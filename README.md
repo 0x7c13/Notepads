@@ -23,6 +23,7 @@ Notes: Please do not share it with others. Design and features are not final, sa
 
 ## Known issues:
 
+* Only works on Windows 10 1809 and 1903 for now. Please check your Windows 10 version before installation.
 * All tooltips hover are shown as CTRL+N.
 * If you drag a file into Notepads, file picker will be shown when saving due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
