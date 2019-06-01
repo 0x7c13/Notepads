@@ -31,5 +31,8 @@ Notes: Please do not share it with others. Design and features are not final, sa
 
 ## Author Notes:
 
-The preview is intended to collect feedback, report bugs and glitches. As well as helping me come up with a list of items that you want me to put into settings (like what part of the UI you want to customize etc.)\n" +
-Let me know if you have any. For more info and issue reporting, please use Github issues.
+The preview is intended to collect feedback, report bugs and glitches. As well as helping me come up with a list of items that you want me to put into settings (like what part of the UI you want to customize etc. Let me know if you have any. For more info and issue reporting, please use Github issues.
+
+## Downloads:
+
+Please head over to GitHub release section for package downloading.
