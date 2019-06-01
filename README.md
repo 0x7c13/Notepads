@@ -73,7 +73,7 @@ To be 100% transparent, Notepads is not and will never collect user information 
 
 On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good. I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only 2-3 weeks back (Today’s date: 06/01/2019). So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
-## Stay tuned:x
+## Stay tuned:
 
 * [Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Slack Workspace](https://join.slack.com/t/notepadsworkspace/shared_invite/enQtNjU0NTgyNjYxMTU4LTVhZmJjMGMzNDEzY2Q1ZDFjOTgxMjlhZTk3MzNlNWE3NWEyZjUzMjFmZTA0ZTY3YTgzYzg3N2JjNWQxMGUxYzM)
