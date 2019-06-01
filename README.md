@@ -1,4 +1,16 @@
-﻿# Notepads App [Preview]
+# Notepads App [Preview]
+
+## What is Notepads and why do I care?
+
+I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be fast and beautiful. 
+
+So here comes the “Notepads” (s stands for Sets).
+
+* A modern, stylish text editor that you will love.
+* Feels like win32 notepad.exe but looks better.
+* Help you get your work done as quickly as possible.
+
+Now, before I publish it and make it open source. Let me give you guys a sneak peak, a preview version of what is coming:
 
 ******* This is a preview release of Notepads for testing purposes only. *******
 
@@ -29,10 +41,30 @@ Notes: Please do not share it with others. Design and features are not final, sa
 * Editor view resizing glitch is caused by system control and won't fix for now.
 * Save as window does not show files, only folders.
 
-## Author Notes:
+## Author’s Notes:
 
 The preview is intended to collect feedback, report bugs and glitches. As well as helping me come up with a list of items that you want me to put into settings (like what part of the UI you want to customize etc. Let me know if you have any. For more info and issue reporting, please use Github issues.
 
 ## Downloads:
 
 Please head over to GitHub release section for package downloading.
+
+## Roadmap
+
+### Phase 0 (3 weeks - 1 month):
+
+* Have all basic features implemented including search and replace, print and settings.
+* Fix active bugs and glitches as much as possible.
+* Launch it on Microsoft Store and setup release pipeline on GitHub.
+* Create a landing website for Notepads -> www.NotepadsApp.com
+* Find or design a good app icon (Simple, modern, stylish and yet easy to recognize.)
+
+### Phase 1 (2-3 months):
+
+Make it rock solid and complete. Add most wanted features but keep it simple. 
+
+### Phase 2 (By end of 2019):
+
+* I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to get rid of UWP limitations and restrictions.
+
+
