@@ -1,6 +1,6 @@
 # Notepads App [Preview v0.3.0.0]
 
-[![release](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
+Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 
 
 ## What is Notepads and why do I care?
