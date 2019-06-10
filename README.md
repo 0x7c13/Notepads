@@ -22,7 +22,7 @@ Notes: Please do not share it with others. Design and features are not final, sa
 * Settings and any customization related.
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 
-## Known issues:
+## Known issues (v0.3.0.0):
 
 * Only works on Windows 10 1809 and 1903 for now. Please check your Windows 10 version before installation.
 * If you drag a file into Notepads, file picker will be shown when saving due to UWP restriction.
