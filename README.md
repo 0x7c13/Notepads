@@ -1,4 +1,4 @@
-# Notepads App [Preview]
+# Notepads App [Preview v0.3.0.0]
 
 ## What is Notepads and why do I care?
 
@@ -16,30 +16,18 @@ Now, before I publish it and make it open source. Let me give you guys a sneak p
 
 Notes: Please do not share it with others. Design and features are not final, same for the App icon.
 
-## Things that suppose to work in this preview version:
-
-* Launch from command line or PowerShell: "notepads", "notepads <file>.txt" or with absolute path: "notepads foo\bar\<file>.txt"
-* Select either single or multiple text files and right click to launch with Notepads is supported.
-* All basic functions including new tab, save, save as and open file should work without problem.
-* Right click context menu is also there and it changes based on mode (Insertion or Selection).
-* Line Ending is based on existing context of your open file. CRLF will be used as default for New Document.txt.
-* Encoding is based on existing context of your open file. UTF-8 will be used as default for New Document.txt.
-* Save reminder on tab closing or app exiting when there is unsaved content.
-* Ctrl+Tab / Ctrl+Shift+Tab to switch tab back and forward. Ctrl+N to create new tab and Ctrl+W to close active tab.
-
 ## Things are not working or not implemented in this preview version:
 
-* Print, Search and Replace.
+* Print, Text Replace.
 * Settings and any customization related.
-* You won't be able to save files to system folders due to UWP restriction (I am waiting for the upcoming .Net Core / Win Apps / Xaml Island meta).
+* You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 
 ## Known issues:
 
 * Only works on Windows 10 1809 and 1903 for now. Please check your Windows 10 version before installation.
-* All tooltips hover are shown as CTRL+N.
 * If you drag a file into Notepads, file picker will be shown when saving due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
-* Save as window does not show files, only folders.
+* Save as window does not show files, only folders because I only added txt and md registration for now. I will add more file types later.
 
 ## Author’s Notes:
 
@@ -53,11 +41,11 @@ Please head over to [release](https://github.com/JasonStein/Notepads/releases) s
 
 ### Phase 0 (3 weeks - 1 month):
 
-* Have all basic features implemented including search and replace, print and settings.
+* Have all basic features implemented including find and replace, print and settings.
 * Fix active bugs and glitches as much as possible.
 * Launch it on Microsoft Store and setup release pipeline on GitHub.
 * Create a landing website for Notepads -> www.NotepadsApp.com
-* Find or design a good app icon (Simple, modern, stylish and yet easy to recognize.)
+* Find or design a good app icon (Simple, modern, stylish and yet easy to recognize) and all file icons that will be supported.
 
 ### Phase 1 (2-3 months):
 
