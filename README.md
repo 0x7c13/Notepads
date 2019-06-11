@@ -1,4 +1,4 @@
-# Notepads App [Preview v0.4.0.0]
+﻿# Notepads App [Preview v0.4.0.0]
 
 Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 
@@ -14,6 +14,10 @@ So here comes the “Notepads” (s stands for Sets).
 * Help you get your work done as quickly as possible.
 
 Now, before I publish it and make it open source. Let me give you guys a sneak peak, a preview version of what is coming:
+
+![Screenshot Dark 1](Screenshots/Notepads_SC_B_1.png?raw=true "Dark 1")
+
+![Screenshot Dark 2](Screenshots/Notepads_SC_B_2.png?raw=true "Dark 2")
 
 ******* This is a preview release of Notepads for testing purposes only. *******
 
