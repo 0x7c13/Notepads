@@ -1,4 +1,4 @@
-# Notepads App [Preview v0.3.0.0]
+# Notepads App [Preview v0.4.0.0]
 
 Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 
