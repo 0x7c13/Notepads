@@ -68,5 +68,5 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 ## Stay tuned:
 
-* [Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
-* [Slack Workspace](https://join.slack.com/t/notepadsworkspace/shared_invite/enQtNjU0NTgyNjYxMTU4LTVhZmJjMGMzNDEzY2Q1ZDFjOTgxMjlhZTk3MzNlNWE3NWEyZjUzMjFmZTA0ZTY3YTgzYzg3N2JjNWQxMGUxYzM)
+* [Reddit](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
+* [Discord](https://discord.gg/VqetCub)
