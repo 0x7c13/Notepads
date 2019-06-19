@@ -1,6 +1,6 @@
 ﻿# Notepads App [Preview v0.5.0.0]
 
-Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
+* Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
 
 ## What is Notepads and why do I care?
