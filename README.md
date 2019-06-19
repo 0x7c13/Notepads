@@ -1,4 +1,4 @@
-﻿# Notepads App [Preview v0.4.0.0]
+﻿# Notepads App [Preview v0.5.0.0]
 
 Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 
@@ -24,7 +24,8 @@ Notes: Please do not share it with others. Design and features are not final, sa
 ## Things are not working or not implemented in this preview version:
 
 * Print, Text Replace.
-* Settings and any customization related.
+* App is in English only. (I will add more later)
+* File type registration only works for .txt and .md. (I will add more later once icons are ready)
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 
 ## Known issues:
