@@ -16,6 +16,7 @@ So here comes the “Notepads” (s stands for Sets).
 Now, before I publish it and make it open source. Let me give you guys a sneak peak, a preview version of what is coming:
 
 ![Screenshot Dark](Screenshots/Notepads_SC_B_2.png?raw=true "Dark")
+![Screenshot Dark_ThemeSettings](Screenshots/Notepads_SC_B_3.png?raw=true "Dark")
 
 ******* This is a preview release of Notepads for testing purposes only. *******
 
