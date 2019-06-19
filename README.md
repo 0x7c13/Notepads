@@ -1,4 +1,4 @@
-﻿# Notepads App [Preview v0.5.0.0]
+﻿# 📝Notepads App [Preview v0.5.0.0]
 
 * Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
@@ -7,7 +7,7 @@
 
 I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be fast and beautiful. 
 
-So here comes the “Notepads” (s stands for Sets).
+So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * A modern, stylish text editor that you will love.
 * Feels like win32 notepad.exe but looks better.
@@ -18,7 +18,7 @@ Now, before I publish it and make it open source. Let me give you guys a sneak p
 ![Screenshot Dark](Screenshots/Notepads_SC_B_2.png?raw=true "Dark")
 ![Screenshot Dark_ThemeSettings](Screenshots/Notepads_SC_B_3.png?raw=true "Dark")
 
-******* This is a preview release of Notepads for testing purposes only. *******
+******* 📣 This is a preview release of Notepads for testing purposes only. *******
 
 Notes: Please do not share it with others. Design and features are not final, same for the App icon.
 
@@ -68,7 +68,7 @@ To be 100% transparent, Notepads is not and will never collect user information 
 
 On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good. I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only 2-3 weeks back (Today’s date: 06/01/2019). So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
-## Stay tuned:
+## Stay tuned 📢:
 
 * [Reddit](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Discord](https://discord.gg/VqetCub)
