@@ -1,4 +1,4 @@
-﻿# 📝Notepads App [Preview v0.5.0.0]
+﻿# 📝Notepads App [Preview v0.6.0.0]
 
 * Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
@@ -35,6 +35,11 @@ Notes: Please do not share it with others. Design and features are not final, sa
 * If you drag a file into Notepads, file picker will be shown when saving due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
 * Save as window does not show files, only folders because I only added txt and md registration for now. I will add more file types later.
+
+## Cheat sheet:
+* Ctrl+N/T to create new tab.
+* Ctrl+(Shift)+Tab to switch between tabs.
+* Ctrl+"+" to increase font size and Ctrl+"-" to decrease font size. Ctrl+"0" to reset font size to default.
 
 ## Author’s Notes:
 
