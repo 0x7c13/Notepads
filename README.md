@@ -1,4 +1,4 @@
-﻿# 📝Notepads App [Preview v0.6.0.0]
+﻿# 📝Notepads App [Preview v0.7.0.0]
 
 * Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
@@ -9,7 +9,7 @@ I have waited long enough for a modern windows 10 notepad app to come before I h
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
-* A modern, stylish text editor that you will love.
+* A modern, stylish text editor with minimum design.
 * Feels like win32 notepad.exe but looks better.
 * Help you get your work done as quickly as possible.
 
@@ -24,7 +24,7 @@ Notes: Please do not share it with others. Design and features are not final, sa
 
 ## Things are not working or not implemented in this preview version:
 
-* Print, Text Replace.
+* Print.
 * App is in English only. (I will add more later)
 * File type registration only works for .txt and .md. (I will add more later once icons are ready)
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
@@ -56,7 +56,7 @@ Please head over to [release](https://github.com/JasonStein/Notepads/releases) s
 * Have all basic features implemented including find and replace, print and settings.
 * Fix active bugs and glitches as much as possible.
 * Launch it on Microsoft Store and setup release pipeline on GitHub.
-* Create a landing website for Notepads -> www.NotepadsApp.com
+* Create a landing website -> www.NotepadsApp.com
 * Find or design a good app icon (Simple, modern, stylish and yet easy to recognize) and all file icons that will be supported.
 
 ### Phase 1 (2-3 months):
