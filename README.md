@@ -1,4 +1,4 @@
-﻿# 📝Notepads App [Preview v0.8.0.0]
+﻿# 📝Notepads App [Beta v0.9.0.0]
 
 * Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
@@ -13,16 +13,14 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Feels like win32 notepad.exe but looks better.
 * Help you get your work done as quickly as possible.
 
-Now, before I publish it and make it open source. Let me give you guys a sneak peak, a preview version of what is coming:
-
 ![Screenshot Dark](Screenshots/Notepads_SC_B_2.png?raw=true "Dark")
 ![Screenshot Dark_ThemeSettings](Screenshots/Notepads_SC_B_3.png?raw=true "Dark")
 
-******* 📣 This is a preview release of Notepads for testing purposes only. *******
+## Beta v0.9.0.0
 
-Notes: Please do not share it with others. Design and features are not final, same for the App icon.
+******* 📣 This is a beta release of Notepads for testing purposes only. *******
 
-## Things are not working or not implemented in this preview version:
+## Things are not working or not implemented in this version:
 
 * Print.
 * App is in English only. (I will add more later)
@@ -31,23 +29,23 @@ Notes: Please do not share it with others. Design and features are not final, sa
 
 ## Known issues:
 
-* Only works on Windows 10 1809 and 1903 for now. Please check your Windows 10 version before installation.
-* If you drag a file into Notepads, file picker will be shown when saving due to UWP restriction.
+* Only works on Windows 10 1809 and above. Please check your Windows 10 version before installation.
+* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
-* Save as window does not show files, only folders because I only added txt and md registration for now. I will add more file types later.
 
 ## Cheat sheet:
+
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+"+" to increase font size and Ctrl+"-" to decrease font size. Ctrl+"0" to reset font size to default.
 
 ## Author’s Notes:
 
-The preview is intended to collect feedback, report bugs and glitches. As well as helping me come up with a list of items that you want me to put into settings (like what part of the UI you want to customize etc.) For more info and issue reporting, please use Github [issues](https://github.com/JasonStein/Notepads/issues).
+The beta is intended to collect feedback, report bugs and glitches. For more info and issue reporting, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Discord](https://discord.gg/VqetCub)
 
 ## Downloads:
 
-Please head over to [release](https://github.com/JasonStein/Notepads/releases) section to download latest build.
+Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest build.
 
 ## Roadmap:
 
@@ -57,7 +55,6 @@ Please head over to [release](https://github.com/JasonStein/Notepads/releases) s
 * Fix active bugs and glitches as much as possible.
 * Launch it on Microsoft Store and setup release pipeline on GitHub.
 * Create a landing website -> www.NotepadsApp.com
-* Find or design a good app icon (Simple, modern, stylish and yet easy to recognize) and all file icons that will be supported.
 
 ### Phase 1 (2-3 months):
 
@@ -72,6 +69,10 @@ Please head over to [release](https://github.com/JasonStein/Notepads/releases) s
 To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties.
 
 On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good. I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only 2-3 weeks back (Today’s date: 06/01/2019). So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+
+## Special Thanks:
+
+* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
 
 ## Stay tuned 📢:
 
