@@ -11,7 +11,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * A modern, stylish text editor with minimum design.
 * Feels like win32 notepad.exe but looks better.
-* Help you get your work done as quickly as possible.
+* Launch from command line or powershell by typing: "notepads" or "notepads %path-to-your-file%".
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_1.jpg?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_1.jpg?raw=true "Light")
