@@ -13,8 +13,8 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Feels like win32 notepad.exe but looks better.
 * Help you get your work done as quickly as possible.
 
-![Screenshot Dark](Screenshots/Notepads_SC_B_2.png?raw=true "Dark")
-![Screenshot Dark_ThemeSettings](Screenshots/Notepads_SC_B_3.png?raw=true "Dark")
+![Screenshot Dark](ScreenShots/Notepads_SC_B_1.png?raw=true "Dark")
+![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_1.png?raw=true "Light")
 
 ## Beta v0.9.0.0
 
