@@ -16,8 +16,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_1.jpg?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_1.jpg?raw=true "Light")
 
-## Beta v0.9.0.0
-
 ******* 📣 This is a beta release of Notepads for testing purposes only. *******
 
 ## Things are not working or not implemented in this version:
