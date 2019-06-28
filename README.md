@@ -1,4 +1,4 @@
-﻿# 📝Notepads App [Beta v0.9.0.0]
+﻿# 📝Notepads App [Beta v0.9.1.0]
 
 * Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Source Code will be available end of June 2019.
@@ -24,7 +24,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Print.
 * App is in English only. (I will add more later)
-* File type registration only works for .txt and .md. (I will add more later once icons are ready)
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 
 ## Known issues:
