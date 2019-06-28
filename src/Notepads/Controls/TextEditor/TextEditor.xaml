@@ -1,0 +1,122 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="TextEditor" TargetType="RichEditBox">
+        <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <!--<Setter Property="ContentLinkForegroundColor" Value="{ThemeResource ContentLinkForegroundColor}"/>
+        <Setter Property="ContentLinkBackgroundColor" Value="{ThemeResource ContentLinkBackgroundColor}"/>-->
+        <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
+        <!--<Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}"/>
+        <Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}"/>-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RichEditBox">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlHeaderForegroundDisabled}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundDisabled}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushDisabled}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundDisabled}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundDisabled}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Focused"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            x:Name="HeaderContentPresenter" 
+                            ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                            Content="{TemplateBinding Header}" 
+                            FontWeight="Normal" 
+                            Foreground="{ThemeResource TextControlHeaderForeground}" 
+                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}" 
+                            Grid.Row="0" 
+                            TextWrapping="Wrap" 
+                            VerticalAlignment="Top" 
+                            Visibility="Collapsed" 
+                            x:DeferLoadStrategy="Lazy">
+                        </ContentPresenter>
+                        <Border 
+                            x:Name="BorderElement" 
+                            Background="{TemplateBinding Background}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            CornerRadius="{TemplateBinding CornerRadius}" 
+                            MinHeight="{ThemeResource TextControlThemeMinHeight}" 
+                            MinWidth="{ThemeResource TextControlThemeMinWidth}" 
+                            Grid.RowSpan="1" 
+                            Grid.Row="1"/>
+                        <ScrollViewer 
+                            x:Name="ContentElement" 
+                            AutomationProperties.AccessibilityView="Raw" 
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
+                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" 
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" 
+                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" 
+                            IsTabStop="False" 
+                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" 
+                            Margin="{TemplateBinding BorderThickness}" 
+                            Padding="{TemplateBinding Padding}" 
+                            Grid.Row="1" 
+                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" 
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" 
+                            ZoomMode="Disabled"/>
+                        <TextBlock 
+                            x:Name="PlaceholderTextContentPresenter" 
+                            Foreground="{ThemeResource TextControlPlaceholderForeground}" 
+                            IsHitTestVisible="False" 
+                            Margin="{TemplateBinding BorderThickness}" 
+                            Padding="{TemplateBinding Padding}" 
+                            Grid.Row="1" 
+                            Text="{TemplateBinding PlaceholderText}" 
+                            TextWrapping="{TemplateBinding TextWrapping}" 
+                            TextAlignment="{TemplateBinding TextAlignment}"
+                            OpticalMarginAlignment="TrimSideBearings"/>
+                        <ContentPresenter
+                            x:Name="DescriptionPresenter" 
+                            AutomationProperties.AccessibilityView="Raw" 
+                            Content="{TemplateBinding Description}" 
+                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" 
+                            Grid.Row="2" 
+                            x:Load="False"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

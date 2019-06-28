@@ -1,0 +1,153 @@
+﻿<UserControl
+    x:Class="Notepads.Controls.FindAndReplace.FindAndReplaceControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    d:DesignHeight="76"
+    d:DesignWidth="250">
+
+    <Grid x:Name="RootGrid">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"  Padding="1, 1, 6, 1" Height="36" x:Name="SearchBarPlaceHolder">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="28" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <TextBox x:Name="SearchBar"
+                         PlaceholderText="Find"
+                         Style="{StaticResource TransparentTextBoxStyle}"
+                         Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         IsSpellCheckEnabled="False"
+                         TextAlignment="Left"
+                         BorderThickness="0"
+                         FontSize="15"
+                         TextChanged="SearchBar_OnTextChanged"
+                         KeyDown="SearchBar_OnKeyDown"/>
+            </Grid>
+
+            <Button x:Name="SearchButton"
+                    Padding="3,0,0,0"
+                    Width="38"
+                    Grid.Column="1" 
+                    Visibility="Collapsed"
+                    IsTabStop="False"
+                    FontSize="16"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE721;" 
+                    ToolTipService.ToolTip="Find Next (F3)"
+                    FontFamily="Segoe MDL2 Assets"
+                    Click="SearchButton_OnClick">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F3"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+
+            <Button x:Name="OptionButton"
+                    IsTabStop="False"
+                    Padding="3,0,0,0"
+                    Width="36"
+                    Grid.Column="2" 
+                    FontSize="16"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE712;" 
+                    FontFamily="Segoe MDL2 Assets">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                        <ToggleMenuFlyoutItem Text="Match Case" x:Name="MatchCaseToggle"/>
+                        <ToggleMenuFlyoutItem Text="Match Whole Word" x:Name="MatchWholeWordToggle"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+
+            <Button x:Name="DismissButton"
+                    IsTabStop="False"
+                    Padding="0"
+                    Width="32"
+                    Grid.Column="3" 
+                    FontSize="15"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE894;" 
+                    FontFamily="Segoe MDL2 Assets" 
+                    Click="DismissButton_OnClick" >
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+        </Grid>
+
+        <Grid Row="1" Padding="1, 1, 6, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Column="0">
+                    <TextBox x:Name="ReplaceBar"
+                         PlaceholderText="Replace"
+                         Style="{StaticResource TransparentTextBoxStyle}"
+                         Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         IsSpellCheckEnabled="False"
+                         TextAlignment="Left"
+                         BorderThickness="0"
+                         FontSize="15"
+                         TextChanged="ReplaceBar_OnTextChanged"
+                         KeyDown="ReplaceBar_OnKeyDown"/>
+                </Grid>
+
+                <Button x:Name="ReplaceButton"
+                        IsEnabled="False"
+                        IsTabStop="False"
+                        Padding="3,0,0,0"
+                        Width="32"
+                        Grid.Column="1" 
+                        ToolTipService.ToolTip="Replace"
+                        FontSize="15"
+                        Style="{StaticResource DismissButtonStyle}"
+                        Content="&#xE8AB;"
+                        FontFamily="Segoe MDL2 Assets"
+                        Click="ReplaceButton_OnClick">
+                </Button>
+
+                <Button x:Name="ReplaceAllButton"
+                        IsEnabled="False"
+                        IsTabStop="False"
+                        Padding="3,0,0,0"
+                        Width="32"
+                        Grid.Column="2" 
+                        ToolTipService.ToolTip="Replace All"
+                        FontSize="15"
+                        Style="{StaticResource DismissButtonStyle}"
+                        Content="&#xE7FD;" 
+                        FontFamily="Segoe MDL2 Assets"
+                        Click="ReplaceAllButton_OnClick">
+                </Button>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

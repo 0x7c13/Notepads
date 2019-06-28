@@ -1,0 +1,113 @@
+﻿<Page
+    x:Class="Notepads.Controls.Settings.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads.Controls.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+
+    <Grid>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <ScrollViewer
+            Grid.Row="0"
+            Padding="20,0,20,0"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <Image x:Name="AppIconImage" Width="90" Source="/Assets/appicon_ws.png"/>
+                    <StackPanel Margin="10,0,0,0">
+                        <TextBlock
+                            Margin="0,5,0,0"
+                            FontWeight="Normal"
+                            FontSize="32"
+                            Text="Notepads" />
+                        <TextBlock
+                            Margin="2,5,0,5"
+                            FontWeight="Normal"
+                            FontSize="18"
+                            Text="{x:Bind AppVersion, Mode=OneTime}" />
+                    </StackPanel>
+                </StackPanel>
+                <RichTextBlock MaxWidth="600" Margin="0,15,0,0" IsTextSelectionEnabled="False">
+                    <Paragraph>
+                        Free and open source text editor designed and implemented by Jackie (Jiaqi) Liu
+                    </Paragraph>
+                    <Paragraph Margin="0,15,0,0">
+                        Source code is available on Github:
+                    </Paragraph>
+                    <Paragraph>
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                            https://github.com/JasonStein/Notepads
+                        </Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,15,0,0">
+                        For more info, please visit our website:
+                    </Paragraph>
+                    <Paragraph>
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                            https://www.NotepadsApp.com
+                        </Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,15,0,0">
+                        To contact the authors:
+                        <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com">mailto:NotepadsApp@outlook.com</Hyperlink>
+                    </Paragraph>
+                </RichTextBlock>
+                <Button  Content="Feedback" Margin="0,8,0,0" Visibility="Collapsed" />
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"
+                    Text="Dependencies and References" />
+                <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
+                    <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">Windows UI Library</Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit">Windows Community Toolkit</Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery">XAML Controls Gallery</Hyperlink>
+                    </Paragraph>
+                </RichTextBlock>
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"
+                    Text="Disclaimer" />
+                <RichTextBlock MaxWidth="600" Margin="0,10,0,40" IsTextSelectionEnabled="False">
+                    <Paragraph>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                        SOFTWARE.</Paragraph>
+                    <Paragraph>
+                        <LineBreak /> Copyright (c) 2019 Jackie (Jiaqi) Liu.
+                    </Paragraph>
+                    <!--<Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="">Privacy Statement</Hyperlink>
+                    </Paragraph>-->
+                </RichTextBlock>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

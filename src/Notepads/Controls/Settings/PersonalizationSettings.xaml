@@ -1,0 +1,86 @@
+﻿<Page
+    x:Class="Notepads.Controls.Settings.PersonalizationSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads.Controls.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+
+    <Grid>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <ScrollViewer
+            Grid.Row="0"
+            Padding="20,0,20,0"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,15,0,0"
+                    FontWeight="Normal"
+                    Text="Theme Mode" />
+                <StackPanel x:Name="ThemePanel" Margin="0,10,0,0">
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeLightButton" Tag="Light"  Content="Light" />
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDarkButton" Tag="Dark" Content="Dark" />
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDefaultButton" Tag="Default" Content="Use my Windows mode" />
+                </StackPanel>
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"
+                    Text="Background Tint Opacity" />
+                <StackPanel Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Slider Style="{StaticResource CustomSliderStyle}" 
+                                x:Name="BackgroundTintOpacitySlider"
+                                Minimum="0" Maximum="100" 
+                                StepFrequency="1"
+                                Margin="0,0,10,0" 
+                                Width="200"/>
+                        <TextBlock Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}"
+                                   Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                   VerticalAlignment="Center" 
+                                   FontSize="18"/>
+                        <TextBlock Text="%"
+                                   Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                   VerticalAlignment="Center" 
+                                   FontSize="18"/>
+                    </StackPanel>
+                    <TextBlock Text="Acrylic background tint opacity" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                </StackPanel>
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"
+                    Text="Accent Color" />
+                <StackPanel Margin="0,10,0,40">
+                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" OffContent="Use my Windows accent color" OnContent="Use a custom accent color" Margin="0,0,0,8"/>
+                    <ColorPicker
+                        x:Name="AccentColorPicker"
+                        ColorSpectrumShape="Ring"
+                        IsColorSliderVisible="True"
+                        IsColorChannelTextInputVisible="True"
+                        IsHexInputVisible="True"
+                        IsAlphaEnabled="False"
+                        IsAlphaSliderVisible="True"
+                        IsAlphaTextInputVisible="True" 
+                        IsEnabled="{x:Bind AccentColorToggle.IsOn, Mode=OneWay}"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
