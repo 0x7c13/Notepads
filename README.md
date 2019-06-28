@@ -1,7 +1,7 @@
 ﻿# 📝Notepads App [Beta v0.9.1.0]
 
-* Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
-* Source Code will be available end of June 2019.
+* Release Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
+* Microsoft Store version coming shortly!
 
 ## What is Notepads and why do I care?
 
@@ -27,8 +27,13 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ## Known issues:
 
 * Only works on Windows 10 1809 and above. Please check your Windows 10 version before installation.
+
+## Platform limitation (UWP):
+
 * If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
+* You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
+* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
 
 ## Cheat sheet:
 
@@ -61,15 +66,16 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 * I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to get rid of UWP limitations and restrictions.
 
-## Disclaimer:
+## Disclaimer and Privacy Statement:
 
-To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties.
+To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
 
-On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good. I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only 2-3 weeks back (Today’s date: 06/01/2019). So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good (To empower every person and every organization on the planet to achieve more😃). I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Special Thanks:
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
+* Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 
 ## Stay tuned 📢:
 
