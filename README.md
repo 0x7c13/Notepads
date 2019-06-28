@@ -1,4 +1,4 @@
-﻿# 📝Notepads App [Beta v0.9.1.0]
+# 📝Notepads App [Beta v0.9.1.0]
 
 * Release Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Microsoft Store version coming shortly!
@@ -24,7 +24,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * App is in English only. (I will add more later)
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 
-## Known issues:
+## Supported windows versions:
 
 * Only works on Windows 10 1809 and above. Please check your Windows 10 version before installation.
 
@@ -66,7 +66,7 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 * I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to get rid of UWP limitations and restrictions.
 
-## Disclaimer and Privacy Statement:
+## Disclaimer and Privacy statement:
 
 To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
 
