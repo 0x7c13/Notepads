@@ -1,4 +1,4 @@
-# 📝Notepads App [Beta v0.9.1.0]
+# Notepads App [ Beta v0.9.1.0 ]
 
 * Release Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
 * Microsoft Store version coming shortly!
