@@ -5,12 +5,12 @@
 
 ## What is Notepads and why do I care?
 
-I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be fast and beautiful. 
+I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * A modern, stylish text editor with minimum design.
-* Feels like win32 notepad.exe but looks better.
+* Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or powershell by typing: "notepads" or "notepads %path-to-your-file%".
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_1.jpg?raw=true "Dark")
@@ -60,7 +60,9 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 ### Phase 1 (2-3 months):
 
-* Make it rock solid and complete. Add most wanted features but keep it simple. 
+* Improve Find and Replace.
+* Add markdown file support.
+* Add diff viewer.
 
 ### Phase 2 (By end of 2019):
 
