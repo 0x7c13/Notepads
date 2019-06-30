@@ -82,11 +82,11 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="readme">
+          <uap:FileTypeAssociation Name="markdown">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="text/plain">.md</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Readme File</uap:DisplayName>
+            <uap:DisplayName>Markdown File</uap:DisplayName>
             <uap:Logo>Assets\appicon_w.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
