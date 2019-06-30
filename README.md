@@ -1,17 +1,18 @@
 # Notepads App [ Beta v0.9.1.0 ]
 
 * Release Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
-* Microsoft Store version coming shortly!
+* Microsoft Store version coming soon!
 
 ## What is Notepads and why do I care?
 
-I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
+I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good text editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * A modern, stylish text editor with minimum design.
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or powershell by typing: "notepads" or "notepads %path-to-your-file%".
+* Built-in support for Markdown file + built-in diff viewer. [Work in progress]
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_1.jpg?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_1.jpg?raw=true "Light")
@@ -20,9 +21,10 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Things are not working or not implemented in this version:
 
-* Print.
+* File Print.
 * App is in English only. (I will add more later)
 * You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
+* Markdown file preview + built-in diff viewer.
 
 ## Supported windows versions:
 
@@ -32,8 +34,9 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
 * Editor view resizing glitch is caused by system control and won't fix for now.
-* You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
+* You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
 * Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
+* You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
 
 ## Cheat sheet:
 
@@ -61,12 +64,12 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 ### Phase 1 (2-3 months):
 
 * Improve Find and Replace.
-* Add markdown file support.
+* Add Markdown file preview.
 * Add diff viewer.
 
 ### Phase 2 (By end of 2019):
 
-* I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to get rid of UWP limitations and restrictions.
+* I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to win32 or WPF to get rid of UWP limitations and restrictions.
 
 ## Disclaimer and Privacy statement:
 
