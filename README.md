@@ -23,7 +23,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * File Print.
 * App is in English only. (I will add more later)
-* You won't be able to save files to system folders due to UWP restriction (I will talk more about this later).
 * Markdown file preview + built-in diff viewer.
 
 ## Supported windows versions:
@@ -46,7 +45,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Author’s Notes:
 
-The beta is intended to collect feedback, report bugs and glitches. For more info and issue reporting, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Discord](https://discord.gg/VqetCub)
+The beta is intended to collect feedback, report bugs and glitches. For more info and issue reporting, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
 ## Downloads:
 
@@ -84,5 +83,5 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 ## Stay tuned 📢:
 
-* [Reddit](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
-* [Discord](https://discord.gg/VqetCub)
+* [Original Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
+* [Notepads Discord Server](https://discord.gg/VqetCub)
