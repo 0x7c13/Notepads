@@ -4,6 +4,7 @@ namespace Notepads.Controls.TextEditor
     using System;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -41,7 +42,8 @@ namespace Notepads.Controls.TextEditor
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
         {
-            if (_textEditor.Document.Selection.StartPosition == _textEditor.Document.Selection.EndPosition)
+            if (_textEditor.Document.Selection.Type == SelectionType.InsertionPoint ||
+                _textEditor.Document.Selection.Type == SelectionType.None)
             {
                 PrepareForInsertionMode();
             }
