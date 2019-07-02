@@ -12,10 +12,10 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * A modern, stylish text editor with minimum design.
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or powershell by typing: "notepads" or "notepads %path-to-your-file%".
-* Built-in support for Markdown file + built-in diff viewer. [Work in progress]
+* Built-in support for Markdown file preview + built-in diff viewer. [Work in progress]
 
-![Screenshot Dark](ScreenShots/Notepads_SC_B_1.jpg?raw=true "Dark")
-![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_1.jpg?raw=true "Light")
+![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
+![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
 
 ******* 📣 This is a beta release of Notepads for testing purposes only. *******
 
@@ -62,7 +62,8 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 ### Phase 1 (2-3 months):
 
-* Improve Find and Replace.
+* Improve Find and Replace UX.
+* Automatic file save and restore.
 * Add Markdown file preview.
 * Add diff viewer.
 
