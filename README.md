@@ -1,7 +1,6 @@
-﻿# Notepads App [ Beta v0.9.1.0 ]
+﻿﻿# Notepads App [ Beta v0.9.1.0 ]
 
 Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm). 
-
 *Only works on Windows 10 1809 and above.
 
 ## What is Notepads and why do I care?
@@ -27,11 +26,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * App is in English only. (I will add more later)
 * Markdown file preview viewer + built-in diff viewer.
 
-## Supported windows versions:
-
-* Only works on Windows 10 1809 and above. Please check your Windows 10 version before installation.
-
-## Cheat sheet:
+## Shortcuts:
 
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
@@ -56,23 +51,11 @@ Or get the latest version of Notepads in the [Microsoft Store](https://www.micro
 
 ## Roadmap:
 
-### Phase 0 (3 weeks - 1 month):
+[Project Roadmap](ROADMAP.md)
 
-* Have all basic features implemented including find and replace, print and settings.
-* Fix active bugs and glitches as much as possible.
-* Launch it on Microsoft Store and setup release pipeline on GitHub.
-* Create a landing website -> www.NotepadsApp.com
+## Contributing:
 
-### Phase 1 (2-3 months):
-
-* Improve Find and Replace UX.
-* Automatic file save and restore.
-* Add Markdown file preview.
-* Add diff viewer.
-
-### Phase 2 (By end of 2019):
-
-* I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to win32 or WPF to get rid of UWP limitations and restrictions.
+[How to contribute?](CONTRIBUTING.md)
 
 ## Disclaimer and Privacy statement:
 
