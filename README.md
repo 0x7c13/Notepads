@@ -1,7 +1,8 @@
-# Notepads App [ Beta v0.9.1.0 ]
+﻿# Notepads App [ Beta v0.9.1.0 ]
 
-* Release Download Count: [![Github All Releases](https://img.shields.io/github/downloads/jasonstein/Notepads/total.svg)]()
-* Microsoft Store version coming soon!
+Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm). 
+
+*Only works on Windows 10 1809 and above.
 
 ## What is Notepads and why do I care?
 
@@ -12,30 +13,23 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * A modern, stylish text editor with minimum design.
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or powershell by typing: "notepads" or "notepads %path-to-your-file%".
-* Built-in support for Markdown file preview + built-in diff viewer. [Work in progress]
+* Multi-line handwriting support.
+* Built-in Markdown file preview viewer + built-in diff viewer. [Work in progress]
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
 
-******* 📣 This is a beta release of Notepads for testing purposes only. *******
+******* 📣 Notepads App is still under active development. *******
 
 ## Things are not working or not implemented in this version:
 
 * File Print.
 * App is in English only. (I will add more later)
-* Markdown file preview + built-in diff viewer.
+* Markdown file preview viewer + built-in diff viewer.
 
 ## Supported windows versions:
 
 * Only works on Windows 10 1809 and above. Please check your Windows 10 version before installation.
-
-## Platform limitation (UWP):
-
-* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
-* Editor view resizing glitch is caused by system control and won't fix for now.
-* You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
-* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
-* You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
 
 ## Cheat sheet:
 
@@ -47,9 +41,18 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 The beta is intended to collect feedback, report bugs and glitches. For more info and issue reporting, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
+## Platform limitation (UWP):
+
+* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
+* Editor view resizing glitch is caused by system control and won't fix for now.
+* You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
+* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
+* You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
+
 ## Downloads:
 
-Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest build.
+Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest release.
+Or get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
 ## Roadmap:
 
