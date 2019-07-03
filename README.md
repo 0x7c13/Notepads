@@ -1,4 +1,4 @@
-﻿﻿# Notepads App [ Beta v0.9.1.0 ]
+# Notepads App [ Beta v0.9.1.0 ]
 
 Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm). 
 *Only works on Windows 10 1809 and above.
@@ -46,8 +46,7 @@ The beta is intended to collect feedback, report bugs and glitches. For more inf
 
 ## Downloads:
 
-Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest release.
-Or get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest release or get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
 ## Roadmap:
 
