@@ -297,9 +297,9 @@ namespace Notepads.Services
                 titleBar.ButtonForegroundColor = Windows.UI.Colors.White;
                 titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
                 titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
-                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 55, 55, 55);
+                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 80, 80, 80);
                 titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.White;
-                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 70, 70, 70);
+                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 110, 110, 110);
 
                 // Set inactive window colors
                 titleBar.InactiveForegroundColor = Windows.UI.Colors.Gray;
@@ -315,9 +315,9 @@ namespace Notepads.Services
                 titleBar.ButtonForegroundColor = Windows.UI.Colors.Black;
                 titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
                 titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.Black;
-                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 200, 200, 200);
+                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 180, 180, 180);
                 titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.Black;
-                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 185, 185, 185);
+                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 150, 150, 150);
 
                 // Set inactive window colors
                 titleBar.InactiveForegroundColor = Windows.UI.Colors.DimGray;

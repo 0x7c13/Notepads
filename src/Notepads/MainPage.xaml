@@ -71,7 +71,7 @@
                         <sets:SetsView.SetsStartHeader>
                             <Button 
                                 IsTabStop="False"
-                                Width="48"
+                                Width="42"
                                 Height="{StaticResource SetsViewItemHeaderMinHeight}"
                                 Margin="0,0,-1,0"
                                 BorderThickness="0"
