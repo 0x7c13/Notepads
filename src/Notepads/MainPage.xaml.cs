@@ -92,7 +92,7 @@ namespace Notepads
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.Encoding = encoding;
-                if (textEditor == ((SetsViewItem) Sets.SelectedItem)?.Content)
+                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content)
                 {
                     EncodingIndicator.Text = textEditor.Encoding.EncodingName;
                 }
@@ -108,7 +108,7 @@ namespace Notepads
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.LineEnding = lineEnding;
-                if (textEditor == ((SetsViewItem) Sets.SelectedItem)?.Content)
+                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content)
                 {
                     LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
                 }
@@ -528,13 +528,14 @@ namespace Notepads
                 if (e.Key == VirtualKey.N || e.Key == VirtualKey.T)
                 {
                     OpenEmptyNewSet();
+                    e.Handled = true;
                 }
 
                 if (e.Key == VirtualKey.O)
                 {
                     OpenFileButton_Click(this, null);
+                    e.Handled = true;
                 }
-                e.Handled = true;
             }
 
             if (e.Key == Windows.System.VirtualKey.Tab)

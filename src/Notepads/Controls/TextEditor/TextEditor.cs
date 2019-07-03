@@ -1,4 +1,5 @@
 ﻿
+
 namespace Notepads.Controls.TextEditor
 {
     using Notepads.Services;
@@ -354,18 +355,19 @@ namespace Notepads.Controls.TextEditor
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
             var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
                 // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
                 // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
                 if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
-                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
-                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
-                    e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9 ||
-                    e.Key == VirtualKey.L || e.Key == VirtualKey.R)
+                   e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
+                   e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
+                   e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
+                   e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9 ||
+                   e.Key == VirtualKey.L || e.Key == VirtualKey.R)
                 {
                     return;
                 }
