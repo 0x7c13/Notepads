@@ -50,17 +50,17 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 ## Roadmap:
 
-[Project Roadmap](ROADMAP.md)
-
-## Contributing:
-
-[How to contribute?](CONTRIBUTING.md)
+* [Project Roadmap](ROADMAP.md)
 
 ## Disclaimer and Privacy statement:
 
 To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
 
 On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good (To empower every person and every organization on the planet to achieve more😃). I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+
+## Contributing:
+
+* [How to contribute?](CONTRIBUTING.md)
 
 ## Special Thanks:
 
