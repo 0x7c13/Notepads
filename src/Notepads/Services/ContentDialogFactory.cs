@@ -40,15 +40,17 @@ namespace Notepads.Services
             return setCloseSaveReminder;
         }
 
-        public static ContentDialog GetFileOpenErrorDialog(StorageFile file, Exception ex)
+        public static ContentDialog GetFileOpenErrorDialog(StorageFile file, Exception ex, Action ackAction)
         {
-            return new ContentDialog
+            ContentDialog fileOpenErrorDialog = new ContentDialog
             {
                 Title = "File Open Error",
                 Content = $"Sorry, file \"{file.Name}\" couldn't be opened:\n{ex.Message}",
                 PrimaryButtonText = "Ok",
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
+            fileOpenErrorDialog.PrimaryButtonClick += (sender, args) => { ackAction(); };
+            return fileOpenErrorDialog;
         }
 
         public static ContentDialog GetFileSaveErrorDialog(StorageFile file)

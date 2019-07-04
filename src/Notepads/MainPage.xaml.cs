@@ -302,7 +302,7 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                await ContentDialogFactory.GetFileOpenErrorDialog(file, ex).ShowAsync();
+                await ContentDialogFactory.GetFileOpenErrorDialog(file, ex, FocusOnSelectedTextEditor).ShowAsync();
                 return false;
             }
         }
@@ -310,7 +310,11 @@ namespace Notepads
         private async void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
             var file = await FilePickerFactory.GetFileOpenPicker().PickSingleFileAsync();
-            if (file == null) return;
+            if (file == null)
+            {
+                FocusOnSelectedTextEditor();
+                return;
+            }
             await OpenFile(file);
         }
 
@@ -380,10 +384,7 @@ namespace Notepads
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.KeyDown += TextEditor_KeyDown;
-            textEditor.OnSetSwitchingKeyDown += TextEditor_OnSetSwitchingKeyDown;
             textEditor.OnSetClosingKeyDown += TextEditor_OnSetClosingKeyDown;
-            textEditor.OnSaveButtonClicked += TextEditor_OnSaveButtonClicked;
-            textEditor.OnSaveAsButtonClicked += TextEditor_OnSaveAsButtonClicked;
             textEditor.OnFindButtonClicked += TextEditor_OnFindButtonClicked;
             textEditor.OnFindAndReplaceButtonClicked += TextEditor_OnFindAndReplaceButtonClicked;
 
@@ -447,25 +448,6 @@ namespace Notepads
             }
         }
 
-        private void TextEditor_OnSaveButtonClicked(object sender, KeyRoutedEventArgs e)
-        {
-            SaveButton_Click(sender, e);
-            e.Handled = true;
-        }
-
-        private void TextEditor_OnSaveAsButtonClicked(object sender, KeyRoutedEventArgs e)
-        {
-            SaveButton_Click(sender, new SaveAsEventArgs());
-            e.Handled = true;
-        }
-
-        private void TextEditor_OnSetSwitchingKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-            SwitchSet(!shift.HasFlag(CoreVirtualKeyStates.Down));
-            e.Handled = true;
-        }
-
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
@@ -522,9 +504,17 @@ namespace Notepads
             if (!(sender is TextEditor textEditor)) return;
 
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
+                if (e.Key == VirtualKey.Tab)
+                {
+                    SwitchSet(!shift.HasFlag(CoreVirtualKeyStates.Down));
+                    e.Handled = true;
+                }
+
                 if (e.Key == VirtualKey.N || e.Key == VirtualKey.T)
                 {
                     OpenEmptyNewSet();
@@ -536,9 +526,26 @@ namespace Notepads
                     OpenFileButton_Click(this, null);
                     e.Handled = true;
                 }
+
+                if (e.Key == VirtualKey.S)
+                {
+                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        SaveButton_Click(sender, new SaveAsEventArgs());
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        SaveButton_Click(sender, e);
+                        e.Handled = true;
+                    }
+                }
             }
 
-            if (e.Key == Windows.System.VirtualKey.Tab)
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
+                e.Key == Windows.System.VirtualKey.Tab)
             {
                 var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
                 textEditor.Document.Selection.TypeText(tabStr);

@@ -29,13 +29,7 @@ namespace Notepads.Controls.TextEditor
 
         public bool Saved { get; set; }
 
-        public event EventHandler<KeyRoutedEventArgs> OnSetSwitchingKeyDown;
-
         public event EventHandler<KeyRoutedEventArgs> OnSetClosingKeyDown;
-
-        public event EventHandler<KeyRoutedEventArgs> OnSaveButtonClicked;
-
-        public event EventHandler<KeyRoutedEventArgs> OnSaveAsButtonClicked;
 
         public event EventHandler<KeyRoutedEventArgs> OnFindButtonClicked;
 
@@ -363,32 +357,18 @@ namespace Notepads.Controls.TextEditor
                 // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
                 // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
                 if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
-                   e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
-                   e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                   e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
-                   e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9 ||
-                   e.Key == VirtualKey.L || e.Key == VirtualKey.R)
+                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
+                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
+                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
+                    e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9 ||
+                    e.Key == VirtualKey.L || e.Key == VirtualKey.R)
                 {
                     return;
                 }
 
                 if (e.Key == VirtualKey.Tab)
                 {
-                    OnSetSwitchingKeyDown?.Invoke(this, e);
-                    return;
-                }
-
-                if (e.Key == VirtualKey.S)
-                {
-                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        OnSaveAsButtonClicked?.Invoke(this, e);
-                    }
-                    else
-                    {
-                        OnSaveButtonClicked?.Invoke(this, e);
-                    }
-                    return;
+                    return; // ignoring tab key here since it is reserved for tab switch
                 }
 
                 if (e.Key == VirtualKey.W)
@@ -397,7 +377,6 @@ namespace Notepads.Controls.TextEditor
                     {
                         OnSetClosingKeyDown?.Invoke(this, e);
                     }
-
                     return;
                 }
 
@@ -414,6 +393,12 @@ namespace Notepads.Controls.TextEditor
                     return;
                 }
 
+                if (e.Key == VirtualKey.H)
+                {
+                    OnFindAndReplaceButtonClicked?.Invoke(this, e);
+                    return;
+                }
+
                 if (e.Key == VirtualKey.Z)
                 {
                     if (shift.HasFlag(CoreVirtualKeyStates.Down))
@@ -427,14 +412,14 @@ namespace Notepads.Controls.TextEditor
                     return;
                 }
 
-                if (e.Key == (VirtualKey)187) // +
+                if (e.Key == (VirtualKey)187 || e.Key == VirtualKey.Add) // +
                 {
                     SetDefaultTabStop(FontFamily, FontSize + 2);
                     FontSize += 2;
                     return;
                 }
 
-                if (e.Key == (VirtualKey)189) // -
+                if (e.Key == (VirtualKey)189 || e.Key == VirtualKey.Subtract) // -
                 {
                     if (FontSize > 4)
                     {
@@ -451,6 +436,7 @@ namespace Notepads.Controls.TextEditor
                     return;
                 }
             }
+
             base.OnKeyDown(e);
         }
 
