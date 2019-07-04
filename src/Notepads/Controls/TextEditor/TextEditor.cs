@@ -1,8 +1,6 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.IO;
     using System.Text;
@@ -17,6 +15,8 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Notepads.Services;
+    using Notepads.Utilities;
 
     public class TextEditor : RichEditBox
     {

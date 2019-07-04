@@ -1,7 +1,6 @@
 ﻿
 namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -16,6 +15,7 @@ namespace Notepads.Controls.Settings
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using Notepads.Services;
 
     public sealed partial class PersonalizationSettings : Page
     {

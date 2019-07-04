@@ -1,13 +1,12 @@
 ﻿<Application
     x:Class="Notepads.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Notepads">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 <Application.Resources>
         <ResourceDictionary>
 
-            <ResourceDictionary.ThemeDictionaries>
+            <!--<ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
 
                 </ResourceDictionary>
@@ -17,12 +16,12 @@
                 <ResourceDictionary x:Key="HighContrast">
 
                 </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary.ThemeDictionaries>-->
 
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="SetsView/SetsView.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditor.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/SearchBarPlaceHolder.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/SetsView.xaml" />
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>

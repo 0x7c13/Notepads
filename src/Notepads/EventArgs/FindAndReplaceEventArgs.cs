@@ -31,5 +31,4 @@ namespace Notepads.EventArgs
 
         public FindAndReplaceMode FindAndReplaceMode  { get; private set; }
     }
-
 }

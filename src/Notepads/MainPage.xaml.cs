@@ -147,7 +147,7 @@ namespace Notepads
             var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
             StatusNotification.Width = textSize.Width + 100;  // actual width + padding
             StatusNotification.Height = textSize.Height + 50; // actual height + padding
-            StatusNotification.Show(message, 1500);
+            StatusNotification.Show(message, duration);
         }
 
         private void FocusOnSelectedTextEditor()

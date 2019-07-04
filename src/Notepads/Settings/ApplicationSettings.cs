@@ -10,7 +10,7 @@ namespace Notepads.Settings
 
     public class ApplicationSettings
     {
-        public static object ReadAsync(string key)
+        public static object Read(string key)
         {
             object obj = null;
 
@@ -32,7 +32,7 @@ namespace Notepads.Settings
             return obj;
         }
 
-        public static void WriteAsync(string key, object obj, bool saveToRoaming)
+        public static void Write(string key, object obj, bool saveToRoaming)
         {
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = obj;

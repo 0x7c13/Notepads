@@ -1,7 +1,6 @@
 ﻿
 namespace Notepads.Services
 {
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -10,6 +9,7 @@ namespace Notepads.Services
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;
     using Windows.UI.Xaml.Controls;
+    using Notepads.Utilities;
 
     public static class ActivationService
     {

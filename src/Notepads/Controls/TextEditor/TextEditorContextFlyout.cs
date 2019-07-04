@@ -37,7 +37,6 @@ namespace Notepads.Controls.TextEditor
             Items.Add(Share);
 
             Opening += TextEditorContextFlyout_Opening;
-
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)

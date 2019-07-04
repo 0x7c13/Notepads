@@ -1,8 +1,6 @@
 ﻿
 namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -20,6 +18,8 @@ namespace Notepads.Controls.Settings
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using Notepads.Services;
+    using Notepads.Utilities;
 
     public sealed partial class TextAndEditorSettings : Page
     {

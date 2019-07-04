@@ -1,10 +1,6 @@
 ﻿
 namespace Notepads.Services
 {
-    using Microsoft.Toolkit.Uwp.Helpers;
-    using Microsoft.Toolkit.Uwp.UI.Helpers;
-    using Notepads.Settings;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -19,6 +15,8 @@ namespace Notepads.Services
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using Notepads.Settings;
+    using Notepads.Utilities;
 
     public static class EditorSettingsService
     {
@@ -43,7 +41,7 @@ namespace Notepads.Services
             {
                 _editorFontFamily = value;
                 OnFontFamilyChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorFontFamilyStr, value, true);
+                ApplicationSettings.Write(SettingsKey.EditorFontFamilyStr, value, true);
             }
         }
 
@@ -56,7 +54,7 @@ namespace Notepads.Services
             {
                 _editorFontSize = value;
                 OnFontSizeChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorFontSizeInt, value, true);
+                ApplicationSettings.Write(SettingsKey.EditorFontSizeInt, value, true);
             }
         }
 
@@ -69,7 +67,7 @@ namespace Notepads.Services
             {
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
+                ApplicationSettings.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
             }
         }
 
@@ -82,7 +80,7 @@ namespace Notepads.Services
             {
                 _editorDefaultLineEnding = value;
                 OnDefaultLineEndingChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
+                ApplicationSettings.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
             }
         }
 
@@ -95,7 +93,7 @@ namespace Notepads.Services
             {
                 _editorDefaultEncoding = value;
                 OnDefaultEncodingChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
+                ApplicationSettings.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
             }
         }
 
@@ -108,7 +106,7 @@ namespace Notepads.Services
             {
                 _editorDefaultTabIndents = value;
                 OnDefaultTabIndentsChanged?.Invoke(null, value);
-                ApplicationSettings.WriteAsync(SettingsKey.EditorDefaultTabIndentsInt, value, true);
+                ApplicationSettings.Write(SettingsKey.EditorDefaultTabIndentsInt, value, true);
             }
         }
 
@@ -128,7 +126,7 @@ namespace Notepads.Services
 
         private static void InitializeLineEndingSettings()
         {
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
+            if (ApplicationSettings.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
             {
                 Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding);
                 _editorDefaultLineEnding = (LineEnding)lineEnding;
@@ -141,7 +139,7 @@ namespace Notepads.Services
 
         private static void InitializeTextWrappingSettings()
         {
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
+            if (ApplicationSettings.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
             {
                 Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping);
                 _editorDefaultTextWrapping = (TextWrapping)textWrapping;
@@ -157,7 +155,7 @@ namespace Notepads.Services
             System.Text.EncodingProvider provider = System.Text.CodePagesEncodingProvider.Instance;
             Encoding.RegisterProvider(provider);
 
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
+            if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
                 _editorDefaultEncoding = Encoding.GetEncoding(encodingCodePage);
             }
@@ -169,7 +167,7 @@ namespace Notepads.Services
 
         private static void InitializeTabIndentsSettings()
         {
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorDefaultTabIndentsInt) is int tabIndents)
+            if (ApplicationSettings.Read(SettingsKey.EditorDefaultTabIndentsInt) is int tabIndents)
             {
                 _editorDefaultTabIndents = tabIndents;
             }
@@ -181,7 +179,7 @@ namespace Notepads.Services
 
         private static void InitializeFontSettings()
         {
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorFontFamilyStr) is string fontFamily)
+            if (ApplicationSettings.Read(SettingsKey.EditorFontFamilyStr) is string fontFamily)
             {
                 _editorFontFamily = fontFamily;
             }
@@ -190,7 +188,7 @@ namespace Notepads.Services
                 _editorFontFamily = "Consolas";
             }
 
-            if (ApplicationSettings.ReadAsync(SettingsKey.EditorFontSizeInt) is int fontSize)
+            if (ApplicationSettings.Read(SettingsKey.EditorFontSizeInt) is int fontSize)
             {
                 _editorFontSize = fontSize;
             }
