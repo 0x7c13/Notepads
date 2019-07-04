@@ -131,11 +131,6 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>-->
                                         <MenuFlyoutItem x:Name="MenuSettingsButton" Text="Settings" Icon="Setting" Click="MenuSettingsButton_OnClick" />
-                                        <!--<MenuFlyoutItem x:Name="AboutButton" Text="About" Click="AboutButton_OnClick">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE946;" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>-->
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
@@ -179,42 +174,12 @@
                                                 Style="{StaticResource InAppNotificationNoDismissButton}"
                                                 Content=""
                                                 ShowDismissButton="False"
-                                                MaxWidth="120"
-                                                MaxHeight="100"
                                                 AnimationDuration="0:0:0.080"
                                                 VerticalOffset="-20"
                                                 HorizontalOffset="0"
-                                                Padding="10"
                                                 FontWeight="Light"
                                                 BorderThickness="1">
                     </controls:InAppNotification>
-
-                    <controls:InAppNotification x:Name="SearchNotFoundNotification"
-                                            Style="{StaticResource InAppNotificationNoDismissButton}"
-                                            Content="Not Found"
-                                            ShowDismissButton="False"
-                                            MaxWidth="150"
-                                            MaxHeight="100"
-                                            AnimationDuration="0:0:0.080"
-                                            VerticalOffset="-20"
-                                            HorizontalOffset="0"
-                                            Padding="10"
-                                            FontWeight="Light"
-                                            BorderThickness="1">
-                    </controls:InAppNotification>
-
-                    <!--<controls:InAppNotification x:Name="AboutInfo"
-                                            Style="{StaticResource InAppNotificationNoDismissButton}"
-                                            ShowDismissButton="False"
-                                            Width="300"
-                                            MaxHeight="100"
-                                            AnimationDuration="0:0:0.080"
-                                            VerticalOffset="-20"
-                                            HorizontalOffset="0"
-                                            Padding="10"
-                                            FontWeight="Light"
-                                            BorderThickness="1">
-                    </controls:InAppNotification>-->
 
                     <controls:InAppNotification x:Name="SearchBarPlaceHolder"
                                             Padding="0"

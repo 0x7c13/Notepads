@@ -23,11 +23,11 @@ namespace Notepads.Utilities
             return off < 0.01;
         }
 
-        public static float GetTextWidth(FontFamily font, double fontSize, string text)
+        public static Size GetTextSize(FontFamily font, double fontSize, string text)
         {
             var tb = new TextBlock { Text = text, FontFamily = font, FontSize = fontSize };
             tb.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-            return (float)tb.DesiredSize.Width;
+            return tb.DesiredSize;
         }
     }
 }

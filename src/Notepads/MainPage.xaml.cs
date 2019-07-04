@@ -138,8 +138,16 @@ namespace Notepads
 
             if (!found)
             {
-                SearchNotFoundNotification.Show(1500);
+                ShowNotificationMessage("Not Found", 1500);
             }
+        }
+
+        private void ShowNotificationMessage(string message, int duration)
+        {
+            var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
+            StatusNotification.Width = textSize.Width + 100;  // actual width + padding
+            StatusNotification.Height = textSize.Height + 50; // actual height + padding
+            StatusNotification.Show(message, 1500);
         }
 
         private void FocusOnSelectedTextEditor()
@@ -362,7 +370,7 @@ namespace Notepads
                         break;
                     }
                 }
-                StatusNotification.Show("Saved", 2000);
+                ShowNotificationMessage("Saved", 2000);
             }
             else
             {
@@ -643,7 +651,7 @@ namespace Notepads
                 var pathData = new DataPackage();
                 pathData.SetText(PathIndicator.Text);
                 Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
-                StatusNotification.Show("Copied", 1500);
+                ShowNotificationMessage("Copied", 1500);
             }
             else if (sender is TextBlock textBlock)
             {

@@ -77,8 +77,8 @@ namespace Notepads.Controls.TextEditor
 
         private void SetDefaultTabStop(FontFamily font, double fontSize)
         {
-            Document.DefaultTabStop = FontUtility.GetTextWidth(font, fontSize, "text");
-            TextDocument.DefaultTabStop = FontUtility.GetTextWidth(font, fontSize, "text");
+            Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
+            TextDocument.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
         }
 
         private void TextEditor_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
