@@ -1,5 +1,4 @@
 ﻿
-
 namespace Notepads.Controls.TextEditor
 {
     using Notepads.Services;
