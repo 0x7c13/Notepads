@@ -50,7 +50,7 @@ namespace Notepads.Services
                 ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
                 ".js", ".ts", ".lua",
             });
-            //savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
+            savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             savePicker.SuggestedFileName = textEditor.EditingFile == null ? defaultFileName : textEditor.EditingFile.Name;
             return savePicker;
         }
