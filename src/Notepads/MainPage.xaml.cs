@@ -304,6 +304,12 @@ namespace Notepads
         {
             try
             {
+                var set = GetTextEditorSetsViewItem(file);
+                if (set != null)
+                {
+                    Sets.SelectedItem = set;
+                    return true;
+                }
                 var textFile = await FileSystemUtility.ReadFile(file);
                 CreateNewTextEditorSet(textFile.Content, file, textFile.Encoding, textFile.LineEnding);
                 return true;
@@ -313,6 +319,22 @@ namespace Notepads
                 await ContentDialogFactory.GetFileOpenErrorDialog(file, ex, FocusOnSelectedTextEditor).ShowAsync();
                 return false;
             }
+        }
+
+        private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
+        {
+            if (Sets.Items == null) return null;
+            foreach (SetsViewItem setsItem in Sets.Items)
+            {
+                if (setsItem.Content is TextEditor textEditor)
+                {
+                    if (string.Equals(textEditor.EditingFile?.Path, file.Path))
+                    {
+                        return setsItem;
+                    }
+                }
+            }
+            return null;
         }
 
         private async void OpenFileButton_Click(object sender, RoutedEventArgs e)
