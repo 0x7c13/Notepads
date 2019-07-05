@@ -40,7 +40,8 @@ namespace Notepads.Controls.Settings
                 }
             }
 
-            AccentColorToggle.IsOn = !ThemeSettingsService.UseWindowsAccentColor;
+            AccentColorToggle.IsOn = ThemeSettingsService.UseWindowsAccentColor;
+            AccentColorPicker.IsEnabled = !ThemeSettingsService.UseWindowsAccentColor;
             BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
@@ -95,7 +96,8 @@ namespace Notepads.Controls.Settings
 
         private void WindowsAccentColorToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            ThemeSettingsService.UseWindowsAccentColor = !AccentColorToggle.IsOn;
+            AccentColorPicker.IsEnabled = !AccentColorToggle.IsOn;
+            ThemeSettingsService.UseWindowsAccentColor = AccentColorToggle.IsOn;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
         }
     }

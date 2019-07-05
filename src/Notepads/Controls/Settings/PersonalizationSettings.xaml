@@ -65,7 +65,7 @@
                     FontWeight="Normal"
                     Text="Accent Color" />
                 <StackPanel Margin="0,10,0,40">
-                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" OffContent="Use my Windows accent color" OnContent="Use a custom accent color" Margin="0,0,0,8"/>
+                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" OffContent="Use my Windows accent color" OnContent="Use my Windows accent color" Margin="0,0,0,8"/>
                     <ColorPicker
                         x:Name="AccentColorPicker"
                         ColorSpectrumShape="Ring"
@@ -74,8 +74,8 @@
                         IsHexInputVisible="True"
                         IsAlphaEnabled="False"
                         IsAlphaSliderVisible="True"
-                        IsAlphaTextInputVisible="True" 
-                        IsEnabled="{x:Bind AccentColorToggle.IsOn, Mode=OneWay}"/>
+                        IsAlphaTextInputVisible="True">
+                    </ColorPicker>
                 </StackPanel>
 
             </StackPanel>
