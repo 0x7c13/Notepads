@@ -64,6 +64,14 @@
                         To contact the authors:
                         <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com">mailto:NotepadsApp@outlook.com</Hyperlink>
                     </Paragraph>
+                    <Paragraph Margin="0,15,0,0">
+                        For issue reporting and feature requests:
+                    </Paragraph>
+                    <Paragraph>
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues">
+                            https://github.com/JasonStein/Notepads/issues
+                        </Hyperlink>
+                    </Paragraph>
                 </RichTextBlock>
                 <Button  Content="Feedback" Margin="0,8,0,0" Visibility="Collapsed" />
 
