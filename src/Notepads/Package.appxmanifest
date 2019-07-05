@@ -11,7 +11,7 @@
   <Identity
     Name="Notepads-Beta"
     Publisher="CN=Jackie Liu"
-    Version="0.9.3.0" />
+    Version="0.9.4.0" />
 
   <mp:PhoneIdentity PhoneProductId="77ab4c55-cc57-4187-a21f-b8adbd22d860" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

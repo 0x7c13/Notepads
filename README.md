@@ -1,6 +1,6 @@
-# Notepads App [ Beta v0.9.3.0 ]
+# Notepads App [ Beta v0.9.4.0 ]
 
-Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm). 
+Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 *Only works on Windows 10 1809 and above.
 
 ## What is Notepads and why do I care?
@@ -34,7 +34,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Author’s Notes:
 
-The beta is intended to collect feedback, report bugs and glitches. For more info and issue reporting, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
+The beta is intended to collect feedback, report bugs and glitches. For issue reporting and feature requests, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
 ## Platform limitation (UWP):
 
@@ -66,6 +66,8 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
+* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio)
+* Internationalization Contributors: N/A
 
 ## Stay tuned 📢:
 

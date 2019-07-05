@@ -11,9 +11,10 @@
 
 * Improve Find and Replace UX.
 * Automatic file save and restore.
-* Add Markdown file preview.
-* Add diff viewer.
+* Markdown file preview.
+* Diff viewer.
 
 ## Phase 2 (By end of 2019):
 
 * I will visit .Net core 3.0, Windows Apps, Xaml Island to see if I can port it over to win32 or WPF to get rid of UWP limitations and restrictions.
+* [UWP with Desktop Extension](https://stefanwick.com/2018/04/06/uwp-with-desktop-extension-part-1)
