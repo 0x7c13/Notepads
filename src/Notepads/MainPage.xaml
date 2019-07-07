@@ -85,22 +85,22 @@
                                                 Placement="BottomEdgeAlignedLeft"
                                                 Opening="MainMenuButtonFlyout_Opening"
                                                 Closing="MainMenuButtonFlyout_Closing">
-                                        <MenuFlyoutItem Text="New" Icon="NewFolder" Click="CreateNewSet" AccessKey="N">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" Icon="NewFolder" Click="CreateNewSet" AccessKey="N">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="Open..." Icon="OpenFile" Click="OpenFileButton_Click" AccessKey="O" >
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" Icon="OpenFile" Click="OpenFileButton_Click" AccessKey="O" >
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Name="MenuSaveButton" Text="Save" Icon="Save" Click="SaveButton_Click">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save" Click="SaveButton_Click">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Name="MenuSaveAsButton" Text="Save As..." Click="MenuSaveAsButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton" Click="MenuSaveAsButton_OnClick">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
@@ -109,12 +109,12 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Name="MenuFindButton" Text="Find..." Icon="Find" Click="FindButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find" Click="FindButton_OnClick">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="F" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Name="MenuReplaceButton" Text="Replace..." Click="ReplaceButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton" Click="ReplaceButton_OnClick">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8AB;" />
                                             </MenuFlyoutItem.Icon>
@@ -123,12 +123,12 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
-                                        <!--<MenuFlyoutItem x:Name="MenuPrintButton" Text="Print..." Icon="Print" Click="MenuPrintButton_OnClick">
+                                        <!--<MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print" Click="MenuPrintButton_OnClick">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>-->
-                                        <MenuFlyoutItem x:Name="MenuSettingsButton" Text="Settings" Icon="Setting" Click="MenuSettingsButton_OnClick" />
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting" Click="MenuSettingsButton_OnClick" />
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
@@ -179,19 +179,19 @@
                                                 BorderThickness="1">
                     </controls:InAppNotification>
 
-                    <controls:InAppNotification x:Name="SearchBarPlaceHolder"
-                                            Padding="0"
-                                            Margin="0"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top"
-                                            Style="{StaticResource SearchBarPlaceHolder}"
-                                            ShowDismissButton="True"
-                                            AnimationDuration="0:0:0.050"
-                                            VerticalOffset="32"
-                                            HorizontalOffset="-22"
-                                            FontWeight="Light"
-                                            BorderThickness="1"
-                                            Closed="SearchBarPlaceHolder_Closed">
+                    <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
+                                                Padding="0"
+                                                Margin="0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                Style="{StaticResource FindAndReplacePlaceholder}"
+                                                ShowDismissButton="True"
+                                                AnimationDuration="0:0:0.050"
+                                                VerticalOffset="32"
+                                                HorizontalOffset="-22"
+                                                FontWeight="Light"
+                                                BorderThickness="1"
+                                                Closed="SearchBarPlaceHolder_Closed">
                         <controls:InAppNotification.Content>
                             <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                             Width="320"

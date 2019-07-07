@@ -20,7 +20,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Controls/TextEditor/TextEditor.xaml" />
-                <ResourceDictionary Source="Controls/FindAndReplace/SearchBarPlaceHolder.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/SetsView.xaml" />
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>

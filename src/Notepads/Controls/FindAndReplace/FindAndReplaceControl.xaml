@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"  Padding="1, 1, 6, 1" Height="36" x:Name="SearchBarPlaceHolder">
+        <Grid Grid.Row="0"  Padding="1, 1, 6, 1" Height="36" x:Name="FindAndReplaceRootGrid">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -25,8 +25,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <TextBox x:Name="SearchBar"
-                         PlaceholderText="Find"
+                <TextBox x:Name="FindBar"
+                         x:Uid="FindAndReplace_FindBar"
                          Style="{StaticResource TransparentTextBoxStyle}"
                          Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
                          HorizontalAlignment="Stretch"
@@ -35,11 +35,12 @@
                          TextAlignment="Left"
                          BorderThickness="0"
                          FontSize="15"
-                         TextChanged="SearchBar_OnTextChanged"
-                         KeyDown="SearchBar_OnKeyDown"/>
+                         TextChanged="FindBar_OnTextChanged"
+                         KeyDown="FindBar_OnKeyDown"/>
             </Grid>
 
             <Button x:Name="SearchButton"
+                    x:Uid="FindAndReplace_SearchButton"
                     Padding="3,0,0,0"
                     Width="38"
                     Grid.Column="1" 
@@ -48,7 +49,6 @@
                     FontSize="16"
                     Style="{StaticResource DismissButtonStyle}"
                     Content="&#xE721;" 
-                    ToolTipService.ToolTip="Find Next (F3)"
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchButton_OnClick">
                 <Button.KeyboardAccelerators>
@@ -72,8 +72,8 @@
                                 <Setter Property="BorderThickness" Value="0" />
                             </Style>
                         </MenuFlyout.MenuFlyoutPresenterStyle>
-                        <ToggleMenuFlyoutItem Text="Match Case" x:Name="MatchCaseToggle"/>
-                        <ToggleMenuFlyoutItem Text="Match Whole Word" x:Name="MatchWholeWordToggle"/>
+                        <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle"/>
+                        <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -105,26 +105,26 @@
 
                 <Grid Column="0">
                     <TextBox x:Name="ReplaceBar"
-                         PlaceholderText="Replace"
-                         Style="{StaticResource TransparentTextBoxStyle}"
-                         Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                         HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch"
-                         IsSpellCheckEnabled="False"
-                         TextAlignment="Left"
-                         BorderThickness="0"
-                         FontSize="15"
-                         TextChanged="ReplaceBar_OnTextChanged"
-                         KeyDown="ReplaceBar_OnKeyDown"/>
+                             x:Uid="FindAndReplace_ReplaceBar"
+                             Style="{StaticResource TransparentTextBoxStyle}"
+                             Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             IsSpellCheckEnabled="False"
+                             TextAlignment="Left"
+                             BorderThickness="0"
+                             FontSize="15"
+                             TextChanged="ReplaceBar_OnTextChanged"
+                             KeyDown="ReplaceBar_OnKeyDown"/>
                 </Grid>
 
                 <Button x:Name="ReplaceButton"
+                        x:Uid="FindAndReplace_ReplaceButton"
                         IsEnabled="False"
                         IsTabStop="False"
                         Padding="3,0,0,0"
                         Width="32"
                         Grid.Column="1" 
-                        ToolTipService.ToolTip="Replace"
                         FontSize="15"
                         Style="{StaticResource DismissButtonStyle}"
                         Content="&#xE8AB;"
@@ -133,12 +133,12 @@
                 </Button>
 
                 <Button x:Name="ReplaceAllButton"
+                        x:Uid="FindAndReplace_ReplaceAllButton"
                         IsEnabled="False"
                         IsTabStop="False"
                         Padding="3,0,0,0"
                         Width="32"
                         Grid.Column="2" 
-                        ToolTipService.ToolTip="Replace All"
                         FontSize="15"
                         Style="{StaticResource DismissButtonStyle}"
                         Content="&#xE7FD;" 

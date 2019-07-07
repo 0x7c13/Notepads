@@ -3,6 +3,7 @@ namespace Notepads.Controls.TextEditor
 {
     using System;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -22,6 +23,7 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _share;
 
         private readonly TextEditor _textEditor;
+        private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
 
         public TextEditorContextFlyout(TextEditor editor)
         {
@@ -61,14 +63,14 @@ namespace Notepads.Controls.TextEditor
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
-            Share.Text = "Share";
+            Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
 
         public void PrepareForSelectionMode()
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
-            Share.Text = "Share Selected";
+            Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
 
         public MenuFlyoutItem Cut
@@ -77,7 +79,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_cut == null)
                 {
-                    _cut = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Cut), Text = "Cut" };
+                    _cut = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Cut), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CutButtonDisplayText") };
                     _cut.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -96,7 +98,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_copy == null)
                 {
-                    _copy = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Copy), Text = "Copy" };
+                    _copy = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Copy), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CopyButtonDisplayText") };
                     _copy.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -120,7 +122,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_paste == null)
                 {
-                    _paste = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Paste), Text = "Paste" };
+                    _paste = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Paste), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_PasteButtonDisplayText") };
                     _paste.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -139,7 +141,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_undo == null)
                 {
-                    _undo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Undo), Text = "Undo" };
+                    _undo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Undo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UndoButtonDisplayText") };
                     _undo.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -158,7 +160,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_redo == null)
                 {
-                    _redo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Redo), Text = "Redo" };
+                    _redo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Redo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RedoButtonDisplayText") };
                     _redo.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
@@ -179,7 +181,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_selectAll == null)
                 {
-                    _selectAll = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.SelectAll), Text = "Select All" };
+                    _selectAll = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.SelectAll), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SelectAllButtonDisplayText") };
                     _selectAll.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -201,7 +203,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (_share == null)
                 {
-                    _share = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Share), Text = "Share" };
+                    _share = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Share), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText") };
                     _share.Click += (sender, args) =>
                     {
                         Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
@@ -219,7 +221,7 @@ namespace Notepads.Controls.TextEditor
 
                 _wordWrap = new MenuFlyoutItem
                 {
-                    Text = "Word Wrap",
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_WordWrapButtonDisplayText"),
                     Icon = new FontIcon()
                     {
                         FontFamily = new FontFamily("Segoe MDL2 Assets"),

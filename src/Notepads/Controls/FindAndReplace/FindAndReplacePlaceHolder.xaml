@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
-    <Style x:Key="SearchBarPlaceHolder" TargetType="controls:InAppNotification">
+    <Style x:Key="FindAndReplacePlaceholder" TargetType="controls:InAppNotification">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>

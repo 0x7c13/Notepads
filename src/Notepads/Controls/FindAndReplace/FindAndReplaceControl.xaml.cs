@@ -32,29 +32,29 @@ namespace Notepads.Controls.FindAndReplace
         {
             if (showReplaceBar)
             {
-                return SearchBarPlaceHolder.Height + ReplaceBarPlaceHolder.Height;
+                return FindAndReplaceRootGrid.Height + ReplaceBarPlaceHolder.Height;
             }
             else
             {
-                return SearchBarPlaceHolder.Height;
+                return FindAndReplaceRootGrid.Height;
             }
         }
 
         private void SetSelectionHighlightColor()
         {
-            SearchBar.SelectionHighlightColor =
+            FindBar.SelectionHighlightColor =
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            SearchBar.SelectionHighlightColorWhenNotFocused =
+            FindBar.SelectionHighlightColorWhenNotFocused =
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            ReplaceBar.SelectionHighlightColor =
+            FindBar.SelectionHighlightColor =
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            ReplaceBar.SelectionHighlightColorWhenNotFocused =
+            FindBar.SelectionHighlightColorWhenNotFocused =
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         public void Focus()
         {
-            SearchBar.Focus(FocusState.Programmatic);
+            FindBar.Focus(FocusState.Programmatic);
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
@@ -67,11 +67,11 @@ namespace Notepads.Controls.FindAndReplace
             OnDismissKeyDown?.Invoke(sender, e);
         }
 
-        private void SearchBar_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void FindBar_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SearchButton.Visibility = !string.IsNullOrEmpty(SearchBar.Text) ? Visibility.Visible : Visibility.Collapsed;
+            SearchButton.Visibility = !string.IsNullOrEmpty(FindBar.Text) ? Visibility.Visible : Visibility.Collapsed;
 
-            if (!string.IsNullOrEmpty(SearchBar.Text))
+            if (!string.IsNullOrEmpty(FindBar.Text))
             {
                 ReplaceButton.IsEnabled = true;
                 ReplaceAllButton.IsEnabled = true;
@@ -87,12 +87,12 @@ namespace Notepads.Controls.FindAndReplace
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(SearchBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.FindOnly));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.FindOnly));
         }
 
-        private void SearchBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(SearchBar.Text))
+            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 SearchButton_OnClick(sender, e);
             }
@@ -108,12 +108,12 @@ namespace Notepads.Controls.FindAndReplace
 
         private void ReplaceButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(SearchBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.Replace));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.Replace));
         }
 
         private void ReplaceAllButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(SearchBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.ReplaceAll));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.ReplaceAll));
         }
     }
 }

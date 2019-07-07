@@ -128,9 +128,8 @@ namespace Notepads.Controls.TextEditor
             CachedFileManager.DeferUpdates(file);
             // write to file
 
-            Document.GetText(TextGetOptions.None, out var text);
-
-            text = TrimTextAndFixLineEnding(text, LineEnding);
+            var text = GetText();
+            text = FixLineEnding(text, LineEnding);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -171,9 +170,16 @@ namespace Notepads.Controls.TextEditor
                 EditingFile = file;
                 Encoding = encoding;
                 Saved = true;
-
                 return true;
             }
+        }
+
+        public string GetText()
+        {
+            Document.GetText(TextGetOptions.None, out var text);
+            // RichEditBox's Document.GetText() method by default append an extra '\r' at end of the text string
+            // We need to trim it before proceeding
+            return TrimText(text); 
         }
 
         public string GetContentForSharing()
@@ -182,7 +188,7 @@ namespace Notepads.Controls.TextEditor
 
             if (Document.Selection.StartPosition == Document.Selection.EndPosition)
             {
-                Document.GetText(TextGetOptions.None, out content);
+                content = GetText();
             }
             else
             {
@@ -232,7 +238,7 @@ namespace Notepads.Controls.TextEditor
             var searchTextLength = searchText.Length;
             var replaceTextLength = replaceText.Length;
 
-            Document.GetText(TextGetOptions.None, out var text);
+            var text = GetText();
 
             StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
@@ -248,12 +254,6 @@ namespace Notepads.Controls.TextEditor
 
             if (found)
             {
-                // Trim end \r
-                if (!string.IsNullOrEmpty(text) && text[text.Length - 1] == '\r')
-                {
-                    text = text.Substring(0, text.Length - 1);
-                }
-
                 SetText(text);
                 Document.Selection.StartPosition = Int32.MaxValue;
                 Document.Selection.EndPosition = Document.Selection.StartPosition;
@@ -269,7 +269,7 @@ namespace Notepads.Controls.TextEditor
                 return false;
             }
 
-            Document.GetText(TextGetOptions.None, out var text);
+            var text = GetText();
 
             StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
@@ -308,7 +308,7 @@ namespace Notepads.Controls.TextEditor
         {
             if (_documentLinesCache == null)
             {
-                Document.GetText(TextGetOptions.None, out var text);
+                var text = GetText();
                 _documentLinesCache = text.Split("\r");
             }
 
@@ -439,7 +439,7 @@ namespace Notepads.Controls.TextEditor
             base.OnKeyDown(e);
         }
 
-        private string TrimTextAndFixLineEnding(string text, LineEnding lineEnding)
+        private string TrimText(string text)
         {
             // Trim end \r
             if (!string.IsNullOrEmpty(text) && text[text.Length - 1] == '\r')
@@ -447,6 +447,11 @@ namespace Notepads.Controls.TextEditor
                 text = text.Substring(0, text.Length - 1);
             }
 
+            return text;
+        }
+
+        private string FixLineEnding(string text, LineEnding lineEnding)
+        {
             return LineEndingUtility.ApplyLineEnding(text, lineEnding);
         }
 

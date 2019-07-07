@@ -18,6 +18,7 @@ namespace Notepads
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
     using Windows.Storage;
@@ -38,7 +39,7 @@ namespace Notepads
 
     public sealed partial class MainPage : Page
     {
-        private const string DefaultFileName = "New Document.txt";
+        private readonly string _defaultNewFileName;
 
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
 
@@ -46,9 +47,13 @@ namespace Notepads
 
         private string _appLaunchCmdArgs;
 
-        public MainPage()
+        private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+
+        public MainPage()  
         {
             InitializeComponent();
+
+            _defaultNewFileName = _resourceLoader.GetString("TextEditor_DefaultNewFileName");
 
             // Set custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
@@ -138,7 +143,7 @@ namespace Notepads
 
             if (!found)
             {
-                ShowNotificationMessage("Not Found", 1500);
+                ShowNotificationMessage(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
             }
         }
 
@@ -162,12 +167,12 @@ namespace Notepads
 
         private void SearchBarPlaceHolder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
         {
-            SearchBarPlaceHolder.Visibility = Visibility.Collapsed;
+            FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
         }
 
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
-            SearchBarPlaceHolder.Dismiss();
+            FindAndReplacePlaceholder.Dismiss();
             FocusOnSelectedTextEditor();
         }
 
@@ -200,11 +205,11 @@ namespace Notepads
             if (!string.IsNullOrEmpty(content))
             {
                 args.Request.Data.SetText(content);
-                args.Request.Data.Properties.Title = editor.EditingFile != null ? editor.EditingFile.Name : DefaultFileName;
+                args.Request.Data.Properties.Title = editor.EditingFile != null ? editor.EditingFile.Name : _defaultNewFileName;
             }
             else
             {
-                args.Request.FailWithDisplayText("Nothing to share because no text is selected and current document is empty.");
+                args.Request.FailWithDisplayText(_resourceLoader.GetString("ContentSharing_FailureDisplayText"));
             }
         }
 
@@ -362,7 +367,7 @@ namespace Notepads
                 FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
                 !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
             {
-                file = await FilePickerFactory.GetFileSavePicker(e, textEditor, DefaultFileName).PickSaveFileAsync();
+                file = await FilePickerFactory.GetFileSavePicker(e, textEditor, _defaultNewFileName).PickSaveFileAsync();
                 textEditor.Focus(FocusState.Programmatic);
             }
             else
@@ -392,7 +397,7 @@ namespace Notepads
                         break;
                     }
                 }
-                ShowNotificationMessage("Saved", 2000);
+                ShowNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 2000);
             }
             else
             {
@@ -420,7 +425,7 @@ namespace Notepads
 
             var newItem = new SetsViewItem
             {
-                Header = file == null ? DefaultFileName : file.Name,
+                Header = file == null ? _defaultNewFileName : file.Name,
                 Content = textEditor,
                 SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
                 Icon = new SymbolIcon(Symbol.Save)
@@ -446,16 +451,16 @@ namespace Notepads
 
         private void ShowFindAndReplaceControl(bool showReplaceBar)
         {
-            var findAndReplace = (FindAndReplaceControl)SearchBarPlaceHolder.Content;
+            var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
 
             if (findAndReplace == null) return;
 
-            SearchBarPlaceHolder.Height = findAndReplace.GetHeight(showReplaceBar);
+            FindAndReplacePlaceholder.Height = findAndReplace.GetHeight(showReplaceBar);
             findAndReplace.ShowReplaceBar(showReplaceBar);
 
-            if (SearchBarPlaceHolder.Visibility == Visibility.Collapsed)
+            if (FindAndReplacePlaceholder.Visibility == Visibility.Collapsed)
             {
-                SearchBarPlaceHolder.Show();
+                FindAndReplacePlaceholder.Show();
             }
 
             Task.Factory.StartNew(
@@ -486,7 +491,7 @@ namespace Notepads
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.Focus(FocusState.Programmatic);
 
-            PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : DefaultFileName;
+            PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
             EncodingIndicator.Text = textEditor.Encoding.EncodingName;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
@@ -526,7 +531,7 @@ namespace Notepads
                 Application.Current.Exit();
             }
 
-            if (SearchBarPlaceHolder.Visibility == Visibility.Visible) SearchBarPlaceHolder.Dismiss();
+            if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
         }
 
         private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -597,7 +602,7 @@ namespace Notepads
 
             e.Cancel = true;
 
-            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : DefaultFileName);
+            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
             await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, () =>
                 {
                     SaveButton_Click(textEditor, new RoutedEventArgs());
@@ -673,7 +678,7 @@ namespace Notepads
                 var pathData = new DataPackage();
                 pathData.SetText(PathIndicator.Text);
                 Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
-                ShowNotificationMessage("Copied", 1500);
+                ShowNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
             }
             else if (sender is TextBlock textBlock)
             {
