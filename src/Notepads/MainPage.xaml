@@ -191,7 +191,7 @@
                                                 HorizontalOffset="-22"
                                                 FontWeight="Light"
                                                 BorderThickness="1"
-                                                Closed="SearchBarPlaceHolder_Closed">
+                                                Closed="SearchBarPlaceholder_Closed">
                         <controls:InAppNotification.Content>
                             <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                             Width="320"

@@ -49,6 +49,8 @@ namespace Notepads
 
         private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
 
+        private bool _loaded = false;
+
         public MainPage()  
         {
             InitializeComponent();
@@ -165,7 +167,7 @@ namespace Notepads
             FocusOnSelectedTextEditor();
         }
 
-        private void SearchBarPlaceHolder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void SearchBarPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
         {
             FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
         }
@@ -218,12 +220,21 @@ namespace Notepads
         {
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
+                var success = false;
                 foreach (var storageItem in _appLaunchFiles)
                 {
                     if (storageItem is StorageFile file)
                     {
-                        await OpenFile(file);
+                        if (await OpenFile(file))
+                        {
+                            success = true;
+                        }
                     }
+                }
+
+                if (!success)
+                {
+                    OpenEmptyNewSet();
                 }
 
                 _appLaunchFiles = null;
@@ -237,15 +248,20 @@ namespace Notepads
                 }
                 else
                 {
-                    await OpenFile(file);
+                    var success = await OpenFile(file);
+                    if (!success)
+                    {
+                        OpenEmptyNewSet();
+                    }
                 }
 
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
-            else if (Sets.Items?.Count == 0)
+            else if (!_loaded)
             {
                 OpenEmptyNewSet();
+                _loaded = true;
             }
         }
 
