@@ -126,11 +126,11 @@
     <comment>FindAndReplace: Find bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>No encontrado</value>
+    <value>No Encontrado</value>
     <comment>FindAndReplace: Notification message when target not found .</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Reemplazar todo</value>
+    <value>Reemplazar Todo</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -142,7 +142,7 @@
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Buscar siguiente (F3)</value>
+    <value>Buscar Siguiente (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
@@ -182,7 +182,7 @@
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>Opciones</value>
+    <value>Ajustes</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
