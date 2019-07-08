@@ -61,6 +61,10 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 ## Contributing:
 
 * [How to contribute?](CONTRIBUTING.md)
+* Notepads is free and open source, if you like my work, please consider:
+   * Star this project on GitHub
+   * Leave me a review [here](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
+   * Buy me a coffee [here](https://ko-fi.com/jackieliu)
 
 ## Special Thanks:
 
