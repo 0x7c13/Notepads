@@ -198,7 +198,7 @@
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
-    <value>重做</value>
+    <value>恢复</value>
     <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
