@@ -23,7 +23,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ## Things are not working or not implemented in this version:
 
 * File Print.
-* App is in English only. (I will add more later)
 * Markdown file preview viewer + built-in diff viewer.
 
 ## Shortcuts:
@@ -31,6 +30,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+"+" to increase font size and Ctrl+"-" to decrease font size. Ctrl+"0" to reset font size to default.
+* Ctrl+L/R to change text flow direction. (LTR/RTL)
 
 ## Author’s Notes:
 
@@ -67,7 +67,10 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio)
-* Internationalization Contributors: N/A
+* Internationalization Contributors: 
+    * fr-FR: [frousselet](https://github.com/frousselet)
+    * es-ES: [joseppinilla](https://github.com/joseppinilla)
+    * zh-CN: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)(Myself)
 
 ## Stay tuned 📢:
 
