@@ -207,7 +207,7 @@
   </data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
     <value>Compartir</value>
-    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
+    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
     <value>Compartir Selección</value>
