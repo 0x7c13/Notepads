@@ -326,8 +326,7 @@ namespace Notepads.Controls.TextEditor
                     e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
-                    e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9 ||
-                    e.Key == VirtualKey.L || e.Key == VirtualKey.R)
+                    e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9)
                 {
                     return;
                 }
