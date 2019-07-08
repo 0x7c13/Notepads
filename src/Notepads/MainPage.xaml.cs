@@ -387,7 +387,7 @@ namespace Notepads
         private async void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
             var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
-            if (files.Count == 0)
+            if (files == null || files.Count == 0)
             {
                 FocusOnSelectedTextEditor();
                 return;
