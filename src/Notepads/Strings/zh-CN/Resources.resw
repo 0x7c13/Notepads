@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>找不到可分享内容，请确保文档存在内容同时选择了文本</value>
+    <value>找不到可分享内容，请确保文档存在内容同时选择了文本。</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
