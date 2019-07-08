@@ -92,6 +92,13 @@ namespace Notepads.Services
             set
             {
                 _editorDefaultEncoding = value;
+
+                if (value is UTF8Encoding)
+                {
+                    ApplicationSettings.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
+                        Equals(value, new UTF8Encoding(true)), true);
+                }
+
                 OnDefaultEncodingChanged?.Invoke(null, value);
                 ApplicationSettings.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
             }
@@ -157,11 +164,25 @@ namespace Notepads.Services
 
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
-                _editorDefaultEncoding = Encoding.GetEncoding(encodingCodePage);
+                var encoding = Encoding.GetEncoding(encodingCodePage);
+
+                if (encoding is UTF8Encoding)
+                {
+                    if (ApplicationSettings.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is bool shouldEmitBom)
+                    {
+                        encoding = new UTF8Encoding(shouldEmitBom);
+                    }
+                    else
+                    {
+                        encoding = new UTF8Encoding(false);
+                    }
+                }
+
+                _editorDefaultEncoding = encoding;
             }
             else
             {
-                _editorDefaultEncoding = Encoding.UTF8;
+                _editorDefaultEncoding = new UTF8Encoding(false);
             }
         }
 

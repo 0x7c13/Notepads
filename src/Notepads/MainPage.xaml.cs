@@ -101,7 +101,7 @@ namespace Notepads
                 textEditor.Encoding = encoding;
                 if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content)
                 {
-                    EncodingIndicator.Text = textEditor.Encoding.EncodingName;
+                    UpdateEncodingIndicatorText(textEditor.Encoding);
                 }
             }
         }
@@ -409,7 +409,7 @@ namespace Notepads
                         PathIndicator.Text = textEditor.EditingFile.Path;
                         LineEndingIndicator.Text =
                             LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
-                        EncodingIndicator.Text = textEditor.Encoding.EncodingName;
+                        UpdateEncodingIndicatorText(textEditor.Encoding);
                         break;
                     }
                 }
@@ -509,7 +509,7 @@ namespace Notepads
 
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
-            EncodingIndicator.Text = textEditor.Encoding.EncodingName;
+            UpdateEncodingIndicatorText(textEditor.Encoding);
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
             LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
         }
@@ -727,13 +727,16 @@ namespace Notepads
             switch (item.Tag)
             {
                 case "UTF-8":
-                    ChangeEncodingSelectedTextEditor(sender, Encoding.UTF8);
+                    ChangeEncodingSelectedTextEditor(sender, new UTF8Encoding(false));
                     break;
-                case "UTF-16 LE":
-                    ChangeEncodingSelectedTextEditor(sender, Encoding.Unicode);
+                case "UTF-8-BOM":
+                    ChangeEncodingSelectedTextEditor(sender, new UTF8Encoding(true));
                     break;
-                case "UTF-16 BE":
-                    ChangeEncodingSelectedTextEditor(sender, Encoding.BigEndianUnicode);
+                case "UTF-16 LE BOM":
+                    ChangeEncodingSelectedTextEditor(sender, new UnicodeEncoding(false, true));
+                    break;
+                case "UTF-16 BE BOM":
+                    ChangeEncodingSelectedTextEditor(sender, new UnicodeEncoding(true, true));
                     break;
             }
         }
@@ -754,11 +757,53 @@ namespace Notepads
             if (!(sender is MenuFlyoutItem)) return;
             if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return;
 
-            if (textEditor.Encoding.CodePage == encoding.CodePage) return;
+            if (textEditor.Encoding.CodePage == encoding.CodePage) 
+            {
+                if (encoding is UTF8Encoding)
+                {
+                    if (Equals(textEditor.Encoding, encoding)) return;
+                }
+                else 
+                {
+                    return;
+                }
+            };
 
             MarkSelectedEditorNotSaved(textEditor);
             textEditor.Encoding = encoding;
-            EncodingIndicator.Text = textEditor.Encoding.EncodingName;
+            UpdateEncodingIndicatorText(textEditor.Encoding);
+        }
+
+        private void UpdateEncodingIndicatorText(Encoding encoding)
+        {
+            EncodingIndicator.Text = encoding.BodyName.ToUpper();
+
+            if (encoding is UTF8Encoding)
+            {
+                if (Equals(encoding, new UTF8Encoding(true)))
+                {
+                    EncodingIndicator.Text = "UTF-8-BOM";
+                }
+                else
+                {
+                    EncodingIndicator.Text = "UTF-8";
+                }
+            }
+            else if (encoding is UnicodeEncoding)
+            {
+                if (encoding.CodePage == Encoding.Unicode.CodePage)
+                {
+                    EncodingIndicator.Text = "UTF-16 LE BOM";
+                }
+                else if (encoding.CodePage == Encoding.BigEndianUnicode.CodePage)
+                {
+                    EncodingIndicator.Text = "UTF-16 BE BOM";
+                }
+            }
+            else
+            {
+                EncodingIndicator.Text = encoding.BodyName;
+            }
         }
 
         private void UtilitySelectionFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
