@@ -226,11 +226,11 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>复制完成</value>
+    <value>已复制</value>
     <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
-    <value>保存完成</value>
+    <value>已保存</value>
     <comment>TextEditor: Notification message when file has been saved succesffully.</comment>
   </data>
 </root>
