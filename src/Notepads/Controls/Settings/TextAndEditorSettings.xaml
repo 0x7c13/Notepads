@@ -87,8 +87,9 @@
                     Text="Default Encoding" />
                 <StackPanel x:Name="EncodingPanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8RadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeRadioButton" Tag="UTF-16 LE" Content="UTF-16 LE" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeRadioButton" Tag="UTF-16 BE" Content="UTF-16 BE" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8BomRadioButton" Tag="UTF-8-BOM" Content="UTF-8-BOM" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeBomRadioButton" Tag="UTF-16 LE BOM" Content="UTF-16 LE BOM" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeBomRadioButton" Tag="UTF-16 BE BOM" Content="UTF-16 BE BOM" GroupName="EncodingGroup"/>
                 </StackPanel>
                 <TextBlock Text="Only apply to new document" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 <TextBlock
