@@ -53,15 +53,22 @@ namespace Notepads.Controls.Settings
 
             if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
             {
-                Utf8RadioButton.IsChecked = true;
+                if (Equals(EditorSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
+                {
+                    Utf8RadioButton.IsChecked = true;
+                }
+                else 
+                {
+                    Utf8BomRadioButton.IsChecked = true;
+                }
             }
             else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.Unicode.CodePage)
             {
-                Utf16LeRadioButton.IsChecked = true;
+                Utf16LeBomRadioButton.IsChecked = true;
             }
             else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.BigEndianUnicode.CodePage)
             {
-                Utf16BeRadioButton.IsChecked = true;
+                Utf16BeBomRadioButton.IsChecked = true;
             }
 
             if (EditorSettingsService.EditorDefaultTabIndents == -1)
@@ -95,8 +102,9 @@ namespace Notepads.Controls.Settings
             LfRadioButton.Checked += LineEndingRadioButton_OnChecked;
 
             Utf8RadioButton.Checked += EncodingRadioButton_Checked;
-            Utf16LeRadioButton.Checked += EncodingRadioButton_Checked;
-            Utf16BeRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf8BomRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16LeBomRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16BeBomRadioButton.Checked += EncodingRadioButton_Checked;
 
             TabDefaultRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
@@ -132,13 +140,16 @@ namespace Notepads.Controls.Settings
             switch (radioButton.Tag)
             {
                 case "UTF-8":
-                    EditorSettingsService.EditorDefaultEncoding = Encoding.UTF8;
+                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(false);
                     break;
-                case "UTF-16 LE":
-                    EditorSettingsService.EditorDefaultEncoding = Encoding.Unicode;
+                case "UTF-8-BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(true);
                     break;
-                case "UTF-16 BE":
-                    EditorSettingsService.EditorDefaultEncoding = Encoding.BigEndianUnicode;
+                case "UTF-16 LE BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(false, true);
+                    break;
+                case "UTF-16 BE BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
                     break;
             }
         }

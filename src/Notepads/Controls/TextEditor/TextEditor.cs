@@ -7,7 +7,6 @@ namespace Notepads.Controls.TextEditor
     using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Storage;
-    using Windows.Storage.Provider;
     using Windows.System;
     using Windows.UI.Core;
     using Windows.UI.Text;
@@ -123,54 +122,22 @@ namespace Notepads.Controls.TextEditor
 
         public async Task<bool> SaveFile(StorageFile file)
         {
-            // Prevent updates to the remote version of the file until we 
-            // finish making changes and call CompleteUpdatesAsync.
-            CachedFileManager.DeferUpdates(file);
-            // write to file
-
+            Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = GetText();
             text = FixLineEnding(text, LineEnding);
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var success = await FileSystemUtility.WriteToFile(text, encoding, file);
 
-            Encoding encoding = Encoding ?? Encoding.UTF8;
-
-            try
-            {
-                using (var stream = await file.OpenStreamForWriteAsync())
-                using (var reader = new StreamReader(stream, encoding))
-                using (var writer = new StreamWriter(stream, encoding))
-                {
-                    // Read
-                    var contents = reader.ReadToEnd();
-
-                    // Write out transformed contents from the start of the file
-                    stream.Position = 0;
-                    writer.Write(text);
-                    writer.Flush();
-
-                    // Truncate
-                    stream.SetLength(stream.Position);
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            // Let Windows know that we're finished changing the file so the 
-            // other app can update the remote version of the file.
-            FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-            if (status != FileUpdateStatus.Complete)
-            {
-                return false;
-            }
-            else
+            if (success)
             {
                 EditingFile = file;
                 Encoding = encoding;
                 Saved = true;
                 return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
