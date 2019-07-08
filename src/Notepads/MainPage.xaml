@@ -18,7 +18,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <SplitView x:Name="RootSplitView"
@@ -169,6 +169,7 @@
                     </sets:SetsView>
 
                     <controls:InAppNotification x:Name="StatusNotification"
+                                                x:Load="false"
                                                 Style="{StaticResource InAppNotificationNoDismissButton}"
                                                 Content=""
                                                 ShowDismissButton="False"
@@ -180,6 +181,7 @@
                     </controls:InAppNotification>
 
                     <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
+                                                x:Load="false"
                                                 Padding="0"
                                                 Margin="0"
                                                 HorizontalAlignment="Right"
@@ -207,7 +209,7 @@
             </SplitView.Pane>
         </SplitView>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" x:Name="StatusBar" Height="25" x:Load="false">
             <Grid.Resources>
                 <Style TargetType="TextBlock" x:Key="StatusBarTextBlockStyle">
                     <Setter Property="Height" Value="25"/>
@@ -216,7 +218,7 @@
                     <Setter Property="FontSize" Value="11"/>
                     <Setter Property="FontWeight" Value="Normal"/>
                     <Setter Property="Opacity" Value="1.0"/>
-                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>

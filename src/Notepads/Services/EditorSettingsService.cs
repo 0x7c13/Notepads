@@ -32,6 +32,8 @@ namespace Notepads.Services
 
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
 
+        public static event EventHandler<bool> OnStatusBarVisibilityChanged;
+
         private static string _editorFontFamily;
 
         public static string EditorFontFamily
@@ -117,6 +119,18 @@ namespace Notepads.Services
             }
         }
 
+        private static bool _showStatusBar;
+
+        public static bool ShowStatusBar
+        {
+            get => _showStatusBar;
+            set
+            {
+                _showStatusBar = value;
+                OnStatusBarVisibilityChanged?.Invoke(null, value);
+                ApplicationSettings.Write(SettingsKey.EditorShowStatusBarBool, value, true);
+            }
+        }
 
         public static void Initialize()
         {
@@ -129,6 +143,20 @@ namespace Notepads.Services
             InitializeEncodingSettings();
 
             InitializeTabIndentsSettings();
+
+            InitializeStatusBarSettings();
+        }
+
+        private static void InitializeStatusBarSettings()
+        {
+            if (ApplicationSettings.Read(SettingsKey.EditorShowStatusBarBool) is bool showStatusBar)
+            {
+                _showStatusBar = showStatusBar;
+            }
+            else
+            {
+                _showStatusBar = true;
+            }
         }
 
         private static void InitializeLineEndingSettings()

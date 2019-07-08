@@ -60,6 +60,9 @@ namespace Notepads
             // Set custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
 
+            // Setup status bar
+            ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
+
             // Setup theme
             ThemeSettingsService.AppBackground = RootGrid;
             ThemeSettingsService.SetRequestedTheme();
@@ -67,6 +70,7 @@ namespace Notepads
 
             EditorSettingsService.OnDefaultLineEndingChanged += EditorSettingsService_OnDefaultLineEndingChanged;
             EditorSettingsService.OnDefaultEncodingChanged += EditorSettingsService_OnDefaultEncodingChanged;
+            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) => ShowHideStatusBar(visibility);
 
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
@@ -78,6 +82,24 @@ namespace Notepads
         {
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
+        }
+
+        public void ShowHideStatusBar(bool showStatusBar)
+        {
+            if (showStatusBar)
+            {
+                this.FindName("StatusBar"); // Lazy loading
+                if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return;
+                SetupStatusBar(textEditor);
+            }
+            else
+            {
+                if (StatusBar != null)
+                {
+                    // If VS cannot find UnloadObject, ignore it. Reference: https://github.com/MicrosoftDocs/windows-uwp/issues/734
+                    this.UnloadObject(StatusBar);
+                }
+            }
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
@@ -99,7 +121,7 @@ namespace Notepads
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.Encoding = encoding;
-                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content)
+                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content && StatusBar != null)
                 {
                     UpdateEncodingIndicatorText(textEditor.Encoding);
                 }
@@ -115,7 +137,7 @@ namespace Notepads
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.LineEnding = lineEnding;
-                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content)
+                if (textEditor == ((SetsViewItem)Sets.SelectedItem)?.Content && StatusBar != null)
                 {
                     LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
                 }
@@ -151,6 +173,10 @@ namespace Notepads
 
         private void ShowNotificationMessage(string message, int duration)
         {
+            if (StatusNotification == null)
+            {
+                this.FindName("StatusNotification"); // Lazy loading
+            }
             var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
             StatusNotification.Width = textSize.Width + 100;  // actual width + padding
             StatusNotification.Height = textSize.Height + 50; // actual height + padding
@@ -406,10 +432,12 @@ namespace Notepads
                         setsItem.Header = file.Name;
                         setsItem.Icon.Visibility = Visibility.Collapsed;
 
-                        PathIndicator.Text = textEditor.EditingFile.Path;
-                        LineEndingIndicator.Text =
-                            LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
-                        UpdateEncodingIndicatorText(textEditor.Encoding);
+                        if (StatusBar != null)
+                        {
+                            PathIndicator.Text = textEditor.EditingFile.Path;
+                            LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
+                            UpdateEncodingIndicatorText(textEditor.Encoding);
+                        }
                         break;
                     }
                 }
@@ -450,9 +478,26 @@ namespace Notepads
                 }
             };
             newItem.Icon.Visibility = Visibility.Collapsed;
+
+            // Notepads should replace current "New Document.txt" with open file if it is empty and it is the only tab that has been created.
+            if (Sets.Items?.Count == 1 && file != null)
+            {
+                if (((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor editor))
+                {
+                    if (editor.Saved && editor.EditingFile == null)
+                    {
+                        Sets.Items.Clear();
+                    }
+                }
+            }
+
             Sets.Items?.Add(newItem);
-            newItem.IsSelected = true;
-            Sets.ScrollToLastSet();
+
+            if (Sets.Items?.Count > 1)
+            {
+                newItem.IsSelected = true;
+                Sets.ScrollToLastSet();
+            }
         }
 
         private void TextEditor_OnFindButtonClicked(object sender, KeyRoutedEventArgs e)
@@ -467,6 +512,11 @@ namespace Notepads
 
         private void ShowFindAndReplaceControl(bool showReplaceBar)
         {
+            if (FindAndReplacePlaceholder == null)
+            {
+                this.FindName("FindAndReplacePlaceholder"); // Lazy loading
+            }
+
             var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
 
             if (findAndReplace == null) return;
@@ -507,6 +557,14 @@ namespace Notepads
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.Focus(FocusState.Programmatic);
 
+            if (StatusBar != null)
+            {
+                SetupStatusBar(textEditor);
+            }
+        }
+
+        private void SetupStatusBar(TextEditor textEditor)
+        {
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(textEditor.LineEnding);
             UpdateEncodingIndicatorText(textEditor.Encoding);
@@ -547,7 +605,10 @@ namespace Notepads
                 Application.Current.Exit();
             }
 
-            if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
+            if (FindAndReplacePlaceholder != null)
+            {
+                if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
+            }
         }
 
         private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -607,6 +668,8 @@ namespace Notepads
         private void TextEditor_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
+            if (StatusBar == null) return;
+            
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
             LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
         }
@@ -749,7 +812,10 @@ namespace Notepads
 
             MarkSelectedEditorNotSaved(textEditor);
             textEditor.LineEnding = lineEnding;
-            LineEndingIndicator.Text = item.Text;
+            if (StatusBar != null)
+            {
+                LineEndingIndicator.Text = item.Text;
+            }
         }
 
         private void ChangeEncodingSelectedTextEditor(object sender, Encoding encoding)
@@ -771,7 +837,10 @@ namespace Notepads
 
             MarkSelectedEditorNotSaved(textEditor);
             textEditor.Encoding = encoding;
-            UpdateEncodingIndicatorText(textEditor.Encoding);
+            if (StatusBar != null)
+            {
+                UpdateEncodingIndicatorText(textEditor.Encoding);
+            }
         }
 
         private void UpdateEncodingIndicatorText(Encoding encoding)

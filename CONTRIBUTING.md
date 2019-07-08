@@ -9,7 +9,7 @@ You can contribute to Notepads project by:
     * Cleanup code and code refactoring.
     * Fix grammar errors or improve my documentations.
 - Internationalization and localization:
-    * My only inputs for the work here is to recommend you guys to use existing phrases that you found in win32 notepad.exe or vs code or notepad++ as much as possible. It makes your translations more consistent and easy to understand by end users.    
+    * My only inputs for the work here is to recommend you guys to use existing phrases that you found in win32 notepad.exe or vs code or notepad++ as much as possible. It makes your translations more consistent and easier to understand by end users.    
     * Since Notepads is still in early beta. I might change texts and add texts now and then for the upcoming months. Whenever that happens, I will notify you in [Notepads Discord Server](https://discord.gg/VqetCub) (Please join it if possible). If someday you lose the passion, feel free to let me know so I can assign your language to others.
     * OK, here are the steps you need to follow if you want to contribute:
         1. Make sure you can build and run Notepads project on your machine so that you can test it after your work.
@@ -25,4 +25,7 @@ You can contribute to Notepads project by:
 * Make sure you installed "Windows 10 SDK (10.0.18362.0)" as well.
 * Open Notepads.sln with Visual Studio and set Solution Platform to x64(amd64).
 * Right click on the solution and click on "Restore NuGet Packages".
-* Now you should be able to build and run Notepads on your machine. If it failes, try close the solution and reopen it again.
+* Now you should be able to build and run Notepads on your machine. If it fails, try close the solution and reopen it again.
+
+# Additional Info:
+This is my first UWP project and I learn as I go. So, the code base is pathetic, and I am not using MVVM pattern as well. I am sorry if my code is hard for you to understand and I know there is a lot to improve. However, I am still proud that I managed to finish the whole project in a month, and have it released on Microsoft Store. For the upcoming months, I will put more effort on making it more reliable and yet easy to use. The philosophy is to create a text editor that easy to use, light weighted and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. As I said, Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.
