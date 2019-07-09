@@ -177,7 +177,15 @@ namespace Notepads.Utilities
         {
             // Prevent updates to the remote version of the file until we 
             // finish making changes and call CompleteUpdatesAsync.
-            CachedFileManager.DeferUpdates(file);
+            try
+            {
+                CachedFileManager.DeferUpdates(file);
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
+
             // write to file
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
