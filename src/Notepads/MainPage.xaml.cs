@@ -386,13 +386,17 @@ namespace Notepads
 
         private async void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
-            var file = await FilePickerFactory.GetFileOpenPicker().PickSingleFileAsync();
-            if (file == null)
+            var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            if (files == null || files.Count == 0)
             {
                 FocusOnSelectedTextEditor();
                 return;
             }
-            await OpenFile(file);
+
+            foreach (var file in files)
+            {
+                await OpenFile(file);
+            }
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
