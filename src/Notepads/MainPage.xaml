@@ -18,7 +18,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <SplitView x:Name="RootSplitView"
@@ -169,6 +169,7 @@
                     </sets:SetsView>
 
                     <controls:InAppNotification x:Name="StatusNotification"
+                                                x:Load="false"
                                                 Style="{StaticResource InAppNotificationNoDismissButton}"
                                                 Content=""
                                                 ShowDismissButton="False"
@@ -180,6 +181,7 @@
                     </controls:InAppNotification>
 
                     <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
+                                                x:Load="false"
                                                 Padding="0"
                                                 Margin="0"
                                                 HorizontalAlignment="Right"
@@ -207,7 +209,7 @@
             </SplitView.Pane>
         </SplitView>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" x:Name="StatusBar" Height="25" x:Load="false">
             <Grid.Resources>
                 <Style TargetType="TextBlock" x:Key="StatusBarTextBlockStyle">
                     <Setter Property="Height" Value="25"/>
@@ -216,7 +218,7 @@
                     <Setter Property="FontSize" Value="11"/>
                     <Setter Property="FontWeight" Value="Normal"/>
                     <Setter Property="Opacity" Value="1.0"/>
-                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
@@ -252,8 +254,9 @@
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="UtilitySelectionFlyout_OnClosing">
                             <MenuFlyoutItem Text="UTF-8" Tag="UTF-8" Click="EncodingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="UTF-16 LE" Tag="UTF-16 LE" Click="EncodingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="UTF-16 BE" Tag="UTF-16 BE" Click="EncodingSelection_OnClick"/>
+                            <MenuFlyoutItem Text="UTF-8-BOM" Tag="UTF-8-BOM" Click="EncodingSelection_OnClick"/>
+                            <MenuFlyoutItem Text="UTF-16 LE BOM" Tag="UTF-16 LE BOM" Click="EncodingSelection_OnClick"/>
+                            <MenuFlyoutItem Text="UTF-16 BE BOM" Tag="UTF-16 BE BOM" Click="EncodingSelection_OnClick"/>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />

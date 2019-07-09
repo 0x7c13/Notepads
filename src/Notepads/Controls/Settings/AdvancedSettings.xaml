@@ -24,6 +24,20 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,15,0,0"
+                    FontWeight="Normal"
+                    Text="Status Bar Settings" />
+                <StackPanel Margin="0,10,0,0">
+                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="ShowStatusBarToggleSwitch" 
+                                  OffContent="Show status bar" 
+                                  OnContent="Show status bar" 
+                                  Margin="0,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
         </ScrollViewer>
 
     </Grid>

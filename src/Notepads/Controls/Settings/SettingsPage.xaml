@@ -31,12 +31,12 @@
                               Glyph="&#xE771;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <!--<NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="Advanced" Tag="Advanced" >
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="Advanced" Tag="Advanced" >
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE9E9;" />
                 </NavigationViewItem.Icon>
-            </NavigationViewItem>-->
+            </NavigationViewItem>
             <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="About" Tag="About" >
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"

@@ -32,6 +32,8 @@ namespace Notepads.Services
 
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
 
+        public static event EventHandler<bool> OnStatusBarVisibilityChanged;
+
         private static string _editorFontFamily;
 
         public static string EditorFontFamily
@@ -92,6 +94,13 @@ namespace Notepads.Services
             set
             {
                 _editorDefaultEncoding = value;
+
+                if (value is UTF8Encoding)
+                {
+                    ApplicationSettings.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
+                        Equals(value, new UTF8Encoding(true)), true);
+                }
+
                 OnDefaultEncodingChanged?.Invoke(null, value);
                 ApplicationSettings.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
             }
@@ -110,6 +119,18 @@ namespace Notepads.Services
             }
         }
 
+        private static bool _showStatusBar;
+
+        public static bool ShowStatusBar
+        {
+            get => _showStatusBar;
+            set
+            {
+                _showStatusBar = value;
+                OnStatusBarVisibilityChanged?.Invoke(null, value);
+                ApplicationSettings.Write(SettingsKey.EditorShowStatusBarBool, value, true);
+            }
+        }
 
         public static void Initialize()
         {
@@ -122,6 +143,20 @@ namespace Notepads.Services
             InitializeEncodingSettings();
 
             InitializeTabIndentsSettings();
+
+            InitializeStatusBarSettings();
+        }
+
+        private static void InitializeStatusBarSettings()
+        {
+            if (ApplicationSettings.Read(SettingsKey.EditorShowStatusBarBool) is bool showStatusBar)
+            {
+                _showStatusBar = showStatusBar;
+            }
+            else
+            {
+                _showStatusBar = true;
+            }
         }
 
         private static void InitializeLineEndingSettings()
@@ -157,11 +192,25 @@ namespace Notepads.Services
 
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
-                _editorDefaultEncoding = Encoding.GetEncoding(encodingCodePage);
+                var encoding = Encoding.GetEncoding(encodingCodePage);
+
+                if (encoding is UTF8Encoding)
+                {
+                    if (ApplicationSettings.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is bool shouldEmitBom)
+                    {
+                        encoding = new UTF8Encoding(shouldEmitBom);
+                    }
+                    else
+                    {
+                        encoding = new UTF8Encoding(false);
+                    }
+                }
+
+                _editorDefaultEncoding = encoding;
             }
             else
             {
-                _editorDefaultEncoding = Encoding.UTF8;
+                _editorDefaultEncoding = new UTF8Encoding(false);
             }
         }
 
