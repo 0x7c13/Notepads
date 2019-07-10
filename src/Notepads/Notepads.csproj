@@ -350,6 +350,9 @@
     <PRIResource Include="Strings\zh-CN\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\hu-HU\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
     <PRIResource Include="Strings\tr-TR\Resources.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
