@@ -85,10 +85,7 @@ namespace Notepads
             Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
 
             NewSetButton.Click += delegate { NotepadsCore.CreateNewTextEditor(); };
-            RootSplitView.PaneOpening += delegate
-            {
-                SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
-            };
+            RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnActiveTextEditor(); };
         }
 

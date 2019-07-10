@@ -68,13 +68,15 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 ## Special Thanks:
 
-* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
+* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky)
 * Internationalization Contributors: 
-    * fr-FR: [François Rousselet](https://github.com/frousselet)
-    * es-ES: [Jose Pinilla](https://github.com/joseppinilla)
-    * zh-CN: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)(Myself)
+    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
+    * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
+    * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
+    * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
+    * [tr-TR][Turkish]: [Mert Demir](https://github.com/validatedev)
 
 ## Stay tuned 📢:
 
