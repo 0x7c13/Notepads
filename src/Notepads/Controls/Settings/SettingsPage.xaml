@@ -8,8 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
-    <NavigationView 
-                    x:Name="SettingsNavigationView"
+    <NavigationView x:Name="SettingsNavigationView"
                     IsPaneOpen="False"
                     IsSettingsVisible="False"
                     IsBackEnabled="False"

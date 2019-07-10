@@ -7,6 +7,7 @@
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -225,13 +226,19 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
-                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped"/>
+                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped"/>
             </Grid>
             <Grid Column="1">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
             <Grid Column="2">
-                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped">
+                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem Text="Windows (CRLF)" Tag="CRLF" Click="LineEndingSelection_OnClick"/>
@@ -247,7 +254,10 @@
                 </TextBlock>
             </Grid>
             <Grid Column="3">
-                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped">
+                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem Text="UTF-8" Tag="UTF-8" Click="EncodingSelection_OnClick"/>

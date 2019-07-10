@@ -271,7 +271,7 @@ namespace Notepads.Controls.TextEditor
         {
             if (_documentLinesCache == null)
             {
-                var text = GetText();
+                Document.GetText(TextGetOptions.None, out var text);
                 _documentLinesCache = text.Split("\r");
             }
 
@@ -300,7 +300,7 @@ namespace Notepads.Controls.TextEditor
                     if (i == lineIndex - 1)
                         selectedCount = end - start;
                     else
-                        selectedCount = end - start + (i - lineIndex) - 1;
+                        selectedCount = end - start + (i - lineIndex);
                     return;
                 }
 

@@ -48,7 +48,7 @@
                         Source code is available on Github:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" Click="Hyperlink_SourceCode_OnClick">
                             https://github.com/JasonStein/Notepads
                         </Hyperlink>
                     </Paragraph>
@@ -56,19 +56,21 @@
                         For more info, please visit our website:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" Click="Hyperlink_LandingPage_OnClick">
                             https://www.NotepadsApp.com
                         </Hyperlink>
                     </Paragraph>
-                    <Paragraph Margin="0,15,0,0">
+                    <Paragraph Margin="0,15,0,0" FontFamily="Segoe UI">
                         To contact the authors:
-                        <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com">mailto:NotepadsApp@outlook.com</Hyperlink>
+                        <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com" Click="Hyperlink_Mail_OnClick">
+                            mailto:NotepadsApp@outlook.com
+                        </Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
                         For issue reporting and feature requests:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues" Click="Hyperlink_Issues_OnClick">
                             https://github.com/JasonStein/Notepads/issues
                         </Hyperlink>
                     </Paragraph>
