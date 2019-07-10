@@ -1,7 +1,8 @@
-# Notepads App [ Beta v0.9.5.0 ]
-
-Get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
-*Only works on Windows 10 1809 and above.
+# Notepads App [ Beta ]
+[![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
+[![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
+![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
+[![Discord](https://img.shields.io/discord/588473626651787274.svg?style=flat-square)](https://discord.gg/VqetCub)
 
 ## What is Notepads and why do I care?
 
@@ -68,13 +69,15 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 ## Special Thanks:
 
-* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon was inspired by the new icon for Windows Terminal. 
+* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky)
 * Internationalization Contributors: 
-    * fr-FR: [François Rousselet](https://github.com/frousselet)
-    * es-ES: [Jose Pinilla](https://github.com/joseppinilla)
-    * zh-CN: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)(Myself)
+    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
+    * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
+    * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
+    * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
+    * [tr-TR][Turkish]: [Mert Demir](https://github.com/validatedev)
 
 ## Stay tuned 📢:
 
