@@ -175,15 +175,17 @@ namespace Notepads.Utilities
 
         public static async Task<bool> WriteToFile(string text, Encoding encoding, StorageFile file)
         {
-            // Prevent updates to the remote version of the file until we 
-            // finish making changes and call CompleteUpdatesAsync.
+            bool usedDeferUpdates = true;
             try
             {
+                // Prevent updates to the remote version of the file until we 
+                // finish making changes and call CompleteUpdatesAsync.
                 CachedFileManager.DeferUpdates(file);
             }
             catch (Exception)
             {
-                // ignore
+                // If DeferUpdates fails, just ignore it and try to save the file anyway
+                usedDeferUpdates = false;
             }
 
             // write to file
@@ -208,12 +210,15 @@ namespace Notepads.Utilities
                 return false;
             }
 
-            // Let Windows know that we're finished changing the file so the 
-            // other app can update the remote version of the file.
-            FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-            if (status != FileUpdateStatus.Complete)
+            if (usedDeferUpdates)
             {
-                return false;
+                // Let Windows know that we're finished changing the file so the 
+                // other app can update the remote version of the file.
+                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status != FileUpdateStatus.Complete)
+                {
+                    return false;
+                }
             }
 
             return true;
