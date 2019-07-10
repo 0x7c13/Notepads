@@ -2,6 +2,7 @@
 namespace Notepads.Services
 {
     using System;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.Storage;
@@ -15,11 +16,11 @@ namespace Notepads.Services
                 Title = "Exit and discard changes?",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = "There are unsaved changes.",
-                PrimaryButtonText = "Yes",
-                SecondaryButtonText = "No",
+                PrimaryButtonText = "Discard & Exit",
+                SecondaryButtonText = "Cancel",
                 RequestedTheme = ThemeSettingsService.ThemeMode,
             };
-
+            saveReminderDialog.PrimaryButtonStyle = GetRedButtonStyle();
             saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => skipSavingAction();
             return saveReminderDialog;
         }
@@ -40,7 +41,7 @@ namespace Notepads.Services
             return setCloseSaveReminder;
         }
 
-        public static ContentDialog GetFileOpenErrorDialog(StorageFile file, Exception ex, Action ackAction)
+        public static ContentDialog GetFileOpenErrorDialog(StorageFile file, Exception ex)
         {
             ContentDialog fileOpenErrorDialog = new ContentDialog
             {
@@ -49,7 +50,6 @@ namespace Notepads.Services
                 PrimaryButtonText = "Ok",
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
-            fileOpenErrorDialog.PrimaryButtonClick += (sender, args) => { ackAction(); };
             return fileOpenErrorDialog;
         }
 
@@ -62,6 +62,15 @@ namespace Notepads.Services
                 PrimaryButtonText = "Ok",
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
+        }
+
+        private static Style GetRedButtonStyle()
+        {
+            var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
+            redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, Color.FromArgb(255, 140, 37, 21)));
+            redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
+
+            return redButtonStyle;
         }
     }
 }

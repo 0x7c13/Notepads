@@ -24,7 +24,7 @@ namespace Notepads.Utilities
         public LineEnding LineEnding { get; }
     }
 
-    public class FileSystemUtility
+    public static class FileSystemUtility
     {
         public static bool IsFullPath(string path)
         {
