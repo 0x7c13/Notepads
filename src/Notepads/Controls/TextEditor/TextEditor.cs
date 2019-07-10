@@ -402,5 +402,18 @@ namespace Notepads.Controls.TextEditor
         {
             Document.SetText(TextSetOptions.None, GetTextWithDefaultTabIndentation(text));
         }
+
+        public void ResetUndoStack()
+        {
+            var undoLimit = Document.UndoLimit;
+
+            // Check to prevent the undo limit stuck on zero
+            // because it returns 0 even if the undo limit isn't set yet
+            if (undoLimit != 0)
+            {
+                Document.UndoLimit = 0;
+                Document.UndoLimit = undoLimit;
+            }
+        }
     }
 }

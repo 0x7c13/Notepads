@@ -71,6 +71,7 @@ namespace Notepads.Core
             };
 
             textEditor.SetText(text);
+            textEditor.ResetUndoStack();
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.OnSetClosingKeyDown += TextEditor_OnSetClosingKeyDown;
