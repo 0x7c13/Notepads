@@ -23,14 +23,14 @@ namespace Notepads.Services
             return fileOpenPicker;
         }
 
-        public static FileSavePicker GetFileSavePicker(RoutedEventArgs e, TextEditor textEditor, string defaultFileName)
+        public static FileSavePicker GetFileSavePicker(TextEditor textEditor, string defaultFileName, bool saveAs)
         {
             FileSavePicker savePicker = new FileSavePicker
             {
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary
             };
 
-            if (!(e is SaveAsEventArgs) && textEditor.EditingFile == null)
+            if (!saveAs && textEditor.EditingFile == null)
             {
                 savePicker.DefaultFileExtension = ".txt";
             }

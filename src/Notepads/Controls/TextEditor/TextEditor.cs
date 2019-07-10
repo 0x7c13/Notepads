@@ -29,10 +29,6 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler<KeyRoutedEventArgs> OnSetClosingKeyDown;
 
-        public event EventHandler<KeyRoutedEventArgs> OnFindButtonClicked;
-
-        public event EventHandler<KeyRoutedEventArgs> OnFindAndReplaceButtonClicked;
-
         private string[] _documentLinesCache;
 
         public TextEditor()
@@ -120,7 +116,7 @@ namespace Notepads.Controls.TextEditor
             return text;
         }
 
-        public async Task<bool> SaveFile(StorageFile file)
+        public async Task<bool> SaveToFile(StorageFile file)
         {
             Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = GetText();
@@ -342,25 +338,6 @@ namespace Notepads.Controls.TextEditor
                     {
                         OnSetClosingKeyDown?.Invoke(this, e);
                     }
-                    return;
-                }
-
-                if (e.Key == VirtualKey.F)
-                {
-                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        OnFindAndReplaceButtonClicked?.Invoke(this, e);
-                    }
-                    else
-                    {
-                        OnFindButtonClicked?.Invoke(this, e);
-                    }
-                    return;
-                }
-
-                if (e.Key == VirtualKey.H)
-                {
-                    OnFindAndReplaceButtonClicked?.Invoke(this, e);
                     return;
                 }
 

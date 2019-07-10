@@ -148,12 +148,13 @@
     <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
       <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\INotepadsCore.cs" />
+    <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EventArgs\SaveAsEventArgs.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\ContentDialogFactory.cs" />
     <Compile Include="Services\FilePickerFactory.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Settings\SettingsKey.cs" />
     <Compile Include="Utilities\FileSystemUtility.cs" />
     <Compile Include="Utilities\FontUtility.cs" />
+    <Compile Include="Utilities\EncodingUtility.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
@@ -349,6 +351,9 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\hu-HU\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\tr-TR\Resources.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

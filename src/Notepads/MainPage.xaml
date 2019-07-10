@@ -31,27 +31,25 @@
                    DisplayMode="Overlay"
                    PaneBackground="Transparent"
                    PanePlacement="Right"
-                   Style="{StaticResource CustomSplitViewStyle}"
-                   PaneClosed="RootSplitView_OnPaneClosed"
-                   PaneOpening="RootSplitView_OnPaneOpening">
+                   Style="{StaticResource CustomSplitViewStyle}">
 
             <SplitView.Content>
                 <Grid>
                     <sets:SetsView x:Name="Sets"
-                                TabIndex="0"
-                                SetsWidthBehavior="Equal"
-                                CanCloseSets="True"
-                                IsCloseButtonOverlay="False"
-                                CanDragItems="True"
-                                CanReorderItems="True"
-                                AllowDrop="True"
-                                Template="{StaticResource SetsViewTemplate}"
-                                Background="Transparent" 
-                                Grid.ColumnSpan="2"
-                                Loaded="Sets_Loaded"
-                                SetClosing="SetsView_OnSetClosing"
-                                SetTapped="SetsView_OnSetTapped"
-                                SetDoubleTapped="SetsView_OnSetTapped">
+                                   TabIndex="0"
+                                   SetsWidthBehavior="Equal"
+                                   CanCloseSets="True"
+                                   IsCloseButtonOverlay="False"
+                                   CanDragItems="True"
+                                   CanReorderItems="True"
+                                   AllowDrop="True"
+                                   Template="{StaticResource SetsViewTemplate}"
+                                   Background="Transparent" 
+                                   Grid.ColumnSpan="2"
+                                   Loaded="Sets_Loaded"
+                                   SetClosing="SetsView_OnSetClosing"
+                                   SetTapped="SetsView_OnSetTapped"
+                                   SetDoubleTapped="SetsView_OnSetTapped">
 
                         <!--<sets:SetsView.KeyboardAccelerators>
                             <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_N_OnInvoked"/>
@@ -75,7 +73,7 @@
                                 BorderThickness="0"
                                 Background="Transparent"
                                 Style="{StaticResource ButtonRevealStyle}"
-                                Padding="2,2,0,0"
+                                Padding="0"
                                 Tapped="MenuButton_OnTapped">
                                 <Viewbox MaxWidth="16" MaxHeight="16">
                                     <SymbolIcon Symbol="GlobalNavigationButton"/>
@@ -85,17 +83,17 @@
                                                 Placement="BottomEdgeAlignedLeft"
                                                 Opening="MainMenuButtonFlyout_Opening"
                                                 Closing="MainMenuButtonFlyout_Closing">
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" Icon="NewFolder" Click="CreateNewSet" AccessKey="N">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" Icon="NewFolder" Click="MenuCreateNewButton_OnClick" AccessKey="N">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" Icon="OpenFile" Click="OpenFileButton_Click" AccessKey="O" >
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" Icon="OpenFile" Click="MenuOpenFileButton_OnClick" AccessKey="O" >
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save" Click="SaveButton_Click">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save" Click="MenuSaveButton_OnClick">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
@@ -109,12 +107,12 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find" Click="FindButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find" Click="MenuOpenFindButton_OnClick">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="F" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton" Click="ReplaceButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton" Click="MenuOpenFindAndReplaceButton_OnClick">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8AB;" />
                                             </MenuFlyoutItem.Icon>
@@ -148,8 +146,7 @@
                                     Margin="-1,0,0,0"
                                     BorderThickness="0"
                                     Background="Transparent"
-                                    Style="{StaticResource ButtonRevealStyle}"
-                                    Tapped="NewSetButton_OnTapped">
+                                    Style="{StaticResource ButtonRevealStyle}">
                                 <Viewbox MaxWidth="16"
                                         MaxHeight="16">
                                     <FontIcon FontFamily="Segoe MDL2 Assets"
@@ -193,7 +190,7 @@
                                                 HorizontalOffset="-22"
                                                 FontWeight="Light"
                                                 BorderThickness="1"
-                                                Closed="SearchBarPlaceholder_Closed">
+                                                Closed="FindAndReplacePlaceholder_Closed">
                         <controls:InAppNotification.Content>
                             <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                             Width="320"
@@ -228,15 +225,15 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
-                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="UtilityIndicator_OnTapped"/>
+                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped"/>
             </Grid>
             <Grid Column="1">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
             <Grid Column="2">
-                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="UtilityIndicator_OnTapped">
+                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="UtilitySelectionFlyout_OnClosing">
+                        <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem Text="Windows (CRLF)" Tag="CRLF" Click="LineEndingSelection_OnClick"/>
                             <MenuFlyoutItem Text="Macintosh (CR)" Tag="CR" Click="LineEndingSelection_OnClick"/>
                             <MenuFlyoutItem Text="Unix (LF)" Tag="LF" Click="LineEndingSelection_OnClick"/>
@@ -250,9 +247,9 @@
                 </TextBlock>
             </Grid>
             <Grid Column="3">
-                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  IsTapEnabled="True" Tapped="UtilityIndicator_OnTapped">
+                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  IsTapEnabled="True" Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="UtilitySelectionFlyout_OnClosing">
+                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem Text="UTF-8" Tag="UTF-8" Click="EncodingSelection_OnClick"/>
                             <MenuFlyoutItem Text="UTF-8-BOM" Tag="UTF-8-BOM" Click="EncodingSelection_OnClick"/>
                             <MenuFlyoutItem Text="UTF-16 LE BOM" Tag="UTF-16 LE BOM" Click="EncodingSelection_OnClick"/>

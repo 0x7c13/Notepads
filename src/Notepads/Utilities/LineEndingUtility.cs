@@ -14,7 +14,7 @@ namespace Notepads.Utilities
         Lf
     }
 
-    public class LineEndingUtility
+    public static class LineEndingUtility
     {
         public static LineEnding GetLineEndingTypeFromText(string text)
         {
@@ -49,6 +49,26 @@ namespace Notepads.Utilities
                 default:
                     return "Windows (CRLF)";
             }
+        }
+
+        public static LineEnding GetLineEndingByName(string name)
+        {
+            LineEnding lineEnding = LineEnding.Crlf;
+
+            switch (name.ToUpper())
+            {
+                case "CRLF":
+                    lineEnding = LineEnding.Crlf;
+                    break;
+                case "CR":
+                    lineEnding = LineEnding.Cr;
+                    break;
+                case "LF":
+                    lineEnding = LineEnding.Lf;
+                    break;
+            }
+
+            return lineEnding;
         }
 
         public static string ApplyLineEnding(string text, LineEnding lineEnding)
