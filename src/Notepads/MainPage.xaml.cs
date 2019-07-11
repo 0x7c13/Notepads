@@ -51,6 +51,7 @@ namespace Notepads
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"));
                     _notepadsCore.OnActiveTextEditorLoaded += OnActiveTextEditorLoaded;
                     _notepadsCore.OnActiveTextEditorUnloaded += OnActiveTextEditorUnloaded;
+                    _notepadsCore.OnActiveTextEditorClosingWithUnsavedContent += OnActiveTextEditorClosingWithUnsavedContent;
                     _notepadsCore.OnActiveTextEditorSelectionChanged += OnActiveTextEditorSelectionChanged;
                     _notepadsCore.OnActiveTextEditorEncodingChanged += OnActiveTextEditorEncodingChanged;
                     _notepadsCore.OnActiveTextEditorLineEndingChanged += OnActiveTextEditorLineEndingChanged;
@@ -87,6 +88,57 @@ namespace Notepads
             NewSetButton.Click += delegate { NotepadsCore.CreateNewTextEditor(); };
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnActiveTextEditor(); };
+        }
+
+        // App should wait for Sets fully loaded before opening files requested by user
+        // Open files from external links or cmd args on Sets Loaded
+        private async void Sets_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
+            {
+                var success = false;
+                foreach (var storageItem in _appLaunchFiles)
+                {
+                    if (storageItem is StorageFile file)
+                    {
+                        if (await OpenFile(file))
+                        {
+                            success = true;
+                        }
+                    }
+                }
+
+                if (!success)
+                {
+                    NotepadsCore.CreateNewTextEditor();
+                }
+
+                _appLaunchFiles = null;
+            }
+            else if (_appLaunchCmdDir != null)
+            {
+                var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
+                if (file == null)
+                {
+                    NotepadsCore.CreateNewTextEditor();
+                }
+                else
+                {
+                    var success = await OpenFile(file);
+                    if (!success)
+                    {
+                        NotepadsCore.CreateNewTextEditor();
+                    }
+                }
+
+                _appLaunchCmdDir = null;
+                _appLaunchCmdArgs = null;
+            }
+            else if (!_loaded)
+            {
+                NotepadsCore.CreateNewTextEditor();
+                _loaded = true;
+            }
         }
 
         #region Application Life Cycle
@@ -347,91 +399,11 @@ namespace Notepads
 
         #endregion
 
-        #region SetsView
-
-        // Open files from external links or cmd args - load time
-        private async void Sets_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
-            {
-                var success = false;
-                foreach (var storageItem in _appLaunchFiles)
-                {
-                    if (storageItem is StorageFile file)
-                    {
-                        if (await OpenFile(file))
-                        {
-                            success = true;
-                        }
-                    }
-                }
-
-                if (!success)
-                {
-                    NotepadsCore.CreateNewTextEditor();
-                }
-
-                _appLaunchFiles = null;
-            }
-            else if (_appLaunchCmdDir != null)
-            {
-                var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file == null)
-                {
-                    NotepadsCore.CreateNewTextEditor();
-                }
-                else
-                {
-                    var success = await OpenFile(file);
-                    if (!success)
-                    {
-                        NotepadsCore.CreateNewTextEditor();
-                    }
-                }
-
-                _appLaunchCmdDir = null;
-                _appLaunchCmdArgs = null;
-            }
-            else if (!_loaded)
-            {
-                NotepadsCore.CreateNewTextEditor();
-                _loaded = true;
-            }
-        }
-
-        private async void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
-        {
-            if (!(e.Set.Content is TextEditor textEditor)) return;
-            if (textEditor.Saved) return;
-
-            e.Cancel = true;
-
-            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
-            await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, () =>
-            {
-                Save(textEditor, false);
-            }, () =>
-            {
-                e.Set.IsEnabled = false;
-                Sets.Items?.Remove(e.Set);
-            }).ShowAsync();
-        }
-
-        private void SetsView_OnSetTapped(object sender, SetSelectedEventArgs e)
-        {
-            if (e.Item is TextEditor textEditor)
-            {
-                textEditor.Focus(FocusState.Programmatic);
-            }
-        }
-
-        #endregion
-
         #region Main Menu
 
         private void MainMenuButtonFlyout_Opening(object sender, object e)
         {
-            if (Sets.Items?.Count == 0)
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 MenuSaveButton.IsEnabled = false;
                 MenuSaveAsButton.IsEnabled = false;
@@ -448,6 +420,7 @@ namespace Notepads
                 //MenuPrintButton.IsEnabled = true;
             }
         }
+
         private void MenuButton_OnTapped(object sender, TappedRoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
@@ -511,6 +484,18 @@ namespace Notepads
             {
                 if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
             }
+        }
+
+        private async void OnActiveTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
+        {
+            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
+            await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, () =>
+            {
+                Save(textEditor, false);
+            }, () =>
+            {
+                NotepadsCore.DeleteTextEditor(textEditor);
+            }).ShowAsync();
         }
 
         private void OnActiveTextEditorSelectionChanged(object sender, TextEditor textEditor)

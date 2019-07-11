@@ -47,10 +47,7 @@
                                    Template="{StaticResource SetsViewTemplate}"
                                    Background="Transparent" 
                                    Grid.ColumnSpan="2"
-                                   Loaded="Sets_Loaded"
-                                   SetClosing="SetsView_OnSetClosing"
-                                   SetTapped="SetsView_OnSetTapped"
-                                   SetDoubleTapped="SetsView_OnSetTapped">
+                                   Loaded="Sets_Loaded">
 
                         <!--<sets:SetsView.KeyboardAccelerators>
                             <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_N_OnInvoked"/>

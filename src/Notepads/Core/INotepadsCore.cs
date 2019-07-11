@@ -11,11 +11,14 @@ namespace Notepads.Core
     using Notepads.Controls.TextEditor;
     using Notepads.Utilities;
 
+    // INotepadsCore handles Tabs and TextEditor life cycle
     public interface INotepadsCore
     {
         event EventHandler<TextEditor> OnActiveTextEditorLoaded;
 
         event EventHandler<TextEditor> OnActiveTextEditorUnloaded;
+
+        event EventHandler<TextEditor> OnActiveTextEditorClosingWithUnsavedContent;
 
         event EventHandler<TextEditor> OnActiveTextEditorSelectionChanged;
 
@@ -26,6 +29,10 @@ namespace Notepads.Core
         event KeyEventHandler OnActiveTextEditorKeyDown;
 
         void CreateNewTextEditor();
+
+        void DeleteTextEditor(TextEditor textEditor);
+
+        int GetNumberOfOpenedTextEditors();
 
         bool TryGetSharingContent(TextEditor textEditor, out string title, out string content);
 
