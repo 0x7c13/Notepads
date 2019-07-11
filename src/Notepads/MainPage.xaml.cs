@@ -49,13 +49,13 @@ namespace Notepads
                 if (_notepadsCore == null)
                 {
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"));
-                    _notepadsCore.OnActiveTextEditorLoaded += OnActiveTextEditorLoaded;
+                    _notepadsCore.OnActiveTextEditorLoaded += (sender, editor) => { SetupStatusBar(editor); };
                     _notepadsCore.OnActiveTextEditorUnloaded += OnActiveTextEditorUnloaded;
                     _notepadsCore.OnTextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.OnActiveTextEditorSelectionChanged += OnActiveTextEditorSelectionChanged;
-                    _notepadsCore.OnActiveTextEditorEncodingChanged += OnActiveTextEditorEncodingChanged;
-                    _notepadsCore.OnActiveTextEditorLineEndingChanged += OnActiveTextEditorLineEndingChanged;
                     _notepadsCore.OnActiveTextEditorKeyDown += OnActiveTextEditor_KeyDown;
+                    _notepadsCore.OnActiveTextEditorSelectionChanged += (sender, editor) => { UpdateLineColumnIndicatorText(editor); };
+                    _notepadsCore.OnActiveTextEditorEncodingChanged += (sender, editor) => { UpdateEncodingIndicatorText(editor.Encoding); };
+                    _notepadsCore.OnActiveTextEditorLineEndingChanged += (sender, editor) => { UpdateLineEndingIndicatorText(editor.LineEnding); };
                 }
 
                 return _notepadsCore;
@@ -216,11 +216,10 @@ namespace Notepads
 
         private void SetupStatusBar(TextEditor textEditor)
         {
-            PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
+            UpdatePathIndicatorText(textEditor);
             UpdateLineEndingIndicatorText(textEditor.LineEnding);
             UpdateEncodingIndicatorText(textEditor.Encoding);
-            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
-            LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
+            UpdateLineColumnIndicatorText(textEditor);
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -247,14 +246,29 @@ namespace Notepads
             }
         }
 
+        private void UpdatePathIndicatorText(TextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
+        }
+
         private void UpdateEncodingIndicatorText(Encoding encoding)
         {
+            if (StatusBar == null) return;
             EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
         }
 
         private void UpdateLineEndingIndicatorText(LineEnding lineEnding)
         {
+            if (StatusBar == null) return;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
+        }
+
+        private void UpdateLineColumnIndicatorText(TextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
+            LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
@@ -262,16 +276,10 @@ namespace Notepads
             if (!(sender is MenuFlyoutItem item)) return;
 
             var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
-
             var textEditor = NotepadsCore.GetActiveTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeLineEnding(textEditor, lineEnding);
-            }
-
-            if (StatusBar != null)
-            {
-                UpdateLineEndingIndicatorText(lineEnding);
             }
         }
 
@@ -280,16 +288,10 @@ namespace Notepads
             if (!(sender is MenuFlyoutItem item)) return;
 
             var encoding = EncodingUtility.GetEncodingByName((string)item.Tag);
-
             var textEditor = NotepadsCore.GetActiveTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeEncoding(textEditor, encoding);
-            }
-
-            if (StatusBar != null)
-            {
-                UpdateEncodingIndicatorText(encoding);
             }
         }
 
@@ -470,14 +472,6 @@ namespace Notepads
 
         #region NotepadsCore Events
 
-        private void OnActiveTextEditorLoaded(object sender, TextEditor textEditor)
-        {
-            if (StatusBar != null)
-            {
-                SetupStatusBar(textEditor);
-            }
-        }
-
         private void OnActiveTextEditorUnloaded(object sender, TextEditor textEditor)
         {
             if (FindAndReplacePlaceholder != null)
@@ -497,29 +491,6 @@ namespace Notepads
                 NotepadsCore.DeleteTextEditor(textEditor);
             }).ShowAsync();
             NotepadsCore.FocusOnActiveTextEditor();
-        }
-
-        private void OnActiveTextEditorSelectionChanged(object sender, TextEditor textEditor)
-        {
-            if (StatusBar == null) return;
-            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
-            LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
-        }
-
-        private void OnActiveTextEditorEncodingChanged(object sender, TextEditor textEditor)
-        {
-            if (StatusBar != null)
-            {
-                UpdateEncodingIndicatorText(textEditor.Encoding);
-            }
-        }
-
-        private void OnActiveTextEditorLineEndingChanged(object sender, TextEditor textEditor)
-        {
-            if (StatusBar != null)
-            {
-                UpdateLineEndingIndicatorText(textEditor.LineEnding);
-            }
         }
 
         private void OnActiveTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -654,10 +625,7 @@ namespace Notepads
 
             if (success)
             {
-                if (StatusBar != null)
-                {
-                    SetupStatusBar(textEditor);
-                }
+                SetupStatusBar(textEditor);
                 ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 2000);
             }
             else

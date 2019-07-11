@@ -46,7 +46,6 @@ namespace Notepads.Core
             Sets = sets;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
-            Sets.SetDoubleTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
 
             DefaultNewFileName = defaultNewFileName;
 
@@ -152,15 +151,23 @@ namespace Notepads.Core
         public void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding)
         {
             if (lineEnding == textEditor.LineEnding) return;
-            MarkTextEditorSetNotSaved(textEditor);
             textEditor.LineEnding = lineEnding;
+            MarkTextEditorSetNotSaved(textEditor);
+            if (textEditor == GetActiveTextEditor())
+            {
+                OnActiveTextEditorLineEndingChanged?.Invoke(this, textEditor);
+            }
         }
 
         public void ChangeEncoding(TextEditor textEditor, Encoding encoding)
         {
             if (EncodingUtility.Equals(textEditor.Encoding, encoding)) return;
-            MarkTextEditorSetNotSaved(textEditor);
             textEditor.Encoding = encoding;
+            MarkTextEditorSetNotSaved(textEditor);
+            if (textEditor == GetActiveTextEditor())
+            {
+                OnActiveTextEditorEncodingChanged?.Invoke(this, textEditor);
+            }
         }
 
         public void SwitchTo(bool next)
