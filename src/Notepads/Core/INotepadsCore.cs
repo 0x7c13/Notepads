@@ -28,7 +28,11 @@ namespace Notepads.Core
 
         event KeyEventHandler OnActiveTextEditorKeyDown;
 
-        void CreateNewTextEditor();
+        void OpenNewTextEditor();
+
+        Task OpenNewTextEditor(StorageFile file);
+
+        Task<bool> SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
 
         void DeleteTextEditor(TextEditor textEditor);
 
@@ -47,9 +51,5 @@ namespace Notepads.Core
         TextEditor GetActiveTextEditor();
 
         void FocusOnActiveTextEditor();
-
-        Task Open(StorageFile file);
-
-        Task<bool> Save(TextEditor textEditor, StorageFile file);
     }
 }

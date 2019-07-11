@@ -8,7 +8,6 @@ namespace Notepads
     using Notepads.EventArgs;
     using Notepads.Services;
     using Notepads.Utilities;
-    using SetsView;
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -85,58 +84,53 @@ namespace Notepads
 
             Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
 
-            NewSetButton.Click += delegate { NotepadsCore.CreateNewTextEditor(); };
+            NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnActiveTextEditor(); };
         }
 
-        // App should wait for Sets fully loaded before opening files requested by user
+        // Handles external links or cmd args activation before Sets loaded
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.Parameter is FileActivatedEventArgs fileActivatedEventArgs)
+            {
+                _appLaunchFiles = fileActivatedEventArgs.Files;
+            }
+            else if (e.Parameter is CommandLineActivatedEventArgs)
+            {
+                var commandLine = e.Parameter as CommandLineActivatedEventArgs;
+                _appLaunchCmdDir = commandLine.Operation.CurrentDirectoryPath;
+                _appLaunchCmdArgs = commandLine.Operation.Arguments;
+            }
+        }
+
+        // App should wait for Sets fully loaded before opening files requested by user (by click or from cmd)
         // Open files from external links or cmd args on Sets Loaded
         private async void Sets_Loaded(object sender, RoutedEventArgs e)
         {
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                var success = false;
-                foreach (var storageItem in _appLaunchFiles)
+                var successCount = await OpenFiles(_appLaunchFiles);
+                if (successCount == 0)
                 {
-                    if (storageItem is StorageFile file)
-                    {
-                        if (await OpenFile(file))
-                        {
-                            success = true;
-                        }
-                    }
+                    NotepadsCore.OpenNewTextEditor();
                 }
-
-                if (!success)
-                {
-                    NotepadsCore.CreateNewTextEditor();
-                }
-
                 _appLaunchFiles = null;
             }
             else if (_appLaunchCmdDir != null)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file == null)
+                if (file == null || !(await OpenFile(file)))
                 {
-                    NotepadsCore.CreateNewTextEditor();
+                    NotepadsCore.OpenNewTextEditor();
                 }
-                else
-                {
-                    var success = await OpenFile(file);
-                    if (!success)
-                    {
-                        NotepadsCore.CreateNewTextEditor();
-                    }
-                }
-
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
             else if (!_loaded)
             {
-                NotepadsCore.CreateNewTextEditor();
+                NotepadsCore.OpenNewTextEditor();
                 _loaded = true;
             }
         }
@@ -194,22 +188,6 @@ namespace Notepads
             e.AcceptedOperation = DataPackageOperation.Link;
         }
 
-        // Handles external links or cmd args during runtime
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            if (e.Parameter is FileActivatedEventArgs fileActivatedEventArgs)
-            {
-                _appLaunchFiles = fileActivatedEventArgs.Files;
-            }
-            else if (e.Parameter is CommandLineActivatedEventArgs)
-            {
-                var commandLine = e.Parameter as CommandLineActivatedEventArgs;
-                _appLaunchCmdDir = commandLine.Operation.CurrentDirectoryPath;
-                _appLaunchCmdArgs = commandLine.Operation.Arguments;
-            }
-        }
-
         #endregion
 
         #region Status Bar
@@ -228,7 +206,7 @@ namespace Notepads
             {
                 if (StatusBar == null)
                 {
-                    this.FindName("StatusBar"); // Lazy loading   
+                    FindName("StatusBar"); // Lazy loading   
                 }
                 var activeTextEditor = NotepadsCore.GetActiveTextEditor();
                 if (activeTextEditor != null)
@@ -241,7 +219,7 @@ namespace Notepads
                 if (StatusBar != null)
                 {
                     // If VS cannot find UnloadObject, ignore it. Reference: https://github.com/MicrosoftDocs/windows-uwp/issues/734
-                    this.UnloadObject(StatusBar);
+                    UnloadObject(StatusBar);
                 }
             }
         }
@@ -324,7 +302,7 @@ namespace Notepads
         {
             if (FindAndReplacePlaceholder == null)
             {
-                this.FindName("FindAndReplacePlaceholder"); // Lazy loading
+                FindName("FindAndReplacePlaceholder"); // Lazy loading
             }
 
             var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
@@ -391,7 +369,7 @@ namespace Notepads
         {
             if (StatusNotification == null)
             {
-                this.FindName("StatusNotification"); // Lazy loading
+                FindName("StatusNotification"); // Lazy loading
             }
             var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
             StatusNotification.Width = textSize.Width + 100;  // actual width + padding
@@ -440,7 +418,7 @@ namespace Notepads
 
         private void MenuCreateNewButton_OnClick(object sender, RoutedEventArgs e)
         {
-            NotepadsCore.CreateNewTextEditor();
+            NotepadsCore.OpenNewTextEditor();
         }
 
         private void MenuSaveButton_OnClick(object sender, RoutedEventArgs e)
@@ -511,7 +489,7 @@ namespace Notepads
 
                 if (e.Key == VirtualKey.N || e.Key == VirtualKey.T)
                 {
-                    NotepadsCore.CreateNewTextEditor();
+                    NotepadsCore.OpenNewTextEditor();
                     e.Handled = true;
                 }
 
@@ -589,7 +567,7 @@ namespace Notepads
         {
             try
             {
-                await NotepadsCore.Open(file);
+                await NotepadsCore.OpenNewTextEditor(file);
                 NotepadsCore.FocusOnActiveTextEditor();
                 return true;
             }
@@ -599,6 +577,24 @@ namespace Notepads
                 NotepadsCore.FocusOnActiveTextEditor();
                 return false;
             }
+        }
+
+        public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
+        {
+            if (storageItems == null || storageItems.Count == 0) return 0;
+
+            int successCount = 0;
+            foreach (var storageItem in storageItems)
+            {
+                if (storageItem is StorageFile file)
+                {
+                    if (await OpenFile(file))
+                    {
+                        successCount++;
+                    }
+                }
+            }
+            return successCount;
         }
 
         private async void Save(TextEditor textEditor, bool saveAs)
@@ -621,7 +617,7 @@ namespace Notepads
 
             if (file == null) return;
 
-            var success = await NotepadsCore.Save(textEditor, file);
+            var success = await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
 
             if (success)
             {

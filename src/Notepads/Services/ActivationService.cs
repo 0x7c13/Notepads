@@ -21,11 +21,37 @@ namespace Notepads.Services
             }
             else if (e is FileActivatedEventArgs fileActivatedEventArgs)
             {
-                await FileActivatedAsync(rootFrame, fileActivatedEventArgs);
+                await FileActivated(rootFrame, fileActivatedEventArgs);
             }
             else
             {
                 await CommandActivated(rootFrame, e);
+            }
+        }
+
+        private static void LaunchActivated(Frame rootFrame, LaunchActivatedEventArgs launchActivatedEventArgs)
+        {
+            if (launchActivatedEventArgs.PrelaunchActivated == false)
+            {
+                // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
+                Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
+            }
+
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
+            }
+        }
+
+        private static async Task FileActivated(Frame rootFrame, FileActivatedEventArgs fileActivatedEventArgs)
+        {
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage), fileActivatedEventArgs);
+            }
+            else if (rootFrame.Content is MainPage mainPage)
+            {
+                await mainPage.OpenFiles(fileActivatedEventArgs.Files);
             }
         }
 
@@ -48,35 +74,6 @@ namespace Notepads.Services
                             await mainPage.OpenFile(file);
                         }
                     }
-                }
-            }
-        }
-
-        private static void LaunchActivated(Frame rootFrame, LaunchActivatedEventArgs launchActivatedEventArgs)
-        {
-            if (launchActivatedEventArgs.PrelaunchActivated == false)
-            {
-                // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
-                Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
-            }
-
-            if (rootFrame.Content == null)
-            {
-                rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
-            }
-        }
-
-        private static async Task FileActivatedAsync(Frame rootFrame, FileActivatedEventArgs fileActivatedEventArgs)
-        {
-            if (rootFrame.Content == null)
-            {
-                rootFrame.Navigate(typeof(MainPage), fileActivatedEventArgs);
-            }
-            else if (rootFrame.Content is MainPage mainPage)
-            {
-                foreach (StorageFile storageItem in fileActivatedEventArgs.Files)
-                {
-                    await mainPage.OpenFile(storageItem);
                 }
             }
         }

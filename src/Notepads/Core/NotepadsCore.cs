@@ -54,27 +54,31 @@ namespace Notepads.Core
             EditorSettingsService.OnDefaultEncodingChanged += EditorSettingsService_OnDefaultEncodingChanged;
         }
 
-        public void CreateNewTextEditor()
+        public void OpenNewTextEditor()
         {
-            CreateNewTextEditor(string.Empty,
+            OpenNewTextEditor(string.Empty,
                 null,
                 EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding);
         }
 
-        public void DeleteTextEditor(TextEditor textEditor)
+        public async Task OpenNewTextEditor(StorageFile file)
         {
-            var item = GetTextEditorSetsViewItem(textEditor);
-            item.IsEnabled = false;
-            Sets.Items?.Remove(item);
+            if (FileOpened(file))
+            {
+                SwitchTo(file);
+                return;
+            }
+
+            var textFile = await FileSystemUtility.ReadFile(file);
+
+            OpenNewTextEditor(textFile.Content,
+                file,
+                textFile.Encoding,
+                textFile.LineEnding);
         }
 
-        public int GetNumberOfOpenedTextEditors()
-        {
-            return Sets.Items?.Count ?? 0;
-        }
-
-        private void CreateNewTextEditor(string text, 
+        private void OpenNewTextEditor(string text, 
             StorageFile file, 
             Encoding encoding, 
             LineEnding lineEnding)
@@ -122,6 +126,35 @@ namespace Notepads.Core
                 Sets.SelectedItem = newItem;
                 Sets.ScrollToLastSet();
             }
+        }
+
+        public async Task<bool> SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
+        {
+            var success = await textEditor.SaveToFile(file);
+
+            if (success)
+            {
+                var item = GetTextEditorSetsViewItem(textEditor);
+                if (item != null)
+                {
+                    item.Header = file.Name;
+                    item.Icon.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            return success;
+        }
+
+        public void DeleteTextEditor(TextEditor textEditor)
+        {
+            var item = GetTextEditorSetsViewItem(textEditor);
+            item.IsEnabled = false;
+            Sets.Items?.Remove(item);
+        }
+
+        public int GetNumberOfOpenedTextEditors()
+        {
+            return Sets.Items?.Count ?? 0;
         }
 
         public bool TryGetSharingContent(TextEditor textEditor, out string title, out string content)
@@ -206,39 +239,6 @@ namespace Notepads.Core
         public void FocusOnActiveTextEditor()
         {
             FocusOnTextEditor(GetActiveTextEditor());
-        }
-
-        public async Task Open(StorageFile file)
-        {
-            if (FileOpened(file))
-            {
-                SwitchTo(file);
-                return;
-            }
-
-            var textFile = await FileSystemUtility.ReadFile(file);
-
-            CreateNewTextEditor(textFile.Content,
-                file,
-                textFile.Encoding,
-                textFile.LineEnding);
-        }
-
-        public async Task<bool> Save(TextEditor textEditor, StorageFile file)
-        {
-            var success = await textEditor.SaveToFile(file);
-
-            if (success)
-            {
-                var item = GetTextEditorSetsViewItem(textEditor);
-                if (item != null)
-                {
-                    item.Header = file.Name;
-                    item.Icon.Visibility = Visibility.Collapsed;
-                }
-            }
-
-            return success;
         }
 
         private void FocusOnTextEditor(TextEditor textEditor)

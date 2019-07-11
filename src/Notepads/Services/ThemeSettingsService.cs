@@ -273,15 +273,15 @@ namespace Notepads.Services
                     var myBrush = new Windows.UI.Xaml.Media.AcrylicBrush
                     {
                         BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                        TintColor = Color.FromArgb(255, 210, 210, 210),
-                        FallbackColor = Color.FromArgb(255, 210, 210, 210),
+                        TintColor = Color.FromArgb(255, 230, 230, 230),
+                        FallbackColor = Color.FromArgb(255, 230, 230, 230),
                         TintOpacity = AppBackgroundPanelTintOpacity
                     };
                     panel.Background = myBrush;
                 }
                 else
                 {
-                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
+                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 240, 240, 240));
                     panel.Background = myBrush;
                 }
             }
