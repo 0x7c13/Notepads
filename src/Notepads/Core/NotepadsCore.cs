@@ -89,6 +89,7 @@ namespace Notepads.Core
             };
 
             textEditor.SetText(text);
+            textEditor.ClearUndoQueue();
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.OnSetClosingKeyDown += TextEditor_OnSetClosingKeyDown;
