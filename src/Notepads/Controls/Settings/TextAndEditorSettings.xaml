@@ -103,9 +103,7 @@
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabFourSpacesRadioButton" Tag="4" Content="4 Spaces" GroupName="TabBehaviorGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabEightSpacesRadioButton" Tag="8" Content="8 Spaces" GroupName="TabBehaviorGroup"/>
                 </StackPanel>
-                <TextBlock Text="Settings for tab indentation, only apply to new tabs." Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
-                <TextBlock Text="Tabs (\t) in new opening files will be replaced with spaces" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,0"/>
-                <TextBlock Text="if you change tab key behavior to spaces." Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,40"/>
+                <TextBlock Text="Settings for tab key behavior, only apply to new tabs inserted by user" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

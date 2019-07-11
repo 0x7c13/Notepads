@@ -98,7 +98,6 @@ namespace Notepads.Controls.TextEditor
             try
             {
                 var text = await dataPackageView.GetTextAsync();
-                text = GetTextWithDefaultTabIndentation(text);
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
@@ -108,13 +107,13 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        public static string GetTextWithDefaultTabIndentation(string text)
-        {
-            if (EditorSettingsService.EditorDefaultTabIndents == -1) return text;
-            var tabStr = new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-            text = text.Replace("\t", tabStr);
-            return text;
-        }
+        //public static string GetTextWithDefaultTabIndentation(string text)
+        //{
+        //    if (EditorSettingsService.EditorDefaultTabIndents == -1) return text;
+        //    var tabStr = new string(' ', EditorSettingsService.EditorDefaultTabIndents);
+        //    text = text.Replace("\t", tabStr);
+        //    return text;
+        //}
 
         public async Task<bool> SaveToFile(StorageFile file)
         {
@@ -400,7 +399,7 @@ namespace Notepads.Controls.TextEditor
 
         public void SetText(string text)
         {
-            Document.SetText(TextSetOptions.None, GetTextWithDefaultTabIndentation(text));
+            Document.SetText(TextSetOptions.None, text);
         }
 
         public void ClearUndoQueue()

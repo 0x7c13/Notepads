@@ -51,7 +51,7 @@ namespace Notepads
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"));
                     _notepadsCore.OnActiveTextEditorLoaded += OnActiveTextEditorLoaded;
                     _notepadsCore.OnActiveTextEditorUnloaded += OnActiveTextEditorUnloaded;
-                    _notepadsCore.OnActiveTextEditorClosingWithUnsavedContent += OnActiveTextEditorClosingWithUnsavedContent;
+                    _notepadsCore.OnTextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
                     _notepadsCore.OnActiveTextEditorSelectionChanged += OnActiveTextEditorSelectionChanged;
                     _notepadsCore.OnActiveTextEditorEncodingChanged += OnActiveTextEditorEncodingChanged;
                     _notepadsCore.OnActiveTextEditorLineEndingChanged += OnActiveTextEditorLineEndingChanged;
@@ -68,15 +68,15 @@ namespace Notepads
 
             _defaultNewFileName = _resourceLoader.GetString("TextEditor_DefaultNewFileName");
 
+            // Setup theme
+            ThemeSettingsService.AppBackground = RootGrid;
+            ThemeSettingsService.SetRequestedTheme();
+
             // Set custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-
-            // Setup theme
-            ThemeSettingsService.AppBackground = RootGrid;
-            ThemeSettingsService.SetRequestedTheme();
 
             EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) => ShowHideStatusBar(visibility);
 
@@ -141,7 +141,7 @@ namespace Notepads
             }
         }
 
-        #region Application Life Cycle
+        #region Application Life Cycle & Window management 
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
@@ -486,7 +486,7 @@ namespace Notepads
             }
         }
 
-        private async void OnActiveTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
+        private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
         {
             var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
             await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, () =>
@@ -496,6 +496,7 @@ namespace Notepads
             {
                 NotepadsCore.DeleteTextEditor(textEditor);
             }).ShowAsync();
+            NotepadsCore.FocusOnActiveTextEditor();
         }
 
         private void OnActiveTextEditorSelectionChanged(object sender, TextEditor textEditor)
@@ -618,6 +619,7 @@ namespace Notepads
             try
             {
                 await NotepadsCore.Open(file);
+                NotepadsCore.FocusOnActiveTextEditor();
                 return true;
             }
             catch (Exception ex)

@@ -30,7 +30,7 @@ namespace Notepads.Core
 
         public event EventHandler<TextEditor> OnActiveTextEditorUnloaded;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorClosingWithUnsavedContent;
+        public event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
 
         public event EventHandler<TextEditor> OnActiveTextEditorSelectionChanged;
 
@@ -107,14 +107,12 @@ namespace Notepads.Core
             newItem.Icon.Visibility = Visibility.Collapsed;
 
             // Notepads should replace current "New Document.txt" with open file if it is empty and it is the only tab that has been created.
-            if (Sets.Items?.Count == 1 && file != null)
+            if (GetNumberOfOpenedTextEditors() == 1 && file != null)
             {
-                if (((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor editor))
+                var activeTextEditor = GetActiveTextEditor();
+                if (activeTextEditor.Saved && activeTextEditor.EditingFile == null)
                 {
-                    if (editor.Saved && editor.EditingFile == null)
-                    {
-                        Sets.Items.Clear();
-                    }
+                    Sets.Items?.Clear();
                 }
             }
 
@@ -154,14 +152,14 @@ namespace Notepads.Core
         public void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding)
         {
             if (lineEnding == textEditor.LineEnding) return;
-            MarkTextEditorSetNotSaved(Sets.SelectedItem as SetsViewItem, textEditor);
+            MarkTextEditorSetNotSaved(textEditor);
             textEditor.LineEnding = lineEnding;
         }
 
         public void ChangeEncoding(TextEditor textEditor, Encoding encoding)
         {
             if (EncodingUtility.Equals(textEditor.Encoding, encoding)) return;
-            MarkTextEditorSetNotSaved(Sets.SelectedItem as SetsViewItem, textEditor);
+            MarkTextEditorSetNotSaved(textEditor);
             textEditor.Encoding = encoding;
         }
 
@@ -190,7 +188,6 @@ namespace Notepads.Core
             var item = GetTextEditorSetsViewItem(file);
             Sets.SelectedItem = item;
             Sets.ScrollIntoView(item);
-            FocusOnActiveTextEditor();
         }
 
         public TextEditor GetActiveTextEditor()
@@ -247,10 +244,10 @@ namespace Notepads.Core
             if (!(e.Set.Content is TextEditor textEditor)) return;
             if (textEditor.Saved) return;
 
-            if (OnActiveTextEditorClosingWithUnsavedContent != null)
+            if (OnTextEditorClosingWithUnsavedContent != null)
             {
                 e.Cancel = true;
-                OnActiveTextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
+                OnTextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
             }
         }
 
@@ -289,13 +286,14 @@ namespace Notepads.Core
             return null;
         }
 
-        private void MarkTextEditorSetNotSaved(SetsViewItem item, TextEditor textEditor)
+        private void MarkTextEditorSetNotSaved(TextEditor textEditor)
         {
             if (textEditor != null)
             {
                 textEditor.Saved = false;
             }
 
+            var item = GetTextEditorSetsViewItem(textEditor);
             if (item != null)
             {
                 item.Icon.Visibility = Visibility.Visible;
@@ -351,7 +349,7 @@ namespace Notepads.Core
 
             if (textEditor.Saved)
             {
-                MarkTextEditorSetNotSaved(GetTextEditorSetsViewItem(textEditor), textEditor);
+                MarkTextEditorSetNotSaved(textEditor);
             }
         }
 
@@ -380,7 +378,7 @@ namespace Notepads.Core
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.Encoding = encoding;
-                if (textEditor == (Sets.SelectedItem as SetsViewItem)?.Content)
+                if (textEditor == GetActiveTextEditor())
                 {
                     OnActiveTextEditorEncodingChanged?.Invoke(this, textEditor);
                 }
@@ -396,7 +394,7 @@ namespace Notepads.Core
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.LineEnding = lineEnding;
-                if (textEditor == (Sets.SelectedItem as SetsViewItem)?.Content)
+                if (textEditor == GetActiveTextEditor())
                 {
                     OnActiveTextEditorLineEndingChanged?.Invoke(this, textEditor);
                 }
