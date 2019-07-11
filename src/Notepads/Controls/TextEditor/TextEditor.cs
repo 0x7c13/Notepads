@@ -403,8 +403,9 @@ namespace Notepads.Controls.TextEditor
             Document.SetText(TextSetOptions.None, GetTextWithDefaultTabIndentation(text));
         }
 
-        public void ResetUndoStack()
+        public void ClearUndoQueue()
         {
+            // Clear UndoQueue by setting its limit to 0 and set it back
             var undoLimit = Document.UndoLimit;
 
             // Check to prevent the undo limit stuck on zero
