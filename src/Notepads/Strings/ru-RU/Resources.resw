@@ -298,7 +298,7 @@
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Поделиться выбранным</value>
+    <value>Поделиться выбраным</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
