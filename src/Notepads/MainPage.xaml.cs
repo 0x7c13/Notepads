@@ -647,6 +647,7 @@ namespace Notepads
                 }
                 catch (Exception)
                 {
+                    await ContentDialogFactory.GetFileSaveErrorDialog().ShowAsync();
                     return false;
                 }
                 textEditor.Focus(FocusState.Programmatic);

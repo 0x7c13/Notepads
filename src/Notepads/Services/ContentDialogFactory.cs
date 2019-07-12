@@ -59,6 +59,17 @@ namespace Notepads.Services
             return fileOpenErrorDialog;
         }
 
+        public static ContentDialog GetFileSaveErrorDialog()
+        {
+            return new ContentDialog
+            {
+                Title = ResourceLoader.GetString("FileSaveErrorDialog_Title"),
+                Content = $"{ResourceLoader.GetString("FileSaveErrorDialog_Content_Part1")} {ResourceLoader.GetString("FileSaveErrorDialog_Content_Part2")}",
+                PrimaryButtonText = ResourceLoader.GetString("FileSaveErrorDialog_PrimaryButtonText"),
+                RequestedTheme = ThemeSettingsService.ThemeMode
+            };
+        }
+
         public static ContentDialog GetFileSaveErrorDialog(StorageFile file)
         {
             return new ContentDialog
