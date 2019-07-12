@@ -48,13 +48,13 @@ namespace Notepads
                 if (_notepadsCore == null)
                 {
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"));
-                    _notepadsCore.OnActiveTextEditorLoaded += (sender, editor) => { SetupStatusBar(editor); };
-                    _notepadsCore.OnActiveTextEditorUnloaded += OnActiveTextEditorUnloaded;
+                    _notepadsCore.OnTextEditorLoaded += OnTextEditorLoaded;
+                    _notepadsCore.OnTextEditorUnloaded += OnTextEditorUnloaded;
+                    _notepadsCore.OnTextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.OnTextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.OnActiveTextEditorKeyDown += OnActiveTextEditor_KeyDown;
-                    _notepadsCore.OnActiveTextEditorSelectionChanged += (sender, editor) => { UpdateLineColumnIndicatorText(editor); };
-                    _notepadsCore.OnActiveTextEditorEncodingChanged += (sender, editor) => { UpdateEncodingIndicatorText(editor.Encoding); };
-                    _notepadsCore.OnActiveTextEditorLineEndingChanged += (sender, editor) => { UpdateLineEndingIndicatorText(editor.LineEnding); };
+                    _notepadsCore.OnTextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
+                    _notepadsCore.OnTextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.Encoding); };
+                    _notepadsCore.OnTextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.LineEnding); };
                 }
 
                 return _notepadsCore;
@@ -86,7 +86,7 @@ namespace Notepads
 
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
-            RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnActiveTextEditor(); };
+            RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
         }
 
         // Handles external links or cmd args activation before Sets loaded
@@ -146,7 +146,7 @@ namespace Notepads
         // Content sharing
         private void MainPage_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var textEditor = NotepadsCore.GetActiveTextEditor();
+            var textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor == null) return;
 
             if (NotepadsCore.TryGetSharingContent(textEditor, out var title, out var content))
@@ -194,6 +194,7 @@ namespace Notepads
 
         private void SetupStatusBar(TextEditor textEditor)
         {
+            if (textEditor == null) return;
             UpdatePathIndicatorText(textEditor);
             UpdateLineEndingIndicatorText(textEditor.LineEnding);
             UpdateEncodingIndicatorText(textEditor.Encoding);
@@ -208,11 +209,7 @@ namespace Notepads
                 {
                     FindName("StatusBar"); // Lazy loading   
                 }
-                var activeTextEditor = NotepadsCore.GetActiveTextEditor();
-                if (activeTextEditor != null)
-                {
-                    SetupStatusBar(activeTextEditor);
-                }
+                SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
             }
             else
             {
@@ -254,7 +251,7 @@ namespace Notepads
             if (!(sender is MenuFlyoutItem item)) return;
 
             var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetActiveTextEditor();
+            var textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeLineEnding(textEditor, lineEnding);
@@ -266,7 +263,7 @@ namespace Notepads
             if (!(sender is MenuFlyoutItem item)) return;
 
             var encoding = EncodingUtility.GetEncodingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetActiveTextEditor();
+            var textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeEncoding(textEditor, encoding);
@@ -277,7 +274,7 @@ namespace Notepads
         {
             if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
-                NotepadsCore.FocusOnActiveTextEditor();
+                NotepadsCore.FocusOnSelectedTextEditor();
                 var pathData = new DataPackage();
                 pathData.SetText(PathIndicator.Text);
                 Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
@@ -291,7 +288,7 @@ namespace Notepads
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            NotepadsCore.FocusOnActiveTextEditor();
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         #endregion
@@ -324,23 +321,23 @@ namespace Notepads
 
         private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
-            var activeTextEditor = NotepadsCore.GetActiveTextEditor();
-            if (activeTextEditor == null) return;
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
 
-            NotepadsCore.FocusOnActiveTextEditor();
+            NotepadsCore.FocusOnSelectedTextEditor();
 
             bool found = false;
 
             switch (e.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = activeTextEditor.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
+                    found = selectedTextEditor.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = activeTextEditor.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = selectedTextEditor.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = activeTextEditor.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = selectedTextEditor.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
                     break;
             }
 
@@ -358,7 +355,7 @@ namespace Notepads
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
             FindAndReplacePlaceholder.Dismiss();
-            NotepadsCore.FocusOnActiveTextEditor();
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         #endregion
@@ -408,7 +405,7 @@ namespace Notepads
 
         private void MainMenuButtonFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            NotepadsCore.FocusOnActiveTextEditor();
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         private async void MenuOpenFileButton_OnClick(object sender, RoutedEventArgs e)
@@ -421,14 +418,14 @@ namespace Notepads
             NotepadsCore.OpenNewTextEditor();
         }
 
-        private void MenuSaveButton_OnClick(object sender, RoutedEventArgs e)
+        private async void MenuSaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Save(NotepadsCore.GetActiveTextEditor(), false);
+            await Save(NotepadsCore.GetSelectedTextEditor(), false);
         }
 
-        private void MenuSaveAsButton_OnClick(object sender, RoutedEventArgs e)
+        private async void MenuSaveAsButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Save(NotepadsCore.GetActiveTextEditor(), true);
+            await Save(NotepadsCore.GetSelectedTextEditor(), true);
         }
 
         private void MenuOpenFindButton_OnClick(object sender, RoutedEventArgs e)
@@ -450,30 +447,48 @@ namespace Notepads
 
         #region NotepadsCore Events
 
-        private void OnActiveTextEditorUnloaded(object sender, TextEditor textEditor)
+        private void OnTextEditorLoaded(object sender, TextEditor textEditor)
+        {
+            if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+            {
+                SetupStatusBar(textEditor);
+                NotepadsCore.FocusOnSelectedTextEditor();
+            }
+        }
+
+        private void OnTextEditorUnloaded(object sender, TextEditor textEditor)
         {
             if (FindAndReplacePlaceholder != null)
             {
                 if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
+            }
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+            {
+                Application.Current.Exit();
             }
         }
 
         private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
         {
             var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
-            await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, () =>
+            await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {
-                Save(textEditor, false);
+                if (await Save(textEditor, false))
+                {
+                    NotepadsCore.DeleteTextEditor(textEditor);
+                }
+                NotepadsCore.FocusOnSelectedTextEditor();
             }, () =>
             {
                 NotepadsCore.DeleteTextEditor(textEditor);
             }).ShowAsync();
-            NotepadsCore.FocusOnActiveTextEditor();
         }
 
-        private void OnActiveTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
+        private async void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
+            // ignoring key events coming from inactive text editors
+            if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
 
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
@@ -503,12 +518,12 @@ namespace Notepads
                 {
                     if (shift.HasFlag(CoreVirtualKeyStates.Down))
                     {
-                        Save(NotepadsCore.GetActiveTextEditor(), true);
+                        await Save(NotepadsCore.GetSelectedTextEditor(), true);
                         e.Handled = true;
                     }
                     else
                     {
-                        Save(NotepadsCore.GetActiveTextEditor(), false);
+                        await Save(NotepadsCore.GetSelectedTextEditor(), false);
                         e.Handled = true;
                     }
                 }
@@ -553,7 +568,7 @@ namespace Notepads
             var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
             if (files == null || files.Count == 0)
             {
-                NotepadsCore.FocusOnActiveTextEditor();
+                NotepadsCore.FocusOnSelectedTextEditor();
                 return;
             }
 
@@ -568,13 +583,13 @@ namespace Notepads
             try
             {
                 await NotepadsCore.OpenNewTextEditor(file);
-                NotepadsCore.FocusOnActiveTextEditor();
+                NotepadsCore.FocusOnSelectedTextEditor();
                 return true;
             }
             catch (Exception ex)
             {
                 await ContentDialogFactory.GetFileOpenErrorDialog(file, ex).ShowAsync();
-                NotepadsCore.FocusOnActiveTextEditor();
+                NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
             }
         }
@@ -597,9 +612,9 @@ namespace Notepads
             return successCount;
         }
 
-        private async void Save(TextEditor textEditor, bool saveAs)
+        private async Task<bool> Save(TextEditor textEditor, bool saveAs)
         {
-            if (textEditor == null) return;
+            if (textEditor == null) return false;
 
             StorageFile file;
 
@@ -615,19 +630,24 @@ namespace Notepads
                 file = textEditor.EditingFile;
             }
 
-            if (file == null) return;
+            if (file == null) return false;
 
             var success = await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
 
             if (success)
             {
-                SetupStatusBar(textEditor);
+                if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+                {
+                    SetupStatusBar(textEditor);
+                }
                 ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 2000);
             }
             else
             {
                 await ContentDialogFactory.GetFileSaveErrorDialog(file).ShowAsync();
             }
+
+            return success;
         }
 
         #endregion

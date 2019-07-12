@@ -31,8 +31,8 @@ namespace Notepads.Services
             {
                 Title = "Save",
                 Content = $"Save file \"{(fileName)}\"?",
-                PrimaryButtonText = "Yes",
-                SecondaryButtonText = "No",
+                PrimaryButtonText = "Save",
+                SecondaryButtonText = "Don't Save",
                 CloseButtonText = "Cancel",
                 RequestedTheme = ThemeSettingsService.ThemeMode,
             };

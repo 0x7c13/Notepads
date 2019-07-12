@@ -26,19 +26,19 @@ namespace Notepads.Core
 
         public readonly string DefaultNewFileName;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorLoaded;
+        public event EventHandler<TextEditor> OnTextEditorLoaded;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorUnloaded;
+        public event EventHandler<TextEditor> OnTextEditorUnloaded;
 
         public event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorSelectionChanged;
+        public event EventHandler<TextEditor> OnTextEditorSelectionChanged;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorEncodingChanged;
+        public event EventHandler<TextEditor> OnTextEditorEncodingChanged;
 
-        public event EventHandler<TextEditor> OnActiveTextEditorLineEndingChanged;
+        public event EventHandler<TextEditor> OnTextEditorLineEndingChanged;
 
-        public event KeyEventHandler OnActiveTextEditorKeyDown;
+        public event KeyEventHandler OnTextEditorKeyDown;
 
         public NotepadsCore(SetsView sets, 
             string defaultNewFileName)
@@ -95,6 +95,9 @@ namespace Notepads.Core
             textEditor.ClearUndoQueue();
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
+            textEditor.TextChanging += TextEditor_TextChanging;
+            textEditor.SelectionChanged += TextEditor_SelectionChanged;
+            textEditor.KeyDown += OnTextEditorKeyDown;
             textEditor.OnSetClosingKeyDown += TextEditor_OnSetClosingKeyDown;
 
             var newItem = new SetsViewItem
@@ -112,8 +115,8 @@ namespace Notepads.Core
             // Notepads should replace current "New Document.txt" with open file if it is empty and it is the only tab that has been created.
             if (GetNumberOfOpenedTextEditors() == 1 && file != null)
             {
-                var activeTextEditor = GetActiveTextEditor();
-                if (activeTextEditor.Saved && activeTextEditor.EditingFile == null)
+                var selectedEditor = GetSelectedTextEditor();
+                if (selectedEditor.Saved && selectedEditor.EditingFile == null)
                 {
                     Sets.Items?.Clear();
                 }
@@ -121,7 +124,7 @@ namespace Notepads.Core
 
             Sets.Items?.Add(newItem);
 
-            if (Sets.Items?.Count > 1)
+            if (GetNumberOfOpenedTextEditors() > 1)
             {
                 Sets.SelectedItem = newItem;
                 Sets.ScrollToLastSet();
@@ -131,7 +134,6 @@ namespace Notepads.Core
         public async Task<bool> SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
         {
             var success = await textEditor.SaveToFile(file);
-
             if (success)
             {
                 var item = GetTextEditorSetsViewItem(textEditor);
@@ -141,7 +143,6 @@ namespace Notepads.Core
                     item.Icon.Visibility = Visibility.Collapsed;
                 }
             }
-
             return success;
         }
 
@@ -159,19 +160,14 @@ namespace Notepads.Core
 
         public bool TryGetSharingContent(TextEditor textEditor, out string title, out string content)
         {
-            title = null;
-            content = null;
-
             title = textEditor.EditingFile != null ? textEditor.EditingFile.Name : DefaultNewFileName;
             content = textEditor.GetContentForSharing();
-
             return !string.IsNullOrEmpty(content);
         }
 
         public bool HaveUnsavedTextEditor()
         {
             if (Sets.Items == null || Sets.Items.Count == 0) return false;
-
             foreach (SetsViewItem setsItem in Sets.Items)
             {
                 if (!(setsItem.Content is TextEditor textEditor)) continue;
@@ -186,10 +182,7 @@ namespace Notepads.Core
             if (lineEnding == textEditor.LineEnding) return;
             textEditor.LineEnding = lineEnding;
             MarkTextEditorSetNotSaved(textEditor);
-            if (textEditor == GetActiveTextEditor())
-            {
-                OnActiveTextEditorLineEndingChanged?.Invoke(this, textEditor);
-            }
+            OnTextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
         public void ChangeEncoding(TextEditor textEditor, Encoding encoding)
@@ -197,10 +190,7 @@ namespace Notepads.Core
             if (EncodingUtility.Equals(textEditor.Encoding, encoding)) return;
             textEditor.Encoding = encoding;
             MarkTextEditorSetNotSaved(textEditor);
-            if (textEditor == GetActiveTextEditor())
-            {
-                OnActiveTextEditorEncodingChanged?.Invoke(this, textEditor);
-            }
+            OnTextEditorEncodingChanged?.Invoke(this, textEditor);
         }
 
         public void SwitchTo(bool next)
@@ -230,18 +220,18 @@ namespace Notepads.Core
             Sets.ScrollIntoView(item);
         }
 
-        public TextEditor GetActiveTextEditor()
+        public TextEditor GetSelectedTextEditor()
         {
             if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return null;
             return textEditor;
         }
 
-        public void FocusOnActiveTextEditor()
+        public void FocusOnSelectedTextEditor()
         {
-            FocusOnTextEditor(GetActiveTextEditor());
+            GetSelectedTextEditor()?.Focus(FocusState.Programmatic);
         }
 
-        private void FocusOnTextEditor(TextEditor textEditor)
+        public void FocusOnTextEditor(TextEditor textEditor)
         {
             textEditor?.Focus(FocusState.Programmatic);
         }
@@ -250,7 +240,6 @@ namespace Notepads.Core
         {
             if (!(e.Set.Content is TextEditor textEditor)) return;
             if (textEditor.Saved) return;
-
             if (OnTextEditorClosingWithUnsavedContent != null)
             {
                 e.Cancel = true;
@@ -299,7 +288,6 @@ namespace Notepads.Core
             {
                 textEditor.Saved = false;
             }
-
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item != null)
             {
@@ -310,37 +298,19 @@ namespace Notepads.Core
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
-
-            textEditor.KeyDown += OnActiveTextEditorKeyDown;
-            textEditor.TextChanging += TextEditor_TextChanging;
-            textEditor.SelectionChanged += TextEditor_SelectionChanged;
-            textEditor.Focus(FocusState.Programmatic);
-
-            OnActiveTextEditorLoaded?.Invoke(this, textEditor);
+            OnTextEditorLoaded?.Invoke(this, textEditor);
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
-
-            textEditor.KeyDown -= OnActiveTextEditorKeyDown;
-            textEditor.TextChanging -= TextEditor_TextChanging;
-            textEditor.SelectionChanged -= TextEditor_SelectionChanged;
-
-            if (Sets.Items?.Count == 0)
-            {
-                Application.Current.Exit();
-            }
-
-            OnActiveTextEditorUnloaded?.Invoke(this, textEditor);
+            OnTextEditorUnloaded?.Invoke(this, textEditor);
         }
 
         private void TextEditor_OnSetClosingKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
-
             if (Sets.Items == null) return;
-
             foreach (SetsViewItem setsItem in Sets.Items)
             {
                 if (setsItem.Content != textEditor) continue;
@@ -353,7 +323,6 @@ namespace Notepads.Core
         private void TextEditor_TextChanging(object sender, RichEditBoxTextChangingEventArgs args)
         {
             if (!(sender is TextEditor textEditor) || !args.IsContentChanging) return;
-
             if (textEditor.Saved)
             {
                 MarkTextEditorSetNotSaved(textEditor);
@@ -363,7 +332,7 @@ namespace Notepads.Core
         private void TextEditor_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
-            OnActiveTextEditorSelectionChanged?.Invoke(this, textEditor);
+            OnTextEditorSelectionChanged?.Invoke(this, textEditor);
         }
 
         private void OnAppAccentColorChanged(object sender, Color color)
@@ -385,10 +354,7 @@ namespace Notepads.Core
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.Encoding = encoding;
-                if (textEditor == GetActiveTextEditor())
-                {
-                    OnActiveTextEditorEncodingChanged?.Invoke(this, textEditor);
-                }
+                OnTextEditorEncodingChanged?.Invoke(this, textEditor);
             }
         }                                     
 
@@ -401,10 +367,7 @@ namespace Notepads.Core
                 if (textEditor.EditingFile != null) continue;
 
                 textEditor.LineEnding = lineEnding;
-                if (textEditor == GetActiveTextEditor())
-                {
-                    OnActiveTextEditorLineEndingChanged?.Invoke(this, textEditor);
-                }
+                OnTextEditorLineEndingChanged?.Invoke(this, textEditor);
             }
         }
     }
