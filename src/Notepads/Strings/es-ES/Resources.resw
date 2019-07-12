@@ -118,23 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>There are unsaved changes.</value>
+    <value>Hay errores sin guardar.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save All &amp; Exit</value>
+    <value>Guardar Todo &amp; Salir</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Discard &amp; Exit</value>
+    <value>Descartar &amp; Salir</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Do you want to save the changes?</value>
+    <value>Quieres Guardar los Cambios?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -142,15 +142,15 @@
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads does not support file greater than 1MB at this moment.</value>
+    <value>Notepads no soporta archivos de más de 1MB en este momento.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Sorry, file</value>
+    <value>Lo sentimos, el archivo</value>
     <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
-    <value>couldn't be opened</value>
+    <value>no pudo ser abierto</value>
     <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -158,15 +158,15 @@
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>File Open Error</value>
+    <value>Eror al Abrir Archivo</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
-    <value>File</value>
+    <value>Archivo</value>
     <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
-    <value>couldn't be saved.</value>
+    <value>no pudo ser guardado.</value>
     <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -174,11 +174,11 @@
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>File Save Error</value>
+    <value>Error al Guardar Archivo</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Close</value>
+    <value>Cerrar</value>
     <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
@@ -206,7 +206,7 @@
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Search Options</value>
+    <value>Opciones de Búsqueda</value>
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Save All</value>
+    <value>Guardar Todo</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
@@ -254,23 +254,23 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Save file</value>
+    <value>Guardar Archivo</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Guardar</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Don't Save</value>
+    <value>No Guardar</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Save your changes?</value>
+    <value>Guardar Cambios?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
