@@ -101,8 +101,13 @@
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control,Menu"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton" Click="MenuSaveAllButton_OnClick">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xEA35;"/>
+                                            </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find" Click="MenuOpenFindButton_OnClick">

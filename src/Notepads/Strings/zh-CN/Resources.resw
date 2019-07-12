@@ -185,6 +185,10 @@
     <value>保存</value>
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
+    <value>全部保存</value>
+    <comment>MainMenu: "Save All" button display text.</comment>
+  </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
     <value>另存为…</value>
     <comment>MainMenu: "Save As" button display text.</comment>

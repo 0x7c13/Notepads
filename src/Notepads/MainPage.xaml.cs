@@ -162,11 +162,17 @@ namespace Notepads
 
         private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (NotepadsCore.HaveUnsavedTextEditor())
-            {
-                e.Handled = true;
-                await ContentDialogFactory.GetAppCloseSaveReminderDialog(() => Application.Current.Exit()).ShowAsync();
-            }
+            if (!NotepadsCore.HaveUnsavedTextEditor()) return;
+            e.Handled = true;
+            await ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
+                {
+                    foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                    {
+                        await Save(textEditor, false);
+                        NotepadsCore.DeleteTextEditor(textEditor);
+                    }
+                },
+                () => Application.Current.Exit()).ShowAsync();
         }
 
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)
@@ -384,6 +390,7 @@ namespace Notepads
             {
                 MenuSaveButton.IsEnabled = false;
                 MenuSaveAsButton.IsEnabled = false;
+                MenuSaveAllButton.IsEnabled = false;
                 MenuFindButton.IsEnabled = false;
                 MenuReplaceButton.IsEnabled = false;
                 //MenuPrintButton.IsEnabled = false;
@@ -392,6 +399,7 @@ namespace Notepads
             {
                 MenuSaveButton.IsEnabled = true;
                 MenuSaveAsButton.IsEnabled = true;
+                MenuSaveAllButton.IsEnabled = true;
                 MenuFindButton.IsEnabled = true;
                 MenuReplaceButton.IsEnabled = true;
                 //MenuPrintButton.IsEnabled = true;
@@ -428,6 +436,14 @@ namespace Notepads
             await Save(NotepadsCore.GetSelectedTextEditor(), true);
         }
 
+        private async void MenuSaveAllButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+            {
+                await Save(textEditor, false);
+            }
+        }
+        
         private void MenuOpenFindButton_OnClick(object sender, RoutedEventArgs e)
         {
             ShowFindAndReplaceControl(false);
@@ -622,6 +638,7 @@ namespace Notepads
                 FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
                 !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
             {
+                NotepadsCore.SwitchTo(textEditor);
                 file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
                 textEditor.Focus(FocusState.Programmatic);
             }

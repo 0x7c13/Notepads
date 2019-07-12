@@ -48,7 +48,11 @@ namespace Notepads.Core
 
         void SwitchTo(bool next);
 
+        void SwitchTo(TextEditor textEditor);
+
         TextEditor GetSelectedTextEditor();
+
+        TextEditor[] GetAllTextEditors();
 
         void FocusOnTextEditor(TextEditor textEditor);
 

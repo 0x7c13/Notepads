@@ -9,19 +9,22 @@ namespace Notepads.Services
 
     public static class ContentDialogFactory
     {
-        public static ContentDialog GetAppCloseSaveReminderDialog(Action skipSavingAction)
+        public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction)
         {
             ContentDialog saveReminderDialog = new ContentDialog
             {
-                Title = "Exit and discard changes?",
+                Title = "Do you want to save the changes?",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = "There are unsaved changes.",
-                PrimaryButtonText = "Discard & Exit",
-                SecondaryButtonText = "Cancel",
+                PrimaryButtonText = "Save All & Exit",
+                SecondaryButtonText = "Discard & Exit",
+                CloseButtonText = "Cancel",
                 RequestedTheme = ThemeSettingsService.ThemeMode,
             };
-            saveReminderDialog.PrimaryButtonStyle = GetRedButtonStyle();
-            saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => skipSavingAction();
+            saveReminderDialog.PrimaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 38, 114, 201));
+            saveReminderDialog.SecondaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 216, 0, 12));
+            saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => saveAndExitAction();
+            saveReminderDialog.SecondaryButtonClick += (dialog, eventArgs) => discardAndExitAction();
             return saveReminderDialog;
         }
 
@@ -64,10 +67,10 @@ namespace Notepads.Services
             };
         }
 
-        private static Style GetRedButtonStyle()
+        private static Style GetButtonStyle(Color backgroundColor)
         {
             var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
-            redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, Color.FromArgb(255, 140, 37, 21)));
+            redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
             redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
 
             return redButtonStyle;

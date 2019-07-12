@@ -213,6 +213,13 @@ namespace Notepads.Core
             }
         }
 
+        public void SwitchTo(TextEditor textEditor)
+        {
+            var item = GetTextEditorSetsViewItem(textEditor);
+            Sets.SelectedItem = item;
+            Sets.ScrollIntoView(item);
+        }
+
         private void SwitchTo(StorageFile file)
         {
             var item = GetTextEditorSetsViewItem(file);
@@ -224,6 +231,20 @@ namespace Notepads.Core
         {
             if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return null;
             return textEditor;
+        }
+
+        public TextEditor[] GetAllTextEditors()
+        {
+            if (Sets.Items == null) return new TextEditor[0];
+            var editors = new List<TextEditor>();
+            foreach (SetsViewItem item in Sets.Items)
+            {
+                if (item.Content is TextEditor textEditor)
+                {
+                    editors.Add(textEditor);
+                }
+            }
+            return editors.ToArray();
         }
 
         public void FocusOnSelectedTextEditor()

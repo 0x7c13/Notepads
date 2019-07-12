@@ -185,6 +185,10 @@
     <value>Enregistrer</value>
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
+    <value>Save All</value>
+    <comment>MainMenu: "Save All" button display text.</comment>
+  </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
     <value>Enregistrer sous...</value>
     <comment>MainMenu: "Save As" button display text.</comment>
