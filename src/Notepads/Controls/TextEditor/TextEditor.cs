@@ -370,7 +370,7 @@ namespace Notepads.Controls.TextEditor
                     return;
                 }
 
-                if (e.Key == VirtualKey.Number0) // 0
+                if (e.Key == VirtualKey.Number0 || e.Key == VirtualKey.NumberPad0) // 0
                 {
                     SetDefaultTabStop(FontFamily, EditorSettingsService.EditorFontSize);
                     FontSize = EditorSettingsService.EditorFontSize;

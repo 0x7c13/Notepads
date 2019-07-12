@@ -514,38 +514,31 @@ namespace Notepads
             {
                 if (e.Key == VirtualKey.Tab)
                 {
-                    NotepadsCore.SwitchTo(!shift.HasFlag(CoreVirtualKeyStates.Down));
                     e.Handled = true;
+                    NotepadsCore.SwitchTo(!shift.HasFlag(CoreVirtualKeyStates.Down));
                 }
 
                 if (e.Key == VirtualKey.N || e.Key == VirtualKey.T)
                 {
-                    NotepadsCore.OpenNewTextEditor();
                     e.Handled = true;
+                    NotepadsCore.OpenNewTextEditor();
                 }
 
                 if (e.Key == VirtualKey.O)
                 {
-                    await OpenNewFiles();
                     e.Handled = true;
+                    await OpenNewFiles();
                 }
 
-                if (e.Key == VirtualKey.S)
+                if (e.Key == VirtualKey.S && !shift.HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        await Save(NotepadsCore.GetSelectedTextEditor(), true);
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        await Save(NotepadsCore.GetSelectedTextEditor(), false);
-                        e.Handled = true;
-                    }
+                    e.Handled = true;
+                    await Save(NotepadsCore.GetSelectedTextEditor(), false);
                 }
 
                 if (e.Key == VirtualKey.F)
                 {
+                    e.Handled = true;
                     if (shift.HasFlag(CoreVirtualKeyStates.Down))
                     {
                         ShowFindAndReplaceControl(true);
@@ -554,13 +547,21 @@ namespace Notepads
                     {
                         ShowFindAndReplaceControl(false);
                     }
-                    return;
                 }
 
                 if (e.Key == VirtualKey.H)
                 {
+                    e.Handled = true;
                     ShowFindAndReplaceControl(true);
-                    return;
+                }
+            }
+
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (e.Key == VirtualKey.S)
+                {
+                    e.Handled = true;
+                    await Save(NotepadsCore.GetSelectedTextEditor(), true);
                 }
             }
 
@@ -569,9 +570,9 @@ namespace Notepads
                 !shift.HasFlag(CoreVirtualKeyStates.Down) &&
                 e.Key == Windows.System.VirtualKey.Tab)
             {
+                e.Handled = true;
                 var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
                 textEditor.Document.Selection.TypeText(tabStr);
-                e.Handled = true;
             }
         }
 

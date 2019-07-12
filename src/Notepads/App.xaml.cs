@@ -50,6 +50,9 @@ namespace Notepads
                 {
                     "Exception", e.Exception.ToString()
                 },
+                {
+                    "StackTrace", e.Exception.StackTrace
+                }
             });
 
             // if you want to suppress and handle it manually, 
@@ -69,6 +72,9 @@ namespace Notepads
                 {
                     "Exception", e.Exception.ToString()
                 },
+                                {
+                    "StackTrace", e.Exception.StackTrace
+                }
             });
 
             // suppress and handle it manually.
