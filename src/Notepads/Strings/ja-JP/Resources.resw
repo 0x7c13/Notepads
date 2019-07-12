@@ -278,11 +278,11 @@
     <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
-    <value>カット</value>
+    <value>切り取り</value>
     <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
-    <value>切り取り</value>
+    <value>貼り付け</value>
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
