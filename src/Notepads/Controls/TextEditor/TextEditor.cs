@@ -313,6 +313,17 @@ namespace Notepads.Controls.TextEditor
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
             var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                !shift.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (e.Key == VirtualKey.Z)
+                {
+                    TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
+                    return;
+                }
+            }
+
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
                 // Disable RichEditBox default shortcuts (Bold, Underline, Italic)

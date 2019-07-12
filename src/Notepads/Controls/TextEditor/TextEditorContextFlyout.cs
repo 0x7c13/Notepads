@@ -228,7 +228,12 @@ namespace Notepads.Controls.TextEditor
                         Glyph = "\uE73E"
                     }
                 };
-
+                _wordWrap.KeyboardAccelerators.Add(new KeyboardAccelerator()
+                {
+                    Modifiers = VirtualKeyModifiers.Menu,
+                    Key = VirtualKey.Z,
+                    IsEnabled = false,
+                });
                 _wordWrap.Icon.Visibility = _textEditor.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
                 _wordWrap.Click += _wordWrap_Click;
                 return _wordWrap;
