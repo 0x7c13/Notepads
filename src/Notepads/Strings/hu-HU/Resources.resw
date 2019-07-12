@@ -118,23 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Mégse</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>There are unsaved changes.</value>
+    <value>Vannak nem mentett módosítások</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save All &amp; Exit</value>
+    <value>Mentés &amp; Kilépés</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Discard &amp; Exit</value>
+    <value>Elvetés &amp; Kilépés</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Do you want to save the changes?</value>
+    <value>El akarod menteni a módosításokat?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -142,15 +142,15 @@
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads does not support file greater than 1MB at this moment.</value>
+    <value>Notepads nem támogatja az 1MB-nál nagyobb fájlokat jelenleg.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Sorry, file</value>
+    <value>Sajnálom, a fájl</value>
     <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
-    <value>couldn't be opened</value>
+    <value>nem nyitható meg</value>
     <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -158,15 +158,15 @@
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>File Open Error</value>
+    <value>Fájl Megnyitási Hiba</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
-    <value>File</value>
+    <value>Fájl</value>
     <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
-    <value>couldn't be saved.</value>
+    <value>nem menthető el.</value>
     <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -174,11 +174,11 @@
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>File Save Error</value>
+    <value>Fájl Mentési Hiba</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Close</value>
+    <value>Bezárás</value>
     <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
@@ -206,7 +206,7 @@
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Search Options</value>
+    <value>Keresési Beállítások</value>
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
@@ -214,7 +214,7 @@
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Tejles szó összehasonlítása</value>
+    <value>Tejles szó megkülönböztetése</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Save All</value>
+    <value>Összes Mentése</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
@@ -254,23 +254,23 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Mégse</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Save file</value>
+    <value>Fájl mentése</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Mentés</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Don't Save</value>
+    <value>Ne Mentsen</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Save your changes?</value>
+    <value>Mentse el a módosításokat?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
@@ -310,7 +310,7 @@
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>Új Dokumentum.txt</value>
+    <value>Névtelen.txt</value>
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
