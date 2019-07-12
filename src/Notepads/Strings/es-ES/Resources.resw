@@ -121,6 +121,10 @@
     <value>Nada para compartir porque no hay texto selecionado o el documento está vacío.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
+  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close</value>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text</comment>
+  </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
     <value>Buscar</value>
     <comment>FindAndReplace: Find bar placeholder text.</comment>
@@ -144,6 +148,10 @@
   <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Buscar Siguiente (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Search Options</value>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
     <value>Coincidencia Exacta</value>

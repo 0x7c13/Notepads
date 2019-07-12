@@ -57,6 +57,7 @@
             </Button>
 
             <Button x:Name="OptionButton"
+                    x:Uid="FindAndReplace_SearchOptionButton"
                     IsTabStop="False"
                     Padding="3,0,0,0"
                     Width="36"
@@ -79,6 +80,7 @@
             </Button>
 
             <Button x:Name="DismissButton"
+                    x:Uid="FindAndReplace_DismissButton"
                     IsTabStop="False"
                     Padding="0"
                     Width="32"
