@@ -1,8 +1,8 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
-    using System.IO;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
@@ -14,8 +14,6 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
-    using Notepads.Services;
-    using Notepads.Utilities;
 
     public class TextEditor : RichEditBox
     {
@@ -52,6 +50,10 @@ namespace Notepads.Controls.TextEditor
 
             SetDefaultTabStop(FontFamily, FontSize);
 
+            PointerWheelChanged += (sender, e) =>
+            {
+                ProcessFontSizeByPointerWhell(sender, e);
+            };
             EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
             {
                 FontFamily = new FontFamily(fontFamily);
@@ -68,6 +70,30 @@ namespace Notepads.Controls.TextEditor
                 SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
                 SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             };
+        }
+
+        private void ProcessFontSizeByPointerWhell(
+            object sender,
+            PointerRoutedEventArgs pointerRoutedEventArgs)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var currentPoint = pointerRoutedEventArgs.GetCurrentPoint(this);
+                if (currentPoint.Properties.MouseWheelDelta > 0)
+                {
+                    SetDefaultTabStop(FontFamily, FontSize + 2);
+                    FontSize += 2;
+                    return;
+                }
+
+                if (!(FontSize > 4)) return;
+                SetDefaultTabStop(FontFamily, FontSize - 2);
+                FontSize -= 2;
+            }
         }
 
         private void SetDefaultTabStop(FontFamily font, double fontSize)
