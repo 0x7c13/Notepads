@@ -117,13 +117,69 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>There are unsaved changes.</value>
+    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Save All &amp; Exit</value>
+    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>Discard &amp; Exit</value>
+    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>Do you want to save the changes?</value>
+    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
     <value>Rien à partager car aucun texte n'a été sélectionné ou le document actuel est vide.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
+    <value>Notepads does not support file greater than 1MB at this moment.</value>
+    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
+    <value>Sorry, file</value>
+    <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
+    <value>couldn't be opened</value>
+    <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+    <value>File Open Error</value>
+    <comment>FileOpenErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
+    <value>File</value>
+    <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
+    <value>couldn't be saved.</value>
+    <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+    <value>File Save Error</value>
+    <comment>FileSaveErrorDialog: "Title" display text.</comment>
+  </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Close</value>
-    <comment>FindAndReplace: "Dismiss" button tool tip display text</comment>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
     <value>Rechercher</value>
@@ -131,7 +187,7 @@
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
     <value>Non trouvé</value>
-    <comment>FindAndReplace: Notification message when target not found .</comment>
+    <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Remplacer tout</value>
@@ -151,7 +207,7 @@
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Search Options</value>
-    <comment>FindAndReplace: "SearchOptions" button tool tip display text</comment>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
     <value>Respecter la case</value>
@@ -196,6 +252,26 @@
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
     <value>Paramètres</value>
     <comment>MainMenu: "Settings" button display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>Save file</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>Don't Save</value>
+    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>Save your changes?</value>
+    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
     <value>Copier</value>

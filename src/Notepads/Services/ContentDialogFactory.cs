@@ -2,6 +2,7 @@
 namespace Notepads.Services
 {
     using System;
+    using Windows.ApplicationModel.Resources;
     using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -9,20 +10,22 @@ namespace Notepads.Services
 
     public static class ContentDialogFactory
     {
+        private static readonly ResourceLoader ResourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+
         public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction)
         {
             ContentDialog saveReminderDialog = new ContentDialog
             {
-                Title = "Do you want to save the changes?",
+                Title = ResourceLoader.GetString("AppCloseSaveReminderDialog_Title"),
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Content = "There are unsaved changes.",
-                PrimaryButtonText = "Save All & Exit",
-                SecondaryButtonText = "Discard & Exit",
-                CloseButtonText = "Cancel",
+                Content = ResourceLoader.GetString("AppCloseSaveReminderDialog_Content"),
+                PrimaryButtonText = ResourceLoader.GetString("AppCloseSaveReminderDialog_PrimaryButtonText"),
+                SecondaryButtonText = ResourceLoader.GetString("AppCloseSaveReminderDialog_SecondaryButtonText"),
+                CloseButtonText = ResourceLoader.GetString("AppCloseSaveReminderDialog_CloseButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode,
+                PrimaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 38, 114, 201)),
+                SecondaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 216, 0, 12)),
             };
-            saveReminderDialog.PrimaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 38, 114, 201));
-            saveReminderDialog.SecondaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 216, 0, 12));
             saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => saveAndExitAction();
             saveReminderDialog.SecondaryButtonClick += (dialog, eventArgs) => discardAndExitAction();
             return saveReminderDialog;
@@ -32,11 +35,11 @@ namespace Notepads.Services
         {
             ContentDialog setCloseSaveReminder = new ContentDialog
             {
-                Title = "Save",
-                Content = $"Save file \"{(fileName)}\"?",
-                PrimaryButtonText = "Save",
-                SecondaryButtonText = "Don't Save",
-                CloseButtonText = "Cancel",
+                Title = ResourceLoader.GetString("SetCloseSaveReminderDialog_Title"),
+                Content = $"{ResourceLoader.GetString("SetCloseSaveReminderDialog_Content")} \"{(fileName)}\"?",
+                PrimaryButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_PrimaryButtonText"),
+                SecondaryButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_SecondaryButtonText"),
+                CloseButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_CloseButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode,
             };
             setCloseSaveReminder.PrimaryButtonClick += (dialog, args) => { saveAction(); };
@@ -48,9 +51,9 @@ namespace Notepads.Services
         {
             ContentDialog fileOpenErrorDialog = new ContentDialog
             {
-                Title = "File Open Error",
-                Content = $"Sorry, file \"{file.Name}\" couldn't be opened:\n{ex.Message}",
-                PrimaryButtonText = "Ok",
+                Title = ResourceLoader.GetString("FileOpenErrorDialog_Title"),
+                Content = $"{ResourceLoader.GetString("FileOpenErrorDialog_Content_Part1")} \"{file.Name}\" {ResourceLoader.GetString("FileOpenErrorDialog_Content_Part2")}: {ex.Message}",
+                PrimaryButtonText = ResourceLoader.GetString("FileOpenErrorDialog_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
             return fileOpenErrorDialog;
@@ -60,9 +63,9 @@ namespace Notepads.Services
         {
             return new ContentDialog
             {
-                Title = "File Save Error",
-                Content = $"File {file.Name} couldn't be saved.",
-                PrimaryButtonText = "Ok",
+                Title = ResourceLoader.GetString("FileSaveErrorDialog_Title"),
+                Content = $"{ResourceLoader.GetString("FileSaveErrorDialog_Content_Part1")} \"{file.Name}\" {ResourceLoader.GetString("FileSaveErrorDialog_Content_Part2")}",
+                PrimaryButtonText = ResourceLoader.GetString("FileSaveErrorDialog_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
         }
@@ -72,7 +75,6 @@ namespace Notepads.Services
             var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
             redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
             redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
-
             return redButtonStyle;
         }
     }

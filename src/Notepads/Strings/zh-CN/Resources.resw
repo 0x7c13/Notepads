@@ -117,13 +117,69 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>您有尚未保存的内容</value>
+    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>全部保存并退出</value>
+    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>退出不保存</value>
+    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>是否保存更改?</value>
+    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
     <value>找不到可分享内容，请确保文档存在内容同时选择了文本。</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
+    <value>Notepads 暂时不支持打开1MB以上的文件</value>
+    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
+    <value>抱歉，文件</value>
+    <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
+    <value>无法打开</value>
+    <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>明白</value>
+    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+    <value>文件打开失败</value>
+    <comment>FileOpenErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
+    <value>文件</value>
+    <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
+    <value>保存失败</value>
+    <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>明白</value>
+    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+    <value>文件保存失败</value>
+    <comment>FileSaveErrorDialog: "Title" display text.</comment>
+  </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>关闭</value>
-    <comment>FindAndReplace: "Dismiss" button tool tip display text</comment>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
     <value>查找</value>
@@ -131,7 +187,7 @@
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
     <value>找不到</value>
-    <comment>FindAndReplace: Notification message when target not found .</comment>
+    <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>全部替换</value>
@@ -151,7 +207,7 @@
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>查找选项</value>
-    <comment>FindAndReplace: "SearchOptions" button tool tip display text</comment>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
     <value>区分大小写</value>
@@ -196,6 +252,26 @@
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
     <value>设置</value>
     <comment>MainMenu: "Settings" button display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>是否将更改保存到</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>不保存</value>
+    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>是否保存更改?</value>
+    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
     <value>复制</value>

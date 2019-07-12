@@ -7,6 +7,7 @@ namespace Notepads.Utilities
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.Provider;
 
@@ -26,6 +27,8 @@ namespace Notepads.Utilities
 
     public static class FileSystemUtility
     {
+        private static readonly ResourceLoader ResourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+
         public static bool IsFullPath(string path)
         {
             return !String.IsNullOrWhiteSpace(path)
@@ -127,7 +130,7 @@ namespace Notepads.Utilities
 
             if (fileProperties.Size > 1000 * 1024) // 1MB
             {
-                throw new Exception("Notepads does not support file greater than 1MB at this moment");
+                throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
 
             string text;
