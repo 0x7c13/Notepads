@@ -168,8 +168,10 @@ namespace Notepads
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        await Save(textEditor, false);
-                        NotepadsCore.DeleteTextEditor(textEditor);
+                        if (await Save(textEditor, false))
+                        {
+                            NotepadsCore.DeleteTextEditor(textEditor);
+                        }
                     }
                 },
                 () => Application.Current.Exit()).ShowAsync();
