@@ -639,7 +639,14 @@ namespace Notepads
                 !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
             {
                 NotepadsCore.SwitchTo(textEditor);
-                file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
+                try
+                {
+                    file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 textEditor.Focus(FocusState.Programmatic);
             }
             else
