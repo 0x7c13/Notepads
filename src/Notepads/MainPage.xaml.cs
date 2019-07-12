@@ -89,6 +89,8 @@ namespace Notepads
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
         }
 
+        #region Application Life Cycle & Window management 
+
         // Handles external links or cmd args activation before Sets loaded
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -134,8 +136,6 @@ namespace Notepads
                 _loaded = true;
             }
         }
-
-        #region Application Life Cycle & Window management 
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
@@ -510,7 +510,7 @@ namespace Notepads
 
                 if (e.Key == VirtualKey.O)
                 {
-                    MenuOpenFileButton_OnClick(this, null);
+                    await OpenNewFiles();
                     e.Handled = true;
                 }
 
