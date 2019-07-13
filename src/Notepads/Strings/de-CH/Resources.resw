@@ -319,6 +319,6 @@
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Gespeichert</value>
-    <comment>TextEditor: Notification message when file has been saved succesffully.</comment>
+    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
 </root>
