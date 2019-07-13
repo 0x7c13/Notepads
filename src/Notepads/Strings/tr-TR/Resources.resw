@@ -126,11 +126,11 @@
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Tümünü Kaydet &amp; Çıkış</value>
+    <value>Tümünü Kaydet &amp; Çık</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>İptal Et &amp; Çıkış</value>
+    <value>İptal Et &amp; Çık</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
