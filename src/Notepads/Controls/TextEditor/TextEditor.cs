@@ -73,22 +73,23 @@
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down))
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) ||
+                alt.HasFlag(CoreVirtualKeyStates.Down) ||
+                shift.HasFlag(CoreVirtualKeyStates.Down)) return;
+
+            var currentPoint = e.GetCurrentPoint(this);
+            if (currentPoint.Properties.MouseWheelDelta > 0)
             {
-                var currentPoint = e.GetCurrentPoint(this);
-                if (currentPoint.Properties.MouseWheelDelta > 0)
-                {
-                    SetDefaultTabStop(FontFamily, FontSize + 2);
-                    FontSize += 2;
-                    return;
-                }
-
-                if (!(FontSize > 4)) return;
-                SetDefaultTabStop(FontFamily, FontSize - 2);
-                FontSize -= 2;
+                SetDefaultTabStop(FontFamily, FontSize + 2);
+                FontSize += 2;
+                return;
             }
+
+            if (!(FontSize > 4)) return;
+            SetDefaultTabStop(FontFamily, FontSize - 2);
+            FontSize -= 2;
         }
 
         private void SetDefaultTabStop(FontFamily font, double fontSize)
