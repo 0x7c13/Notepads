@@ -84,12 +84,13 @@
             {
                 SetDefaultTabStop(FontFamily, FontSize + 2);
                 FontSize += 2;
-                return;
             }
-
-            if (!(FontSize > 4)) return;
-            SetDefaultTabStop(FontFamily, FontSize - 2);
-            FontSize -= 2;
+            else
+            {
+                if (!(FontSize > 4)) return;
+                SetDefaultTabStop(FontFamily, FontSize - 2);
+                FontSize -= 2;
+            }
         }
 
         private void SetDefaultTabStop(FontFamily font, double fontSize)
