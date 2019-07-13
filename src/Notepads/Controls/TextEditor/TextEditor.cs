@@ -50,10 +50,7 @@
 
             SetDefaultTabStop(FontFamily, FontSize);
 
-            PointerWheelChanged += (sender, e) =>
-            {
-                ProcessFontSizeByPointerWhell(sender, e);
-            };
+            PointerWheelChanged += OnPointerWheelChanged;
             EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
             {
                 FontFamily = new FontFamily(fontFamily);
@@ -72,9 +69,7 @@
             };
         }
 
-        private void ProcessFontSizeByPointerWhell(
-            object sender,
-            PointerRoutedEventArgs pointerRoutedEventArgs)
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
@@ -82,7 +77,7 @@
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
-                var currentPoint = pointerRoutedEventArgs.GetCurrentPoint(this);
+                var currentPoint = e.GetCurrentPoint(this);
                 if (currentPoint.Properties.MouseWheelDelta > 0)
                 {
                     SetDefaultTabStop(FontFamily, FontSize + 2);
