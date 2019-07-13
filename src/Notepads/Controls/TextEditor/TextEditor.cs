@@ -115,25 +115,15 @@ namespace Notepads.Controls.TextEditor
         //    return text;
         //}
 
-        public async Task<bool> SaveToFile(StorageFile file)
+        public async Task SaveToFile(StorageFile file)
         {
             Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = GetText();
             text = FixLineEnding(text, LineEnding);
-
-            var success = await FileSystemUtility.WriteToFile(text, encoding, file);
-
-            if (success)
-            {
-                EditingFile = file;
-                Encoding = encoding;
-                Saved = true;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            await FileSystemUtility.WriteToFile(text, encoding, file);
+            EditingFile = file;
+            Encoding = encoding;
+            Saved = true;
         }
 
         public string GetText()

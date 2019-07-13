@@ -142,16 +142,12 @@
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads 暂时不支持打开1MB以上的文件</value>
+    <value>Notepads 暂时不支持打开 1MB 以上的文件</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
-  <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
-    <value>抱歉，文件</value>
-    <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
-    <value>无法打开</value>
-    <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>抱歉，文件 "{0}" 打开失败: {1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>明白</value>
@@ -161,13 +157,9 @@
     <value>文件打开失败</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
-  <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
-    <value>文件</value>
-    <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
-    <value>保存失败</value>
-    <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>抱歉，文件 "{0}" 保存失败: {1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>明白</value>
@@ -258,8 +250,8 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>是否将更改保存到</value>
-    <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
+    <value>是否将更改保存到 "{0}"?</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
     <value>保存</value>

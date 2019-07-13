@@ -145,13 +145,9 @@
     <value>Notepads nem támogatja az 1MB-nál nagyobb fájlokat jelenleg.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
-  <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Sajnálom, a fájl</value>
-    <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
-    <value>nem nyitható meg</value>
-    <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>Sajnálom, a fájl "{0}" nem nyitható meg: {1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
@@ -161,13 +157,9 @@
     <value>Fájl Megnyitási Hiba</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
-  <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Fájl</value>
-    <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
-    <value>nem menthető el.</value>
-    <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>Sajnálom, a fájl "{0}" nem menthető el: {1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
@@ -258,8 +250,8 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Fájl mentése</value>
-    <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
+    <value>Fájl mentése "{0}"?</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
     <value>Mentés</value>

@@ -55,6 +55,14 @@ namespace Notepads
                     _notepadsCore.OnTextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
                     _notepadsCore.OnTextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.Encoding); };
                     _notepadsCore.OnTextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.LineEnding); };
+                    _notepadsCore.OnTextEditorSaved += (sender, editor) =>
+                    {
+                        if (NotepadsCore.GetSelectedTextEditor() == editor)
+                        {
+                            SetupStatusBar(editor);
+                        }
+                        ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
+                    };
                 }
 
                 return _notepadsCore;
@@ -168,8 +176,10 @@ namespace Notepads
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        await Save(textEditor, false);
-                        NotepadsCore.DeleteTextEditor(textEditor);
+                        if (await Save(textEditor, false))
+                        {
+                            NotepadsCore.DeleteTextEditor(textEditor);
+                        }
                     }
                 },
                 () => Application.Current.Exit()).ShowAsync();
@@ -605,7 +615,7 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                await ContentDialogFactory.GetFileOpenErrorDialog(file, ex).ShowAsync();
+                await ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message).ShowAsync();
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
             }
@@ -633,39 +643,34 @@ namespace Notepads
         {
             if (textEditor == null) return false;
 
-            StorageFile file;
-
-            if (textEditor.EditingFile == null || saveAs ||
-                FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
-                !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
+            StorageFile file = null;
+            try
             {
-                NotepadsCore.SwitchTo(textEditor);
-                file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                textEditor.Focus(FocusState.Programmatic);
-            }
-            else
-            {
-                file = textEditor.EditingFile;
-            }
-
-            if (file == null) return false;
-
-            var success = await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
-
-            if (success)
-            {
-                if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+                if (textEditor.EditingFile == null || saveAs ||
+                    FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
+                    !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
                 {
-                    SetupStatusBar(textEditor);
+                    NotepadsCore.SwitchTo(textEditor);
+                    file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
+                    textEditor.Focus(FocusState.Programmatic);
+                    if (file == null)
+                    {
+                        return false; // User cancelled
+                    }
                 }
-                ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 2000);
-            }
-            else
-            {
-                await ContentDialogFactory.GetFileSaveErrorDialog(file).ShowAsync();
-            }
+                else
+                {
+                    file = textEditor.EditingFile;
+                }
 
-            return success;
+                await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message).ShowAsync();
+                return false;
+            }
         }
 
         #endregion

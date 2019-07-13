@@ -18,6 +18,8 @@ namespace Notepads.Core
 
         event EventHandler<TextEditor> OnTextEditorUnloaded;
 
+        event EventHandler<TextEditor> OnTextEditorSaved;
+
         event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
 
         event EventHandler<TextEditor> OnTextEditorSelectionChanged;
@@ -32,7 +34,7 @@ namespace Notepads.Core
 
         Task OpenNewTextEditor(StorageFile file);
 
-        Task<bool> SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
+        Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
 
         void DeleteTextEditor(TextEditor textEditor);
 

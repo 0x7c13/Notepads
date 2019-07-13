@@ -30,6 +30,8 @@ namespace Notepads.Core
 
         public event EventHandler<TextEditor> OnTextEditorUnloaded;
 
+        public event EventHandler<TextEditor> OnTextEditorSaved;
+
         public event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
 
         public event EventHandler<TextEditor> OnTextEditorSelectionChanged;
@@ -131,19 +133,16 @@ namespace Notepads.Core
             }
         }
 
-        public async Task<bool> SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
+        public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
         {
-            var success = await textEditor.SaveToFile(file);
-            if (success)
+            await textEditor.SaveToFile(file);
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item != null)
             {
-                var item = GetTextEditorSetsViewItem(textEditor);
-                if (item != null)
-                {
-                    item.Header = file.Name;
-                    item.Icon.Visibility = Visibility.Collapsed;
-                }
+                item.Header = file.Name;
+                item.Icon.Visibility = Visibility.Collapsed;
             }
-            return success;
+            OnTextEditorSaved?.Invoke(this, textEditor);
         }
 
         public void DeleteTextEditor(TextEditor textEditor)

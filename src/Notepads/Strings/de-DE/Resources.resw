@@ -145,13 +145,9 @@
     <value>Notepads unterstützt zurzeit keine Dateien größer als 1MB</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
-  <data name="FileOpenErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Entschuldige, die Datei</value>
-    <comment>FileOpenErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Content_Part2" xml:space="preserve">
-    <value>konnte nicht geöffnet werden.</value>
-    <comment>FileOpenErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>Entschuldige, die Datei "{0}" konnte nicht geöffnet werden: {1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
@@ -161,13 +157,9 @@
     <value>Fehler beim öffnen der Datei</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
-  <data name="FileSaveErrorDialog_Content_Part1" xml:space="preserve">
-    <value>Die Datei</value>
-    <comment>FileSaveErrorDialog: "Content" display text before file name.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Content_Part2" xml:space="preserve">
-    <value>konnte nicht gespeichert werden.</value>
-    <comment>FileSaveErrorDialog: "Content" display text after file name.</comment>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>Entschuldige, die Datei "{0}" konnte nicht gespeichert werden: {1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
@@ -258,8 +250,8 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Datei speichern</value>
-    <comment>SetCloseSaveReminderDialog: "Content" display text.</comment>
+    <value>Datei speichern "{0}"?</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
     <value>Speichern</value>

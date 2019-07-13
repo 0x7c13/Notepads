@@ -31,12 +31,12 @@ namespace Notepads.Services
             return saveReminderDialog;
         }
 
-        public static ContentDialog GetSetCloseSaveReminderDialog(string fileName, Action saveAction, Action skipSavingAction)
+        public static ContentDialog GetSetCloseSaveReminderDialog(string fileNameOrPath, Action saveAction, Action skipSavingAction)
         {
             ContentDialog setCloseSaveReminder = new ContentDialog
             {
                 Title = ResourceLoader.GetString("SetCloseSaveReminderDialog_Title"),
-                Content = $"{ResourceLoader.GetString("SetCloseSaveReminderDialog_Content")} \"{(fileName)}\"?",
+                Content = string.Format(ResourceLoader.GetString("SetCloseSaveReminderDialog_Content"), fileNameOrPath),
                 PrimaryButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_PrimaryButtonText"),
                 SecondaryButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_SecondaryButtonText"),
                 CloseButtonText = ResourceLoader.GetString("SetCloseSaveReminderDialog_CloseButtonText"),
@@ -47,24 +47,25 @@ namespace Notepads.Services
             return setCloseSaveReminder;
         }
 
-        public static ContentDialog GetFileOpenErrorDialog(StorageFile file, Exception ex)
+        public static ContentDialog GetFileOpenErrorDialog(string filePath, string errorMsg)
         {
             ContentDialog fileOpenErrorDialog = new ContentDialog
             {
                 Title = ResourceLoader.GetString("FileOpenErrorDialog_Title"),
-                Content = $"{ResourceLoader.GetString("FileOpenErrorDialog_Content_Part1")} \"{file.Name}\" {ResourceLoader.GetString("FileOpenErrorDialog_Content_Part2")}: {ex.Message}",
+                Content = string.Format(ResourceLoader.GetString("FileOpenErrorDialog_Content"), filePath, errorMsg),
                 PrimaryButtonText = ResourceLoader.GetString("FileOpenErrorDialog_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
             return fileOpenErrorDialog;
         }
 
-        public static ContentDialog GetFileSaveErrorDialog(StorageFile file)
+        public static ContentDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
         {
+            var content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
             return new ContentDialog
             {
                 Title = ResourceLoader.GetString("FileSaveErrorDialog_Title"),
-                Content = $"{ResourceLoader.GetString("FileSaveErrorDialog_Content_Part1")} \"{file.Name}\" {ResourceLoader.GetString("FileSaveErrorDialog_Content_Part2")}",
+                Content = content,
                 PrimaryButtonText = ResourceLoader.GetString("FileSaveErrorDialog_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };

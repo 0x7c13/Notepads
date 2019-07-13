@@ -10,6 +10,7 @@ namespace Notepads.Utilities
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.Provider;
+    using Microsoft.AppCenter.Analytics;
 
     public class TextFile
     {
@@ -49,7 +50,7 @@ namespace Notepads.Utilities
             }
             else
                 finalPath = path;
-            // resolves any internal "..\" to get the true full path.
+            // Resolves any internal "..\" to get the true full path.
             return Path.GetFullPath(finalPath);
         }
 
@@ -176,9 +177,10 @@ namespace Notepads.Utilities
             return encoding;
         }
 
-        public static async Task<bool> WriteToFile(string text, Encoding encoding, StorageFile file)
+        public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
+
             try
             {
                 // Prevent updates to the remote version of the file until we 
@@ -191,26 +193,17 @@ namespace Notepads.Utilities
                 usedDeferUpdates = false;
             }
 
-            // write to file
-
+            // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            try
+            using (var stream = await file.OpenStreamForWriteAsync())
+            using (var writer = new StreamWriter(stream, encoding))
             {
-                using (var stream = await file.OpenStreamForWriteAsync())
-                using (var writer = new StreamWriter(stream, encoding))
-                {
-                    stream.Position = 0;
-                    writer.Write(text);
-                    writer.Flush();
-
-                    // Truncate
-                    stream.SetLength(stream.Position);
-                }
-            }
-            catch (Exception)
-            {
-                return false;
+                stream.Position = 0;
+                writer.Write(text);
+                writer.Flush();
+                // Truncate
+                stream.SetLength(stream.Position);
             }
 
             if (usedDeferUpdates)
@@ -220,11 +213,16 @@ namespace Notepads.Utilities
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
                 if (status != FileUpdateStatus.Complete)
                 {
-                    return false;
+                    // Track FileUpdateStatus here to better understand the failed scenarios
+                    // File name, path and content are not included to respect/protect user privacy 
+                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() {
+                        {
+                            "FileUpdateStatus", nameof(status)
+                        }
+                    });
+                    throw new Exception($"FileUpdateStatus: {nameof(status)}");
                 }
             }
-
-            return true;
         }
     }
 }
