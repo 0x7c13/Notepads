@@ -259,7 +259,9 @@ namespace Notepads
         {
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
-            LineColumnIndicator.Text = selectedCount == 0 ? $"Ln {line} Col {column}" : $"Ln {line} Col {column} ({selectedCount} selected)";
+            LineColumnIndicator.Text = selectedCount == 0
+                ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
+                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
