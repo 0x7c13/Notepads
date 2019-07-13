@@ -118,23 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal Et</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>There are unsaved changes.</value>
+    <value>Kaydedilmemiş değişiklikler var.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save All &amp; Exit</value>
+    <value>Tümünü Kaydet &amp; Çık</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Discard &amp; Exit</value>
+    <value>İptal Et &amp; Çık</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Do you want to save the changes?</value>
+    <value>Değişiklikleri kaydetmek istiyor musunuz?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -142,35 +142,35 @@
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads does not support file greater than 1MB at this moment.</value>
+    <value>Notepads şu anda 1MB üzeri dosyaları desteklemiyor.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Sorry, file "{0}" couldn't be opened: {1}</value>
+    <value>Üzgünüm, "{0}" dosyası açılamıyor: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>Tamam</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>File Open Error</value>
+    <value>Dosya Açma Hatası</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Sorry, file "{0}" couldn't be saved: {1}</value>
+    <value>Üzgünüm, "{0}" dosyası kaydedilemedi: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>Tamam</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>File Save Error</value>
+    <value>Dosya Kaydetme Hatası</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Close</value>
+    <value>Kapat</value>
     <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
@@ -234,7 +234,7 @@
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Save All</value>
+    <value>Tümünü Kaydet</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
@@ -246,23 +246,23 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal Et</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Save file "{0}"?</value>
+    <value>"{0}" dosyası kaydedilsin mi?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Kaydet</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Don't Save</value>
+    <value>Kaydetme</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Save your changes?</value>
+    <value>Değişiklikler kaydedilsin mi?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
@@ -306,11 +306,11 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Ln {0}, Col {1} ({2} selected)</value>
+    <value>Sat {0}, Süt {1} ({2} seçildi)</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Ln {0}, Col {1}</value>
+    <value>Sat {0}, Süt {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
@@ -319,6 +319,6 @@
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Kaydedildi</value>
-    <comment>TextEditor: Notification message when file has been saved succesffully.</comment>
+    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
 </root>
