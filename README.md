@@ -30,7 +30,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
-* Ctrl+"+" to increase font size and Ctrl+"-" to decrease font size. Ctrl+"0" to reset font size to default.
+* Ctrl+"+"/"-" to increase/decrease font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 
 ## Author’s Notes:
@@ -81,6 +81,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [ja-JP][Japanese]: [Mamoru Satoh](https://github.com/pnp0a03)
     * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
     * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx)
+    * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
 
 ## Stay tuned 📢:
 

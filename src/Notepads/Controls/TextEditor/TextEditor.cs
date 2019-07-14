@@ -1,4 +1,5 @@
-﻿namespace Notepads.Controls.TextEditor
+﻿
+namespace Notepads.Controls.TextEditor
 {
     using Notepads.Services;
     using Notepads.Utilities;
@@ -43,14 +44,13 @@
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
-
             ContextFlyout = new TextEditorContextFlyout(this);
             TextChanging += TextEditor_TextChanging;
             Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
+            PointerWheelChanged += OnPointerWheelChanged;
 
             SetDefaultTabStop(FontFamily, FontSize);
 
-            PointerWheelChanged += OnPointerWheelChanged;
             EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
             {
                 FontFamily = new FontFamily(fontFamily);
@@ -75,21 +75,22 @@
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
             var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) ||
-                alt.HasFlag(CoreVirtualKeyStates.Down) ||
-                shift.HasFlag(CoreVirtualKeyStates.Down)) return;
-
-            var currentPoint = e.GetCurrentPoint(this);
-            if (currentPoint.Properties.MouseWheelDelta > 0)
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                !shift.HasFlag(CoreVirtualKeyStates.Down))
             {
-                SetDefaultTabStop(FontFamily, FontSize + 2);
-                FontSize += 2;
-            }
-            else
-            {
-                if (!(FontSize > 4)) return;
-                SetDefaultTabStop(FontFamily, FontSize - 2);
-                FontSize -= 2;
+                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                if (mouseWheelDelta > 0)
+                {
+                    SetDefaultTabStop(FontFamily, FontSize + 1);
+                    FontSize += 1;
+                }
+                else if (mouseWheelDelta < 0)
+                {
+                    if (!(FontSize > 4)) return;
+                    SetDefaultTabStop(FontFamily, FontSize - 1);
+                    FontSize -= 1;
+                }
             }
         }
 
