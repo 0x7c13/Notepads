@@ -300,7 +300,6 @@ namespace Notepads.Controls.TextEditor
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
                     e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
                 {
-                    e.Handled = true;
                     return;
                 }
             }
