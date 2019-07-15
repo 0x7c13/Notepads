@@ -196,7 +196,7 @@ namespace SetsView
                         _setsContentPresenter.Content = container.Content;
                         _setsContentPresenter.ContentTemplate = container.ContentTemplate;
 
-                        if (e != null) _setsContentPresenter.Loaded += _setsContentPresenter_Loaded;
+                        if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
                     }
                 }
             }
@@ -208,9 +208,9 @@ namespace SetsView
             }
         }
 
-        private void _setsContentPresenter_Loaded(object sender, RoutedEventArgs e)
+        private void SetsContentPresenter_Loaded(object sender, RoutedEventArgs e)
         {
-            _setsContentPresenter.Loaded -= _setsContentPresenter_Loaded;
+            _setsContentPresenter.Loaded -= SetsContentPresenter_Loaded;
             var args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
             SetSelected?.Invoke(this, args);
         }

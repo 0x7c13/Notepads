@@ -235,15 +235,13 @@ namespace Notepads.Controls.TextEditor
                     IsEnabled = false,
                 });
                 _wordWrap.Icon.Visibility = _textEditor.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
-                _wordWrap.Click += _wordWrap_Click;
+                _wordWrap.Click += (sender, args) =>
+                {
+                    _wordWrap.Icon.Visibility = _textEditor.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
+                    _textEditor.TextWrapping = _textEditor.TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
+                };
                 return _wordWrap;
             }
-        }
-
-        private void _wordWrap_Click(object sender, RoutedEventArgs e)
-        {
-            _wordWrap.Icon.Visibility = _textEditor.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
-            _textEditor.TextWrapping = _textEditor.TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
         }
     }
 }
