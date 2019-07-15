@@ -21,14 +21,14 @@ namespace Notepads.EventArgs
             FindAndReplaceMode = findAndReplaceMode;
         }
 
-        public string SearchText { get; private set; }
+        public string SearchText { get; }
 
-        public string ReplaceText { get; private set; }
+        public string ReplaceText { get; }
 
-        public bool MatchCase { get; private set; }
+        public bool MatchCase { get; }
 
-        public bool MatchWholeWord { get; private set; }
+        public bool MatchWholeWord { get; }
 
-        public FindAndReplaceMode FindAndReplaceMode  { get; private set; }
+        public FindAndReplaceMode FindAndReplaceMode  { get; }
     }
 }

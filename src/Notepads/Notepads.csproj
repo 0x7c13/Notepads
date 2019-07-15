@@ -127,6 +127,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\IKeyboardCommand.cs" />
+    <Compile Include="Commands\IKeyboardCommandHandler.cs" />
+    <Compile Include="Commands\KeyboardShortcut.cs" />
+    <Compile Include="Commands\KeyboardCommandHandler.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>

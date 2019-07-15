@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads
 {
+    using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
@@ -69,6 +70,8 @@ namespace Notepads
             }
         }
 
+        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+
         public MainPage()
         {
             InitializeComponent();
@@ -95,6 +98,27 @@ namespace Notepads
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
+
+            // Init shortcuts
+            _keyboardCommandHandler = GetKeyboardCommandHandler();
+        }
+
+        private KeyboardCommandHandler GetKeyboardCommandHandler()
+        {
+            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
+            {
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.T, (args) => NotepadsCore.OpenNewTextEditor()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
+            });
         }
 
         #region Application Life Cycle & Window management 
@@ -512,80 +536,12 @@ namespace Notepads
             }).ShowAsync();
         }
 
-        private async void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
             // ignoring key events coming from inactive text editors
             if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
-
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
-            {
-                if (e.Key == VirtualKey.Tab)
-                {
-                    e.Handled = true;
-                    NotepadsCore.SwitchTo(!shift.HasFlag(CoreVirtualKeyStates.Down));
-                }
-
-                if (e.Key == VirtualKey.N || e.Key == VirtualKey.T)
-                {
-                    e.Handled = true;
-                    NotepadsCore.OpenNewTextEditor();
-                }
-
-                if (e.Key == VirtualKey.O)
-                {
-                    e.Handled = true;
-                    await OpenNewFiles();
-                }
-
-                if (e.Key == VirtualKey.S && !shift.HasFlag(CoreVirtualKeyStates.Down))
-                {
-                    e.Handled = true;
-                    await Save(NotepadsCore.GetSelectedTextEditor(), false);
-                }
-
-                if (e.Key == VirtualKey.F)
-                {
-                    e.Handled = true;
-                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        ShowFindAndReplaceControl(true);
-                    }
-                    else
-                    {
-                        ShowFindAndReplaceControl(false);
-                    }
-                }
-
-                if (e.Key == VirtualKey.H)
-                {
-                    e.Handled = true;
-                    ShowFindAndReplaceControl(true);
-                }
-            }
-
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down))
-            {
-                if (e.Key == VirtualKey.S)
-                {
-                    e.Handled = true;
-                    await Save(NotepadsCore.GetSelectedTextEditor(), true);
-                }
-            }
-
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                e.Key == Windows.System.VirtualKey.Tab)
-            {
-                e.Handled = true;
-                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-                textEditor.Document.Selection.TypeText(tabStr);
-            }
+            _keyboardCommandHandler.Handle(e);
         }
 
         #endregion

@@ -1,9 +1,11 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Notepads.Commands;
     using Notepads.Services;
     using Notepads.Utilities;
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
@@ -29,6 +31,8 @@ namespace Notepads.Controls.TextEditor
         public event EventHandler<KeyRoutedEventArgs> OnSetClosingKeyDown;
 
         private string[] _documentLinesCache;
+
+        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         public TextEditor()
         {
@@ -67,45 +71,25 @@ namespace Notepads.Controls.TextEditor
                 SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
                 SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             };
+
+            // Init shortcuts
+            _keyboardCommandHandler = GetKeyboardCommandHandler();
         }
 
-        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down))
+            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                if (mouseWheelDelta > 0)
-                {
-                    SetDefaultTabStop(FontFamily, FontSize + 1);
-                    FontSize += 1;
-                }
-                else if (mouseWheelDelta < 0)
-                {
-                    if (!(FontSize > 4)) return;
-                    SetDefaultTabStop(FontFamily, FontSize - 1);
-                    FontSize -= 1;
-                }
-            }
-        }
-
-        private void SetDefaultTabStop(FontFamily font, double fontSize)
-        {
-            Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
-            TextDocument.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
-        }
-
-        private void TextEditor_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
-        {
-            if (args.IsContentChanging)
-            {
-                _documentLinesCache = null;
-            }
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => OnSetClosingKeyDown?.Invoke(this, args)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Document.Undo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Document.Redo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(2)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
+            });
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs e)
@@ -172,27 +156,6 @@ namespace Notepads.Controls.TextEditor
             }
 
             return content;
-        }
-
-        private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
-        {
-            int pos = startIndex;
-            while (pos < target.Length && (pos = target.IndexOf(value, pos, comparison)) != -1)
-            {
-                bool startBoundary = true;
-                if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
-
-                bool endBoundary = true;
-                if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
-
-                if (startBoundary && endBoundary)
-                    return pos;
-
-                pos++;
-            }
-            return -1;
         }
 
         public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
@@ -325,18 +288,6 @@ namespace Notepads.Controls.TextEditor
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
-                alt.HasFlag(CoreVirtualKeyStates.Down) && 
-                !shift.HasFlag(CoreVirtualKeyStates.Down))
-            {
-                if (e.Key == VirtualKey.Z)
-                {
-                    TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
-                    return;
-                }
-            }
 
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
@@ -345,65 +296,122 @@ namespace Notepads.Controls.TextEditor
                 if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
                     e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 || e.Key == VirtualKey.Number7 ||
-                    e.Key == VirtualKey.Number8 || e.Key == VirtualKey.Number9)
+                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
+                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
                 {
-                    return;
-                }
-
-                if (e.Key == VirtualKey.Tab)
-                {
-                    return; // ignoring tab key here since it is reserved for tab switch
-                }
-
-                if (e.Key == VirtualKey.W)
-                {
-                    if (!shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        OnSetClosingKeyDown?.Invoke(this, e);
-                    }
-                    return;
-                }
-
-                if (e.Key == VirtualKey.Z)
-                {
-                    if (shift.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        Document.Redo();
-                    }
-                    else
-                    {
-                        Document.Undo();
-                    }
-                    return;
-                }
-
-                if (e.Key == (VirtualKey)187 || e.Key == VirtualKey.Add) // +
-                {
-                    SetDefaultTabStop(FontFamily, FontSize + 2);
-                    FontSize += 2;
-                    return;
-                }
-
-                if (e.Key == (VirtualKey)189 || e.Key == VirtualKey.Subtract) // -
-                {
-                    if (FontSize > 4)
-                    {
-                        SetDefaultTabStop(FontFamily, FontSize - 2);
-                        FontSize -= 2;
-                    }
-                    return;
-                }
-
-                if (e.Key == VirtualKey.Number0 || e.Key == VirtualKey.NumberPad0) // 0
-                {
-                    SetDefaultTabStop(FontFamily, EditorSettingsService.EditorFontSize);
-                    FontSize = EditorSettingsService.EditorFontSize;
+                    e.Handled = true;
                     return;
                 }
             }
 
-            base.OnKeyDown(e);
+            _keyboardCommandHandler.Handle(e);
+
+            if (!e.Handled)
+            {
+                base.OnKeyDown(e);
+            }
+        }
+
+        public void SetText(string text)
+        {
+            Document.SetText(TextSetOptions.None, text);
+        }
+
+        public void TypeTab()
+        {
+            var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
+            Document.Selection.TypeText(tabStr);
+        }
+
+        public void ClearUndoQueue()
+        {
+            // Clear UndoQueue by setting its limit to 0 and set it back
+            var undoLimit = Document.UndoLimit;
+
+            // Check to prevent the undo limit stuck on zero
+            // because it returns 0 even if the undo limit isn't set yet
+            if (undoLimit != 0)
+            {
+                Document.UndoLimit = 0;
+                Document.UndoLimit = undoLimit;
+            }
+        }
+
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                !shift.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                if (mouseWheelDelta > 0)
+                {
+                    IncreaseFontSize(1);
+                }
+                else if (mouseWheelDelta < 0)
+                {
+                    DecreaseFontSize(1);
+                }
+            }
+        }
+
+        private void IncreaseFontSize(double delta)
+        {
+            SetDefaultTabStop(FontFamily, FontSize + delta);
+            FontSize += delta;
+        }
+
+        private void DecreaseFontSize(double delta)
+        {
+            if (FontSize < delta + 2) return;
+            SetDefaultTabStop(FontFamily, FontSize - delta);
+            FontSize -= delta;
+        }
+
+        private void ResetFontSizeToDefault()
+        {
+            SetDefaultTabStop(FontFamily, EditorSettingsService.EditorFontSize);
+            FontSize = EditorSettingsService.EditorFontSize;
+        }
+
+        private void SetDefaultTabStop(FontFamily font, double fontSize)
+        {
+            Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
+            TextDocument.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
+        }
+
+        private void TextEditor_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        {
+            if (args.IsContentChanging)
+            {
+                _documentLinesCache = null;
+            }
+        }
+
+        private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        {
+            int pos = startIndex;
+            while (pos < target.Length && (pos = target.IndexOf(value, pos, comparison)) != -1)
+            {
+                bool startBoundary = true;
+                if (pos > 0)
+                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
+
+                bool endBoundary = true;
+                if (pos + value.Length < target.Length)
+                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
+
+                if (startBoundary && endBoundary)
+                    return pos;
+
+                pos++;
+            }
+            return -1;
         }
 
         private string TrimText(string text)
@@ -420,25 +428,6 @@ namespace Notepads.Controls.TextEditor
         private string FixLineEnding(string text, LineEnding lineEnding)
         {
             return LineEndingUtility.ApplyLineEnding(text, lineEnding);
-        }
-
-        public void SetText(string text)
-        {
-            Document.SetText(TextSetOptions.None, text);
-        }
-
-        public void ClearUndoQueue()
-        {
-            // Clear UndoQueue by setting its limit to 0 and set it back
-            var undoLimit = Document.UndoLimit;
-
-            // Check to prevent the undo limit stuck on zero
-            // because it returns 0 even if the undo limit isn't set yet
-            if (undoLimit != 0)
-            {
-                Document.UndoLimit = 0;
-                Document.UndoLimit = undoLimit;
-            }
         }
     }
 }
