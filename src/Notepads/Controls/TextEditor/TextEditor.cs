@@ -83,6 +83,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => OnSetClosingKeyDown?.Invoke(this, args)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Document.Undo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Document.Redo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(2)),
@@ -127,7 +128,7 @@ namespace Notepads.Controls.TextEditor
         {
             Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = GetText();
-            text = FixLineEnding(text, LineEnding);
+            text = LineEndingUtility.ApplyLineEnding(text, LineEnding);
             await FileSystemUtility.WriteToFile(text, encoding, file);
             EditingFile = file;
             Encoding = encoding;
@@ -424,9 +425,5 @@ namespace Notepads.Controls.TextEditor
             return text;
         }
 
-        private string FixLineEnding(string text, LineEnding lineEnding)
-        {
-            return LineEndingUtility.ApplyLineEnding(text, lineEnding);
-        }
     }
 }
