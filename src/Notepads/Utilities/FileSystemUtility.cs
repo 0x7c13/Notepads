@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Utilities
 {
+    using Microsoft.AppCenter.Analytics;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,7 +11,6 @@ namespace Notepads.Utilities
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.Provider;
-    using Microsoft.AppCenter.Analytics;
 
     public class TextFile
     {

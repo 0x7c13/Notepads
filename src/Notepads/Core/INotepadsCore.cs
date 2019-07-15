@@ -1,15 +1,13 @@
 ﻿
 namespace Notepads.Core
 {
+    using Notepads.Controls.TextEditor;
+    using Notepads.Utilities;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Utilities;
 
     // INotepadsCore handles Tabs and TextEditor life cycle
     public interface INotepadsCore

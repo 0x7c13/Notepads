@@ -479,7 +479,7 @@ namespace Notepads
                 await Save(textEditor, false);
             }
         }
-        
+
         private void MenuOpenFindButton_OnClick(object sender, RoutedEventArgs e)
         {
             ShowFindAndReplaceControl(false);

@@ -1,14 +1,14 @@
 ﻿
 namespace Notepads.Controls.FindAndReplace
 {
+    using Notepads.EventArgs;
+    using Notepads.Services;
     using System;
     using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
-    using Notepads.EventArgs;
-    using Notepads.Services;
 
     public sealed partial class FindAndReplaceControl : UserControl
     {

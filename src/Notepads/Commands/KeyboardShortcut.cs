@@ -3,7 +3,6 @@ namespace Notepads.Commands
 {
     using System;
     using Windows.System;
-    using Windows.UI.Xaml.Input;
 
     public class KeyboardShortcut<T> : IKeyboardCommand<T>
     {

@@ -29,6 +29,6 @@ namespace Notepads.EventArgs
 
         public bool MatchWholeWord { get; }
 
-        public FindAndReplaceMode FindAndReplaceMode  { get; }
+        public FindAndReplaceMode FindAndReplaceMode { get; }
     }
 }

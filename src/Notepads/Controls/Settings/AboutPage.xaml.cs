@@ -1,25 +1,14 @@
 ﻿
 namespace Notepads.Controls.Settings
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
-    using Windows.ApplicationModel;
-    using Windows.Foundation;
-    using Windows.Foundation.Collections;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Data;
-    using Windows.UI.Xaml.Documents;
-    using Windows.UI.Xaml.Input;
-    using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Media.Imaging;
-    using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
+    using System;
+    using Windows.ApplicationModel;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Documents;
+    using Windows.UI.Xaml.Media.Imaging;
 
     public sealed partial class AboutPage : Page
     {

@@ -140,7 +140,7 @@ namespace Notepads.Controls.TextEditor
             Document.GetText(TextGetOptions.None, out var text);
             // RichEditBox's Document.GetText() method by default append an extra '\r' at end of the text string
             // We need to trim it before proceeding
-            return TrimText(text); 
+            return TrimText(text);
         }
 
         public string GetContentForSharing()

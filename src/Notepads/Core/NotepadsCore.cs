@@ -1,24 +1,20 @@
 ﻿
 namespace Notepads.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Windows.System;
-    using Windows.Storage;
-    using Windows.UI;
-    using Windows.UI.Core;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Input;
-    using Notepads.EventArgs;
-    using Notepads.Services;
     using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Notepads.Utilities;
     using SetsView;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Windows.Storage;
+    using Windows.UI;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
+    using Windows.UI.Xaml.Media;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -42,7 +38,7 @@ namespace Notepads.Core
 
         public event KeyEventHandler OnTextEditorKeyDown;
 
-        public NotepadsCore(SetsView sets, 
+        public NotepadsCore(SetsView sets,
             string defaultNewFileName)
         {
             Sets = sets;
@@ -80,9 +76,9 @@ namespace Notepads.Core
                 textFile.LineEnding);
         }
 
-        private void OpenNewTextEditor(string text, 
-            StorageFile file, 
-            Encoding encoding, 
+        private void OpenNewTextEditor(string text,
+            StorageFile file,
+            Encoding encoding,
             LineEnding lineEnding)
         {
             var textEditor = new TextEditor()
@@ -376,7 +372,7 @@ namespace Notepads.Core
                 textEditor.Encoding = encoding;
                 OnTextEditorEncodingChanged?.Invoke(this, textEditor);
             }
-        }                                     
+        }
 
         private void EditorSettingsService_OnDefaultLineEndingChanged(object sender, LineEnding lineEnding)
         {

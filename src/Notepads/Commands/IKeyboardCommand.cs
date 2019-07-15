@@ -2,7 +2,6 @@
 namespace Notepads.Commands
 {
     using Windows.System;
-    using Windows.UI.Xaml.Input;
 
     public interface IKeyboardCommand<in T>
     {

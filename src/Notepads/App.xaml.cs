@@ -4,6 +4,7 @@ namespace Notepads
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -16,7 +17,6 @@ namespace Notepads
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
-    using Notepads.Services;
 
     sealed partial class App : Application
     {

@@ -1,24 +1,18 @@
 ﻿
 namespace Notepads.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Windows.Storage.Pickers;
-    using Windows.UI.Xaml;
     using Notepads.Controls.TextEditor;
-    using Notepads.EventArgs;
+    using System.Collections.Generic;
+    using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
     {
         public static FileOpenPicker GetFileOpenPicker()
         {
             var fileOpenPicker = new FileOpenPicker
-                    {
-                        SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
-                    };
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+            };
             fileOpenPicker.FileTypeFilter.Add("*");
             return fileOpenPicker;
         }
