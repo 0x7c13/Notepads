@@ -63,7 +63,7 @@
                         </sets:SetsView.Resources>
 
                         <sets:SetsView.SetsStartHeader>
-                            <Button 
+                            <Button x:Name="MainMenuButton"
                                 IsTabStop="False"
                                 Width="42"
                                 Height="{StaticResource SetsViewItemHeaderMinHeight}"
@@ -71,32 +71,29 @@
                                 BorderThickness="0"
                                 Background="Transparent"
                                 Style="{StaticResource ButtonRevealStyle}"
-                                Padding="0"
-                                Tapped="MenuButton_OnTapped">
+                                Padding="0">
                                 <Viewbox MaxWidth="16" MaxHeight="16">
                                     <SymbolIcon Symbol="GlobalNavigationButton"/>
                                 </Viewbox>
                                 <FlyoutBase.AttachedFlyout>
                                     <MenuFlyout x:Name="MainMenuButtonFlyout" 
-                                                Placement="BottomEdgeAlignedLeft"
-                                                Opening="MainMenuButtonFlyout_Opening"
-                                                Closing="MainMenuButtonFlyout_Closing">
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" Icon="NewFolder" Click="MenuCreateNewButton_OnClick" AccessKey="N">
+                                                Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" Icon="OpenFile" Click="MenuOpenFileButton_OnClick" AccessKey="O" >
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save" Click="MenuSaveButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton" Click="MenuSaveAsButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
@@ -104,18 +101,18 @@
                                                 <KeyboardAccelerator Key="S" Modifiers="Control,Menu"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton" Click="MenuSaveAllButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xEA35;"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find" Click="MenuOpenFindButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="F" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton" Click="MenuOpenFindAndReplaceButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8AB;" />
                                             </MenuFlyoutItem.Icon>
@@ -129,7 +126,7 @@
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>-->
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting" Click="MenuSettingsButton_OnClick" />
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />

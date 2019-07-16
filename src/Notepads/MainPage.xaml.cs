@@ -82,25 +82,62 @@ namespace Notepads
             ThemeSettingsService.AppBackground = RootGrid;
             ThemeSettingsService.SetRequestedTheme();
 
-            // Set custom Title Bar
+            // Setup custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-
             EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) => ShowHideStatusBar(visibility);
 
+            // Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
 
             Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
 
-            NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
-            RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
-            RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
+            InitControls();
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+        }
+
+        private void InitControls()
+        {
+            RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
+            RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
+            NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
+            MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor();
+            MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
+            MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), false);
+            MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), true);
+            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, false); };
+            MenuFindButton.Click += (sender, args) => ShowFindAndReplaceControl(false);
+            MenuReplaceButton.Click += (sender, args) => ShowFindAndReplaceControl(true);
+            MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
+
+            MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
+            MainMenuButtonFlyout.Opening += (sender, o) =>
+            {
+                if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+                {
+                    MenuSaveButton.IsEnabled = false;
+                    MenuSaveAsButton.IsEnabled = false;
+                    MenuSaveAllButton.IsEnabled = false;
+                    MenuFindButton.IsEnabled = false;
+                    MenuReplaceButton.IsEnabled = false;
+                    //MenuPrintButton.IsEnabled = false;
+                }
+                else
+                {
+                    MenuSaveButton.IsEnabled = true;
+                    MenuSaveAsButton.IsEnabled = true;
+                    MenuSaveAllButton.IsEnabled = true;
+                    MenuFindButton.IsEnabled = true;
+                    MenuReplaceButton.IsEnabled = true;
+                    //MenuPrintButton.IsEnabled = true;
+                }
+            };
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -245,10 +282,7 @@ namespace Notepads
         {
             if (showStatusBar)
             {
-                if (StatusBar == null)
-                {
-                    FindName("StatusBar"); // Lazy loading   
-                }
+                if (StatusBar == null) { FindName("StatusBar"); } // Lazy loading   
                 SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
             }
             else
@@ -406,93 +440,11 @@ namespace Notepads
 
         private void ShowInAppNotificationMessage(string message, int duration)
         {
-            if (StatusNotification == null)
-            {
-                FindName("StatusNotification"); // Lazy loading
-            }
+            if (StatusNotification == null) { FindName("StatusNotification"); } // Lazy loading
             var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
             StatusNotification.Width = textSize.Width + 100;  // actual width + padding
             StatusNotification.Height = textSize.Height + 50; // actual height + padding
             StatusNotification.Show(message, duration);
-        }
-
-        #endregion
-
-        #region Main Menu
-
-        private void MainMenuButtonFlyout_Opening(object sender, object e)
-        {
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
-            {
-                MenuSaveButton.IsEnabled = false;
-                MenuSaveAsButton.IsEnabled = false;
-                MenuSaveAllButton.IsEnabled = false;
-                MenuFindButton.IsEnabled = false;
-                MenuReplaceButton.IsEnabled = false;
-                //MenuPrintButton.IsEnabled = false;
-            }
-            else
-            {
-                MenuSaveButton.IsEnabled = true;
-                MenuSaveAsButton.IsEnabled = true;
-                MenuSaveAllButton.IsEnabled = true;
-                MenuFindButton.IsEnabled = true;
-                MenuReplaceButton.IsEnabled = true;
-                //MenuPrintButton.IsEnabled = true;
-            }
-        }
-
-        private void MenuButton_OnTapped(object sender, TappedRoutedEventArgs e)
-        {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
-        }
-
-        private void MainMenuButtonFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-        {
-            NotepadsCore.FocusOnSelectedTextEditor();
-        }
-
-        private async void MenuOpenFileButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            await OpenNewFiles();
-        }
-
-        private void MenuCreateNewButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            NotepadsCore.OpenNewTextEditor();
-        }
-
-        private async void MenuSaveButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            await Save(NotepadsCore.GetSelectedTextEditor(), false);
-        }
-
-        private async void MenuSaveAsButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            await Save(NotepadsCore.GetSelectedTextEditor(), true);
-        }
-
-        private async void MenuSaveAllButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            foreach (var textEditor in NotepadsCore.GetAllTextEditors())
-            {
-                await Save(textEditor, false);
-            }
-        }
-
-        private void MenuOpenFindButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            ShowFindAndReplaceControl(false);
-        }
-
-        private void MenuOpenFindAndReplaceButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            ShowFindAndReplaceControl(true);
-        }
-
-        private void MenuSettingsButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            RootSplitView.IsPaneOpen = true;
         }
 
         #endregion
@@ -512,7 +464,7 @@ namespace Notepads
         {
             if (FindAndReplacePlaceholder != null)
             {
-                if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) FindAndReplacePlaceholder.Dismiss();
+                if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) { FindAndReplacePlaceholder.Dismiss(); }
             }
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {

@@ -72,7 +72,7 @@ namespace Notepads
                 {
                     "Exception", e.Exception.ToString()
                 },
-                                {
+                {
                     "StackTrace", e.Exception.StackTrace
                 }
             });
