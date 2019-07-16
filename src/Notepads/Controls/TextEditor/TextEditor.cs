@@ -50,6 +50,7 @@ namespace Notepads.Controls.TextEditor
             HandwritingView.BorderThickness = new Thickness(0);
             ContextFlyout = new TextEditorContextFlyout(this);
             TextChanging += TextEditor_TextChanging;
+            CopyingToClipboard += (sender, args) => CopyPlainTextToWindowsClipboard(args);
             Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
             PointerWheelChanged += OnPointerWheelChanged;
 
@@ -93,11 +94,23 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs e)
+        public void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
         {
-            if (e != null)
+            if (args != null)
             {
-                e.Handled = true;
+                args.Handled = true;
+            }
+
+            DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+            dataPackage.SetText(Document.Selection.Text);
+            Clipboard.SetContent(dataPackage);
+        }
+
+        public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
             }
 
             if (!Document.CanPaste()) return;

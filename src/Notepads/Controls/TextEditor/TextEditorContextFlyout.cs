@@ -105,12 +105,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.C,
                         IsEnabled = false,
                     });
-                    _copy.Click += (sender, args) =>
-                    {
-                        DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                        dataPackage.SetText(_textEditor.Document.Selection.Text);
-                        Clipboard.SetContent(dataPackage);
-                    };
+                    _copy.Click += (sender, args) => _textEditor.CopyPlainTextToWindowsClipboard(null);
                 }
                 return _copy;
             }
