@@ -7,6 +7,7 @@ namespace Notepads
     using Notepads.Controls.TextEditor;
     using Notepads.Core;
     using Notepads.EventArgs;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using System;
@@ -48,7 +49,7 @@ namespace Notepads
             {
                 if (_notepadsCore == null)
                 {
-                    _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"));
+                    _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"), new NotepadsExtensionProvider());
                     _notepadsCore.OnTextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.OnTextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.OnTextEditorKeyDown += OnTextEditor_KeyDown;
@@ -273,9 +274,9 @@ namespace Notepads
         {
             if (textEditor == null) return;
             UpdatePathIndicatorText(textEditor);
+            UpdateLineColumnIndicatorText(textEditor);
             UpdateLineEndingIndicatorText(textEditor.LineEnding);
             UpdateEncodingIndicatorText(textEditor.Encoding);
-            UpdateLineColumnIndicatorText(textEditor);
         }
 
         public void ShowHideStatusBar(bool showStatusBar)

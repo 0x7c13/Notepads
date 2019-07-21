@@ -2,6 +2,7 @@
 namespace Notepads.Core
 {
     using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using SetsView;
@@ -38,12 +39,16 @@ namespace Notepads.Core
 
         public event KeyEventHandler OnTextEditorKeyDown;
 
+        private readonly INotepadsExtensionProvider _extensionProvider;
+
         public NotepadsCore(SetsView sets,
-            string defaultNewFileName)
+            string defaultNewFileName,
+            INotepadsExtensionProvider extensionProvider)
         {
             Sets = sets;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
+            _extensionProvider = extensionProvider;
 
             DefaultNewFileName = defaultNewFileName;
 
@@ -87,6 +92,7 @@ namespace Notepads.Core
                 Encoding = encoding,
                 LineEnding = lineEnding,
                 Saved = true,
+                ExtensionProvider = _extensionProvider
             };
 
             textEditor.SetText(text);
@@ -96,7 +102,7 @@ namespace Notepads.Core
             textEditor.TextChanging += TextEditor_TextChanging;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.KeyDown += OnTextEditorKeyDown;
-            textEditor.OnSetClosingKeyDown += TextEditor_OnSetClosingKeyDown;
+            textEditor.OnEditorClosingKeyDown += TextEditor_OnClosingKeyDown;
 
             var newItem = new SetsViewItem
             {
@@ -323,7 +329,7 @@ namespace Notepads.Core
             OnTextEditorUnloaded?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_OnSetClosingKeyDown(object sender, KeyRoutedEventArgs e)
+        private void TextEditor_OnClosingKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
             if (Sets.Items == null) return;
@@ -336,9 +342,9 @@ namespace Notepads.Core
             }
         }
 
-        private void TextEditor_TextChanging(object sender, RichEditBoxTextChangingEventArgs args)
+        private void TextEditor_TextChanging(object sender, bool isContentChanging)
         {
-            if (!(sender is TextEditor textEditor) || !args.IsContentChanging) return;
+            if (!(sender is TextEditor textEditor) || !isContentChanging) return;
             if (textEditor.Saved)
             {
                 MarkTextEditorSetNotSaved(textEditor);

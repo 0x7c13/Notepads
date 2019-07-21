@@ -23,7 +23,6 @@ namespace Notepads.Services
                 CloseButtonText = ResourceLoader.GetString("AppCloseSaveReminderDialog_CloseButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode,
                 PrimaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 38, 114, 201)),
-                SecondaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 216, 0, 12)),
             };
             saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => saveAndExitAction();
             saveReminderDialog.SecondaryButtonClick += (dialog, eventArgs) => discardAndExitAction();

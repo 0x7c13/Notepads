@@ -152,9 +152,22 @@
     <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
       <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
+      <DependentUpon>TextEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
+    <Compile Include="Extensions\IContentExtension.cs" />
+    <Compile Include="Utilities\FileTypeUtility.cs" />
+    <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
+    <Compile Include="Extensions\IContentPreviewExtension.cs" />
+    <Compile Include="Extensions\MarkdownExtensionView.xaml.cs">
+      <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -171,8 +184,6 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
-    <Compile Include="Controls\TextEditor\TextEditor.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -189,6 +200,7 @@
     <Content Include="Assets\LargeTile.scale-150.png" />
     <Content Include="Assets\LargeTile.scale-200.png" />
     <Content Include="Assets\LargeTile.scale-400.png" />
+    <Content Include="Assets\md.png" />
     <Content Include="Assets\notepads.png" />
     <Content Include="Assets\SmallTile.scale-100.png" />
     <Content Include="Assets\SmallTile.scale-125.png" />
@@ -272,6 +284,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TextEditor\TextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TextEditor\TextEditorCore.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\MarkdownExtensionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -297,10 +321,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resource\InAppNotificationNoDismissButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TextEditor\TextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

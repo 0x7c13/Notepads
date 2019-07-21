@@ -87,7 +87,7 @@
               <uap:FileType ContentType="text/plain">.md</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Markdown File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\md.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

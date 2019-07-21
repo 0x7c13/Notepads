@@ -19,7 +19,7 @@
             </ResourceDictionary.ThemeDictionaries>-->
 
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Controls/TextEditor/TextEditor.xaml" />
+                <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/SetsView.xaml" />
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
@@ -31,27 +31,6 @@
                 <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-
-            <!--<ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <AcrylicBrush x:Key="AcrylicMenuFlyoutBackgroundThemeBrush"
-                                  BackgroundSource="Backdrop"
-                                  TintColor="White"
-                                  TintOpacity="0.5"
-                                  FallbackColor="White"/>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <AcrylicBrush x:Key="AcrylicMenuFlyoutBackgroundThemeBrush"
-                                  BackgroundSource="Backdrop"
-                                  TintColor="Black"
-                                  TintOpacity="0.1"
-                                  FallbackColor="Black"/>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="AcrylicMenuFlyoutBackgroundThemeBrush"
-                                     Color="{ThemeResource SystemColorHighlightColor}"/>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>-->
 
         </ResourceDictionary>
     </Application.Resources>
