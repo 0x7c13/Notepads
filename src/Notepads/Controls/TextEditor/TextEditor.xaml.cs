@@ -128,6 +128,14 @@ namespace Notepads.Controls.TextEditor
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => OnEditorClosingKeyDown?.Invoke(this, args)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                {
+                    if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                    {
+                        _contentPreviewExtension.IsExtensionEnabled = false;
+                        CloseSplitView();
+                    }
+                }),
             });
         }
 

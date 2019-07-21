@@ -19,8 +19,9 @@ namespace Notepads.Extensions
                 _isExtensionEnabled = value;
                 if (_isExtensionEnabled)
                 {
-                    UpdateText();
+                    UpdateFontSize();
                     UpdateTextWrapping();
+                    UpdateText();
                 }
             }
         }
@@ -30,7 +31,6 @@ namespace Notepads.Extensions
         public MarkdownExtensionView()
         {
             InitializeComponent();
-
         }
 
         public void Bind(TextEditorCore editor)
@@ -43,24 +43,7 @@ namespace Notepads.Extensions
             _editorCore = editor;
             _editorCore.TextChanged += OnTextChanged;
             _editorCore.TextWrappingChanged += OnTextWrappingChanged;
-        }
-
-        private void UpdateTextWrapping()
-        {
-            if (_editorCore != null)
-            {
-                MarkdownTextBlock.TextWrapping = _editorCore.TextWrapping;
-                MarkdownScrollViewer.HorizontalScrollBarVisibility = MarkdownTextBlock.TextWrapping == TextWrapping.Wrap ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Visible;
-            }
-        }
-
-        private void OnTextWrappingChanged(object sender, TextWrapping textWrapping)
-        {
-            if (IsExtensionEnabled)
-            {
-                MarkdownTextBlock.TextWrapping = textWrapping;
-                UpdateTextWrapping();
-            }
+            _editorCore.FontSizeChanged += OnFontSizeChanged;
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -71,11 +54,50 @@ namespace Notepads.Extensions
             }
         }
 
+        private void OnTextWrappingChanged(object sender, TextWrapping textWrapping)
+        {
+            if (IsExtensionEnabled)
+            {
+                UpdateTextWrapping();
+            }
+        }
+
+        private void OnFontSizeChanged(object sender, double fontSize)
+        {
+            if (IsExtensionEnabled)
+            {
+                UpdateFontSize();
+            }
+        }
+
+        private void UpdateFontSize()
+        {
+            if (_editorCore != null)
+            {
+                MarkdownTextBlock.FontSize = _editorCore.FontSize;
+                MarkdownTextBlock.Header1FontSize = MarkdownTextBlock.FontSize + 5;
+                MarkdownTextBlock.Header2FontSize = MarkdownTextBlock.FontSize + 5;
+                MarkdownTextBlock.Header3FontSize = MarkdownTextBlock.FontSize + 2;
+                MarkdownTextBlock.Header4FontSize = MarkdownTextBlock.FontSize + 2;
+                MarkdownTextBlock.Header5FontSize = MarkdownTextBlock.FontSize + 1;
+                MarkdownTextBlock.Header6FontSize = MarkdownTextBlock.FontSize + 1;
+            }
+        }
+
         private void UpdateText()
         {
             if (_editorCore != null)
             {
-                MarkdownTextBlock.Text = _editorCore?.GetText();
+                MarkdownTextBlock.Text = _editorCore.GetText();
+            }
+        }
+
+        private void UpdateTextWrapping()
+        {
+            if (_editorCore != null)
+            {
+                MarkdownTextBlock.TextWrapping = _editorCore.TextWrapping;
+                MarkdownScrollViewer.HorizontalScrollBarVisibility = MarkdownTextBlock.TextWrapping == TextWrapping.Wrap ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Visible;
             }
         }
 

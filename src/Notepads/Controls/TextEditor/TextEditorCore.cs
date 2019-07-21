@@ -24,6 +24,8 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler<TextWrapping> TextWrappingChanged;
 
+        public event EventHandler<double> FontSizeChanged;
+
         public new TextWrapping TextWrapping
         {
             get => base.TextWrapping;
@@ -31,6 +33,16 @@ namespace Notepads.Controls.TextEditor
             {
                 base.TextWrapping = value;
                 TextWrappingChanged?.Invoke(this, value);
+            }
+        }
+
+        public new double FontSize
+        {
+            get => base.FontSize;
+            set
+            {
+                base.FontSize = value;
+                FontSizeChanged?.Invoke(this, value);
             }
         }
 
