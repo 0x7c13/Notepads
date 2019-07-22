@@ -115,8 +115,9 @@ namespace Notepads.Core
                 }
             };
             newItem.Icon.Visibility = Visibility.Collapsed;
+            newItem.ContextFlyout = new TabContextFlyout(Sets, newItem);
 
-            // Notepads should replace current "New Document.txt" with open file if it is empty and it is the only tab that has been created.
+            // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             if (GetNumberOfOpenedTextEditors() == 1 && file != null)
             {
                 var selectedEditor = GetSelectedTextEditor();

@@ -155,6 +155,7 @@
     <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
       <DependentUpon>TextEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TabContextFlyout.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
     <Compile Include="Core\INotepadsCore.cs" />

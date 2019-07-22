@@ -43,7 +43,13 @@ namespace Notepads.Utilities
             ActiveDialog = dialog;
             ActiveDialog.Closed += ActiveDialog_Closed;
             await ActiveDialog.ShowAsync();
-            ActiveDialog.Closed -= ActiveDialog_Closed;
+
+            // Only unsubscribe the callback if the active dialog is us
+            // Otherwise, the in-flight dialog may end up not signaling the awaiter
+            if (ActiveDialog == dialog)
+            {
+                ActiveDialog.Closed -= ActiveDialog_Closed;
+            }
         }
     }
 }

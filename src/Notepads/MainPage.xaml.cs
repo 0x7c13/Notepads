@@ -490,7 +490,7 @@ namespace Notepads
                 NotepadsCore.FocusOnSelectedTextEditor();
             }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
-            await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: false);
+            await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
