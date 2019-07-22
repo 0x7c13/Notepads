@@ -13,7 +13,7 @@ You can contribute to Notepads project by:
     * Since Notepads is still in early beta. I might change texts and add texts now and then for the upcoming months. Whenever that happens, I will notify you in [Notepads Discord Server](https://discord.gg/VqetCub) (Please join it if possible). If someday you lose the passion, feel free to let me know so I can assign your language to others.
     * OK, here are the steps you need to follow if you want to contribute:
         1. Make sure you can build and run Notepads project on your machine so that you can test it after your work.
-        2. Click [here](https://github.com/JasonStein/Notepads/issues/33) and provide your information:
+        2. Click [here](https://github.com/JasonStein/Notepads/issues/33) and provide your information.
         3. Do your work and test it on your machine and check your work to make sure it is not breaking any existing layout.
         4. Finish your work and create a PR (Example: https://github.com/JasonStein/Notepads/pull/30)
         5. Let me know and I will merge it if it looks good to me.

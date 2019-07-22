@@ -14,7 +14,8 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or PowerShell by typing: "notepads" or "notepads %path-to-your-file%".
 * Multi-line handwriting support.
-* Built-in Markdown file preview viewer + built-in diff viewer. [Work in progress]
+* Built-in Markdown file preview viewer.
+* Built-in diff viewer. [Work in progress]
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
@@ -24,14 +25,15 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ## Things are not working or not implemented in this version:
 
 * File Print.
-* Markdown file preview viewer + built-in diff viewer.
+* Built-in diff viewer.
 
 ## Shortcuts:
 
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
-* Ctrl+"+"/"-" to increase/decrease font size. Ctrl+"0" to reset font size to default.
+* Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
+* Ctrl+P to toggle preivew split view for Markdown file.
 
 ## Author’s Notes:
 
@@ -83,6 +85,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx)
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
+    * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
 
 ## Stay tuned 📢:
 
