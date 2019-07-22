@@ -265,6 +265,30 @@
     <value>是否保存更改?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
+  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
+    <value>关闭</value>
+    <comment>Tab: ContextFlyout "Close" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
+    <value>关闭其他</value>
+    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
+    <value>关闭右侧所有</value>
+    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
+    <value>关闭已保存</value>
+    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
+    <value>复制路径</value>
+    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
+    <value>打开文件所在文件夹</value>
+    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
+  </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
     <value>复制</value>
     <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>

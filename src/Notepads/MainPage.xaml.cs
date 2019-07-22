@@ -355,10 +355,17 @@ namespace Notepads
             if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
-                var pathData = new DataPackage();
-                pathData.SetText(PathIndicator.Text);
-                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
-                ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                try
+                {
+                    var pathData = new DataPackage();
+                    pathData.SetText(PathIndicator.Text);
+                    Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
+                    ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                }
+                catch (Exception)
+                {
+                    // Ignore
+                }
             }
             else if (sender is TextBlock textBlock)
             {

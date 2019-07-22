@@ -1,6 +1,7 @@
 ﻿
-namespace Notepads.Controls.TextEditor
+namespace Notepads.Core
 {
+    using Notepads.Controls.TextEditor;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,7 +10,9 @@ namespace Notepads.Controls.TextEditor
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public class TabContextFlyout : MenuFlyout
     {
@@ -42,6 +45,28 @@ namespace Notepads.Controls.TextEditor
             Items.Add(OpenContainingFolder);
 
             Opening += TabContextFlyout_Opening;
+            Closed += TabContextFlyout_Closed;
+        }
+
+        private void TabContextFlyout_Opening(object sender, object e)
+        {
+            if (_tab.Content is TextEditor textEditor && textEditor.EditingFile != null)
+            {
+                _filePath = textEditor.EditingFile.Path;
+                _containingFolderPath = Path.GetDirectoryName(_filePath);
+            }
+
+            CloseOthers.IsEnabled = CloseRight.IsEnabled = _tabs.Items?.Count > 1;
+            CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
+            OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+        }
+
+        private void TabContextFlyout_Closed(object sender, object e)
+        {
+            if (((SetsViewItem) _tabs.SelectedItem)?.Content is TextEditor textEditor)
+            {
+                textEditor.Focus(FocusState.Programmatic);
+            }
         }
 
         private IList<SetsViewItem> TabList
@@ -52,7 +77,6 @@ namespace Notepads.Controls.TextEditor
                 {
                     return Array.Empty<SetsViewItem>();
                 }
-
                 return _tabs.Items.Cast<SetsViewItem>().ToList();
             }
         }
@@ -65,7 +89,14 @@ namespace Notepads.Controls.TextEditor
                 {
                     _close = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText") };
                     _close.Click += (sender, args) => { _tab.Close(); };
+                    _close.KeyboardAccelerators.Add(new KeyboardAccelerator()
+                    {
+                        Modifiers = VirtualKeyModifiers.Control,
+                        Key = VirtualKey.W,
+                        IsEnabled = false,
+                    });
                 }
+
                 return _close;
             }
         }
@@ -151,9 +182,16 @@ namespace Notepads.Controls.TextEditor
                     _copyFullPath = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText") };
                     _copyFullPath.Click += (sender, args) =>
                     {
-                        DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                        dataPackage.SetText(_filePath);
-                        Clipboard.SetContent(dataPackage);
+                        try
+                        {
+                            DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                            dataPackage.SetText(_filePath);
+                            Clipboard.SetContent(dataPackage);
+                        }
+                        catch (Exception)
+                        {
+                            // Ignore
+                        }
                     };
                 }
                 return _copyFullPath;
@@ -174,19 +212,6 @@ namespace Notepads.Controls.TextEditor
                 }
                 return _openContainingFolder;
             }
-        }
-
-        private void TabContextFlyout_Opening(object sender, object e)
-        {
-            if (_tab.Content is TextEditor textEditor && textEditor.EditingFile != null)
-            {
-                _filePath = textEditor.EditingFile.Path;
-                _containingFolderPath = Path.GetDirectoryName(_filePath);
-            }
-
-            CloseOthers.IsEnabled = CloseRight.IsEnabled = _tabs.Items.Count > 1;
-            CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
-            OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
         }
     }
 }

@@ -171,9 +171,16 @@ namespace Notepads.Controls.TextEditor
                 args.Handled = true;
             }
 
-            DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-            dataPackage.SetText(Document.Selection.Text);
-            Clipboard.SetContent(dataPackage);
+            try
+            {
+                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                dataPackage.SetText(Document.Selection.Text);
+                Clipboard.SetContent(dataPackage);
+            }
+            catch (Exception )
+            {
+                // Ignore
+            }
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
@@ -185,10 +192,10 @@ namespace Notepads.Controls.TextEditor
 
             if (!Document.CanPaste()) return;
 
-            var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
-            if (!dataPackageView.Contains(StandardDataFormats.Text)) return;
             try
             {
+                var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+                if (!dataPackageView.Contains(StandardDataFormats.Text)) return;
                 var text = await dataPackageView.GetTextAsync();
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
