@@ -272,16 +272,8 @@ namespace Notepads.Controls.TextEditor
                     Document.Selection.Type == SelectionType.Shape)
                 {
                     var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                    if (mouseWheelDelta > 0)
-                    {
-                        _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
-                            _contentScrollViewer.VerticalOffset - mouseWheelDelta, null, true);
-                    }
-                    else if (mouseWheelDelta < 0)
-                    {
-                        _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
+                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
                             _contentScrollViewer.VerticalOffset + -1 * mouseWheelDelta, null, true);
-                    }
                 }
             }
         }
