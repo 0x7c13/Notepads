@@ -3,7 +3,6 @@ namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using SetsView;
