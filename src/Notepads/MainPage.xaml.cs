@@ -110,11 +110,11 @@ namespace Notepads
             MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor();
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
-            MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), false);
-            MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), true);
-            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, false); };
-            MenuFindButton.Click += (sender, args) => ShowFindAndReplaceControl(false);
-            MenuReplaceButton.Click += (sender, args) => ShowFindAndReplaceControl(true);
+            MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
+            MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
+            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false); };
+            MenuFindButton.Click += (sender, args) => ShowFindAndReplaceControl(showReplaceBar: false);
+            MenuReplaceButton.Click += (sender, args) => ShowFindAndReplaceControl(showReplaceBar: true);
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
@@ -150,11 +150,11 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.T, (args) => NotepadsCore.OpenNewTextEditor()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
             });
         }
@@ -239,7 +239,7 @@ namespace Notepads
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        if (await Save(textEditor, false))
+                        if (await Save(textEditor, saveAs: false))
                         {
                             NotepadsCore.DeleteTextEditor(textEditor);
                         }
@@ -482,7 +482,7 @@ namespace Notepads
 
             var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {
-                if (await Save(textEditor, false))
+                if (await Save(textEditor, saveAs: false))
                 {
                     NotepadsCore.DeleteTextEditor(textEditor);
                 }

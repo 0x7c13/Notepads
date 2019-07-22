@@ -108,8 +108,15 @@ namespace Notepads.Extensions
                 return;
             }
 
-            var uri = new Uri(e.Link);
-            await Windows.System.Launcher.LaunchUriAsync(uri);
+            try
+            {
+                var uri = new Uri(e.Link);
+                await Windows.System.Launcher.LaunchUriAsync(uri);
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
         }
     }
 }
