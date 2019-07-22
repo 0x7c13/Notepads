@@ -82,6 +82,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
     * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx)
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
+    * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
 
 ## Stay tuned 📢:
 
