@@ -144,6 +144,7 @@ namespace Notepads.Core
             {
                 item.Header = file.Name;
                 item.Icon.Visibility = Visibility.Collapsed;
+                item.Content = textEditor;
             }
             OnTextEditorSaved?.Invoke(this, textEditor);
         }

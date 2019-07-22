@@ -20,11 +20,11 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _copyFullPath;
         private MenuFlyoutItem _openContainingFolder;
 
+        private string _filePath;
+        private string _containingFolderPath;
+
         private readonly SetsView _tabs;
         private readonly SetsViewItem _tab;
-
-        private readonly string _filePath;
-        private readonly string _containingFolderPath;
 
         private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
 
@@ -32,12 +32,6 @@ namespace Notepads.Controls.TextEditor
         {
             _tabs = tabs;
             _tab = tab;
-
-            if (_tab.Content is TextEditor textEditor && textEditor.EditingFile != null)
-            {
-                _filePath = textEditor.EditingFile.Path;
-                _containingFolderPath = Path.GetDirectoryName(_filePath);
-            }
 
             Items.Add(Close);
             Items.Add(CloseOthers);
@@ -184,6 +178,12 @@ namespace Notepads.Controls.TextEditor
 
         private void TabContextFlyout_Opening(object sender, object e)
         {
+            if (_tab.Content is TextEditor textEditor && textEditor.EditingFile != null)
+            {
+                _filePath = textEditor.EditingFile.Path;
+                _containingFolderPath = Path.GetDirectoryName(_filePath);
+            }
+
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _tabs.Items.Count > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
