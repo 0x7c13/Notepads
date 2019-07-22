@@ -16,6 +16,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
+    [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
         private string[] _documentLinesCache;
@@ -25,6 +26,10 @@ namespace Notepads.Controls.TextEditor
         public event EventHandler<TextWrapping> TextWrappingChanged;
 
         public event EventHandler<double> FontSizeChanged;
+
+        private const string ContentElementName = "ContentElement";
+
+        private ScrollViewer _contentScrollViewer;
 
         public new TextWrapping TextWrapping
         {
@@ -101,6 +106,12 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
             });
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
         }
 
         public string GetText()
@@ -249,6 +260,28 @@ namespace Notepads.Controls.TextEditor
                 else if (mouseWheelDelta < 0)
                 {
                     DecreaseFontSize(1);
+                }
+            }
+
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                !shift.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (Document.Selection.Type == SelectionType.Normal ||
+                    Document.Selection.Type == SelectionType.InlineShape ||
+                    Document.Selection.Type == SelectionType.Shape)
+                {
+                    var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                    if (mouseWheelDelta > 0)
+                    {
+                        _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
+                            _contentScrollViewer.VerticalOffset - mouseWheelDelta, null, true);
+                    }
+                    else if (mouseWheelDelta < 0)
+                    {
+                        _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
+                            _contentScrollViewer.VerticalOffset + -1 * mouseWheelDelta, null, true);
+                    }
                 }
             }
         }
