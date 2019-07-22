@@ -98,7 +98,7 @@
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control,Menu"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
