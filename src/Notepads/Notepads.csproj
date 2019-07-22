@@ -159,6 +159,7 @@
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
+    <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Utilities\ContentDialogMaker.cs" />
