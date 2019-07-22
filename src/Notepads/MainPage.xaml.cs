@@ -234,7 +234,8 @@ namespace Notepads
         {
             if (!NotepadsCore.HaveUnsavedTextEditor()) return;
             e.Handled = true;
-            await ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
+
+            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
@@ -244,7 +245,9 @@ namespace Notepads
                         }
                     }
                 },
-                () => Application.Current.Exit()).ShowAsync();
+                () => Application.Current.Exit());
+
+            await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
         }
 
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)
@@ -476,17 +479,18 @@ namespace Notepads
         private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
         {
             var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
-            await ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+
+            var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {
                 if (await Save(textEditor, false))
                 {
                     NotepadsCore.DeleteTextEditor(textEditor);
                 }
+
                 NotepadsCore.FocusOnSelectedTextEditor();
-            }, () =>
-            {
-                NotepadsCore.DeleteTextEditor(textEditor);
-            }).ShowAsync();
+            }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
+
+            await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: false);
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -526,7 +530,8 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                await ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message).ShowAsync();
+                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
             }
@@ -579,7 +584,8 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                await ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message).ShowAsync();
+                var fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 return false;
             }
         }

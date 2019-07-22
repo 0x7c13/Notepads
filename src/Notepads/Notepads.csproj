@@ -161,6 +161,7 @@
     <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
+    <Compile Include="Utilities\ContentDialogMaker.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
