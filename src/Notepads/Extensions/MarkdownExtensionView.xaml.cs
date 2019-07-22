@@ -4,8 +4,32 @@ namespace Notepads.Extensions
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Controls.TextEditor;
     using System;
+    using System.IO;
+    using System.Net;
+    using System.Threading.Tasks;
+    using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
+
+    public class Downloader : IDisposable
+    {
+        public async Task<MemoryStream> GetDataFeed(string feedUrl)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(feedUrl);
+            request.Method = "GET";
+
+            var response = (HttpWebResponse)await request.GetResponseAsync();
+
+            MemoryStream ms = new MemoryStream();
+            var stream = response.GetResponseStream();
+            stream?.CopyTo(ms);
+            return ms;
+        }
+
+        public void Dispose() { }
+    }
 
     public sealed partial class MarkdownExtensionView : IContentPreviewExtension
     {
@@ -31,6 +55,67 @@ namespace Notepads.Extensions
         public MarkdownExtensionView()
         {
             InitializeComponent();
+            MarkdownTextBlock.ImageResolving += MarkdownTextBlock_ImageResolving;
+        }
+
+        private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+
+            try
+            {
+                var imageUri = new Uri(e.Url);
+                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                {
+                    // SvgImageSource is not working properly when width and height are not set in uri
+                    // I am disabling Svg parsing here.
+                    // e.Image = await GetImageAsync(e.Url);
+                    e.Handled = true;
+                }
+                else
+                {
+                    e.Image = await GetImageAsync(e.Url);
+                    e.Handled = true;
+                }
+            }
+            catch (Exception)
+            {
+                e.Handled = false;
+            }
+
+            deferral.Complete();    
+        }
+
+        private async Task<ImageSource> GetImageAsync(string url)
+        {
+            var imageUri = new Uri(url);
+            using (var d = new Downloader())
+            {
+                var feed = await d.GetDataFeed(url);
+                feed.Seek(0, SeekOrigin.Begin);
+
+                using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
+                {
+                    using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
+                    {
+                        writer.WriteBytes((byte[])feed.ToArray());
+                        writer.StoreAsync().GetResults();
+                    }
+
+                    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                    {
+                        var image = new SvgImageSource();
+                        await image.SetSourceAsync(ms);
+                        return image;
+                    }
+                    else
+                    {
+                        var image = new BitmapImage();
+                        await image.SetSourceAsync(ms);
+                        return image;
+                    }
+                }
+            }
         }
 
         public void Bind(TextEditorCore editor)
@@ -88,6 +173,7 @@ namespace Notepads.Extensions
         {
             if (_editorCore != null)
             {
+                MarkdownTextBlock.ImageMaxWidth = ActualWidth;
                 MarkdownTextBlock.Text = _editorCore.GetText();
             }
         }
