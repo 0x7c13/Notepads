@@ -21,6 +21,8 @@ namespace Notepads.Controls.TextEditor
     {
         private string[] _documentLinesCache;
 
+        private bool _isCachePendingUpdate = true;
+
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         public event EventHandler<TextWrapping> TextWrappingChanged;
@@ -125,10 +127,11 @@ namespace Notepads.Controls.TextEditor
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_documentLinesCache == null)
+            if (_isCachePendingUpdate)
             {
                 Document.GetText(TextGetOptions.None, out var text);
                 _documentLinesCache = text.Split("\r");
+                _isCachePendingUpdate = false;
             }
 
             var start = Document.Selection.StartPosition;
@@ -245,7 +248,7 @@ namespace Notepads.Controls.TextEditor
         {
             if (args.IsContentChanging)
             {
-                _documentLinesCache = null;
+                _isCachePendingUpdate = true;
             }
         }
 

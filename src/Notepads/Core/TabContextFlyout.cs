@@ -1,9 +1,9 @@
 ﻿
 namespace Notepads.Core
 {
+    using Notepads.Controls.TextEditor;
     using System;
     using System.IO;
-    using Notepads.Controls.TextEditor;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -77,7 +77,6 @@ namespace Notepads.Core
                         IsEnabled = false,
                     });
                 }
-
                 return _close;
             }
         }

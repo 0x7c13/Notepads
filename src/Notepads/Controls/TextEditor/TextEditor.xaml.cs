@@ -53,7 +53,7 @@ namespace Notepads.Controls.TextEditor
 
         public TextEditor()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             TextEditorCore.TextChanging += (sender, args) => { TextChanging?.Invoke(this, args.IsContentChanging); };
             TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, args); };
