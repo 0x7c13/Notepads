@@ -270,19 +270,19 @@
     <comment>Tab: ContextFlyout "Close" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>Chiudi tutte le altre schede</value>
+    <value>Chiudi le altre schede</value>
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Chiudi tutte le schede a destra</value>
+    <value>Chiudi le schede a destra</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Chiudi tutte le schede salvate</value>
+    <value>Chiudi le schede salvate</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>Copia percorso intero</value>
+    <value>Copia percorso completo</value>
     <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
