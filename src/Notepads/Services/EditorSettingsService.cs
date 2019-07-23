@@ -5,6 +5,7 @@ namespace Notepads.Services
     using Notepads.Utilities;
     using System;
     using System.Text;
+    using System.Threading;
     using Windows.UI.Xaml;
 
     public static class EditorSettingsService
@@ -95,6 +96,36 @@ namespace Notepads.Services
             }
         }
 
+        private static Encoding _editorDefaultDecoding;
+
+        public static Encoding EditorDefaultDecoding
+        {
+            get
+            {
+                // If it is not UTF-8 meaning user is using ANSI decoding,
+                // We should always try get latest system ANSI code page.
+                if (!(_editorDefaultDecoding is UTF8Encoding))
+                {
+                    try
+                    {
+                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
+                        _editorDefaultDecoding = decoding;
+                    }
+                    catch (Exception)
+                    {
+                        _editorDefaultDecoding = new UTF8Encoding(false);
+                    }
+                }
+                return _editorDefaultDecoding;
+            }
+            set
+            {
+                _editorDefaultDecoding = value;
+                ApplicationSettings.Write(SettingsKey.EditorDefaultDecodingCodePageInt, value.CodePage, true);
+            }
+        }
+
         private static int _editorDefaultTabIndents;
 
         public static int EditorDefaultTabIndents
@@ -130,6 +161,8 @@ namespace Notepads.Services
             InitializeLineEndingSettings();
 
             InitializeEncodingSettings();
+
+            InitializeDecodingSettings();
 
             InitializeTabIndentsSettings();
 
@@ -176,8 +209,7 @@ namespace Notepads.Services
 
         private static void InitializeEncodingSettings()
         {
-            System.Text.EncodingProvider provider = System.Text.CodePagesEncodingProvider.Instance;
-            Encoding.RegisterProvider(provider);
+            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
@@ -200,6 +232,31 @@ namespace Notepads.Services
             else
             {
                 _editorDefaultEncoding = new UTF8Encoding(false);
+            }
+        }
+
+        private static void InitializeDecodingSettings()
+        {
+            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            if (ApplicationSettings.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
+            {
+                try
+                {
+                    _editorDefaultDecoding = Encoding.GetEncoding(decodingCodePage);
+                    if (_editorDefaultDecoding is UTF8Encoding)
+                    {
+                        _editorDefaultDecoding = new UTF8Encoding(false);
+                    }
+                }
+                catch (Exception)
+                {
+                    _editorDefaultDecoding = new UTF8Encoding(false);
+                }
+            }
+            else
+            {
+                _editorDefaultDecoding = new UTF8Encoding(false);
             }
         }
 

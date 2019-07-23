@@ -177,7 +177,7 @@ namespace Notepads.Controls.TextEditor
                 dataPackage.SetText(Document.Selection.Text);
                 Clipboard.SetContent(dataPackage);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 // Ignore
             }

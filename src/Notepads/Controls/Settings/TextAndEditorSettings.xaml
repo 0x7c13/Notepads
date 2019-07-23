@@ -86,12 +86,22 @@
                     FontWeight="Normal"
                     Text="Default Encoding" />
                 <StackPanel x:Name="EncodingPanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8RadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8BomRadioButton" Tag="UTF-8-BOM" Content="UTF-8-BOM" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeBomRadioButton" Tag="UTF-16 LE BOM" Content="UTF-16 LE BOM" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeBomRadioButton" Tag="UTF-16 BE BOM" Content="UTF-16 BE BOM" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8EncodingRadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8BomEncodingRadioButton" Tag="UTF-8-BOM" Content="UTF-8-BOM" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeBomEncodingRadioButton" Tag="UTF-16 LE BOM" Content="UTF-16 LE BOM" GroupName="EncodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeBomEncodingRadioButton" Tag="UTF-16 BE BOM" Content="UTF-16 BE BOM" GroupName="EncodingGroup"/>
                 </StackPanel>
                 <TextBlock Text="Only apply to new document" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"
+                    Text="Default Decoding" />
+                <StackPanel x:Name="DecodingPanel" Margin="0,10,0,0">
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8DecodingRadioButton" Tag="UTF-8" Content="UTF-8 (Recommended)" GroupName="DecodingGroup"/>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="AnsiDecodingRadioButton" Tag="ANSI" Content="ANSI (Windows code page)" GroupName="DecodingGroup"/>
+                </StackPanel>
+                <TextBlock Text="Default decoding when no BOM was found. ANSI decoding is used to read legacy text files." Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 <TextBlock
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,35,0,0"

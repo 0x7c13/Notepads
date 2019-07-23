@@ -2,6 +2,7 @@
 namespace Notepads.Utilities
 {
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -134,6 +135,8 @@ namespace Notepads.Utilities
                 throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
 
+            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
             string text;
             Encoding encoding;
             var bom = new byte[4];
@@ -146,15 +149,27 @@ namespace Notepads.Utilities
 
             using (var inputStream = await file.OpenReadAsync())
             using (var classicStream = inputStream.AsStreamForRead())
-            using (var streamReader = new StreamReader(classicStream))
             {
-                streamReader.Peek();
-                encoding = streamReader.CurrentEncoding;
-                text = streamReader.ReadToEnd();
+                var reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                reader.Peek();
+                encoding = reader.CurrentEncoding;
+                text = reader.ReadToEnd();
+                reader.Close();
             }
 
             encoding = FixUtf8Bom(encoding, bom);
             return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text));
+        }
+
+        private static bool HasBom(byte[] bom)
+        {
+            // Analyze the BOM
+            if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return true; // Encoding.UTF7
+            if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return true; // Encoding.UTF8
+            if (bom[0] == 0xff && bom[1] == 0xfe) return true; // Encoding.Unicode
+            if (bom[0] == 0xfe && bom[1] == 0xff) return true; // Encoding.BigEndianUnicode
+            if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) return true; // Encoding.UTF32
+            return false;
         }
 
         private static Encoding FixUtf8Bom(Encoding encoding, byte[] bom)

@@ -2,11 +2,11 @@
 namespace Notepads.Core
 {
     using Notepads.Controls.TextEditor;
+    using SetsView;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using SetsView;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -63,7 +63,7 @@ namespace Notepads.Core
 
         private void TabContextFlyout_Closed(object sender, object e)
         {
-            if (((SetsViewItem) _tabs.SelectedItem)?.Content is TextEditor textEditor)
+            if (((SetsViewItem)_tabs.SelectedItem)?.Content is TextEditor textEditor)
             {
                 textEditor.Focus(FocusState.Programmatic);
             }

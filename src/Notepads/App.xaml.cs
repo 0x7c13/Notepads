@@ -7,7 +7,6 @@ namespace Notepads
     using Notepads.Services;
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -31,9 +30,6 @@ namespace Notepads
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(null, services);
-
-            System.Text.EncodingProvider provider = System.Text.CodePagesEncodingProvider.Instance;
-            Encoding.RegisterProvider(provider);
 
             InitializeComponent();
             Suspending += OnSuspending;

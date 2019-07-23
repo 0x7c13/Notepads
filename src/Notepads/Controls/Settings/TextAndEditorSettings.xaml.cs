@@ -3,8 +3,10 @@ namespace Notepads.Controls.Settings
 {
     using Notepads.Services;
     using Notepads.Utilities;
+    using System;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -25,6 +27,7 @@ namespace Notepads.Controls.Settings
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
+            // Line Ending
             switch (EditorSettingsService.EditorDefaultLineEnding)
             {
                 case LineEnding.Crlf:
@@ -38,26 +41,38 @@ namespace Notepads.Controls.Settings
                     break;
             }
 
+            // Encoding
             if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
             {
                 if (Equals(EditorSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
                 {
-                    Utf8RadioButton.IsChecked = true;
+                    Utf8EncodingRadioButton.IsChecked = true;
                 }
                 else
                 {
-                    Utf8BomRadioButton.IsChecked = true;
+                    Utf8BomEncodingRadioButton.IsChecked = true;
                 }
             }
             else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.Unicode.CodePage)
             {
-                Utf16LeBomRadioButton.IsChecked = true;
+                Utf16LeBomEncodingRadioButton.IsChecked = true;
             }
             else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.BigEndianUnicode.CodePage)
             {
-                Utf16BeBomRadioButton.IsChecked = true;
+                Utf16BeBomEncodingRadioButton.IsChecked = true;
             }
 
+            // Decoding
+            if (EditorSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
+            {
+                Utf8DecodingRadioButton.IsChecked = true;
+            }
+            else
+            {
+                AnsiDecodingRadioButton.IsChecked = true;
+            }
+
+            // Tab indentation
             if (EditorSettingsService.EditorDefaultTabIndents == -1)
             {
                 TabDefaultRadioButton.IsChecked = true;
@@ -88,10 +103,13 @@ namespace Notepads.Controls.Settings
             CrRadioButton.Checked += LineEndingRadioButton_OnChecked;
             LfRadioButton.Checked += LineEndingRadioButton_OnChecked;
 
-            Utf8RadioButton.Checked += EncodingRadioButton_Checked;
-            Utf8BomRadioButton.Checked += EncodingRadioButton_Checked;
-            Utf16LeBomRadioButton.Checked += EncodingRadioButton_Checked;
-            Utf16BeBomRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf8EncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf8BomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16LeBomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16BeBomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+
+            Utf8DecodingRadioButton.Checked += DecodingRadioButton_Checked;
+            AnsiDecodingRadioButton.Checked += DecodingRadioButton_Checked;
 
             TabDefaultRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
@@ -137,6 +155,30 @@ namespace Notepads.Controls.Settings
                     break;
                 case "UTF-16 BE BOM":
                     EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
+                    break;
+            }
+        }
+
+        private void DecodingRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Tag)
+            {
+                case "UTF-8":
+                    EditorSettingsService.EditorDefaultDecoding = new UTF8Encoding(false);
+                    break;
+                case "ANSI":
+                    try
+                    {
+                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
+                        EditorSettingsService.EditorDefaultDecoding = decoding;
+                    }
+                    catch (Exception)
+                    {
+                        Utf8DecodingRadioButton.IsChecked = true;
+                    }
                     break;
             }
         }

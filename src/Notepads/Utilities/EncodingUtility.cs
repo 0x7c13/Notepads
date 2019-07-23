@@ -1,15 +1,20 @@
 ﻿
 namespace Notepads.Utilities
 {
+    using System;
     using System.Text;
 
     public static class EncodingUtility
     {
         public static string GetEncodingBodyName(Encoding encoding)
         {
-            var encodingBodyName = encoding.BodyName.ToUpper();
+            var encodingBodyName = "ANSI";
 
-            if (encoding is UTF8Encoding)
+            if (encoding is UTF7Encoding)
+            {
+                encodingBodyName = "UTF-7";
+            }
+            else if (encoding is UTF8Encoding)
             {
                 if (Equals(encoding, new UTF8Encoding(true)))
                 {
@@ -33,7 +38,14 @@ namespace Notepads.Utilities
             }
             else
             {
-                encodingBodyName = encoding.BodyName;
+                try
+                {
+                    encodingBodyName = encoding.BodyName.ToUpper();
+                }
+                catch (Exception)
+                {
+                    // Ignore
+                }
             }
 
             return encodingBodyName;

@@ -16,6 +16,7 @@ namespace Notepads.Settings
         internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
         internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
         internal static string EditorDefaultEncodingCodePageInt = "EditorDefaultEncodingCodePageInt";
+        internal static string EditorDefaultDecodingCodePageInt = "EditorDefaultDecodingCodePageInt";
         internal static string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";

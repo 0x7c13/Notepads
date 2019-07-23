@@ -83,7 +83,7 @@ namespace Notepads.Extensions
                 e.Handled = false;
             }
 
-            deferral.Complete();    
+            deferral.Complete();
         }
 
         private async Task<ImageSource> GetImageAsync(string url)
