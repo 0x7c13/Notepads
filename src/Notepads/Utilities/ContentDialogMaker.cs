@@ -5,8 +5,6 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Controls;
 
-    // Took from https://stackoverflow.com/questions/33018346/only-a-single-contentdialog-can-be-open-at-any-time-error-while-opening-anoth
-    // with some modifications
     public static class ContentDialogMaker
     {
         public static async void CreateContentDialog(ContentDialog dialog, bool awaitPreviousDialog) { await CreateDialog(dialog, awaitPreviousDialog); }
@@ -17,39 +15,27 @@ namespace Notepads.Utilities
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
 
-        private static void ActiveDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            try
-            {
-                _dialogAwaiter.SetResult(true);
-            }
-            catch (Exception)
-            {
-                // Ignore
-            }
-        }
-
         static async Task CreateDialog(ContentDialog dialog, bool awaitPreviousDialog)
         {
+            TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
+            TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();
+            _dialogAwaiter = nextAwaiter;
+
             if (ActiveDialog != null)
             {
                 if (awaitPreviousDialog)
                 {
-                    await _dialogAwaiter.Task;
-                    _dialogAwaiter = new TaskCompletionSource<bool>();
+                    await currentAwaiter.Task;
                 }
-                else ActiveDialog.Hide();
+                else
+                {
+                    ActiveDialog.Hide();
+                }
             }
-            ActiveDialog = dialog;
-            ActiveDialog.Closed += ActiveDialog_Closed;
-            await ActiveDialog.ShowAsync();
 
-            // Only unsubscribe the callback if the active dialog is us
-            // Otherwise, the in-flight dialog may end up not signaling the awaiter
-            if (ActiveDialog == dialog)
-            {
-                ActiveDialog.Closed -= ActiveDialog_Closed;
-            }
+            ActiveDialog = dialog;
+            await ActiveDialog.ShowAsync();
+            nextAwaiter.SetResult(true);
         }
     }
 }
