@@ -91,12 +91,12 @@ namespace Notepads.Core
                     _closeOthers = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseOthersButtonDisplayText") };
                     _closeOthers.Click += (sender, args) =>
                     {
-                        ExecuteOnAllOpenedTextEditors(
-                            (tab) =>
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                if (tab != _textEditor)
+                                if (textEditor != _textEditor)
                                 {
-                                    _notepadsCore.CloseTextEditor(tab);
+                                    _notepadsCore.CloseTextEditor(textEditor);
                                 }
                             });
                     };
@@ -116,16 +116,16 @@ namespace Notepads.Core
                     {
                         bool close = false;
 
-                        ExecuteOnAllOpenedTextEditors(
-                            (tab) =>
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                if (tab == _textEditor)
+                                if (textEditor == _textEditor)
                                 {
                                     close = true;
                                 }
                                 else if (close)
                                 {
-                                    _notepadsCore.CloseTextEditor(tab);
+                                    _notepadsCore.CloseTextEditor(textEditor);
                                 }
                             });
                     };
@@ -143,12 +143,12 @@ namespace Notepads.Core
                     _closeSaved = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseSavedButtonDisplayText") };
                     _closeSaved.Click += (sender, args) =>
                     {
-                        ExecuteOnAllOpenedTextEditors(
-                            (tab) =>
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                if (tab.Saved)
+                                if (textEditor.Saved)
                                 {
-                                    _notepadsCore.CloseTextEditor(tab);
+                                    _notepadsCore.CloseTextEditor(textEditor);
                                 }
                             });
                     };
@@ -198,11 +198,11 @@ namespace Notepads.Core
             }
         }
 
-        private void ExecuteOnAllOpenedTextEditors(Action<TextEditor> action)
+        private void ExecuteOnAllTextEditors(Action<TextEditor> action)
         {
-            foreach (TextEditor tab in _notepadsCore.GetAllTextEditors())
+            foreach (TextEditor textEditor in _notepadsCore.GetAllTextEditors())
             {
-                action(tab);
+                action(textEditor);
             }
         }
     }
