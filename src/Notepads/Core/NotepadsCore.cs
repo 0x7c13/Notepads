@@ -1,15 +1,15 @@
 ﻿
 namespace Notepads.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using SetsView;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.UI;
     using Windows.UI.ViewManagement;
@@ -127,7 +127,7 @@ namespace Notepads.Core
                 }
             };
             newItem.Icon.Visibility = Visibility.Collapsed;
-            newItem.ContextFlyout = new TabContextFlyout(Sets, newItem);
+            newItem.ContextFlyout = new TabContextFlyout(this, textEditor);
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             if (GetNumberOfOpenedTextEditors() == 1 && file != null)
@@ -264,12 +264,18 @@ namespace Notepads.Core
 
         public void FocusOnSelectedTextEditor()
         {
-            GetSelectedTextEditor()?.Focus(FocusState.Programmatic);
+            FocusOnTextEditor(GetSelectedTextEditor());
         }
 
         public void FocusOnTextEditor(TextEditor textEditor)
         {
             textEditor?.Focus(FocusState.Programmatic);
+        }
+
+        public void CloseTextEditor(TextEditor textEditor)
+        {
+            var item = GetTextEditorSetsViewItem(textEditor);
+            item?.Close();
         }
 
         private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)

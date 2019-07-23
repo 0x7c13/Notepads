@@ -1,16 +1,12 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using SetsView;
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
+    using Notepads.Controls.TextEditor;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
-    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
@@ -26,15 +22,15 @@ namespace Notepads.Core
         private string _filePath;
         private string _containingFolderPath;
 
-        private readonly SetsView _tabs;
-        private readonly SetsViewItem _tab;
+        private readonly INotepadsCore _notepadsCore;
+        private readonly TextEditor _textEditor;
 
         private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
 
-        public TabContextFlyout(SetsView tabs, SetsViewItem tab)
+        public TabContextFlyout(INotepadsCore notepadsCore, TextEditor textEditor)
         {
-            _tabs = tabs;
-            _tab = tab;
+            _notepadsCore = notepadsCore;
+            _textEditor = textEditor;
 
             Items.Add(Close);
             Items.Add(CloseOthers);
@@ -50,35 +46,20 @@ namespace Notepads.Core
 
         private void TabContextFlyout_Opening(object sender, object e)
         {
-            if (_tab.Content is TextEditor textEditor && textEditor.EditingFile != null)
+            if (_textEditor.EditingFile != null)
             {
-                _filePath = textEditor.EditingFile.Path;
+                _filePath = _textEditor.EditingFile.Path;
                 _containingFolderPath = Path.GetDirectoryName(_filePath);
             }
 
-            CloseOthers.IsEnabled = CloseRight.IsEnabled = _tabs.Items?.Count > 1;
+            CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
         }
 
         private void TabContextFlyout_Closed(object sender, object e)
         {
-            if (((SetsViewItem)_tabs.SelectedItem)?.Content is TextEditor textEditor)
-            {
-                textEditor.Focus(FocusState.Programmatic);
-            }
-        }
-
-        private IList<SetsViewItem> TabList
-        {
-            get
-            {
-                if (_tabs.Items == null)
-                {
-                    return Array.Empty<SetsViewItem>();
-                }
-                return _tabs.Items.Cast<SetsViewItem>().ToList();
-            }
+            _notepadsCore.FocusOnSelectedTextEditor();
         }
 
         private MenuFlyoutItem Close
@@ -88,7 +69,7 @@ namespace Notepads.Core
                 if (_close == null)
                 {
                     _close = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText") };
-                    _close.Click += (sender, args) => { _tab.Close(); };
+                    _close.Click += (sender, args) => { _notepadsCore.CloseTextEditor(_textEditor); };
                     _close.KeyboardAccelerators.Add(new KeyboardAccelerator()
                     {
                         Modifiers = VirtualKeyModifiers.Control,
@@ -110,13 +91,14 @@ namespace Notepads.Core
                     _closeOthers = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseOthersButtonDisplayText") };
                     _closeOthers.Click += (sender, args) =>
                     {
-                        foreach (SetsViewItem tab in TabList)
-                        {
-                            if (tab != _tab)
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                tab.Close();
-                            }
-                        }
+                                if (textEditor != _textEditor)
+                                {
+                                    _notepadsCore.CloseTextEditor(textEditor);
+                                }
+                            });
                     };
                 }
                 return _closeOthers;
@@ -134,17 +116,18 @@ namespace Notepads.Core
                     {
                         bool close = false;
 
-                        foreach (SetsViewItem tab in TabList)
-                        {
-                            if (tab == _tab)
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                close = true;
-                            }
-                            else if (close)
-                            {
-                                tab.Close();
-                            }
-                        }
+                                if (textEditor == _textEditor)
+                                {
+                                    close = true;
+                                }
+                                else if (close)
+                                {
+                                    _notepadsCore.CloseTextEditor(textEditor);
+                                }
+                            });
                     };
                 }
                 return _closeRight;
@@ -160,13 +143,14 @@ namespace Notepads.Core
                     _closeSaved = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseSavedButtonDisplayText") };
                     _closeSaved.Click += (sender, args) =>
                     {
-                        foreach (SetsViewItem tab in TabList)
-                        {
-                            if (tab.Content is TextEditor textEditor && textEditor.Saved)
+                        ExecuteOnAllTextEditors(
+                            (textEditor) =>
                             {
-                                tab.Close();
-                            }
-                        }
+                                if (textEditor.Saved)
+                                {
+                                    _notepadsCore.CloseTextEditor(textEditor);
+                                }
+                            });
                     };
                 }
                 return _closeSaved;
@@ -211,6 +195,14 @@ namespace Notepads.Core
                     };
                 }
                 return _openContainingFolder;
+            }
+        }
+
+        private void ExecuteOnAllTextEditors(Action<TextEditor> action)
+        {
+            foreach (TextEditor textEditor in _notepadsCore.GetAllTextEditors())
+            {
+                action(textEditor);
             }
         }
     }
