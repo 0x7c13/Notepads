@@ -12,6 +12,8 @@ namespace Notepads.Core
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.UI;
+    using Windows.UI.Core;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -48,6 +50,17 @@ namespace Notepads.Core
             Sets = sets;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
+            Sets.SetDoubleTapped += (sender, args) =>
+            {
+                if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+                {
+                    ApplicationView.GetForCurrentView().ExitFullScreenMode();
+                }
+                else
+                {
+                    ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+                }
+            };
             _extensionProvider = extensionProvider;
 
             DefaultNewFileName = defaultNewFileName;
