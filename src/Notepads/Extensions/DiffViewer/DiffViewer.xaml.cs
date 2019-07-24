@@ -1,50 +1,45 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
-    using System;
     using System.Collections.Generic;
-    using System.Threading;
-    using Notepads.Controls.TextEditor;
-    using Windows.System;
-    using Windows.UI.Core;
-    using Windows.UI.Text;
-    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Input;
 
-    public sealed partial class DiffViewer : Page, IContentPreviewExtension
+    public sealed partial class DiffViewer : Page, ISideBySideDiffViewer
     {
         private readonly TextBoxDiffRenderer diffRenderer;
         private readonly ScrollViewerSynchronizer scrollSynchronizer;
-
-        private TextEditor _editor;
 
         public DiffViewer()
         {
             InitializeComponent();
             scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> { LeftScroller, RightScroller });
-            diffRenderer = new TextBoxDiffRenderer(LeftBox, RightBox);
+            diffRenderer = new TextBoxDiffRenderer();
         }
 
-        public void Bind(TextEditor editor)
+        public void RenderDiff(string originalContent, string newContent)
         {
-            _editor = editor;
-            diffRenderer.GenerateDiffView(editor.OriginalContent, editor.TextEditorCore.GetText());
-        }
+            var diffData = diffRenderer.GenerateDiffViewData(originalContent, newContent);
+            var leftData = diffData.Item1;
+            var rightData = diffData.Item2;
 
-
-        private bool _isExtensionEnabled;
-
-        public bool IsExtensionEnabled
-        {
-            get => _isExtensionEnabled;
-            set
+            foreach (var block in leftData.Blocks)
             {
-                if (value)
-                {
-                    diffRenderer.GenerateDiffView(_editor.OriginalContent, _editor.TextEditorCore.GetText());
-                }
-                _isExtensionEnabled = value;
+                LeftBox.Blocks.Add(block);
+            }
+
+            foreach (var textHighlighter in leftData.TextHighlighters)
+            {
+                LeftBox.TextHighlighters.Add(textHighlighter);
+            }
+
+            foreach (var block in rightData.Blocks)
+            {
+                RightBox.Blocks.Add(block);
+            }
+
+            foreach (var textHighlighter in rightData.TextHighlighters)
+            {
+                RightBox.TextHighlighters.Add(textHighlighter);
             }
         }
     }

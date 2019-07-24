@@ -57,11 +57,6 @@ namespace Notepads.Utilities
                 return true;
             }
 
-            if (fileType == FileType.TextFile)
-            {
-                return true;
-            }
-
             return false;
         }
 

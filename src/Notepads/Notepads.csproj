@@ -161,9 +161,10 @@
     <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
-    <Compile Include="Extensions\DiffViewer\DiffViewer.xaml.cs" >
-         <DependentUpon>DiffViewer.xaml</DependentUpon>
+    <Compile Include="Extensions\DiffViewer\DiffViewer.xaml.cs">
+      <DependentUpon>DiffViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\DiffViewer\ISideBySideDiffViewer.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\TextBoxDiffRenderer.cs" />
