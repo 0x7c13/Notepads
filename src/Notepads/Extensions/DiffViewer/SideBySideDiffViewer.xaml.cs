@@ -1,14 +1,14 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
+    using Notepads.Commands;
     using System;
     using System.Collections.Generic;
     using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Input;
-    using Notepads.Commands;
+    using Windows.UI.Xaml.Media;
 
 
     public sealed partial class SideBySideDiffViewer : Page, ISideBySideDiffViewer

@@ -19,14 +19,14 @@ namespace Notepads.Extensions.DiffViewer
 
         public ScrollViewerSynchronizer(List<ScrollViewer> scrollViewers)
         {
-            this._scrollViewers = scrollViewers;
+            _scrollViewers = scrollViewers;
             scrollViewers.ForEach(x => x.Loaded += Scroller_Loaded);
         }
 
         private void Scroller_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
-            
+
             scrollViewer.ChangeView(_horizontalScrollOffset, _verticalScrollOffset, null, true);
 
             scrollViewer.Opacity = 1;

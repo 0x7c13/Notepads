@@ -115,7 +115,6 @@ namespace Notepads.Core
             textEditor.TextChanging += TextEditor_TextChanging;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.KeyDown += OnTextEditorKeyDown;
-            textEditor.OnEditorClosingKeyDown += TextEditor_OnClosingKeyDown;
 
             var newItem = new SetsViewItem
             {

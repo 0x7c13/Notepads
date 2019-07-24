@@ -42,8 +42,6 @@ namespace Notepads.Controls.TextEditor
 
         public INotepadsExtensionProvider ExtensionProvider;
 
-        public event EventHandler<KeyRoutedEventArgs> OnEditorClosingKeyDown;
-
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private IContentPreviewExtension _contentPreviewExtension;
@@ -171,7 +169,6 @@ namespace Notepads.Controls.TextEditor
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => OnEditorClosingKeyDown?.Invoke(this, args)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
@@ -325,8 +322,11 @@ namespace Notepads.Controls.TextEditor
 
         public void TypeTab()
         {
-            var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-            TextEditorCore.Document.Selection.TypeText(tabStr);
+            if (TextEditorCore.IsEnabled)
+            {
+                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
+                TextEditorCore.Document.Selection.TypeText(tabStr);
+            }
         }
 
         public void ClearUndoQueue()

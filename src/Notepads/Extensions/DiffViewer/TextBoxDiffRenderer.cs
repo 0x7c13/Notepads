@@ -1,11 +1,13 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
+    using DiffPlex;
+    using DiffPlex.DiffBuilder;
+    using DiffPlex.DiffBuilder.Model;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DiffPlex;
-    using Notepads.Utilities;
     using Windows.UI;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -13,8 +15,6 @@ namespace Notepads.Extensions.DiffViewer
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Shapes;
-    using DiffPlex.DiffBuilder;
-    using DiffPlex.DiffBuilder.Model;
 
     public class RichTextBlockData
     {
