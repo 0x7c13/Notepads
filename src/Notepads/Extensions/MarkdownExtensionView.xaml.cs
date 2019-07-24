@@ -124,6 +124,7 @@ namespace Notepads.Extensions
             {
                 _editorCore.TextChanged -= OnTextChanged;
                 _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
+                _editorCore.FontSizeChanged -= OnFontSizeChanged;
             }
             _editorCore = editor.TextEditorCore;
             _editorCore.TextChanged += OnTextChanged;
