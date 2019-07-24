@@ -161,8 +161,8 @@
     <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
-    <Compile Include="Extensions\DiffViewer\DiffViewer.xaml.cs">
-      <DependentUpon>DiffViewer.xaml</DependentUpon>
+    <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
+      <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\DiffViewer\ISideBySideDiffViewer.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
@@ -300,7 +300,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\DiffViewer\DiffViewer.xaml">
+    <Page Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
