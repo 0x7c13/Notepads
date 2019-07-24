@@ -161,7 +161,12 @@
     <Compile Include="Core\NotepadsCore.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
+    <Compile Include="Extensions\DiffViewer\DiffViewer.xaml.cs" >
+         <DependentUpon>DiffViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\IContentExtension.cs" />
+    <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
+    <Compile Include="Extensions\DiffViewer\TextBoxDiffRenderer.cs" />
     <Compile Include="Utilities\ContentDialogMaker.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
@@ -294,6 +299,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Extensions\DiffViewer\DiffViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Extensions\MarkdownExtensionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -344,6 +353,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DiffPlex">
+      <Version>1.4.4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>2.1.1</Version>
     </PackageReference>

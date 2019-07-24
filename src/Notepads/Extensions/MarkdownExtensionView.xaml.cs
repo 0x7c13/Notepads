@@ -118,14 +118,14 @@ namespace Notepads.Extensions
             }
         }
 
-        public void Bind(TextEditorCore editor)
+        public void Bind(TextEditor editor)
         {
             if (_editorCore != null)
             {
                 _editorCore.TextChanged -= OnTextChanged;
                 _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
             }
-            _editorCore = editor;
+            _editorCore = editor.TextEditorCore;
             _editorCore.TextChanged += OnTextChanged;
             _editorCore.TextWrappingChanged += OnTextWrappingChanged;
             _editorCore.FontSizeChanged += OnFontSizeChanged;

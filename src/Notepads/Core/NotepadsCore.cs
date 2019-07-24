@@ -107,6 +107,7 @@ namespace Notepads.Core
                 ExtensionProvider = _extensionProvider
             };
 
+            textEditor.OriginalContent = text;
             textEditor.SetText(text);
             textEditor.ClearUndoQueue();
             textEditor.Loaded += TextEditor_Loaded;

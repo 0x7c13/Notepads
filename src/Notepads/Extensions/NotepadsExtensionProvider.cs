@@ -9,6 +9,8 @@ namespace Notepads.Extensions
         {
             switch (fileType)
             {
+                case FileType.TextFile:
+                    return new DiffViewer.DiffViewer();
                 case FileType.MarkdownFile:
                     return new MarkdownExtensionView();
                 default:

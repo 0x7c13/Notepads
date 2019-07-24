@@ -51,6 +51,8 @@ namespace Notepads.Controls.TextEditor
 
         public event RoutedEventHandler SelectionChanged;
 
+        public string OriginalContent;
+
         public TextEditor()
         {
             InitializeComponent();
@@ -97,7 +99,7 @@ namespace Notepads.Controls.TextEditor
             {
                 _contentPreviewExtension = ExtensionProvider?.GetContentPreviewExtension(FileType);
                 if (_contentPreviewExtension == null) return;
-                _contentPreviewExtension.Bind(TextEditorCore);
+                _contentPreviewExtension.Bind(this);
             }
 
             if (SplitPanel == null) LoadSplitView();
