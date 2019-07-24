@@ -16,12 +16,12 @@
 
         <ScrollViewer Name="LeftScroller" IsTabStop="False" Padding="6" Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid>
-                <RichTextBlock FontFamily="Consolas" Name="LeftBox" IsTextSelectionEnabled="False" ></RichTextBlock>
+                <RichTextBlock FontFamily="Consolas" Name="LeftBox"></RichTextBlock>
             </Grid>
         </ScrollViewer>
         <ScrollViewer  Name="RightScroller" IsTabStop="False" Padding="6" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid>
-                <RichTextBlock FontFamily="Consolas" Name="RightBox" IsTextSelectionEnabled="False" ></RichTextBlock>
+                <RichTextBlock FontFamily="Consolas" Name="RightBox"></RichTextBlock>
             </Grid>
         </ScrollViewer>
     </Grid>

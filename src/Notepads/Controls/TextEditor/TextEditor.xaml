@@ -6,9 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
+    xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
-
 
     <Page.Resources>
         <ResourceDictionary>
@@ -76,34 +76,45 @@
     </Page.Resources>
     
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="100"/>
-            <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
-        </Grid.ColumnDefinitions>
-        <textEditor:TextEditorCore x:Name="TextEditorCore" 
-                                   Style="{StaticResource TextEditorCore}" 
-                                   x:FieldModifier="public"
-                                   Padding="8"/>
-        <ContentPresenter x:Name="SplitPanel" 
-                          x:Load="False"
-                          Padding="10,0,0,0"
-                          Background="{ThemeResource SplitViewBackgroundThemeBrush}"
-                          AutomationProperties.AccessibilityView="Raw"
-                          Grid.Column="1"/>
-        <controls:GridSplitter x:Name="GridSplitter"
-                               x:Load="False"
-                               Style="{StaticResource CustomGridSplitterStyle}"
-                               MinWidth="10"
-                               GripperCursor="Default"
-                               HorizontalAlignment="Left"
-                               Grid.Column="1"
-                               ResizeDirection="Auto"
-                               ResizeBehavior="BasedOnAlignment"
-                               CursorBehavior="ChangeOnSplitterHover"
-                               Width="10">
-            <controls:GridSplitter.RenderTransform>
-                <TranslateTransform X="0" />
-            </controls:GridSplitter.RenderTransform>
-        </controls:GridSplitter>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="EditorRowDefinition" Height="*"/>
+            <RowDefinition x:Name="SideBySideDiffViewRowDefinition" Height="0"/>
+        </Grid.RowDefinitions>
+
+        <Grid Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="100"/>
+                <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <textEditor:TextEditorCore x:Name="TextEditorCore" 
+                                       Style="{StaticResource TextEditorCore}" 
+                                       Grid.Column="0"
+                                       x:FieldModifier="public"
+                                       Padding="8"/>
+            <ContentPresenter x:Name="SplitPanel" 
+                              x:Load="False"
+                              Padding="10,0,0,0"
+                              Background="{ThemeResource SplitViewBackgroundThemeBrush}"
+                              AutomationProperties.AccessibilityView="Raw"
+                              Grid.Column="1"/>
+            <controls:GridSplitter x:Name="GridSplitter"
+                                   x:Load="False"
+                                   Style="{StaticResource CustomGridSplitterStyle}"
+                                   MinWidth="10"
+                                   GripperCursor="Default"
+                                   HorizontalAlignment="Left"
+                                   Grid.Column="1"
+                                   ResizeDirection="Auto"
+                                   ResizeBehavior="BasedOnAlignment"
+                                   CursorBehavior="ChangeOnSplitterHover"
+                                   Width="10">
+                <controls:GridSplitter.RenderTransform>
+                    <TranslateTransform X="0" />
+                </controls:GridSplitter.RenderTransform>
+            </controls:GridSplitter>
+        </Grid>
+        <diffViewer:SideBySideDiffViewer x:Name="SideBySideDiffViewer"
+                                         x:Load="False"
+                                         Grid.Row="1"/>
     </Grid>
 </Page>

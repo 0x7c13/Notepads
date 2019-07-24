@@ -27,10 +27,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RichEditBox">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" MinWidth="100"/>
-                            <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Disabled">
@@ -57,6 +58,29 @@
                                 <VisualState x:Name="Focused"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            x:Name="HeaderContentPresenter" 
+                            ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                            Content="{TemplateBinding Header}" 
+                            FontWeight="Normal" 
+                            Foreground="{ThemeResource TextControlHeaderForeground}" 
+                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}" 
+                            Grid.Row="0" 
+                            TextWrapping="Wrap" 
+                            VerticalAlignment="Top" 
+                            Visibility="Collapsed" 
+                            x:DeferLoadStrategy="Lazy">
+                        </ContentPresenter>
+                        <Border 
+                            x:Name="BorderElement" 
+                            Background="{TemplateBinding Background}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            CornerRadius="{TemplateBinding CornerRadius}" 
+                            MinHeight="{ThemeResource TextControlThemeMinHeight}" 
+                            MinWidth="{ThemeResource TextControlThemeMinWidth}" 
+                            Grid.RowSpan="1" 
+                            Grid.Row="1"/>
                         <ScrollViewer 
                             x:Name="ContentElement" 
                             AutomationProperties.AccessibilityView="Raw" 
@@ -68,7 +92,7 @@
                             IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" 
                             Margin="{TemplateBinding BorderThickness}" 
                             Padding="{TemplateBinding Padding}" 
-                            Grid.Column="0" 
+                            Grid.Row="1" 
                             VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" 
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" 
                             ZoomMode="Disabled"/>
@@ -78,11 +102,18 @@
                             IsHitTestVisible="False" 
                             Margin="{TemplateBinding BorderThickness}" 
                             Padding="{TemplateBinding Padding}" 
-                            Grid.Column="0" 
+                            Grid.Row="1" 
                             Text="{TemplateBinding PlaceholderText}" 
                             TextWrapping="{TemplateBinding TextWrapping}" 
                             TextAlignment="{TemplateBinding TextAlignment}"
                             OpticalMarginAlignment="TrimSideBearings"/>
+                        <ContentPresenter
+                            x:Name="DescriptionPresenter" 
+                            AutomationProperties.AccessibilityView="Raw" 
+                            Content="{TemplateBinding Description}" 
+                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" 
+                            Grid.Row="2" 
+                            x:Load="False"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -12,6 +12,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.Foundation;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -116,6 +117,48 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        public void LoadSideBySideDiffViewer()
+        {
+            FindName("SideBySideDiffViewer");
+            SideBySideDiffViewer.Visibility = Visibility.Collapsed;
+            SideBySideDiffViewer.OnCloseEvent += (sender, args) => CloseSideBySideDiffViewer();
+        }
+
+        public void OpenSideBySideDiffViewer()
+        {
+            TextEditorCore.IsEnabled = false;
+            EditorRowDefinition.Height = new GridLength(0);
+            SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
+            SideBySideDiffViewer.Visibility = Visibility.Visible;
+            SideBySideDiffViewer.RenderDiff(OriginalContent, TextEditorCore.GetText());
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => SideBySideDiffViewer.Focus()));
+        }
+
+        public void CloseSideBySideDiffViewer()
+        {
+            TextEditorCore.IsEnabled = true;
+            EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
+            SideBySideDiffViewRowDefinition.Height = new GridLength(0);
+            SideBySideDiffViewer.Visibility = Visibility.Collapsed;
+            TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        public void ShowHideSideBySideDiffViewer()
+        {
+            if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
+
+            if (SideBySideDiffViewer.Visibility == Visibility.Collapsed)
+            {
+                OpenSideBySideDiffViewer();
+            }
+            else
+            {
+                CloseSideBySideDiffViewer();
+            }
+        }
+
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
             TextEditorCore.GetCurrentLineColumn(out int line, out int column, out int selected);
@@ -130,6 +173,7 @@ namespace Notepads.Controls.TextEditor
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => OnEditorClosingKeyDown?.Invoke(this, args)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
                 {
                     if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
@@ -250,6 +294,18 @@ namespace Notepads.Controls.TextEditor
             }
 
             return true;
+        }
+
+        public void Focus()
+        {
+            if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
+            {
+                SideBySideDiffViewer.Focus();
+            }
+            else
+            {
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
         }
 
         private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)

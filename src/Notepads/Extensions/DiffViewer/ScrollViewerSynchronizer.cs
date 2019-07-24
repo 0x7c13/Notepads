@@ -27,14 +27,11 @@ namespace Notepads.Extensions.DiffViewer
         {
             var scrollViewer = (ScrollViewer)sender;
             
-            //scrollViewer.ScrollToVerticalOffset(verticalScrollOffset);
-            //scrollViewer.ScrollToHorizontalOffset(horizontalScrollOffset);
             scrollViewer.ChangeView(_horizontalScrollOffset, _verticalScrollOffset, null, true);
 
             scrollViewer.Opacity = 1;
             if (_verticalScrollerViewers.Count > 0)
             {
-                //scrollViewer.ScrollToVerticalOffset(verticalScrollOffset);
                 scrollViewer.ChangeView(null, _verticalScrollOffset, null, true);
             }
             scrollViewer.ApplyTemplate();
@@ -102,15 +99,13 @@ namespace Notepads.Extensions.DiffViewer
 
             foreach (var scrollViewer in _scrollViewers.Where(s => s != changedScrollViewer))
             {
-                if (Math.Abs(scrollViewer.VerticalOffset - changedScrollViewer.VerticalOffset) > 0.001)
+                if (Math.Abs(scrollViewer.VerticalOffset - changedScrollViewer.VerticalOffset) > 0.01)
                 {
-                    //scrollViewer.ScrollToVerticalOffset(changedScrollViewer.VerticalOffset);
                     scrollViewer.ChangeView(null, changedScrollViewer.VerticalOffset, null, true);
                 }
 
-                if (Math.Abs(scrollViewer.HorizontalOffset - changedScrollViewer.HorizontalOffset) > 0.001)
+                if (Math.Abs(scrollViewer.HorizontalOffset - changedScrollViewer.HorizontalOffset) > 0.01)
                 {
-                    //scrollViewer.ScrollToHorizontalOffset(changedScrollViewer.HorizontalOffset);
                     scrollViewer.ChangeView(changedScrollViewer.HorizontalOffset, null, null, true);
                 }
             }

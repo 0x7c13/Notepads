@@ -270,7 +270,7 @@ namespace Notepads.Core
 
         public void FocusOnTextEditor(TextEditor textEditor)
         {
-            textEditor?.Focus(FocusState.Programmatic);
+            textEditor?.Focus();
         }
 
         public void CloseTextEditor(TextEditor textEditor)

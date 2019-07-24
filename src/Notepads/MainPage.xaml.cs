@@ -576,7 +576,7 @@ namespace Notepads
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                    textEditor.Focus(FocusState.Programmatic);
+                    _notepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {
                         return false; // User cancelled
