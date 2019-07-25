@@ -10,10 +10,9 @@ namespace Notepads.Extensions.DiffViewer
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-
     public sealed partial class SideBySideDiffViewer : Page, ISideBySideDiffViewer
     {
-        private readonly TextBoxDiffRenderer _diffRenderer;
+        private readonly RichTextBlockDiffRenderer _diffRenderer;
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
@@ -23,7 +22,7 @@ namespace Notepads.Extensions.DiffViewer
         {
             InitializeComponent();
             _scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> { LeftScroller, RightScroller });
-            _diffRenderer = new TextBoxDiffRenderer();
+            _diffRenderer = new RichTextBlockDiffRenderer();
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
             LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
@@ -40,6 +39,10 @@ namespace Notepads.Extensions.DiffViewer
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                {
+                    OnCloseEvent?.Invoke(this, EventArgs.Empty);
+                }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
                     OnCloseEvent?.Invoke(this, EventArgs.Empty);
                 }),

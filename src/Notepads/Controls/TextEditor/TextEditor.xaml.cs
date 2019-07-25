@@ -170,7 +170,7 @@ namespace Notepads.Controls.TextEditor
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
                 {
                     if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)

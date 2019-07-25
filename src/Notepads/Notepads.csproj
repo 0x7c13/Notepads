@@ -167,7 +167,7 @@
     <Compile Include="Extensions\DiffViewer\ISideBySideDiffViewer.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
-    <Compile Include="Extensions\DiffViewer\TextBoxDiffRenderer.cs" />
+    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
     <Compile Include="Utilities\ContentDialogMaker.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />

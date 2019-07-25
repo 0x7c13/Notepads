@@ -8,18 +8,50 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
+                                     Opacity="0.25"
+                                     Color="White"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
+                                  Opacity="0.15"
+                                  Color="Black"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
+                                     Color="{ThemeResource SystemColorHighlightColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+
+    </Page.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer Name="LeftScroller" IsTabStop="False" Padding="6" Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Name="LeftScroller" 
+                      IsTabStop="False" 
+                      Padding="6" 
+                      Grid.Column="0" 
+                      HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Auto">
             <Grid>
                 <RichTextBlock FontFamily="Consolas" Name="LeftBox"></RichTextBlock>
             </Grid>
         </ScrollViewer>
-        <ScrollViewer  Name="RightScroller" IsTabStop="False" Padding="6" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Name="RightScroller" 
+                      IsTabStop="False" 
+                      Padding="6" 
+                      Grid.Column="1" 
+                      HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Auto"
+                      Background="{ThemeResource RightBoxBackgroundThemeBrush}">
             <Grid>
                 <RichTextBlock FontFamily="Consolas" Name="RightBox"></RichTextBlock>
             </Grid>

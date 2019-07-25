@@ -29,14 +29,14 @@ namespace Notepads.Extensions.DiffViewer
         public IList<TextHighlighter> TextHighlighters { get; set; }
     }
 
-    public class TextBoxDiffRenderer
+    public class RichTextBlockDiffRenderer
     {
         private const char ImaginaryLineCharacter = '\u202B';
         private readonly SideBySideDiffBuilder differ;
         private readonly object mutex = new object();
         private bool inDiff;
 
-        public TextBoxDiffRenderer()
+        public RichTextBlockDiffRenderer()
         {
             differ = new SideBySideDiffBuilder(new Differ());
         }
