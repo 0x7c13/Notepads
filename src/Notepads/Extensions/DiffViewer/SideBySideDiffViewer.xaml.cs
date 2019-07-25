@@ -2,9 +2,11 @@
 namespace Notepads.Extensions.DiffViewer
 {
     using Notepads.Commands;
+    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -61,7 +63,11 @@ namespace Notepads.Extensions.DiffViewer
 
         public void RenderDiff(string left, string right)
         {
-            var diffData = _diffRenderer.GenerateDiffViewData(left, right);
+            var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
+                ? new SolidColorBrush(Colors.White)
+                : new SolidColorBrush(Colors.Black);
+
+            var diffData = _diffRenderer.GenerateDiffViewData(left, right, foregroundBrush);
             var leftData = diffData.Item1;
             var rightData = diffData.Item2;
 

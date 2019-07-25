@@ -8,6 +8,7 @@ namespace Notepads.Extensions.DiffViewer
     using System.Collections.Generic;
     using System.Linq;
     using Windows.UI;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
 
@@ -37,8 +38,9 @@ namespace Notepads.Extensions.DiffViewer
         }
 
         private static char BreakingSpace = '-';
+        private Brush _defaultForeground;
 
-        public Tuple<RichTextBlockData, RichTextBlockData> GenerateDiffViewData(string leftText, string rightText)
+        public Tuple<RichTextBlockData, RichTextBlockData> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)
         {
             if (inDiff) return null;
             lock (mutex)
@@ -46,6 +48,8 @@ namespace Notepads.Extensions.DiffViewer
                 if (inDiff) return null;
                 inDiff = true;
             }
+
+            _defaultForeground = defaultForeground;
 
             var diff = differ.BuildDiffModel(leftText, rightText);
             var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
@@ -69,7 +73,7 @@ namespace Notepads.Extensions.DiffViewer
                 switch (oldNewLine.Type)
                 {
                     case ChangeType.Unchanged:
-                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer);
+                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, null);
                         break;
                     case ChangeType.Imaginary:
                         AppendParagraph(data, new string(BreakingSpace, synchroLineLength), ref pointer, new SolidColorBrush(Colors.Gray), new SolidColorBrush(Colors.LightCyan));
@@ -84,7 +88,7 @@ namespace Notepads.Extensions.DiffViewer
                         var paragraph = new Paragraph()
                         {
                             LineHeight = 0.5,
-                            Foreground = new SolidColorBrush(Colors.White),
+                            Foreground = _defaultForeground,
                         };
                         foreach (var subPiece in lineSubPieces)
                         {
@@ -108,12 +112,7 @@ namespace Notepads.Extensions.DiffViewer
 
         private Inline NewRun(RichTextBlockData richTextBlockData, string text, ref int pointer, Brush background = null, Brush foreground = null)
         {
-            var run = new Run { Text = text };
-
-            if (foreground != null)
-            {
-                run.Foreground = foreground;
-            }
+            var run = new Run { Text = text, Foreground = foreground ?? _defaultForeground };
 
             if (background != null)
             {
@@ -134,7 +133,7 @@ namespace Notepads.Extensions.DiffViewer
             var paragraph = new Paragraph()
             {
                 LineHeight = 0.5,
-                Foreground = foreground ?? new SolidColorBrush(Colors.White),
+                Foreground = foreground ?? _defaultForeground
             };
 
             var run = new Run { Text = text };

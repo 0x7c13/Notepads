@@ -63,6 +63,17 @@ namespace Notepads.Controls.TextEditor
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            ThemeSettingsService.OnThemeChanged += (sender, theme) =>
+            {
+                if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
+                {
+                    SideBySideDiffViewer.RenderDiff(OriginalContent, TextEditorCore.GetText());
+                    Task.Factory.StartNew(
+                        () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                            () => SideBySideDiffViewer.Focus()));
+                }
+            };
         }
 
         private void LoadSplitView()
