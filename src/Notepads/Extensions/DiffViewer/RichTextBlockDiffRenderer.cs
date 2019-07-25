@@ -27,7 +27,7 @@ namespace Notepads.Extensions.DiffViewer
 
     public class RichTextBlockDiffRenderer
     {
-        private const char ImaginaryLineCharacter = '\u202B';
+        //private const char ImaginaryLineCharacter = '\u202B';
         private readonly SideBySideDiffBuilder differ;
         private readonly object mutex = new object();
         private bool inDiff;
@@ -37,7 +37,7 @@ namespace Notepads.Extensions.DiffViewer
             differ = new SideBySideDiffBuilder(new Differ());
         }
 
-        private static char BreakingSpace = '-';
+        private static readonly char BreakingSpace = '-';
         private Brush _defaultForeground;
 
         public Tuple<RichTextBlockData, RichTextBlockData> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)

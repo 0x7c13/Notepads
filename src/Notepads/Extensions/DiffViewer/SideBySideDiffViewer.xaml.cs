@@ -30,6 +30,14 @@ namespace Notepads.Extensions.DiffViewer
             LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
 
+            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
+            {
+                LeftBox.SelectionHighlightColor =
+                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                RightBox.SelectionHighlightColor =
+                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            };
+
             LayoutRoot.KeyDown += OnKeyDown;
             KeyDown += OnKeyDown;
             LeftBox.KeyDown += OnKeyDown;
