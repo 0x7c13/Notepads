@@ -64,8 +64,11 @@ namespace Notepads.Extensions.DiffViewer
             var diffData = _diffRenderer.GenerateDiffViewData(left, right);
             var leftData = diffData.Item1;
             var rightData = diffData.Item2;
+
             LeftBox.Blocks.Clear();
+            LeftBox.TextHighlighters.Clear();
             RightBox.Blocks.Clear();
+            RightBox.TextHighlighters.Clear();
 
             foreach (var block in leftData.Blocks)
             {
