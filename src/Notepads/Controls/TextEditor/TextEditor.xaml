@@ -1,4 +1,4 @@
-﻿<Page
+﻿<UserControl
     x:Class="Notepads.Controls.TextEditor.TextEditor"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
-    <Page.Resources>
+    <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -73,7 +73,7 @@
                 </Setter>
             </Style>
         </ResourceDictionary>
-    </Page.Resources>
+    </UserControl.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -117,4 +117,4 @@
                                          x:Load="False"
                                          Grid.Row="1"/>
     </Grid>
-</Page>
+</UserControl>

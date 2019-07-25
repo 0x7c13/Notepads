@@ -126,6 +126,12 @@ namespace Notepads.Core
                     Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
                 }
             };
+
+            if (newItem.Content == null || newItem.Content is Page)
+            {
+                throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
+            }
+
             newItem.Icon.Visibility = Visibility.Collapsed;
             newItem.ContextFlyout = new TabContextFlyout(this, textEditor);
 

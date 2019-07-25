@@ -1,4 +1,4 @@
-﻿<Page
+﻿<UserControl
     x:Class="Notepads.Extensions.DiffViewer.SideBySideDiffViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
-    <Page.Resources>
+    <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -28,7 +28,7 @@
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
 
-    </Page.Resources>
+    </UserControl.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -57,4 +57,4 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-</Page>
+</UserControl>

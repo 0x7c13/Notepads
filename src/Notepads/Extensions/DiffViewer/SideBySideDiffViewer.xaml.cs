@@ -12,7 +12,7 @@ namespace Notepads.Extensions.DiffViewer
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-    public sealed partial class SideBySideDiffViewer : Page, ISideBySideDiffViewer
+    public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer
     {
         private readonly RichTextBlockDiffRenderer _diffRenderer;
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;

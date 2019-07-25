@@ -31,7 +31,7 @@ namespace Notepads.Extensions
         public void Dispose() { }
     }
 
-    public sealed partial class MarkdownExtensionView : IContentPreviewExtension
+    public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {
         private bool _isExtensionEnabled;
 

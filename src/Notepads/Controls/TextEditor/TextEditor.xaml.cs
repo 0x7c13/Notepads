@@ -18,7 +18,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public sealed partial class TextEditor : Page
+    public sealed partial class TextEditor : UserControl
     {
         public FileType FileType { get; private set; }
 
