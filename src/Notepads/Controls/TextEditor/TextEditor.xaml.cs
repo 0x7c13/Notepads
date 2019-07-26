@@ -168,7 +168,10 @@ namespace Notepads.Controls.TextEditor
 
             if (SideBySideDiffViewer.Visibility == Visibility.Collapsed)
             {
-                OpenSideBySideDiffViewer();
+                if (!Saved)
+                {
+                    OpenSideBySideDiffViewer();
+                }
             }
             else
             {
@@ -199,6 +202,11 @@ namespace Notepads.Controls.TextEditor
                     }
                 }),
             });
+        }
+
+        public bool IsEditorEnabled()
+        {
+            return TextEditorCore.IsEnabled;
         }
 
         public async Task SaveToFile(StorageFile file)

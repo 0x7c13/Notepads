@@ -120,7 +120,8 @@ namespace Notepads
             MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
-                if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+                if (selectedTextEditor == null)
                 {
                     MenuSaveButton.IsEnabled = false;
                     MenuSaveAsButton.IsEnabled = false;
@@ -128,6 +129,15 @@ namespace Notepads
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
                     //MenuPrintButton.IsEnabled = false;
+                }
+                else if (selectedTextEditor.IsEditorEnabled() == false)
+                {
+                    MenuSaveButton.IsEnabled = true;
+                    MenuSaveAsButton.IsEnabled = true;
+                    MenuSaveAllButton.IsEnabled = true;
+                    MenuFindButton.IsEnabled = false;
+                    MenuReplaceButton.IsEnabled = false;
+                    //MenuPrintButton.IsEnabled = true;
                 }
                 else
                 {
@@ -385,6 +395,12 @@ namespace Notepads
 
         private void ShowFindAndReplaceControl(bool showReplaceBar)
         {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor == null || !selectedEditor.IsEditorEnabled())
+            {
+                return;
+            }
+
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
