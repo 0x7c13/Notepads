@@ -79,8 +79,8 @@ namespace Notepads.Services
                         {
                             Thread.Sleep(_loggingInterval);
 
-                            // We will try to write all pending messages in our next attempt
-                            // However, if the size of _messages becomes abnormally big, we know something is wrong and should abort at this point
+                            // We will try to write all pending messages in our next attempt, if the current attempt failed
+                            // However, if the size of _messages has become abnormally big, we know something is wrong and should abort at this point
                             if (!await TryFlushMessageQueueAsync() && _messages.Count > 1000)
                             {
                                 break;
