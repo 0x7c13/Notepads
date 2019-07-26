@@ -121,7 +121,7 @@ namespace Notepads.Extensions.DiffViewer
 
             _defaultForeground = defaultForeground;
 
-            var diff = differ.BuildDiffModel(leftText, rightText);
+            var diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
             var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
             var leftContext = GetDiffData(zippedDiffs, line => line.Old, piece => piece.Old);
             var rightContext = GetDiffData(zippedDiffs, line => line.New, piece => piece.New);
