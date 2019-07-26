@@ -98,7 +98,7 @@ namespace Notepads.Core
             Encoding encoding,
             LineEnding lineEnding)
         {
-            var textEditor = new TextEditor()
+            var textEditor = new TextEditor
             {
                 EditingFile = file,
                 Encoding = encoding,
@@ -107,9 +107,7 @@ namespace Notepads.Core
                 ExtensionProvider = _extensionProvider
             };
 
-            textEditor.OriginalContent = text;
-            textEditor.SetText(text);
-            textEditor.ClearUndoQueue();
+            textEditor.InitWithText(text);
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.TextChanging += TextEditor_TextChanging;
@@ -157,13 +155,7 @@ namespace Notepads.Core
         public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
         {
             await textEditor.SaveToFile(file);
-            var item = GetTextEditorSetsViewItem(textEditor);
-            if (item != null)
-            {
-                item.Header = file.Name;
-                item.Icon.Visibility = Visibility.Collapsed;
-                item.Content = textEditor;
-            }
+            MarkTextEditorSetSaved(textEditor);
             OnTextEditorSaved?.Invoke(this, textEditor);
         }
 
@@ -343,6 +335,23 @@ namespace Notepads.Core
             }
         }
 
+        private void MarkTextEditorSetSaved(TextEditor textEditor)
+        {
+            if (textEditor != null)
+            {
+                textEditor.Saved = true;
+                var item = GetTextEditorSetsViewItem(textEditor);
+                if (item != null)
+                {
+                    if (textEditor.EditingFile != null)
+                    {
+                        item.Header = textEditor.EditingFile.Name;
+                    }
+                    item.Icon.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
@@ -355,25 +364,21 @@ namespace Notepads.Core
             OnTextEditorUnloaded?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_OnClosingKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (!(sender is TextEditor textEditor)) return;
-            if (Sets.Items == null) return;
-            foreach (SetsViewItem setsItem in Sets.Items)
-            {
-                if (setsItem.Content != textEditor) continue;
-                setsItem.Close();
-                e.Handled = true;
-                break;
-            }
-        }
 
         private void TextEditor_TextChanging(object sender, bool isContentChanging)
         {
             if (!(sender is TextEditor textEditor) || !isContentChanging) return;
-            if (textEditor.Saved)
+
+            if (string.Equals(textEditor.OriginalContent, textEditor.TextEditorCore.GetText()))
             {
-                MarkTextEditorSetNotSaved(textEditor);
+                MarkTextEditorSetSaved(textEditor);
+            }
+            else
+            {
+                if (textEditor.Saved)
+                {
+                    MarkTextEditorSetNotSaved(textEditor);
+                }
             }
         }
 

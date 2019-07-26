@@ -103,6 +103,13 @@ namespace Notepads.Controls.TextEditor
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
+        public void InitWithText(string text)
+        {
+            TextEditorCore.SetText(text);
+            OriginalContent = TextEditorCore.GetText();
+            TextEditorCore.ClearUndoQueue();
+        }
+
         public void ShowHideContentPreview()
         {
             if (_contentPreviewExtension == null)
@@ -257,7 +264,7 @@ namespace Notepads.Controls.TextEditor
 
             if (found)
             {
-                SetText(text);
+                TextEditorCore.SetText(text);
                 TextEditorCore.Document.Selection.StartPosition = Int32.MaxValue;
                 TextEditorCore.Document.Selection.EndPosition = TextEditorCore.Document.Selection.StartPosition;
             }
@@ -328,31 +335,12 @@ namespace Notepads.Controls.TextEditor
             _keyboardCommandHandler.Handle(e);
         }
 
-        public void SetText(string text)
-        {
-            TextEditorCore.Document.SetText(TextSetOptions.None, text);
-        }
-
         public void TypeTab()
         {
             if (TextEditorCore.IsEnabled)
             {
                 var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
                 TextEditorCore.Document.Selection.TypeText(tabStr);
-            }
-        }
-
-        public void ClearUndoQueue()
-        {
-            // Clear UndoQueue by setting its limit to 0 and set it back
-            var undoLimit = TextEditorCore.Document.UndoLimit;
-
-            // Check to prevent the undo limit stuck on zero
-            // because it returns 0 even if the undo limit isn't set yet
-            if (undoLimit != 0)
-            {
-                TextEditorCore.Document.UndoLimit = 0;
-                TextEditorCore.Document.UndoLimit = undoLimit;
             }
         }
 

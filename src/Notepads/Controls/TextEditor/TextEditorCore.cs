@@ -100,8 +100,8 @@ namespace Notepads.Controls.TextEditor
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Document.Undo()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Document.Redo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
@@ -116,6 +116,27 @@ namespace Notepads.Controls.TextEditor
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
+        }
+
+        public void Undo()
+        {
+            if (Document.CanUndo() && IsEnabled)
+            {
+                Document.Undo();
+            }
+        }
+
+        public void Redo()
+        {
+            if (Document.CanRedo() && IsEnabled)
+            {
+                Document.Redo();
+            }
+        }
+
+        public void SetText(string text)
+        {
+            Document.SetText(TextSetOptions.None, text);
         }
 
         public string GetText()
@@ -204,6 +225,20 @@ namespace Notepads.Controls.TextEditor
             catch (Exception)
             {
                 // ignore
+            }
+        }
+
+        public void ClearUndoQueue()
+        {
+            // Clear UndoQueue by setting its limit to 0 and set it back
+            var undoLimit = Document.UndoLimit;
+
+            // Check to prevent the undo limit stuck on zero
+            // because it returns 0 even if the undo limit isn't set yet
+            if (undoLimit != 0)
+            {
+                Document.UndoLimit = 0;
+                Document.UndoLimit = undoLimit;
             }
         }
 
