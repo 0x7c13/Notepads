@@ -31,7 +31,7 @@ namespace Notepads.Extensions
         public void Dispose() { }
     }
 
-    public sealed partial class MarkdownExtensionView : IContentPreviewExtension
+    public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {
         private bool _isExtensionEnabled;
 
@@ -118,14 +118,15 @@ namespace Notepads.Extensions
             }
         }
 
-        public void Bind(TextEditorCore editor)
+        public void Bind(TextEditor editor)
         {
             if (_editorCore != null)
             {
                 _editorCore.TextChanged -= OnTextChanged;
                 _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
+                _editorCore.FontSizeChanged -= OnFontSizeChanged;
             }
-            _editorCore = editor;
+            _editorCore = editor.TextEditorCore;
             _editorCore.TextChanged += OnTextChanged;
             _editorCore.TextWrappingChanged += OnTextWrappingChanged;
             _editorCore.FontSizeChanged += OnFontSizeChanged;

@@ -19,9 +19,11 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
-        private string[] _documentLinesCache;
+        private string[] _contentLinesCache;
 
-        private bool _isCachePendingUpdate = true;
+        private bool _isLineCachePendingUpdate = true;
+
+        private string _content = string.Empty;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
@@ -98,8 +100,8 @@ namespace Notepads.Controls.TextEditor
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Document.Undo()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Document.Redo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
@@ -116,22 +118,39 @@ namespace Notepads.Controls.TextEditor
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
         }
 
+        public void Undo()
+        {
+            if (Document.CanUndo() && IsEnabled)
+            {
+                Document.Undo();
+            }
+        }
+
+        public void Redo()
+        {
+            if (Document.CanRedo() && IsEnabled)
+            {
+                Document.Redo();
+            }
+        }
+
+        public void SetText(string text)
+        {
+            Document.SetText(TextSetOptions.None, text);
+        }
+
         public string GetText()
         {
-            Document.GetText(TextGetOptions.None, out var text);
-            // RichEditBox's Document.GetText() method by default append an extra '\r' at end of the text string
-            // We need to trim it before proceeding
-            return TrimRichEditBoxText(text);
+            return _content;
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_isCachePendingUpdate)
+            if (_isLineCachePendingUpdate)
             {
-                Document.GetText(TextGetOptions.None, out var text);
-                _documentLinesCache = text.Split("\r");
-                _isCachePendingUpdate = false;
+                _contentLinesCache = (_content + "\r").Split("\r");
+                _isLineCachePendingUpdate = false;
             }
 
             var start = Document.Selection.StartPosition;
@@ -143,9 +162,9 @@ namespace Notepads.Controls.TextEditor
 
             var length = 0;
             bool startLocated = false;
-            for (int i = 0; i < _documentLinesCache.Length; i++)
+            for (int i = 0; i < _contentLinesCache.Length; i++)
             {
-                var line = _documentLinesCache[i];
+                var line = _contentLinesCache[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -209,6 +228,20 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        public void ClearUndoQueue()
+        {
+            // Clear UndoQueue by setting its limit to 0 and set it back
+            var undoLimit = Document.UndoLimit;
+
+            // Check to prevent the undo limit stuck on zero
+            // because it returns 0 even if the undo limit isn't set yet
+            if (undoLimit != 0)
+            {
+                Document.UndoLimit = 0;
+                Document.UndoLimit = undoLimit;
+            }
+        }
+
         private void SetDefaultTabStop(FontFamily font, double fontSize)
         {
             Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
@@ -248,7 +281,9 @@ namespace Notepads.Controls.TextEditor
         {
             if (args.IsContentChanging)
             {
-                _isCachePendingUpdate = true;
+                Document.GetText(TextGetOptions.None, out _content);
+                _content = TrimRichEditBoxText(_content);
+                _isLineCachePendingUpdate = true;
             }
         }
 

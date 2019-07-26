@@ -120,7 +120,8 @@ namespace Notepads
             MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
-                if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+                if (selectedTextEditor == null)
                 {
                     MenuSaveButton.IsEnabled = false;
                     MenuSaveAsButton.IsEnabled = false;
@@ -128,6 +129,15 @@ namespace Notepads
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
                     //MenuPrintButton.IsEnabled = false;
+                }
+                else if (selectedTextEditor.IsEditorEnabled() == false)
+                {
+                    MenuSaveButton.IsEnabled = true;
+                    MenuSaveAsButton.IsEnabled = true;
+                    MenuSaveAllButton.IsEnabled = true;
+                    MenuFindButton.IsEnabled = false;
+                    MenuReplaceButton.IsEnabled = false;
+                    //MenuPrintButton.IsEnabled = true;
                 }
                 else
                 {
@@ -145,6 +155,7 @@ namespace Notepads
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
             {
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => NotepadsCore.CloseTextEditor(NotepadsCore.GetSelectedTextEditor())),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(false)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor()),
@@ -384,6 +395,12 @@ namespace Notepads
 
         private void ShowFindAndReplaceControl(bool showReplaceBar)
         {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor == null || !selectedEditor.IsEditorEnabled())
+            {
+                return;
+            }
+
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
@@ -576,7 +593,7 @@ namespace Notepads
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                    textEditor.Focus(FocusState.Programmatic);
+                    _notepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {
                         return false; // User cancelled

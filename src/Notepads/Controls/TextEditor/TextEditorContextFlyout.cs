@@ -147,7 +147,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.Z,
                         IsEnabled = false,
                     });
-                    _undo.Click += (sender, args) => { _textEditor.TextEditorCore.Document.Undo(); };
+                    _undo.Click += (sender, args) => { _textEditor.TextEditorCore.Undo(); };
                 }
                 return _undo;
             }
@@ -168,7 +168,7 @@ namespace Notepads.Controls.TextEditor
 
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
-                    _redo.Click += (sender, args) => { _textEditor.TextEditorCore.Document.Redo(); };
+                    _redo.Click += (sender, args) => { _textEditor.TextEditorCore.Redo(); };
                 }
                 return _redo;
             }
