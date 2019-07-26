@@ -5,8 +5,11 @@ namespace Notepads.Extensions.DiffViewer
     using Notepads.Services;
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Windows.System;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -69,40 +72,181 @@ namespace Notepads.Extensions.DiffViewer
             RightBox.Focus(FocusState.Programmatic);
         }
 
+        public void ClearCache()
+        {
+            LeftBox.TextHighlighters.Clear();
+            LeftBox.Blocks.Clear();
+            RightBox.TextHighlighters.Clear();
+            RightBox.Blocks.Clear();
+        }
+
         public void RenderDiff(string left, string right)
         {
+            ClearCache();
+
             var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
                 ? new SolidColorBrush(Colors.White)
                 : new SolidColorBrush(Colors.Black);
 
-            var diffData = _diffRenderer.GenerateDiffViewData(left, right, foregroundBrush);
-            var leftData = diffData.Item1;
-            var rightData = diffData.Item2;
+            var diffContext = _diffRenderer.GenerateDiffViewData(left, right, foregroundBrush);
+            var leftContext = diffContext.Item1;
+            var rightContext = diffContext.Item2;
+            var leftHighlighters = leftContext.GetTextHighlighters();
+            var rightHighlighters = rightContext.GetTextHighlighters();
 
-            LeftBox.Blocks.Clear();
-            LeftBox.TextHighlighters.Clear();
-            RightBox.Blocks.Clear();
-            RightBox.TextHighlighters.Clear();
-
-            foreach (var block in leftData.Blocks)
+            Task.Factory.StartNew(async () =>
             {
-                LeftBox.Blocks.Add(block);
-            }
+                var leftCount = leftContext.Blocks.Count;
+                var rightCount = rightContext.Blocks.Count;
 
-            foreach (var textHighlighter in leftData.GetTextHighlighters())
-            {
-                LeftBox.TextHighlighters.Add(textHighlighter);
-            }
+                //var count = rightCount > leftCount ? rightCount : leftCount;
 
-            foreach (var block in rightData.Blocks)
-            {
-                RightBox.Blocks.Add(block);
-            }
+                //for (int i = 0; i < count; i++)
+                //{
+                //    if (i  < leftCount)
+                //    {
+                //        var j = i;
+                //        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                //        {
+                //            Thread.Sleep(20);
+                //            LeftBox.Blocks.Add(leftContext.Blocks[j]);
+                //        });
+                //    }
+                //    if (i  < rightCount)
+                //    {
+                //        var j = i;
+                //        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                //        {
+                //            Thread.Sleep(20);
+                //            RightBox.Blocks.Add(rightContext.Blocks[j]);
+                //        });
+                //    }
+                //}
 
-            foreach (var textHighlighter in rightData.GetTextHighlighters())
+                var leftStartIndex = 0;
+                var rightStartIndex = 0;
+                var threshold = 1;
+
+                while (true)
+                {
+                    Thread.Sleep(1);
+                    if (leftStartIndex < leftCount)
+                    {
+                        var end = leftStartIndex + threshold;
+                        if (end >= leftCount) end = leftCount;
+                        var start = leftStartIndex;
+
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            for (int x = start; x < end; x++)
+                            {
+                                LeftBox.Blocks.Add(leftContext.Blocks[x]);
+                            }
+                        });
+                    }
+
+                    if (rightStartIndex < rightCount)
+                    {
+                        var end = rightStartIndex + threshold;
+                        if (end >= rightCount) end = rightCount;
+                        var start = rightStartIndex;
+
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            for (int x = start; x < end; x++)
+                            {
+                                RightBox.Blocks.Add(rightContext.Blocks[x]);
+                            }
+                        });
+                    }
+
+                    leftStartIndex += threshold;
+                    rightStartIndex += threshold;
+                    threshold *= 5;
+
+                    if (leftStartIndex >= leftCount && rightStartIndex >= rightCount)
+                    {
+                        break;
+                    }
+                }
+            });
+
+            Task.Factory.StartNew(async () =>
             {
-                RightBox.TextHighlighters.Add(textHighlighter);
-            }
+                var leftCount = leftHighlighters.Count;
+                var rightCount = rightHighlighters.Count;
+
+                var leftStartIndex = 0;
+                var rightStartIndex = 0;
+                var threshold = 5;
+
+                while (true)
+                {
+                    Thread.Sleep(10);
+                    if (leftStartIndex < leftCount)
+                    {
+                        var end = leftStartIndex + threshold;
+                        if (end >= leftCount) end = leftCount;
+                        var start = leftStartIndex;
+
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            for (int x = start; x < end; x++)
+                            {
+                                LeftBox.TextHighlighters.Add(leftHighlighters[x]);
+                            }
+                        });
+                    }
+
+                    if (rightStartIndex < rightCount)
+                    {
+                        var end = rightStartIndex + threshold;
+                        if (end >= rightCount) end = rightCount;
+                        var start = rightStartIndex;
+
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            for (int x = start; x < end; x++)
+                            {
+                                RightBox.TextHighlighters.Add(rightHighlighters[x]);
+                            }
+                        });
+                    }
+
+                    leftStartIndex += threshold;
+                    rightStartIndex += threshold;
+                    threshold *= 5;
+
+                    if (leftStartIndex >= leftCount && rightStartIndex >= rightCount)
+                    {
+                        break;
+                    }
+                }
+            });
+
+            //Task.Factory.StartNew(async () =>
+            //{
+            //    var leftCount = leftHighlighters.Count;
+            //    var rightCount = rightHighlighters.Count;
+
+            //    var count = rightCount > leftCount ? rightCount : leftCount;
+
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        if (i < leftCount)
+            //        {
+            //            var j = i;
+            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+            //                () => LeftBox.TextHighlighters.Add(leftHighlighters[j]));
+            //        }
+            //        if (i < rightCount)
+            //        {
+            //            var j = i;
+            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+            //                () => RightBox.TextHighlighters.Add(rightHighlighters[j]));
+            //        }
+            //    }
+            //});
         }
     }
 }
