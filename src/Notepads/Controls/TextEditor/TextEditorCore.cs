@@ -19,9 +19,11 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
-        private string[] _documentLinesCache;
+        private string[] _contentLinesCache;
 
-        private bool _isCachePendingUpdate = true;
+        private bool _isLineCachePendingUpdate = true;
+
+        private string _content = string.Empty;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
@@ -118,20 +120,16 @@ namespace Notepads.Controls.TextEditor
 
         public string GetText()
         {
-            Document.GetText(TextGetOptions.None, out var text);
-            // RichEditBox's Document.GetText() method by default append an extra '\r' at end of the text string
-            // We need to trim it before proceeding
-            return TrimRichEditBoxText(text);
+            return _content;
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_isCachePendingUpdate)
+            if (_isLineCachePendingUpdate)
             {
-                Document.GetText(TextGetOptions.None, out var text);
-                _documentLinesCache = text.Split("\r");
-                _isCachePendingUpdate = false;
+                _contentLinesCache = (_content + "\r").Split("\r");
+                _isLineCachePendingUpdate = false;
             }
 
             var start = Document.Selection.StartPosition;
@@ -143,9 +141,9 @@ namespace Notepads.Controls.TextEditor
 
             var length = 0;
             bool startLocated = false;
-            for (int i = 0; i < _documentLinesCache.Length; i++)
+            for (int i = 0; i < _contentLinesCache.Length; i++)
             {
-                var line = _documentLinesCache[i];
+                var line = _contentLinesCache[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -248,7 +246,9 @@ namespace Notepads.Controls.TextEditor
         {
             if (args.IsContentChanging)
             {
-                _isCachePendingUpdate = true;
+                Document.GetText(TextGetOptions.None, out _content);
+                _content = TrimRichEditBoxText(_content);
+                _isLineCachePendingUpdate = true;
             }
         }
 

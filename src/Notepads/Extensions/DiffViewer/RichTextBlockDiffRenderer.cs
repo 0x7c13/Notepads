@@ -12,9 +12,14 @@ namespace Notepads.Extensions.DiffViewer
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
 
-    public class RichTextBlockData
+    public class RichTextBlockDiffContext
     {
-        public RichTextBlockData()
+        private bool _hasPendingHightlighter;
+        private int _lastStart;
+        private int _lastEnd;
+        private Color _lastHightlightColor;
+
+        public RichTextBlockDiffContext()
         {
             Blocks = new List<Block>();
             TextHighlighters = new List<TextHighlighter>();
@@ -22,7 +27,56 @@ namespace Notepads.Extensions.DiffViewer
 
         public ICollection<Block> Blocks { get; set; }
 
-        public IList<TextHighlighter> TextHighlighters { get; set; }
+        private IList<TextHighlighter> TextHighlighters { get; set; }
+
+        public void AddPendingHightlighter(TextRange textRange, Color backgroundColor)
+        {
+            _lastStart = textRange.StartIndex;
+            _lastEnd = _lastStart + textRange.Length;
+            _lastHightlightColor = backgroundColor;
+            _hasPendingHightlighter = true;
+        }
+
+        public void AddTextHighlighter(TextRange textRange, Color backgroundColor)
+        {
+            if (!_hasPendingHightlighter)
+            {
+                AddPendingHightlighter(textRange, backgroundColor);
+            }
+            else
+            {
+                if (_lastEnd == textRange.StartIndex && _lastHightlightColor == backgroundColor)
+                {
+                    _lastEnd += textRange.Length;
+                }
+                else
+                {
+                    TextRange range = new TextRange() { StartIndex = _lastStart, Length = _lastEnd - _lastStart };
+                    TextHighlighters.Add(new TextHighlighter()
+                    {
+                        Background = new SolidColorBrush(_lastHightlightColor),
+                        Ranges = { range }
+                    });
+                    _hasPendingHightlighter = false;
+                    AddPendingHightlighter(textRange, backgroundColor);
+                }
+            }
+        }
+
+        public IList<TextHighlighter> GetTextHighlighters()
+        {
+            if (_hasPendingHightlighter)
+            {
+                TextRange range = new TextRange() { StartIndex = _lastStart, Length = _lastEnd - _lastStart };
+                TextHighlighters.Add(new TextHighlighter()
+                {
+                    Background = new SolidColorBrush(_lastHightlightColor),
+                    Ranges = { range }
+                });
+                _hasPendingHightlighter = false;
+            }
+            return TextHighlighters;
+        }
     }
 
     public class RichTextBlockDiffRenderer
@@ -40,7 +94,7 @@ namespace Notepads.Extensions.DiffViewer
         private static readonly char BreakingSpace = '-';
         private Brush _defaultForeground;
 
-        public Tuple<RichTextBlockData, RichTextBlockData> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)
+        public Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)
         {
             if (inDiff) return null;
             lock (mutex)
@@ -57,12 +111,12 @@ namespace Notepads.Extensions.DiffViewer
             var rightRichTextBlockData = GetDiffData(zippedDiffs, line => line.New, piece => piece.New);
 
             inDiff = false;
-            return new Tuple<RichTextBlockData, RichTextBlockData>(leftRichTextBlockData, rightRichTextBlockData);
+            return new Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext>(leftRichTextBlockData, rightRichTextBlockData);
         }
 
-        private RichTextBlockData GetDiffData(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
+        private RichTextBlockDiffContext GetDiffData(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
         {
-            var data = new RichTextBlockData();
+            var data = new RichTextBlockDiffContext();
             int pointer = 0;
             foreach (var line in lines)
             {
@@ -76,13 +130,13 @@ namespace Notepads.Extensions.DiffViewer
                         AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, null);
                         break;
                     case ChangeType.Imaginary:
-                        AppendParagraph(data, new string(BreakingSpace, synchroLineLength), ref pointer, new SolidColorBrush(Colors.Gray), new SolidColorBrush(Colors.LightCyan));
+                        AppendParagraph(data, new string(BreakingSpace, synchroLineLength), ref pointer, Colors.Gray, Colors.LightCyan);
                         break;
                     case ChangeType.Inserted:
-                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.LightGreen));
+                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, Colors.LightGreen);
                         break;
                     case ChangeType.Deleted:
-                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.OrangeRed));
+                        AppendParagraph(data, oldNewLine.Text ?? string.Empty, ref pointer, Colors.OrangeRed);
                         break;
                     case ChangeType.Modified:
                         var paragraph = new Paragraph()
@@ -95,13 +149,13 @@ namespace Notepads.Extensions.DiffViewer
                             var oldNewPiece = pieceSelector(subPiece);
                             switch (oldNewPiece.Type)
                             {
-                                case ChangeType.Unchanged: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.Yellow))); break;
+                                case ChangeType.Unchanged: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.Yellow)); break;
                                 case ChangeType.Imaginary: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer)); break;
-                                case ChangeType.Inserted: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.LightGreen))); break;
-                                case ChangeType.Deleted: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.OrangeRed))); break;
-                                case ChangeType.Modified: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, new SolidColorBrush(Colors.Yellow))); break;
+                                case ChangeType.Inserted: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.LightGreen)); break;
+                                case ChangeType.Deleted: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.OrangeRed)); break;
+                                case ChangeType.Modified: paragraph.Inlines.Add(NewRun(data, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.Yellow)); break;
                             }
-                            paragraph.Inlines.Add(NewRun(data, new string(BreakingSpace, subPiece.Length - (oldNewPiece.Text ?? string.Empty).Length), ref pointer, new SolidColorBrush(Colors.Gray), new SolidColorBrush(Colors.LightCyan)));
+                            paragraph.Inlines.Add(NewRun(data, new string(BreakingSpace, subPiece.Length - (oldNewPiece.Text ?? string.Empty).Length), ref pointer, Colors.Gray, Colors.LightCyan));
                         }
                         data.Blocks.Add(paragraph);
                         break;
@@ -110,31 +164,42 @@ namespace Notepads.Extensions.DiffViewer
             return data;
         }
 
-        private Inline NewRun(RichTextBlockData richTextBlockData, string text, ref int pointer, Brush background = null, Brush foreground = null)
+        private Inline NewRun(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
         {
-            var run = new Run { Text = text, Foreground = foreground ?? _defaultForeground };
+            var run = new Run { Text = text };
+
+            if (foreground.HasValue)
+            {
+                run.Foreground = new SolidColorBrush(foreground.Value);
+            }
+            else
+            {
+                run.Foreground = _defaultForeground;
+            }
 
             if (background != null)
             {
-                TextRange textRange = new TextRange() { StartIndex = pointer, Length = text.Length };
-                TextHighlighter highlighter = new TextHighlighter()
-                {
-                    Background = background,
-                    Ranges = { textRange }
-                };
-                richTextBlockData.TextHighlighters.Add(highlighter);
+                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = pointer, Length = text.Length }, background.Value);
             }
             pointer += text.Length;
             return run;
         }
 
-        private Paragraph AppendParagraph(RichTextBlockData richTextBlockData, string text, ref int pointer, Brush background = null, Brush foreground = null)
+        private Paragraph AppendParagraph(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
         {
             var paragraph = new Paragraph()
             {
                 LineHeight = 0.5,
-                Foreground = foreground ?? _defaultForeground
             };
+
+            if (foreground.HasValue)
+            {
+                paragraph.Foreground = new SolidColorBrush(foreground.Value);
+            }
+            else
+            {
+                paragraph.Foreground = _defaultForeground;
+            }
 
             var run = new Run { Text = text };
             paragraph.Inlines.Add(run);
@@ -143,13 +208,7 @@ namespace Notepads.Extensions.DiffViewer
 
             if (background != null)
             {
-                TextRange textRange = new TextRange() { StartIndex = pointer, Length = text.Length };
-                TextHighlighter highlighter = new TextHighlighter()
-                {
-                    Background = background,
-                    Ranges = { textRange }
-                };
-                richTextBlockData.TextHighlighters.Add(highlighter);
+                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = pointer, Length = text.Length }, background.Value);
             }
             pointer += text.Length;
             return paragraph;

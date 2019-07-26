@@ -89,7 +89,7 @@ namespace Notepads.Extensions.DiffViewer
                 LeftBox.Blocks.Add(block);
             }
 
-            foreach (var textHighlighter in leftData.TextHighlighters)
+            foreach (var textHighlighter in leftData.GetTextHighlighters())
             {
                 LeftBox.TextHighlighters.Add(textHighlighter);
             }
@@ -99,7 +99,7 @@ namespace Notepads.Extensions.DiffViewer
                 RightBox.Blocks.Add(block);
             }
 
-            foreach (var textHighlighter in rightData.TextHighlighters)
+            foreach (var textHighlighter in rightData.GetTextHighlighters())
             {
                 RightBox.TextHighlighters.Add(textHighlighter);
             }

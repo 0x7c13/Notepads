@@ -199,6 +199,7 @@ namespace Notepads.Controls.TextEditor
             var text = TextEditorCore.GetText();
             text = LineEndingUtility.ApplyLineEnding(text, LineEnding);
             await FileSystemUtility.WriteToFile(text, encoding, file);
+            OriginalContent = text;
             EditingFile = file;
             Encoding = encoding;
             Saved = true;
