@@ -10,12 +10,12 @@ I have waited long enough for a modern windows 10 notepad app to come before I h
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
-* A modern, stylish text editor with minimum design.
+* Fluent design with built-in Tab system.
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or PowerShell by typing: "notepads" or "notepads %path-to-your-file%".
 * Multi-line handwriting support.
 * Built-in Markdown file preview viewer.
-* Built-in diff viewer. [Work in progress]
+* Built-in diff viewer (Preview your changes).
 
 ![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
 ![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
@@ -25,7 +25,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ## Things are not working or not implemented in this version:
 
 * File Print.
-* Built-in diff viewer.
 
 ## Shortcuts:
 
@@ -34,6 +33,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Ctrl+P to toggle preivew split view for Markdown file.
+* Alt+D to toggle side-by-side diff viewer.
 
 ## Author’s Notes:
 
@@ -68,6 +68,12 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
    * Star this project on GitHub
    * Leave me a review [here](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
    * [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D6Y3C6)
+
+## Dependencies and References:
+* [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
+* [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
+* [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
+* [DiffPlex](https://github.com/mmanela/diffplex)
 
 ## Special Thanks:
 
