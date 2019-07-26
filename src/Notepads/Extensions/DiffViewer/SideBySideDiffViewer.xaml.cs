@@ -18,8 +18,12 @@ namespace Notepads.Extensions.DiffViewer
     public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer
     {
         private readonly RichTextBlockDiffRenderer _diffRenderer;
+
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
+
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+
+        private CancellationTokenSource _cancellationTokenSource;
 
         public event EventHandler OnCloseEvent;
 
@@ -53,10 +57,12 @@ namespace Notepads.Extensions.DiffViewer
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
                 {
+                    StopRenderingAndClearCache();
                     OnCloseEvent?.Invoke(this, EventArgs.Empty);
                 }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
+                    StopRenderingAndClearCache();
                     OnCloseEvent?.Invoke(this, EventArgs.Empty);
                 }),
             });
@@ -72,8 +78,13 @@ namespace Notepads.Extensions.DiffViewer
             RightBox.Focus(FocusState.Programmatic);
         }
 
-        public void ClearCache()
+        public void StopRenderingAndClearCache()
         {
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+
             LeftBox.TextHighlighters.Clear();
             LeftBox.Blocks.Clear();
             RightBox.TextHighlighters.Clear();
@@ -82,7 +93,7 @@ namespace Notepads.Extensions.DiffViewer
 
         public void RenderDiff(string left, string right)
         {
-            ClearCache();
+            StopRenderingAndClearCache();
 
             var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
                 ? new SolidColorBrush(Colors.White)
@@ -94,34 +105,12 @@ namespace Notepads.Extensions.DiffViewer
             var leftHighlighters = leftContext.GetTextHighlighters();
             var rightHighlighters = rightContext.GetTextHighlighters();
 
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
             Task.Factory.StartNew(async () =>
             {
                 var leftCount = leftContext.Blocks.Count;
                 var rightCount = rightContext.Blocks.Count;
-
-                //var count = rightCount > leftCount ? rightCount : leftCount;
-
-                //for (int i = 0; i < count; i++)
-                //{
-                //    if (i  < leftCount)
-                //    {
-                //        var j = i;
-                //        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                //        {
-                //            Thread.Sleep(20);
-                //            LeftBox.Blocks.Add(leftContext.Blocks[j]);
-                //        });
-                //    }
-                //    if (i  < rightCount)
-                //    {
-                //        var j = i;
-                //        await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                //        {
-                //            Thread.Sleep(20);
-                //            RightBox.Blocks.Add(rightContext.Blocks[j]);
-                //        });
-                //    }
-                //}
 
                 var leftStartIndex = 0;
                 var rightStartIndex = 0;
@@ -129,7 +118,7 @@ namespace Notepads.Extensions.DiffViewer
 
                 while (true)
                 {
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                     if (leftStartIndex < leftCount)
                     {
                         var end = leftStartIndex + threshold;
@@ -140,6 +129,7 @@ namespace Notepads.Extensions.DiffViewer
                         {
                             for (int x = start; x < end; x++)
                             {
+                                if (cancellationTokenSource.IsCancellationRequested) return;
                                 LeftBox.Blocks.Add(leftContext.Blocks[x]);
                             }
                         });
@@ -155,6 +145,7 @@ namespace Notepads.Extensions.DiffViewer
                         {
                             for (int x = start; x < end; x++)
                             {
+                                if (cancellationTokenSource.IsCancellationRequested) return;
                                 RightBox.Blocks.Add(rightContext.Blocks[x]);
                             }
                         });
@@ -169,7 +160,7 @@ namespace Notepads.Extensions.DiffViewer
                         break;
                     }
                 }
-            });
+            }, cancellationTokenSource.Token);
 
             Task.Factory.StartNew(async () =>
             {
@@ -193,6 +184,7 @@ namespace Notepads.Extensions.DiffViewer
                         {
                             for (int x = start; x < end; x++)
                             {
+                                if (cancellationTokenSource.IsCancellationRequested) return;
                                 LeftBox.TextHighlighters.Add(leftHighlighters[x]);
                             }
                         });
@@ -208,6 +200,7 @@ namespace Notepads.Extensions.DiffViewer
                         {
                             for (int x = start; x < end; x++)
                             {
+                                if (cancellationTokenSource.IsCancellationRequested) return;
                                 RightBox.TextHighlighters.Add(rightHighlighters[x]);
                             }
                         });
@@ -222,7 +215,36 @@ namespace Notepads.Extensions.DiffViewer
                         break;
                     }
                 }
-            });
+            }, cancellationTokenSource.Token);
+
+            _cancellationTokenSource = cancellationTokenSource;
+
+            //Task.Factory.StartNew(async () =>
+            //{
+            //    var count = rightCount > leftCount ? rightCount : leftCount;
+
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        if (i < leftCount)
+            //        {
+            //            var j = i;
+            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            //            {
+            //                Thread.Sleep(20);
+            //                LeftBox.Blocks.Add(leftContext.Blocks[j]);
+            //            });
+            //        }
+            //        if (i < rightCount)
+            //        {
+            //            var j = i;
+            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            //            {
+            //                Thread.Sleep(20);
+            //                RightBox.Blocks.Add(rightContext.Blocks[j]);
+            //            });
+            //        }
+            //    }
+            //});
 
             //Task.Factory.StartNew(async () =>
             //{

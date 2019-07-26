@@ -158,7 +158,7 @@ namespace Notepads.Controls.TextEditor
             EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
-            SideBySideDiffViewer.ClearCache();
+            SideBySideDiffViewer.StopRenderingAndClearCache();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
