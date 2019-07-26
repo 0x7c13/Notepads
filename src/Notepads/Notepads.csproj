@@ -168,6 +168,7 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
     <Compile Include="Utilities\ContentDialogMaker.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />

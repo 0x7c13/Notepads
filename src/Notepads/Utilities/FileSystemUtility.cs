@@ -10,6 +10,7 @@ namespace Notepads.Utilities
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Resources;
+    using Windows.Foundation.Metadata;
     using Windows.Storage;
     using Windows.Storage.Provider;
 
@@ -238,6 +239,17 @@ namespace Notepads.Utilities
                     throw new Exception($"FileUpdateStatus: {nameof(status)}");
                 }
             }
+        }
+
+        public static async Task<StorageFolder> GetOrCreateAppFolder(string folderName)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
+        }
+
+        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
+        {
+            return await folder.CreateFileAsync(fileName);
         }
     }
 }
