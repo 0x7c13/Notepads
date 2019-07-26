@@ -213,8 +213,8 @@ namespace Notepads.Controls.TextEditor
         {
             Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = TextEditorCore.GetText();
-            text = LineEndingUtility.ApplyLineEnding(text, LineEnding);
-            await FileSystemUtility.WriteToFile(text, encoding, file);
+            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, LineEnding), encoding, file);
+            TextEditorCore.ClearUndoQueue();
             OriginalContent = text;
             EditingFile = file;
             Encoding = encoding;
