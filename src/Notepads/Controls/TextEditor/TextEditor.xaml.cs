@@ -27,7 +27,7 @@ namespace Notepads.Controls.TextEditor
         public StorageFile EditingFile
         {
             get => _editingFile;
-            set
+            private set
             {
                 FileType = value == null ? FileType.TextFile : FileTypeUtility.GetFileTypeByFileName(value.Name);
                 _editingFile = value;
@@ -131,11 +131,11 @@ namespace Notepads.Controls.TextEditor
 
         public void Init(TextFile textFile, StorageFile file)
         {
-            OriginalSnapshot = textFile;
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);
+            OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding);
             TextEditorCore.ClearUndoQueue();
             IsModified = false;
         }
