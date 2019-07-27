@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
@@ -176,29 +175,6 @@
                                                 FontWeight="Light"
                                                 BorderThickness="1">
                     </controls:InAppNotification>
-
-                    <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
-                                                x:Load="false"
-                                                Padding="0"
-                                                Margin="0"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Top"
-                                                Style="{StaticResource FindAndReplacePlaceholder}"
-                                                ShowDismissButton="True"
-                                                AnimationDuration="0:0:0.050"
-                                                VerticalOffset="32"
-                                                HorizontalOffset="-22"
-                                                FontWeight="Light"
-                                                BorderThickness="1"
-                                                Closed="FindAndReplacePlaceholder_Closed">
-                        <controls:InAppNotification.Content>
-                            <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
-                                                            Width="320"
-                                                            OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
-                                                            OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
-                        </controls:InAppNotification.Content>
-                    </controls:InAppNotification>
-
                 </Grid>
             </SplitView.Content>
             <SplitView.Pane>

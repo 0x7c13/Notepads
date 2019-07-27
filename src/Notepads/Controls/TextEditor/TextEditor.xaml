@@ -7,6 +7,7 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
     xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
+    xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -86,11 +87,34 @@
                 <ColumnDefinition Width="*" MinWidth="100"/>
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
-            <textEditor:TextEditorCore x:Name="TextEditorCore" 
+            <Grid>
+                <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
                                        x:FieldModifier="public"
                                        Padding="8"/>
+                <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
+                                            x:Load="false"
+                                            Padding="0"
+                                            Margin="0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Style="{StaticResource FindAndReplacePlaceholder}"
+                                            ShowDismissButton="True"
+                                            AnimationDuration="0:0:0.050"
+                                            VerticalOffset="10"
+                                            HorizontalOffset="-22"
+                                            FontWeight="Light"
+                                            BorderThickness="1"
+                                            Closed="FindAndReplacePlaceholder_Closed">
+                    <controls:InAppNotification.Content>
+                        <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
+                                                              Width="320"
+                                                              OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
+                                                              OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
+                    </controls:InAppNotification.Content>
+                </controls:InAppNotification>
+            </Grid>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"
                               Padding="10,0,0,0"

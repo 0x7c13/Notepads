@@ -2,6 +2,7 @@
 namespace Notepads.Core
 {
     using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using System;
     using System.IO;
     using Windows.ApplicationModel.DataTransfer;
@@ -25,7 +26,7 @@ namespace Notepads.Core
         private readonly INotepadsCore _notepadsCore;
         private readonly TextEditor _textEditor;
 
-        private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public TabContextFlyout(INotepadsCore notepadsCore, TextEditor textEditor)
         {
@@ -170,6 +171,7 @@ namespace Notepads.Core
                             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                             dataPackage.SetText(_filePath);
                             Clipboard.SetContent(dataPackage);
+                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
                         catch (Exception)
                         {

@@ -21,7 +21,7 @@
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="50" />
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="20" />
                                             <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
                                                       Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </DoubleAnimationUsingKeyFrames>
@@ -59,7 +59,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                             <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="50" />
+                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="20" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"

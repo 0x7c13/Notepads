@@ -8,6 +8,7 @@ namespace Notepads.Core
     using SetsView;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Storage;
@@ -133,7 +134,7 @@ namespace Notepads.Core
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             if (GetNumberOfOpenedTextEditors() == 1 && file != null)
             {
-                var selectedEditor = GetSelectedTextEditor();
+                var selectedEditor = GetAllTextEditors().First();
                 if (selectedEditor.EditingFile == null && !selectedEditor.IsModified)
                 {
                     Sets.Items?.Clear();

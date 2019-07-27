@@ -9,7 +9,7 @@ namespace Notepads.Services
 
     public static class ContentDialogFactory
     {
-        private static readonly ResourceLoader ResourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+        private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction)
         {

@@ -242,6 +242,120 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        {
+            if (FindNextAndSelect(searchText, matchCase, matchWholeWord))
+            {
+                Document.Selection.SetText(TextSetOptions.None, replaceText);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        {
+            var found = false;
+
+            var pos = 0;
+            var searchTextLength = searchText.Length;
+            var replaceTextLength = replaceText.Length;
+
+            var text = GetText();
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+
+            while (pos != -1)
+            {
+                found = true;
+                text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
+                pos += replaceTextLength;
+                pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+            }
+
+            if (found)
+            {
+                SetText(text);
+                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.EndPosition = Document.Selection.StartPosition;
+            }
+
+            return found;
+        }
+
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool stopAtEof = true)
+        {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return false;
+            }
+
+            var text = GetText();
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+
+            var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+
+            if (index != -1)
+            {
+                Document.Selection.StartPosition = index;
+                Document.Selection.EndPosition = index + searchText.Length;
+            }
+            else
+            {
+                if (!stopAtEof)
+                {
+                    index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+
+                    if (index != -1)
+                    {
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + searchText.Length;
+                    }
+                }
+            }
+
+            if (index == -1)
+            {
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
+                return false;
+            }
+
+            return true;
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
+                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
+                if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
+                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
+                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
+                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
+                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
+                {
+                    return;
+                }
+            }
+
+            _keyboardCommandHandler.Handle(e);
+
+            if (!e.Handled)
+            {
+                base.OnKeyDown(e);
+            }
+        }
+
         private void SetDefaultTabStop(FontFamily font, double fontSize)
         {
             Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
@@ -323,32 +437,26 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            int pos = startIndex;
 
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            while (pos < target.Length && (pos = target.IndexOf(value, pos, comparison)) != -1)
             {
-                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
-                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
-                if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
-                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
-                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
-                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
-                {
-                    return;
-                }
-            }
+                bool startBoundary = true;
+                if (pos > 0)
+                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
 
-            _keyboardCommandHandler.Handle(e);
+                bool endBoundary = true;
+                if (pos + value.Length < target.Length)
+                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
 
-            if (!e.Handled)
-            {
-                base.OnKeyDown(e);
+                if (startBoundary && endBoundary)
+                    return pos;
+
+                pos++;
             }
+            return -1;
         }
     }
 }

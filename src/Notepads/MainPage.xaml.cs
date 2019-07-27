@@ -2,11 +2,9 @@
 namespace Notepads
 {
     using Notepads.Commands;
-    using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
     using Notepads.Core;
-    using Notepads.EventArgs;
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -19,7 +17,6 @@ namespace Notepads
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
-    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -27,7 +24,7 @@ namespace Notepads
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
 
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, INotificationDelegate
     {
         private readonly string _defaultNewFileName;
 
@@ -37,7 +34,7 @@ namespace Notepads
 
         private string _appLaunchCmdArgs;
 
-        private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private bool _loaded = false;
 
@@ -63,7 +60,7 @@ namespace Notepads
                         {
                             SetupStatusBar(editor);
                         }
-                        ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
                     };
                 }
 
@@ -78,6 +75,8 @@ namespace Notepads
             InitializeComponent();
 
             _defaultNewFileName = _resourceLoader.GetString("TextEditor_DefaultNewFileName");
+
+            NotificationCenter.Instance.SetNotificationDelegate(this);
 
             // Setup theme
             ThemeSettingsService.AppBackground = RootGrid;
@@ -112,9 +111,9 @@ namespace Notepads
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
             MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
             MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false); };
-            MenuFindButton.Click += (sender, args) => ShowFindAndReplaceControl(showReplaceBar: false);
-            MenuReplaceButton.Click += (sender, args) => ShowFindAndReplaceControl(showReplaceBar: true);
+            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
+            MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
+            MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
@@ -125,29 +124,27 @@ namespace Notepads
                 {
                     MenuSaveButton.IsEnabled = false;
                     MenuSaveAsButton.IsEnabled = false;
-                    MenuSaveAllButton.IsEnabled = false;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
                     //MenuPrintButton.IsEnabled = false;
                 }
                 else if (selectedTextEditor.IsEditorEnabled() == false)
                 {
-                    MenuSaveButton.IsEnabled = true;
+                    MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
                     MenuSaveAsButton.IsEnabled = true;
-                    MenuSaveAllButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
                     //MenuPrintButton.IsEnabled = true;
                 }
                 else
                 {
-                    MenuSaveButton.IsEnabled = true;
+                    MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
                     MenuSaveAsButton.IsEnabled = true;
-                    MenuSaveAllButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = true;
                     MenuReplaceButton.IsEnabled = true;
                     //MenuPrintButton.IsEnabled = true;
                 }
+                MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
         }
 
@@ -161,11 +158,8 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.T, (args) => NotepadsCore.OpenNewTextEditor()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
             });
         }
@@ -250,7 +244,7 @@ namespace Notepads
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        if (await Save(textEditor, saveAs: false))
+                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
                         {
                             NotepadsCore.DeleteTextEditor(textEditor);
                         }
@@ -371,7 +365,7 @@ namespace Notepads
                     var pathData = new DataPackage();
                     pathData.SetText(PathIndicator.Text);
                     Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
-                    ShowInAppNotificationMessage(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                 }
                 catch (Exception)
                 {
@@ -391,82 +385,9 @@ namespace Notepads
 
         #endregion
 
-        #region Find & Replace
-
-        private void ShowFindAndReplaceControl(bool showReplaceBar)
-        {
-            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedEditor == null || !selectedEditor.IsEditorEnabled())
-            {
-                return;
-            }
-
-            if (FindAndReplacePlaceholder == null)
-            {
-                FindName("FindAndReplacePlaceholder"); // Lazy loading
-            }
-
-            var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
-
-            if (findAndReplace == null) return;
-
-            FindAndReplacePlaceholder.Height = findAndReplace.GetHeight(showReplaceBar);
-            findAndReplace.ShowReplaceBar(showReplaceBar);
-
-            if (FindAndReplacePlaceholder.Visibility == Visibility.Collapsed)
-            {
-                FindAndReplacePlaceholder.Show();
-            }
-
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => findAndReplace.Focus()));
-        }
-
-        private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
-        {
-            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedTextEditor == null) return;
-
-            NotepadsCore.FocusOnSelectedTextEditor();
-
-            bool found = false;
-
-            switch (e.FindAndReplaceMode)
-            {
-                case FindAndReplaceMode.FindOnly:
-                    found = selectedTextEditor.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
-                    break;
-                case FindAndReplaceMode.Replace:
-                    found = selectedTextEditor.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
-                    break;
-                case FindAndReplaceMode.ReplaceAll:
-                    found = selectedTextEditor.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
-                    break;
-            }
-
-            if (!found)
-            {
-                ShowInAppNotificationMessage(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
-            }
-        }
-
-        private void FindAndReplacePlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
-        {
-            FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
-        }
-
-        private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
-        {
-            FindAndReplacePlaceholder.Dismiss();
-            NotepadsCore.FocusOnSelectedTextEditor();
-        }
-
-        #endregion
-
         #region InAppNotification
 
-        private void ShowInAppNotificationMessage(string message, int duration)
+        public void PostNotification(string message, int duration)
         {
             if (StatusNotification == null) { FindName("StatusNotification"); } // Lazy loading
             var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
@@ -490,10 +411,6 @@ namespace Notepads
 
         private void OnTextEditorUnloaded(object sender, TextEditor textEditor)
         {
-            if (FindAndReplacePlaceholder != null)
-            {
-                if (FindAndReplacePlaceholder.Visibility == Visibility.Visible) { FindAndReplacePlaceholder.Dismiss(); }
-            }
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 Application.Current.Exit();
@@ -580,9 +497,14 @@ namespace Notepads
             return successCount;
         }
 
-        private async Task<bool> Save(TextEditor textEditor, bool saveAs)
+        private async Task<bool> Save(TextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
         {
             if (textEditor == null) return false;
+
+            if (ignoreUnmodifiedDocument && !textEditor.IsModified)
+            {
+                return true;
+            }
 
             StorageFile file = null;
             try

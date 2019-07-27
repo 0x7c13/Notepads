@@ -25,7 +25,7 @@ namespace Notepads.Controls.TextEditor
 
         private readonly TextEditor _textEditor;
 
-        private readonly ResourceLoader _resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public TextEditorContextFlyout(TextEditor editor)
         {

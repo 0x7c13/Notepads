@@ -2,6 +2,8 @@
 namespace Notepads.Controls.TextEditor
 {
     using Notepads.Commands;
+    using Notepads.Controls.FindAndReplace;
+    using Notepads.EventArgs;
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -9,10 +11,10 @@ namespace Notepads.Controls.TextEditor
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
+    using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
-    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -38,6 +40,8 @@ namespace Notepads.Controls.TextEditor
                 _editingFile = value;
             }
         }
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public INotepadsExtensionProvider ExtensionProvider;
 
@@ -115,6 +119,9 @@ namespace Notepads.Controls.TextEditor
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
@@ -124,18 +131,25 @@ namespace Notepads.Controls.TextEditor
                         _contentPreviewExtension.IsExtensionEnabled = false;
                         CloseSplitView();
                     }
+                    else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+                    {
+                        HideFindAndReplaceControl();
+                    }
                 }),
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file)
+        public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
         {
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);
             OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding);
-            TextEditorCore.ClearUndoQueue();
+            if (clearUndoQueue)
+            {
+                TextEditorCore.ClearUndoQueue();
+            }
             IsModified = false;
         }
 
@@ -292,7 +306,7 @@ namespace Notepads.Controls.TextEditor
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
-            Init(new TextFile(text, encoding, lineEnding), file);
+            Init(new TextFile(text, encoding, lineEnding), file, clearUndoQueue: false);
         }
 
         public string GetContentForSharing()
@@ -318,90 +332,6 @@ namespace Notepads.Controls.TextEditor
                 var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
                 TextEditorCore.Document.Selection.TypeText(tabStr);
             }
-        }
-
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
-        {
-            if (FindNextAndSelect(searchText, matchCase, matchWholeWord))
-            {
-                TextEditorCore.Document.Selection.SetText(TextSetOptions.None, replaceText);
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
-        {
-            var found = false;
-
-            var pos = 0;
-            var searchTextLength = searchText.Length;
-            var replaceTextLength = replaceText.Length;
-
-            var text = TextEditorCore.GetText();
-
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
-
-            while (pos != -1)
-            {
-                found = true;
-                text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
-                pos += replaceTextLength;
-                pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
-            }
-
-            if (found)
-            {
-                TextEditorCore.SetText(text);
-                TextEditorCore.Document.Selection.StartPosition = Int32.MaxValue;
-                TextEditorCore.Document.Selection.EndPosition = TextEditorCore.Document.Selection.StartPosition;
-            }
-
-            return found;
-        }
-
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool stopAtEof = true)
-        {
-            if (string.IsNullOrEmpty(searchText))
-            {
-                return false;
-            }
-
-            var text = TextEditorCore.GetText();
-
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            var index = matchWholeWord ? IndexOfWholeWord(text, TextEditorCore.Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, TextEditorCore.Document.Selection.EndPosition, comparison);
-
-            if (index != -1)
-            {
-                TextEditorCore.Document.Selection.StartPosition = index;
-                TextEditorCore.Document.Selection.EndPosition = index + searchText.Length;
-            }
-            else
-            {
-                if (!stopAtEof)
-                {
-                    index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
-
-                    if (index != -1)
-                    {
-                        TextEditorCore.Document.Selection.StartPosition = index;
-                        TextEditorCore.Document.Selection.EndPosition = index + searchText.Length;
-                    }
-                }
-            }
-
-            if (index == -1)
-            {
-                TextEditorCore.Document.Selection.StartPosition = TextEditorCore.Document.Selection.EndPosition;
-                return false;
-            }
-
-            return true;
         }
 
         public void Focus()
@@ -478,25 +408,73 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        public void ShowFindAndReplaceControl(bool showReplaceBar)
         {
-            int pos = startIndex;
-            while (pos < target.Length && (pos = target.IndexOf(value, pos, comparison)) != -1)
+            if (!TextEditorCore.IsEnabled || TextEditorMode != TextEditorMode.Editing)
             {
-                bool startBoundary = true;
-                if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
-
-                bool endBoundary = true;
-                if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
-
-                if (startBoundary && endBoundary)
-                    return pos;
-
-                pos++;
+                return;
             }
-            return -1;
+
+            if (FindAndReplacePlaceholder == null)
+            {
+                FindName("FindAndReplacePlaceholder"); // Lazy loading
+            }
+
+            var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
+
+            if (findAndReplace == null) return;
+
+            FindAndReplacePlaceholder.Height = findAndReplace.GetHeight(showReplaceBar);
+            findAndReplace.ShowReplaceBar(showReplaceBar);
+
+            if (FindAndReplacePlaceholder.Visibility == Visibility.Collapsed)
+            {
+                FindAndReplacePlaceholder.Show();
+            }
+
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => findAndReplace.Focus()));
+        }
+
+        public void HideFindAndReplaceControl()
+        {
+            FindAndReplacePlaceholder?.Dismiss();
+        }
+
+        private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
+        {
+            TextEditorCore.Focus(FocusState.Programmatic);
+            bool found = false;
+
+            switch (e.FindAndReplaceMode)
+            {
+                case FindAndReplaceMode.FindOnly:
+                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
+                    break;
+                case FindAndReplaceMode.Replace:
+                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    break;
+                case FindAndReplaceMode.ReplaceAll:
+                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    break;
+            }
+
+            if (!found)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+            }
+        }
+
+        private void FindAndReplacePlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        {
+            FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
+        }
+
+        private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
+        {
+            FindAndReplacePlaceholder.Dismiss();
+            TextEditorCore.Focus(FocusState.Programmatic);
         }
     }
 }
