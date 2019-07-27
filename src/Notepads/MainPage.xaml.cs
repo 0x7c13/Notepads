@@ -55,8 +55,8 @@ namespace Notepads
                     _notepadsCore.OnTextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.OnTextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
                     _notepadsCore.OnTextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
-                    _notepadsCore.OnTextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.Encoding); };
-                    _notepadsCore.OnTextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.LineEnding); };
+                    _notepadsCore.OnTextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
+                    _notepadsCore.OnTextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
                     _notepadsCore.OnTextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -289,8 +289,8 @@ namespace Notepads
             if (textEditor == null) return;
             UpdatePathIndicatorText(textEditor);
             UpdateLineColumnIndicatorText(textEditor);
-            UpdateLineEndingIndicatorText(textEditor.LineEnding);
-            UpdateEncodingIndicatorText(textEditor.Encoding);
+            UpdateLineEndingIndicatorText(textEditor.GetLineEnding());
+            UpdateEncodingIndicatorText(textEditor.GetEncoding());
         }
 
         public void ShowHideStatusBar(bool showStatusBar)

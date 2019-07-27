@@ -145,7 +145,7 @@ namespace Notepads.Core
                         ExecuteOnAllTextEditors(
                             (textEditor) =>
                             {
-                                if (textEditor.Saved)
+                                if (!textEditor.IsModified)
                                 {
                                     _notepadsCore.CloseTextEditor(textEditor);
                                 }

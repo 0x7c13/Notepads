@@ -34,29 +34,42 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        public Encoding Encoding { get; set; }
-
-        public LineEnding LineEnding { get; set; }
-
-        public bool Saved { get; set; }
-
         public INotepadsExtensionProvider ExtensionProvider;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private IContentPreviewExtension _contentPreviewExtension;
 
-        public event TypedEventHandler<TextEditor, bool> TextChanging;
+        public event EventHandler ModifyStateChanged;
 
         public event RoutedEventHandler SelectionChanged;
 
-        public string OriginalContent;
+        public TextFile OriginalSnapshot { get; private set; }
+
+        public LineEnding? TargetLineEnding { get; private set; }
+
+        public Encoding TargetEncoding { get; private set; }
+
+        private bool _isModified;
+
+        public bool IsModified
+        {
+            get => _isModified;
+            private set
+            {
+                if (_isModified != value)
+                {
+                    _isModified = value;
+                    ModifyStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
 
         public TextEditor()
         {
             InitializeComponent();
 
-            TextEditorCore.TextChanging += (sender, args) => { TextChanging?.Invoke(this, args.IsContentChanging); };
+            TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, args); };
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this);
@@ -68,12 +81,25 @@ namespace Notepads.Controls.TextEditor
             {
                 if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
                 {
-                    SideBySideDiffViewer.RenderDiff(OriginalContent, TextEditorCore.GetText());
+                    SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
                     Task.Factory.StartNew(
                         () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                             () => SideBySideDiffViewer.Focus()));
                 }
             };
+        }
+
+        private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
+        {
+            if (!args.IsContentChanging) return;
+            if (IsModified)
+            {
+                IsModified = !IsInOriginalState();
+            }
+            else
+            {
+                IsModified = !IsInOriginalState(compareTextOnly: true);
+            }
         }
 
         private void LoadSplitView()
@@ -103,11 +129,86 @@ namespace Notepads.Controls.TextEditor
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
-        public void InitWithText(string text)
+        public void Init(TextFile textFile, StorageFile file)
         {
-            TextEditorCore.SetText(text);
-            OriginalContent = TextEditorCore.GetText();
+            OriginalSnapshot = textFile;
+            EditingFile = file;
+            TargetEncoding = null;
+            TargetLineEnding = null;
+            TextEditorCore.SetText(textFile.Content);
             TextEditorCore.ClearUndoQueue();
+            IsModified = false;
+        }
+
+        public bool TryChangeEncoding(Encoding encoding)
+        {
+            if (encoding == null) return false;
+            
+            if (!EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
+            {
+                TargetEncoding = encoding;
+                IsModified = true;
+                return true;
+            }
+
+            if (TargetEncoding != null && EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
+            {
+                TargetEncoding = null;
+                IsModified = !IsInOriginalState();
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryChangeLineEnding(LineEnding lineEnding)
+        {
+            if (OriginalSnapshot.LineEnding != lineEnding)
+            {
+                TargetLineEnding = lineEnding;
+                IsModified = true;
+                return true;
+            }
+
+            if (TargetLineEnding != null && OriginalSnapshot.LineEnding == lineEnding)
+            {
+                TargetLineEnding = null;
+                IsModified = !IsInOriginalState();
+                return true;
+            }
+            return false;
+        }
+
+        public LineEnding GetLineEnding()
+        {
+            return TargetLineEnding ?? OriginalSnapshot.LineEnding;
+        }
+
+        public Encoding GetEncoding()
+        {
+            return TargetEncoding ?? OriginalSnapshot.Encoding;
+        }
+
+        private bool IsInOriginalState(bool compareTextOnly = false)
+        {
+            if (!compareTextOnly)
+            {
+                if (TargetLineEnding != null)
+                {
+                    return false;
+                }
+
+                if (TargetEncoding != null)
+                {
+                    return false;
+                }
+            }
+
+            if (!string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void ShowHideContentPreview()
@@ -146,7 +247,7 @@ namespace Notepads.Controls.TextEditor
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
-            SideBySideDiffViewer.RenderDiff(OriginalContent, TextEditorCore.GetText());
+            SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
             Task.Factory.StartNew(
                 () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                     () => SideBySideDiffViewer.Focus()));
@@ -168,7 +269,7 @@ namespace Notepads.Controls.TextEditor
 
             if (SideBySideDiffViewer.Visibility == Visibility.Collapsed)
             {
-                if (!Saved)
+                if (!string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
                 {
                     OpenSideBySideDiffViewer();
                 }
@@ -211,14 +312,11 @@ namespace Notepads.Controls.TextEditor
 
         public async Task SaveToFile(StorageFile file)
         {
-            Encoding encoding = Encoding ?? new UTF8Encoding(false);
             var text = TextEditorCore.GetText();
-            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, LineEnding), encoding, file);
-            TextEditorCore.ClearUndoQueue();
-            OriginalContent = text;
-            EditingFile = file;
-            Encoding = encoding;
-            Saved = true;
+            var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
+            var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
+            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
+            Init(new TextFile(text, encoding, lineEnding), file);
         }
 
         public string GetContentForSharing()
