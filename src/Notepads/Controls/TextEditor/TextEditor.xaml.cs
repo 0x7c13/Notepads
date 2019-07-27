@@ -9,7 +9,6 @@ namespace Notepads.Controls.TextEditor
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
-    using Windows.Foundation;
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
@@ -17,6 +16,12 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
+
+    public enum TextEditorMode
+    {
+        Editing,
+        DiffPreview
+    }
 
     public sealed partial class TextEditor : UserControl
     {
@@ -40,6 +45,8 @@ namespace Notepads.Controls.TextEditor
 
         private IContentPreviewExtension _contentPreviewExtension;
 
+        public event EventHandler ModeChanged;
+
         public event EventHandler ModifyStateChanged;
 
         public event RoutedEventHandler SelectionChanged;
@@ -61,6 +68,21 @@ namespace Notepads.Controls.TextEditor
                 {
                     _isModified = value;
                     ModifyStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private TextEditorMode _textEditorMode = TextEditorMode.Editing;
+
+        public TextEditorMode TextEditorMode
+        {
+            get => _textEditorMode;
+            private set
+            {
+                if (_textEditorMode != value)
+                {
+                    _textEditorMode = value;
+                    ModeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -89,44 +111,21 @@ namespace Notepads.Controls.TextEditor
             };
         }
 
-        private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
+        private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
-            if (!args.IsContentChanging) return;
-            if (IsModified)
+            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                IsModified = !IsInOriginalState();
-            }
-            else
-            {
-                IsModified = !IsInOriginalState(compareTextOnly: true);
-            }
-        }
-
-        private void LoadSplitView()
-        {
-            FindName("SplitPanel");
-            FindName("GridSplitter");
-            SplitPanel.Visibility = Visibility.Collapsed;
-            GridSplitter.Visibility = Visibility.Collapsed;
-            SplitPanel.KeyDown += SplitPanel_OnKeyDown;
-        }
-
-        public void OpenSplitView(IContentPreviewExtension extension)
-        {
-            SplitPanel.Content = extension;
-            SplitPanelColumnDefinition.Width = new GridLength(ActualWidth / 2.0f);
-            SplitPanelColumnDefinition.MinWidth = 100.0f;
-            SplitPanel.Visibility = Visibility.Visible;
-            GridSplitter.Visibility = Visibility.Visible;
-        }
-
-        public void CloseSplitView()
-        {
-            SplitPanelColumnDefinition.Width = new GridLength(0);
-            SplitPanelColumnDefinition.MinWidth = 0.0f;
-            SplitPanel.Visibility = Visibility.Collapsed;
-            GridSplitter.Visibility = Visibility.Collapsed;
-            TextEditorCore.Focus(FocusState.Programmatic);
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                {
+                    if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                    {
+                        _contentPreviewExtension.IsExtensionEnabled = false;
+                        CloseSplitView();
+                    }
+                }),
+            });
         }
 
         public void Init(TextFile textFile, StorageFile file)
@@ -143,7 +142,7 @@ namespace Notepads.Controls.TextEditor
         public bool TryChangeEncoding(Encoding encoding)
         {
             if (encoding == null) return false;
-            
+
             if (!EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
             {
                 TargetEncoding = encoding;
@@ -188,27 +187,22 @@ namespace Notepads.Controls.TextEditor
             return TargetEncoding ?? OriginalSnapshot.Encoding;
         }
 
-        private bool IsInOriginalState(bool compareTextOnly = false)
+        public void OpenSplitView(IContentPreviewExtension extension)
         {
-            if (!compareTextOnly)
-            {
-                if (TargetLineEnding != null)
-                {
-                    return false;
-                }
+            SplitPanel.Content = extension;
+            SplitPanelColumnDefinition.Width = new GridLength(ActualWidth / 2.0f);
+            SplitPanelColumnDefinition.MinWidth = 100.0f;
+            SplitPanel.Visibility = Visibility.Visible;
+            GridSplitter.Visibility = Visibility.Visible;
+        }
 
-                if (TargetEncoding != null)
-                {
-                    return false;
-                }
-            }
-
-            if (!string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
-            {
-                return false;
-            }
-
-            return true;
+        public void CloseSplitView()
+        {
+            SplitPanelColumnDefinition.Width = new GridLength(0);
+            SplitPanelColumnDefinition.MinWidth = 0.0f;
+            SplitPanel.Visibility = Visibility.Collapsed;
+            GridSplitter.Visibility = Visibility.Collapsed;
+            TextEditorCore.Focus(FocusState.Programmatic);
         }
 
         public void ShowHideContentPreview()
@@ -234,15 +228,9 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        public void LoadSideBySideDiffViewer()
-        {
-            FindName("SideBySideDiffViewer");
-            SideBySideDiffViewer.Visibility = Visibility.Collapsed;
-            SideBySideDiffViewer.OnCloseEvent += (sender, args) => CloseSideBySideDiffViewer();
-        }
-
         public void OpenSideBySideDiffViewer()
         {
+            TextEditorMode = TextEditorMode.DiffPreview;
             TextEditorCore.IsEnabled = false;
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
@@ -255,6 +243,7 @@ namespace Notepads.Controls.TextEditor
 
         public void CloseSideBySideDiffViewer()
         {
+            TextEditorMode = TextEditorMode.Editing;
             TextEditorCore.IsEnabled = true;
             EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
@@ -288,23 +277,6 @@ namespace Notepads.Controls.TextEditor
             selectedCount = selected;
         }
 
-        private KeyboardCommandHandler GetKeyboardCommandHandler()
-        {
-            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
-            {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
-                {
-                    if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
-                    {
-                        _contentPreviewExtension.IsExtensionEnabled = false;
-                        CloseSplitView();
-                    }
-                }),
-            });
-        }
-
         public bool IsEditorEnabled()
         {
             return TextEditorCore.IsEnabled;
@@ -312,6 +284,10 @@ namespace Notepads.Controls.TextEditor
 
         public async Task SaveToFile(StorageFile file)
         {
+            if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
+            {
+                CloseSideBySideDiffViewer();
+            }
             var text = TextEditorCore.GetText();
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
@@ -333,6 +309,15 @@ namespace Notepads.Controls.TextEditor
             }
 
             return content;
+        }
+
+        public void TypeTab()
+        {
+            if (TextEditorCore.IsEnabled)
+            {
+                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
+                TextEditorCore.Document.Selection.TypeText(tabStr);
+            }
         }
 
         public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
@@ -431,6 +416,45 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        private bool IsInOriginalState(bool compareTextOnly = false)
+        {
+            if (OriginalSnapshot == null) return true;
+
+            if (!compareTextOnly)
+            {
+                if (TargetLineEnding != null)
+                {
+                    return false;
+                }
+
+                if (TargetEncoding != null)
+                {
+                    return false;
+                }
+            }
+            if (!string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void LoadSplitView()
+        {
+            FindName("SplitPanel");
+            FindName("GridSplitter");
+            SplitPanel.Visibility = Visibility.Collapsed;
+            GridSplitter.Visibility = Visibility.Collapsed;
+            SplitPanel.KeyDown += SplitPanel_OnKeyDown;
+        }
+
+        private void LoadSideBySideDiffViewer()
+        {
+            FindName("SideBySideDiffViewer");
+            SideBySideDiffViewer.Visibility = Visibility.Collapsed;
+            SideBySideDiffViewer.OnCloseEvent += (sender, args) => CloseSideBySideDiffViewer();
+        }
+
         private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             _keyboardCommandHandler.Handle(e);
@@ -441,12 +465,16 @@ namespace Notepads.Controls.TextEditor
             _keyboardCommandHandler.Handle(e);
         }
 
-        public void TypeTab()
+        private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
         {
-            if (TextEditorCore.IsEnabled)
+            if (!args.IsContentChanging) return;
+            if (IsModified)
             {
-                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-                TextEditorCore.Document.Selection.TypeText(tabStr);
+                IsModified = !IsInOriginalState();
+            }
+            else
+            {
+                IsModified = !IsInOriginalState(compareTextOnly: true);
             }
         }
 

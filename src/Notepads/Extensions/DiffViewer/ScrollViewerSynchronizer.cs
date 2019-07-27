@@ -36,7 +36,6 @@ namespace Notepads.Extensions.DiffViewer
             }
             scrollViewer.ApplyTemplate();
 
-
             var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
             var horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
             var verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");

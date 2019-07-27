@@ -50,14 +50,14 @@ namespace Notepads
                 if (_notepadsCore == null)
                 {
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"), new NotepadsExtensionProvider());
-                    _notepadsCore.OnTextEditorLoaded += OnTextEditorLoaded;
-                    _notepadsCore.OnTextEditorUnloaded += OnTextEditorUnloaded;
-                    _notepadsCore.OnTextEditorKeyDown += OnTextEditor_KeyDown;
-                    _notepadsCore.OnTextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.OnTextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
-                    _notepadsCore.OnTextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
-                    _notepadsCore.OnTextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
-                    _notepadsCore.OnTextEditorSaved += (sender, editor) =>
+                    _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
+                    _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
+                    _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
+                    _notepadsCore.TextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
+                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
+                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
+                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
+                    _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
                         {

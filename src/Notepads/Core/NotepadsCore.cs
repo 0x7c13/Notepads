@@ -24,21 +24,23 @@ namespace Notepads.Core
 
         public readonly string DefaultNewFileName;
 
-        public event EventHandler<TextEditor> OnTextEditorLoaded;
+        public event EventHandler<TextEditor> TextEditorLoaded;
 
-        public event EventHandler<TextEditor> OnTextEditorUnloaded;
+        public event EventHandler<TextEditor> TextEditorUnloaded;
 
-        public event EventHandler<TextEditor> OnTextEditorSaved;
+        public event EventHandler<TextEditor> TextEditorSaved;
 
-        public event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
+        public event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
 
-        public event EventHandler<TextEditor> OnTextEditorSelectionChanged;
+        public event EventHandler<TextEditor> TextEditorSelectionChanged;
 
-        public event EventHandler<TextEditor> OnTextEditorEncodingChanged;
+        public event EventHandler<TextEditor> TextEditorEncodingChanged;
 
-        public event EventHandler<TextEditor> OnTextEditorLineEndingChanged;
+        public event EventHandler<TextEditor> TextEditorLineEndingChanged;
 
-        public event KeyEventHandler OnTextEditorKeyDown;
+        public event EventHandler<TextEditor> TextEditorModeChanged;
+
+        public event KeyEventHandler TextEditorKeyDown;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
@@ -105,8 +107,9 @@ namespace Notepads.Core
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
-            textEditor.KeyDown += OnTextEditorKeyDown;
+            textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModifyStateChanged += TextEditor_OnModifyStateChanged;
+            textEditor.ModeChanged += TextEditor_ModeChanged;
 
             var newItem = new SetsViewItem
             {
@@ -149,7 +152,7 @@ namespace Notepads.Core
         public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
         {
             await textEditor.SaveToFile(file);
-            OnTextEditorSaved?.Invoke(this, textEditor);
+            TextEditorSaved?.Invoke(this, textEditor);
         }
 
         public void DeleteTextEditor(TextEditor textEditor)
@@ -187,7 +190,7 @@ namespace Notepads.Core
         {
             if (textEditor.TryChangeLineEnding(lineEnding))
             {
-                OnTextEditorLineEndingChanged?.Invoke(this, textEditor);
+                TextEditorLineEndingChanged?.Invoke(this, textEditor);
             }
         }
 
@@ -195,7 +198,7 @@ namespace Notepads.Core
         {
             if (textEditor.TryChangeEncoding(encoding))
             {
-                OnTextEditorEncodingChanged?.Invoke(this, textEditor);
+                TextEditorEncodingChanged?.Invoke(this, textEditor);
             }
         }
 
@@ -273,10 +276,10 @@ namespace Notepads.Core
         {
             if (!(e.Set.Content is TextEditor textEditor)) return;
             if (!textEditor.IsModified) return;
-            if (OnTextEditorClosingWithUnsavedContent != null)
+            if (TextEditorClosingWithUnsavedContent != null)
             {
                 e.Cancel = true;
-                OnTextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
+                TextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
             }
         }
 
@@ -339,6 +342,24 @@ namespace Notepads.Core
             }
         }
 
+        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TextEditor textEditor)) return;
+            TextEditorLoaded?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TextEditor textEditor)) return;
+            TextEditorUnloaded?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TextEditor textEditor)) return;
+            TextEditorSelectionChanged?.Invoke(this, textEditor);
+        }
+
         private void TextEditor_OnModifyStateChanged(object sender, EventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
@@ -352,22 +373,10 @@ namespace Notepads.Core
             }
         }
 
-        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
+        private void TextEditor_ModeChanged(object sender, EventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
-            OnTextEditorLoaded?.Invoke(this, textEditor);
-        }
-
-        private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is TextEditor textEditor)) return;
-            OnTextEditorUnloaded?.Invoke(this, textEditor);
-        }
-
-        private void TextEditor_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is TextEditor textEditor)) return;
-            OnTextEditorSelectionChanged?.Invoke(this, textEditor);
+            TextEditorModeChanged?.Invoke(this, textEditor);
         }
 
         private void OnAppAccentColorChanged(object sender, Color color)
