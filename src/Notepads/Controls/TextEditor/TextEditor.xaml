@@ -92,7 +92,7 @@
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
                                        x:FieldModifier="public"
-                                       Padding="8"/>
+                                       Padding="8 , 6, 10, 10"/>
                 <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"
                                             Padding="0"

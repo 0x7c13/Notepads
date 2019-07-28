@@ -141,6 +141,14 @@
     <value>找不到可分享内容，请确保文档存在内容同时选择了文本。</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
+    <value>改动之后</value>
+    <comment>DiffViewer: Header's text for new text (After changes).</comment>
+  </data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
+    <value>改动之前</value>
+    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
+  </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
     <value>Notepads 暂时不支持打开 1MB 以上的文件</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>

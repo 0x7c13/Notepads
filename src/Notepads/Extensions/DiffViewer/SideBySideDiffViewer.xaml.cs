@@ -58,13 +58,11 @@ namespace Notepads.Extensions.DiffViewer
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
                 {
-                    StopRenderingAndClearCache();
-                    OnCloseEvent?.Invoke(this, EventArgs.Empty);
+                    DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
-                    StopRenderingAndClearCache();
-                    OnCloseEvent?.Invoke(this, EventArgs.Empty);
+                    DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
             });
         }
@@ -270,6 +268,12 @@ namespace Notepads.Extensions.DiffViewer
             //        }
             //    }
             //});
+        }
+
+        private void DismissButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            StopRenderingAndClearCache();
+            OnCloseEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 }
