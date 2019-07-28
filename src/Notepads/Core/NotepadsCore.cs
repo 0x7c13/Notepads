@@ -29,6 +29,8 @@ namespace Notepads.Core
 
         public event EventHandler<TextEditor> TextEditorUnloaded;
 
+        public event EventHandler<TextEditor> TextEditorModificationStateChanged;
+
         public event EventHandler<TextEditor> TextEditorSaved;
 
         public event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
@@ -109,8 +111,10 @@ namespace Notepads.Core
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.KeyDown += TextEditorKeyDown;
-            textEditor.ModifyStateChanged += TextEditor_OnModifyStateChanged;
+            textEditor.ModificationStateChanged += TextEditor_OnModificationStateChanged;
             textEditor.ModeChanged += TextEditor_ModeChanged;
+            textEditor.LineEndingChanged += (sender, args) => { TextEditorLineEndingChanged?.Invoke(this, sender as TextEditor); };
+            textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as TextEditor); };
 
             var newItem = new SetsViewItem
             {
@@ -189,18 +193,12 @@ namespace Notepads.Core
 
         public void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding)
         {
-            if (textEditor.TryChangeLineEnding(lineEnding))
-            {
-                TextEditorLineEndingChanged?.Invoke(this, textEditor);
-            }
+            textEditor.TryChangeLineEnding(lineEnding);
         }
 
         public void ChangeEncoding(TextEditor textEditor, Encoding encoding)
         {
-            if (textEditor.TryChangeEncoding(encoding))
-            {
-                TextEditorEncodingChanged?.Invoke(this, textEditor);
-            }
+            textEditor.TryChangeEncoding(encoding);
         }
 
         public void SwitchTo(bool next)
@@ -254,6 +252,7 @@ namespace Notepads.Core
                     editors.Add(textEditor);
                 }
             }
+
             return editors.ToArray();
         }
 
@@ -361,7 +360,7 @@ namespace Notepads.Core
             TextEditorSelectionChanged?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_OnModifyStateChanged(object sender, EventArgs e)
+        private void TextEditor_OnModificationStateChanged(object sender, EventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
             if (textEditor.IsModified)
@@ -372,6 +371,7 @@ namespace Notepads.Core
             {
                 MarkTextEditorSetSaved(textEditor);
             }
+            TextEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
         private void TextEditor_ModeChanged(object sender, EventArgs e)

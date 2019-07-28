@@ -76,5 +76,19 @@ namespace Notepads.Services
             redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
             return redButtonStyle;
         }
+
+        public static ContentDialog GetRevertAllChangesConfirmationDialog(string fileNameOrPath, Action confirmedAction)
+        {
+            ContentDialog revertAllChangesConfirmationDialog = new ContentDialog
+            {
+                Title = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_Title"),
+                Content = string.Format(ResourceLoader.GetString("RevertAllChangesConfirmationDialog_Content"), fileNameOrPath),
+                PrimaryButtonText = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_PrimaryButtonText"),
+                CloseButtonText = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_CloseButtonText"),
+                RequestedTheme = ThemeSettingsService.ThemeMode,
+            };
+            revertAllChangesConfirmationDialog.PrimaryButtonClick += (dialog, args) => { confirmedAction(); };
+            return revertAllChangesConfirmationDialog;
+        }
     }
 }

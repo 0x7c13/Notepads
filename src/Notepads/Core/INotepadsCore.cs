@@ -16,6 +16,8 @@ namespace Notepads.Core
 
         event EventHandler<TextEditor> TextEditorUnloaded;
 
+        event EventHandler<TextEditor> TextEditorModificationStateChanged;
+
         event EventHandler<TextEditor> TextEditorSaved;
 
         event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;

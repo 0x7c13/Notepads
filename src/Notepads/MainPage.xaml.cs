@@ -54,6 +54,7 @@ namespace Notepads
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
+                    _notepadsCore.TextEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -282,6 +283,7 @@ namespace Notepads
         {
             if (textEditor == null) return;
             UpdatePathIndicatorText(textEditor);
+            UpdateEditorModificationIndicatorText(textEditor);
             UpdateLineColumnIndicatorText(textEditor);
             UpdateLineEndingIndicatorText(textEditor.GetLineEnding());
             UpdateEncodingIndicatorText(textEditor.GetEncoding());
@@ -310,6 +312,23 @@ namespace Notepads
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
         }
 
+        private void UpdateEditorModificationIndicatorText(TextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            if (textEditor.IsModified)
+            {
+                ModificationIndicator.Text = _resourceLoader.GetString("TextEditor_ModificationIndicator_Text");
+                ModificationIndicator.Visibility = Visibility.Visible;
+                ModificationIndicator.IsTapEnabled = true;
+            }
+            else
+            {
+                ModificationIndicator.Text = string.Empty;
+                ModificationIndicator.Visibility = Visibility.Collapsed;
+                ModificationIndicator.IsTapEnabled = false;
+            }
+        }
+
         private void UpdateEncodingIndicatorText(Encoding encoding)
         {
             if (StatusBar == null) return;
@@ -329,6 +348,29 @@ namespace Notepads
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
+        }
+
+        private void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuFlyoutItem item)) return;
+
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
+
+            switch ((string)item.Tag)
+            {
+                case "PreviewTextChanges":
+                    NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
+                    break;
+                case "RevertAllChanges":
+                    var fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
+                    var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
+                    {
+                        NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
+                    });
+                    _ = ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+                    break;
+            }
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
@@ -357,6 +399,9 @@ namespace Notepads
 
         private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
         {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor == null) return;
+            
             if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
@@ -374,6 +419,10 @@ namespace Notepads
             }
             else if (sender is TextBlock textBlock)
             {
+                if (sender == ModificationIndicator)
+                {
+                    PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                }
                 textBlock.ContextFlyout?.ShowAt(textBlock);
             }
         }

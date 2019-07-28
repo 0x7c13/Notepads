@@ -72,16 +72,11 @@ namespace SetsView
                     _isMiddleClick = true;
                 }
 
-                // Disable ctrl + left click
+                // Disable "ctrl + left click to deselect set"
                 if (pointerPoint.Properties.IsLeftButtonPressed)
                 {
                     var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                    var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-                    var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                    if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                        !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                        !shift.HasFlag(CoreVirtualKeyStates.Down))
+                    if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
                     {
                         e.Handled = true;
                     }

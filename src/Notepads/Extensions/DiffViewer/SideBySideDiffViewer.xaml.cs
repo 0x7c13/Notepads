@@ -49,6 +49,7 @@ namespace Notepads.Extensions.DiffViewer
             KeyDown += OnKeyDown;
             LeftBox.KeyDown += OnKeyDown;
             RightBox.KeyDown += OnKeyDown;
+            Loaded += (sender, args) => { Focus(); };
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
