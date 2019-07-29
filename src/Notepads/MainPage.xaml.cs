@@ -409,7 +409,8 @@ namespace Notepads
                 {
                     var pathData = new DataPackage();
                     pathData.SetText(PathIndicator.Text);
-                    Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pathData);
+                    Clipboard.SetContentWithOptions(pathData, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                    Clipboard.Flush();
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                 }
                 catch (Exception)

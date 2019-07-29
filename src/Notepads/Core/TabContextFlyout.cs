@@ -170,7 +170,8 @@ namespace Notepads.Core
                         {
                             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                             dataPackage.SetText(_filePath);
-                            Clipboard.SetContent(dataPackage);
+                            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                            Clipboard.Flush();
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
                         catch (Exception)
