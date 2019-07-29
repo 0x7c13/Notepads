@@ -101,6 +101,8 @@ namespace Notepads.Core
             Encoding encoding,
             LineEnding lineEnding)
         {
+            LoggingService.LogInfo("Opening a text editor.");
+
             var textEditor = new TextEditor
             {
                 ExtensionProvider = _extensionProvider
@@ -274,6 +276,7 @@ namespace Notepads.Core
 
         private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
         {
+            LoggingService.LogInfo("Closing a text editor.");
             if (!(e.Set.Content is TextEditor textEditor)) return;
             if (!textEditor.IsModified) return;
             if (TextEditorClosingWithUnsavedContent != null)
