@@ -21,13 +21,20 @@ namespace Notepads.Services
         private static readonly List<string> _messages = new List<string>();
 
         private static StorageFile _logFile;
+        private static Task _backgroundTask;
         private static bool _initialized;
 
         public static async Task InitializeAsync()
         {
-            CoreApplication.Suspending += async (sender, args) => { await TryFlushMessageQueueAsync(); };
+            if (_initialized)
+            {
+                return;
+            }
 
-            await InitializeBackgroundThreadAsync();
+            CoreApplication.Suspending += async (sender, args) => { await TryFlushMessageQueueAsync(); };
+            CoreApplication.Resuming += async (sender, args) => { await InitializeBackgroundTaskAsync(); };
+
+            await InitializeBackgroundTaskAsync();
         }
 
         public static void LogInfo(string message)
@@ -65,14 +72,25 @@ namespace Notepads.Services
             _messageQueue.Enqueue(String.Format(_messageFormat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), level, message));
         }
 
-        private static async Task InitializeBackgroundThreadAsync()
+        private static async Task InitializeBackgroundTaskAsync()
         {
-            StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolder("Logs");
-            _logFile = await FileSystemUtility.CreateFile(logsFolder, DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log");
+            await _semaphoreSlim.WaitAsync();
+
+            if (_backgroundTask != null && !_backgroundTask.IsCompleted)
+            {
+                _semaphoreSlim.Release();
+                return;
+            }
+
+            if (_logFile == null)
+            {
+                StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolder("Logs");
+                _logFile = await FileSystemUtility.CreateFile(logsFolder, DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log");
+            }
 
             try
             {
-                _ = Task.Run(
+                _backgroundTask = Task.Run(
                     async () =>
                     {
                         while (true)
@@ -94,10 +112,17 @@ namespace Notepads.Services
             {
                 // Ignore
             }
+
+            _semaphoreSlim.Release();
         }
 
         private static async Task<bool> TryFlushMessageQueueAsync()
         {
+            if (!_initialized)
+            {
+                return false;
+            }
+
             await _semaphoreSlim.WaitAsync();
 
             while (_messageQueue.TryDequeue(out string message))
