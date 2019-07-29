@@ -20,7 +20,7 @@ namespace Notepads.Controls.Settings
 
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            SettingsPanel.Show(args.InvokedItem as string);
+            SettingsPanel.Show((args.InvokedItem as string), (args.InvokedItemContainer as NavigationViewItem)?.Tag as string);
         }
     }
 }

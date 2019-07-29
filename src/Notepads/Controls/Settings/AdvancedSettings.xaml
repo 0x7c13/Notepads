@@ -26,15 +26,14 @@
             VerticalScrollMode="Auto">
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
+                    x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,15,0,0"
-                    FontWeight="Normal"
-                    Text="Status Bar Settings" />
+                    FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" 
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="ShowStatusBarToggleSwitch" 
-                                  OffContent="Show status bar" 
-                                  OnContent="Show status bar" 
                                   Margin="0,0,0,0"/>
                 </StackPanel>
             </StackPanel>

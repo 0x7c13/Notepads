@@ -12,13 +12,13 @@ namespace Notepads.Controls.Settings
             InitializeComponent();
         }
 
-        public void Show(string title)
+        public void Show(string title, string tag)
         {
             Type pageType;
 
-            switch (title)
+            switch (tag)
             {
-                case "Text & Editor":
+                case "TextAndEditor":
                     pageType = typeof(TextAndEditorSettings);
                     break;
                 case "Personalization":

@@ -266,7 +266,7 @@ namespace Notepads.Controls.TextEditor
         public void OpenSideBySideDiffViewer()
         {
             if (string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText())) return;
-            if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible) return;
+            if (EditorMode == TextEditorMode.DiffPreview) return;
             if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
             EditorMode = TextEditorMode.DiffPreview;
             TextEditorCore.IsEnabled = false;
@@ -281,7 +281,7 @@ namespace Notepads.Controls.TextEditor
 
         public void CloseSideBySideDiffViewer()
         {
-            if (SideBySideDiffViewer == null || SideBySideDiffViewer.Visibility == Visibility.Collapsed) return;
+            if (EditorMode != TextEditorMode.DiffPreview) return;
             EditorMode = TextEditorMode.Editing;
             TextEditorCore.IsEnabled = true;
             EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
