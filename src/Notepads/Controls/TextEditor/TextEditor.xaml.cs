@@ -65,6 +65,8 @@ namespace Notepads.Controls.TextEditor
 
         public Encoding TargetEncoding { get; private set; }
 
+        private bool _loaded;
+
         private bool _isModified;
 
         public bool IsModified
@@ -109,7 +111,7 @@ namespace Notepads.Controls.TextEditor
 
             ThemeSettingsService.OnThemeChanged += (sender, theme) =>
             {
-                if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
+                if (EditorMode == TextEditorMode.DiffPreview)
                 {
                     SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
                     Task.Factory.StartNew(
@@ -145,6 +147,7 @@ namespace Notepads.Controls.TextEditor
 
         public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
         {
+            _loaded = false;
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
@@ -155,6 +158,7 @@ namespace Notepads.Controls.TextEditor
                 TextEditorCore.ClearUndoQueue();
             }
             IsModified = false;
+            _loaded = true;
         }
 
         public void RevertAllChanges()
@@ -328,16 +332,9 @@ namespace Notepads.Controls.TextEditor
 
         public string GetContentForSharing()
         {
-            string content;
-
-            if (TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition)
-            {
-                content = TextEditorCore.GetText();
-            }
-            else
-            {
-                content = TextEditorCore.Document.Selection.Text;
-            }
+            var content = TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition ?
+                TextEditorCore.GetText() :
+                TextEditorCore.Document.Selection.Text;
 
             return content;
         }
@@ -365,7 +362,7 @@ namespace Notepads.Controls.TextEditor
 
         public bool IsInOriginalState(bool compareTextOnly = false)
         {
-            if (OriginalSnapshot == null) return true;
+            if (!_loaded) return true;
 
             if (!compareTextOnly)
             {
@@ -414,7 +411,7 @@ namespace Notepads.Controls.TextEditor
 
         private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
         {
-            if (!args.IsContentChanging) return;
+            if (!args.IsContentChanging || !_loaded) return;
             if (IsModified)
             {
                 IsModified = !IsInOriginalState();

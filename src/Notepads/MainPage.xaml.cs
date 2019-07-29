@@ -350,7 +350,7 @@ namespace Notepads
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
         }
 
-        private void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is MenuFlyoutItem item)) return;
 
@@ -368,7 +368,7 @@ namespace Notepads
                     {
                         NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
                     });
-                    _ = ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+                    await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
                     break;
             }
         }
@@ -401,7 +401,7 @@ namespace Notepads
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor == null) return;
-            
+
             if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
