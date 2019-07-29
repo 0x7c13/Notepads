@@ -197,7 +197,7 @@ namespace Notepads.Controls.TextEditor
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                 dataPackage.SetText(Document.Selection.Text);
-                Clipboard.SetContent(dataPackage);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
             }
             catch (Exception)
             {
