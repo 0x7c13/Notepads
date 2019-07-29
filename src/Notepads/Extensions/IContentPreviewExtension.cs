@@ -5,7 +5,7 @@ namespace Notepads.Extensions
 
     public interface IContentPreviewExtension
     {
-        void Bind(TextEditor editor);
+        void Bind(TextEditorCore editor);
 
         bool IsExtensionEnabled { get; set; }
     }

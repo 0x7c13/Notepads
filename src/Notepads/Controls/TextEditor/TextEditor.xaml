@@ -91,7 +91,6 @@
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
-                                       x:FieldModifier="public"
                                        Padding="8 , 6, 10, 10"/>
                 <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"

@@ -48,7 +48,7 @@
                         Source code is available on Github:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" Click="Hyperlink_SourceCode_OnClick">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
                             https://github.com/JasonStein/Notepads
                         </Hyperlink>
                     </Paragraph>
@@ -56,13 +56,13 @@
                         For more info, please visit our website:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" Click="Hyperlink_LandingPage_OnClick">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
                             https://www.NotepadsApp.com
                         </Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
                         To contact the authors:
-                        <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com" Click="Hyperlink_Mail_OnClick">
+                        <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com">
                             mailto:NotepadsApp@outlook.com
                         </Hyperlink>
                     </Paragraph>
@@ -70,7 +70,7 @@
                         For issue reporting and feature requests:
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues" Click="Hyperlink_Issues_OnClick">
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues">
                             https://github.com/JasonStein/Notepads/issues
                         </Hyperlink>
                     </Paragraph>

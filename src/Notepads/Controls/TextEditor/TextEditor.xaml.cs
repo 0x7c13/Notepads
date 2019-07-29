@@ -102,7 +102,7 @@ namespace Notepads.Controls.TextEditor
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, args); };
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
-            TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this);
+            TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, this.TextEditorCore);
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
@@ -242,7 +242,7 @@ namespace Notepads.Controls.TextEditor
             {
                 _contentPreviewExtension = ExtensionProvider?.GetContentPreviewExtension(FileType);
                 if (_contentPreviewExtension == null) return;
-                _contentPreviewExtension.Bind(this);
+                _contentPreviewExtension.Bind(this.TextEditorCore);
             }
 
             if (SplitPanel == null) LoadSplitView();

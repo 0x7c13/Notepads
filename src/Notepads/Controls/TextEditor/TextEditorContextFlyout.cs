@@ -24,12 +24,14 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _share;
 
         private readonly TextEditor _textEditor;
+        private readonly TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public TextEditorContextFlyout(TextEditor editor)
+        public TextEditorContextFlyout(TextEditor editor, TextEditorCore editorCore)
         {
             _textEditor = editor;
+            _textEditorCore = editorCore;
             Items.Add(Cut);
             Items.Add(Copy);
             Items.Add(Paste);
@@ -46,8 +48,8 @@ namespace Notepads.Controls.TextEditor
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
         {
-            if (_textEditor.TextEditorCore.Document.Selection.Type == SelectionType.InsertionPoint ||
-                _textEditor.TextEditorCore.Document.Selection.Type == SelectionType.None)
+            if (_textEditorCore.Document.Selection.Type == SelectionType.InsertionPoint ||
+                _textEditorCore.Document.Selection.Type == SelectionType.None)
             {
                 PrepareForInsertionMode();
             }
@@ -56,11 +58,11 @@ namespace Notepads.Controls.TextEditor
                 PrepareForSelectionMode();
             }
 
-            Undo.IsEnabled = _textEditor.TextEditorCore.Document.CanUndo();
-            Redo.IsEnabled = _textEditor.TextEditorCore.Document.CanRedo();
+            Undo.IsEnabled = _textEditorCore.Document.CanUndo();
+            Redo.IsEnabled = _textEditorCore.Document.CanRedo();
 
             PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
-            WordWrap.Icon.Visibility = (_textEditor.TextEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
+            WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void PrepareForInsertionMode()
@@ -90,7 +92,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.X,
                         IsEnabled = false,
                     });
-                    _cut.Click += (sender, args) => { _textEditor.TextEditorCore.Document.Selection.Cut(); };
+                    _cut.Click += (sender, args) => { _textEditorCore.Document.Selection.Cut(); };
                 }
                 return _cut;
             }
@@ -109,7 +111,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.C,
                         IsEnabled = false,
                     });
-                    _copy.Click += (sender, args) => _textEditor.TextEditorCore.CopyPlainTextToWindowsClipboard(null);
+                    _copy.Click += (sender, args) => _textEditorCore.CopyPlainTextToWindowsClipboard(null);
                 }
                 return _copy;
             }
@@ -128,7 +130,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.V,
                         IsEnabled = false,
                     });
-                    _paste.Click += async (sender, args) => { await _textEditor.TextEditorCore.PastePlainTextFromWindowsClipboard(null); };
+                    _paste.Click += async (sender, args) => { await _textEditorCore.PastePlainTextFromWindowsClipboard(null); };
                 }
                 return _paste;
             }
@@ -147,7 +149,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.Z,
                         IsEnabled = false,
                     });
-                    _undo.Click += (sender, args) => { _textEditor.TextEditorCore.Undo(); };
+                    _undo.Click += (sender, args) => { _textEditorCore.Undo(); };
                 }
                 return _undo;
             }
@@ -168,7 +170,7 @@ namespace Notepads.Controls.TextEditor
 
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
-                    _redo.Click += (sender, args) => { _textEditor.TextEditorCore.Redo(); };
+                    _redo.Click += (sender, args) => { _textEditorCore.Redo(); };
                 }
                 return _redo;
             }
@@ -189,7 +191,7 @@ namespace Notepads.Controls.TextEditor
                     });
                     _selectAll.Click += (sender, args) =>
                     {
-                        _textEditor.TextEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
+                        _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
                     };
                 }
                 return _selectAll;
@@ -233,11 +235,11 @@ namespace Notepads.Controls.TextEditor
                     Key = VirtualKey.Z,
                     IsEnabled = false,
                 });
-                _wordWrap.Icon.Visibility = _textEditor.TextEditorCore.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
+                _wordWrap.Icon.Visibility = _textEditorCore.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
                 _wordWrap.Click += (sender, args) =>
                 {
-                    _wordWrap.Icon.Visibility = _textEditor.TextEditorCore.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
-                    _textEditor.TextEditorCore.TextWrapping = _textEditor.TextEditorCore.TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
+                    _wordWrap.Icon.Visibility = _textEditorCore.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
+                    _textEditorCore.TextWrapping = _textEditorCore.TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
                 };
                 return _wordWrap;
             }
