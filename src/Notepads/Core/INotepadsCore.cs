@@ -12,21 +12,25 @@ namespace Notepads.Core
     // INotepadsCore handles Tabs and TextEditor life cycle
     public interface INotepadsCore
     {
-        event EventHandler<TextEditor> OnTextEditorLoaded;
+        event EventHandler<TextEditor> TextEditorLoaded;
 
-        event EventHandler<TextEditor> OnTextEditorUnloaded;
+        event EventHandler<TextEditor> TextEditorUnloaded;
 
-        event EventHandler<TextEditor> OnTextEditorSaved;
+        event EventHandler<TextEditor> TextEditorModificationStateChanged;
 
-        event EventHandler<TextEditor> OnTextEditorClosingWithUnsavedContent;
+        event EventHandler<TextEditor> TextEditorSaved;
 
-        event EventHandler<TextEditor> OnTextEditorSelectionChanged;
+        event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
 
-        event EventHandler<TextEditor> OnTextEditorEncodingChanged;
+        event EventHandler<TextEditor> TextEditorSelectionChanged;
 
-        event EventHandler<TextEditor> OnTextEditorLineEndingChanged;
+        event EventHandler<TextEditor> TextEditorEncodingChanged;
 
-        event KeyEventHandler OnTextEditorKeyDown;
+        event EventHandler<TextEditor> TextEditorLineEndingChanged;
+
+        event EventHandler<TextEditor> TextEditorModeChanged;
+
+        event KeyEventHandler TextEditorKeyDown;
 
         void OpenNewTextEditor();
 

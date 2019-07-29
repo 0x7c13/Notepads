@@ -68,11 +68,6 @@
                     FontFamily="Segoe MDL2 Assets">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedRight">
-                        <MenuFlyout.MenuFlyoutPresenterStyle>
-                            <Style TargetType="MenuFlyoutPresenter">
-                                <Setter Property="BorderThickness" Value="0" />
-                            </Style>
-                        </MenuFlyout.MenuFlyoutPresenterStyle>
                         <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle"/>
                         <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle"/>
                     </MenuFlyout>

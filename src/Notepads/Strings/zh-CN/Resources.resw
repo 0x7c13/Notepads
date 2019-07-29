@@ -141,6 +141,14 @@
     <value>找不到可分享内容，请确保文档存在内容同时选择了文本。</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
+    <value>改动之后</value>
+    <comment>DiffViewer: Header's text for new text (After changes).</comment>
+  </data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
+    <value>改动之前</value>
+    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
+  </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
     <value>Notepads 暂时不支持打开 1MB 以上的文件</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
@@ -245,6 +253,22 @@
     <value>设置</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
+  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
+    <value>所有对 "{0}" 的改动包括文字，换行符和编码将会被撤消！</value>
+    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
+    <value>是的</value>
+    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
+    <value>是否撤消所有改动？</value>
+    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
+  </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
     <value>取消</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
@@ -340,6 +364,18 @@
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
     <value>第 {0} 行，第 {1} 列</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
+    <value>预览文字改动</value>
+    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
+    <value>撤消所有改动</value>
+    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
+    <value>已改动</value>
+    <comment>TextEditor: ModificationIndicator display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
     <value>已复制</value>

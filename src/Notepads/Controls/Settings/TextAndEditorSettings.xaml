@@ -26,22 +26,21 @@
             VerticalScrollMode="Auto">
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,15,0,0"
-                    FontWeight="Normal"
-                    Text="Text Wrapping" />
+                    FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch Style="{StaticResource CustomToggleSwitchStyle}" 
+                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_ToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="TextWrappingToggle" 
-                                  OffContent="Wrap word" 
-                                  OnContent="Wrap word" 
                                   Margin="0,0,0,0"/>
                 </StackPanel>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,30,0,0"
-                    FontWeight="Normal"
-                    Text="Font" />
+                    FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="FontFamilyPicker"
                               ItemsSource="{x:Bind SystemFonts, Mode=OneTime}"
@@ -70,50 +69,50 @@
                     </ComboBox>
                 </StackPanel>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,35,0,0"
-                    FontWeight="Normal"
-                    Text="Default Line Ending" />
+                    FontWeight="Normal"/>
                 <StackPanel x:Name="LineEndingPanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CrlfRadioButton" Tag="Crlf" Content="Windows (CRLF)" GroupName="LineEndingGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CrRadioButton" Tag="Cr" Content="Macintosh (CR)" GroupName="LineEndingGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="LfRadioButton" Tag="Lf" Content="Unix (LF)" GroupName="LineEndingGroup"/>
                 </StackPanel>
-                <TextBlock Text="Only apply to new document" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,35,0,0"
-                    FontWeight="Normal"
-                    Text="Default Encoding" />
+                    FontWeight="Normal"/>
                 <StackPanel x:Name="EncodingPanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8EncodingRadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8BomEncodingRadioButton" Tag="UTF-8-BOM" Content="UTF-8-BOM" GroupName="EncodingGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeBomEncodingRadioButton" Tag="UTF-16 LE BOM" Content="UTF-16 LE BOM" GroupName="EncodingGroup"/>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeBomEncodingRadioButton" Tag="UTF-16 BE BOM" Content="UTF-16 BE BOM" GroupName="EncodingGroup"/>
                 </StackPanel>
-                <TextBlock Text="Only apply to new document" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,35,0,0"
-                    FontWeight="Normal"
-                    Text="Default Decoding" />
+                    FontWeight="Normal"/>
                 <StackPanel x:Name="DecodingPanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8DecodingRadioButton" Tag="UTF-8" Content="UTF-8 (Recommended)" GroupName="DecodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="AnsiDecodingRadioButton" Tag="ANSI" Content="ANSI (Windows code page)" GroupName="DecodingGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Utf8RadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8DecodingRadioButton" Tag="UTF-8" GroupName="DecodingGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AnsiRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AnsiDecodingRadioButton" Tag="ANSI" GroupName="DecodingGroup"/>
                 </StackPanel>
-                <TextBlock Text="Default decoding when no BOM was found. ANSI decoding is used to read legacy text files." Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,35,0,0"
-                    FontWeight="Normal"
-                    Text="Tab Key Behavior" />
+                    FontWeight="Normal"/>
                 <StackPanel x:Name="TabBehaviorPanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabDefaultRadioButton" Tag="-1" Content="Default (\t)" GroupName="TabBehaviorGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabTwoSpacesRadioButton" Tag="2" Content="2 Spaces" GroupName="TabBehaviorGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabFourSpacesRadioButton" Tag="4" Content="4 Spaces" GroupName="TabBehaviorGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabEightSpacesRadioButton" Tag="8" Content="8 Spaces" GroupName="TabBehaviorGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_DefaultRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabDefaultRadioButton" Tag="-1" GroupName="TabBehaviorGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabTwoSpacesRadioButton" Tag="2" GroupName="TabBehaviorGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_FourSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabFourSpacesRadioButton" Tag="4" GroupName="TabBehaviorGroup"/>
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_EightSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabEightSpacesRadioButton" Tag="8" GroupName="TabBehaviorGroup"/>
                 </StackPanel>
-                <TextBlock Text="Settings for tab key behavior, only apply to new tabs inserted by user" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

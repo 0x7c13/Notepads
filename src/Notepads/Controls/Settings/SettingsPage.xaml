@@ -18,25 +18,34 @@
                     ItemInvoked="SettingsPanel_OnItemInvoked">
 
         <NavigationView.MenuItems>
-            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="Text &amp; Editor" IsSelected="True">
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
+                                x:Uid="/Settings/TextAndEditorPage_Title"
+                                Tag="TextAndEditor"
+                                IsSelected="True">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xF17F;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="Personalization" Tag="Personalization" >
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
+                                x:Uid="/Settings/PersonalizationPage_Title"
+                                Tag="Personalization" >
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE771;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="Advanced" Tag="Advanced" >
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
+                                x:Uid="/Settings/AdvancedPage_Title"
+                                Tag="Advanced" >
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE9E9;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" Content="About" Tag="About" >
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
+                                x:Uid="/Settings/AboutPage_Title"
+                                Tag="About" >
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE946;" />

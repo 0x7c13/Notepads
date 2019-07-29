@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
@@ -176,29 +175,6 @@
                                                 FontWeight="Light"
                                                 BorderThickness="1">
                     </controls:InAppNotification>
-
-                    <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
-                                                x:Load="false"
-                                                Padding="0"
-                                                Margin="0"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Top"
-                                                Style="{StaticResource FindAndReplacePlaceholder}"
-                                                ShowDismissButton="True"
-                                                AnimationDuration="0:0:0.050"
-                                                VerticalOffset="32"
-                                                HorizontalOffset="-22"
-                                                FontWeight="Light"
-                                                BorderThickness="1"
-                                                Closed="FindAndReplacePlaceholder_Closed">
-                        <controls:InAppNotification.Content>
-                            <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
-                                                            Width="320"
-                                                            OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
-                                                            OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
-                        </controls:InAppNotification.Content>
-                    </controls:InAppNotification>
-
                 </Grid>
             </SplitView.Content>
             <SplitView.Pane>
@@ -223,6 +199,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
@@ -231,9 +208,34 @@
                            Tapped="StatusBarComponent_OnTapped"/>
             </Grid>
             <Grid Column="1">
-                <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
+                <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           Foreground="{StaticResource SystemControlForegroundAccentBrush}"
+                           TextDecorations="Underline"
+                           IsTapEnabled="True"
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped"
+                           >
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="D" Modifiers="Menu" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" Tag="RevertAllChanges" Click="ModificationFlyoutSelection_OnClick"/>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
             </Grid>
             <Grid Column="2">
+                <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
+            </Grid>
+            <Grid Column="3">
                 <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"
@@ -252,7 +254,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="3">
+            <Grid Column="4">
                 <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"

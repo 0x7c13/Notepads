@@ -29,7 +29,7 @@ namespace Notepads.Utilities
 
     public static class FileSystemUtility
     {
-        private static readonly ResourceLoader ResourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+        private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         public static bool IsFullPath(string path)
         {

@@ -6,6 +6,8 @@ namespace SetsView
 {
     using System;
     using Windows.Devices.Input;
+    using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Input;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -58,8 +60,6 @@ namespace SetsView
         /// <inheritdoc/>
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            base.OnPointerPressed(e);
-
             _isMiddleClick = false;
 
             if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
@@ -71,7 +71,19 @@ namespace SetsView
                 {
                     _isMiddleClick = true;
                 }
+
+                // Disable "ctrl + left click to deselect set"
+                if (pointerPoint.Properties.IsLeftButtonPressed)
+                {
+                    var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                    if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        e.Handled = true;
+                    }
+                }
             }
+
+            base.OnPointerPressed(e);
         }
 
         /// <inheritdoc/>

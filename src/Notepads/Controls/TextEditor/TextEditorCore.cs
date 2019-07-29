@@ -19,9 +19,11 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
-        private string[] _documentLinesCache;
+        private string[] _contentLinesCache;
 
-        private bool _isCachePendingUpdate = true;
+        private bool _isLineCachePendingUpdate = true;
+
+        private string _content = string.Empty;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
@@ -98,8 +100,8 @@ namespace Notepads.Controls.TextEditor
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Document.Undo()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Document.Redo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
@@ -116,22 +118,39 @@ namespace Notepads.Controls.TextEditor
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
         }
 
+        public void Undo()
+        {
+            if (Document.CanUndo() && IsEnabled)
+            {
+                Document.Undo();
+            }
+        }
+
+        public void Redo()
+        {
+            if (Document.CanRedo() && IsEnabled)
+            {
+                Document.Redo();
+            }
+        }
+
+        public void SetText(string text)
+        {
+            Document.SetText(TextSetOptions.None, text);
+        }
+
         public string GetText()
         {
-            Document.GetText(TextGetOptions.None, out var text);
-            // RichEditBox's Document.GetText() method by default append an extra '\r' at end of the text string
-            // We need to trim it before proceeding
-            return TrimRichEditBoxText(text);
+            return _content;
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_isCachePendingUpdate)
+            if (_isLineCachePendingUpdate)
             {
-                Document.GetText(TextGetOptions.None, out var text);
-                _documentLinesCache = text.Split("\r");
-                _isCachePendingUpdate = false;
+                _contentLinesCache = (_content + "\r").Split("\r");
+                _isLineCachePendingUpdate = false;
             }
 
             var start = Document.Selection.StartPosition;
@@ -143,9 +162,9 @@ namespace Notepads.Controls.TextEditor
 
             var length = 0;
             bool startLocated = false;
-            for (int i = 0; i < _documentLinesCache.Length; i++)
+            for (int i = 0; i < _contentLinesCache.Length; i++)
             {
-                var line = _documentLinesCache[i];
+                var line = _contentLinesCache[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -178,7 +197,8 @@ namespace Notepads.Controls.TextEditor
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                 dataPackage.SetText(Document.Selection.Text);
-                Clipboard.SetContent(dataPackage);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                Clipboard.Flush();
             }
             catch (Exception)
             {
@@ -206,6 +226,134 @@ namespace Notepads.Controls.TextEditor
             catch (Exception)
             {
                 // ignore
+            }
+        }
+
+        public void ClearUndoQueue()
+        {
+            // Clear UndoQueue by setting its limit to 0 and set it back
+            var undoLimit = Document.UndoLimit;
+
+            // Check to prevent the undo limit stuck on zero
+            // because it returns 0 even if the undo limit isn't set yet
+            if (undoLimit != 0)
+            {
+                Document.UndoLimit = 0;
+                Document.UndoLimit = undoLimit;
+            }
+        }
+
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        {
+            if (FindNextAndSelect(searchText, matchCase, matchWholeWord))
+            {
+                Document.Selection.SetText(TextSetOptions.None, replaceText);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        {
+            var found = false;
+
+            var pos = 0;
+            var searchTextLength = searchText.Length;
+            var replaceTextLength = replaceText.Length;
+
+            var text = GetText();
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+
+            while (pos != -1)
+            {
+                found = true;
+                text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
+                pos += replaceTextLength;
+                pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+            }
+
+            if (found)
+            {
+                SetText(text);
+                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.EndPosition = Document.Selection.StartPosition;
+            }
+
+            return found;
+        }
+
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool stopAtEof = true)
+        {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return false;
+            }
+
+            var text = GetText();
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+
+            var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+
+            if (index != -1)
+            {
+                Document.Selection.StartPosition = index;
+                Document.Selection.EndPosition = index + searchText.Length;
+            }
+            else
+            {
+                if (!stopAtEof)
+                {
+                    index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+
+                    if (index != -1)
+                    {
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + searchText.Length;
+                    }
+                }
+            }
+
+            if (index == -1)
+            {
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
+                return false;
+            }
+
+            return true;
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
+                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
+                if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
+                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
+                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
+                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
+                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
+                {
+                    return;
+                }
+            }
+
+            _keyboardCommandHandler.Handle(e);
+
+            if (!e.Handled)
+            {
+                base.OnKeyDown(e);
             }
         }
 
@@ -248,7 +396,9 @@ namespace Notepads.Controls.TextEditor
         {
             if (args.IsContentChanging)
             {
-                _isCachePendingUpdate = true;
+                Document.GetText(TextGetOptions.None, out _content);
+                _content = TrimRichEditBoxText(_content);
+                _isLineCachePendingUpdate = true;
             }
         }
 
@@ -288,32 +438,26 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            int pos = startIndex;
 
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            while (pos < target.Length && (pos = target.IndexOf(value, pos, comparison)) != -1)
             {
-                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
-                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
-                if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
-                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
-                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
-                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
-                {
-                    return;
-                }
-            }
+                bool startBoundary = true;
+                if (pos > 0)
+                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
 
-            _keyboardCommandHandler.Handle(e);
+                bool endBoundary = true;
+                if (pos + value.Length < target.Length)
+                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
 
-            if (!e.Handled)
-            {
-                base.OnKeyDown(e);
+                if (startBoundary && endBoundary)
+                    return pos;
+
+                pos++;
             }
+            return -1;
         }
     }
 }
