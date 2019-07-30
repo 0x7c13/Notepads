@@ -17,8 +17,10 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Built-in Markdown file preview viewer.
 * Built-in diff viewer (Preview your changes).
 
-![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
-![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
+![Screenshot Dark](ScreenShots/1.png?raw=true "Dark")
+![Screenshot Markdown](ScreenShots/2.png?raw=true "Markdown")
+![Screenshot DiffViewer](ScreenShots/3.png?raw=true "DiffViewer")
+![Screenshot Light](ScreenShots/4.png?raw=true "Light")
 
 ******* 📣 Notepads App is still under active development. *******
 
