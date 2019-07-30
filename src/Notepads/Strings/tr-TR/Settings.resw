@@ -130,7 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Jackie (Jiaqi) Liu tarafından oluşturulmuş, özgür ve açık kaynak bir metin düzenleyicisi/value>
+    <value>Jackie (Jiaqi) Liu tarafından oluşturulmuş, özgür ve açık kaynak bir metin düzenleyicisi</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
