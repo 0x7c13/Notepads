@@ -111,7 +111,7 @@ namespace Notepads
             EditorSettingsService.Initialize();
 
             await ActivationService.ActivateAsync(rootFrame, e);
-            await LoggingService.InitializeAsync();
+            //await LoggingService.InitializeAsync();
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();

@@ -10,7 +10,6 @@ namespace Notepads.Utilities
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Resources;
-    using Windows.Foundation.Metadata;
     using Windows.Storage;
     using Windows.Storage.Provider;
 
