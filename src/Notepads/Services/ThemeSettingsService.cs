@@ -247,15 +247,15 @@ namespace Notepads.Services
                     var myBrush = new Windows.UI.Xaml.Media.AcrylicBrush
                     {
                         BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                        TintColor = Color.FromArgb(255, 45, 45, 45),
-                        FallbackColor = Color.FromArgb(255, 45, 45, 45),
+                        TintColor = Color.FromArgb(255, 50, 50, 50),
+                        FallbackColor = Color.FromArgb(255, 50, 50, 50),
                         TintOpacity = AppBackgroundPanelTintOpacity
                     };
                     panel.Background = myBrush;
                 }
                 else
                 {
-                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32));
+                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
                     panel.Background = myBrush;
                 }
             }
@@ -266,15 +266,15 @@ namespace Notepads.Services
                     var myBrush = new Windows.UI.Xaml.Media.AcrylicBrush
                     {
                         BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                        TintColor = Color.FromArgb(255, 230, 230, 230),
-                        FallbackColor = Color.FromArgb(255, 230, 230, 230),
+                        TintColor = Color.FromArgb(255, 220, 220, 220),
+                        FallbackColor = Color.FromArgb(255, 220, 220, 220),
                         TintOpacity = AppBackgroundPanelTintOpacity
                     };
                     panel.Background = myBrush;
                 }
                 else
                 {
-                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 240, 240, 240));
+                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
                     panel.Background = myBrush;
                 }
             }

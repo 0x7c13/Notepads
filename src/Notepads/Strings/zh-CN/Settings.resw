@@ -194,11 +194,11 @@
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>深色模式</value>
+    <value>深色</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>浅色模式</value>
+    <value>浅色</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">

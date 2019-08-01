@@ -8,13 +8,13 @@
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.3"
+                         Opacity="0.4"
                          Color="White"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.2"
+                         Opacity="0.25"
                          Color="White"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.3"
+                         Opacity="0.4"
                          Color="White"/>
             <StaticResource x:Key="SetsViewItemHeaderBackground"
                             ResourceKey="SystemControlTransparentBrush" />
@@ -42,13 +42,13 @@
                           FallbackColor="#FF202020"/>-->
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.25"
+                         Opacity="0.3"
                          Color="Black"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.15"
+                         Opacity="0.2"
                          Color="Black"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.25"
+                         Opacity="0.3"
                          Color="Black"/>
             <StaticResource x:Key="SetsViewItemHeaderBackground"
                             ResourceKey="SystemControlTransparentBrush" />
@@ -139,9 +139,8 @@
         <Setter Property="ItemContainerTransitions">
             <Setter.Value>
                 <TransitionCollection>
-                    <EdgeUIThemeTransition Edge="Bottom" />
                     <ContentThemeTransition />
-                    <ReorderThemeTransition />
+                    <PaneThemeTransition Edge="Left"/>
                     <EntranceThemeTransition IsStaggeringEnabled="False" />
                 </TransitionCollection>
             </Setter.Value>

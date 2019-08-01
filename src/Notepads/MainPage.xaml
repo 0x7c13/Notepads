@@ -7,6 +7,9 @@
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -59,6 +62,12 @@
                             <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
+                            <Storyboard x:Name="NewSetButtonOpacityAnimation">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="NewSetButton"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0" Duration="0:0:1"/>
+                            </Storyboard>
                         </sets:SetsView.Resources>
 
                         <sets:SetsView.SetsStartHeader>
@@ -137,7 +146,6 @@
                         </sets:SetsView.SetsStartHeader>
 
                         <sets:SetsView.SetsActionHeader>
-                            
                             <Button x:Name="NewSetButton"
                                     IsTabStop="False"
                                     Width="48"
@@ -151,6 +159,11 @@
                                     <FontIcon FontFamily="Segoe MDL2 Assets"
                                             Glyph="&#xE710;" />
                                 </Viewbox>
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Click">
+                                        <media:ControlStoryboardAction Storyboard="{StaticResource NewSetButtonOpacityAnimation}" />
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
                             </Button>
                         </sets:SetsView.SetsActionHeader>
 

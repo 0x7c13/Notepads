@@ -8,6 +8,7 @@ namespace Notepads.Core
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
@@ -40,6 +41,10 @@ namespace Notepads.Core
             Items.Add(new MenuFlyoutSeparator());
             Items.Add(CopyFullPath);
             Items.Add(OpenContainingFolder);
+
+            var style = new Style(typeof(MenuFlyoutPresenter));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
+            MenuFlyoutPresenterStyle = style;
 
             Opening += TabContextFlyout_Opening;
             Closed += TabContextFlyout_Closed;
