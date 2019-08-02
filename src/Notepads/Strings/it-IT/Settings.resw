@@ -214,7 +214,7 @@
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows)</value>
+    <value>ANSI (tabella codici di Windows)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
