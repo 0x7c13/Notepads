@@ -76,6 +76,7 @@ namespace Notepads.Core
         {
             OpenNewTextEditor(string.Empty,
                 null,
+                -1,
                 EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding);
         }
@@ -89,15 +90,20 @@ namespace Notepads.Core
             }
 
             var textFile = await FileSystemUtility.ReadFile(file);
+            var properties = await FileSystemUtility.GetFileProperties(file);
+            var dateModified = properties.DateModified;
+            var dateModifiedFileTime = dateModified.ToFileTime();
 
             OpenNewTextEditor(textFile.Content,
                 file,
+                dateModifiedFileTime,
                 textFile.Encoding,
                 textFile.LineEnding);
         }
 
         private void OpenNewTextEditor(string text,
             StorageFile file,
+            long dateModifiedFileTime,
             Encoding encoding,
             LineEnding lineEnding)
         {
@@ -107,7 +113,7 @@ namespace Notepads.Core
                 ExtensionProvider = _extensionProvider
             };
 
-            textEditor.Init(new TextFile(text, encoding, lineEnding), file);
+            textEditor.Init(new TextFile(text, encoding, lineEnding), file, dateModifiedFileTime);
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;

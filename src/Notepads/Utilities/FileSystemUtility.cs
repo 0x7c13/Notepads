@@ -11,6 +11,7 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
+    using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
 
     public class TextFile
@@ -106,6 +107,11 @@ namespace Notepads.Utilities
             }
 
             return path;
+        }
+
+        public static async Task<BasicProperties> GetFileProperties(StorageFile file)
+        {
+            return await file.GetBasicPropertiesAsync();
         }
 
         public static bool IsFileReadOnly(StorageFile file)

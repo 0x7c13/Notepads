@@ -29,6 +29,8 @@ namespace Notepads.Controls.TextEditor
     {
         public FileType FileType { get; private set; }
 
+        public long DateModifiedFileTime { get; private set; }
+
         private StorageFile _editingFile;
 
         public StorageFile EditingFile
@@ -145,10 +147,11 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
+        public void Init(TextFile textFile, StorageFile file, long dateModifiedFileTime = -1, bool clearUndoQueue = true)
         {
             _loaded = false;
             EditingFile = file;
+            DateModifiedFileTime = dateModifiedFileTime;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);

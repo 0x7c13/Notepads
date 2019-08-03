@@ -140,8 +140,8 @@
             <Setter.Value>
                 <TransitionCollection>
                     <ContentThemeTransition />
-                    <PaneThemeTransition Edge="Left"/>
                     <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <EdgeUIThemeTransition Edge="Bottom" />
                 </TransitionCollection>
             </Setter.Value>
         </Setter>

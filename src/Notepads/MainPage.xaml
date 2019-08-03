@@ -159,11 +159,11 @@
                                     <FontIcon FontFamily="Segoe MDL2 Assets"
                                             Glyph="&#xE710;" />
                                 </Viewbox>
-                                <interactivity:Interaction.Behaviors>
+                                <!--<interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Click">
                                         <media:ControlStoryboardAction Storyboard="{StaticResource NewSetButtonOpacityAnimation}" />
                                     </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
+                                </interactivity:Interaction.Behaviors>-->
                             </Button>
                         </sets:SetsView.SetsActionHeader>
 
