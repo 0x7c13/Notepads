@@ -76,6 +76,15 @@ namespace Notepads
         {
             InitializeComponent();
 
+            // Ctrl + . accelerator
+            KeyboardAccelerator accelerator = new KeyboardAccelerator
+            {
+                Key = (VirtualKey)0xBE, // 0xBE is mapped to VK_OEM_PERIOD
+                Modifiers = VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift
+            };
+            MenuSettingsButton.KeyboardAcceleratorTextOverride = "Ctrl + ."; // See https://github.com/microsoft/microsoft-ui-xaml/issues/708
+            MenuSettingsButton.KeyboardAccelerators.Add(accelerator);
+
             _defaultNewFileName = _resourceLoader.GetString("TextEditor_DefaultNewFileName");
 
             NotificationCenter.Instance.SetNotificationDelegate(this);
