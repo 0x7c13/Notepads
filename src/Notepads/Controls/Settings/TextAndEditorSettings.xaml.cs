@@ -42,7 +42,7 @@
                 if (_SystemFonts == null)
                 {
                     var fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-                    _SystemFonts = fonts.Where(font => !SymbolicFonts.Contains(font)).ToArray();
+                    _SystemFonts = fonts.Where(font => !SymbolicFonts.Contains(font)).OrderBy(font => font).ToArray();
                 }
 
                 return _SystemFonts;
