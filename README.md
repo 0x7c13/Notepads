@@ -41,12 +41,11 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 The beta is intended to collect feedback, report bugs and glitches. For issue reporting and feature requests, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
-## Platform limitation (UWP):
+## Platform limitations (UWP):
 
 * If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
-* Editor view resizing glitch is caused by system control and won't fix for now.
 * You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
-* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
+* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now. I will add large file support later.
 * You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
 
 ## Downloads:
@@ -82,7 +81,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx)
+* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [DanverZ](https://github.com/chenghanzou)
 * Localization Contributors: 
     * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
