@@ -17,6 +17,7 @@ namespace Notepads
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -162,6 +163,17 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) =>
+                {
+                    if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+                    {
+                        ApplicationView.GetForCurrentView().ExitFullScreenMode();
+                    }
+                    else
+                    {
+                        ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+                    }
+                }),
             });
         }
 

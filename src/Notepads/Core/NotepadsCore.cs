@@ -54,17 +54,7 @@ namespace Notepads.Core
             Sets = sets;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
-            Sets.SetDoubleTapped += (sender, args) =>
-            {
-                if (ApplicationView.GetForCurrentView().IsFullScreenMode)
-                {
-                    ApplicationView.GetForCurrentView().ExitFullScreenMode();
-                }
-                else
-                {
-                    ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
-                }
-            };
+
             _extensionProvider = extensionProvider;
 
             DefaultNewFileName = defaultNewFileName;
