@@ -174,7 +174,7 @@
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
-    <Compile Include="Extensions\MarkdownExtensionView.xaml.cs">
+    <Compile Include="Extensions\Markdown\MarkdownExtensionView.xaml.cs">
       <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
@@ -306,7 +306,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\MarkdownExtensionView.xaml">
+    <Page Include="Extensions\Markdown\MarkdownExtensionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

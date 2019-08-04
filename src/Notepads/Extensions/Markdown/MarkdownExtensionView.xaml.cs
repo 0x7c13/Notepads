@@ -1,5 +1,5 @@
 ﻿
-namespace Notepads.Extensions
+namespace Notepads.Extensions.Markdown
 {
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Controls.TextEditor;
@@ -17,15 +17,16 @@ namespace Notepads.Extensions
     {
         public async Task<MemoryStream> GetDataFeed(string feedUrl)
         {
-            var request = (HttpWebRequest)WebRequest.Create(feedUrl);
-            request.Method = "GET";
-
-            var response = (HttpWebResponse)await request.GetResponseAsync();
-
-            MemoryStream ms = new MemoryStream();
-            var stream = response.GetResponseStream();
-            stream?.CopyTo(ms);
-            return ms;
+            using (var ms = new MemoryStream())
+            {
+                var request = (HttpWebRequest)WebRequest.Create(feedUrl);
+                request.Method = "GET";
+                using (var response = (HttpWebResponse) await request.GetResponseAsync())
+                {
+                    response.GetResponseStream()?.CopyTo(ms);
+                    return ms;
+                }
+            }
         }
 
         public void Dispose() { }
