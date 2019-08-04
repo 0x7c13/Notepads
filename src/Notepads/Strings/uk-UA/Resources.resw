@@ -385,4 +385,8 @@
     <value>Збережено</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Натисніть F11, щоб вийти з повноекранного режиму</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
 </root>

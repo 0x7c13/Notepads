@@ -385,4 +385,8 @@
     <value>Kaydedildi</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Tam ekran çıkmak için F11 tuşuna basın</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
 </root>

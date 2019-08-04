@@ -385,4 +385,8 @@
     <value>Enregistré</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Appuyez sur F11 pour quitter le mode plein écran</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
 </root>

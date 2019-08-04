@@ -385,4 +385,8 @@
     <value>已保存</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>按下 F11 可退出全屏</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
 </root>

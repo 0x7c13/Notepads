@@ -163,18 +163,23 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) =>
-                {
-                    if (ApplicationView.GetForCurrentView().IsFullScreenMode)
-                    {
-                        ApplicationView.GetForCurrentView().ExitFullScreenMode();
-                    }
-                    else
-                    {
-                        ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
-                    }
-                }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
             });
+        }
+
+        private void EnterExitFullScreenMode()
+        {
+            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+            {
+                ApplicationView.GetForCurrentView().ExitFullScreenMode();
+            }
+            else
+            {
+                if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
+                }
+            }
         }
 
         #region Application Life Cycle & Window management 
