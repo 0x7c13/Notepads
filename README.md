@@ -75,6 +75,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 * [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
+* [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
 ## Special Thanks:
