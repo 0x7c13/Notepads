@@ -1,9 +1,9 @@
-﻿
-namespace Notepads.Controls.Settings
+﻿namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
-    using Notepads.Utilities;
+    using Services;
+    using Utilities;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -12,7 +12,42 @@ namespace Notepads.Controls.Settings
 
     public sealed partial class TextAndEditorSettings : Page
     {
-        public string[] SystemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+        /// <summary>
+        /// The collection of symbolic fonts that need to be skipped from the available fonts, as they don't produce readable text
+        /// </summary>
+        private static readonly IReadOnlyCollection<string> SymbolicFonts = new HashSet<string>(new[]
+        {
+            "Segoe MDL2 Assets",
+            "Webdings",
+            "Wingdings",
+            "HoloLens MDL2 Assets",
+            "Bookshelf Symbol 7",
+            "MT Extra",
+            "MS Outlook",
+            "MS Reference Specialty",
+            "Wingdings 2",
+            "Wingdings 3",
+            "Marlett"
+        });
+
+        private IReadOnlyCollection<string> _SystemFonts;
+
+        /// <summary>
+        /// Gets the collection of fonts that the user can choose from for the text editor
+        /// </summary>
+        public IReadOnlyCollection<string> SystemFonts
+        {
+            get
+            {
+                if (_SystemFonts == null)
+                {
+                    var fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+                    _SystemFonts = fonts.Where(font => !SymbolicFonts.Contains(font)).OrderBy(font => font).ToArray();
+                }
+
+                return _SystemFonts;
+            }
+        }
 
         public int[] FontSizes = new int[]
         {
