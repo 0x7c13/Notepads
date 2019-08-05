@@ -13,9 +13,9 @@
     public sealed partial class TextAndEditorSettings : Page
     {
         /// <summary>
-        /// The collection of symbolic fonts that need to be skipped from the available fonts, as they don't produce readable text
+        /// The collection of symbol fonts that need to be skipped from the available fonts, as they don't produce readable text
         /// </summary>
-        private static readonly IReadOnlyCollection<string> SymbolicFonts = new HashSet<string>(new[]
+        private static readonly IReadOnlyCollection<string> SymbolFonts = new HashSet<string>(new[]
         {
             "Segoe MDL2 Assets",
             "Webdings",
@@ -30,22 +30,22 @@
             "Marlett"
         });
 
-        private IReadOnlyCollection<string> _SystemFonts;
+        private IReadOnlyCollection<string> _availableFonts;
 
         /// <summary>
-        /// Gets the collection of fonts that the user can choose from for the text editor
+        /// Gets the collection of fonts that the user can choose from System Fonts
         /// </summary>
-        public IReadOnlyCollection<string> SystemFonts
+        public IReadOnlyCollection<string> AvailableFonts
         {
             get
             {
-                if (_SystemFonts == null)
+                if (_availableFonts == null)
                 {
-                    var fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-                    _SystemFonts = fonts.Where(font => !SymbolicFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+                    _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
                 }
 
-                return _SystemFonts;
+                return _availableFonts;
             }
         }
 
