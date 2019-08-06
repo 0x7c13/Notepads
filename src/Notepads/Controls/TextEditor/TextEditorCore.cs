@@ -333,11 +333,12 @@ namespace Notepads.Controls.TextEditor
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
+            // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
+            // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
             {
-                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
-                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
                 if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
                     e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
@@ -347,6 +348,15 @@ namespace Notepads.Controls.TextEditor
                 {
                     return;
                 }
+            }
+
+            // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
+            // This should be converted to '\r' to match same behaviour as single "Enter"
+            if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter)
+            {
+                Document.Selection.SetText(TextSetOptions.None, "\r");
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
+                return;
             }
 
             _keyboardCommandHandler.Handle(e);
