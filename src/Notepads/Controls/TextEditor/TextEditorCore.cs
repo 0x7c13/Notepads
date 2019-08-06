@@ -19,6 +19,8 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
+        private const char RichEditBoxDefaultLineEnding = '\r';
+
         private string[] _contentLinesCache;
 
         private bool _isLineCachePendingUpdate = true;
@@ -149,7 +151,7 @@ namespace Notepads.Controls.TextEditor
         {
             if (_isLineCachePendingUpdate)
             {
-                _contentLinesCache = (_content + "\r").Split("\r");
+                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
             }
 
@@ -354,7 +356,7 @@ namespace Notepads.Controls.TextEditor
             // This should be converted to '\r' to match same behaviour as single "Enter"
             if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter)
             {
-                Document.Selection.SetText(TextSetOptions.None, "\r");
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding.ToString());
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return;
             }
@@ -394,7 +396,7 @@ namespace Notepads.Controls.TextEditor
         private string TrimRichEditBoxText(string text)
         {
             // Trim end \r
-            if (!string.IsNullOrEmpty(text) && text[text.Length - 1] == '\r')
+            if (!string.IsNullOrEmpty(text) && text[text.Length - 1] == RichEditBoxDefaultLineEnding)
             {
                 text = text.Substring(0, text.Length - 1);
             }
