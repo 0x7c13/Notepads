@@ -208,6 +208,7 @@
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="10"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -215,12 +216,39 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
+                <Grid x:Name="FileModifiedOutsideIndicator"
+                      x:Uid="TextEditor_FileModifiedOutsideIndicator"
+                      Padding="10,4,10,6"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon Glyph="&#xE814;" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
+                    </Viewbox>
+                    <Grid.ContextFlyout>
+                        <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="ReloadFileFromDiskFlyoutItem" x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" Tag="ReloadFileFromDisk">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </Grid.ContextFlyout>
+                </Grid>
+            </Grid>
+            <Grid Column="1">
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           Padding ="0,4,8,4"
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"
                            Tapped="StatusBarComponent_OnTapped"/>
             </Grid>
-            <Grid Column="1">
+            <Grid Column="2">
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                            TextDecorations="Underline"
@@ -245,10 +273,10 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="2">
+            <Grid Column="3">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
-            <Grid Column="3">
+            <Grid Column="4">
                 <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"
@@ -267,7 +295,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="4">
+            <Grid Column="5">
                 <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"

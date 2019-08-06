@@ -31,6 +31,8 @@ namespace Notepads.Core
 
         public event EventHandler<TextEditor> TextEditorModificationStateChanged;
 
+        public event EventHandler<TextEditor> TextEditorFileModifiedOutside;
+
         public event EventHandler<TextEditor> TextEditorSaved;
 
         public event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
@@ -110,6 +112,7 @@ namespace Notepads.Core
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnModificationStateChanged;
             textEditor.ModeChanged += TextEditor_ModeChanged;
+            textEditor.FileModifiedOutside += (sender, args) => { TextEditorFileModifiedOutside?.Invoke(this, sender as TextEditor); };
             textEditor.LineEndingChanged += (sender, args) => { TextEditorLineEndingChanged?.Invoke(this, sender as TextEditor); };
             textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as TextEditor); };
 

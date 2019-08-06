@@ -389,4 +389,12 @@
     <value>Натисніть F11, щоб вийти з повноекранного режиму</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>Перезавантаження файлу з диска</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Файл було змінено за межами</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
 </root>

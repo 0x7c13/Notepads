@@ -52,10 +52,11 @@ namespace Notepads
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.TextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
-                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
+                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
+                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
+                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
                     _notepadsCore.TextEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                    _notepadsCore.TextEditorFileModifiedOutside += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFileModifiedOutsideIndicator(editor); };
                     _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -299,11 +300,12 @@ namespace Notepads
         private void SetupStatusBar(TextEditor textEditor)
         {
             if (textEditor == null) return;
-            UpdatePathIndicatorText(textEditor);
-            UpdateEditorModificationIndicatorText(textEditor);
-            UpdateLineColumnIndicatorText(textEditor);
-            UpdateLineEndingIndicatorText(textEditor.GetLineEnding());
-            UpdateEncodingIndicatorText(textEditor.GetEncoding());
+            UpdateFileModifiedOutsideIndicator(textEditor);
+            UpdatePathIndicator(textEditor);
+            UpdateEditorModificationIndicator(textEditor);
+            UpdateLineColumnIndicator(textEditor);
+            UpdateLineEndingIndicator(textEditor.GetLineEnding());
+            UpdateEncodingIndicator(textEditor.GetEncoding());
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -323,13 +325,19 @@ namespace Notepads
             }
         }
 
-        private void UpdatePathIndicatorText(TextEditor textEditor)
+        private void UpdateFileModifiedOutsideIndicator(TextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            FileModifiedOutsideIndicator.Visibility = textEditor.IsFileModifiedOutside ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdatePathIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
         }
 
-        private void UpdateEditorModificationIndicatorText(TextEditor textEditor)
+        private void UpdateEditorModificationIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             if (textEditor.IsModified)
@@ -346,19 +354,19 @@ namespace Notepads
             }
         }
 
-        private void UpdateEncodingIndicatorText(Encoding encoding)
+        private void UpdateEncodingIndicator(Encoding encoding)
         {
             if (StatusBar == null) return;
             EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
         }
 
-        private void UpdateLineEndingIndicatorText(LineEnding lineEnding)
+        private void UpdateLineEndingIndicator(LineEnding lineEnding)
         {
             if (StatusBar == null) return;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
         }
 
-        private void UpdateLineColumnIndicatorText(TextEditor textEditor)
+        private void UpdateLineColumnIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
@@ -419,7 +427,11 @@ namespace Notepads
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor == null) return;
 
-            if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
+            if (sender == FileModifiedOutsideIndicator)
+            {
+                FileModifiedOutsideIndicator.ContextFlyout.ShowAt(FileModifiedOutsideIndicator);
+            }
+            else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
                 try
@@ -435,14 +447,23 @@ namespace Notepads
                     // Ignore
                 }
             }
-            else if (sender is TextBlock textBlock)
+            else if (sender == ModificationIndicator)
             {
-                if (sender == ModificationIndicator)
-                {
-                    PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
-                }
-                textBlock.ContextFlyout?.ShowAt(textBlock);
+                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                ModificationIndicator.ContextFlyout.ShowAt(ModificationIndicator);
             }
+            else if (sender == LineColumnIndicator)
+            {
+            }
+            else if (sender == LineEndingIndicator)
+            {
+                LineEndingIndicator.ContextFlyout.ShowAt(LineEndingIndicator);
+            }
+            else if (sender == EncodingIndicator)
+            {
+                EncodingIndicator.ContextFlyout.ShowAt(EncodingIndicator);
+            }
+
         }
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)

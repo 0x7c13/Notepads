@@ -27,24 +27,6 @@ namespace Notepads.Controls.TextEditor
 
     public sealed partial class TextEditor : UserControl
     {
-        public FileType FileType { get; private set; }
-
-        public long DateModifiedFileTime { get; private set; }
-
-        private StorageFile _editingFile;
-
-        public StorageFile EditingFile
-        {
-            get => _editingFile;
-            private set
-            {
-                FileType = value == null ? FileType.TextFile : FileTypeUtility.GetFileTypeByFileName(value.Name);
-                _editingFile = value;
-            }
-        }
-
-        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
-
         public INotepadsExtensionProvider ExtensionProvider;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
@@ -55,11 +37,17 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler ModificationStateChanged;
 
+        public event EventHandler FileModifiedOutside;
+
         public event EventHandler LineEndingChanged;
 
         public event EventHandler EncodingChanged;
 
         public event RoutedEventHandler SelectionChanged;
+
+        public FileType FileType { get; private set; }
+
+        public long DateModifiedFileTime { get; private set; }
 
         public TextFile OriginalSnapshot { get; private set; }
 
@@ -67,9 +55,15 @@ namespace Notepads.Controls.TextEditor
 
         public Encoding TargetEncoding { get; private set; }
 
-        private bool _loaded;
-
-        private bool _isModified;
+        public StorageFile EditingFile
+        {
+            get => _editingFile;
+            private set
+            {
+                FileType = value == null ? FileType.TextFile : FileTypeUtility.GetFileTypeByFileName(value.Name);
+                _editingFile = value;
+            }
+        }
 
         public bool IsModified
         {
@@ -83,6 +77,29 @@ namespace Notepads.Controls.TextEditor
                 }
             }
         }
+
+        public bool IsFileModifiedOutside
+        {
+            get => _isFileModifiedOutside;
+            private set
+            {
+                if (_isFileModifiedOutside != value)
+                {
+                    _isFileModifiedOutside = value;
+                    FileModifiedOutside?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private bool _loaded;
+
+        private bool _isModified;
+
+        private bool _isFileModifiedOutside;
+
+        private StorageFile _editingFile;
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private TextEditorMode _editorMode = TextEditorMode.Editing;
 
