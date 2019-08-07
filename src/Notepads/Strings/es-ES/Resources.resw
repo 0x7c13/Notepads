@@ -393,8 +393,12 @@
     <value>Archivo de volver a cargar desde el disco</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
     <value>El archivo ha sido modificado fuera</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>Archivo ha sido movido, renombrado o borrado</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
 </root>

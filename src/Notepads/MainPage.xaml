@@ -216,14 +216,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
-                <Grid x:Name="FileModifiedOutsideIndicator"
-                      x:Uid="TextEditor_FileModifiedOutsideIndicator"
-                      Padding="10,4,10,6"
+                <Grid x:Name="FileModificationStateIndicator"
+                      Padding="10,5,8,5"
                       IsTapEnabled="True" 
                       extensions:Mouse.Cursor="Hand"
                       Tapped="StatusBarComponent_OnTapped">
                     <Viewbox>
-                        <FontIcon Glyph="&#xE814;" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
+                        <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
                     </Viewbox>
                     <Grid.ContextFlyout>
                         <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">

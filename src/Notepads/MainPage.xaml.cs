@@ -55,8 +55,8 @@ namespace Notepads
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
-                    _notepadsCore.TextEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModifiedOutside += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFileModifiedOutsideIndicator(editor); };
+                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFileModificationStateIndicator(editor); };
                     _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -300,7 +300,7 @@ namespace Notepads
         private void SetupStatusBar(TextEditor textEditor)
         {
             if (textEditor == null) return;
-            UpdateFileModifiedOutsideIndicator(textEditor);
+            UpdateFileModificationStateIndicator(textEditor);
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
             UpdateLineColumnIndicator(textEditor);
@@ -325,11 +325,28 @@ namespace Notepads
             }
         }
 
-        private void UpdateFileModifiedOutsideIndicator(TextEditor textEditor)
+        private void UpdateFileModificationStateIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
-            FileModifiedOutsideIndicator.Visibility = textEditor.IsFileModifiedOutside ? Visibility.Visible : Visibility.Collapsed;
+            if (textEditor.FileModificationState == FileModificationState.Untouched)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "";
+                FileModificationStateIndicator.Visibility = Visibility.Collapsed;
+            }
+            else if (textEditor.FileModificationState == FileModificationState.Modified)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+                FileModificationStateIndicator.Visibility = Visibility.Visible;
+            }
+            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+                FileModificationStateIndicator.Visibility = Visibility.Visible;
+            }
         }
+
 
         private void UpdatePathIndicator(TextEditor textEditor)
         {
@@ -427,9 +444,16 @@ namespace Notepads
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor == null) return;
 
-            if (sender == FileModifiedOutsideIndicator)
+            if (sender == FileModificationStateIndicator)
             {
-                FileModifiedOutsideIndicator.ContextFlyout.ShowAt(FileModifiedOutsideIndicator);
+                if (selectedEditor.FileModificationState == FileModificationState.Modified)
+                {
+                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                }
+                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                }
             }
             else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
@@ -463,7 +487,6 @@ namespace Notepads
             {
                 EncodingIndicator.ContextFlyout.ShowAt(EncodingIndicator);
             }
-
         }
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)

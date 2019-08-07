@@ -29,9 +29,9 @@ namespace Notepads.Core
 
         public event EventHandler<TextEditor> TextEditorUnloaded;
 
-        public event EventHandler<TextEditor> TextEditorModificationStateChanged;
+        public event EventHandler<TextEditor> TextEditorEditorModificationStateChanged;
 
-        public event EventHandler<TextEditor> TextEditorFileModifiedOutside;
+        public event EventHandler<TextEditor> TextEditorFileModificationStateChanged;
 
         public event EventHandler<TextEditor> TextEditorSaved;
 
@@ -58,9 +58,7 @@ namespace Notepads.Core
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
 
             _extensionProvider = extensionProvider;
-
             DefaultNewFileName = defaultNewFileName;
-
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
         }
 
@@ -82,9 +80,7 @@ namespace Notepads.Core
             }
 
             var textFile = await FileSystemUtility.ReadFile(file);
-            var properties = await FileSystemUtility.GetFileProperties(file);
-            var dateModified = properties.DateModified;
-            var dateModifiedFileTime = dateModified.ToFileTime();
+            var dateModifiedFileTime = await FileSystemUtility.GetDateModified(file);
 
             OpenNewTextEditor(textFile.Content,
                 file,
@@ -110,9 +106,9 @@ namespace Notepads.Core
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
             textEditor.KeyDown += TextEditorKeyDown;
-            textEditor.ModificationStateChanged += TextEditor_OnModificationStateChanged;
+            textEditor.EditorModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged += TextEditor_ModeChanged;
-            textEditor.FileModifiedOutside += (sender, args) => { TextEditorFileModifiedOutside?.Invoke(this, sender as TextEditor); };
+            textEditor.FileModificationStateChanged += (sender, args) => { TextEditorFileModificationStateChanged?.Invoke(this, sender as TextEditor); };
             textEditor.LineEndingChanged += (sender, args) => { TextEditorLineEndingChanged?.Invoke(this, sender as TextEditor); };
             textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as TextEditor); };
 
@@ -361,7 +357,7 @@ namespace Notepads.Core
             TextEditorSelectionChanged?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_OnModificationStateChanged(object sender, EventArgs e)
+        private void TextEditor_OnEditorModificationStateChanged(object sender, EventArgs e)
         {
             if (!(sender is TextEditor textEditor)) return;
             if (textEditor.IsModified)
@@ -372,7 +368,7 @@ namespace Notepads.Core
             {
                 MarkTextEditorSetSaved(textEditor);
             }
-            TextEditorModificationStateChanged?.Invoke(this, textEditor);
+            TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
         private void TextEditor_ModeChanged(object sender, EventArgs e)

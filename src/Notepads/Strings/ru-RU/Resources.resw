@@ -393,8 +393,12 @@
     <value>Перезагрузка файла с диска</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
     <value>Файл был изменен вне</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>Файл был перемещен, переименован или удален</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
 </root>

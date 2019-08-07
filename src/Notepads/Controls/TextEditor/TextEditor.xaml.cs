@@ -25,6 +25,13 @@ namespace Notepads.Controls.TextEditor
         DiffPreview
     }
 
+    public enum FileModificationState
+    {
+        Untouched,
+        Modified,
+        RenamedMovedOrDeleted
+    }
+
     public sealed partial class TextEditor : UserControl
     {
         public INotepadsExtensionProvider ExtensionProvider;
@@ -35,9 +42,9 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler ModeChanged;
 
-        public event EventHandler ModificationStateChanged;
+        public event EventHandler EditorModificationStateChanged;
 
-        public event EventHandler FileModifiedOutside;
+        public event EventHandler FileModificationStateChanged;
 
         public event EventHandler LineEndingChanged;
 
@@ -46,8 +53,6 @@ namespace Notepads.Controls.TextEditor
         public event RoutedEventHandler SelectionChanged;
 
         public FileType FileType { get; private set; }
-
-        public long DateModifiedFileTime { get; private set; }
 
         public TextFile OriginalSnapshot { get; private set; }
 
@@ -73,20 +78,20 @@ namespace Notepads.Controls.TextEditor
                 if (_isModified != value)
                 {
                     _isModified = value;
-                    ModificationStateChanged?.Invoke(this, EventArgs.Empty);
+                    EditorModificationStateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
-        public bool IsFileModifiedOutside
+        public FileModificationState FileModificationState
         {
-            get => _isFileModifiedOutside;
+            get => _fileModificationState;
             private set
             {
-                if (_isFileModifiedOutside != value)
+                if (_fileModificationState != value)
                 {
-                    _isFileModifiedOutside = value;
-                    FileModifiedOutside?.Invoke(this, EventArgs.Empty);
+                    _fileModificationState = value;
+                    FileModificationStateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -95,7 +100,9 @@ namespace Notepads.Controls.TextEditor
 
         private bool _isModified;
 
-        private bool _isFileModifiedOutside;
+        private FileModificationState _fileModificationState;
+
+        private long _dateModifiedFileTime;
 
         private StorageFile _editingFile;
 
@@ -138,6 +145,34 @@ namespace Notepads.Controls.TextEditor
                             () => SideBySideDiffViewer.Focus()));
                 }
             };
+
+            Loaded += TextEditor_Loaded;
+            Unloaded += TextEditor_Unloaded;
+        }
+
+        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
+        {
+            CheckAndUpdateFileStatus();
+        }
+
+        private async void CheckAndUpdateFileStatus()
+        {
+            if (EditingFile == null) return;
+
+            if (!await FileSystemUtility.FileExists(EditingFile))
+            {
+                FileModificationState = FileModificationState.RenamedMovedOrDeleted;
+            }
+            else
+            {
+                FileModificationState = await FileSystemUtility.GetDateModified(EditingFile) != _dateModifiedFileTime ?
+                    FileModificationState.Modified :
+                    FileModificationState.Untouched;
+            }
+        }
+
+        private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
+        {
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -168,7 +203,7 @@ namespace Notepads.Controls.TextEditor
         {
             _loaded = false;
             EditingFile = file;
-            DateModifiedFileTime = dateModifiedFileTime;
+            _dateModifiedFileTime = dateModifiedFileTime;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);
@@ -347,7 +382,9 @@ namespace Notepads.Controls.TextEditor
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
-            Init(new TextFile(text, encoding, lineEnding), file, clearUndoQueue: false);
+            var newFileModifiedTime = await FileSystemUtility.GetDateModified(EditingFile);
+            FileModificationState = FileModificationState.Untouched;
+            Init(new TextFile(text, encoding, lineEnding), file, newFileModifiedTime, clearUndoQueue: false);
         }
 
         public string GetContentForSharing()

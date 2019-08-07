@@ -393,8 +393,12 @@
     <value>Disk dosyasından yeniden yükle</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
     <value>Dosya dışında değiştirildi</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>Dosya taşınmış, yeniden adlandırılmış veya silinmiş</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
 </root>

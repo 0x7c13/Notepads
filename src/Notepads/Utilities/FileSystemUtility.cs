@@ -88,7 +88,7 @@ namespace Notepads.Utilities
                 path = path.Substring(1, args.Length - 2);
             }
 
-            if (FileSystemUtility.IsFullPath(path))
+            if (IsFullPath(path))
             {
                 return path;
             }
@@ -99,7 +99,7 @@ namespace Notepads.Utilities
             }
             else if (path.StartsWith("..\\"))
             {
-                path = FileSystemUtility.GetAbsolutePath(dir, path);
+                path = GetAbsolutePath(dir, path);
             }
             else
             {
@@ -112,6 +112,13 @@ namespace Notepads.Utilities
         public static async Task<BasicProperties> GetFileProperties(StorageFile file)
         {
             return await file.GetBasicPropertiesAsync();
+        }
+
+        public static async Task<long> GetDateModified(StorageFile file)
+        {
+            var properties = await GetFileProperties(file);
+            var dateModified = properties.DateModified;
+            return dateModified.ToFileTime();
         }
 
         public static bool IsFileReadOnly(StorageFile file)
@@ -255,6 +262,19 @@ namespace Notepads.Utilities
         public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
         {
             return await folder.CreateFileAsync(fileName);
+        }
+
+        public static async Task<bool> FileExists(StorageFile file)
+        {
+            try
+            {
+                using (var stream = await file.OpenStreamForReadAsync()) { }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
