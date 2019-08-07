@@ -439,6 +439,27 @@ namespace Notepads
             }
         }
 
+        private async void ReloadFileFromDiskFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+
+            if (selectedEditor?.EditingFile != null)
+            {
+                try
+                {
+                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
+                    selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
+                    selectedEditor.StartCheckingFileStatusPeriodically();
+                }
+                catch (Exception ex)
+                {
+                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
+                    await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
+            }
+        }
+
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is MenuFlyoutItem item)) return;

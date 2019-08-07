@@ -101,7 +101,7 @@ namespace Notepads.Core
                 ExtensionProvider = _extensionProvider
             };
 
-            textEditor.Init(new TextFile(text, encoding, lineEnding), file, dateModifiedFileTime);
+            textEditor.Init(new TextFile(text, encoding, lineEnding, dateModifiedFileTime), file);
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;

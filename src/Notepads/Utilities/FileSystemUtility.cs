@@ -16,16 +16,18 @@ namespace Notepads.Utilities
 
     public class TextFile
     {
-        public TextFile(string content, Encoding encoding, LineEnding lineEnding)
+        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime)
         {
             Content = content;
             Encoding = encoding;
             LineEnding = lineEnding;
+            DateModifiedFileTime = dateModifiedFileTime;
         }
 
         public string Content { get; }
         public Encoding Encoding { get; }
         public LineEnding LineEnding { get; }
+        public long DateModifiedFileTime { get; }
     }
 
     public static class FileSystemUtility
@@ -171,7 +173,7 @@ namespace Notepads.Utilities
             }
 
             encoding = FixUtf8Bom(encoding, bom);
-            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text));
+            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), fileProperties.DateModified.ToFileTime());
         }
 
         private static bool HasBom(byte[] bom)

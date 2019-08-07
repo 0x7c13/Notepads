@@ -105,8 +105,6 @@ namespace Notepads.Controls.TextEditor
 
         private FileModificationState _fileModificationState;
 
-        private long _dateModifiedFileTime;
-
         private StorageFile _editingFile;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
@@ -220,7 +218,7 @@ namespace Notepads.Controls.TextEditor
             }
             else
             {
-                newState = await FileSystemUtility.GetDateModified(EditingFile) != _dateModifiedFileTime ?
+                newState = await FileSystemUtility.GetDateModified(EditingFile) != OriginalSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
             }
@@ -255,15 +253,14 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, long dateModifiedFileTime = -1, bool clearUndoQueue = true)
+        public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
         {
             _loaded = false;
             EditingFile = file;
-            _dateModifiedFileTime = dateModifiedFileTime;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);
-            OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding);
+            OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
             if (clearUndoQueue)
             {
                 TextEditorCore.ClearUndoQueue();
@@ -440,9 +437,9 @@ namespace Notepads.Controls.TextEditor
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
-            var newFileModifiedTime = await FileSystemUtility.GetDateModified(EditingFile);
+            var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
             FileModificationState = FileModificationState.Untouched;
-            Init(new TextFile(text, encoding, lineEnding), file, newFileModifiedTime, clearUndoQueue: false);
+            Init(new TextFile(text, encoding, lineEnding, newFileModifiedTime), file, clearUndoQueue: false);
         }
 
         public string GetContentForSharing()
