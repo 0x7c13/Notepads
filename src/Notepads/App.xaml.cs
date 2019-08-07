@@ -5,6 +5,7 @@ namespace Notepads
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -45,9 +46,6 @@ namespace Notepads
                 },
                 {
                     "Exception", e.Exception.ToString()
-                },
-                {
-                    "StackTrace", e.Exception.StackTrace
                 }
             });
 
@@ -67,9 +65,6 @@ namespace Notepads
                 },
                 {
                     "Exception", e.Exception.ToString()
-                },
-                {
-                    "StackTrace", e.Exception.StackTrace
                 }
             });
 
@@ -109,6 +104,36 @@ namespace Notepads
 
             ThemeSettingsService.Initialize();
             EditorSettingsService.Initialize();
+
+            Analytics.TrackEvent("AppLaunch_Settings", new Dictionary<string, string>() {
+                {
+                    "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
+                },
+                {
+                    "ThemeMode", ThemeSettingsService.ThemeMode.ToString()
+                },
+                {
+                    "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
+                },
+                {
+                    "AppBackgroundTintOpacity", $"{ThemeSettingsService.AppBackgroundPanelTintOpacity:0.0}"
+                },
+                {
+                    "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
+                },
+                {
+                    "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString()
+                },
+                {
+                    "EditorDefaultEncoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultEncoding)
+                },
+                {
+                    "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
+                },
+                {
+                    "EditorDefaultDecoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultDecoding)
+                },
+            });
 
             await ActivationService.ActivateAsync(rootFrame, e);
             //await LoggingService.InitializeAsync();

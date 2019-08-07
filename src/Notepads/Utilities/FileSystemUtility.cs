@@ -271,9 +271,9 @@ namespace Notepads.Utilities
                 using (var stream = await file.OpenStreamForReadAsync()) { }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return !(ex is FileNotFoundException);
             }
         }
     }

@@ -172,13 +172,19 @@ namespace Notepads
         {
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
+                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Existing full screen mode.");
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
             else
             {
                 if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
                 {
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Entered full screen mode.");
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter full screen mode.");
                 }
             }
         }
@@ -229,10 +235,29 @@ namespace Notepads
                 NotepadsCore.OpenNewTextEditor();
                 _loaded = true;
             }
+
+            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
+            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+        }
+
+        private void CoreWindow_Activated(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            {
+                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Deactivated.");
+                NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+            }
+            else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
+                     args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
+            {
+                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Activated.");
+                NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+            }
         }
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Window Visibility Changed, Visible = {e.Visible}.");
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
         }
@@ -346,7 +371,6 @@ namespace Notepads
                 FileModificationStateIndicator.Visibility = Visibility.Visible;
             }
         }
-
 
         private void UpdatePathIndicator(TextEditor textEditor)
         {

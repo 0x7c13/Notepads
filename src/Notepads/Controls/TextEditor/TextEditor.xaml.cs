@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.EventArgs;
@@ -10,7 +11,9 @@ namespace Notepads.Controls.TextEditor
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
@@ -108,6 +111,12 @@ namespace Notepads.Controls.TextEditor
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
+        private CancellationTokenSource _fileStatusCheckerCancellationTokenSource;
+
+        private int _fileStatusCheckerPollingRateInSec = 5;
+
+        private readonly object _fileStatusCheckLocker = new object();
+
         private TextEditorMode _editorMode = TextEditorMode.Editing;
 
         public TextEditorMode EditorMode
@@ -152,27 +161,74 @@ namespace Notepads.Controls.TextEditor
 
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
-            CheckAndUpdateFileStatus();
+            StartCheckingFileStatusPeriodically();
+        }
+        private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
+        {
+            StopCheckingFileStatus();
+        }
+
+        public async void StartCheckingFileStatusPeriodically()
+        {
+            if (EditingFile == null) return;
+            StopCheckingFileStatus();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+            _fileStatusCheckerCancellationTokenSource = cancellationTokenSource;
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        lock (_fileStatusCheckLocker)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}]Checking file status for \"{EditingFile.Path}\".");
+                            CheckAndUpdateFileStatus();
+                        }
+                        Thread.Sleep(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec));
+                    }
+                }, cancellationToken);
+            }
+            catch (Exception)
+            {
+                // Ignore;
+            }
+        }
+
+        public void StopCheckingFileStatus()
+        {
+            if (_fileStatusCheckerCancellationTokenSource != null)
+            {
+                if (!_fileStatusCheckerCancellationTokenSource.IsCancellationRequested)
+                {
+                    _fileStatusCheckerCancellationTokenSource.Cancel();
+                }
+            }
         }
 
         private async void CheckAndUpdateFileStatus()
         {
             if (EditingFile == null) return;
 
+            FileModificationState? newState = null;
+
             if (!await FileSystemUtility.FileExists(EditingFile))
             {
-                FileModificationState = FileModificationState.RenamedMovedOrDeleted;
+                newState = FileModificationState.RenamedMovedOrDeleted;
             }
             else
             {
-                FileModificationState = await FileSystemUtility.GetDateModified(EditingFile) != _dateModifiedFileTime ?
+                newState = await FileSystemUtility.GetDateModified(EditingFile) != _dateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
             }
-        }
 
-        private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
-        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                FileModificationState = newState.Value;
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -284,6 +340,7 @@ namespace Notepads.Controls.TextEditor
             SplitPanelColumnDefinition.MinWidth = 100.0f;
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
+            Analytics.TrackEvent("MarkdownContentPreview_Opened");
         }
 
         private void CloseSplitView()
@@ -332,6 +389,7 @@ namespace Notepads.Controls.TextEditor
             Task.Factory.StartNew(
                 () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                     () => SideBySideDiffViewer.Focus()));
+            Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
 
         public void CloseSideBySideDiffViewer()
@@ -389,11 +447,9 @@ namespace Notepads.Controls.TextEditor
 
         public string GetContentForSharing()
         {
-            var content = TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition ?
+            return TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition ?
                 TextEditorCore.GetText() :
                 TextEditorCore.Document.Selection.Text;
-
-            return content;
         }
 
         public void TypeTab()
