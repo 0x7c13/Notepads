@@ -319,6 +319,9 @@ namespace Notepads
                 NotepadsCore.OpenNewTextEditor();
             }
 
+            _sessionManager.IsBackupEnabled = true;
+            _sessionManager.StartSessionBackup();
+
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
         }
@@ -329,16 +332,15 @@ namespace Notepads
             {
                 System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Deactivated.");
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+                _sessionManager.StopSessionBackup();
             }
             else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Activated.");
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+                _sessionManager.StartSessionBackup();
             }
-
-            _sessionManager.IsBackupEnabled = true;
-            _sessionManager.StartSessionBackup();
         }
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
