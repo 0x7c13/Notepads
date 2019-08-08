@@ -1,13 +1,10 @@
 ﻿
 namespace Notepads.Services
 {
-    using Microsoft.Graphics.Canvas.Effects;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Settings;
     using System;
-    using UICompositionAnimations.Behaviours;
-    using UICompositionAnimations.Enums;
     using Windows.ApplicationModel.Core;
     using Windows.UI;
     using Windows.UI.Core;
@@ -259,7 +256,7 @@ namespace Notepads.Services
                             Source = AcrylicBackgroundSource.HostBackdrop,
                             BlurAmount = 8,
                             Tint = Color.FromArgb(255, 50, 50, 50),
-                            TintMix = (float) AppBackgroundPanelTintOpacity,
+                            TintMix = (float)AppBackgroundPanelTintOpacity,
                             TextureUri = "/Assets/noise_low.png".ToAppxUri(),
                         };
                         return brush;

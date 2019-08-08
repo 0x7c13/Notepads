@@ -6,6 +6,7 @@ namespace Notepads.Controls.TextEditor
     using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
@@ -111,6 +112,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F5, (args) => InsertDataTimeString()),
             });
         }
 
@@ -470,6 +472,13 @@ namespace Notepads.Controls.TextEditor
                 pos++;
             }
             return -1;
+        }
+
+        private void InsertDataTimeString()
+        {
+            var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+            Document.Selection.SetText(TextSetOptions.None, dateStr);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
     }
 }

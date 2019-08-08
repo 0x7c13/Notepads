@@ -56,7 +56,7 @@ namespace Notepads
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
                     _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => 
+                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
                         {
@@ -461,6 +461,7 @@ namespace Notepads
                     var fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
                     var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
                     {
+                        selectedTextEditor.CloseSideBySideDiffViewer();
                         NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
                     });
                     await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
@@ -479,6 +480,7 @@ namespace Notepads
                     var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
                     selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
                     selectedEditor.StartCheckingFileStatusPeriodically();
+                    selectedEditor.CloseSideBySideDiffViewer();
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)

@@ -271,10 +271,6 @@ namespace Notepads.Controls.TextEditor
 
         public void RevertAllChanges()
         {
-            if (EditorMode == TextEditorMode.DiffPreview)
-            {
-                CloseSideBySideDiffViewer();
-            }
             Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
         }
 

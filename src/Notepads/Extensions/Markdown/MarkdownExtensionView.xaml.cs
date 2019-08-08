@@ -21,7 +21,7 @@ namespace Notepads.Extensions.Markdown
             {
                 var request = (HttpWebRequest)WebRequest.Create(feedUrl);
                 request.Method = "GET";
-                using (var response = (HttpWebResponse) await request.GetResponseAsync())
+                using (var response = (HttpWebResponse)await request.GetResponseAsync())
                 {
                     response.GetResponseStream()?.CopyTo(ms);
                     return ms;
