@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
+    <value>Závislosti a Odkazy</value>
+    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
+    <value>SOFTWARE JE POSKYTOVÁN  "TAK JAK JE ", BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NIKOLI VÝHRADNĚ, ZÁRUK PRODEJNOSTI, VHODNOSTI PRO URČITÝ ÚČEL A NEPORUŠENÍ PŘEDPISŮ. AUTOŘI NEBO DRŽITELÉ AUTORSKÝCH PRÁV NEJSOU V ŽÁDNÉM PŘÍPADĚ ODPOVĚDNI ZA JAKÉKOLI NÁROKY, ŠKODY NEBO JINÉ ZÁVAZKY, AŤ JIŽ V RÁMCI SMLOUVY, DELIKTŮ NEBO JINAK, VZNIKLÉ V SOUVISLOSTI S TÍMTO SOFTWAREM NEBO S JEHO POUŽÍVÁNÍM NEBO S JINÝM OBCHODOVÁNÍ SE SOFTWAREM.</value>
+    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
+    <value>Prohlášení</value>
+    <comment>AboutPage Disclaimer Title display text.</comment>
+  </data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
+    <value>Design a implementace volně šiřitelného a open source distribuovaného text editoru od Jackie (Jiaqi) Liu</value>
+    <comment>AboutPage NotepadsShortDescription display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
+    <value>Pro kontaktování autorů:</value>
+    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
+    <value>Pro hlášení problémů a požadavků na nové funkce:</value>
+    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
+    <value>Zdrojový kód je dostupný na GitHub:</value>
+    <comment>AboutPage Notepads SourceCode Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
+    <value>Pro více informací, prosím, navštivte náš web:</value>
+    <comment>AboutPage Notepads Website Title display text.</comment>
+  </data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+    <value>Prohlášení o zásadách ochrany osobních údajů</value>
+    <comment>AboutPage PrivacyStatementTitle display text.</comment>
+  </data>
+  <data name="AboutPage_Title.Content" xml:space="preserve">
+    <value>O programu</value>
+    <comment>AboutPage Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
+    <value>Zobrazit stavový řádek</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
+    <value>Zobrazit stavový řádek</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
+    <value>Nastavení Stavového Řádku</value>
+    <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
+  </data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+    <value>Pokročilé</value>
+    <comment>AdvancedPage Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
+    <value>Barva zvýraznění</value>
+    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>Použít barvu zvýraznění z Windows</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>Použít barvu zvýraznění z Windows</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
+    <value>Průhlednost akrylového odstínu pozadí</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
+    <value>Průhlednost odstínu pozadí</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
+    <value>Tmavý</value>
+    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
+    <value>Světlý</value>
+    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
+    <value>Motiv aplikace</value>
+    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
+    <value>Použít Windows motiv</value>
+    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+    <value>Přizpůsobení</value>
+    <comment>PersonalizationPage Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
+    <value>ANSI (Windows code page)</value>
+    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
+    <value>Záložní dekódování bude použitu, pokud nebude možné rozeznat kódování souboru. Dekódování ANSI je doporučeno pouze pro otvírání starších textových souborů.</value>
+    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
+    <value>Záložní dekódování</value>
+    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
+    <value>UTF-8 (Doporučené)</value>
+    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
+    <value>Aplikuje se pouze na nové dokumenty</value>
+    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
+    <value>Výchozí kódování</value>
+    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
+    <value>Výchozí Font a Velikost</value>
+    <comment>TextAndEditorPage FontSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
+    <value>Aplikuje se pouze na nové dokumenty</value>
+    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
+    <value>Výchozí zakončení řádků</value>
+    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
+    <value>Výchozí (\t)</value>
+    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
+    <value>Nastavení pro chování klávesy tab, aplikuje se pouze na nové vložení uživatelem</value>
+    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
+    <value>8 mezer</value>
+    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
+    <value>4 mezery</value>
+    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
+    <value>Chování Klávesy Tab</value>
+    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
+    <value>2 mezery</value>
+    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
+    <value>Zalamování Textu</value>
+    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Zalamování řádků</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Zalamování řádků</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+    <value>Text a Editor</value>
+    <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+</root>
