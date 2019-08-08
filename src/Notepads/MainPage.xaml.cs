@@ -165,6 +165,7 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
             });
         }
 
@@ -439,17 +440,18 @@ namespace Notepads
             }
         }
 
-        private async void ReloadFileFromDiskFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+        private async void ReloadFileFromDisk_OnClick(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
 
-            if (selectedEditor?.EditingFile != null)
+            if (selectedEditor?.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
             {
                 try
                 {
                     var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
                     selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
                     selectedEditor.StartCheckingFileStatusPeriodically();
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {

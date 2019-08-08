@@ -401,4 +401,8 @@
     <value>文件已移动、重命名或删除</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>文件已重新加载</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
 </root>

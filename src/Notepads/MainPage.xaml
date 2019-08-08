@@ -226,7 +226,7 @@
                     </Viewbox>
                     <Grid.ContextFlyout>
                         <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="ReloadFileFromDiskFlyoutItem" x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" Tag="ReloadFileFromDisk" Click="ReloadFileFromDiskFlyoutItem_OnClick">
+                            <MenuFlyoutItem x:Name="ReloadFileFromDiskFlyoutItem" x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" Tag="ReloadFileFromDisk" Click="ReloadFileFromDisk_OnClick">
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>

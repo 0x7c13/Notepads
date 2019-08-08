@@ -401,4 +401,8 @@
     <value>Datei wurde verschoben, umbenannt oder gelöscht</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>File reloaded</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
 </root>
