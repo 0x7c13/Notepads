@@ -142,7 +142,7 @@ namespace Notepads
             });
 
             await ActivationService.ActivateAsync(rootFrame, e);
-            //await LoggingService.InitializeAsync();
+            await LoggingService.InitializeAsync();
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();

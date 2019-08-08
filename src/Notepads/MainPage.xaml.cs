@@ -1,6 +1,10 @@
 ﻿
 namespace Notepads
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -9,10 +13,6 @@ namespace Notepads
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
@@ -37,8 +37,6 @@ namespace Notepads
         private string _appLaunchCmdArgs;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
-
-        private bool _loaded = false;
 
         private INotepadsCore _notepadsCore;
 
@@ -93,6 +91,8 @@ namespace Notepads
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
+        private readonly ISessionManager _sessionManager;
+
         public MainPage()
         {
             InitializeComponent();
@@ -125,6 +125,8 @@ namespace Notepads
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            _sessionManager = SessionUtility.GetSessionManager(NotepadsCore);
         }
 
         private void InitControls()
@@ -294,29 +296,27 @@ namespace Notepads
         // Open files from external links or cmd args on Sets Loaded
         private async void Sets_Loaded(object sender, RoutedEventArgs e)
         {
+            await _sessionManager.LoadLastSessionAsync();
+
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                var successCount = await OpenFiles(_appLaunchFiles);
-                if (successCount == 0)
-                {
-                    NotepadsCore.OpenNewTextEditor();
-                }
+                await OpenFiles(_appLaunchFiles);
                 _appLaunchFiles = null;
             }
             else if (_appLaunchCmdDir != null)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file == null || !(await OpenFile(file)))
+                if (file != null)
                 {
-                    NotepadsCore.OpenNewTextEditor();
+                    await OpenFile(file);
                 }
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
-            else if (!_loaded)
+
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 NotepadsCore.OpenNewTextEditor();
-                _loaded = true;
             }
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
@@ -336,6 +336,9 @@ namespace Notepads
                 System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Activated.");
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
             }
+
+            _sessionManager.IsBackupEnabled = true;
+            _sessionManager.StartSessionBackup();
         }
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
@@ -367,7 +370,8 @@ namespace Notepads
             if (!NotepadsCore.HaveUnsavedTextEditor()) return;
             e.Handled = true;
 
-            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
+            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
+                async () =>
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
@@ -377,7 +381,16 @@ namespace Notepads
                         }
                     }
                 },
-                () => Application.Current.Exit());
+                () =>
+                {
+                    if (_sessionManager.IsBackupEnabled)
+                    {
+                        _sessionManager.StopSessionBackup();
+                        _sessionManager.ClearSessionData();
+                    }
+
+                    Application.Current.Exit();
+                });
 
             await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
         }
