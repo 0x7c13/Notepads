@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads
 {
+    using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
@@ -40,6 +41,10 @@ namespace Notepads
         private bool _loaded = false;
 
         private INotepadsCore _notepadsCore;
+
+        private const int TitleBarReservedAreaDefaultWidth = 180;
+
+        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore NotepadsCore
         {
@@ -105,7 +110,10 @@ namespace Notepads
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) => ShowHideStatusBar(visibility);
+            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
+            {
+                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+            };
 
             // Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
@@ -180,28 +188,81 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
             });
+        }
+
+        private async void EnterExitCompactOverlayMode()
+        {
+            if (!ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay)) return;
+
+            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
+            {
+                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                if (modeSwitched)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Visible;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter CompactOverlay view mode.");
+                    Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
+                }
+            }
+            else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
+            {
+                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                if (modeSwitched)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter Default view mode.");
+                    Analytics.TrackEvent("FailedToEnterDefaultViewMode");
+                }
+            }
         }
 
         private void EnterExitFullScreenMode()
         {
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Existing full screen mode.");
+                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Existing full screen view mode.");
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
             else
             {
+                bool wasCompactOverlayMode = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
                 if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Entered full screen mode.");
+                    if (wasCompactOverlayMode)
+                    {
+                        TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
+                        ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
+                        if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                    }
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Entered full screen view mode.");
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter full screen mode.");
+                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter full screen view mode.");
+                    Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
                 }
+            }
+        }
+
+        private void ExitCompactOverlayButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
+            {
+                EnterExitCompactOverlayMode();
             }
         }
 

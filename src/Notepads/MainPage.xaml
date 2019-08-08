@@ -146,25 +146,46 @@
                         </sets:SetsView.SetsStartHeader>
 
                         <sets:SetsView.SetsActionHeader>
-                            <Button x:Name="NewSetButton"
-                                    IsTabStop="False"
-                                    Width="48"
-                                    Height="{StaticResource SetsViewItemHeaderMinHeight}"
-                                    Margin="-1,0,0,0"
-                                    BorderThickness="0"
-                                    Background="Transparent"
-                                    Style="{StaticResource ButtonRevealStyle}">
-                                <Viewbox MaxWidth="16"
-                                        MaxHeight="16">
-                                    <FontIcon FontFamily="Segoe MDL2 Assets"
-                                            Glyph="&#xE710;" />
-                                </Viewbox>
-                                <!--<interactivity:Interaction.Behaviors>
-                                    <core:EventTriggerBehavior EventName="Click">
-                                        <media:ControlStoryboardAction Storyboard="{StaticResource NewSetButtonOpacityAnimation}" />
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>-->
-                            </Button>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="NewSetButton"
+                                        Grid.Column="0"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="-1,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Style="{StaticResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="16"
+                                            MaxHeight="16">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                Glyph="&#xE710;" />
+                                        </Viewbox>
+                                </Button>
+                                <Button x:Name="ExitCompactOverlayButton"
+                                        Grid.Column="1"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="0,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Click="ExitCompactOverlayButton_OnClick"
+                                        Visibility="Collapsed"
+                                        Style="{StaticResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="19"
+                                             MaxHeight="19">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                  Glyph="&#xE944;" />
+                                        </Viewbox>
+                                </Button>
+                            </Grid>
+
                         </sets:SetsView.SetsActionHeader>
 
                         <sets:SetsView.SetsPaddingHeader>
