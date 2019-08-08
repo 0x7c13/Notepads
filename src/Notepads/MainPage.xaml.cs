@@ -56,7 +56,22 @@ namespace Notepads
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
                     _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFileModificationStateIndicator(editor); };
+                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => 
+                    {
+                        if (NotepadsCore.GetSelectedTextEditor() == editor)
+                        {
+                            if (editor.FileModificationState == FileModificationState.Modified)
+                            {
+                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"), 3500);
+                            }
+                            else if (editor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+                            {
+                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
+                            }
+                            UpdateFileModificationStateIndicator(editor);
+                            UpdatePathIndicator(editor);
+                        }
+                    };
                     _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -377,6 +392,19 @@ namespace Notepads
         {
             if (StatusBar == null) return;
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
+
+            if (textEditor.FileModificationState == FileModificationState.Untouched)
+            {
+                ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
+            }
+            else if (textEditor.FileModificationState == FileModificationState.Modified)
+            {
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+            }
+            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+            }
         }
 
         private void UpdateEditorModificationIndicator(TextEditor textEditor)
@@ -505,17 +533,29 @@ namespace Notepads
             else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
-                try
+
+                if (selectedEditor.FileModificationState == FileModificationState.Untouched)
                 {
-                    var pathData = new DataPackage();
-                    pathData.SetText(PathIndicator.Text);
-                    Clipboard.SetContentWithOptions(pathData, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                    Clipboard.Flush();
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    try
+                    {
+                        var pathData = new DataPackage();
+                        pathData.SetText(PathIndicator.Text);
+                        Clipboard.SetContentWithOptions(pathData, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                        Clipboard.Flush();
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    }
+                    catch (Exception)
+                    {
+                        // Ignore
+                    }
                 }
-                catch (Exception)
+                else if (selectedEditor.FileModificationState == FileModificationState.Modified)
                 {
-                    // Ignore
+                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                }
+                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
                 }
             }
             else if (sender == ModificationIndicator)

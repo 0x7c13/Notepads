@@ -394,11 +394,11 @@
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>外部ファイルが変更されています</value>
+    <value>外部ファイルが変更されています!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>ファイルが移動、名前変更または削除</value>
+    <value>ファイルが移動、名前変更または削除!</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
