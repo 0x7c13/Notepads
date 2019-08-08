@@ -231,13 +231,13 @@ namespace Notepads.Core
             if (sourceFile == null)
             {
                 textEditor = _notepadsCore.OpenNewTextEditor(
-                                        textEditorData.Id,
-                                        string.Empty,
-                                        null,
-                                        -1,
-                                        EditorSettingsService.EditorDefaultEncoding,
-                                        EditorSettingsService.EditorDefaultLineEnding,
-                                        false);
+                    textEditorData.Id,
+                    string.Empty,
+                    null,
+                    -1,
+                    EditorSettingsService.EditorDefaultEncoding,
+                    EditorSettingsService.EditorDefaultLineEnding,
+                    false);
 
                 await ApplyChangesAsync(textEditor, pending ?? lastSaved);
             }
