@@ -358,12 +358,16 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Soubor byl modifikován vně aplikace</value>
+    <value>Soubor byl modifikován vně aplikace!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
     <value>Znovu načíst soubor z disku</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>Soubor byl přesunut, přejmenován nebo odstraněn!</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
     <value>Řádek {0}, Sloupec {1} ({2} vybrán)</value>
@@ -392,6 +396,10 @@
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
     <value>Kopírovaný</value>
     <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>Soubor byl znovu načten</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Uložen</value>
