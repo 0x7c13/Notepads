@@ -59,7 +59,7 @@
                 </TextBlock>
                 <Button x:Name="DismissButton"
                         VerticalAlignment="Center"
-                        HorizontalAlignment="Right"
+                        HorizontalAlignment="Left"
                         IsTabStop="False"
                         Padding="0"
                         Height="25"

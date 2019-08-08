@@ -182,7 +182,7 @@ namespace Notepads.Controls.TextEditor
                     {
                         lock (_fileStatusCheckLocker)
                         {
-                            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}]Checking file status for \"{EditingFile.Path}\".");
+                            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Checking file status for \"{EditingFile.Path}\".");
                             CheckAndUpdateFileStatus();
                         }
                         Thread.Sleep(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec));
