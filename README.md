@@ -94,6 +94,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
+    * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
 
 ## Stay tuned 📢:
 
