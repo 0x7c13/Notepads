@@ -1,11 +1,11 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Utilities;
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
 
@@ -37,6 +37,8 @@ namespace Notepads.Core
         void OpenNewTextEditor();
 
         Task OpenNewTextEditor(StorageFile file);
+
+        TextEditor OpenNewTextEditor(Guid id, string text, StorageFile file, long dateModifiedFileTime, Encoding encoding, LineEnding lineEnding, bool isModified);
 
         Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
 

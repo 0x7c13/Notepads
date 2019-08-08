@@ -1,6 +1,11 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
@@ -8,11 +13,6 @@ namespace Notepads.Controls.TextEditor
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
@@ -37,6 +37,8 @@ namespace Notepads.Controls.TextEditor
 
     public sealed partial class TextEditor : UserControl
     {
+        public Guid Id;
+
         public INotepadsExtensionProvider ExtensionProvider;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
@@ -52,6 +54,8 @@ namespace Notepads.Controls.TextEditor
         public event EventHandler LineEndingChanged;
 
         public event EventHandler EncodingChanged;
+
+        public event EventHandler TextChanging;
 
         public event RoutedEventHandler SelectionChanged;
 
@@ -253,19 +257,22 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
+        public void Init(TextFile textFile, StorageFile file, bool resetOriginalSnapshot = true, bool clearUndoQueue = true, bool isModified = false)
         {
             _loaded = false;
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
             TextEditorCore.SetText(textFile.Content);
-            OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
+            if (resetOriginalSnapshot)
+            {
+                OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
+            }
             if (clearUndoQueue)
             {
                 TextEditorCore.ClearUndoQueue();
             }
-            IsModified = false;
+            IsModified = isModified;
             _loaded = true;
         }
 
@@ -433,13 +440,19 @@ namespace Notepads.Controls.TextEditor
             {
                 CloseSideBySideDiffViewer();
             }
+            TextFile textFile = await SaveToFileCore(file);
+            FileModificationState = FileModificationState.Untouched;
+            Init(textFile, file, clearUndoQueue: false);
+        }
+
+        public async Task<TextFile> SaveToFileCore(StorageFile file)
+        {
             var text = TextEditorCore.GetText();
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
             var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
-            FileModificationState = FileModificationState.Untouched;
-            Init(new TextFile(text, encoding, lineEnding, newFileModifiedTime), file, clearUndoQueue: false);
+            return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
 
         public string GetContentForSharing()
@@ -530,6 +543,7 @@ namespace Notepads.Controls.TextEditor
             {
                 IsModified = !IsInOriginalState(compareTextOnly: true);
             }
+            TextChanging?.Invoke(this, EventArgs.Empty);
         }
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)

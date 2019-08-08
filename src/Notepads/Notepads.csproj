@@ -158,7 +158,9 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
+    <Compile Include="Core\ISessionManager.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
+    <Compile Include="Core\SessionManager.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
     <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
@@ -194,6 +196,8 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
+    <Compile Include="Utilities\SessionUtility.cs" />
+    <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -373,6 +377,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>5.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="UICompositionAnimations">
       <Version>4.1.1</Version>
