@@ -1,4 +1,5 @@
-# Notepads App [ Beta ]
+# Notepads App [ Beta ] <img align="left" src="src/Notepads/Assets/StoreLogo.scale-200.png">
+
 [![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
 [![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
 ![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
