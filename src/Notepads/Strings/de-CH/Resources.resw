@@ -405,4 +405,20 @@
     <value>File reloaded</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Compact Overlay</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Full Screen</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Exit Compact Overlay</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Exit Full Screen</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
 </root>

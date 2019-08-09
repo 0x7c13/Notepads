@@ -129,6 +129,7 @@ namespace Notepads
 
         private void InitControls()
         {
+            ToolTipService.SetToolTip(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
@@ -140,9 +141,10 @@ namespace Notepads
             MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
+            MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
+            MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
@@ -170,6 +172,11 @@ namespace Notepads
                     MenuReplaceButton.IsEnabled = true;
                     //MenuPrintButton.IsEnabled = true;
                 }
+
+                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ? 
+                    "App_ExitFullScreenMode_Text" : "App_EnterFullScreenMode_Text");
+                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ? 
+                    "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
         }
@@ -195,8 +202,6 @@ namespace Notepads
 
         private async void EnterExitCompactOverlayMode()
         {
-            if (!ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay)) return;
-
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
             {
                 var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
@@ -205,6 +210,7 @@ namespace Notepads
                     TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Visible;
                     if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                    Analytics.TrackEvent("EnteredCompactOverlayMode");
                 }
                 else
                 {

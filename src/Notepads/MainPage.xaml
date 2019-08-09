@@ -98,7 +98,7 @@
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
@@ -106,7 +106,7 @@
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
@@ -117,7 +117,7 @@
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
@@ -125,7 +125,24 @@
                                                 <FontIcon Glyph="&#xE8AB;" />
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE740;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F11" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="CompactOverlay" x:Name="MenuCompactOverlayButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8A7;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F12" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
