@@ -96,6 +96,11 @@ namespace Notepads.Controls.FindAndReplace
             {
                 SearchButton_OnClick(sender, e);
             }
+
+            if (e.Key == VirtualKey.Tab)
+            {
+                e.Handled = true;
+            }
         }
 
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)

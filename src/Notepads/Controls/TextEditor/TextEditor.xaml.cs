@@ -571,6 +571,7 @@ namespace Notepads.Controls.TextEditor
             {
                 case FindAndReplaceMode.FindOnly:
                     found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
+                    FindAndReplaceControl.Focus();
                     break;
                 case FindAndReplaceMode.Replace:
                     found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
