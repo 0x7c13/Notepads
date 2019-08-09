@@ -268,6 +268,9 @@
                                             x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
                                             Tag="ReloadFileFromDisk" 
                                             Click="ReloadFileFromDisk_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE72C;"/>
+                                </MenuFlyoutItem.Icon>
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
@@ -299,12 +302,24 @@
                            >
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 
+                                            x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" 
+                                            Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE89A;"/>
+                                </MenuFlyoutItem.Icon>
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="D" Modifiers="Menu" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" Tag="RevertAllChanges" Click="ModificationFlyoutSelection_OnClick"/>
+                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" 
+                                            Tag="RevertAllChanges" 
+                                            Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7A7;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />

@@ -605,17 +605,9 @@ namespace Notepads
 
                 if (selectedEditor.FileModificationState == FileModificationState.Untouched)
                 {
-                    try
+                    if (selectedEditor.EditingFile != null)
                     {
-                        var pathData = new DataPackage();
-                        pathData.SetText(PathIndicator.Text);
-                        Clipboard.SetContentWithOptions(pathData, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                        Clipboard.Flush();
-                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
-                    }
-                    catch (Exception)
-                    {
-                        // Ignore
+                        FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
                     }
                 }
                 else if (selectedEditor.FileModificationState == FileModificationState.Modified)
