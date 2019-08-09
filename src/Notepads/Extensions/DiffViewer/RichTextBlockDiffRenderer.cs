@@ -8,6 +8,7 @@ namespace Notepads.Extensions.DiffViewer
     using System.Collections.Generic;
     using System.Linq;
     using Windows.UI;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
 
@@ -157,9 +158,10 @@ namespace Notepads.Extensions.DiffViewer
                     case ChangeType.Modified:
                         var paragraph = new Paragraph()
                         {
-                            LineHeight = 0.5,
+                            LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                             Foreground = _defaultForeground,
                         };
+                        paragraph.LineHeight = paragraph.FontSize + 6;
                         foreach (var subPiece in lineSubPieces)
                         {
                             var oldNewPiece = pieceSelector(subPiece);
@@ -202,11 +204,12 @@ namespace Notepads.Extensions.DiffViewer
         {
             var paragraph = new Paragraph
             {
-                LineHeight = 0.5,
+                LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                 Foreground = foreground.HasValue
                     ? BrushFactory.GetSolidColorBrush(foreground.Value)
                     : _defaultForeground,
             };
+            paragraph.LineHeight = paragraph.FontSize + 6;
 
             var run = new Run { Text = text };
             paragraph.Inlines.Add(run);
