@@ -111,7 +111,7 @@ namespace Notepads.Controls.TextEditor
 
         private CancellationTokenSource _fileStatusCheckerCancellationTokenSource;
 
-        private int _fileStatusCheckerPollingRateInSec = 5;
+        private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
         private readonly object _fileStatusCheckLocker = new object();
 

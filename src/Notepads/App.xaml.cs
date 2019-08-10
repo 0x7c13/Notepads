@@ -116,7 +116,7 @@ namespace Notepads
                     "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
                 },
                 {
-                    "AppBackgroundTintOpacity", $"{ThemeSettingsService.AppBackgroundPanelTintOpacity:0.0}"
+                    "AppBackgroundTintOpacity", $"{(int)(ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
                 },
                 {
                     "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
@@ -132,6 +132,12 @@ namespace Notepads
                 },
                 {
                     "EditorDefaultDecoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultDecoding)
+                },
+                {
+                    "EditorFontFamily", EditorSettingsService.EditorFontFamily
+                },
+                {
+                    "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
                 },
             });
 

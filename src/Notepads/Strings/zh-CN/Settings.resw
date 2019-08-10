@@ -289,4 +289,8 @@
     <value>文本与编辑器</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>更新日志</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
 </root>

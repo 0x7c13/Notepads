@@ -289,4 +289,8 @@
     <value>Texto y Editor</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>Registro de cambios</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
 </root>
