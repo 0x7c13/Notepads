@@ -137,6 +137,22 @@
     <value>Chcete uložit změny?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Kompaktní režim</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Celoobrazovkový režim</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Opustit kompaktní režim</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Vypnout celoobrazovkový režim</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
     <value>Nic ke sdílení, protože nebyl vybrán text a vybraný dokument je prázdný.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
@@ -364,6 +380,10 @@
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
     <value>Znovu načíst soubor z disku</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>Soubor byl modifikován vně aplikace!</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
     <value>Soubor byl přesunut, přejmenován nebo odstraněn!</value>
