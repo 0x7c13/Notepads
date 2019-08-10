@@ -373,10 +373,6 @@
     <value>Untitled.txt</value>
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Soubor byl modifikován vně aplikace!</value>
-    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
-  </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
     <value>Znovu načíst soubor z disku</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
