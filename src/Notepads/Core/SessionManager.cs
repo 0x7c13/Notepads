@@ -1,15 +1,15 @@
 ﻿
 namespace Notepads.Core
 {
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.Storage;
 
     internal class SessionManager : ISessionManager
@@ -18,11 +18,10 @@ namespace Notepads.Core
         private static readonly TimeSpan _saveInterval = TimeSpan.FromSeconds(7);
 
         private INotepadsCore _notepadsCore;
-        private bool _loaded;
+        private Timer _timer;
         private SemaphoreSlim _semaphoreSlim;
-        private Task _backgroundTask;
-        private CancellationTokenSource _cancellationTokenSource;
         private EncodingConverter _encodingConverter;
+        private bool _loaded;
 
         /// <summary>
         /// Do not call this constructor directly. Use <see cref="SessionUtility.GetSessionManager(INotepadsCore)" instead./>
@@ -30,9 +29,9 @@ namespace Notepads.Core
         public SessionManager(INotepadsCore notepadsCore)
         {
             _notepadsCore = notepadsCore;
-            _loaded = false;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             _encodingConverter = new EncodingConverter();
+            _loaded = false;
         }
 
         public bool IsBackupEnabled { get; set; }
@@ -171,48 +170,36 @@ namespace Notepads.Core
 
         public void StartSessionBackup()
         {
-            if (_backgroundTask != null && !_backgroundTask.IsCompleted)
+            if (_timer == null)
             {
-                return; // Backup thread already running
-            }
+                Timer timer = new Timer(async (obj) => await SaveSessionAsync());
 
-            try
-            {
-                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-                _backgroundTask = Task.Run(
-                    async () =>
-                    {
-                        while (true)
-                        {
-                            Thread.Sleep(_saveInterval);
-                            await SaveSessionAsync();
-                        }
-                    },
-                    cancellationTokenSource.Token);
-
-                _cancellationTokenSource = cancellationTokenSource;
-            }
-            catch
-            {
-                // Best effort
+                if (Interlocked.CompareExchange(ref _timer, timer, null) == null)
+                {
+                    timer.Change(_saveInterval, _saveInterval);
+                }
+                else
+                {
+                    timer.Dispose();
+                }
             }
         }
 
         public void StopSessionBackup()
         {
+            Timer timer = _timer;
+
             try
             {
-                if (_cancellationTokenSource != null)
-                {
-                    _cancellationTokenSource.Cancel();
-                    _cancellationTokenSource.Dispose();
-                    _cancellationTokenSource = null;
-                }
+                timer?.Dispose();
             }
             catch
             {
                 // Best effort
+            }
+            finally
+            {
+                Interlocked.CompareExchange(ref _timer, null, timer);
             }
         }
 
