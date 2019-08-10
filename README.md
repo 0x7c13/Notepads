@@ -1,4 +1,5 @@
-# Notepads App [ Beta ]
+# Notepads App [ Beta ] <img align="left" src="src/Notepads/Assets/StoreLogo.scale-200.png">
+
 [![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
 [![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
 ![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
@@ -56,6 +57,10 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 * [Project Roadmap](ROADMAP.md)
 
+## Changelog
+
+* [Notepads Releases](https://github.com/JasonStein/Notepads/releases)
+
 ## Disclaimer and Privacy statement:
 
 To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
@@ -94,6 +99,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
+    * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
 
 ## Stay tuned 📢:
 

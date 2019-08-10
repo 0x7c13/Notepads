@@ -111,7 +111,7 @@ namespace Notepads.Controls.TextEditor
 
         private CancellationTokenSource _fileStatusCheckerCancellationTokenSource;
 
-        private int _fileStatusCheckerPollingRateInSec = 5;
+        private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
         private readonly object _fileStatusCheckLocker = new object();
 
@@ -379,9 +379,7 @@ namespace Notepads.Controls.TextEditor
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
             SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => SideBySideDiffViewer.Focus()));
+            SideBySideDiffViewer.Focus();
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
 
@@ -552,9 +550,7 @@ namespace Notepads.Controls.TextEditor
                 FindAndReplacePlaceholder.Show();
             }
 
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => findAndReplace.Focus()));
+            findAndReplace.Focus(showReplaceBar ? FindAndReplaceMode.Replace : FindAndReplaceMode.FindOnly);
         }
 
         public void HideFindAndReplaceControl()
@@ -571,6 +567,7 @@ namespace Notepads.Controls.TextEditor
             {
                 case FindAndReplaceMode.FindOnly:
                     found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
+                    FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);
                     break;
                 case FindAndReplaceMode.Replace:
                     found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
