@@ -258,13 +258,16 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool resetOriginalSnapshot = true, bool clearUndoQueue = true, bool isModified = false)
+        public void Init(TextFile textFile, StorageFile file, bool resetOriginalSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
         {
             _loaded = false;
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
-            TextEditorCore.SetText(textFile.Content);
+            if (resetText)
+            {
+                TextEditorCore.SetText(textFile.Content);
+            }
             if (resetOriginalSnapshot)
             {
                 OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
@@ -437,7 +440,7 @@ namespace Notepads.Controls.TextEditor
             }
             TextFile textFile = await SaveToFileCore(file);
             FileModificationState = FileModificationState.Untouched;
-            Init(textFile, file, clearUndoQueue: false);
+            Init(textFile, file, clearUndoQueue: false, resetText: false);
         }
 
         public async Task<TextFile> SaveToFileCore(StorageFile file)
