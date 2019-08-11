@@ -219,8 +219,11 @@ namespace Notepads.Core
         public void SwitchTo(TextEditor textEditor)
         {
             var item = GetTextEditorSetsViewItem(textEditor);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
+            if (Sets.SelectedItem != item)
+            {
+                Sets.SelectedItem = item;
+                Sets.ScrollIntoView(item);
+            }
         }
 
         private void SwitchTo(StorageFile file)

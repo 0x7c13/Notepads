@@ -686,12 +686,11 @@ namespace Notepads
                 {
                     NotepadsCore.DeleteTextEditor(textEditor);
                 }
-
-                NotepadsCore.FocusOnSelectedTextEditor();
             }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
             setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
             await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
