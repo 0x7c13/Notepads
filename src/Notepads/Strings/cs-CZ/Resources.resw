@@ -137,6 +137,22 @@
     <value>Chcete uložit změny?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Kompaktní režim</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Celoobrazovkový režim</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Opustit kompaktní režim</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Vypnout celoobrazovkový režim</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
     <value>Nic ke sdílení, protože nebyl vybrán text a vybraný dokument je prázdný.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
@@ -404,21 +420,5 @@
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Uložen</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
-  </data>
-  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Compact Overlay</value>
-    <comment>App: "Compact Overlay" display text</comment>
-  </data>
-  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Full Screen</value>
-    <comment>App: "Full Screen" display text</comment>
-  </data>
-  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Exit Compact Overlay</value>
-    <comment>App: "Exit Compact Overlay" display text</comment>
-  </data>
-  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Exit Full Screen</value>
-    <comment>App: "Exit Full Screen" display text</comment>
   </data>
 </root>
