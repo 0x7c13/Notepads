@@ -5,6 +5,7 @@ namespace Notepads.Services
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -69,7 +70,13 @@ namespace Notepads.Services
                 return;
             }
 
-            _messageQueue.Enqueue(String.Format(_messageFormat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), level, message));
+            string formattedMessage = string.Format(_messageFormat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), level, message);
+
+            // Print out to debug
+            Debug.WriteLine(formattedMessage);
+
+            // Add to message queue
+            _messageQueue.Enqueue(formattedMessage);
         }
 
         private static async Task InitializeBackgroundTaskAsync()

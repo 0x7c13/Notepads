@@ -1,16 +1,17 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Extensions;
-    using Notepads.Services;
-    using Notepads.Utilities;
-    using SetsView;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
+    using Notepads.Services;
+    using Notepads.Utilities;
+    using SetsView;
+    using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
     using Windows.UI.Xaml;
@@ -48,26 +49,39 @@ namespace Notepads.Core
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
+        private readonly ISessionManager _sessionManager;
+
+        private TextEditor _selectedTextEditor;
+
+        private TextEditor[] _allTextEditors;
+
         public NotepadsCore(SetsView sets,
             string defaultNewFileName,
             INotepadsExtensionProvider extensionProvider)
         {
             Sets = sets;
+            Sets.SelectionChanged += SetsView_OnSelectionChanged;
+            Sets.Items.VectorChanged += SetsView_OnItemsChanged;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
 
             _extensionProvider = extensionProvider;
             DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
+
+            _sessionManager = SessionUtility.GetSessionManager(this);
         }
 
         public void OpenNewTextEditor()
         {
-            OpenNewTextEditor(string.Empty,
+            OpenNewTextEditor(
+                Guid.NewGuid(),
+                string.Empty,
                 null,
                 -1,
                 EditorSettingsService.EditorDefaultEncoding,
-                EditorSettingsService.EditorDefaultLineEnding);
+                EditorSettingsService.EditorDefaultLineEnding,
+                false);
         }
 
         public async Task OpenNewTextEditor(StorageFile file)
@@ -81,26 +95,33 @@ namespace Notepads.Core
             var textFile = await FileSystemUtility.ReadFile(file);
             var dateModifiedFileTime = await FileSystemUtility.GetDateModified(file);
 
-            OpenNewTextEditor(textFile.Content,
+            OpenNewTextEditor(
+                Guid.NewGuid(),
+                textFile.Content,
                 file,
                 dateModifiedFileTime,
                 textFile.Encoding,
-                textFile.LineEnding);
+                textFile.LineEnding,
+                false);
         }
 
-        private void OpenNewTextEditor(string text,
+        public TextEditor OpenNewTextEditor(
+            Guid id,
+            string text,
             StorageFile file,
             long dateModifiedFileTime,
             Encoding encoding,
-            LineEnding lineEnding)
+            LineEnding lineEnding,
+            bool isModified)
         {
             //LoggingService.LogInfo("Opening a text editor.");
             var textEditor = new TextEditor
             {
+                Id = id,
                 ExtensionProvider = _extensionProvider
             };
 
-            textEditor.Init(new TextFile(text, encoding, lineEnding, dateModifiedFileTime), file);
+            textEditor.Init(new TextFile(text, encoding, lineEnding, dateModifiedFileTime), file, isModified: isModified);
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_SelectionChanged;
@@ -127,7 +148,7 @@ namespace Notepads.Core
                 throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
             }
 
-            newItem.Icon.Visibility = Visibility.Collapsed;
+            newItem.Icon.Visibility = isModified ? Visibility.Visible : Visibility.Collapsed;
             newItem.ContextFlyout = new TabContextFlyout(this, textEditor);
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
@@ -147,6 +168,8 @@ namespace Notepads.Core
                 Sets.SelectedItem = newItem;
                 Sets.ScrollToLastSet();
             }
+
+            return textEditor;
         }
 
         public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
@@ -235,23 +258,37 @@ namespace Notepads.Core
 
         public TextEditor GetSelectedTextEditor()
         {
-            if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return null;
-            return textEditor;
+            if (ThreadUtility.IsOnUIThread())
+            {
+                if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return null;
+                return textEditor;
+            }
+            else
+            {
+                return _selectedTextEditor;
+            }
         }
 
         public TextEditor[] GetAllTextEditors()
         {
-            if (Sets.Items == null) return new TextEditor[0];
-            var editors = new List<TextEditor>();
-            foreach (SetsViewItem item in Sets.Items)
+            if (ThreadUtility.IsOnUIThread())
             {
-                if (item.Content is TextEditor textEditor)
+                if (Sets.Items == null) return new TextEditor[0];
+                var editors = new List<TextEditor>();
+                foreach (SetsViewItem item in Sets.Items)
                 {
-                    editors.Add(textEditor);
+                    if (item.Content is TextEditor textEditor)
+                    {
+                        editors.Add(textEditor);
+                    }
                 }
-            }
 
-            return editors.ToArray();
+                return editors.ToArray();
+            }
+            else
+            {
+                return _allTextEditors;
+            }
         }
 
         public void FocusOnSelectedTextEditor()
@@ -268,6 +305,18 @@ namespace Notepads.Core
         {
             var item = GetTextEditorSetsViewItem(textEditor);
             item?.Close();
+        }
+
+        private async void SetsView_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _selectedTextEditor = GetSelectedTextEditor();
+            await _sessionManager.SaveSessionAsync();
+        }
+
+        private async void SetsView_OnItemsChanged(object sender, IVectorChangedEventArgs e)
+        {
+            _allTextEditors = GetAllTextEditors();
+            await _sessionManager.SaveSessionAsync();
         }
 
         private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
