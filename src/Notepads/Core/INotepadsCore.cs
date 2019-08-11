@@ -40,7 +40,7 @@ namespace Notepads.Core
 
         TextEditor OpenNewTextEditor(Guid id, string text, StorageFile file, long dateModifiedFileTime, Encoding encoding, LineEnding lineEnding, bool isModified);
 
-        Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
+        Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
 
         void DeleteTextEditor(TextEditor textEditor);
 

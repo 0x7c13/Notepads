@@ -432,18 +432,18 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.IsEnabled;
         }
 
-        public async Task SaveToFile(StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
             if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
             {
                 CloseSideBySideDiffViewer();
             }
-            TextFile textFile = await SaveToFileCore(file);
+            TextFile textFile = await SaveContentToFile(file);
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
         }
 
-        public async Task<TextFile> SaveToFileCore(StorageFile file)
+        public async Task<TextFile> SaveContentToFile(StorageFile file)
         {
             var text = TextEditorCore.GetText();
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;

@@ -300,7 +300,7 @@ namespace Notepads.Core
             try
             {
                 backupFile = await SessionUtility.CreateNewBackupFileAsync(textEditor.Id.ToString("N") + "-Pending");
-                textFile = await textEditor.SaveToFileCore(backupFile);
+                textFile = await textEditor.SaveContentToFile(backupFile);
             }
             catch
             {

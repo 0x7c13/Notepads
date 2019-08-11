@@ -810,7 +810,7 @@ namespace Notepads
                     file = textEditor.EditingFile;
                 }
 
-                await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
+                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
                 return true;
             }
             catch (Exception ex)

@@ -172,9 +172,9 @@ namespace Notepads.Core
             return textEditor;
         }
 
-        public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file)
         {
-            await textEditor.SaveToFile(file);
+            await textEditor.SaveContentToFileAndUpdateEditorState(file);
             TextEditorSaved?.Invoke(this, textEditor);
         }
 
