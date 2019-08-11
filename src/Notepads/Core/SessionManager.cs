@@ -14,13 +14,13 @@ namespace Notepads.Core
 
     internal class SessionManager : ISessionManager
     {
-        private const string _sessionDataKey = "NotepadsSessionDataV1";
-        private static readonly TimeSpan _saveInterval = TimeSpan.FromSeconds(7);
+        private const string SessionDataKey = "NotepadsSessionDataV1";
+        private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
 
-        private INotepadsCore _notepadsCore;
+        private readonly INotepadsCore _notepadsCore;
         private Timer _timer;
-        private SemaphoreSlim _semaphoreSlim;
-        private EncodingConverter _encodingConverter;
+        private readonly SemaphoreSlim _semaphoreSlim;
+        private readonly EncodingConverter _encodingConverter;
         private bool _loaded;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Notepads.Core
                 return 0; // Already loaded
             }
 
-            if (!ApplicationData.Current.LocalSettings.Values.TryGetValue(_sessionDataKey, out object data))
+            if (!ApplicationData.Current.LocalSettings.Values.TryGetValue(SessionDataKey, out object data))
             {
                 return 0; // No session data found
             }
@@ -163,7 +163,7 @@ namespace Notepads.Core
             try
             {
                 string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
-                ApplicationData.Current.LocalSettings.Values[_sessionDataKey] = sessionJson;
+                ApplicationData.Current.LocalSettings.Values[SessionDataKey] = sessionJson;
                 LoggingService.LogInfo("Successfully saved the current session.");
             }
             catch
@@ -184,7 +184,7 @@ namespace Notepads.Core
 
                 if (Interlocked.CompareExchange(ref _timer, timer, null) == null)
                 {
-                    timer.Change(_saveInterval, _saveInterval);
+                    timer.Change(SaveInterval, SaveInterval);
                 }
                 else
                 {
@@ -213,7 +213,7 @@ namespace Notepads.Core
 
         public void ClearSessionData()
         {
-            ApplicationData.Current.LocalSettings.Values.Remove(_sessionDataKey);
+            ApplicationData.Current.LocalSettings.Values.Remove(SessionDataKey);
         }
 
         private async Task<TextEditor> RecoverTextEditorAsync(TextEditorSessionData textEditorData)

@@ -1,27 +1,26 @@
 ﻿
 namespace Notepads.Utilities
 {
+    using Notepads.Core;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
-    using Notepads.Core;
     using Windows.Storage;
 
     internal static class SessionUtility
     {
-        private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> _sessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
+        private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
         public static ISessionManager GetSessionManager(INotepadsCore notepadCore)
         {
-            if (!_sessionManagers.TryGetValue(notepadCore, out ISessionManager sessionManager))
+            if (!SessionManagers.TryGetValue(notepadCore, out ISessionManager sessionManager))
             {
                 sessionManager = new SessionManager(notepadCore);
 
-                if (!_sessionManagers.TryAdd(notepadCore, sessionManager))
+                if (!SessionManagers.TryAdd(notepadCore, sessionManager))
                 {
-                    sessionManager = _sessionManagers[notepadCore];
+                    sessionManager = SessionManagers[notepadCore];
                 }
             }
 

@@ -40,6 +40,8 @@ namespace Notepads
         {
             // Occurs when an exception is not handled on the UI thread.
 
+            LoggingService.LogException(e.Exception);
+
             Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
                 {
                     "Message", e.Message
@@ -58,6 +60,8 @@ namespace Notepads
         {
             // Occurs when an exception is not handled on a background thread.
             // ie. A task is fired and forgotten Task.Run(() => {...})
+
+            LoggingService.LogException(e.Exception);
 
             Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
                 {
@@ -142,7 +146,7 @@ namespace Notepads
             });
 
             await ActivationService.ActivateAsync(rootFrame, e);
-            await LoggingService.InitializeAsync();
+            //await LoggingService.InitializeAsync();
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();

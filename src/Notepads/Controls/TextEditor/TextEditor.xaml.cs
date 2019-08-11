@@ -1,18 +1,17 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Commands;
+    using Notepads.Controls.FindAndReplace;
+    using Notepads.Extensions;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Commands;
-    using Notepads.Controls.FindAndReplace;
-    using Notepads.EventArgs;
-    using Notepads.Extensions;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
@@ -117,6 +116,8 @@ namespace Notepads.Controls.TextEditor
 
         private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
+        private readonly double _fileStatusCheckerDelayInSec = 0.2;
+
         private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new SemaphoreSlim(1, 1);
 
         private TextEditorMode _editorMode = TextEditorMode.Editing;
@@ -184,13 +185,14 @@ namespace Notepads.Controls.TextEditor
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Checking file status for \"{EditingFile.Path}\".");
+                        await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
+                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
                         await CheckAndUpdateFileStatus();
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
             }
-            catch (Exception)
+            catch
             {
                 // Ignore;
             }
@@ -434,13 +436,11 @@ namespace Notepads.Controls.TextEditor
 
         public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
-            if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
-            {
-                CloseSideBySideDiffViewer();
-            }
+            if (EditorMode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
             TextFile textFile = await SaveContentToFile(file);
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
+            StartCheckingFileStatusPeriodically();
         }
 
         public async Task<TextFile> SaveContentToFile(StorageFile file)

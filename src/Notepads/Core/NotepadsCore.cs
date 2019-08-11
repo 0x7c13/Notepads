@@ -1,16 +1,16 @@
 ﻿
 namespace Notepads.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using SetsView;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;

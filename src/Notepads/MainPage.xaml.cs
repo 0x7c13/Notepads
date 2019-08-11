@@ -1,10 +1,6 @@
 ﻿
 namespace Notepads
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -13,6 +9,10 @@ namespace Notepads
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
@@ -204,6 +204,8 @@ namespace Notepads
             });
         }
 
+        #region View Mode Switches
+
         private async void EnterExitCompactOverlayMode()
         {
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
@@ -218,7 +220,7 @@ namespace Notepads
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter CompactOverlay view mode.");
+                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
                     Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
                 }
             }
@@ -233,7 +235,7 @@ namespace Notepads
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter Default view mode.");
+                    LoggingService.LogError("Failed to enter Default view mode.");
                     Analytics.TrackEvent("FailedToEnterDefaultViewMode");
                 }
             }
@@ -243,7 +245,7 @@ namespace Notepads
         {
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Existing full screen view mode.");
+                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
             else
@@ -257,12 +259,13 @@ namespace Notepads
                         ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
                         if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
                     }
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Entered full screen view mode.");
+
+                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter full screen view mode.");
+                    LoggingService.LogError("Failed to enter full screen view mode.");
                     Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
                 }
             }
@@ -275,6 +278,8 @@ namespace Notepads
                 EnterExitCompactOverlayMode();
             }
         }
+
+        #endregion
 
         #region Application Life Cycle & Window management 
 
@@ -341,14 +346,14 @@ namespace Notepads
         {
             if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Deactivated.");
+                LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
                 _sessionManager.StopSessionBackup();
             }
             else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Activated.");
+                LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 _sessionManager.StartSessionBackup();
             }
@@ -356,7 +361,7 @@ namespace Notepads
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Window Visibility Changed, Visible = {e.Visible}.");
+            LoggingService.LogInfo($"Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
         }

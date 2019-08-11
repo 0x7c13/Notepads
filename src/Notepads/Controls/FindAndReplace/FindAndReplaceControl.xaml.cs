@@ -1,7 +1,6 @@
 ﻿
 namespace Notepads.Controls.FindAndReplace
 {
-    using Notepads.EventArgs;
     using Notepads.Services;
     using System;
     using Windows.System;
