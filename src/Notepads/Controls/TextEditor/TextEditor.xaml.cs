@@ -113,7 +113,7 @@ namespace Notepads.Controls.TextEditor
 
         private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
-        private readonly object _fileStatusCheckLocker = new object();
+        private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new SemaphoreSlim(1, 1);
 
         private TextEditorMode _editorMode = TextEditorMode.Editing;
 
@@ -176,16 +176,13 @@ namespace Notepads.Controls.TextEditor
 
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        lock (_fileStatusCheckLocker)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Checking file status for \"{EditingFile.Path}\".");
-                            CheckAndUpdateFileStatus();
-                        }
-                        Thread.Sleep(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec));
+                        System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Checking file status for \"{EditingFile.Path}\".");
+                        await CheckAndUpdateFileStatus();
+                        await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
             }
@@ -206,9 +203,11 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        private async void CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus()
         {
             if (EditingFile == null) return;
+
+            await _fileStatusSemaphoreSlim.WaitAsync();
 
             FileModificationState? newState = null;
 
@@ -227,6 +226,8 @@ namespace Notepads.Controls.TextEditor
             {
                 FileModificationState = newState.Value;
             });
+
+            _fileStatusSemaphoreSlim.Release();
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
