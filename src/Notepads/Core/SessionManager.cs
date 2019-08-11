@@ -14,7 +14,7 @@ namespace Notepads.Core
 
     internal class SessionManager : ISessionManager
     {
-        private const string _sessionDataKey = "NotepadsSessionData";
+        private const string _sessionDataKey = "NotepadsSessionDataV1";
         private static readonly TimeSpan _saveInterval = TimeSpan.FromSeconds(7);
 
         private INotepadsCore _notepadsCore;
@@ -36,29 +36,30 @@ namespace Notepads.Core
 
         public bool IsBackupEnabled { get; set; }
 
-        public async Task LoadLastSessionAsync()
+        public async Task<int> LoadLastSessionAsync()
         {
             if (_loaded)
             {
-                return; // Already loaded
+                return 0; // Already loaded
             }
 
             if (!ApplicationData.Current.LocalSettings.Values.TryGetValue(_sessionDataKey, out object data))
             {
-                return; // No session data found
+                return 0; // No session data found
             }
 
-            NotepadsSessionData sessionData;
+            NotepadsSessionDataV1 sessionData;
 
             try
             {
-                sessionData = JsonConvert.DeserializeObject<NotepadsSessionData>((string)data, _encodingConverter);
+                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>((string)data, _encodingConverter);
             }
             catch
             {
-                return; // Failed to load the session data
+                return 0; // Failed to load the session data
             }
 
+            int recoveredCount = 0;
             TextEditor selectedTextEditor = null;
 
             foreach (TextEditorSessionData textEditorData in sessionData.TextEditors)
@@ -74,9 +75,14 @@ namespace Notepads.Core
                     continue;
                 }
 
-                if (textEditor != null && textEditor.Id == sessionData.SelectedTextEditor)
+                if (textEditor != null)
                 {
-                    selectedTextEditor = textEditor;
+                    recoveredCount++;
+
+                    if (textEditor.Id == sessionData.SelectedTextEditor)
+                    {
+                        selectedTextEditor = textEditor;
+                    }
                 }
             }
 
@@ -86,6 +92,8 @@ namespace Notepads.Core
             }
 
             _loaded = true;
+
+            return recoveredCount;
         }
 
         public async Task SaveSessionAsync()
@@ -98,7 +106,7 @@ namespace Notepads.Core
             // Serialize saves
             await _semaphoreSlim.WaitAsync();
 
-            NotepadsSessionData sessionData = new NotepadsSessionData();
+            NotepadsSessionDataV1 sessionData = new NotepadsSessionDataV1();
             HashSet<string> backupPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             TextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
@@ -124,7 +132,7 @@ namespace Notepads.Core
                     }
 
                     textEditorData.LastSaved = lastSaved;
-                    backupPaths.Add(lastSaved.BackupPath);
+                    backupPaths.Add(lastSaved.BackupFilePath);
                 }
 
                 if (textEditor.IsModified)
@@ -138,7 +146,7 @@ namespace Notepads.Core
                     }
 
                     textEditorData.Pending = pending;
-                    backupPaths.Add(pending.BackupPath);
+                    backupPaths.Add(pending.BackupFilePath);
                 }
 
                 if (textEditorData.LastSaved != null || textEditorData.Pending != null)
@@ -230,7 +238,7 @@ namespace Notepads.Core
             }
             else
             {
-                TextFile lastSavedContent = await FileSystemUtility.ReadFile(lastSaved.BackupPath);
+                TextFile lastSavedContent = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath);
 
                 textEditor = _notepadsCore.OpenNewTextEditor(
                     textEditorData.Id,
@@ -254,7 +262,7 @@ namespace Notepads.Core
                 return;
             }
 
-            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupPath);
+            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath);
             textEditor.Init(textFile, textEditor.EditingFile, resetOriginalSnapshot: false, isModified: true);
             textEditor.TryChangeEncoding(backupMetadata.Encoding);
             textEditor.TryChangeLineEnding(backupMetadata.LineEnding);
@@ -277,7 +285,7 @@ namespace Notepads.Core
 
             return new BackupMetadata
             {
-                BackupPath = backupFile.Path,
+                BackupFilePath = backupFile.Path,
                 Encoding = originalSnapshot.Encoding,
                 LineEnding = originalSnapshot.LineEnding,
                 DateModified = originalSnapshot.DateModifiedFileTime
@@ -301,7 +309,7 @@ namespace Notepads.Core
 
             return new BackupMetadata
             {
-                BackupPath = backupFile.Path,
+                BackupFilePath = backupFile.Path,
                 Encoding = textFile.Encoding,
                 LineEnding = textFile.LineEnding,
                 DateModified = textFile.DateModifiedFileTime
@@ -331,9 +339,9 @@ namespace Notepads.Core
             return textEditorId.ToString("N");
         }
 
-        private class NotepadsSessionData
+        private class NotepadsSessionDataV1
         {
-            public NotepadsSessionData()
+            public NotepadsSessionDataV1()
             {
                 TextEditors = new List<TextEditorSessionData>();
             }
@@ -354,7 +362,7 @@ namespace Notepads.Core
 
         private class BackupMetadata
         {
-            public string BackupPath { get; set; }
+            public string BackupFilePath { get; set; }
 
             public Encoding Encoding { get; set; }
 

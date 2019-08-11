@@ -7,7 +7,7 @@ namespace Notepads.Core
     {
         bool IsBackupEnabled { get; set; }
 
-        Task LoadLastSessionAsync();
+        Task<int> LoadLastSessionAsync();
 
         Task SaveSessionAsync();
 

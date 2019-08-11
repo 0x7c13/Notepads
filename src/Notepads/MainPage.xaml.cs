@@ -40,6 +40,8 @@ namespace Notepads
 
         private INotepadsCore _notepadsCore;
 
+        private bool _loaded = false;
+
         private const int TitleBarReservedAreaDefaultWidth = 180;
 
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
@@ -175,9 +177,9 @@ namespace Notepads
                     //MenuPrintButton.IsEnabled = true;
                 }
 
-                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ? 
+                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
                     "App_ExitFullScreenMode_Text" : "App_EnterFullScreenMode_Text");
-                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ? 
+                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
@@ -296,30 +298,39 @@ namespace Notepads
         // Open files from external links or cmd args on Sets Loaded
         private async void Sets_Loaded(object sender, RoutedEventArgs e)
         {
-            await _sessionManager.LoadLastSessionAsync();
+            int loadedCount = 0;
+
+            if (!_loaded)
+            {
+                loadedCount = await _sessionManager.LoadLastSessionAsync();
+            }
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                await OpenFiles(_appLaunchFiles);
+                loadedCount += await OpenFiles(_appLaunchFiles);
                 _appLaunchFiles = null;
             }
             else if (_appLaunchCmdDir != null)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file != null)
+                if (file != null && await OpenFile(file))
                 {
-                    await OpenFile(file);
+                    loadedCount++;
                 }
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
 
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+            if (!_loaded)
             {
-                NotepadsCore.OpenNewTextEditor();
+                if (loadedCount == 0)
+                {
+                    NotepadsCore.OpenNewTextEditor();
+                }
+                _loaded = true;
             }
 
-            _sessionManager.IsBackupEnabled = true;
+            //_sessionManager.IsBackupEnabled = true;
             _sessionManager.StartSessionBackup();
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
