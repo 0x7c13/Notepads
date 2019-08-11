@@ -57,10 +57,23 @@ namespace Notepads.Controls.FindAndReplace
         {
             if (mode == FindAndReplaceMode.FindOnly)
             {
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    FindBar.SelectionStart = 0;
+                    FindBar.SelectionLength = FindBar.Text.Length;
+                }
                 FindBar.Focus(FocusState.Programmatic);
             }
             else
             {
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    FindBar.SelectionStart = FindBar.Text.Length;
+                }
+                if (!string.IsNullOrEmpty(ReplaceBar.Text))
+                {
+                    ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
+                }
                 ReplaceBar.Focus(FocusState.Programmatic);
             }
         }
