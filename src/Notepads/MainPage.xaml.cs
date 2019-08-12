@@ -335,7 +335,7 @@ namespace Notepads
                 _loaded = true;
             }
 
-            //_sessionManager.IsBackupEnabled = true;
+            _sessionManager.IsBackupEnabled = true;
             _sessionManager.StartSessionBackup();
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
