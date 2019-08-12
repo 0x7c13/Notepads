@@ -73,7 +73,7 @@ namespace Notepads.Services
                 _appBackgroundPanelTintOpacity = value;
                 if (AppBackground != null)
                 {
-                    ((AcrylicBrush)AppBackground.Background).TintOpacity = value;
+                    AppBackground.Background = GetBackgroundBrush(ThemeMode);
                     ApplicationSettings.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
                 }
             }
@@ -170,8 +170,10 @@ namespace Notepads.Services
             {
                 if (ApplicationSettings.Read(SettingsKey.RequestedThemeStr) is string themeModeStr)
                 {
-                    Enum.TryParse(typeof(ElementTheme), themeModeStr, out var theme);
-                    ThemeMode = (ElementTheme)theme;
+                    if (Enum.TryParse(typeof(ElementTheme), themeModeStr, out var theme))
+                    {
+                        ThemeMode = (ElementTheme)theme;
+                    }
                 }
             }
         }
@@ -237,47 +239,73 @@ namespace Notepads.Services
             }
         }
 
-        public static void ApplyAcrylicBrush(ElementTheme theme, Panel panel)
+        private static Brush GetBackgroundBrush(ElementTheme theme)
         {
-            // Apply Acrylic background
             if (theme == ElementTheme.Dark)
             {
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    var myBrush = new Windows.UI.Xaml.Media.AcrylicBrush
+                    if (AppBackgroundPanelTintOpacity > 0.99f)
                     {
-                        BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                        TintColor = Color.FromArgb(255, 45, 45, 45),
-                        FallbackColor = Color.FromArgb(255, 45, 45, 45),
-                        TintOpacity = AppBackgroundPanelTintOpacity
-                    };
-                    panel.Background = myBrush;
+                        return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
+                    }
+                    else
+                    {
+                        var brush = new UICompositionAnimations.Brushes.AcrylicBrush()
+                        {
+                            Source = AcrylicBackgroundSource.HostBackdrop,
+                            BlurAmount = 8,
+                            Tint = Color.FromArgb(255, 50, 50, 50),
+                            TintMix = (float)AppBackgroundPanelTintOpacity,
+                            TextureUri = "/Assets/noise_low.png".ToAppxUri(),
+                        };
+                        return brush;
+
+                        //return PipelineBuilder.FromHostBackdropBrush()
+                        //    .Effect(source => new LuminanceToAlphaEffect { Source = source })
+                        //    .Opacity((float)AppBackgroundPanelTintOpacity)
+                        //    .Blend(PipelineBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
+                        //    .Tint(Color.FromArgb(255, 50, 50, 50), (float)AppBackgroundPanelTintOpacity)
+                        //    .Blend(PipelineBuilder.FromTiles("/Assets/noise_low.png".ToAppxUri()), BlendEffectMode.Overlay, Placement.Background)
+                        //    .AsBrush();
+                    }
                 }
                 else
                 {
-                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32));
-                    panel.Background = myBrush;
+                    return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
                 }
             }
             else if (theme == ElementTheme.Light)
             {
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    var myBrush = new Windows.UI.Xaml.Media.AcrylicBrush
+                    if (AppBackgroundPanelTintOpacity > 0.99f)
                     {
-                        BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                        TintColor = Color.FromArgb(255, 230, 230, 230),
-                        FallbackColor = Color.FromArgb(255, 230, 230, 230),
-                        TintOpacity = AppBackgroundPanelTintOpacity
-                    };
-                    panel.Background = myBrush;
+                        return new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
+                    }
+                    else
+                    {
+                        return new Windows.UI.Xaml.Media.AcrylicBrush
+                        {
+                            BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
+                            TintColor = Color.FromArgb(255, 230, 230, 230),
+                            FallbackColor = Color.FromArgb(255, 230, 230, 230),
+                            TintOpacity = AppBackgroundPanelTintOpacity
+                        };
+                    }
                 }
                 else
                 {
-                    SolidColorBrush myBrush = new SolidColorBrush(Color.FromArgb(255, 240, 240, 240));
-                    panel.Background = myBrush;
+                    return new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
                 }
             }
+
+            return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
+        }
+
+        public static void ApplyAcrylicBrush(ElementTheme theme, Panel panel)
+        {
+            panel.Background = GetBackgroundBrush(theme);
         }
 
         public static void ApplyThemeForTitleBarButtons(ElementTheme theme)
@@ -290,9 +318,9 @@ namespace Notepads.Services
                 titleBar.ButtonForegroundColor = Windows.UI.Colors.White;
                 titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
                 titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
-                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 80, 80, 80);
+                titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 90, 90, 90);
                 titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.White;
-                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 110, 110, 110);
+                titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 120, 120, 120);
 
                 // Set inactive window colors
                 titleBar.InactiveForegroundColor = Windows.UI.Colors.Gray;
@@ -356,9 +384,9 @@ namespace Notepads.Services
                 {
                     ((SolidColorBrush)Application.Current.Resources[brush]).Color = color;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignore
+                    LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
             }
         }

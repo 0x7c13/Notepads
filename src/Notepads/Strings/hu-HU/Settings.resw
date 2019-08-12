@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Dependencies and References</value>
+    <value>Függőségek és Hivatkozások</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
@@ -126,167 +126,171 @@
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Disclaimer</value>
+    <value>Nyilatkozat</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Free and open source text editor designed and implemented by Jackie (Jiaqi) Liu</value>
+    <value>Ingyenes és nyílt forráskódú szövegszerkesztő tervezve és létrehozva Jackie (Jiaqi) Liu által</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>To contact the authors:</value>
+    <value>A készítőkkel való kapcsolatba lépéshez:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>For issue reporting and feature requests:</value>
+    <value>Probléma jelentések és funkció kérelmekhez:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Source code is available on Github:</value>
+    <value>A forráskód elérhető GitHub-on:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>For more info, please visit our website:</value>
+    <value>További információért, látogassa meg a weboldalunkat:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Privacy Statement</value>
+    <value>Adatvédelmi Nyilatkozat</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>About</value>
+    <value>Névjegy</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Show status bar</value>
+    <value>Állapotsor mutatása</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show status bar</value>
+    <value>Állapotsor mutatása</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Status Bar Settings</value>
+    <value>Állapotsor Beállítások</value>
     <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Haladó</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Accent Color</value>
+    <value>Téma Szín</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Use my Windows accent color</value>
+    <value>Használja a Windows téma színét</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Use my Windows accent color</value>
+    <value>Használja a Windows téma színét</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Acrylic background tint opacity</value>
+    <value>Akril háttér homályosság</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Background Tint Opacity</value>
+    <value>Háttér homályosság</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>Sötét</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>Világos</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Theme Mode</value>
+    <value>Téma Mód</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Use my Windows mode</value>
+    <value>Rendszerbeállítás használata</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Personalization</value>
+    <value>Testreszabás</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows code page)</value>
+    <value>ANSI (Windows kódlap)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Fallback decoding will be used if file's encoding cannot be recognized. ANSI decoding is only recommended to open legacy text files.</value>
+    <value>Visszaeső dekódolás lesz használva ha a fájl kódolása nem felismerhető. ANSI dekódolás csak régi szövegfájlok megnyitására ajánlott.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Fallback Decoding</value>
+    <value>Visszaeső Dekódolás</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (Recommended)</value>
+    <value>UTF-8 (Ajánlott)</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Csak új dokumentumokra alkalmazva</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Default Encoding</value>
+    <value>Alapértelmezett Kódolás</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Default Font &amp; Size</value>
+    <value>Alapértelmezett Szövegtipus &amp; Méret</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Csak új dokumentumokra alkalmazva</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Default Line Ending</value>
+    <value>Alapértelmezett Sor Végződés</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Default (\t)</value>
+    <value>Alapértelmezett (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Settings for tab key behavior, only apply to new tabs inserted by user</value>
+    <value>Tabulátor viselkedés csak a felhasználó által beillesztett új tabulátorokra lesz alkalmazva</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Spaces</value>
+    <value>8 Szóköz</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Spaces</value>
+    <value>4 Szóköz</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tab Key Behavior</value>
+    <value>Tabulátor Viselkedés</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Spaces</value>
+    <value>2 Szóköz</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Text Wrapping</value>
+    <value>Szöveg tördelés</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wrap word</value>
+    <value>Sortörés</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wrap word</value>
+    <value>Sortörés</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Text &amp; Editor</value>
+    <value>Szöveg &amp; Szerkesztő</value>
     <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>Változtatás</value>
+    <comment>AboutPage Changelog Title display text.</comment>
   </data>
 </root>

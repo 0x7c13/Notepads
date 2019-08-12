@@ -142,11 +142,11 @@
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>After your changes</value>
+    <value>Після ваших змін</value>
     <comment>DiffViewer: Header's text for new text (After changes).</comment>
   </data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>Before your changes</value>
+    <value>До ваших змін</value>
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
@@ -384,5 +384,41 @@
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Збережено</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Натисніть F11, щоб вийти з повноекранного режиму</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>Перезавантаження файлу з диска</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>Файл було змінено за межами!</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>Файл переміщено, перейменовано або видалено!</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>Файл перевідкритий</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Compact Overlay</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Full Screen</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Exit Compact Overlay</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Exit Full Screen</value>
+    <comment>App: "Exit Full Screen" display text</comment>
   </data>
 </root>

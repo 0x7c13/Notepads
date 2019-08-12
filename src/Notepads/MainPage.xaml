@@ -7,6 +7,9 @@
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -59,6 +62,12 @@
                             <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
+                            <Storyboard x:Name="NewSetButtonOpacityAnimation">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="NewSetButton"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0" Duration="0:0:1"/>
+                            </Storyboard>
                         </sets:SetsView.Resources>
 
                         <sets:SetsView.SetsStartHeader>
@@ -89,7 +98,7 @@
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
@@ -97,7 +106,7 @@
                                                 <FontIcon Glyph="&#xE792;"/>
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift"/>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
@@ -108,7 +117,7 @@
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control"/>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
@@ -116,7 +125,24 @@
                                                 <FontIcon Glyph="&#xE8AB;" />
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift"/>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE740;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F11" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="CompactOverlay" x:Name="MenuCompactOverlayButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8A7;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F12" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
@@ -137,21 +163,46 @@
                         </sets:SetsView.SetsStartHeader>
 
                         <sets:SetsView.SetsActionHeader>
-                            
-                            <Button x:Name="NewSetButton"
-                                    IsTabStop="False"
-                                    Width="48"
-                                    Height="{StaticResource SetsViewItemHeaderMinHeight}"
-                                    Margin="-1,0,0,0"
-                                    BorderThickness="0"
-                                    Background="Transparent"
-                                    Style="{StaticResource ButtonRevealStyle}">
-                                <Viewbox MaxWidth="16"
-                                        MaxHeight="16">
-                                    <FontIcon FontFamily="Segoe MDL2 Assets"
-                                            Glyph="&#xE710;" />
-                                </Viewbox>
-                            </Button>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="NewSetButton"
+                                        Grid.Column="0"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="-1,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Style="{StaticResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="16"
+                                            MaxHeight="16">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                Glyph="&#xE710;" />
+                                        </Viewbox>
+                                </Button>
+                                <Button x:Name="ExitCompactOverlayButton"
+                                        Grid.Column="1"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="0,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Click="ExitCompactOverlayButton_OnClick"
+                                        Visibility="Collapsed"
+                                        Style="{StaticResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="19"
+                                             MaxHeight="19">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                  Glyph="&#xE944;" />
+                                        </Viewbox>
+                                </Button>
+                            </Grid>
+
                         </sets:SetsView.SetsActionHeader>
 
                         <sets:SetsView.SetsPaddingHeader>
@@ -195,6 +246,7 @@
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="10"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -202,12 +254,45 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
-                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
-                           IsTapEnabled="True" 
-                           extensions:Mouse.Cursor="Hand"
-                           Tapped="StatusBarComponent_OnTapped"/>
+                <Grid x:Name="FileModificationStateIndicator"
+                      Padding="10,5,8,5"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
+                    </Viewbox>
+                    <Grid.ContextFlyout>
+                        <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem" 
+                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
+                                            Tag="ReloadFileFromDisk" 
+                                            Click="ReloadFileFromDisk_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE72C;"/>
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </Grid.ContextFlyout>
+                </Grid>
             </Grid>
             <Grid Column="1">
+                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           Padding ="0,4,8,4"
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped">
+                </TextBlock>
+            </Grid>
+            <Grid Column="2">
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                            TextDecorations="Underline"
@@ -217,12 +302,24 @@
                            >
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 
+                                            x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" 
+                                            Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE89A;"/>
+                                </MenuFlyoutItem.Icon>
                                 <MenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="D" Modifiers="Menu" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" Tag="RevertAllChanges" Click="ModificationFlyoutSelection_OnClick"/>
+                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" 
+                                            Tag="RevertAllChanges" 
+                                            Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7A7;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />
@@ -232,10 +329,10 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="2">
+            <Grid Column="3">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
-            <Grid Column="3">
+            <Grid Column="4">
                 <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"
@@ -254,7 +351,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="4">
+            <Grid Column="5">
                 <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"

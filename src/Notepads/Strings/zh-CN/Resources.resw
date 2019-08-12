@@ -385,4 +385,40 @@
     <value>已保存</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>按下 F11 可退出全屏</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>从磁盘重新加载文件</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>文件已在外部被修改！</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>文件已移动、重命名或删除！</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>文件已重新加载</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>画中画模式</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>全屏模式</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>退出画中画模式</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>退出全屏模式</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
 </root>

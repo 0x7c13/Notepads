@@ -1,4 +1,5 @@
-# Notepads App [ Beta ]
+# Notepads App [ Beta ] <img align="left" src="src/Notepads/Assets/StoreLogo.scale-200.png">
+
 [![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
 [![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
 ![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
@@ -6,7 +7,7 @@
 
 ## What is Notepads and why do I care?
 
-I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, Atom, VS Code and Sublime are good text editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light, simple and clean to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
+I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, VS Code and Sublime are good text editors. I have used most of them and I will continue use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light and looks cool to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
@@ -14,11 +15,13 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Blazingly fast, feels like win32 notepad.exe but looks better.
 * Launch from command line or PowerShell by typing: "notepads" or "notepads %path-to-your-file%".
 * Multi-line handwriting support.
-* Built-in Markdown file preview viewer.
+* Built-in Markdown file live preview.
 * Built-in diff viewer (Preview your changes).
 
-![Screenshot Dark](ScreenShots/Notepads_SC_B_2.png?raw=true "Dark")
-![Screenshot Light_ThemeSettings](ScreenShots/Notepads_SC_W_2.png?raw=true "Light")
+![Screenshot Dark](ScreenShots/1.png?raw=true "Dark")
+![Screenshot Markdown](ScreenShots/2.png?raw=true "Markdown")
+![Screenshot DiffViewer](ScreenShots/3.png?raw=true "DiffViewer")
+![Screenshot Light](ScreenShots/4.png?raw=true "Light")
 
 ******* 📣 Notepads App is still under active development. *******
 
@@ -39,13 +42,12 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 The beta is intended to collect feedback, report bugs and glitches. For issue reporting and feature requests, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
-## Platform limitation (UWP):
+## Platform limitations (UWP):
 
-* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
-* Editor view resizing glitch is caused by system control and won't fix for now.
 * You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
-* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now.
 * You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
+* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
+* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now. I will add large file support later.
 
 ## Downloads:
 
@@ -54,6 +56,10 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 ## Roadmap:
 
 * [Project Roadmap](ROADMAP.md)
+
+## Changelog
+
+* [Notepads Releases](https://github.com/JasonStein/Notepads/releases)
 
 ## Disclaimer and Privacy statement:
 
@@ -73,13 +79,14 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 * [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
+* [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
 ## Special Thanks:
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx)
+* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [DanverZ](https://github.com/chenghanzou), [Sergio Pedri](https://github.com/Sergio0694)
 * Localization Contributors: 
     * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
@@ -92,6 +99,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
+    * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
 
 ## Stay tuned 📢:
 

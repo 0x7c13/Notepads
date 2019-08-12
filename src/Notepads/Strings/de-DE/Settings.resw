@@ -118,11 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Dependencies and References</value>
+    <value>Abhängigkeiten und Referenzen</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+    <value>DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
@@ -130,163 +130,167 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Free and open source text editor designed and implemented by Jackie (Jiaqi) Liu</value>
+    <value>Kostenloser Open-Source Texteditor entworfen und implementiert durch Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>To contact the authors:</value>
+    <value>Autoren kontaktieren:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>For issue reporting and feature requests:</value>
+    <value>Für Fehlermeldungen oder Featureanfrage:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Source code is available on Github:</value>
+    <value>Quellcode verfügbar auf Github:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>For more info, please visit our website:</value>
+    <value>Mehr Informationen auf unserer Website:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Privacy Statement</value>
+    <value>Datenschutzerklärung</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>About</value>
+    <value>Über</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Show status bar</value>
+    <value>Statusleiste anzeigen</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show status bar</value>
+    <value>Statusleiste anzeigen</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Status Bar Settings</value>
+    <value>Statusleisteneinstellungen</value>
     <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Erweitert</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Accent Color</value>
+    <value>Akzentfarbe</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Use my Windows accent color</value>
+    <value>Windows Akzentfarbe verwenden</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Use my Windows accent color</value>
+    <value>Windows Akzentfarbe verwenden</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Acrylic background tint opacity</value>
+    <value>Acryl Hintergrundfarbton Transparenz</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Background Tint Opacity</value>
+    <value>Hintergrundfarbton Transparenz</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>Dunkel</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>Hell</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Theme Mode</value>
+    <value>Design Modus</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Use my Windows mode</value>
+    <value>Windows Modus verwenden</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Personalization</value>
+    <value>Personalisierung</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows code page)</value>
+    <value>ANSI (Windows Zeichensatz)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Fallback decoding will be used if file's encoding cannot be recognized. ANSI decoding is only recommended to open legacy text files.</value>
+    <value>Die Fallback-Dekodierung wird verwendet, wenn die Codierung einer Datei nicht erkannt wird. ANSI wird nur für alte Textdateien empfohlen.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Fallback Decoding</value>
+    <value>Fallback-Dekodierung</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (Recommended)</value>
+    <value>UTF-8 (Empfohlen)</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Gilt nur für neue Dokumente</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Default Encoding</value>
+    <value>Standard Codierung</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Default Font &amp; Size</value>
+    <value>Standard Schiftart &amp; Größe</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Gilt nur für neue Dokumente</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Default Line Ending</value>
+    <value>Standard Zeilenumbruch</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Default (\t)</value>
+    <value>Standard (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Settings for tab key behavior, only apply to new tabs inserted by user</value>
+    <value>Einstellungen für die Tabulatortaste, gilt nur für neu eingefügte Tabs</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Spaces</value>
+    <value>8 Leerzeichen</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Spaces</value>
+    <value>4 Leerzeichen</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tab Key Behavior</value>
+    <value>Tabulatortastenverhalten</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Spaces</value>
+    <value>2 Leerzeichen</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Text Wrapping</value>
+    <value>Textumbruch</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wrap word</value>
+    <value>Wörter umbrechen</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wrap word</value>
+    <value>Wörter umbrechen</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
     <value>Text &amp; Editor</value>
     <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>Änderungsprotokoll</value>
+    <comment>AboutPage Changelog Title display text.</comment>
   </data>
 </root>

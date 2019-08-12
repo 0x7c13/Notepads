@@ -5,7 +5,6 @@ namespace Notepads.Services
     using Notepads.Utilities;
     using System;
     using System.Text;
-    using System.Threading;
     using Windows.UI.Xaml;
 
     public static class EditorSettingsService
@@ -106,16 +105,7 @@ namespace Notepads.Services
                 // We should always try get latest system ANSI code page.
                 if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    try
-                    {
-                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
-                        _editorDefaultDecoding = decoding;
-                    }
-                    catch (Exception)
-                    {
-                        _editorDefaultDecoding = new UTF8Encoding(false);
-                    }
+                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding();
                 }
                 return _editorDefaultDecoding;
             }

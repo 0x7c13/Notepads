@@ -1,8 +1,12 @@
 ﻿
 namespace Notepads.Utilities
 {
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
     using System;
+    using System.Collections.Generic;
     using System.Text;
+    using System.Threading;
 
     public static class EncodingUtility
     {
@@ -72,6 +76,8 @@ namespace Notepads.Utilities
         {
             switch (name)
             {
+                case "ANSI":
+                    return GetSystemCurrentANSIEncoding();
                 case "UTF-8":
                     return new UTF8Encoding(false);
                 case "UTF-8-BOM":
@@ -82,6 +88,24 @@ namespace Notepads.Utilities
                     return new UnicodeEncoding(true, true);
                 default:
                     return Encoding.GetEncoding(name);
+            }
+        }
+
+        public static Encoding GetSystemCurrentANSIEncoding()
+        {
+            try
+            {
+                Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                return Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to get system current ANSI encoding: {ex.Message}");
+                Analytics.TrackEvent("FailedToGetANSIEncoding", new Dictionary<string, string>
+                {
+                    {"ExceptionMessage", ex.Message}
+                });
+                return new UTF8Encoding(false);
             }
         }
     }

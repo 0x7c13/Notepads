@@ -11,20 +11,24 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
+    using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
 
     public class TextFile
     {
-        public TextFile(string content, Encoding encoding, LineEnding lineEnding)
+        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime)
         {
             Content = content;
             Encoding = encoding;
             LineEnding = lineEnding;
+            DateModifiedFileTime = dateModifiedFileTime;
         }
 
         public string Content { get; }
         public Encoding Encoding { get; }
         public LineEnding LineEnding { get; }
+        public long DateModifiedFileTime { get; }
     }
 
     public static class FileSystemUtility
@@ -64,16 +68,7 @@ namespace Notepads.Utilities
                 return null;
             }
 
-            try
-            {
-                return await StorageFile.GetFileFromPathAsync(path);
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
-
-            return null;
+            return await GetFile(path);
         }
 
         public static string GetAbsolutePathFromCommondLine(string dir, string args)
@@ -87,7 +82,7 @@ namespace Notepads.Utilities
                 path = path.Substring(1, args.Length - 2);
             }
 
-            if (FileSystemUtility.IsFullPath(path))
+            if (IsFullPath(path))
             {
                 return path;
             }
@@ -98,7 +93,7 @@ namespace Notepads.Utilities
             }
             else if (path.StartsWith("..\\"))
             {
-                path = FileSystemUtility.GetAbsolutePath(dir, path);
+                path = GetAbsolutePath(dir, path);
             }
             else
             {
@@ -106,6 +101,18 @@ namespace Notepads.Utilities
             }
 
             return path;
+        }
+
+        public static async Task<BasicProperties> GetFileProperties(StorageFile file)
+        {
+            return await file.GetBasicPropertiesAsync();
+        }
+
+        public static async Task<long> GetDateModified(StorageFile file)
+        {
+            var properties = await GetFileProperties(file);
+            var dateModified = properties.DateModified;
+            return dateModified.ToFileTime();
         }
 
         public static bool IsFileReadOnly(StorageFile file)
@@ -124,6 +131,24 @@ namespace Notepads.Utilities
             {
                 return false;
             }
+        }
+
+        public static async Task<StorageFile> GetFile(string filePath)
+        {
+            try
+            {
+                return await StorageFile.GetFileFromPathAsync(filePath);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static async Task<TextFile> ReadFile(string filePath)
+        {
+            StorageFile file = await GetFile(filePath);
+            return file == null ? null : await ReadFile(file);
         }
 
         public static async Task<TextFile> ReadFile(StorageFile file)
@@ -158,7 +183,7 @@ namespace Notepads.Utilities
             }
 
             encoding = FixUtf8Bom(encoding, bom);
-            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text));
+            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), fileProperties.DateModified.ToFileTime());
         }
 
         private static bool HasBom(byte[] bom)
@@ -235,9 +260,70 @@ namespace Notepads.Utilities
                             "FileUpdateStatus", nameof(status)
                         }
                     });
-                    throw new Exception($"FileUpdateStatus: {nameof(status)}");
+                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }
             }
+        }
+
+        public static async Task<StorageFolder> GetOrCreateAppFolder(string folderName)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
+        }
+
+        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
+        {
+            return await folder.CreateFileAsync(fileName);
+        }
+
+        public static async Task<bool> FileExists(StorageFile file)
+        {
+            try
+            {
+                using (var stream = await file.OpenStreamForReadAsync()) { }
+                return true;
+            }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                return true;
+            }
+        }
+
+        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
+        {
+            try
+            {
+                return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static bool TryAddToFutureAccessList(string token, StorageFile file)
+        {
+            try
+            {
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+                return false;
+            }
+        }
+
+        public static void ClearFutureAccessList()
+        {
+            StorageApplicationPermissions.FutureAccessList.Clear();
         }
     }
 }

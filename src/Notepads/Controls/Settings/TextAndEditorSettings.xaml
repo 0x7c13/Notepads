@@ -10,7 +10,7 @@
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
-                <EntranceThemeTransition />
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.BackgroundTransition>
@@ -43,7 +43,7 @@
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="FontFamilyPicker"
-                              ItemsSource="{x:Bind SystemFonts, Mode=OneTime}"
+                              ItemsSource="{x:Bind AvailableFonts, Mode=OneTime}"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Center"
                               BorderThickness="2"

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -384,5 +384,41 @@
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
     <value>Salvato</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Premere F11 per uscire da schermo intero</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>Aggiorna il file dal disco</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>File è stato modificato di fuori!</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>File è stato spostato, rinominato o eliminato!</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>File reloaded</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Compact Overlay</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Full Screen</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Exit Compact Overlay</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Exit Full Screen</value>
+    <comment>App: "Exit Full Screen" display text</comment>
   </data>
 </root>

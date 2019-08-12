@@ -16,7 +16,9 @@ namespace Notepads.Core
 
         event EventHandler<TextEditor> TextEditorUnloaded;
 
-        event EventHandler<TextEditor> TextEditorModificationStateChanged;
+        event EventHandler<TextEditor> TextEditorEditorModificationStateChanged;
+
+        event EventHandler<TextEditor> TextEditorFileModificationStateChanged;
 
         event EventHandler<TextEditor> TextEditorSaved;
 
@@ -36,7 +38,16 @@ namespace Notepads.Core
 
         Task OpenNewTextEditor(StorageFile file);
 
-        Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file);
+        TextEditor OpenNewTextEditor(
+            Guid id,
+            string text,
+            StorageFile file,
+            long dateModifiedFileTime,
+            Encoding encoding,
+            LineEnding lineEnding,
+            bool isModified);
+
+        Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
 
         void DeleteTextEditor(TextEditor textEditor);
 

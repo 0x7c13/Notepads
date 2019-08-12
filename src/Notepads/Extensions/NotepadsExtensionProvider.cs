@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Extensions
 {
+    using Notepads.Extensions.Markdown;
     using Notepads.Utilities;
 
     public class NotepadsExtensionProvider : INotepadsExtensionProvider

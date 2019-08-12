@@ -10,7 +10,7 @@
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
-                <EntranceThemeTransition />
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.BackgroundTransition>

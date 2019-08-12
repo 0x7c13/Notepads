@@ -1,8 +1,9 @@
 ﻿
-namespace Notepads.Extensions
+namespace Notepads.Extensions.Markdown
 {
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using System;
     using System.IO;
     using System.Net;
@@ -17,15 +18,16 @@ namespace Notepads.Extensions
     {
         public async Task<MemoryStream> GetDataFeed(string feedUrl)
         {
-            var request = (HttpWebRequest)WebRequest.Create(feedUrl);
-            request.Method = "GET";
-
-            var response = (HttpWebResponse)await request.GetResponseAsync();
-
-            MemoryStream ms = new MemoryStream();
-            var stream = response.GetResponseStream();
-            stream?.CopyTo(ms);
-            return ms;
+            using (var ms = new MemoryStream())
+            {
+                var request = (HttpWebRequest)WebRequest.Create(feedUrl);
+                request.Method = "GET";
+                using (var response = (HttpWebResponse)await request.GetResponseAsync())
+                {
+                    response.GetResponseStream()?.CopyTo(ms);
+                    return ms;
+                }
+            }
         }
 
         public void Dispose() { }
@@ -78,8 +80,9 @@ namespace Notepads.Extensions
                     e.Handled = true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to resolve Markdown image [{e.Url}]: {ex.Message}");
                 e.Handled = false;
             }
 
@@ -201,9 +204,9 @@ namespace Notepads.Extensions
                 var uri = new Uri(e.Link);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                LoggingService.LogError($"Failed to open Markdown Link: {ex.Message}");
             }
         }
     }

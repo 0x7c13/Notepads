@@ -24,7 +24,6 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>34935F32E725C4911A0B8157A86DEBE647C42546</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -158,9 +157,11 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
+    <Compile Include="Core\ISessionManager.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
+    <Compile Include="Core\SessionManager.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
-    <Compile Include="EventArgs\FindAndReplaceEventArgs.cs" />
+    <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
     <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
@@ -168,12 +169,13 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
     <Compile Include="Utilities\ContentDialogMaker.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
-    <Compile Include="Extensions\MarkdownExtensionView.xaml.cs">
+    <Compile Include="Extensions\Markdown\MarkdownExtensionView.xaml.cs">
       <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
@@ -193,6 +195,8 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
+    <Compile Include="Utilities\SessionUtility.cs" />
+    <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -210,7 +214,10 @@
     <Content Include="Assets\LargeTile.scale-200.png" />
     <Content Include="Assets\LargeTile.scale-400.png" />
     <Content Include="Assets\md.png" />
+    <Content Include="Assets\noise_high.png" />
+    <Content Include="Assets\noise_low.png" />
     <Content Include="Assets\notepads.png" />
+    <Content Include="Assets\no_noise.png" />
     <Content Include="Assets\SmallTile.scale-100.png" />
     <Content Include="Assets\SmallTile.scale-125.png" />
     <Content Include="Assets\SmallTile.scale-150.png" />
@@ -305,7 +312,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\MarkdownExtensionView.xaml">
+    <Page Include="Extensions\Markdown\MarkdownExtensionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -369,6 +376,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>5.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="UICompositionAnimations">
+      <Version>4.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -454,6 +467,12 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\uk-UA\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Settings.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

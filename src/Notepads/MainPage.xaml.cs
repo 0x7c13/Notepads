@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads
 {
+    using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
@@ -17,6 +18,7 @@ namespace Notepads
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -36,9 +38,13 @@ namespace Notepads
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
+        private INotepadsCore _notepadsCore;
+
         private bool _loaded = false;
 
-        private INotepadsCore _notepadsCore;
+        private const int TitleBarReservedAreaDefaultWidth = 180;
+
+        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore NotepadsCore
         {
@@ -51,10 +57,26 @@ namespace Notepads
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.TextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicatorText(editor); };
-                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicatorText(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicatorText(editor.GetLineEnding()); };
-                    _notepadsCore.TextEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
+                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
+                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
+                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) =>
+                    {
+                        if (NotepadsCore.GetSelectedTextEditor() == editor)
+                        {
+                            if (editor.FileModificationState == FileModificationState.Modified)
+                            {
+                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"), 3500);
+                            }
+                            else if (editor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+                            {
+                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
+                            }
+                            UpdateFileModificationStateIndicator(editor);
+                            UpdatePathIndicator(editor);
+                        }
+                    };
                     _notepadsCore.TextEditorSaved += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -70,6 +92,8 @@ namespace Notepads
         }
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+
+        private readonly ISessionManager _sessionManager;
 
         public MainPage()
         {
@@ -88,7 +112,10 @@ namespace Notepads
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) => ShowHideStatusBar(visibility);
+            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
+            {
+                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+            };
 
             // Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
@@ -100,10 +127,13 @@ namespace Notepads
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            _sessionManager = SessionUtility.GetSessionManager(NotepadsCore);
         }
 
         private void InitControls()
         {
+            ToolTipService.SetToolTip(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
@@ -115,9 +145,10 @@ namespace Notepads
             MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
+            MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
+            MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            MainMenuButtonFlyout.Closing += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
@@ -145,6 +176,11 @@ namespace Notepads
                     MenuReplaceButton.IsEnabled = true;
                     //MenuPrintButton.IsEnabled = true;
                 }
+
+                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
+                    "App_ExitFullScreenMode_Text" : "App_EnterFullScreenMode_Text");
+                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
+                    "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
         }
@@ -162,8 +198,88 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
             });
         }
+
+        #region View Mode Switches
+
+        private async void EnterExitCompactOverlayMode()
+        {
+            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
+            {
+                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                if (modeSwitched)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Visible;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                    Analytics.TrackEvent("EnteredCompactOverlayMode");
+                }
+                else
+                {
+                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
+                    Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
+                }
+            }
+            else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
+            {
+                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                if (modeSwitched)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                }
+                else
+                {
+                    LoggingService.LogError("Failed to enter Default view mode.");
+                    Analytics.TrackEvent("FailedToEnterDefaultViewMode");
+                }
+            }
+        }
+
+        private void EnterExitFullScreenMode()
+        {
+            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+            {
+                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
+                ApplicationView.GetForCurrentView().ExitFullScreenMode();
+            }
+            else
+            {
+                bool wasCompactOverlayMode = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
+                if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
+                {
+                    if (wasCompactOverlayMode)
+                    {
+                        TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
+                        ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
+                        if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                    }
+
+                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
+                }
+                else
+                {
+                    LoggingService.LogError("Failed to enter full screen view mode.");
+                    Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
+                }
+            }
+        }
+
+        private void ExitCompactOverlayButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
+            {
+                EnterExitCompactOverlayMode();
+            }
+        }
+
+        #endregion
 
         #region Application Life Cycle & Window management 
 
@@ -187,34 +303,65 @@ namespace Notepads
         // Open files from external links or cmd args on Sets Loaded
         private async void Sets_Loaded(object sender, RoutedEventArgs e)
         {
+            int loadedCount = 0;
+
+            if (!_loaded)
+            {
+                loadedCount = await _sessionManager.LoadLastSessionAsync();
+            }
+
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                var successCount = await OpenFiles(_appLaunchFiles);
-                if (successCount == 0)
-                {
-                    NotepadsCore.OpenNewTextEditor();
-                }
+                loadedCount += await OpenFiles(_appLaunchFiles);
                 _appLaunchFiles = null;
             }
             else if (_appLaunchCmdDir != null)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file == null || !(await OpenFile(file)))
+                if (file != null && await OpenFile(file))
                 {
-                    NotepadsCore.OpenNewTextEditor();
+                    loadedCount++;
                 }
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
-            else if (!_loaded)
+
+            if (!_loaded)
             {
-                NotepadsCore.OpenNewTextEditor();
+                if (loadedCount == 0)
+                {
+                    NotepadsCore.OpenNewTextEditor();
+                }
                 _loaded = true;
+            }
+
+            _sessionManager.IsBackupEnabled = true;
+            _sessionManager.StartSessionBackup();
+
+            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
+            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+        }
+
+        private void CoreWindow_Activated(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            {
+                LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
+                NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+                _sessionManager.StopSessionBackup();
+            }
+            else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
+                     args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
+            {
+                LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
+                NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+                _sessionManager.StartSessionBackup();
             }
         }
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
+            LoggingService.LogInfo($"Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
         }
@@ -241,7 +388,8 @@ namespace Notepads
             if (!NotepadsCore.HaveUnsavedTextEditor()) return;
             e.Handled = true;
 
-            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
+            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
+                async () =>
                 {
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
@@ -251,7 +399,16 @@ namespace Notepads
                         }
                     }
                 },
-                () => Application.Current.Exit());
+                () =>
+                {
+                    if (_sessionManager.IsBackupEnabled)
+                    {
+                        _sessionManager.StopSessionBackup();
+                        _sessionManager.ClearSessionData();
+                    }
+
+                    Application.Current.Exit();
+                });
 
             await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
         }
@@ -282,11 +439,12 @@ namespace Notepads
         private void SetupStatusBar(TextEditor textEditor)
         {
             if (textEditor == null) return;
-            UpdatePathIndicatorText(textEditor);
-            UpdateEditorModificationIndicatorText(textEditor);
-            UpdateLineColumnIndicatorText(textEditor);
-            UpdateLineEndingIndicatorText(textEditor.GetLineEnding());
-            UpdateEncodingIndicatorText(textEditor.GetEncoding());
+            UpdateFileModificationStateIndicator(textEditor);
+            UpdatePathIndicator(textEditor);
+            UpdateEditorModificationIndicator(textEditor);
+            UpdateLineColumnIndicator(textEditor);
+            UpdateLineEndingIndicator(textEditor.GetLineEnding());
+            UpdateEncodingIndicator(textEditor.GetEncoding());
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -306,13 +464,48 @@ namespace Notepads
             }
         }
 
-        private void UpdatePathIndicatorText(TextEditor textEditor)
+        private void UpdateFileModificationStateIndicator(TextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            if (textEditor.FileModificationState == FileModificationState.Untouched)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "";
+                FileModificationStateIndicator.Visibility = Visibility.Collapsed;
+            }
+            else if (textEditor.FileModificationState == FileModificationState.Modified)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+                FileModificationStateIndicator.Visibility = Visibility.Visible;
+            }
+            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+                FileModificationStateIndicator.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void UpdatePathIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
+
+            if (textEditor.FileModificationState == FileModificationState.Untouched)
+            {
+                ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
+            }
+            else if (textEditor.FileModificationState == FileModificationState.Modified)
+            {
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+            }
+            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+            }
         }
 
-        private void UpdateEditorModificationIndicatorText(TextEditor textEditor)
+        private void UpdateEditorModificationIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             if (textEditor.IsModified)
@@ -329,19 +522,19 @@ namespace Notepads
             }
         }
 
-        private void UpdateEncodingIndicatorText(Encoding encoding)
+        private void UpdateEncodingIndicator(Encoding encoding)
         {
             if (StatusBar == null) return;
             EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
         }
 
-        private void UpdateLineEndingIndicatorText(LineEnding lineEnding)
+        private void UpdateLineEndingIndicator(LineEnding lineEnding)
         {
             if (StatusBar == null) return;
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
         }
 
-        private void UpdateLineColumnIndicatorText(TextEditor textEditor)
+        private void UpdateLineColumnIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
@@ -366,10 +559,34 @@ namespace Notepads
                     var fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
                     var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
                     {
+                        selectedTextEditor.CloseSideBySideDiffViewer();
                         NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
                     });
                     await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
                     break;
+            }
+        }
+
+        private async void ReloadFileFromDisk_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+
+            if (selectedEditor?.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
+            {
+                try
+                {
+                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
+                    selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
+                    selectedEditor.StartCheckingFileStatusPeriodically();
+                    selectedEditor.CloseSideBySideDiffViewer();
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                }
+                catch (Exception ex)
+                {
+                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
+                    await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
             }
         }
 
@@ -402,29 +619,52 @@ namespace Notepads
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor == null) return;
 
-            if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
+            if (sender == FileModificationStateIndicator)
             {
-                NotepadsCore.FocusOnSelectedTextEditor();
-                try
+                if (selectedEditor.FileModificationState == FileModificationState.Modified)
                 {
-                    var pathData = new DataPackage();
-                    pathData.SetText(PathIndicator.Text);
-                    Clipboard.SetContentWithOptions(pathData, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                    Clipboard.Flush();
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
                 }
-                catch (Exception)
+                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
                 {
-                    // Ignore
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
                 }
             }
-            else if (sender is TextBlock textBlock)
+            else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
-                if (sender == ModificationIndicator)
+                NotepadsCore.FocusOnSelectedTextEditor();
+
+                if (selectedEditor.FileModificationState == FileModificationState.Untouched)
                 {
-                    PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                    if (selectedEditor.EditingFile != null)
+                    {
+                        FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                    }
                 }
-                textBlock.ContextFlyout?.ShowAt(textBlock);
+                else if (selectedEditor.FileModificationState == FileModificationState.Modified)
+                {
+                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                }
+                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                }
+            }
+            else if (sender == ModificationIndicator)
+            {
+                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                ModificationIndicator.ContextFlyout.ShowAt(ModificationIndicator);
+            }
+            else if (sender == LineColumnIndicator)
+            {
+            }
+            else if (sender == LineEndingIndicator)
+            {
+                LineEndingIndicator.ContextFlyout.ShowAt(LineEndingIndicator);
+            }
+            else if (sender == EncodingIndicator)
+            {
+                EncodingIndicator.ContextFlyout.ShowAt(EncodingIndicator);
             }
         }
 
@@ -477,12 +717,11 @@ namespace Notepads
                 {
                     NotepadsCore.DeleteTextEditor(textEditor);
                 }
-
-                NotepadsCore.FocusOnSelectedTextEditor();
             }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
             setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
             await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -576,7 +815,7 @@ namespace Notepads
                     file = textEditor.EditingFile;
                 }
 
-                await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
+                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
                 return true;
             }
             catch (Exception ex)

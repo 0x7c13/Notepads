@@ -1,7 +1,6 @@
 ﻿
 namespace Notepads.Controls.FindAndReplace
 {
-    using Notepads.EventArgs;
     using Notepads.Services;
     using System;
     using Windows.System;
@@ -26,6 +25,8 @@ namespace Notepads.Controls.FindAndReplace
             {
                 SetSelectionHighlightColor();
             };
+
+            Loaded += (sender, args) => { Focus(FindAndReplaceMode.FindOnly); };
         }
 
         public double GetHeight(bool showReplaceBar)
@@ -52,9 +53,29 @@ namespace Notepads.Controls.FindAndReplace
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
-        public void Focus()
+        public void Focus(FindAndReplaceMode mode)
         {
-            FindBar.Focus(FocusState.Programmatic);
+            if (mode == FindAndReplaceMode.FindOnly)
+            {
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    FindBar.SelectionStart = 0;
+                    FindBar.SelectionLength = FindBar.Text.Length;
+                }
+                FindBar.Focus(FocusState.Programmatic);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    FindBar.SelectionStart = FindBar.Text.Length;
+                }
+                if (!string.IsNullOrEmpty(ReplaceBar.Text))
+                {
+                    ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
+                }
+                ReplaceBar.Focus(FocusState.Programmatic);
+            }
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
@@ -95,6 +116,11 @@ namespace Notepads.Controls.FindAndReplace
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 SearchButton_OnClick(sender, e);
+            }
+
+            if (e.Key == VirtualKey.Tab)
+            {
+                e.Handled = true;
             }
         }
 
