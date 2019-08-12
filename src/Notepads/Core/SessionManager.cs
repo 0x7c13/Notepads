@@ -8,6 +8,7 @@ namespace Notepads.Core
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -117,11 +118,16 @@ namespace Notepads.Core
         {
             if (!IsBackupEnabled)
             {
+                LoggingService.LogInfo("Session backup is disabled.");
                 return;
             }
 
             // Serialize saves
             await _semaphoreSlim.WaitAsync();
+
+            StorageFolder backupFolder = await SessionUtility.GetBackupFolderAsync();
+            LoggingService.LogInfo("Session backup is starting. Backup folder: " + backupFolder.Path);
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             TextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
             TextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
@@ -186,7 +192,6 @@ namespace Notepads.Core
             {
                 string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
                 ApplicationData.Current.LocalSettings.Values[SessionDataKey] = sessionJson;
-                LoggingService.LogInfo("Successfully saved the current session.");
             }
             catch
             {
@@ -194,6 +199,9 @@ namespace Notepads.Core
             }
 
             await DeleteOrphanedBackupFilesAsync(sessionData);
+
+            stopwatch.Stop();
+            LoggingService.LogInfo("Successfully saved the current session. Total time: " + stopwatch.Elapsed.TotalMilliseconds + " milliseconds.");
 
             _semaphoreSlim.Release();
         }
