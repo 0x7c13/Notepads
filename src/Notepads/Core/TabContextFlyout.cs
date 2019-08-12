@@ -179,9 +179,9 @@ namespace Notepads.Core
                             Clipboard.Flush();
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // Ignore
+                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
                         }
                     };
                 }

@@ -73,9 +73,10 @@ namespace Notepads.Core
             {
                 sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>((string)data, _encodingConverter);
             }
-            catch
+            catch (Exception ex)
             {
-                return 0; // Failed to load the session data
+                LoggingService.LogError($"Failed to load session metadata: {ex.Message}");
+                return 0;
             }
 
             TextEditor selectedTextEditor = null;
@@ -125,8 +126,6 @@ namespace Notepads.Core
             // Serialize saves
             await _semaphoreSlim.WaitAsync();
 
-            StorageFolder backupFolder = await SessionUtility.GetBackupFolderAsync();
-            LoggingService.LogInfo("Session backup is starting. Backup folder: " + backupFolder.Path);
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             TextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
@@ -134,6 +133,8 @@ namespace Notepads.Core
             FileSystemUtility.ClearFutureAccessList();
 
             NotepadsSessionDataV1 sessionData = new NotepadsSessionDataV1();
+
+            int sessionDataUpdateCount = 0;
 
             foreach (TextEditor textEditor in textEditors)
             {
@@ -175,6 +176,7 @@ namespace Notepads.Core
 
                     // We will not create new backup files for this text editor unless it has changes
                     _sessionData.TryAdd(textEditor.Id, textEditorData);
+                    sessionDataUpdateCount++;
                 }
 
                 if (textEditorData.LastSaved != null || textEditorData.Pending != null)
@@ -193,20 +195,24 @@ namespace Notepads.Core
                 string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
                 ApplicationData.Current.LocalSettings.Values[SessionDataKey] = sessionJson;
             }
-            catch
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to save session metadata: {ex.Message}");
                 return; // Failed to save the session - do not proceed to delete backup files
             }
 
             await DeleteOrphanedBackupFilesAsync(sessionData);
 
             stopwatch.Stop();
-            LoggingService.LogInfo("Successfully saved the current session. Total time: " + stopwatch.Elapsed.TotalMilliseconds + " milliseconds.");
+            if (sessionDataUpdateCount > 0)
+            {
+                LoggingService.LogInfo($"Successfully saved the current session with [{sessionDataUpdateCount}] new updates. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
+            }
 
             _semaphoreSlim.Release();
         }
 
-        public void StartSessionBackup()
+        public void StartSessionBackup(bool startImmediately = false)
         {
             if (_timer == null)
             {
@@ -214,7 +220,8 @@ namespace Notepads.Core
 
                 if (Interlocked.CompareExchange(ref _timer, timer, null) == null)
                 {
-                    timer.Change(SaveInterval, SaveInterval);
+                    var delay = startImmediately ? TimeSpan.Zero : SaveInterval;
+                    timer.Change(delay, SaveInterval);
                 }
                 else
                 {
@@ -308,8 +315,9 @@ namespace Notepads.Core
                 backupFile = await SessionUtility.CreateNewBackupFileAsync(textEditor.Id.ToString("N") + "-LastSaved");
                 await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(originalSnapshot.Content, originalSnapshot.LineEnding), originalSnapshot.Encoding, backupFile);
             }
-            catch
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to save backup file: {ex.Message}");
                 return null;
             }
 
@@ -360,9 +368,9 @@ namespace Notepads.Core
                     {
                         await backupFile.DeleteAsync();
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Best effort
+                        LoggingService.LogError($"Failed to delete backup file: {ex.Message}");
                     }
                 }
             }

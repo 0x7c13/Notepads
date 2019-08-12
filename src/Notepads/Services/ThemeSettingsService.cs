@@ -384,9 +384,9 @@ namespace Notepads.Services
                 {
                     ((SolidColorBrush)Application.Current.Resources[brush]).Color = color;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignore
+                    LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
             }
         }

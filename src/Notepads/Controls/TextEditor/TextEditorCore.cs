@@ -204,9 +204,9 @@ namespace Notepads.Controls.TextEditor
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                 Clipboard.Flush();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -227,9 +227,9 @@ namespace Notepads.Controls.TextEditor
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignore
+                LoggingService.LogError($"Failed to paste plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -283,7 +283,7 @@ namespace Notepads.Controls.TextEditor
             if (found)
             {
                 SetText(text);
-                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.StartPosition = int.MaxValue;
                 Document.Selection.EndPosition = Document.Selection.StartPosition;
             }
 
@@ -463,11 +463,11 @@ namespace Notepads.Controls.TextEditor
             {
                 bool startBoundary = true;
                 if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
 
                 bool endBoundary = true;
                 if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
 
                 if (startBoundary && endBoundary)
                     return pos;

@@ -11,7 +11,7 @@ namespace Notepads.Core
 
         Task SaveSessionAsync();
 
-        void StartSessionBackup();
+        void StartSessionBackup(bool startImmediately = false);
 
         void StopSessionBackup();
 

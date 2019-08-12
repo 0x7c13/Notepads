@@ -1,4 +1,6 @@
 ﻿
+using System.Reflection.Metadata.Ecma335;
+
 namespace Notepads.Utilities
 {
     using Microsoft.AppCenter.Analytics;
@@ -260,7 +262,7 @@ namespace Notepads.Utilities
                             "FileUpdateStatus", nameof(status)
                         }
                     });
-                    throw new Exception($"FileUpdateStatus: {nameof(status)}");
+                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }
             }
         }
@@ -283,9 +285,14 @@ namespace Notepads.Utilities
                 using (var stream = await file.OpenStreamForReadAsync()) { }
                 return true;
             }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
             catch (Exception ex)
             {
-                return !(ex is FileNotFoundException);
+                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                return true;
             }
         }
 
@@ -295,8 +302,9 @@ namespace Notepads.Utilities
             {
                 return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
             }
-            catch
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
                 return null;
             }
         }
@@ -308,8 +316,9 @@ namespace Notepads.Utilities
                 StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
                 return false;
             }
         }

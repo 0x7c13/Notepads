@@ -307,21 +307,18 @@ namespace Notepads.Core
             item?.Close();
         }
 
-        private async void SetsView_OnSelectionChanged(object sender, RoutedEventArgs e)
+        private void SetsView_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             _selectedTextEditor = GetSelectedTextEditor();
-            await _sessionManager.SaveSessionAsync();
         }
 
-        private async void SetsView_OnItemsChanged(object sender, IVectorChangedEventArgs e)
+        private void SetsView_OnItemsChanged(object sender, IVectorChangedEventArgs e)
         {
             _allTextEditors = GetAllTextEditors();
-            await _sessionManager.SaveSessionAsync();
         }
 
         private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
         {
-            //LoggingService.LogInfo("Closing a text editor.");
             if (!(e.Set.Content is TextEditor textEditor)) return;
             if (!textEditor.IsModified) return;
             if (TextEditorClosingWithUnsavedContent != null)

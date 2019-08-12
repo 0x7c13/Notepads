@@ -8,6 +8,7 @@ namespace Notepads
     using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -20,17 +21,21 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        private const string AppCenterSecret = null;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            //await LoggingService.InitializeAsync();
+
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(null, services);
+            AppCenter.Start(AppCenterSecret, services);
 
             InitializeComponent();
             Suspending += OnSuspending;
@@ -109,7 +114,8 @@ namespace Notepads
             ThemeSettingsService.Initialize();
             EditorSettingsService.Initialize();
 
-            Analytics.TrackEvent("AppLaunch_Settings", new Dictionary<string, string>() {
+            var appLaunchSettings = new Dictionary<string, string>()
+            {
                 {
                     "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
                 },
@@ -120,7 +126,7 @@ namespace Notepads
                     "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
                 },
                 {
-                    "AppBackgroundTintOpacity", $"{(int)(ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
+                    "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
                 },
                 {
                     "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
@@ -143,10 +149,12 @@ namespace Notepads
                 {
                     "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
                 },
-            });
+            };
+
+            LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
+            Analytics.TrackEvent("AppLaunchSettings", appLaunchSettings);
 
             await ActivationService.ActivateAsync(rootFrame, e);
-            //await LoggingService.InitializeAsync();
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();
@@ -172,7 +180,18 @@ namespace Notepads
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            var exception = new Exception($"Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
+            LoggingService.LogException(exception);
+            Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
+            {
+                {
+                    "Page", e.SourcePageType.FullName
+                },
+                {
+                    "Exception", e.Exception.Message
+                }
+            });
+            throw exception;
         }
 
         /// <summary>

@@ -100,7 +100,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                LoggingService.LogException(ex);
+                LoggingService.LogError($"Failed to get system current ANSI encoding: {ex.Message}");
                 Analytics.TrackEvent("FailedToGetANSIEncoding", new Dictionary<string, string>
                 {
                     {"ExceptionMessage", ex.Message}

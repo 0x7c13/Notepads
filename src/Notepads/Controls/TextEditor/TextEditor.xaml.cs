@@ -192,9 +192,13 @@ namespace Notepads.Controls.TextEditor
                     }
                 }, cancellationToken);
             }
-            catch
+            catch (TaskCanceledException)
             {
-                // Ignore;
+                // ignore
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
