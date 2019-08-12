@@ -1,11 +1,11 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Utilities;
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
 
@@ -34,9 +34,9 @@ namespace Notepads.Core
 
         event KeyEventHandler TextEditorKeyDown;
 
-        void OpenNewTextEditor();
+        TextEditor OpenNewTextEditor(Guid? id = null);
 
-        Task OpenNewTextEditor(StorageFile file);
+        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null);
 
         TextEditor OpenNewTextEditor(
             Guid id,
