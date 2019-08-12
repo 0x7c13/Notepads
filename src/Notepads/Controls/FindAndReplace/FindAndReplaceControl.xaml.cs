@@ -106,7 +106,10 @@ namespace Notepads.Controls.FindAndReplace
 
         private void SearchButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyout) return;
+            if (sender is MenuFlyout)
+            {
+                return;
+            }
 
             OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, FindAndReplaceMode.FindOnly));
         }

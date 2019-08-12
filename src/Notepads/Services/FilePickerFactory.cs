@@ -9,7 +9,7 @@ namespace Notepads.Services
     {
         public static FileOpenPicker GetFileOpenPicker()
         {
-            var fileOpenPicker = new FileOpenPicker
+            FileOpenPicker fileOpenPicker = new FileOpenPicker
             {
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
             };

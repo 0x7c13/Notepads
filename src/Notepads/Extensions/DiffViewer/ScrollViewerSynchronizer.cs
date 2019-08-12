@@ -25,7 +25,7 @@ namespace Notepads.Extensions.DiffViewer
 
         private void Scroller_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = (ScrollViewer)sender;
+            ScrollViewer scrollViewer = (ScrollViewer)sender;
 
             scrollViewer.ChangeView(_horizontalScrollOffset, _verticalScrollOffset, null, true);
 
@@ -36,9 +36,9 @@ namespace Notepads.Extensions.DiffViewer
             }
             scrollViewer.ApplyTemplate();
 
-            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
-            var horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
-            var verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
+            FrameworkElement scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
+            ScrollBar horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
+            ScrollBar verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
 
             if (!_horizontalScrollerViewers.Keys.Contains(horizontalScrollBar))
             {
@@ -65,29 +65,29 @@ namespace Notepads.Extensions.DiffViewer
 
         private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
+            ScrollBar changedScrollBar = sender as ScrollBar;
+            ScrollViewer changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void VerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
+            ScrollBar changedScrollBar = sender as ScrollBar;
+            ScrollViewer changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
+            ScrollBar changedScrollBar = sender as ScrollBar;
+            ScrollViewer changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void HorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
+            ScrollBar changedScrollBar = sender as ScrollBar;
+            ScrollViewer changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
@@ -96,7 +96,7 @@ namespace Notepads.Extensions.DiffViewer
             _verticalScrollOffset = changedScrollViewer.VerticalOffset;
             _horizontalScrollOffset = changedScrollViewer.HorizontalOffset;
 
-            foreach (var scrollViewer in _scrollViewers.Where(s => s != changedScrollViewer))
+            foreach (ScrollViewer scrollViewer in _scrollViewers.Where(s => s != changedScrollViewer))
             {
                 if (Math.Abs(scrollViewer.VerticalOffset - changedScrollViewer.VerticalOffset) > 0.01)
                 {

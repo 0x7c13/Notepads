@@ -15,7 +15,7 @@ namespace Notepads.Utilities
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
 
-        static async Task CreateDialog(ContentDialog dialog, bool awaitPreviousDialog)
+        private static async Task CreateDialog(ContentDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();

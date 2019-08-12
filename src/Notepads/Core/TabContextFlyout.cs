@@ -42,7 +42,7 @@ namespace Notepads.Core
             Items.Add(CopyFullPath);
             Items.Add(OpenContainingFolder);
 
-            var style = new Style(typeof(MenuFlyoutPresenter));
+            Style style = new Style(typeof(MenuFlyoutPresenter));
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
             MenuFlyoutPresenterStyle = style;
 

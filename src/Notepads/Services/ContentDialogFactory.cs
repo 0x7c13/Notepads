@@ -59,7 +59,7 @@ namespace Notepads.Services
 
         public static ContentDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
         {
-            var content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
+            string content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
             return new ContentDialog
             {
                 Title = ResourceLoader.GetString("FileSaveErrorDialog_Title"),
@@ -71,7 +71,7 @@ namespace Notepads.Services
 
         private static Style GetButtonStyle(Color backgroundColor)
         {
-            var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
+            Style redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
             redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
             redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
             return redButtonStyle;

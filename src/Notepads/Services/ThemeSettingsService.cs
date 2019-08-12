@@ -170,7 +170,7 @@ namespace Notepads.Services
             {
                 if (ApplicationSettings.Read(SettingsKey.RequestedThemeStr) is string themeModeStr)
                 {
-                    if (Enum.TryParse(typeof(ElementTheme), themeModeStr, out var theme))
+                    if (Enum.TryParse(typeof(ElementTheme), themeModeStr, out object theme))
                     {
                         ThemeMode = (ElementTheme)theme;
                     }
@@ -251,7 +251,7 @@ namespace Notepads.Services
                     }
                     else
                     {
-                        var brush = new UICompositionAnimations.Brushes.AcrylicBrush()
+                        UICompositionAnimations.Brushes.AcrylicBrush brush = new UICompositionAnimations.Brushes.AcrylicBrush()
                         {
                             Source = AcrylicBackgroundSource.HostBackdrop,
                             BlurAmount = 8,
@@ -310,7 +310,7 @@ namespace Notepads.Services
 
         public static void ApplyThemeForTitleBarButtons(ElementTheme theme)
         {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
 
             if (theme == ElementTheme.Dark)
             {
@@ -360,7 +360,7 @@ namespace Notepads.Services
             Application.Current.Resources["SystemAccentColor"] = color;
 
             // Took from: https://stackoverflow.com/questions/31831917/change-accent-color-in-windows-10-uwp/31844773
-            var brushes = new string[]
+            string[] brushes = new string[]
             {
                 "SystemControlBackgroundAccentBrush",
                 "SystemControlDisabledAccentBrush",
@@ -378,7 +378,7 @@ namespace Notepads.Services
                 "JumpListDefaultEnabledBackground"
             };
 
-            foreach (var brush in brushes)
+            foreach (string brush in brushes)
             {
                 try
                 {

@@ -37,31 +37,37 @@ namespace Notepads.Utilities
 
         public static bool IsFullPath(string path)
         {
-            return !String.IsNullOrWhiteSpace(path)
+            return !string.IsNullOrWhiteSpace(path)
                    && path.IndexOfAny(System.IO.Path.GetInvalidPathChars().ToArray()) == -1
                    && Path.IsPathRooted(path)
                    && !Path.GetPathRoot(path).Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
         }
 
-        public static String GetAbsolutePath(String basePath, String path)
+        public static string GetAbsolutePath(string basePath, string path)
         {
-            String finalPath;
+            string finalPath;
             if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
             {
                 if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                {
                     finalPath = Path.Combine(Path.GetPathRoot(basePath), path.TrimStart(Path.DirectorySeparatorChar));
+                }
                 else
+                {
                     finalPath = Path.Combine(basePath, path);
+                }
             }
             else
+            {
                 finalPath = path;
+            }
             // Resolves any internal "..\" to get the true full path.
             return Path.GetFullPath(finalPath);
         }
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommondLine(dir, args);
+            string path = GetAbsolutePathFromCommondLine(dir, args);
 
             if (string.IsNullOrEmpty(path))
             {
@@ -73,7 +79,10 @@ namespace Notepads.Utilities
 
         public static string GetAbsolutePathFromCommondLine(string dir, string args)
         {
-            if (string.IsNullOrEmpty(args)) return null;
+            if (string.IsNullOrEmpty(args))
+            {
+                return null;
+            }
 
             string path = args;
 
@@ -110,8 +119,8 @@ namespace Notepads.Utilities
 
         public static async Task<long> GetDateModified(StorageFile file)
         {
-            var properties = await GetFileProperties(file);
-            var dateModified = properties.DateModified;
+            BasicProperties properties = await GetFileProperties(file);
+            DateTimeOffset dateModified = properties.DateModified;
             return dateModified.ToFileTime();
         }
 
@@ -124,7 +133,7 @@ namespace Notepads.Utilities
         {
             try
             {
-                using (var stream = await file.OpenStreamForWriteAsync()) { }
+                using (Stream stream = await file.OpenStreamForWriteAsync()) { }
                 return true;
             }
             catch (Exception)
@@ -153,7 +162,7 @@ namespace Notepads.Utilities
 
         public static async Task<TextFile> ReadFile(StorageFile file)
         {
-            var fileProperties = await file.GetBasicPropertiesAsync();
+            BasicProperties fileProperties = await file.GetBasicPropertiesAsync();
 
             if (fileProperties.Size > 1000 * 1024) // 1MB
             {
@@ -164,18 +173,18 @@ namespace Notepads.Utilities
 
             string text;
             Encoding encoding;
-            var bom = new byte[4];
+            byte[] bom = new byte[4];
 
-            using (var inputStream = await file.OpenReadAsync())
-            using (var classicStream = inputStream.AsStreamForRead())
+            using (Windows.Storage.Streams.IRandomAccessStreamWithContentType inputStream = await file.OpenReadAsync())
+            using (Stream classicStream = inputStream.AsStreamForRead())
             {
                 classicStream.Read(bom, 0, 4);
             }
 
-            using (var inputStream = await file.OpenReadAsync())
-            using (var classicStream = inputStream.AsStreamForRead())
+            using (Windows.Storage.Streams.IRandomAccessStreamWithContentType inputStream = await file.OpenReadAsync())
+            using (Stream classicStream = inputStream.AsStreamForRead())
             {
-                var reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                StreamReader reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
                 reader.Peek();
                 encoding = reader.CurrentEncoding;
                 text = reader.ReadToEnd();
@@ -189,11 +198,31 @@ namespace Notepads.Utilities
         private static bool HasBom(byte[] bom)
         {
             // Analyze the BOM
-            if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return true; // Encoding.UTF7
-            if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return true; // Encoding.UTF8
-            if (bom[0] == 0xff && bom[1] == 0xfe) return true; // Encoding.Unicode
-            if (bom[0] == 0xfe && bom[1] == 0xff) return true; // Encoding.BigEndianUnicode
-            if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) return true; // Encoding.UTF32
+            if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76)
+            {
+                return true; // Encoding.UTF7
+            }
+
+            if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf)
+            {
+                return true; // Encoding.UTF8
+            }
+
+            if (bom[0] == 0xff && bom[1] == 0xfe)
+            {
+                return true; // Encoding.Unicode
+            }
+
+            if (bom[0] == 0xfe && bom[1] == 0xff)
+            {
+                return true; // Encoding.BigEndianUnicode
+            }
+
+            if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff)
+            {
+                return true; // Encoding.UTF32
+            }
+
             return false;
         }
 
@@ -236,8 +265,8 @@ namespace Notepads.Utilities
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            using (var stream = await file.OpenStreamForWriteAsync())
-            using (var writer = new StreamWriter(stream, encoding))
+            using (Stream stream = await file.OpenStreamForWriteAsync())
+            using (StreamWriter writer = new StreamWriter(stream, encoding))
             {
                 stream.Position = 0;
                 writer.Write(text);
@@ -280,7 +309,7 @@ namespace Notepads.Utilities
         {
             try
             {
-                using (var stream = await file.OpenStreamForReadAsync()) { }
+                using (Stream stream = await file.OpenStreamForReadAsync()) { }
                 return true;
             }
             catch (Exception ex)

@@ -57,10 +57,10 @@ namespace Notepads
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.TextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
-                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
-                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
-                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineColumnIndicator(editor); } };
+                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateEncodingIndicator(editor.GetEncoding()); } };
+                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); } };
+                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { SetupStatusBar(editor); } };
                     _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) =>
                     {
                         if (NotepadsCore.GetSelectedTextEditor() == editor)
@@ -114,7 +114,10 @@ namespace Notepads
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
             EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
             {
-                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay)
+                {
+                    ShowHideStatusBar(visibility);
+                }
             };
 
             // Sharing
@@ -142,7 +145,7 @@ namespace Notepads
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
             MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
             MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
+            MenuSaveAllButton.Click += async (sender, args) => { foreach (TextEditor textEditor in NotepadsCore.GetAllTextEditors()) { await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); } };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
@@ -151,7 +154,7 @@ namespace Notepads
 
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
-                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+                TextEditor selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
                 if (selectedTextEditor == null)
                 {
                     MenuSaveButton.IsEnabled = false;
@@ -210,12 +213,16 @@ namespace Notepads
         {
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
             {
-                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
                 if (modeSwitched)
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Visible;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                    if (EditorSettingsService.ShowStatusBar)
+                    {
+                        ShowHideStatusBar(false);
+                    }
+
                     Analytics.TrackEvent("EnteredCompactOverlayMode");
                 }
                 else
@@ -226,12 +233,15 @@ namespace Notepads
             }
             else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
             {
-                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
                 if (modeSwitched)
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                    if (EditorSettingsService.ShowStatusBar)
+                    {
+                        ShowHideStatusBar(true);
+                    }
                 }
                 else
                 {
@@ -257,7 +267,10 @@ namespace Notepads
                     {
                         TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
                         ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                        if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                        if (EditorSettingsService.ShowStatusBar)
+                        {
+                            ShowHideStatusBar(true);
+                        }
                     }
 
                     LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
@@ -293,7 +306,7 @@ namespace Notepads
             }
             else if (e.Parameter is CommandLineActivatedEventArgs)
             {
-                var commandLine = e.Parameter as CommandLineActivatedEventArgs;
+                CommandLineActivatedEventArgs commandLine = e.Parameter as CommandLineActivatedEventArgs;
                 _appLaunchCmdDir = commandLine.Operation.CurrentDirectoryPath;
                 _appLaunchCmdArgs = commandLine.Operation.Arguments;
             }
@@ -317,7 +330,7 @@ namespace Notepads
             }
             else if (_appLaunchCmdDir != null)
             {
-                var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
+                StorageFile file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
                 if (file != null && await OpenFile(file))
                 {
                     loadedCount++;
@@ -359,7 +372,7 @@ namespace Notepads
             }
         }
 
-        void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
+        private void WindowVisibilityChangedEventHandler(object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
             LoggingService.LogInfo($"Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
@@ -369,10 +382,13 @@ namespace Notepads
         // Content sharing
         private void MainPage_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
-            if (textEditor == null) return;
+            TextEditor textEditor = NotepadsCore.GetSelectedTextEditor();
+            if (textEditor == null)
+            {
+                return;
+            }
 
-            if (NotepadsCore.TryGetSharingContent(textEditor, out var title, out var content))
+            if (NotepadsCore.TryGetSharingContent(textEditor, out string title, out string content))
             {
                 args.Request.Data.Properties.Title = title;
                 args.Request.Data.SetText(content);
@@ -385,13 +401,17 @@ namespace Notepads
 
         private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (!NotepadsCore.HaveUnsavedTextEditor()) return;
+            if (!NotepadsCore.HaveUnsavedTextEditor())
+            {
+                return;
+            }
+
             e.Handled = true;
 
             ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
                 async () =>
                 {
-                    foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                    foreach (TextEditor textEditor in NotepadsCore.GetAllTextEditors())
                     {
                         if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
                         {
@@ -415,10 +435,14 @@ namespace Notepads
 
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)
         {
-            if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
-            var storageItems = await e.DataView.GetStorageItemsAsync();
+            if (!e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                return;
+            }
 
-            foreach (var storageItem in storageItems)
+            IReadOnlyList<IStorageItem> storageItems = await e.DataView.GetStorageItemsAsync();
+
+            foreach (IStorageItem storageItem in storageItems)
             {
                 if (storageItem is StorageFile file)
                 {
@@ -438,7 +462,11 @@ namespace Notepads
 
         private void SetupStatusBar(TextEditor textEditor)
         {
-            if (textEditor == null) return;
+            if (textEditor == null)
+            {
+                return;
+            }
+
             UpdateFileModificationStateIndicator(textEditor);
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
@@ -466,7 +494,11 @@ namespace Notepads
 
         private void UpdateFileModificationStateIndicator(TextEditor textEditor)
         {
-            if (StatusBar == null) return;
+            if (StatusBar == null)
+            {
+                return;
+            }
+
             if (textEditor.FileModificationState == FileModificationState.Untouched)
             {
                 FileModificationStateIndicatorIcon.Glyph = "";
@@ -488,7 +520,11 @@ namespace Notepads
 
         private void UpdatePathIndicator(TextEditor textEditor)
         {
-            if (StatusBar == null) return;
+            if (StatusBar == null)
+            {
+                return;
+            }
+
             PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
 
             if (textEditor.FileModificationState == FileModificationState.Untouched)
@@ -507,7 +543,11 @@ namespace Notepads
 
         private void UpdateEditorModificationIndicator(TextEditor textEditor)
         {
-            if (StatusBar == null) return;
+            if (StatusBar == null)
+            {
+                return;
+            }
+
             if (textEditor.IsModified)
             {
                 ModificationIndicator.Text = _resourceLoader.GetString("TextEditor_ModificationIndicator_Text");
@@ -524,20 +564,32 @@ namespace Notepads
 
         private void UpdateEncodingIndicator(Encoding encoding)
         {
-            if (StatusBar == null) return;
+            if (StatusBar == null)
+            {
+                return;
+            }
+
             EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
         }
 
         private void UpdateLineEndingIndicator(LineEnding lineEnding)
         {
-            if (StatusBar == null) return;
+            if (StatusBar == null)
+            {
+                return;
+            }
+
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
         }
 
         private void UpdateLineColumnIndicator(TextEditor textEditor)
         {
-            if (StatusBar == null) return;
-            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
+            if (StatusBar == null)
+            {
+                return;
+            }
+
+            textEditor.GetCurrentLineColumn(out int line, out int column, out int selectedCount);
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
@@ -545,10 +597,16 @@ namespace Notepads
 
         private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuFlyoutItem item)) return;
+            if (!(sender is MenuFlyoutItem item))
+            {
+                return;
+            }
 
-            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedTextEditor == null) return;
+            TextEditor selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null)
+            {
+                return;
+            }
 
             switch ((string)item.Tag)
             {
@@ -556,8 +614,8 @@ namespace Notepads
                     NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
                     break;
                 case "RevertAllChanges":
-                    var fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
-                    var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
+                    string fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
+                    ContentDialog setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
                     {
                         selectedTextEditor.CloseSideBySideDiffViewer();
                         NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
@@ -569,13 +627,13 @@ namespace Notepads
 
         private async void ReloadFileFromDisk_OnClick(object sender, RoutedEventArgs e)
         {
-            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            TextEditor selectedEditor = NotepadsCore.GetSelectedTextEditor();
 
             if (selectedEditor?.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
             {
                 try
                 {
-                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
+                    TextFile textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
                     selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
                     selectedEditor.StartCheckingFileStatusPeriodically();
                     selectedEditor.CloseSideBySideDiffViewer();
@@ -583,7 +641,7 @@ namespace Notepads
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
+                    ContentDialog fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
                     await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
@@ -592,10 +650,13 @@ namespace Notepads
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuFlyoutItem item)) return;
+            if (!(sender is MenuFlyoutItem item))
+            {
+                return;
+            }
 
-            var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
+            LineEnding lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
+            TextEditor textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeLineEnding(textEditor, lineEnding);
@@ -604,10 +665,13 @@ namespace Notepads
 
         private void EncodingSelection_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuFlyoutItem item)) return;
+            if (!(sender is MenuFlyoutItem item))
+            {
+                return;
+            }
 
-            var encoding = EncodingUtility.GetEncodingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
+            Encoding encoding = EncodingUtility.GetEncodingByName((string)item.Tag);
+            TextEditor textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor != null)
             {
                 NotepadsCore.ChangeEncoding(textEditor, encoding);
@@ -616,8 +680,11 @@ namespace Notepads
 
         private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
         {
-            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedEditor == null) return;
+            TextEditor selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor == null)
+            {
+                return;
+            }
 
             if (sender == FileModificationStateIndicator)
             {
@@ -680,7 +747,7 @@ namespace Notepads
         public void PostNotification(string message, int duration)
         {
             if (StatusNotification == null) { FindName("StatusNotification"); } // Lazy loading
-            var textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
+            Windows.Foundation.Size textSize = FontUtility.GetTextSize(StatusNotification.FontFamily, StatusNotification.FontSize, message);
             StatusNotification.Width = textSize.Width + 100;  // actual width + padding
             StatusNotification.Height = textSize.Height + 50; // actual height + padding
             StatusNotification.Show(message, duration);
@@ -709,9 +776,9 @@ namespace Notepads
 
         private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
         {
-            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
+            string file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
 
-            var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+            ContentDialog setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {
                 if (await Save(textEditor, saveAs: false))
                 {
@@ -726,9 +793,16 @@ namespace Notepads
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is TextEditor textEditor))
+            {
+                return;
+            }
             // ignoring key events coming from inactive text editors
-            if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
+            if (NotepadsCore.GetSelectedTextEditor() != textEditor)
+            {
+                return;
+            }
+
             _keyboardCommandHandler.Handle(e);
         }
 
@@ -738,14 +812,14 @@ namespace Notepads
 
         private async Task OpenNewFiles()
         {
-            var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            IReadOnlyList<StorageFile> files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
             if (files == null || files.Count == 0)
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return;
             }
 
-            foreach (var file in files)
+            foreach (StorageFile file in files)
             {
                 await OpenFile(file);
             }
@@ -761,7 +835,7 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                ContentDialog fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
                 await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
@@ -770,10 +844,13 @@ namespace Notepads
 
         public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
         {
-            if (storageItems == null || storageItems.Count == 0) return 0;
+            if (storageItems == null || storageItems.Count == 0)
+            {
+                return 0;
+            }
 
             int successCount = 0;
-            foreach (var storageItem in storageItems)
+            foreach (IStorageItem storageItem in storageItems)
             {
                 if (storageItem is StorageFile file)
                 {
@@ -788,7 +865,10 @@ namespace Notepads
 
         private async Task<bool> Save(TextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
         {
-            if (textEditor == null) return false;
+            if (textEditor == null)
+            {
+                return false;
+            }
 
             if (ignoreUnmodifiedDocument && !textEditor.IsModified)
             {
@@ -820,7 +900,7 @@ namespace Notepads
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                ContentDialog fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 return false;
             }

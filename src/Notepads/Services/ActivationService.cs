@@ -63,7 +63,7 @@ namespace Notepads.Services
                 {
                     if (e is CommandLineActivatedEventArgs commandLine)
                     {
-                        var file = await FileSystemUtility.OpenFileFromCommandLine(
+                        Windows.Storage.StorageFile file = await FileSystemUtility.OpenFileFromCommandLine(
                             commandLine.Operation.CurrentDirectoryPath, commandLine.Operation.Arguments);
                         if (file != null)
                         {

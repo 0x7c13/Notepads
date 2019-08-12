@@ -175,7 +175,7 @@ namespace Notepads.Services
         {
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
             {
-                Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding);
+                Enum.TryParse(typeof(LineEnding), lineEndingStr, out object lineEnding);
                 _editorDefaultLineEnding = (LineEnding)lineEnding;
             }
             else
@@ -188,7 +188,7 @@ namespace Notepads.Services
         {
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
             {
-                Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping);
+                Enum.TryParse(typeof(TextWrapping), textWrappingStr, out object textWrapping);
                 _editorDefaultTextWrapping = (TextWrapping)textWrapping;
             }
             else
@@ -203,7 +203,7 @@ namespace Notepads.Services
 
             if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
-                var encoding = Encoding.GetEncoding(encodingCodePage);
+                Encoding encoding = Encoding.GetEncoding(encodingCodePage);
 
                 if (encoding is UTF8Encoding)
                 {

@@ -97,7 +97,10 @@ namespace SetsView
         }
 
         /// <inheritdoc/>
-        protected override DependencyObject GetContainerForItemOverride() => new SetsViewItem();
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new SetsViewItem();
+        }
 
         /// <inheritdoc/>
         protected override bool IsItemItsOwnContainerOverride(object item)
@@ -196,7 +199,10 @@ namespace SetsView
                         _setsContentPresenter.Content = container.Content;
                         _setsContentPresenter.ContentTemplate = container.ContentTemplate;
 
-                        if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
+                        if (e != null)
+                        {
+                            _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
+                        }
                     }
                 }
             }
@@ -211,7 +217,7 @@ namespace SetsView
         private void SetsContentPresenter_Loaded(object sender, RoutedEventArgs e)
         {
             _setsContentPresenter.Loaded -= SetsContentPresenter_Loaded;
-            var args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
+            SetSelectedEventArgs args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
             SetSelected?.Invoke(this, args);
         }
 
@@ -220,7 +226,7 @@ namespace SetsView
         {
             base.PrepareContainerForItemOverride(element, item);
 
-            var setItem = element as SetsViewItem;
+            SetsViewItem setItem = element as SetsViewItem;
 
             setItem.Loaded -= SetsViewItem_Loaded;
             setItem.Closing -= SetsViewItem_Closing;
@@ -238,7 +244,7 @@ namespace SetsView
 
             if (setItem.HeaderTemplate == null)
             {
-                var headertemplatebinding = new Binding()
+                Binding headertemplatebinding = new Binding()
                 {
                     Source = this,
                     Path = new PropertyPath(nameof(ItemHeaderTemplate)),
@@ -249,7 +255,7 @@ namespace SetsView
 
             if (setItem.IsClosable != true && setItem.ReadLocalValue(SetsViewItem.IsClosableProperty) == DependencyProperty.UnsetValue)
             {
-                var iscloseablebinding = new Binding()
+                Binding iscloseablebinding = new Binding()
                 {
                     Source = this,
                     Path = new PropertyPath(nameof(CanCloseSets)),
@@ -261,19 +267,19 @@ namespace SetsView
 
         private void SetsViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            var args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
+            SetSelectedEventArgs args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
             SetDoubleTapped?.Invoke(sender, args);
         }
 
         private void SetsViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
+            SetSelectedEventArgs args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
             SetTapped?.Invoke(sender, args);
         }
 
         private void SetsViewItem_Loaded(object sender, RoutedEventArgs e)
         {
-            var setItem = sender as SetsViewItem;
+            SetsViewItem setItem = sender as SetsViewItem;
 
             setItem.Loaded -= SetsViewItem_Loaded;
 
@@ -298,9 +304,9 @@ namespace SetsView
 
         private void SetsViewItem_Closing(object sender, SetClosingEventArgs e)
         {
-            var item = ItemFromContainer(e.Set);
+            object item = ItemFromContainer(e.Set);
 
-            var args = new SetClosingEventArgs(item, e.Set);
+            SetClosingEventArgs args = new SetClosingEventArgs(item, e.Set);
             SetClosing?.Invoke(this, args);
 
             if (!args.Cancel)
@@ -329,8 +335,8 @@ namespace SetsView
             // args.DropResult == None when outside of area (e.g. create new window)
             if (args.DropResult == DataPackageOperation.None)
             {
-                var item = args.Items.FirstOrDefault();
-                var set = ContainerFromItem(item) as SetsViewItem;
+                object item = args.Items.FirstOrDefault();
+                SetsViewItem set = ContainerFromItem(item) as SetsViewItem;
 
                 if (set == null && item is FrameworkElement fe)
                 {
@@ -344,7 +350,7 @@ namespace SetsView
                     // Note: This can be wrong if two SetsViewItems share the exact same Content (i.e. a string), this should be unlikely in any practical scenario.
                     for (int i = 0; i < Items.Count; i++)
                     {
-                        var setItem = ContainerFromIndex(i) as SetsViewItem;
+                        SetsViewItem setItem = ContainerFromIndex(i) as SetsViewItem;
                         if (ReferenceEquals(setItem.Content, item))
                         {
                             set = setItem;

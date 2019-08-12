@@ -2,7 +2,6 @@
 namespace Notepads.Controls.TextEditor
 {
     using Notepads.Utilities;
-    using System;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Text;
@@ -191,7 +190,7 @@ namespace Notepads.Controls.TextEditor
                     });
                     _selectAll.Click += (sender, args) =>
                     {
-                        _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
+                        _textEditorCore.Document.Selection.SetRange(0, int.MaxValue);
                     };
                 }
                 return _selectAll;
@@ -218,7 +217,10 @@ namespace Notepads.Controls.TextEditor
         {
             get
             {
-                if (_wordWrap != null) return _wordWrap;
+                if (_wordWrap != null)
+                {
+                    return _wordWrap;
+                }
 
                 _wordWrap = new MenuFlyoutItem
                 {
@@ -249,7 +251,10 @@ namespace Notepads.Controls.TextEditor
         {
             get
             {
-                if (_previewToggle != null) return _previewToggle;
+                if (_previewToggle != null)
+                {
+                    return _previewToggle;
+                }
 
                 _previewToggle = new MenuFlyoutItem
                 {

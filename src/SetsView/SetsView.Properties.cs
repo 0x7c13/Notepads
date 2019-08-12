@@ -17,8 +17,8 @@ namespace SetsView
         /// </summary>
         public object SetsStartHeader
         {
-            get { return (object)GetValue(SetsStartHeaderProperty); }
-            set { SetValue(SetsStartHeaderProperty, value); }
+            get => GetValue(SetsStartHeaderProperty);
+            set => SetValue(SetsStartHeaderProperty, value);
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate SetsStartHeaderTemplate
         {
-            get { return (DataTemplate)GetValue(SetsStartHeaderTemplateProperty); }
-            set { SetValue(SetsStartHeaderTemplateProperty, value); }
+            get => (DataTemplate)GetValue(SetsStartHeaderTemplateProperty);
+            set => SetValue(SetsStartHeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace SetsView
         /// </summary>
         public object SetsActionHeader
         {
-            get { return (object)GetValue(SetsActionHeaderProperty); }
-            set { SetValue(SetsActionHeaderProperty, value); }
+            get => GetValue(SetsActionHeaderProperty);
+            set => SetValue(SetsActionHeaderProperty, value);
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate SetsActionHeaderTemplate
         {
-            get { return (DataTemplate)GetValue(SetsActionHeaderTemplateProperty); }
-            set { SetValue(SetsActionHeaderTemplateProperty, value); }
+            get => (DataTemplate)GetValue(SetsActionHeaderTemplateProperty);
+            set => SetValue(SetsActionHeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -81,8 +81,8 @@ namespace SetsView
         /// </summary>
         public object SetsPaddingHeader
         {
-            get { return (object)GetValue(SetsPaddingHeaderProperty); }
-            set { SetValue(SetsPaddingHeaderProperty, value); }
+            get => GetValue(SetsPaddingHeaderProperty);
+            set => SetValue(SetsPaddingHeaderProperty, value);
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate SetsPaddingHeaderTemplate
         {
-            get { return (DataTemplate)GetValue(SetsPaddingHeaderTemplateProperty); }
-            set { SetValue(SetsPaddingHeaderTemplateProperty, value); }
+            get => (DataTemplate)GetValue(SetsPaddingHeaderTemplateProperty);
+            set => SetValue(SetsPaddingHeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -114,8 +114,8 @@ namespace SetsView
         /// </summary>
         public object SetsEndHeader
         {
-            get { return (object)GetValue(SetsEndHeaderProperty); }
-            set { SetValue(SetsEndHeaderProperty, value); }
+            get => GetValue(SetsEndHeaderProperty);
+            set => SetValue(SetsEndHeaderProperty, value);
         }
 
         /// <summary>
@@ -130,8 +130,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate SetsEndHeaderTemplate
         {
-            get { return (DataTemplate)GetValue(SetsEndHeaderTemplateProperty); }
-            set { SetValue(SetsEndHeaderTemplateProperty, value); }
+            get => (DataTemplate)GetValue(SetsEndHeaderTemplateProperty);
+            set => SetValue(SetsEndHeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -146,8 +146,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate ItemHeaderTemplate
         {
-            get { return (DataTemplate)GetValue(ItemHeaderTemplateTemplateProperty); }
-            set { SetValue(ItemHeaderTemplateTemplateProperty, value); }
+            get => (DataTemplate)GetValue(ItemHeaderTemplateTemplateProperty);
+            set => SetValue(ItemHeaderTemplateTemplateProperty, value);
         }
 
         /// <summary>
@@ -162,8 +162,8 @@ namespace SetsView
         /// </summary>
         public bool CanCloseSets
         {
-            get { return (bool)GetValue(CanCloseSetsProperty); }
-            set { SetValue(CanCloseSetsProperty, value); }
+            get => (bool)GetValue(CanCloseSetsProperty);
+            set => SetValue(CanCloseSetsProperty, value);
         }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace SetsView
         /// </summary>
         public bool IsCloseButtonOverlay
         {
-            get { return (bool)GetValue(IsCloseButtonOverlayProperty); }
-            set { SetValue(IsCloseButtonOverlayProperty, value); }
+            get => (bool)GetValue(IsCloseButtonOverlayProperty);
+            set => SetValue(IsCloseButtonOverlayProperty, value);
         }
 
         /// <summary>
@@ -194,8 +194,8 @@ namespace SetsView
         /// </summary>
         public double SelectedSetWidth
         {
-            get { return (double)GetValue(SelectedSetWidthProperty); }
-            set { SetValue(SelectedSetWidthProperty, value); }
+            get => (double)GetValue(SelectedSetWidthProperty);
+            set => SetValue(SelectedSetWidthProperty, value);
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace SetsView
         /// </summary>
         public SetsWidthMode SetsWidthBehavior
         {
-            get { return (SetsWidthMode)GetValue(SetsWidthBehaviorProperty); }
-            set { SetValue(SetsWidthBehaviorProperty, value); }
+            get => (SetsWidthMode)GetValue(SetsWidthBehaviorProperty);
+            set => SetValue(SetsWidthBehaviorProperty, value);
         }
 
         /// <summary>

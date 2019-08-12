@@ -18,11 +18,11 @@ namespace Notepads.Commands
 
         public void Handle(KeyRoutedEventArgs args)
         {
-            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            bool ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            bool altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            bool shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            foreach (var keyboardCommand in Commands)
+            foreach (IKeyboardCommand<KeyRoutedEventArgs> keyboardCommand in Commands)
             {
                 if (keyboardCommand.Hit(ctrlDown, altDown, shiftDown, args.Key))
                 {

@@ -30,7 +30,7 @@ namespace Notepads.Utilities
                 return FileType.Unknown;
             }
 
-            var ext = extension.ToLower();
+            string ext = extension.ToLower();
 
             if (ext == "txt")
             {

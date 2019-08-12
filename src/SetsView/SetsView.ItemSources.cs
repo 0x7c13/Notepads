@@ -43,7 +43,7 @@ namespace SetsView
 
         private void ItemContainerGenerator_ItemsChanged(object sender, ItemsChangedEventArgs e)
         {
-            var action = (CollectionChange)e.Action;
+            CollectionChange action = (CollectionChange)e.Action;
             if (action == CollectionChange.Reset)
             {
                 // Reset collection to reload later.
@@ -88,7 +88,7 @@ namespace SetsView
                         index = Items.Count - 1;
                     }
 
-                    var setItem = ContainerFromIndex(index) as SetsViewItem;
+                    SetsViewItem setItem = ContainerFromIndex(index) as SetsViewItem;
                     if (setItem != null && setItem.IsEnabled && setItem.Visibility == Visibility.Visible)
                     {
                         break;

@@ -17,11 +17,11 @@ namespace Notepads.Extensions.Markdown
     {
         public async Task<MemoryStream> GetDataFeed(string feedUrl)
         {
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var request = (HttpWebRequest)WebRequest.Create(feedUrl);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feedUrl);
                 request.Method = "GET";
-                using (var response = (HttpWebResponse)await request.GetResponseAsync())
+                using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
                 {
                     response.GetResponseStream()?.CopyTo(ms);
                     return ms;
@@ -61,11 +61,11 @@ namespace Notepads.Extensions.Markdown
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
         {
-            var deferral = e.GetDeferral();
+            Windows.Foundation.Deferral deferral = e.GetDeferral();
 
             try
             {
-                var imageUri = new Uri(e.Url);
+                Uri imageUri = new Uri(e.Url);
                 if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
                 {
                     // SvgImageSource is not working properly when width and height are not set in uri
@@ -89,29 +89,29 @@ namespace Notepads.Extensions.Markdown
 
         private async Task<ImageSource> GetImageAsync(string url)
         {
-            var imageUri = new Uri(url);
-            using (var d = new Downloader())
+            Uri imageUri = new Uri(url);
+            using (Downloader d = new Downloader())
             {
-                var feed = await d.GetDataFeed(url);
+                MemoryStream feed = await d.GetDataFeed(url);
                 feed.Seek(0, SeekOrigin.Begin);
 
                 using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
                 {
                     using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
                     {
-                        writer.WriteBytes((byte[])feed.ToArray());
+                        writer.WriteBytes(feed.ToArray());
                         writer.StoreAsync().GetResults();
                     }
 
                     if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
                     {
-                        var image = new SvgImageSource();
+                        SvgImageSource image = new SvgImageSource();
                         await image.SetSourceAsync(ms);
                         return image;
                     }
                     else
                     {
-                        var image = new BitmapImage();
+                        BitmapImage image = new BitmapImage();
                         await image.SetSourceAsync(ms);
                         return image;
                     }
@@ -199,7 +199,7 @@ namespace Notepads.Extensions.Markdown
 
             try
             {
-                var uri = new Uri(e.Link);
+                Uri uri = new Uri(e.Link);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
             catch (Exception)

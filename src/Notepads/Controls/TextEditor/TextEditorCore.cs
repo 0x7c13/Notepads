@@ -157,18 +157,18 @@ namespace Notepads.Controls.TextEditor
                 _isLineCachePendingUpdate = false;
             }
 
-            var start = Document.Selection.StartPosition;
-            var end = Document.Selection.EndPosition;
+            int start = Document.Selection.StartPosition;
+            int end = Document.Selection.EndPosition;
 
             lineIndex = 1;
             columnIndex = 1;
             selectedCount = 0;
 
-            var length = 0;
+            int length = 0;
             bool startLocated = false;
             for (int i = 0; i < _contentLinesCache.Length; i++)
             {
-                var line = _contentLinesCache[i];
+                string line = _contentLinesCache[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -180,9 +180,14 @@ namespace Notepads.Controls.TextEditor
                 if (line.Length + length >= end)
                 {
                     if (i == lineIndex - 1)
+                    {
                         selectedCount = end - start;
+                    }
                     else
+                    {
                         selectedCount = end - start + (i - lineIndex);
+                    }
+
                     return;
                 }
 
@@ -217,13 +222,20 @@ namespace Notepads.Controls.TextEditor
                 args.Handled = true;
             }
 
-            if (!Document.CanPaste()) return;
+            if (!Document.CanPaste())
+            {
+                return;
+            }
 
             try
             {
-                var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
-                if (!dataPackageView.Contains(StandardDataFormats.Text)) return;
-                var text = await dataPackageView.GetTextAsync();
+                DataPackageView dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+                if (!dataPackageView.Contains(StandardDataFormats.Text))
+                {
+                    return;
+                }
+
+                string text = await dataPackageView.GetTextAsync();
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
@@ -236,7 +248,7 @@ namespace Notepads.Controls.TextEditor
         public void ClearUndoQueue()
         {
             // Clear UndoQueue by setting its limit to 0 and set it back
-            var undoLimit = Document.UndoLimit;
+            uint undoLimit = Document.UndoLimit;
 
             // Check to prevent the undo limit stuck on zero
             // because it returns 0 even if the undo limit isn't set yet
@@ -260,13 +272,13 @@ namespace Notepads.Controls.TextEditor
 
         public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
         {
-            var found = false;
+            bool found = false;
 
-            var pos = 0;
-            var searchTextLength = searchText.Length;
-            var replaceTextLength = replaceText.Length;
+            int pos = 0;
+            int searchTextLength = searchText.Length;
+            int replaceTextLength = replaceText.Length;
 
-            var text = GetText();
+            string text = GetText();
 
             StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
@@ -283,7 +295,7 @@ namespace Notepads.Controls.TextEditor
             if (found)
             {
                 SetText(text);
-                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.StartPosition = int.MaxValue;
                 Document.Selection.EndPosition = Document.Selection.StartPosition;
             }
 
@@ -297,13 +309,16 @@ namespace Notepads.Controls.TextEditor
                 return false;
             }
 
-            var text = GetText();
+            string text = GetText();
 
             StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-            if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+            if (Document.Selection.EndPosition > text.Length)
+            {
+                Document.Selection.EndPosition = text.Length;
+            }
 
-            var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+            int index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
 
             if (index != -1)
             {
@@ -335,9 +350,9 @@ namespace Notepads.Controls.TextEditor
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+            CoreVirtualKeyStates ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            CoreVirtualKeyStates alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            CoreVirtualKeyStates shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
             // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
             // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
@@ -374,7 +389,7 @@ namespace Notepads.Controls.TextEditor
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)
         {
             Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
-            var format = Document.GetDefaultParagraphFormat();
+            ITextParagraphFormat format = Document.GetDefaultParagraphFormat();
             format.SetLineSpacing(LineSpacingRule.AtLeast, (float)fontSize);
             Document.SetDefaultParagraphFormat(format);
         }
@@ -387,7 +402,11 @@ namespace Notepads.Controls.TextEditor
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize < delta + 2) return;
+            if (FontSize < delta + 2)
+            {
+                return;
+            }
+
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize - delta);
             FontSize -= delta;
         }
@@ -421,15 +440,15 @@ namespace Notepads.Controls.TextEditor
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+            CoreVirtualKeyStates ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            CoreVirtualKeyStates alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            CoreVirtualKeyStates shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 !shift.HasFlag(CoreVirtualKeyStates.Down))
             {
-                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                int mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                 if (mouseWheelDelta > 0)
                 {
                     IncreaseFontSize(1);
@@ -448,7 +467,7 @@ namespace Notepads.Controls.TextEditor
                     Document.Selection.Type == SelectionType.InlineShape ||
                     Document.Selection.Type == SelectionType.Shape)
                 {
-                    var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                    int mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                     _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
                             _contentScrollViewer.VerticalOffset + -1 * mouseWheelDelta, null, true);
                 }
@@ -463,14 +482,20 @@ namespace Notepads.Controls.TextEditor
             {
                 bool startBoundary = true;
                 if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
+                {
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
+                }
 
                 bool endBoundary = true;
                 if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
+                {
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
+                }
 
                 if (startBoundary && endBoundary)
+                {
                     return pos;
+                }
 
                 pos++;
             }
@@ -479,7 +504,7 @@ namespace Notepads.Controls.TextEditor
 
         private void InsertDataTimeString()
         {
-            var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+            string dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }

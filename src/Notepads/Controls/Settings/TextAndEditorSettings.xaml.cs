@@ -41,7 +41,7 @@
             {
                 if (_availableFonts == null)
                 {
-                    var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+                    string[] systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
                     _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
                 }
 
@@ -154,7 +154,10 @@
 
         private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!(sender is RadioButton radioButton)) return;
+            if (!(sender is RadioButton radioButton))
+            {
+                return;
+            }
 
             switch (radioButton.Tag)
             {
@@ -175,7 +178,10 @@
 
         private void EncodingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!(sender is RadioButton radioButton)) return;
+            if (!(sender is RadioButton radioButton))
+            {
+                return;
+            }
 
             switch (radioButton.Tag)
             {
@@ -196,7 +202,10 @@
 
         private void DecodingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!(sender is RadioButton radioButton)) return;
+            if (!(sender is RadioButton radioButton))
+            {
+                return;
+            }
 
             switch (radioButton.Tag)
             {
@@ -207,7 +216,7 @@
                     try
                     {
                         Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
+                        Encoding decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
                         EditorSettingsService.EditorDefaultDecoding = decoding;
                     }
                     catch (Exception)
@@ -220,7 +229,10 @@
 
         private void LineEndingRadioButton_OnChecked(object sender, RoutedEventArgs e)
         {
-            if (!(sender is RadioButton radioButton)) return;
+            if (!(sender is RadioButton radioButton))
+            {
+                return;
+            }
 
             switch (radioButton.Tag)
             {

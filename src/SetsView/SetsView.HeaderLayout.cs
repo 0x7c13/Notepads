@@ -43,15 +43,15 @@ namespace SetsView
             if (_hasLoaded && _setsViewContainer != null)
             {
                 // Look for our special columns to calculate size of other 'stuff'
-                var taken = _setsViewContainer.ColumnDefinitions.Sum(cd => GetIgnoreColumn(cd) ? 0 : cd.ActualWidth);
+                double taken = _setsViewContainer.ColumnDefinitions.Sum(cd => GetIgnoreColumn(cd) ? 0 : cd.ActualWidth);
 
                 // Get the column we want to work on for available space
-                var setc = _setsViewContainer.ColumnDefinitions.FirstOrDefault(cd => GetConstrainColumn(cd));
+                Windows.UI.Xaml.Controls.ColumnDefinition setc = _setsViewContainer.ColumnDefinitions.FirstOrDefault(cd => GetConstrainColumn(cd));
                 if (setc != null)
                 {
-                    var available = ActualWidth - taken;
-                    var required = 0.0;
-                    var minsetwidth = double.MaxValue;
+                    double available = ActualWidth - taken;
+                    double required = 0.0;
+                    double minsetwidth = double.MaxValue;
 
                     if (SetsWidthBehavior == SetsWidthMode.Actual)
                     {
@@ -62,9 +62,9 @@ namespace SetsView
                         }
 
                         // Restore original widths
-                        foreach (var item in Items)
+                        foreach (object item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
+                            SetsViewItem set = ContainerFromItem(item) as SetsViewItem;
                             if (set == null)
                             {
                                 continue; // container not generated yet
@@ -79,9 +79,9 @@ namespace SetsView
                     else if (available > 0)
                     {
                         // Calculate the width for each set from the provider and determine how much space they take.
-                        foreach (var item in Items)
+                        foreach (object item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
+                            SetsViewItem set = ContainerFromItem(item) as SetsViewItem;
                             if (set == null)
                             {
                                 continue; // container not generated yet
@@ -125,9 +125,9 @@ namespace SetsView
 
                         // Still need to determine a 'minimum' width (if available)
                         // TODO: Consolidate this logic with above better?
-                        foreach (var item in Items)
+                        foreach (object item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
+                            SetsViewItem set = ContainerFromItem(item) as SetsViewItem;
                             if (set == null)
                             {
                                 continue; // container not generated yet
@@ -186,7 +186,7 @@ namespace SetsView
             }
             else
             {
-                var width = (availableWidth - SelectedSetWidth) / (Items.Count - 1);
+                double width = (availableWidth - SelectedSetWidth) / (Items.Count - 1);
 
                 // Constrain between Min and Selected (Max)
                 if (width < set.MinWidth)

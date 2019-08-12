@@ -113,19 +113,27 @@ namespace Notepads.Extensions.DiffViewer
 
         public Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)
         {
-            if (inDiff) return null;
+            if (inDiff)
+            {
+                return null;
+            }
+
             lock (mutex)
             {
-                if (inDiff) return null;
+                if (inDiff)
+                {
+                    return null;
+                }
+
                 inDiff = true;
             }
 
             _defaultForeground = defaultForeground;
 
-            var diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
-            var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
-            var leftContext = GetDiffData(zippedDiffs, line => line.Old, piece => piece.Old);
-            var rightContext = GetDiffData(zippedDiffs, line => line.New, piece => piece.New);
+            SideBySideDiffModel diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
+            List<OldNew<DiffPiece>> zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
+            RichTextBlockDiffContext leftContext = GetDiffData(zippedDiffs, line => line.Old, piece => piece.Old);
+            RichTextBlockDiffContext rightContext = GetDiffData(zippedDiffs, line => line.New, piece => piece.New);
 
             inDiff = false;
             return new Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext>(leftContext, rightContext);
@@ -133,14 +141,14 @@ namespace Notepads.Extensions.DiffViewer
 
         private RichTextBlockDiffContext GetDiffData(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
         {
-            var context = new RichTextBlockDiffContext();
+            RichTextBlockDiffContext context = new RichTextBlockDiffContext();
             int pointer = 0;
-            foreach (var line in lines)
+            foreach (OldNew<DiffPiece> line in lines)
             {
-                var synchroLineLength = Math.Max(line.Old.Text?.Length ?? 0, line.New.Text?.Length ?? 0);
-                var lineSubPieces = Enumerable.Zip(line.Old.SubPieces, line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
+                int synchroLineLength = Math.Max(line.Old.Text?.Length ?? 0, line.New.Text?.Length ?? 0);
+                IEnumerable<OldNew<DiffPiece>> lineSubPieces = Enumerable.Zip(line.Old.SubPieces, line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
 
-                var oldNewLine = lineSelector(line);
+                DiffPiece oldNewLine = lineSelector(line);
                 switch (oldNewLine.Type)
                 {
                     case ChangeType.Unchanged:
@@ -156,15 +164,15 @@ namespace Notepads.Extensions.DiffViewer
                         AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref pointer, Colors.OrangeRed);
                         break;
                     case ChangeType.Modified:
-                        var paragraph = new Paragraph()
+                        Paragraph paragraph = new Paragraph()
                         {
                             LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                             Foreground = _defaultForeground,
                         };
                         paragraph.LineHeight = paragraph.FontSize + 6;
-                        foreach (var subPiece in lineSubPieces)
+                        foreach (OldNew<DiffPiece> subPiece in lineSubPieces)
                         {
-                            var oldNewPiece = pieceSelector(subPiece);
+                            DiffPiece oldNewPiece = pieceSelector(subPiece);
                             switch (oldNewPiece.Type)
                             {
                                 case ChangeType.Unchanged: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.Yellow)); break;
@@ -184,7 +192,7 @@ namespace Notepads.Extensions.DiffViewer
 
         private Inline NewRun(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
         {
-            var run = new Run
+            Run run = new Run
             {
                 Text = text,
                 Foreground = foreground.HasValue
@@ -202,7 +210,7 @@ namespace Notepads.Extensions.DiffViewer
 
         private Paragraph AppendParagraph(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
         {
-            var paragraph = new Paragraph
+            Paragraph paragraph = new Paragraph
             {
                 LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                 Foreground = foreground.HasValue
@@ -211,7 +219,7 @@ namespace Notepads.Extensions.DiffViewer
             };
             paragraph.LineHeight = paragraph.FontSize + 6;
 
-            var run = new Run { Text = text };
+            Run run = new Run { Text = text };
             paragraph.Inlines.Add(run);
 
             richTextBlockData.Blocks.Add(paragraph);

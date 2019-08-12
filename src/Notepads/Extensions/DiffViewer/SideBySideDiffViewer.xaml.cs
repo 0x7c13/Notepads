@@ -94,41 +94,49 @@ namespace Notepads.Extensions.DiffViewer
         {
             StopRenderingAndClearCache();
 
-            var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
+            SolidColorBrush foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
                 ? new SolidColorBrush(Colors.White)
                 : new SolidColorBrush(Colors.Black);
 
-            var diffContext = _diffRenderer.GenerateDiffViewData(left, right, foregroundBrush);
-            var leftContext = diffContext.Item1;
-            var rightContext = diffContext.Item2;
-            var leftHighlighters = leftContext.GetTextHighlighters();
-            var rightHighlighters = rightContext.GetTextHighlighters();
+            Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext> diffContext = _diffRenderer.GenerateDiffViewData(left, right, foregroundBrush);
+            RichTextBlockDiffContext leftContext = diffContext.Item1;
+            RichTextBlockDiffContext rightContext = diffContext.Item2;
+            IList<Windows.UI.Xaml.Documents.TextHighlighter> leftHighlighters = leftContext.GetTextHighlighters();
+            IList<Windows.UI.Xaml.Documents.TextHighlighter> rightHighlighters = rightContext.GetTextHighlighters();
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
             Task.Factory.StartNew(async () =>
             {
-                var leftCount = leftContext.Blocks.Count;
-                var rightCount = rightContext.Blocks.Count;
+                int leftCount = leftContext.Blocks.Count;
+                int rightCount = rightContext.Blocks.Count;
 
-                var leftStartIndex = 0;
-                var rightStartIndex = 0;
-                var threshold = 1;
+                int leftStartIndex = 0;
+                int rightStartIndex = 0;
+                int threshold = 1;
 
                 while (true)
                 {
                     Thread.Sleep(10);
                     if (leftStartIndex < leftCount)
                     {
-                        var end = leftStartIndex + threshold;
-                        if (end >= leftCount) end = leftCount;
-                        var start = leftStartIndex;
+                        int end = leftStartIndex + threshold;
+                        if (end >= leftCount)
+                        {
+                            end = leftCount;
+                        }
+
+                        int start = leftStartIndex;
 
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
                             for (int x = start; x < end; x++)
                             {
-                                if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (cancellationTokenSource.IsCancellationRequested)
+                                {
+                                    return;
+                                }
+
                                 LeftBox.Blocks.Add(leftContext.Blocks[x]);
                             }
                         });
@@ -136,15 +144,23 @@ namespace Notepads.Extensions.DiffViewer
 
                     if (rightStartIndex < rightCount)
                     {
-                        var end = rightStartIndex + threshold;
-                        if (end >= rightCount) end = rightCount;
-                        var start = rightStartIndex;
+                        int end = rightStartIndex + threshold;
+                        if (end >= rightCount)
+                        {
+                            end = rightCount;
+                        }
+
+                        int start = rightStartIndex;
 
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
                             for (int x = start; x < end; x++)
                             {
-                                if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (cancellationTokenSource.IsCancellationRequested)
+                                {
+                                    return;
+                                }
+
                                 RightBox.Blocks.Add(rightContext.Blocks[x]);
                             }
                         });
@@ -163,27 +179,35 @@ namespace Notepads.Extensions.DiffViewer
 
             Task.Factory.StartNew(async () =>
             {
-                var leftCount = leftHighlighters.Count;
-                var rightCount = rightHighlighters.Count;
+                int leftCount = leftHighlighters.Count;
+                int rightCount = rightHighlighters.Count;
 
-                var leftStartIndex = 0;
-                var rightStartIndex = 0;
-                var threshold = 5;
+                int leftStartIndex = 0;
+                int rightStartIndex = 0;
+                int threshold = 5;
 
                 while (true)
                 {
                     Thread.Sleep(10);
                     if (leftStartIndex < leftCount)
                     {
-                        var end = leftStartIndex + threshold;
-                        if (end >= leftCount) end = leftCount;
-                        var start = leftStartIndex;
+                        int end = leftStartIndex + threshold;
+                        if (end >= leftCount)
+                        {
+                            end = leftCount;
+                        }
+
+                        int start = leftStartIndex;
 
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
                             for (int x = start; x < end; x++)
                             {
-                                if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (cancellationTokenSource.IsCancellationRequested)
+                                {
+                                    return;
+                                }
+
                                 LeftBox.TextHighlighters.Add(leftHighlighters[x]);
                             }
                         });
@@ -191,15 +215,23 @@ namespace Notepads.Extensions.DiffViewer
 
                     if (rightStartIndex < rightCount)
                     {
-                        var end = rightStartIndex + threshold;
-                        if (end >= rightCount) end = rightCount;
-                        var start = rightStartIndex;
+                        int end = rightStartIndex + threshold;
+                        if (end >= rightCount)
+                        {
+                            end = rightCount;
+                        }
+
+                        int start = rightStartIndex;
 
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                         {
                             for (int x = start; x < end; x++)
                             {
-                                if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (cancellationTokenSource.IsCancellationRequested)
+                                {
+                                    return;
+                                }
+
                                 RightBox.TextHighlighters.Add(rightHighlighters[x]);
                             }
                         });

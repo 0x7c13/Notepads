@@ -12,7 +12,7 @@ namespace Notepads.Utilities
     {
         public static string GetEncodingBodyName(Encoding encoding)
         {
-            var encodingBodyName = "ANSI";
+            string encodingBodyName = "ANSI";
 
             if (encoding is UTF7Encoding)
             {

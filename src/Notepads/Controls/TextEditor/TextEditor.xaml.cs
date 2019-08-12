@@ -142,7 +142,7 @@ namespace Notepads.Controls.TextEditor
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, args); };
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
-            TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, this.TextEditorCore);
+            TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
@@ -173,10 +173,14 @@ namespace Notepads.Controls.TextEditor
 
         public async void StartCheckingFileStatusPeriodically()
         {
-            if (EditingFile == null) return;
+            if (EditingFile == null)
+            {
+                return;
+            }
+
             StopCheckingFileStatus();
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
             _fileStatusCheckerCancellationTokenSource = cancellationTokenSource;
 
             try
@@ -211,7 +215,10 @@ namespace Notepads.Controls.TextEditor
 
         private async Task CheckAndUpdateFileStatus()
         {
-            if (EditingFile == null) return;
+            if (EditingFile == null)
+            {
+                return;
+            }
 
             await _fileStatusSemaphoreSlim.WaitAsync();
 
@@ -289,7 +296,10 @@ namespace Notepads.Controls.TextEditor
 
         public bool TryChangeEncoding(Encoding encoding)
         {
-            if (encoding == null) return false;
+            if (encoding == null)
+            {
+                return false;
+            }
 
             if (!EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
             {
@@ -363,11 +373,18 @@ namespace Notepads.Controls.TextEditor
             if (_contentPreviewExtension == null)
             {
                 _contentPreviewExtension = ExtensionProvider?.GetContentPreviewExtension(FileType);
-                if (_contentPreviewExtension == null) return;
-                _contentPreviewExtension.Bind(this.TextEditorCore);
+                if (_contentPreviewExtension == null)
+                {
+                    return;
+                }
+
+                _contentPreviewExtension.Bind(TextEditorCore);
             }
 
-            if (SplitPanel == null) LoadSplitView();
+            if (SplitPanel == null)
+            {
+                LoadSplitView();
+            }
 
             if (SplitPanel.Visibility == Visibility.Collapsed)
             {
@@ -383,9 +400,21 @@ namespace Notepads.Controls.TextEditor
 
         public void OpenSideBySideDiffViewer()
         {
-            if (string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText())) return;
-            if (EditorMode == TextEditorMode.DiffPreview) return;
-            if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
+            if (string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
+            {
+                return;
+            }
+
+            if (EditorMode == TextEditorMode.DiffPreview)
+            {
+                return;
+            }
+
+            if (SideBySideDiffViewer == null)
+            {
+                LoadSideBySideDiffViewer();
+            }
+
             EditorMode = TextEditorMode.DiffPreview;
             TextEditorCore.IsEnabled = false;
             EditorRowDefinition.Height = new GridLength(0);
@@ -398,7 +427,11 @@ namespace Notepads.Controls.TextEditor
 
         public void CloseSideBySideDiffViewer()
         {
-            if (EditorMode != TextEditorMode.DiffPreview) return;
+            if (EditorMode != TextEditorMode.DiffPreview)
+            {
+                return;
+            }
+
             EditorMode = TextEditorMode.Editing;
             TextEditorCore.IsEnabled = true;
             EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
@@ -410,7 +443,11 @@ namespace Notepads.Controls.TextEditor
 
         public void ShowHideSideBySideDiffViewer()
         {
-            if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
+            if (SideBySideDiffViewer == null)
+            {
+                LoadSideBySideDiffViewer();
+            }
+
             if (SideBySideDiffViewer.Visibility == Visibility.Collapsed)
             {
                 OpenSideBySideDiffViewer();
@@ -436,7 +473,11 @@ namespace Notepads.Controls.TextEditor
 
         public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
-            if (EditorMode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
+            if (EditorMode == TextEditorMode.DiffPreview)
+            {
+                CloseSideBySideDiffViewer();
+            }
+
             TextFile textFile = await SaveContentToFile(file);
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
@@ -445,11 +486,11 @@ namespace Notepads.Controls.TextEditor
 
         public async Task<TextFile> SaveContentToFile(StorageFile file)
         {
-            var text = TextEditorCore.GetText();
-            var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
-            var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
+            string text = TextEditorCore.GetText();
+            Encoding encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
+            LineEnding lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
-            var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
+            long newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
 
@@ -464,7 +505,7 @@ namespace Notepads.Controls.TextEditor
         {
             if (TextEditorCore.IsEnabled)
             {
-                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
+                string tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
                 TextEditorCore.Document.Selection.TypeText(tabStr);
             }
         }
@@ -483,7 +524,10 @@ namespace Notepads.Controls.TextEditor
 
         public bool IsInOriginalState(bool compareTextOnly = false)
         {
-            if (!_loaded) return true;
+            if (!_loaded)
+            {
+                return true;
+            }
 
             if (!compareTextOnly)
             {
@@ -532,7 +576,11 @@ namespace Notepads.Controls.TextEditor
 
         private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
         {
-            if (!args.IsContentChanging || !_loaded) return;
+            if (!args.IsContentChanging || !_loaded)
+            {
+                return;
+            }
+
             if (IsModified)
             {
                 IsModified = !IsInOriginalState();
@@ -556,9 +604,12 @@ namespace Notepads.Controls.TextEditor
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
             }
 
-            var findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
+            FindAndReplaceControl findAndReplace = (FindAndReplaceControl)FindAndReplacePlaceholder.Content;
 
-            if (findAndReplace == null) return;
+            if (findAndReplace == null)
+            {
+                return;
+            }
 
             FindAndReplacePlaceholder.Height = findAndReplace.GetHeight(showReplaceBar);
             findAndReplace.ShowReplaceBar(showReplaceBar);
