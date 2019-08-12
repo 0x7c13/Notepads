@@ -1,10 +1,6 @@
 ﻿
 namespace Notepads.Core
 {
-    using Newtonsoft.Json;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -13,6 +9,11 @@ namespace Notepads.Core
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Utilities;
+    using Windows.Foundation.Collections;
     using Windows.Storage;
 
     internal class SessionManager : ISessionManager
@@ -134,8 +135,6 @@ namespace Notepads.Core
 
             NotepadsSessionDataV1 sessionData = new NotepadsSessionDataV1();
 
-            int sessionDataUpdateCount = 0;
-
             foreach (TextEditor textEditor in textEditors)
             {
                 if (textEditor.EditingFile != null)
@@ -148,21 +147,21 @@ namespace Notepads.Core
                 {
                     textEditorData = new TextEditorSessionData { Id = textEditor.Id };
 
-                    if (textEditor.EditingFile != null)
-                    {
-                        // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
-                        BackupMetadata lastSaved = await SaveLastSavedChangesAsync(textEditor);
-
-                        if (lastSaved == null)
-                        {
-                            continue;
-                        }
-
-                        textEditorData.LastSaved = lastSaved;
-                    }
-
                     if (textEditor.IsModified)
                     {
+                        if (textEditor.EditingFile != null)
+                        {
+                            // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
+                            BackupMetadata lastSaved = await SaveLastSavedChangesAsync(textEditor);
+
+                            if (lastSaved == null)
+                            {
+                                continue;
+                            }
+
+                            textEditorData.LastSaved = lastSaved;
+                        }
+
                         // Persist pending changes relative to the last save
                         BackupMetadata pending = await SavePendingChangesAsync(textEditor);
 
@@ -176,24 +175,28 @@ namespace Notepads.Core
 
                     // We will not create new backup files for this text editor unless it has changes
                     _sessionData.TryAdd(textEditor.Id, textEditorData);
-                    sessionDataUpdateCount++;
                 }
 
-                if (textEditorData.LastSaved != null || textEditorData.Pending != null)
-                {
-                    sessionData.TextEditors.Add(textEditorData);
+                sessionData.TextEditors.Add(textEditorData);
 
-                    if (textEditor == selectedTextEditor)
-                    {
-                        sessionData.SelectedTextEditor = textEditor.Id;
-                    }
+                if (textEditor == selectedTextEditor)
+                {
+                    sessionData.SelectedTextEditor = textEditor.Id;
                 }
             }
+
+            bool sessionDataSaved = false;
 
             try
             {
                 string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
-                ApplicationData.Current.LocalSettings.Values[SessionDataKey] = sessionJson;
+                IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
+
+                if (!settings.TryGetValue(SessionDataKey, out object currentValue) || !string.Equals((string)currentValue, sessionJson, StringComparison.OrdinalIgnoreCase))
+                {
+                    settings[SessionDataKey] = sessionJson;
+                    sessionDataSaved = true;
+                }
             }
             catch (Exception ex)
             {
@@ -201,12 +204,16 @@ namespace Notepads.Core
                 return; // Failed to save the session - do not proceed to delete backup files
             }
 
-            await DeleteOrphanedBackupFilesAsync(sessionData);
+            if (sessionDataSaved)
+            {
+                await DeleteOrphanedBackupFilesAsync(sessionData);
+            }
 
             stopwatch.Stop();
-            if (sessionDataUpdateCount > 0)
+
+            if (sessionDataSaved)
             {
-                LoggingService.LogInfo($"Successfully saved the current session with [{sessionDataUpdateCount}] new updates. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
+                LoggingService.LogInfo($"Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
             }
 
             _semaphoreSlim.Release();
@@ -260,26 +267,47 @@ namespace Notepads.Core
             BackupMetadata pending = textEditorData.Pending;
             TextEditor textEditor;
 
-            if (sourceFile == null)
+            if (sourceFile == null) // Untitled.txt or file not found
             {
-                textEditor = _notepadsCore.OpenNewTextEditor(
-                    textEditorData.Id,
-                    string.Empty,
-                    null,
-                    -1,
-                    EditorSettingsService.EditorDefaultEncoding,
-                    EditorSettingsService.EditorDefaultLineEnding,
-                    false);
+                if (lastSaved != null || pending != null)
+                {
+                    textEditor = _notepadsCore.OpenNewTextEditor(
+                        textEditorData.Id,
+                        string.Empty,
+                        null,
+                        -1,
+                        EditorSettingsService.EditorDefaultEncoding,
+                        EditorSettingsService.EditorDefaultLineEnding,
+                        false);
 
-                await ApplyChangesAsync(textEditor, pending ?? lastSaved);
+                    await ApplyChangesAsync(textEditor, pending ?? lastSaved);
+                }
+                else
+                {
+                    textEditor = null;
+                }
             }
-            else
+            else if (lastSaved == null && pending == null) // File without pending changes
             {
-                TextFile lastSavedContent = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath);
+                TextFile textFile = await FileSystemUtility.ReadFile(sourceFile);
+                long dateModified = await FileSystemUtility.GetDateModified(sourceFile);
 
                 textEditor = _notepadsCore.OpenNewTextEditor(
                     textEditorData.Id,
-                    lastSavedContent.Content,
+                    textFile.Content,
+                    sourceFile,
+                    dateModified,
+                    textFile.Encoding,
+                    textFile.LineEnding,
+                    false);
+            }
+            else // File with pending changes
+            {
+                TextFile textFile = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath);
+
+                textEditor = _notepadsCore.OpenNewTextEditor(
+                    textEditorData.Id,
+                    textFile.Content,
                     sourceFile,
                     lastSaved.DateModified,
                     lastSaved.Encoding,
@@ -294,11 +322,6 @@ namespace Notepads.Core
 
         private async Task ApplyChangesAsync(TextEditor textEditor, BackupMetadata backupMetadata)
         {
-            if (backupMetadata == null)
-            {
-                return;
-            }
-
             TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath);
             textEditor.Init(textFile, textEditor.EditingFile, resetOriginalSnapshot: false, isModified: true);
             textEditor.TryChangeEncoding(backupMetadata.Encoding);
