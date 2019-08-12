@@ -1,16 +1,16 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Extensions;
-    using Notepads.Services;
-    using Notepads.Utilities;
-    using SetsView;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
+    using Notepads.Services;
+    using Notepads.Utilities;
+    using SetsView;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
@@ -72,10 +72,10 @@ namespace Notepads.Core
             _sessionManager = SessionUtility.GetSessionManager(this);
         }
 
-        public void OpenNewTextEditor()
+        public TextEditor OpenNewTextEditor(Guid? id = null)
         {
-            OpenNewTextEditor(
-                Guid.NewGuid(),
+            return OpenNewTextEditor(
+                id ?? Guid.NewGuid(),
                 string.Empty,
                 null,
                 -1,
@@ -84,19 +84,19 @@ namespace Notepads.Core
                 false);
         }
 
-        public async Task OpenNewTextEditor(StorageFile file)
+        public async Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null)
         {
             if (FileOpened(file))
             {
                 SwitchTo(file);
-                return;
+                return GetSelectedTextEditor();
             }
 
             var textFile = await FileSystemUtility.ReadFile(file);
             var dateModifiedFileTime = await FileSystemUtility.GetDateModified(file);
 
-            OpenNewTextEditor(
-                Guid.NewGuid(),
+            return OpenNewTextEditor(
+                id ?? Guid.NewGuid(),
                 textFile.Content,
                 file,
                 dateModifiedFileTime,

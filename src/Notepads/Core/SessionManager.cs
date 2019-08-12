@@ -271,15 +271,7 @@ namespace Notepads.Core
             {
                 if (lastSaved != null || pending != null)
                 {
-                    textEditor = _notepadsCore.OpenNewTextEditor(
-                        textEditorData.Id,
-                        string.Empty,
-                        null,
-                        -1,
-                        EditorSettingsService.EditorDefaultEncoding,
-                        EditorSettingsService.EditorDefaultLineEnding,
-                        false);
-
+                    textEditor = _notepadsCore.OpenNewTextEditor(textEditorData.Id);
                     await ApplyChangesAsync(textEditor, pending ?? lastSaved);
                 }
                 else
@@ -289,17 +281,7 @@ namespace Notepads.Core
             }
             else if (lastSaved == null && pending == null) // File without pending changes
             {
-                TextFile textFile = await FileSystemUtility.ReadFile(sourceFile);
-                long dateModified = await FileSystemUtility.GetDateModified(sourceFile);
-
-                textEditor = _notepadsCore.OpenNewTextEditor(
-                    textEditorData.Id,
-                    textFile.Content,
-                    sourceFile,
-                    dateModified,
-                    textFile.Encoding,
-                    textFile.LineEnding,
-                    false);
+                textEditor = await _notepadsCore.OpenNewTextEditor(sourceFile, textEditorData.Id);
             }
             else // File with pending changes
             {
