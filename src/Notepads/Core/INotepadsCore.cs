@@ -39,12 +39,12 @@ namespace Notepads.Core
         Task OpenNewTextEditor(StorageFile file);
 
         TextEditor OpenNewTextEditor(
-            Guid id, 
-            string text, 
-            StorageFile file, 
-            long dateModifiedFileTime, 
-            Encoding encoding, 
-            LineEnding lineEnding, 
+            Guid id,
+            string text,
+            StorageFile file,
+            long dateModifiedFileTime,
+            Encoding encoding,
+            LineEnding lineEnding,
             bool isModified);
 
         Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
