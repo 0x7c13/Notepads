@@ -1,6 +1,4 @@
 ﻿
-using System.Reflection.Metadata.Ecma335;
-
 namespace Notepads.Utilities
 {
     using Microsoft.AppCenter.Analytics;
