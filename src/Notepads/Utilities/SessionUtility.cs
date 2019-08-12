@@ -27,6 +27,11 @@ namespace Notepads.Utilities
             return sessionManager;
         }
 
+        public static async Task<StorageFolder> GetBackupFolderAsync()
+        {
+            return await FileSystemUtility.GetOrCreateAppFolder("BackupFiles");
+        }
+
         public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync()
         {
             StorageFolder backupFolder = await GetBackupFolderAsync();
@@ -37,11 +42,6 @@ namespace Notepads.Utilities
         {
             StorageFolder backupFolder = await GetBackupFolderAsync();
             return await backupFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-        }
-
-        private static async Task<StorageFolder> GetBackupFolderAsync()
-        {
-            return await FileSystemUtility.GetOrCreateAppFolder("BackupFiles");
         }
     }
 }
