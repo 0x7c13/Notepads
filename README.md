@@ -25,6 +25,12 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ******* 📣 Notepads App is still under active development. *******
 
+## Status update
+
+[[08-12-2019] Status update and KPI report](https://github.com/JasonStein/Notepads/issues/138)
+
+![image](https://user-images.githubusercontent.com/1166162/62916469-75eb5800-bd4d-11e9-9f97-a632792400c0.png)
+
 ## Things are not working or not implemented in this version:
 
 * File Print.
