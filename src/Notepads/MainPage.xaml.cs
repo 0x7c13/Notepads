@@ -368,14 +368,20 @@ namespace Notepads
             {
                 LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
-                SessionManager.StopSessionBackup();
+                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.StopSessionBackup();
+                }
             }
             else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
-                SessionManager.StartSessionBackup();
+                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.StartSessionBackup();
+                }
             }
         }
 
