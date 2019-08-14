@@ -56,6 +56,8 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler TextChanging;
 
+        public event EventHandler ChangeReverted;
+
         public event RoutedEventHandler SelectionChanged;
 
         public FileType FileType { get; private set; }
@@ -289,6 +291,7 @@ namespace Notepads.Controls.TextEditor
         public void RevertAllChanges()
         {
             Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
+            ChangeReverted?.Invoke(this, EventArgs.Empty);
         }
 
         public bool TryChangeEncoding(Encoding encoding)

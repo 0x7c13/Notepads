@@ -44,6 +44,8 @@ namespace Notepads.Core
                 textEditor.TextChanging += RemoveTextEditorData;
                 textEditor.EncodingChanged += RemoveTextEditorData;
                 textEditor.LineEndingChanged += RemoveTextEditorData;
+                textEditor.ChangeReverted += RemoveTextEditorData;
+                textEditor.EditorModificationStateChanged += RemoveTextEditorData;
             };
 
             _notepadsCore.TextEditorUnloaded += (sender, textEditor) =>
@@ -51,6 +53,8 @@ namespace Notepads.Core
                 textEditor.TextChanging -= RemoveTextEditorData;
                 textEditor.EncodingChanged -= RemoveTextEditorData;
                 textEditor.LineEndingChanged -= RemoveTextEditorData;
+                textEditor.ChangeReverted -= RemoveTextEditorData;
+                textEditor.EditorModificationStateChanged -= RemoveTextEditorData;
             };
         }
 

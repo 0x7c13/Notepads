@@ -307,18 +307,21 @@ namespace Notepads.Utilities
             }
         }
 
-        public static bool TryAddToFutureAccessList(string token, StorageFile file)
+        public static async Task<bool> TryAddToFutureAccessList(string token, StorageFile file)
         {
             try
             {
-                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-                return true;
+                if (await FileExists(file))
+                {
+                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                return false;
             }
+            return false;
         }
 
         public static void ClearFutureAccessList()
