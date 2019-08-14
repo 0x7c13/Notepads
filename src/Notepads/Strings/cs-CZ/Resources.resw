@@ -410,7 +410,7 @@
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>Kopírovaný</value>
+    <value>Zkopírováno</value>
     <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
