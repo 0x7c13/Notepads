@@ -167,7 +167,7 @@
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
     <value>Status Bar Settings</value>
-    <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
     <value>Advanced</value>
@@ -292,5 +292,21 @@
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
     <value>Журнал изменений</value>
     <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
+    <value>Notepads will remember the current session for next launch and do a periodic backup to prevent accidental data loss. Notepads will NOT remind you to save your work on app close if this option is enabled.</value>
+    <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Enable session backup and restore</value>
+    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Enable session backup and restore</value>
+    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
+    <value>Session Backup Settings</value>
+    <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
   </data>
 </root>

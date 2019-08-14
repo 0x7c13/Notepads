@@ -38,13 +38,13 @@ namespace Notepads
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        private INotepadsCore _notepadsCore;
-
         private bool _loaded = false;
 
         private const int TitleBarReservedAreaDefaultWidth = 180;
 
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
+
+        private INotepadsCore _notepadsCore;
 
         private INotepadsCore NotepadsCore
         {
@@ -93,7 +93,10 @@ namespace Notepads
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
-        private readonly ISessionManager _sessionManager;
+        private ISessionManager _sessionManager;
+
+        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
+
 
         public MainPage()
         {
@@ -117,6 +120,22 @@ namespace Notepads
                 if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
             };
 
+            // Session backup and restore toggle
+            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += (sender, isSessionBackupAndRestoreEnabled) =>
+            {
+                if (isSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.IsBackupEnabled = true;
+                    SessionManager.StartSessionBackup(startImmediately: true);
+                }
+                else
+                {
+                    SessionManager.IsBackupEnabled = false;
+                    SessionManager.StopSessionBackup();
+                    SessionManager.ClearSessionData();
+                }
+            };
+
             // Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
@@ -127,8 +146,6 @@ namespace Notepads
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
-
-            _sessionManager = SessionUtility.GetSessionManager(NotepadsCore);
         }
 
         private void InitControls()
@@ -305,9 +322,9 @@ namespace Notepads
         {
             int loadedCount = 0;
 
-            if (!_loaded)
+            if (!_loaded && EditorSettingsService.IsSessionBackupAndRestoreEnabled)
             {
-                loadedCount = await _sessionManager.LoadLastSessionAsync();
+                loadedCount = await SessionManager.LoadLastSessionAsync();
             }
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
@@ -335,8 +352,11 @@ namespace Notepads
                 _loaded = true;
             }
 
-            _sessionManager.IsBackupEnabled = true;
-            _sessionManager.StartSessionBackup();
+            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            {
+                SessionManager.IsBackupEnabled = true;
+                SessionManager.StartSessionBackup();
+            }
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
@@ -348,14 +368,14 @@ namespace Notepads
             {
                 LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
-                _sessionManager.StopSessionBackup();
+                SessionManager.StopSessionBackup();
             }
             else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
-                _sessionManager.StartSessionBackup();
+                SessionManager.StartSessionBackup();
             }
         }
 
@@ -385,32 +405,39 @@ namespace Notepads
 
         private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (!NotepadsCore.HaveUnsavedTextEditor()) return;
             e.Handled = true;
 
-            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
-                async () =>
+            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            {
+                // Save session before app exit
+                await SessionManager.SaveSessionAsync();
+                Application.Current.Exit();
+            }
+            else
+            {
+                if (!NotepadsCore.HaveUnsavedTextEditor())
                 {
-                    foreach (var textEditor in NotepadsCore.GetAllTextEditors())
-                    {
-                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
-                        {
-                            NotepadsCore.DeleteTextEditor(textEditor);
-                        }
-                    }
-                },
-                () =>
-                {
-                    if (_sessionManager.IsBackupEnabled)
-                    {
-                        _sessionManager.StopSessionBackup();
-                        _sessionManager.ClearSessionData();
-                    }
-
                     Application.Current.Exit();
-                });
+                }
 
-            await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+                ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
+                    async () =>
+                    {
+                        foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                        {
+                            if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
+                            {
+                                NotepadsCore.DeleteTextEditor(textEditor);
+                            }
+                        }
+                    },
+                    () =>
+                    {
+                        Application.Current.Exit();
+                    });
+
+                await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+            }
         }
 
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)

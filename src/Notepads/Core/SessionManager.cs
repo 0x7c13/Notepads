@@ -144,7 +144,7 @@ namespace Notepads.Core
                 if (textEditor.EditingFile != null)
                 {
                     // Add the opened file to FutureAccessList so we can access it next launch
-                    FileSystemUtility.TryAddToFutureAccessList(ToToken(textEditor.Id), textEditor.EditingFile);
+                    await FileSystemUtility.TryAddToFutureAccessList(ToToken(textEditor.Id), textEditor.EditingFile);
                 }
 
                 if (!_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionData textEditorData))

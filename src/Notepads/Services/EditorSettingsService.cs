@@ -23,6 +23,8 @@ namespace Notepads.Services
 
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
 
+        public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
+
         private static string _editorFontFamily;
 
         public static string EditorFontFamily
@@ -142,6 +144,20 @@ namespace Notepads.Services
             }
         }
 
+        private static bool _isSessionBackupAndRestoreEnabled;
+
+        public static bool IsSessionBackupAndRestoreEnabled
+        {
+            get => _isSessionBackupAndRestoreEnabled;
+            set
+            {
+                _isSessionBackupAndRestoreEnabled = value;
+                OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
+                ApplicationSettings.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
+            }
+        }
+
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -157,6 +173,8 @@ namespace Notepads.Services
             InitializeTabIndentsSettings();
 
             InitializeStatusBarSettings();
+
+            InitializeSessionBackupAndRestoreSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -168,6 +186,18 @@ namespace Notepads.Services
             else
             {
                 _showStatusBar = true;
+            }
+        }
+
+        private static void InitializeSessionBackupAndRestoreSettings()
+        {
+            if (ApplicationSettings.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+            {
+                _isSessionBackupAndRestoreEnabled = enableSessionBackupAndRestore;
+            }
+            else
+            {
+                _isSessionBackupAndRestoreEnabled = false;
             }
         }
 
