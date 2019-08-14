@@ -63,7 +63,7 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 * [Project Roadmap](ROADMAP.md)
 
-## Changelog
+## Changelog:
 
 * [Notepads Releases](https://github.com/JasonStein/Notepads/releases)
 
