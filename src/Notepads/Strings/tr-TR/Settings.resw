@@ -294,19 +294,19 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic backup to prevent accidental data loss. Notepads will NOT remind you to save your work on app close if this option is enabled.</value>
+    <value>Notepads şu anki oturumu sonraki açılışta hatırlayacak ve olası veri kayıpları için periyodik yedeklemeler yapacak. Notepads bu seçenek etkinken size uygulama kapanırken çalışmalarınızı kaydetmenizle alakalı bir hatırlatma YAPMAYACAK.</value>
     <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Oturum yedekleme ve geri yüklemeyi etkinleştir</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Oturum yedekleme ve geri yüklemeyi etkinleştir</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
-    <value>Session Backup Settings</value>
+    <value>Oturum Yedekleme Ayarları</value>
     <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
   </data>
 </root>

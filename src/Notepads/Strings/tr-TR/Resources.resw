@@ -254,7 +254,7 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal Et</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
