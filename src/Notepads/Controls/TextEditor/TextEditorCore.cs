@@ -74,18 +74,18 @@ namespace Notepads.Controls.TextEditor
             Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
             TextChanging += OnTextChanging;
 
-            SetDefaultTabStop(FontFamily, FontSize);
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
 
             EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
             {
                 FontFamily = new FontFamily(fontFamily);
-                SetDefaultTabStop(FontFamily, FontSize);
+                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             };
             EditorSettingsService.OnFontSizeChanged += (sender, fontSize) =>
             {
                 FontSize = fontSize;
-                SetDefaultTabStop(FontFamily, FontSize);
+                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             };
 
             EditorSettingsService.OnDefaultTextWrappingChanged += (sender, textWrapping) => { TextWrapping = textWrapping; };
@@ -371,27 +371,30 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        private void SetDefaultTabStop(FontFamily font, double fontSize)
+        private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)
         {
             Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
+            var format = Document.GetDefaultParagraphFormat();
+            format.SetLineSpacing(LineSpacingRule.AtLeast, (float)fontSize);
+            Document.SetDefaultParagraphFormat(format);
         }
 
         private void IncreaseFontSize(double delta)
         {
-            SetDefaultTabStop(FontFamily, FontSize + delta);
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize + delta);
             FontSize += delta;
         }
 
         private void DecreaseFontSize(double delta)
         {
             if (FontSize < delta + 2) return;
-            SetDefaultTabStop(FontFamily, FontSize - delta);
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize - delta);
             FontSize -= delta;
         }
 
         private void ResetFontSizeToDefault()
         {
-            SetDefaultTabStop(FontFamily, EditorSettingsService.EditorFontSize);
+            SetDefaultTabStopAndLineSpacing(FontFamily, EditorSettingsService.EditorFontSize);
             FontSize = EditorSettingsService.EditorFontSize;
         }
 

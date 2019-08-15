@@ -405,4 +405,20 @@
     <value>文件已重新加载</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>画中画模式</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>全屏模式</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>退出画中画模式</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>退出全屏模式</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
 </root>

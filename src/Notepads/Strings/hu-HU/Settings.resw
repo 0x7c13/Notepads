@@ -289,4 +289,8 @@
     <value>Szöveg &amp; Szerkesztő</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>Változtatás</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
 </root>

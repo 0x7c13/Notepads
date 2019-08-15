@@ -26,6 +26,8 @@ namespace Notepads.Controls.FindAndReplace
             {
                 SetSelectionHighlightColor();
             };
+
+            Loaded += (sender, args) => { Focus(FindAndReplaceMode.FindOnly); };
         }
 
         public double GetHeight(bool showReplaceBar)
@@ -52,9 +54,16 @@ namespace Notepads.Controls.FindAndReplace
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
-        public void Focus()
+        public void Focus(FindAndReplaceMode mode)
         {
-            FindBar.Focus(FocusState.Programmatic);
+            if (mode == FindAndReplaceMode.FindOnly)
+            {
+                FindBar.Focus(FocusState.Programmatic);
+            }
+            else
+            {
+                ReplaceBar.Focus(FocusState.Programmatic);
+            }
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
@@ -95,6 +104,11 @@ namespace Notepads.Controls.FindAndReplace
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 SearchButton_OnClick(sender, e);
+            }
+
+            if (e.Key == VirtualKey.Tab)
+            {
+                e.Handled = true;
             }
         }
 
