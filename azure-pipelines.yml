@@ -23,3 +23,4 @@ steps:
     platform: 'x64'
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:AppxBundle=Never'
