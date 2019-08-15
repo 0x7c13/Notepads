@@ -294,19 +294,19 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic backup to prevent accidental data loss. Notepads will NOT remind you to save your work on app close if this option is enabled.</value>
+    <value>Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva.</value>
     <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
-    <value>Session Backup Settings</value>
+    <value>Munkamenet Mentési Beállítások</value>
     <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
   </data>
 </root>
