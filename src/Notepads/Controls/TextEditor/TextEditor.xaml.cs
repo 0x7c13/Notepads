@@ -251,7 +251,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
                     {
