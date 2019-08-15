@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Commands;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
+    using Notepads.Commands;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
     using Windows.UI.Core;
@@ -16,6 +16,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
 
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
@@ -113,6 +114,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 5)
             });
         }
 
@@ -482,6 +484,17 @@ namespace Notepads.Controls.TextEditor
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void ShowEasterEgg()
+        {
+            _contentScrollViewer.Background = new ImageBrush
+            {
+                ImageSource = new BitmapImage(new Uri(BaseUri, "/Assets/EasterEgg.jpg")),
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center,
+                Stretch = Stretch.Uniform
+            };
         }
     }
 }
