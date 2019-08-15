@@ -290,23 +290,23 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Changelog</value>
+    <value>Änderungsprotokoll</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic backup to prevent accidental data loss. Notepads will NOT remind you to save your work on app close if this option is enabled.</value>
+    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schliessen NICHT zum speichern auffordern, wenn diese Option aktiviert ist.</value>
     <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
     <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
-    <value>Session Backup Settings</value>
+    <value>Sitzungssicherungseinstellungen</value>
     <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
   </data>
 </root>
