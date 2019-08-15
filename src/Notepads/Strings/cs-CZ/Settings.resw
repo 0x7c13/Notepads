@@ -157,6 +157,22 @@
     <value>O programu</value>
     <comment>AboutPage Title display text.</comment>
   </data>
+  <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
+    <value>Notepads si bude pamatovat aktuální session pro příští spuštění a bude dělat pravidelné zálohy proti možné ztrátě dat. Notepads vás při vypínání aplikace NEBUDE vyzývat k uložení souborů, pokud je tato funkce zapnutá</value>
+    <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Povolit zálohování a obnovení session</value>
+    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Povolit zálohování a obnovení session</value>
+    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
+    <value>Nastavení zálohování session</value>
+    <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
+  </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
     <value>Zobrazit stavový řádek</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
