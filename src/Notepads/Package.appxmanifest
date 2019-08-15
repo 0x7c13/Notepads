@@ -10,13 +10,13 @@
 
   <Identity
     Name="Notepads-Beta"
-    Publisher="CN=Jackie Liu"
+    Publisher="CN=jackil"
     Version="0.9.9.0" />
 
   <mp:PhoneIdentity PhoneProductId="77ab4c55-cc57-4187-a21f-b8adbd22d860" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Notepads - Beta</DisplayName>
+    <DisplayName>Notepads - Dev</DisplayName>
     <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
