@@ -16,7 +16,7 @@
   <mp:PhoneIdentity PhoneProductId="77ab4c55-cc57-4187-a21f-b8adbd22d860" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Notepads - Dev</DisplayName>
+    <DisplayName>Notepads - Beta</DisplayName>
     <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -97,6 +97,16 @@
               <uap:FileType ContentType="text/plain">.log</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Log File</uap:DisplayName>
+            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bib">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.bib</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>BibTeX File</uap:DisplayName>
             <uap:Logo>Assets\appicon_w.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
