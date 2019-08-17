@@ -293,20 +293,20 @@
     <value>Változtatás</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
     <value>Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva.</value>
-    <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
     <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
     <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>Munkamenet Mentési Beállítások</value>
-    <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

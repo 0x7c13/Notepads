@@ -558,7 +558,7 @@ namespace Notepads
         private void UpdateEncodingIndicator(Encoding encoding)
         {
             if (StatusBar == null) return;
-            EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
+            EncodingIndicator.Text = EncodingUtility.GetEncodingName(encoding);
         }
 
         private void UpdateLineEndingIndicator(LineEnding lineEnding)

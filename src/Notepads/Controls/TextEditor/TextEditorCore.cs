@@ -488,13 +488,13 @@ namespace Notepads.Controls.TextEditor
 
         private void ShowEasterEgg()
         {
-            _contentScrollViewer.Background = new ImageBrush
-            {
-                ImageSource = new BitmapImage(new Uri(BaseUri, "/Assets/EasterEgg.jpg")),
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center,
-                Stretch = Stretch.Uniform
-            };
+            //_contentScrollViewer.Background = new ImageBrush
+            //{
+            //    ImageSource = new BitmapImage(new Uri(BaseUri, "/Assets/EasterEgg.jpg")),
+            //    AlignmentX = AlignmentX.Center,
+            //    AlignmentY = AlignmentY.Center,
+            //    Stretch = Stretch.Uniform
+            //};
         }
     }
 }

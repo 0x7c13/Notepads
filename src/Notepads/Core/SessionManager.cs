@@ -434,12 +434,12 @@ namespace Notepads.Core
         {
             public override Encoding ReadJson(JsonReader reader, Type objectType, Encoding existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                return EncodingUtility.GetEncodingByName((string)reader.Value);
+                return EncodingUtility.GetEncodingByName((string)reader.Value, new UTF8Encoding(false));
             }
 
             public override void WriteJson(JsonWriter writer, Encoding value, JsonSerializer serializer)
             {
-                writer.WriteValue(EncodingUtility.GetEncodingBodyName(value));
+                writer.WriteValue(EncodingUtility.GetEncodingName(value));
             }
         }
     }

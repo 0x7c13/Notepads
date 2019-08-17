@@ -293,20 +293,20 @@
     <value>Журнал изменений</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic backup to prevent accidental data loss. Notepads will NOT remind you to save your work on app close if this option is enabled.</value>
-    <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Notepads will remember the current session for next launch and do a periodic session snapshot backup to prevent accidental data loss for uncommitted changes. Notepads will NOT remind you to save your work on app close if this feature is enabled.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
     <value>Enable session backup and restore</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
     <value>Enable session backup and restore</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>Session Backup Settings</value>
-    <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

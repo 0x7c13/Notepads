@@ -293,20 +293,20 @@
     <value>Changelog</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Description.Text" xml:space="preserve">
-    <value>Notepads は次回起動時に備えて現在の状態保存を行い、また定期的にファイルの一時バックアップを作成しデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。再開時は一時バックアップされたファイルを開きます。元ファイルへの変更を確定するには保存の操作が必要です。</value>
-    <comment>AdvancedPage SessionBackupSettings Description display text.</comment>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Notepads は次回起動時に備えて現在の状態保存を行い、また定期的にセッション スナップショットのバックアップを行い、保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
     <value>セッションのバックアップと復元を使用する</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch On display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
     <value>セッションのバックアップと復元を使用する</value>
-    <comment>AdvancedPage SessionBackupSettings OnOffToggleSwitch Off display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionBackupSettings_Title.Text" xml:space="preserve">
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>セッションのバックアップ設定</value>
-    <comment>AdvancedPage SessionBackupSettings Title display text.</comment>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>
