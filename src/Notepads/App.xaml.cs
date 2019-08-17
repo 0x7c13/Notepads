@@ -135,13 +135,13 @@ namespace Notepads
                     "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString()
                 },
                 {
-                    "EditorDefaultEncoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultEncoding)
+                    "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding)
                 },
                 {
                     "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
                 },
                 {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultDecoding)
+                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
                 },
                 {
                     "EditorFontFamily", EditorSettingsService.EditorFontFamily
