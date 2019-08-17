@@ -208,6 +208,7 @@
     <Content Include="Assets\appicon_bs.png" />
     <Content Include="Assets\appicon_w.png" />
     <Content Include="Assets\appicon_ws.png" />
+    <Content Include="Assets\EasterEgg.jpg" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
     <Content Include="Assets\LargeTile.scale-150.png" />
