@@ -571,9 +571,11 @@ namespace Notepads
         {
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
+
+            var wordSelected = selectedCount > 1 ? _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") : _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_SingularSelectedWord");
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
-                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
+                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount, wordSelected);
         }
 
         private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
