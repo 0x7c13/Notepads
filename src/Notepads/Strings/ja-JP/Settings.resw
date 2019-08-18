@@ -290,23 +290,23 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>変更ログ</value>
+    <value>Changelog</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic session snapshot backup to prevent accidental data loss for uncommitted changes. Notepads will NOT remind you to save your work on app close if this feature is enabled.</value>
+    <value>Notepads は次回起動時に備えて現在の状態保存を行い、また定期的にセッション スナップショットのバックアップを行い、保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>セッションのバックアップと復元を使用する</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>セッションのバックアップと復元を使用する</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Session Backup Settings</value>
+    <value>セッションのバックアップ設定</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>
