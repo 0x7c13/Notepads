@@ -68,12 +68,28 @@ namespace Notepads.Utilities
                 return null;
             }
 
+            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
+
             return await GetFile(path);
         }
 
         public static string GetAbsolutePathFromCommondLine(string dir, string args)
         {
             if (string.IsNullOrEmpty(args)) return null;
+
+            args = args.Trim();
+
+            if (args.StartsWith("notepads",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                args = args.Substring("notepads".Length);
+                args = args.Trim();
+            }
+
+            if (string.IsNullOrEmpty(args))
+            {
+                return null;
+            }
 
             string path = args;
 

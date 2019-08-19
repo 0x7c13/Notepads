@@ -1,4 +1,7 @@
 ﻿
+using Windows.ApplicationModel;
+using Windows.System;
+
 namespace Notepads.Core
 {
     using System;
@@ -64,12 +67,51 @@ namespace Notepads.Core
             Sets.Items.VectorChanged += SetsView_OnItemsChanged;
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
+            Sets.SetDraggedOutside += Sets_SetDraggedOutside;
 
             _extensionProvider = extensionProvider;
             DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
 
             _sessionManager = SessionUtility.GetSessionManager(this);
+        }
+
+        private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
+        {
+            if (Sets.Items.Count > 1 && e.Set.Content is TextEditor textEditor)
+            {
+                if (!textEditor.IsModified)
+                {
+                    string uriToLaunch;
+
+                    if (textEditor.EditingFile == null)
+                    {
+                        uriToLaunch = "notepads://";
+                    }
+                    else if (textEditor.EditingFile != null && await FileSystemUtility.FileExists(textEditor.EditingFile))
+                    {
+                        if (await FileSystemUtility.TryAddToFutureAccessList("OnFileDraggedOutside".ToLower(), textEditor.EditingFile))
+                        {
+                            uriToLaunch = "notepads://" + "OnFileDraggedOutside".ToLower();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    var uri = new Uri(uriToLaunch);
+                    bool success = await Windows.System.Launcher.LaunchUriAsync(uri);
+                    if (success)
+                    {
+                        Sets.Items.Remove(e.Set);
+                    }
+                }
+            }
         }
 
         public TextEditor OpenNewTextEditor(Guid? id = null)

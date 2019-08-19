@@ -252,6 +252,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Grid x:Name="FileModificationStateIndicator"
@@ -369,6 +370,15 @@
                             </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="6" Background="{StaticResource SystemControlForegroundAccentBrush}">
+                <TextBlock x:Name="ShadowInstanceIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           x:Uid="TextEditor_ShadowInstanceIndicator" 
+                           Visibility="Collapsed"
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped">
                 </TextBlock>
             </Grid>
         </Grid>

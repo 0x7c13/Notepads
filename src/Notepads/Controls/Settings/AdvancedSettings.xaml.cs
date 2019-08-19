@@ -11,19 +11,32 @@ namespace Notepads.Controls.Settings
         {
             InitializeComponent();
             ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
-            EnableSessionBackupAndRestoreToggleSwitch.IsOn = EditorSettingsService.IsSessionBackupAndRestoreEnabled;
+
+            if (!App.IsFirstInstance)
+            {
+                EnableSessionBackupAndRestoreToggleSwitch.IsOn = false;
+                EnableSessionBackupAndRestoreToggleSwitch.IsEnabled = false;
+            }
+            else
+            {
+                EnableSessionBackupAndRestoreToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
+            }
+
             Loaded += AdvancedSettings_Loaded;
         }
 
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
-            EnableSessionBackupAndRestoreToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+            if (App.IsFirstInstance)
+            {
+                EnableSessionBackupAndRestoreToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+            }
         }
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsSessionBackupAndRestoreEnabled = EnableSessionBackupAndRestoreToggleSwitch.IsOn;
+            EditorSettingsService.IsSessionSnapshotEnabled = EnableSessionBackupAndRestoreToggleSwitch.IsOn;
         }
 
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)

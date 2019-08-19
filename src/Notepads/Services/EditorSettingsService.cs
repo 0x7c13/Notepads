@@ -144,19 +144,18 @@ namespace Notepads.Services
             }
         }
 
-        private static bool _isSessionBackupAndRestoreEnabled;
+        private static bool _isSessionSnapshotEnabled;
 
-        public static bool IsSessionBackupAndRestoreEnabled
+        public static bool IsSessionSnapshotEnabled
         {
-            get => _isSessionBackupAndRestoreEnabled;
+            get => _isSessionSnapshotEnabled;
             set
             {
-                _isSessionBackupAndRestoreEnabled = value;
+                _isSessionSnapshotEnabled = value;
                 OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
                 ApplicationSettings.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
             }
         }
-
 
         public static void Initialize()
         {
@@ -174,7 +173,7 @@ namespace Notepads.Services
 
             InitializeStatusBarSettings();
 
-            InitializeSessionBackupAndRestoreSettings();
+            InitializeSessionSnapshotSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -189,15 +188,23 @@ namespace Notepads.Services
             }
         }
 
-        private static void InitializeSessionBackupAndRestoreSettings()
+        private static void InitializeSessionSnapshotSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+            // We should disable session snapshot feature on multi instances
+            if (!App.IsFirstInstance)
             {
-                _isSessionBackupAndRestoreEnabled = enableSessionBackupAndRestore;
+                _isSessionSnapshotEnabled = false;
             }
             else
             {
-                _isSessionBackupAndRestoreEnabled = false;
+                if (ApplicationSettings.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+                {
+                    _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
+                }
+                else
+                {
+                    _isSessionSnapshotEnabled = false;
+                }
             }
         }
 

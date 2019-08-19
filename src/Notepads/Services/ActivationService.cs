@@ -11,7 +11,11 @@ namespace Notepads.Services
     {
         public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e)
         {
-            if (e is LaunchActivatedEventArgs launchActivatedEventArgs && launchActivatedEventArgs.PrelaunchActivated == false)
+            if (e.Kind == ActivationKind.Protocol && e is ProtocolActivatedEventArgs protocolActivatedEventArgs)
+            {
+                ProtocolActivated(rootFrame, protocolActivatedEventArgs);
+            }
+            else if (e is LaunchActivatedEventArgs launchActivatedEventArgs && launchActivatedEventArgs.PrelaunchActivated == false)
             {
                 LaunchActivated(rootFrame, launchActivatedEventArgs);
             }
@@ -22,6 +26,14 @@ namespace Notepads.Services
             else
             {
                 await CommandActivated(rootFrame, e);
+            }
+        }
+
+        private static void ProtocolActivated(Frame rootFrame, ProtocolActivatedEventArgs protocolActivatedEventArgs)
+        {
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage), protocolActivatedEventArgs);
             }
         }
 
@@ -63,6 +75,7 @@ namespace Notepads.Services
                 {
                     if (e is CommandLineActivatedEventArgs commandLine)
                     {
+                        LoggingService.LogInfo($"[CommandActivated] CurrentDirectoryPath: {commandLine.Operation.CurrentDirectoryPath} Arguments: {commandLine.Operation.Arguments}");
                         var file = await FileSystemUtility.OpenFileFromCommandLine(
                             commandLine.Operation.CurrentDirectoryPath, commandLine.Operation.Arguments);
                         if (file != null)

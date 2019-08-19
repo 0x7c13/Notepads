@@ -23,6 +23,7 @@ namespace Notepads
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
+    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
 
@@ -35,6 +36,8 @@ namespace Notepads
         private string _appLaunchCmdDir;
 
         private string _appLaunchCmdArgs;
+
+        private Uri _appLaunchUri;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -200,6 +203,12 @@ namespace Notepads
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
+
+            if (!App.IsFirstInstance)
+            {
+                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+                MenuSettingsButton.IsEnabled = false;
+            }
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -308,11 +317,14 @@ namespace Notepads
             {
                 _appLaunchFiles = fileActivatedEventArgs.Files;
             }
-            else if (e.Parameter is CommandLineActivatedEventArgs)
+            else if (e.Parameter is CommandLineActivatedEventArgs commandLine)
             {
-                var commandLine = e.Parameter as CommandLineActivatedEventArgs;
                 _appLaunchCmdDir = commandLine.Operation.CurrentDirectoryPath;
                 _appLaunchCmdArgs = commandLine.Operation.Arguments;
+            }
+            else if (e.Parameter is ProtocolActivatedEventArgs protocol)
+            {
+                _appLaunchUri = protocol.Uri;
             }
         }
 
@@ -322,7 +334,7 @@ namespace Notepads
         {
             int loadedCount = 0;
 
-            if (!_loaded && EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            if (!_loaded && EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 loadedCount = await SessionManager.LoadLastSessionAsync();
             }
@@ -342,6 +354,32 @@ namespace Notepads
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
+            else if (_appLaunchUri != null)
+            {
+                var fileToken = _appLaunchUri.ToString().Substring("notepads://".Length).Trim().ToLower();
+                if (fileToken.EndsWith("/"))
+                {
+                    fileToken = fileToken.Remove(fileToken.Length - 1);
+                }
+                if (string.IsNullOrEmpty(fileToken))
+                {
+                    NotepadsCore.OpenNewTextEditor();
+                    loadedCount++;
+                }
+                else
+                {
+                    try
+                    {
+                        await NotepadsCore.OpenNewTextEditor(await FileSystemUtility.GetFileFromFutureAccessList(fileToken));
+                        loadedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingService.LogError($"Failed to open file from Uri protocol: {_appLaunchUri} Exception: {ex.Message}");
+                    }
+                }
+                _appLaunchUri = null;
+            }
 
             if (!_loaded)
             {
@@ -349,10 +387,15 @@ namespace Notepads
                 {
                     NotepadsCore.OpenNewTextEditor();
                 }
+
+                if (!App.IsFirstInstance)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+                }
                 _loaded = true;
             }
 
-            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            if (EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 SessionManager.IsBackupEnabled = true;
                 SessionManager.StartSessionBackup();
@@ -368,7 +411,7 @@ namespace Notepads
             {
                 LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
-                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
                     SessionManager.StopSessionBackup();
                 }
@@ -377,8 +420,9 @@ namespace Notepads
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
+                ApplicationData.Current.LocalSettings.Values["ActiveInstance"] = App.Id.ToString();
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
-                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
                     SessionManager.StartSessionBackup();
                 }
@@ -413,7 +457,7 @@ namespace Notepads
         {
             e.Handled = true;
 
-            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            if (EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync();
@@ -478,6 +522,7 @@ namespace Notepads
             UpdateLineColumnIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
+            UpdateShadowInstanceIndicator();
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -574,6 +619,12 @@ namespace Notepads
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount);
+        }
+
+        private void UpdateShadowInstanceIndicator()
+        {
+            if (StatusBar == null) return;
+            ShadowInstanceIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
@@ -699,6 +750,10 @@ namespace Notepads
             {
                 EncodingIndicator.ContextFlyout.ShowAt(EncodingIndicator);
             }
+            else if (sender == ShadowInstanceIndicator)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+            }
         }
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -736,6 +791,10 @@ namespace Notepads
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
+                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                {
+                    SessionManager.ClearSessionData();
+                }
                 Application.Current.Exit();
             }
         }

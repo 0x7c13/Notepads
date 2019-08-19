@@ -13,6 +13,7 @@ namespace Notepads
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
+    using Windows.Storage;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -21,6 +22,10 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        public static Guid Id { get; } = Guid.NewGuid();
+
+        public static bool IsFirstInstance;
+
         private const string AppCenterSecret = null;
 
         /// <summary>
@@ -30,6 +35,9 @@ namespace Notepads
         public App()
         {
             //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+
+            ApplicationData.Current.LocalSettings.Values["ActiveInstance"] = App.Id.ToString();
 
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
