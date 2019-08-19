@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Controls.Settings
 {
+    using Notepads.Services;
     using System;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Animation;
@@ -35,6 +36,7 @@ namespace Notepads.Controls.Settings
                     break;
             }
 
+            LoggingService.LogInfo($"Navigating to: {tag} Page", consoleOnly: true);
             TitleTextBlock.Text = title;
             ContentFrame.Navigate(pageType, null, new SuppressNavigationTransitionInfo());
         }

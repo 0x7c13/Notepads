@@ -167,7 +167,7 @@
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
     <value>ステータス バー</value>
-    <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
     <value>詳細設定</value>
@@ -290,7 +290,23 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>変更ログ</value>
+    <value>Changelog</value>
     <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Notepads は次回起動時に備えて現在の状態保存を行い、また定期的にセッション スナップショットのバックアップを行い、保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>セッションのバックアップと復元を使用する</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>セッションのバックアップと復元を使用する</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>セッションのバックアップ設定</value>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

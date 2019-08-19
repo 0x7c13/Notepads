@@ -11,6 +11,7 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
 
@@ -67,16 +68,7 @@ namespace Notepads.Utilities
                 return null;
             }
 
-            try
-            {
-                return await StorageFile.GetFileFromPathAsync(path);
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
-
-            return null;
+            return await GetFile(path);
         }
 
         public static string GetAbsolutePathFromCommondLine(string dir, string args)
@@ -139,6 +131,24 @@ namespace Notepads.Utilities
             {
                 return false;
             }
+        }
+
+        public static async Task<StorageFile> GetFile(string filePath)
+        {
+            try
+            {
+                return await StorageFile.GetFileFromPathAsync(filePath);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static async Task<TextFile> ReadFile(string filePath)
+        {
+            StorageFile file = await GetFile(filePath);
+            return file == null ? null : await ReadFile(file);
         }
 
         public static async Task<TextFile> ReadFile(StorageFile file)
@@ -250,7 +260,7 @@ namespace Notepads.Utilities
                             "FileUpdateStatus", nameof(status)
                         }
                     });
-                    throw new Exception($"FileUpdateStatus: {nameof(status)}");
+                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }
             }
         }
@@ -273,10 +283,50 @@ namespace Notepads.Utilities
                 using (var stream = await file.OpenStreamForReadAsync()) { }
                 return true;
             }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
             catch (Exception ex)
             {
-                return !(ex is FileNotFoundException);
+                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                return true;
             }
+        }
+
+        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
+        {
+            try
+            {
+                return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static async Task<bool> TryAddToFutureAccessList(string token, StorageFile file)
+        {
+            try
+            {
+                if (await FileExists(file))
+                {
+                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+            }
+            return false;
+        }
+
+        public static void ClearFutureAccessList()
+        {
+            StorageApplicationPermissions.FutureAccessList.Clear();
         }
     }
 }

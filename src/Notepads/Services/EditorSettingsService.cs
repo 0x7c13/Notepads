@@ -5,7 +5,6 @@ namespace Notepads.Services
     using Notepads.Utilities;
     using System;
     using System.Text;
-    using System.Threading;
     using Windows.UI.Xaml;
 
     public static class EditorSettingsService
@@ -23,6 +22,8 @@ namespace Notepads.Services
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
 
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
+
+        public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
 
         private static string _editorFontFamily;
 
@@ -106,16 +107,7 @@ namespace Notepads.Services
                 // We should always try get latest system ANSI code page.
                 if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    try
-                    {
-                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
-                        _editorDefaultDecoding = decoding;
-                    }
-                    catch (Exception)
-                    {
-                        _editorDefaultDecoding = new UTF8Encoding(false);
-                    }
+                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false); ;
                 }
                 return _editorDefaultDecoding;
             }
@@ -152,6 +144,20 @@ namespace Notepads.Services
             }
         }
 
+        private static bool _isSessionBackupAndRestoreEnabled;
+
+        public static bool IsSessionBackupAndRestoreEnabled
+        {
+            get => _isSessionBackupAndRestoreEnabled;
+            set
+            {
+                _isSessionBackupAndRestoreEnabled = value;
+                OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
+                ApplicationSettings.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
+            }
+        }
+
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -167,6 +173,8 @@ namespace Notepads.Services
             InitializeTabIndentsSettings();
 
             InitializeStatusBarSettings();
+
+            InitializeSessionBackupAndRestoreSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -178,6 +186,18 @@ namespace Notepads.Services
             else
             {
                 _showStatusBar = true;
+            }
+        }
+
+        private static void InitializeSessionBackupAndRestoreSettings()
+        {
+            if (ApplicationSettings.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+            {
+                _isSessionBackupAndRestoreEnabled = enableSessionBackupAndRestore;
+            }
+            else
+            {
+                _isSessionBackupAndRestoreEnabled = false;
             }
         }
 

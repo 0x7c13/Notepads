@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Commands;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
+    using Notepads.Commands;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
     using Windows.UI.Core;
@@ -16,6 +16,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
 
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
@@ -113,6 +114,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
 
@@ -204,9 +206,9 @@ namespace Notepads.Controls.TextEditor
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                 Clipboard.Flush();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -227,9 +229,9 @@ namespace Notepads.Controls.TextEditor
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignore
+                LoggingService.LogError($"Failed to paste plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -283,7 +285,7 @@ namespace Notepads.Controls.TextEditor
             if (found)
             {
                 SetText(text);
-                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.StartPosition = int.MaxValue;
                 Document.Selection.EndPosition = Document.Selection.StartPosition;
             }
 
@@ -463,11 +465,11 @@ namespace Notepads.Controls.TextEditor
             {
                 bool startBoundary = true;
                 if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
 
                 bool endBoundary = true;
                 if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
 
                 if (startBoundary && endBoundary)
                     return pos;
@@ -482,6 +484,17 @@ namespace Notepads.Controls.TextEditor
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void ShowEasterEgg()
+        {
+            //_contentScrollViewer.Background = new ImageBrush
+            //{
+            //    ImageSource = new BitmapImage(new Uri(BaseUri, "/Assets/EasterEgg.jpg")),
+            //    AlignmentX = AlignmentX.Center,
+            //    AlignmentY = AlignmentY.Center,
+            //    Stretch = Stretch.Uniform
+            //};
         }
     }
 }

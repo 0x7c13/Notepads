@@ -4,7 +4,6 @@ namespace Notepads.Controls.TextEditor
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
-    using Notepads.EventArgs;
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -37,6 +36,8 @@ namespace Notepads.Controls.TextEditor
 
     public sealed partial class TextEditor : UserControl
     {
+        public Guid Id;
+
         public INotepadsExtensionProvider ExtensionProvider;
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
@@ -52,6 +53,10 @@ namespace Notepads.Controls.TextEditor
         public event EventHandler LineEndingChanged;
 
         public event EventHandler EncodingChanged;
+
+        public event EventHandler TextChanging;
+
+        public event EventHandler ChangeReverted;
 
         public event RoutedEventHandler SelectionChanged;
 
@@ -113,7 +118,9 @@ namespace Notepads.Controls.TextEditor
 
         private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
-        private readonly object _fileStatusCheckLocker = new object();
+        private readonly double _fileStatusCheckerDelayInSec = 0.2;
+
+        private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new SemaphoreSlim(1, 1);
 
         private TextEditorMode _editorMode = TextEditorMode.Editing;
 
@@ -176,22 +183,24 @@ namespace Notepads.Controls.TextEditor
 
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        lock (_fileStatusCheckLocker)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Checking file status for \"{EditingFile.Path}\".");
-                            CheckAndUpdateFileStatus();
-                        }
-                        Thread.Sleep(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec));
+                        await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
+                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        await CheckAndUpdateFileStatus();
+                        await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
             }
-            catch (Exception)
+            catch (TaskCanceledException)
             {
-                // Ignore;
+                // ignore
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
@@ -206,9 +215,11 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        private async void CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus()
         {
             if (EditingFile == null) return;
+
+            await _fileStatusSemaphoreSlim.WaitAsync();
 
             FileModificationState? newState = null;
 
@@ -227,6 +238,8 @@ namespace Notepads.Controls.TextEditor
             {
                 FileModificationState = newState.Value;
             });
+
+            _fileStatusSemaphoreSlim.Release();
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -238,7 +251,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
                     {
@@ -253,25 +266,32 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool clearUndoQueue = true)
+        public void Init(TextFile textFile, StorageFile file, bool resetOriginalSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
         {
             _loaded = false;
             EditingFile = file;
             TargetEncoding = null;
             TargetLineEnding = null;
-            TextEditorCore.SetText(textFile.Content);
-            OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
+            if (resetText)
+            {
+                TextEditorCore.SetText(textFile.Content);
+            }
+            if (resetOriginalSnapshot)
+            {
+                OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
+            }
             if (clearUndoQueue)
             {
                 TextEditorCore.ClearUndoQueue();
             }
-            IsModified = false;
+            IsModified = isModified;
             _loaded = true;
         }
 
         public void RevertAllChanges()
         {
             Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
+            ChangeReverted?.Invoke(this, EventArgs.Empty);
         }
 
         public bool TryChangeEncoding(Encoding encoding)
@@ -421,19 +441,23 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.IsEnabled;
         }
 
-        public async Task SaveToFile(StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
-            if (SideBySideDiffViewer != null && SideBySideDiffViewer.Visibility == Visibility.Visible)
-            {
-                CloseSideBySideDiffViewer();
-            }
+            if (EditorMode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
+            TextFile textFile = await SaveContentToFile(file);
+            FileModificationState = FileModificationState.Untouched;
+            Init(textFile, file, clearUndoQueue: false, resetText: false);
+            StartCheckingFileStatusPeriodically();
+        }
+
+        public async Task<TextFile> SaveContentToFile(StorageFile file)
+        {
             var text = TextEditorCore.GetText();
             var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
             var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
             await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
             var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
-            FileModificationState = FileModificationState.Untouched;
-            Init(new TextFile(text, encoding, lineEnding, newFileModifiedTime), file, clearUndoQueue: false);
+            return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
 
         public string GetContentForSharing()
@@ -524,6 +548,7 @@ namespace Notepads.Controls.TextEditor
             {
                 IsModified = !IsInOriginalState(compareTextOnly: true);
             }
+            TextChanging?.Invoke(this, EventArgs.Empty);
         }
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)

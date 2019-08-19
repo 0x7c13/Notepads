@@ -254,7 +254,7 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal Et</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
@@ -370,7 +370,7 @@
     <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Tüm Değişiklikleri geri al</value>
+    <value>Tüm değişiklikleri geri al</value>
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
@@ -386,15 +386,15 @@
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Tam ekran çıkmak için F11 tuşuna basın</value>
+    <value>Tam ekrandan çıkmak için F11 tuşuna basın</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Disk dosyasından yeniden yükle</value>
+    <value>Var olan dosyadan geri yükle</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>Dosya dışında değiştirildi!</value>
+    <value>Dosya dışarıda değişikliğe uğradı!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
@@ -402,23 +402,23 @@
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>File reloaded</value>
+    <value>Dosya yeniden yüklendi</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Compact Overlay</value>
+    <value>Kompakt Mod</value>
     <comment>App: "Compact Overlay" display text</comment>
   </data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Full Screen</value>
+    <value>Tam Ekran</value>
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Exit Compact Overlay</value>
+    <value>Kompakt Moddan Çık</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Exit Full Screen</value>
+    <value>Tam Ekrandan Çık</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
 </root>

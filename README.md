@@ -25,6 +25,12 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ******* 📣 Notepads App is still under active development. *******
 
+## Status update
+
+[[08-12-2019] Status update and KPI report](https://github.com/JasonStein/Notepads/issues/138)
+
+![image](https://user-images.githubusercontent.com/1166162/62916469-75eb5800-bd4d-11e9-9f97-a632792400c0.png)
+
 ## Things are not working or not implemented in this version:
 
 * File Print.
@@ -57,7 +63,7 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 * [Project Roadmap](ROADMAP.md)
 
-## Changelog
+## Changelog:
 
 * [Notepads Releases](https://github.com/JasonStein/Notepads/releases)
 
@@ -86,7 +92,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [DanverZ](https://github.com/chenghanzou), [Sergio Pedri](https://github.com/Sergio0694)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694)
 * Localization Contributors: 
     * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)

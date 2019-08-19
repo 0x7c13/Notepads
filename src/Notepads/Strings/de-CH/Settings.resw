@@ -167,7 +167,7 @@
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
     <value>Statusleisteneinstellungen</value>
-    <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
     <value>Erweitert</value>
@@ -290,7 +290,23 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Changelog</value>
+    <value>Änderungsprotokoll</value>
     <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schliessen NICHT zum speichern auffordern, wenn diese Option aktiviert ist.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>Sitzungssicherungseinstellungen</value>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

@@ -3,6 +3,7 @@ namespace Notepads.Extensions.Markdown
 {
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using System;
     using System.IO;
     using System.Net;
@@ -79,8 +80,9 @@ namespace Notepads.Extensions.Markdown
                     e.Handled = true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to resolve Markdown image [{e.Url}]: {ex.Message}");
                 e.Handled = false;
             }
 
@@ -202,9 +204,9 @@ namespace Notepads.Extensions.Markdown
                 var uri = new Uri(e.Link);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                LoggingService.LogError($"Failed to open Markdown Link: {ex.Message}");
             }
         }
     }

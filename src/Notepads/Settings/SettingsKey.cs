@@ -20,5 +20,6 @@ namespace Notepads.Settings
         internal static string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
+        internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
     }
 }

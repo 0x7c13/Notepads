@@ -13,7 +13,7 @@
 * Automatic file save and restore.
 * Markdown file preview.
 * Diff viewer.
-* Publish 1.0 version of Notepads by end of Augest 2019.
+* Publish 1.0 version of Notepads by end of August 2019.
 
 ## Phase 2 (By end of 2019):
 

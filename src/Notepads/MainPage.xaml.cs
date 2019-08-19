@@ -40,11 +40,11 @@ namespace Notepads
 
         private bool _loaded = false;
 
-        private INotepadsCore _notepadsCore;
-
         private const int TitleBarReservedAreaDefaultWidth = 180;
 
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
+
+        private INotepadsCore _notepadsCore;
 
         private INotepadsCore NotepadsCore
         {
@@ -93,6 +93,11 @@ namespace Notepads
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
+        private ISessionManager _sessionManager;
+
+        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
+
+
         public MainPage()
         {
             InitializeComponent();
@@ -113,6 +118,22 @@ namespace Notepads
             EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
             {
                 if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+            };
+
+            // Session backup and restore toggle
+            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += (sender, isSessionBackupAndRestoreEnabled) =>
+            {
+                if (isSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.IsBackupEnabled = true;
+                    SessionManager.StartSessionBackup(startImmediately: true);
+                }
+                else
+                {
+                    SessionManager.IsBackupEnabled = false;
+                    SessionManager.StopSessionBackup();
+                    SessionManager.ClearSessionData();
+                }
             };
 
             // Sharing
@@ -173,9 +194,9 @@ namespace Notepads
                     //MenuPrintButton.IsEnabled = true;
                 }
 
-                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ? 
+                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
                     "App_ExitFullScreenMode_Text" : "App_EnterFullScreenMode_Text");
-                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ? 
+                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
             };
@@ -193,12 +214,14 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
             });
         }
+
+        #region View Mode Switches
 
         private async void EnterExitCompactOverlayMode()
         {
@@ -214,7 +237,7 @@ namespace Notepads
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter CompactOverlay view mode.");
+                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
                     Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
                 }
             }
@@ -229,7 +252,7 @@ namespace Notepads
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter Default view mode.");
+                    LoggingService.LogError("Failed to enter Default view mode.");
                     Analytics.TrackEvent("FailedToEnterDefaultViewMode");
                 }
             }
@@ -239,7 +262,7 @@ namespace Notepads
         {
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Existing full screen view mode.");
+                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
             else
@@ -253,12 +276,13 @@ namespace Notepads
                         ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
                         if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
                     }
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Entered full screen view mode.");
+
+                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Failed to enter full screen view mode.");
+                    LoggingService.LogError("Failed to enter full screen view mode.");
                     Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
                 }
             }
@@ -271,6 +295,8 @@ namespace Notepads
                 EnterExitCompactOverlayMode();
             }
         }
+
+        #endregion
 
         #region Application Life Cycle & Window management 
 
@@ -294,29 +320,42 @@ namespace Notepads
         // Open files from external links or cmd args on Sets Loaded
         private async void Sets_Loaded(object sender, RoutedEventArgs e)
         {
+            int loadedCount = 0;
+
+            if (!_loaded && EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            {
+                loadedCount = await SessionManager.LoadLastSessionAsync();
+            }
+
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                var successCount = await OpenFiles(_appLaunchFiles);
-                if (successCount == 0)
-                {
-                    NotepadsCore.OpenNewTextEditor();
-                }
+                loadedCount += await OpenFiles(_appLaunchFiles);
                 _appLaunchFiles = null;
             }
             else if (_appLaunchCmdDir != null)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
-                if (file == null || !(await OpenFile(file)))
+                if (file != null && await OpenFile(file))
                 {
-                    NotepadsCore.OpenNewTextEditor();
+                    loadedCount++;
                 }
                 _appLaunchCmdDir = null;
                 _appLaunchCmdArgs = null;
             }
-            else if (!_loaded)
+
+            if (!_loaded)
             {
-                NotepadsCore.OpenNewTextEditor();
+                if (loadedCount == 0)
+                {
+                    NotepadsCore.OpenNewTextEditor();
+                }
                 _loaded = true;
+            }
+
+            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            {
+                SessionManager.IsBackupEnabled = true;
+                SessionManager.StartSessionBackup();
             }
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
@@ -327,20 +366,28 @@ namespace Notepads
         {
             if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Deactivated.");
+                LoggingService.LogInfo("CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.StopSessionBackup();
+                }
             }
             else if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated ||
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
-                System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] CoreWindow Activated.");
+                LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+                if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.StartSessionBackup();
+                }
             }
         }
 
         void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now}] Window Visibility Changed, Visible = {e.Visible}.");
+            LoggingService.LogInfo($"Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
         }
@@ -364,22 +411,39 @@ namespace Notepads
 
         private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (!NotepadsCore.HaveUnsavedTextEditor()) return;
             e.Handled = true;
 
-            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(async () =>
+            if (EditorSettingsService.IsSessionBackupAndRestoreEnabled)
+            {
+                // Save session before app exit
+                await SessionManager.SaveSessionAsync();
+                Application.Current.Exit();
+            }
+            else
+            {
+                if (!NotepadsCore.HaveUnsavedTextEditor())
                 {
-                    foreach (var textEditor in NotepadsCore.GetAllTextEditors())
-                    {
-                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
-                        {
-                            NotepadsCore.DeleteTextEditor(textEditor);
-                        }
-                    }
-                },
-                () => Application.Current.Exit());
+                    Application.Current.Exit();
+                }
 
-            await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+                ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
+                    async () =>
+                    {
+                        foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                        {
+                            if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
+                            {
+                                NotepadsCore.DeleteTextEditor(textEditor);
+                            }
+                        }
+                    },
+                    () =>
+                    {
+                        Application.Current.Exit();
+                    });
+
+                await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+            }
         }
 
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)
@@ -494,7 +558,7 @@ namespace Notepads
         private void UpdateEncodingIndicator(Encoding encoding)
         {
             if (StatusBar == null) return;
-            EncodingIndicator.Text = EncodingUtility.GetEncodingBodyName(encoding);
+            EncodingIndicator.Text = EncodingUtility.GetEncodingName(encoding);
         }
 
         private void UpdateLineEndingIndicator(LineEnding lineEnding)
@@ -686,12 +750,11 @@ namespace Notepads
                 {
                     NotepadsCore.DeleteTextEditor(textEditor);
                 }
-
-                NotepadsCore.FocusOnSelectedTextEditor();
             }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
             setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
             await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+            NotepadsCore.FocusOnSelectedTextEditor();
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -785,7 +848,7 @@ namespace Notepads
                     file = textEditor.EditingFile;
                 }
 
-                await NotepadsCore.SaveTextEditorContentToFile(textEditor, file);
+                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
                 return true;
             }
             catch (Exception ex)

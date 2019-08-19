@@ -154,7 +154,7 @@
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>About</value>
+    <value>Hakkında</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
@@ -167,7 +167,7 @@
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
     <value>Durum Çubuğu Ayarları</value>
-    <comment>AdvancedPage StatusBarSettings Title display ext.</comment>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
     <value>Gelişmiş</value>
@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Akrilik arkaplan renk tonu opaklığı</value>
+    <value>Arkaplan bulanıklık opaklığı</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -292,5 +292,21 @@
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
     <value>Değişiklik günlüğü</value>
     <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Notepads şu anki oturumu sonraki açılışta hatırlayacak ve olası veri kayıpları için periyodik yedeklemeler yapacak. Notepads bu seçenek etkinken size uygulama kapanırken çalışmalarınızı kaydetmenizle alakalı bir hatırlatma YAPMAYACAK.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Oturum yedekleme ve geri yüklemeyi etkinleştir</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Oturum yedekleme ve geri yüklemeyi etkinleştir</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>Oturum Yedekleme Ayarları</value>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>
