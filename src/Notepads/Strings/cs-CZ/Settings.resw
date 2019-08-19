@@ -158,19 +158,19 @@
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads si bude pamatovat aktuální session pro příští spuštění a bude dělat pravidelné zálohy proti možné ztrátě dat. Notepads vás při vypínání aplikace NEBUDE vyzývat k uložení souborů, pokud je tato funkce zapnutá</value>
+    <value>Notepads si bude pamatovat aktuální session pro příští spuštění a bude dělat pravidelné zálohy proti možné ztrátě neuložených dat. Notepads vás při vypínání aplikace NEBUDE vyzývat k uložení souborů, pokud je tato funkce zapnutá</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Povolit zálohování a obnovení session</value>
+    <value>Povolit zaznamenávání session</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Povolit zálohování a obnovení session</value>
+    <value>Povolit zaznamenávání  session</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Nastavení zálohování session</value>
+    <value>Nastavení zaznamenávání session</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
