@@ -45,7 +45,8 @@ namespace Notepads.Core
             long dateModifiedFileTime,
             Encoding encoding,
             LineEnding lineEnding,
-            bool isModified);
+            bool isModified,
+            int atIndex = -1);
 
         Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
 

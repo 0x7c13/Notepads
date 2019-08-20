@@ -36,6 +36,10 @@ namespace Notepads.Controls.TextEditor
 
     public class TextEditorMetaData
     {
+        public string OriginalText { get; set; }
+
+        public string WorkingText { get; set; }
+
         public string OriginalEncoding { get; set; }
 
         public string OriginalLineEncoding { get; set; }
@@ -47,6 +51,8 @@ namespace Notepads.Controls.TextEditor
         public string TargetEncoding { get; set; }
 
         public bool HasEditingFile { get; set; }
+
+        public bool IsModified { get; set; }
     }
 
     public sealed partial class TextEditor : UserControl
@@ -183,11 +189,20 @@ namespace Notepads.Controls.TextEditor
         {
             var metaData = new TextEditorMetaData
             {
+                OriginalText = OriginalSnapshot.Content,
                 OriginalEncoding = EncodingUtility.GetEncodingName(OriginalSnapshot.Encoding),
                 OriginalLineEncoding = LineEndingUtility.GetLineEndingName(OriginalSnapshot.LineEnding),
                 DateModifiedFileTime = OriginalSnapshot.DateModifiedFileTime,
-                HasEditingFile = EditingFile != null
+                HasEditingFile = EditingFile != null,
+                IsModified = IsModified
             };
+
+            var workingText = TextEditorCore.GetText();
+
+            if (!string.Equals(OriginalSnapshot.Content, workingText))
+            {
+                metaData.WorkingText = workingText;
+            }
 
             if (TargetEncoding != null)
             {
