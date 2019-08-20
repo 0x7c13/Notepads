@@ -34,6 +34,21 @@ namespace Notepads.Controls.TextEditor
         RenamedMovedOrDeleted
     }
 
+    public class TextEditorMetaData
+    {
+        public string OriginalEncoding { get; set; }
+
+        public string OriginalLineEncoding { get; set; }
+
+        public long DateModifiedFileTime { get; set; }
+
+        public string TargetLineEnding { get; set; }
+
+        public string TargetEncoding { get; set; }
+
+        public bool HasEditingFile { get; set; }
+    }
+
     public sealed partial class TextEditor : UserControl
     {
         public Guid Id;
@@ -162,6 +177,29 @@ namespace Notepads.Controls.TextEditor
 
             Loaded += TextEditor_Loaded;
             Unloaded += TextEditor_Unloaded;
+        }
+
+        public TextEditorMetaData GetTextEditorMetaData()
+        {
+            var metaData = new TextEditorMetaData
+            {
+                OriginalEncoding = EncodingUtility.GetEncodingName(OriginalSnapshot.Encoding),
+                OriginalLineEncoding = LineEndingUtility.GetLineEndingName(OriginalSnapshot.LineEnding),
+                DateModifiedFileTime = OriginalSnapshot.DateModifiedFileTime,
+                HasEditingFile = EditingFile != null
+            };
+
+            if (TargetEncoding != null)
+            {
+                metaData.TargetEncoding = EncodingUtility.GetEncodingName(TargetEncoding);
+            }
+
+            if (TargetLineEnding != null)
+            {
+                metaData.TargetLineEnding = LineEndingUtility.GetLineEndingName(TargetLineEnding.Value);
+            }
+
+            return metaData;
         }
 
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)

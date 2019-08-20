@@ -319,12 +319,14 @@ namespace SetsView
         private void SetsView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             // Keep track of drag so we don't modify content until done.
+            System.Diagnostics.Debug.WriteLine("***** DragStarting *****");
             _isDragging = true;
         }
 
         private void SetsView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
             _isDragging = false;
+            System.Diagnostics.Debug.WriteLine($"***** DragCompleted: {args.DropResult.ToString()} *****");
 
             // args.DropResult == None when outside of area (e.g. create new window)
             if (args.DropResult == DataPackageOperation.None)

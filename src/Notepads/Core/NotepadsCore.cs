@@ -1,6 +1,9 @@
 ﻿
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.ViewManagement;
+using Newtonsoft.Json;
 
 namespace Notepads.Core
 {
@@ -58,6 +61,10 @@ namespace Notepads.Core
 
         private TextEditor[] _allTextEditors;
 
+        private const string DragAndDropDataIdentifier = "NotepadsSetData";
+        private const string DragAndDropDataIndex = "NotepadsSetIndex";
+        private const string DragAndDropDataWindow = "NotepadsSetsWindow";
+
         public NotepadsCore(SetsView sets,
             string defaultNewFileName,
             INotepadsExtensionProvider extensionProvider)
@@ -68,12 +75,65 @@ namespace Notepads.Core
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
             Sets.SetDraggedOutside += Sets_SetDraggedOutside;
+            Sets.DragOver += Sets_DragOver;
+            Sets.Drop += Sets_Drop;
+            Sets.DropCompleted += Sets_DropCompleted;
+            Sets.DragItemsStarting += Sets_DragItemsStarting;
+            Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
             DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
 
             _sessionManager = SessionUtility.GetSessionManager(this);
+        }
+
+        private void Sets_DragOver(object sender, DragEventArgs e)
+        {
+            // Do we have NotepadsSetData?
+            if (e.DataView.Properties.ContainsKey(DragAndDropDataIdentifier))
+            {
+                // Tell OS that we allow moving item.
+                e.AcceptedOperation = DataPackageOperation.Move;
+            }
+        }
+
+        private void Sets_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
+        {
+            // In Initial Window we need to serialize our tab data.
+            var item = args.Items.FirstOrDefault();
+
+            if (item is TextEditor editor)
+            {
+                // JsonConvert.SerializeObject(data)
+                var data = JsonConvert.SerializeObject(editor.GetTextEditorMetaData());
+                args.Data.Properties.Add(DragAndDropDataIdentifier, data);
+                // Add Editing File
+                if (editor.EditingFile != null)
+                {
+                    args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
+                }
+                // Add our index so we know where to remove from later (if needed)
+                args.Data.Properties.Add(DragAndDropDataIndex, Sets.Items.IndexOf(GetTextEditorSetsViewItem(editor)));
+                // Add Window Id to know if we're transferring to a different window.
+                args.Data.Properties.Add(DragAndDropDataWindow, ApplicationView.GetForCurrentView().Id);
+            }
+        }
+
+        private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            LoggingService.LogInfo("Sets_DragItemsCompleted: " + args.DropResult);
+        }
+
+        private void Sets_Drop(object sender, DragEventArgs e)
+        {
+            LoggingService.LogInfo("Sets_Drop");
+            e.AcceptedOperation = DataPackageOperation.Move;
+        }
+
+        private void Sets_DropCompleted(UIElement sender, DropCompletedEventArgs args)
+        {
+            LoggingService.LogInfo("Sets_DropCompleted: " + args.DropResult);
         }
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
@@ -156,7 +216,6 @@ namespace Notepads.Core
             LineEnding lineEnding,
             bool isModified)
         {
-            //LoggingService.LogInfo("Opening a text editor.");
             var textEditor = new TextEditor
             {
                 Id = id,
@@ -174,7 +233,7 @@ namespace Notepads.Core
             textEditor.LineEndingChanged += (sender, args) => { TextEditorLineEndingChanged?.Invoke(this, sender as TextEditor); };
             textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as TextEditor); };
 
-            var newItem = new SetsViewItem
+            var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = file == null ? DefaultNewFileName : file.Name,
                 Content = textEditor,
@@ -185,13 +244,13 @@ namespace Notepads.Core
                 }
             };
 
-            if (newItem.Content == null || newItem.Content is Page)
+            if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)
             {
                 throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
             }
 
-            newItem.Icon.Visibility = isModified ? Visibility.Visible : Visibility.Collapsed;
-            newItem.ContextFlyout = new TabContextFlyout(this, textEditor);
+            textEditorSetsViewItem.Icon.Visibility = isModified ? Visibility.Visible : Visibility.Collapsed;
+            textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor);
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             if (GetNumberOfOpenedTextEditors() == 1 && file != null)
@@ -203,11 +262,11 @@ namespace Notepads.Core
                 }
             }
 
-            Sets.Items?.Add(newItem);
+            Sets.Items?.Add(textEditorSetsViewItem);
 
             if (GetNumberOfOpenedTextEditors() > 1)
             {
-                Sets.SelectedItem = newItem;
+                Sets.SelectedItem = textEditorSetsViewItem;
                 Sets.ScrollToLastSet();
             }
 

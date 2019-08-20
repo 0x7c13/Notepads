@@ -20,7 +20,7 @@ namespace Notepads
         private static IList<AppInstance> _instances;
 
         #region Main
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             _instances = AppInstance.GetInstances();
 
