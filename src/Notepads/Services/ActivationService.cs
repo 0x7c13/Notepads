@@ -31,9 +31,15 @@ namespace Notepads.Services
 
         private static void ProtocolActivated(Frame rootFrame, ProtocolActivatedEventArgs protocolActivatedEventArgs)
         {
+            LoggingService.LogInfo($"[ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+
             if (rootFrame.Content == null)
             {
                 rootFrame.Navigate(typeof(MainPage), protocolActivatedEventArgs);
+            }
+            else if (rootFrame.Content is MainPage mainPage)
+            {
+                mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
             }
         }
 

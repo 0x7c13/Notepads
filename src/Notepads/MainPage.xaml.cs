@@ -11,6 +11,7 @@ namespace Notepads
     using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
@@ -48,6 +49,8 @@ namespace Notepads
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore _notepadsCore;
+
+        private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
 
         private INotepadsCore NotepadsCore
         {
@@ -356,28 +359,37 @@ namespace Notepads
             }
             else if (_appLaunchUri != null)
             {
-                var fileToken = _appLaunchUri.ToString().Substring("notepads://".Length).Trim().ToLower();
-                if (fileToken.EndsWith("/"))
-                {
-                    fileToken = fileToken.Remove(fileToken.Length - 1);
-                }
-                if (string.IsNullOrEmpty(fileToken))
+                var operation = NotepadsProtocolService.GetOperationProtocol(_appLaunchUri, out var context);
+
+                if (operation == NotepadsOperationProtocol.OpenNewInstance)
                 {
                     NotepadsCore.OpenNewTextEditor();
                     loadedCount++;
                 }
-                else
+                else if (operation == NotepadsOperationProtocol.OpenFileDraggedOutside)
                 {
-                    try
+                    if (context.Contains(":"))
                     {
-                        await NotepadsCore.OpenNewTextEditor(await FileSystemUtility.GetFileFromFutureAccessList(fileToken));
-                        loadedCount++;
-                    }
-                    catch (Exception ex)
-                    {
-                        LoggingService.LogError($"Failed to open file from Uri protocol: {_appLaunchUri} Exception: {ex.Message}");
+                        var parts = context.Split(':');
+                        if (parts.Length == 3)
+                        {
+                            var appInstance = parts[0];
+                            var editorGuid = parts[1];
+                            var fileToken = parts[2];
+                            try
+                            {
+                                await NotepadsCore.OpenNewTextEditor(await FileSystemUtility.GetFileFromFutureAccessList(fileToken));
+                                await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.CloseEditor, appInstance, editorGuid);
+                                loadedCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                LoggingService.LogError($"Failed to open file from Uri protocol: {_appLaunchUri} Exception: {ex.Message}");
+                            }
+                        }
                     }
                 }
+
                 _appLaunchUri = null;
             }
 
@@ -403,6 +415,26 @@ namespace Notepads
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+        }
+
+        public void ExecuteProtocol(Uri uri)
+        {
+            var protocol = NotepadsProtocolService.GetOperationProtocol(uri, out var context);
+            if (protocol == NotepadsOperationProtocol.CloseEditor)
+            {
+                if (context.Contains(":"))
+                {
+                    var parts = context.Split(':');
+                    if (parts.Length == 2)
+                    {
+                        var appInstance = parts[0];
+                        var editorGuid = parts[1];
+                        NotepadsCore.DeleteTextEditor(
+                            NotepadsCore.GetAllTextEditors()
+                                .FirstOrDefault(editor => string.Equals(editor.Id.ToString(), editorGuid, StringComparison.InvariantCultureIgnoreCase)));
+                    }
+                }
+            }
         }
 
         private void CoreWindow_Activated(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowActivatedEventArgs args)
@@ -493,6 +525,14 @@ namespace Notepads
         private async void RootGrid_OnDrop(object sender, DragEventArgs e)
         {
             if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+
+            if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) &&
+                dataObj is string data)
+            {
+                // We should let NotepadsCore to handle set movement
+                return;
+            }
+
             var storageItems = await e.DataView.GetStorageItemsAsync();
 
             foreach (var storageItem in storageItems)

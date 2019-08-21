@@ -1,13 +1,4 @@
 ﻿
-using System.Diagnostics;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Data.Text;
-using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.ViewManagement;
-using Newtonsoft.Json;
-
 namespace Notepads.Core
 {
     using System;
@@ -15,11 +6,14 @@ namespace Notepads.Core
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using SetsView;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
@@ -63,7 +57,7 @@ namespace Notepads.Core
         private TextEditor[] _allTextEditors;
 
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
-        private const string NotepadsTextEditorIndex = "NotepadsTextEditorIndex";
+        private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
         private const string NotepadsInstanceId = "NotepadsInstanceId";
 
         public NotepadsCore(SetsView sets,
@@ -90,14 +84,14 @@ namespace Notepads.Core
 
         private void Sets_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
-            args.AllowedOperations = DataPackageOperation.Move;
+            args.AllowedOperations = DataPackageOperation.Copy;
         }
 
         private void Sets_DragOver(object sender, DragEventArgs e)
         {
             if (e.DataView.Properties.ContainsKey(NotepadsTextEditorMetaData))
             {
-                e.AcceptedOperation = DataPackageOperation.Move;
+                e.AcceptedOperation = DataPackageOperation.Copy;
             }
         }
 
@@ -113,18 +107,20 @@ namespace Notepads.Core
                 args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
 
                 // Add our index so we know where to remove from later (if needed)
-                args.Data.Properties.Add(NotepadsTextEditorIndex, Sets.Items.IndexOf(GetTextEditorSetsViewItem(editor)));
+                args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
                 // Add Window Id to know if we're transferring to a different window.
-                args.Data.Properties.Add(NotepadsInstanceId, App.Id);
+                args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
+
+                args.Data.Properties.ApplicationName = "Notepads";
 
                 // Add Editing File
                 if (editor.EditingFile != null)
                 {
-                    //args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
+                    args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
                     args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
                 }
 
-                //args.Data.RequestedOperation = DataPackageOperation.Move;
+                ApplicationSettings.Write("SetDroppedToAnotherInstance", false);
             }
         }
 
@@ -133,9 +129,15 @@ namespace Notepads.Core
             LoggingService.LogInfo("Sets_DragItemsCompleted: " + args.DropResult);
             if (args.DropResult != DataPackageOperation.None)
             {
-                if (args.Items.FirstOrDefault() is TextEditor editor)
+                var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
+
+                if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
                 {
-                    DeleteTextEditor(editor);
+                    if (args.Items.FirstOrDefault() is TextEditor editor)
+                    {
+                        DeleteTextEditor(editor);
+                    }
+                    ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
                 }
             }
         }
@@ -149,9 +151,11 @@ namespace Notepads.Core
                 return;
             }
 
-            if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object value) && value is string str)
+            if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) && dataObj is string data)
             {
-                var metadata = JsonConvert.DeserializeObject<TextEditorMetaData>(str);
+                ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
+
+                var metadata = JsonConvert.DeserializeObject<TextEditorMetaData>(data);
                 if (metadata == null) return;
 
                 StorageFile editingFile = null;
@@ -226,10 +230,16 @@ namespace Notepads.Core
                     droppedEditor.TryChangeLineEnding(targetLineEnding.Value);
                 }
 
-                //e.Handled = true;
+                if (e.DataView.Properties.TryGetValue(NotepadsInstanceId, out object instanceIdObj) && instanceIdObj is string appInstance &&
+                    e.DataView.Properties.TryGetValue(NotepadsTextEditorGuid, out object editorGuidObj) && editorGuidObj is string editorGuid)
+                {
+                    //await NotepadsProtocolService.LaunchProtocolAsync(
+                    //    NotepadsOperationProtocol.CloseEditor,
+                    //    appInstance,
+                    //    editorGuid);
+                }
 
-                //Items.SelectedItem = data; // Select new item.
-                // Send message to originator to remove the tab.
+                e.Handled = true;
             }
         }
 
@@ -244,33 +254,21 @@ namespace Notepads.Core
             {
                 if (!textEditor.IsModified)
                 {
-                    string uriToLaunch;
-
                     if (textEditor.EditingFile == null)
                     {
-                        uriToLaunch = "notepads://";
+                        DeleteTextEditor(textEditor);
+                        await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
                     }
                     else if (textEditor.EditingFile != null && await FileSystemUtility.FileExists(textEditor.EditingFile))
                     {
-                        if (await FileSystemUtility.TryAddToFutureAccessList("OnFileDraggedOutside".ToLower(), textEditor.EditingFile))
+                        var fileToken = Guid.NewGuid().ToString().ToLower();
+                        if (await FileSystemUtility.TryAddToFutureAccessList(fileToken, textEditor.EditingFile))
                         {
-                            uriToLaunch = "notepads://" + "OnFileDraggedOutside".ToLower();
+                            await NotepadsProtocolService.LaunchProtocolAsync(
+                                NotepadsOperationProtocol.OpenFileDraggedOutside, App.Id.ToString(),
+                                textEditor.Id.ToString(),
+                                fileToken);
                         }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                    var uri = new Uri(uriToLaunch);
-                    bool success = await Windows.System.Launcher.LaunchUriAsync(uri);
-                    if (success)
-                    {
-                        Sets.Items.Remove(e.Set);
                     }
                 }
             }
@@ -357,7 +355,7 @@ namespace Notepads.Core
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             // If index != -1, it means set was created after a drag and drop, we should skip this logic
-            if (GetNumberOfOpenedTextEditors() == 1 && file != null && atIndex != -1)
+            if (GetNumberOfOpenedTextEditors() == 1 && file != null && atIndex == -1)
             {
                 var selectedEditor = GetAllTextEditors().First();
                 if (selectedEditor.EditingFile == null && !selectedEditor.IsModified)
@@ -392,6 +390,7 @@ namespace Notepads.Core
 
         public void DeleteTextEditor(TextEditor textEditor)
         {
+            if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
             item.IsEnabled = false;
             Sets.Items?.Remove(item);

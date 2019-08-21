@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Settings
 {
+    using System;
     using Windows.Storage;
 
     public class ApplicationSettings
@@ -27,7 +28,7 @@ namespace Notepads.Settings
             return obj;
         }
 
-        public static void Write(string key, object obj, bool saveToRoaming)
+        public static void Write(string key, object obj, bool saveToRoaming = false)
         {
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = obj;

@@ -56,6 +56,29 @@ namespace Notepads
                     OpenNewInstance();
                 }
             }
+            else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
+            {
+                LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+
+                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
+                if (protocol == NotepadsOperationProtocol.CloseEditor)
+                {
+                    if (context.Contains(":"))
+                    {
+                        var parts = context.Split(':');
+                        if (parts.Length == 2)
+                        {
+                            var appInstance = parts[0];
+                            var instance = AppInstance.GetInstances().FirstOrDefault(i => string.Equals(i.Key, appInstance, StringComparison.InvariantCultureIgnoreCase));
+                            instance?.RedirectActivationTo();
+                        }
+                    }
+                }
+                else if (protocol == NotepadsOperationProtocol.OpenNewInstance || protocol == NotepadsOperationProtocol.OpenFileDraggedOutside)
+                {
+                    OpenNewInstance();
+                }
+            }
             else
             {
                 OpenNewInstance();
