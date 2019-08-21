@@ -185,60 +185,7 @@ namespace Notepads.Core
                     }
                 }
 
-                var droppedEditor = OpenNewTextEditor(Guid.NewGuid(),
-                    metadata.OriginalText,
-                    editingFile,
-                    metadata.DateModifiedFileTime,
-                    EncodingUtility.GetEncodingByName(metadata.OriginalEncoding),
-                    LineEndingUtility.GetLineEndingByName(metadata.OriginalLineEncoding),
-                    isModified: metadata.IsModified,
-                    index);
-
-                Encoding targetEncoding = null;
-                LineEnding? targetLineEnding = null;
-
-                if (!string.IsNullOrEmpty(metadata.TargetEncoding))
-                {
-                    targetEncoding = EncodingUtility.GetEncodingByName(metadata.TargetEncoding);
-                }
-
-                if (!string.IsNullOrEmpty(metadata.TargetLineEnding))
-                {
-                    targetLineEnding = LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding);
-                }
-
-                if (metadata.WorkingText != null)
-                {
-                    var workingText = new TextFile(metadata.WorkingText,
-                        targetEncoding,
-                        targetLineEnding ?? LineEndingUtility.GetLineEndingByName(metadata.OriginalLineEncoding), -1);
-
-                    droppedEditor.Init(workingText, 
-                        editingFile, 
-                        resetOriginalSnapshot: false, 
-                        clearUndoQueue: true, 
-                        isModified: metadata.IsModified);
-                }
-
-                if (targetEncoding != null)
-                {
-                    droppedEditor.TryChangeEncoding(targetEncoding);
-                }
-
-                if (targetLineEnding != null)
-                {
-                    droppedEditor.TryChangeLineEnding(targetLineEnding.Value);
-                }
-
-                if (e.DataView.Properties.TryGetValue(NotepadsInstanceId, out object instanceIdObj) && instanceIdObj is string appInstance &&
-                    e.DataView.Properties.TryGetValue(NotepadsTextEditorGuid, out object editorGuidObj) && editorGuidObj is string editorGuid)
-                {
-                    //await NotepadsProtocolService.LaunchProtocolAsync(
-                    //    NotepadsOperationProtocol.CloseEditor,
-                    //    appInstance,
-                    //    editorGuid);
-                }
-
+                OpenNewTextEditor(metadata, editingFile, index == -1 ? sets.Items.Count : index);
                 e.Handled = true;
             }
         }
@@ -252,24 +199,11 @@ namespace Notepads.Core
         {
             if (Sets.Items.Count > 1 && e.Set.Content is TextEditor textEditor)
             {
-                if (!textEditor.IsModified)
+                // Only allow untitled empty document to be dragged outside for now
+                if (!textEditor.IsModified && textEditor.EditingFile == null)
                 {
-                    if (textEditor.EditingFile == null)
-                    {
-                        DeleteTextEditor(textEditor);
-                        await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
-                    }
-                    else if (textEditor.EditingFile != null && await FileSystemUtility.FileExists(textEditor.EditingFile))
-                    {
-                        var fileToken = Guid.NewGuid().ToString().ToLower();
-                        if (await FileSystemUtility.TryAddToFutureAccessList(fileToken, textEditor.EditingFile))
-                        {
-                            await NotepadsProtocolService.LaunchProtocolAsync(
-                                NotepadsOperationProtocol.OpenFileDraggedOutside, App.Id.ToString(),
-                                textEditor.Id.ToString(),
-                                fileToken);
-                        }
-                    }
+                    DeleteTextEditor(textEditor);
+                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
                 }
             }
         }
@@ -305,6 +239,50 @@ namespace Notepads.Core
                 textFile.Encoding,
                 textFile.LineEnding,
                 false);
+        }
+
+        public TextEditor OpenNewTextEditor(TextEditorMetaData metadata, StorageFile file = null, int atIndex = -1)
+        {
+            var newEditor = OpenNewTextEditor(Guid.NewGuid(),
+                metadata.OriginalText,
+                file,
+                metadata.DateModifiedFileTime,
+                EncodingUtility.GetEncodingByName(metadata.OriginalEncoding),
+                LineEndingUtility.GetLineEndingByName(metadata.OriginalLineEncoding),
+                isModified: metadata.IsModified,
+                atIndex);
+
+            Encoding targetEncoding = null;
+            LineEnding? targetLineEnding = null;
+
+            if (!string.IsNullOrEmpty(metadata.TargetEncoding))
+            {
+                targetEncoding = EncodingUtility.GetEncodingByName(metadata.TargetEncoding);
+            }
+
+            if (!string.IsNullOrEmpty(metadata.TargetLineEnding))
+            {
+                targetLineEnding = LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding);
+            }
+
+            if (metadata.WorkingText != null)
+            {
+                newEditor.SetText(metadata.WorkingText);
+            }
+
+            if (targetEncoding != null)
+            {
+                newEditor.TryChangeEncoding(targetEncoding);
+            }
+
+            if (targetLineEnding != null)
+            {
+                newEditor.TryChangeLineEnding(targetLineEnding.Value);
+            }
+
+            newEditor.SetSelection(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
+
+            return newEditor;
         }
 
         public TextEditor OpenNewTextEditor(
@@ -482,24 +460,20 @@ namespace Notepads.Core
 
         public TextEditor[] GetAllTextEditors()
         {
-            if (ThreadUtility.IsOnUIThread())
-            {
-                if (Sets.Items == null) return new TextEditor[0];
-                var editors = new List<TextEditor>();
-                foreach (SetsViewItem item in Sets.Items)
-                {
-                    if (item.Content is TextEditor textEditor)
-                    {
-                        editors.Add(textEditor);
-                    }
-                }
+            if (!ThreadUtility.IsOnUIThread()) return _allTextEditors;
 
-                return editors.ToArray();
-            }
-            else
+            if (Sets.Items == null) return new TextEditor[0];
+            var editors = new List<TextEditor>();
+            foreach (SetsViewItem item in Sets.Items)
             {
-                return _allTextEditors;
+                if (item.Content is TextEditor textEditor)
+                {
+                    editors.Add(textEditor);
+                }
             }
+
+            return editors.ToArray();
+
         }
 
         public void FocusOnSelectedTextEditor()

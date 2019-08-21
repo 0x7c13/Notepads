@@ -53,6 +53,10 @@ namespace Notepads.Controls.TextEditor
         public bool HasEditingFile { get; set; }
 
         public bool IsModified { get; set; }
+
+        public int SelectionStartPosition { get; set; }
+
+        public int SelectionEndPosition { get; set; }
     }
 
     public sealed partial class TextEditor : UserControl
@@ -194,7 +198,9 @@ namespace Notepads.Controls.TextEditor
                 OriginalLineEncoding = LineEndingUtility.GetLineEndingName(OriginalSnapshot.LineEnding),
                 DateModifiedFileTime = OriginalSnapshot.DateModifiedFileTime,
                 HasEditingFile = EditingFile != null,
-                IsModified = IsModified
+                IsModified = IsModified,
+                SelectionStartPosition =  TextEditorCore.Document.Selection.StartPosition,
+                SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition
             };
 
             var workingText = TextEditorCore.GetText();
@@ -327,7 +333,7 @@ namespace Notepads.Controls.TextEditor
             TargetLineEnding = null;
             if (resetText)
             {
-                TextEditorCore.SetText(textFile.Content);
+                SetText(textFile.Content);
             }
             if (resetOriginalSnapshot)
             {
@@ -345,6 +351,17 @@ namespace Notepads.Controls.TextEditor
         {
             Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
             ChangeReverted?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void SetText(string text)
+        {
+            TextEditorCore.SetText(text);
+        }
+
+        public void SetSelection(int start, int end)
+        {
+            TextEditorCore.Document.Selection.StartPosition = start;
+            TextEditorCore.Document.Selection.EndPosition = end;
         }
 
         public bool TryChangeEncoding(Encoding encoding)

@@ -36,6 +36,8 @@ namespace Notepads.Core
 
         TextEditor OpenNewTextEditor(Guid? id = null);
 
+        TextEditor OpenNewTextEditor(TextEditorMetaData metadata, StorageFile file = null, int atIndex = -1);
+
         Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null);
 
         TextEditor OpenNewTextEditor(

@@ -1,14 +1,11 @@
 ﻿
 namespace Notepads
 {
+    using Notepads.Settings;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;
@@ -27,8 +24,7 @@ namespace Notepads
             if (_instances.Count == 0)
             {
                 IsFirstInstance = true;
-                ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-                localSettings.Values["ActiveInstance"] = null;
+                ApplicationSettings.Write("ActiveInstance", null);
             }
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
@@ -59,22 +55,8 @@ namespace Notepads
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
                 LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
-                if (protocol == NotepadsOperationProtocol.CloseEditor)
-                {
-                    if (context.Contains(":"))
-                    {
-                        var parts = context.Split(':');
-                        if (parts.Length == 2)
-                        {
-                            var appInstance = parts[0];
-                            var instance = AppInstance.GetInstances().FirstOrDefault(i => string.Equals(i.Key, appInstance, StringComparison.InvariantCultureIgnoreCase));
-                            instance?.RedirectActivationTo();
-                        }
-                    }
-                }
-                else if (protocol == NotepadsOperationProtocol.OpenNewInstance || protocol == NotepadsOperationProtocol.OpenFileDraggedOutside)
+                if (protocol == NotepadsOperationProtocol.OpenNewInstance || protocol == NotepadsOperationProtocol.Unrecognized)
                 {
                     OpenNewInstance();
                 }
@@ -121,8 +103,8 @@ namespace Notepads
                 return instances.FirstOrDefault();
             }
 
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            string activeInstance = localSettings.Values["ActiveInstance"] as string;
+            string activeInstance = ApplicationSettings.Read("ActiveInstance") as string;
+
             if (activeInstance == null)
             {
                 return null;

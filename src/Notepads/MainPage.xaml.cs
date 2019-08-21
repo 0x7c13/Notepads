@@ -361,33 +361,10 @@ namespace Notepads
             {
                 var operation = NotepadsProtocolService.GetOperationProtocol(_appLaunchUri, out var context);
 
-                if (operation == NotepadsOperationProtocol.OpenNewInstance)
+                if (operation == NotepadsOperationProtocol.OpenNewInstance || operation == NotepadsOperationProtocol.Unrecognized)
                 {
                     NotepadsCore.OpenNewTextEditor();
                     loadedCount++;
-                }
-                else if (operation == NotepadsOperationProtocol.OpenFileDraggedOutside)
-                {
-                    if (context.Contains(":"))
-                    {
-                        var parts = context.Split(':');
-                        if (parts.Length == 3)
-                        {
-                            var appInstance = parts[0];
-                            var editorGuid = parts[1];
-                            var fileToken = parts[2];
-                            try
-                            {
-                                await NotepadsCore.OpenNewTextEditor(await FileSystemUtility.GetFileFromFutureAccessList(fileToken));
-                                await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.CloseEditor, appInstance, editorGuid);
-                                loadedCount++;
-                            }
-                            catch (Exception ex)
-                            {
-                                LoggingService.LogError($"Failed to open file from Uri protocol: {_appLaunchUri} Exception: {ex.Message}");
-                            }
-                        }
-                    }
                 }
 
                 _appLaunchUri = null;
@@ -419,22 +396,6 @@ namespace Notepads
 
         public void ExecuteProtocol(Uri uri)
         {
-            var protocol = NotepadsProtocolService.GetOperationProtocol(uri, out var context);
-            if (protocol == NotepadsOperationProtocol.CloseEditor)
-            {
-                if (context.Contains(":"))
-                {
-                    var parts = context.Split(':');
-                    if (parts.Length == 2)
-                    {
-                        var appInstance = parts[0];
-                        var editorGuid = parts[1];
-                        NotepadsCore.DeleteTextEditor(
-                            NotepadsCore.GetAllTextEditors()
-                                .FirstOrDefault(editor => string.Equals(editor.Id.ToString(), editorGuid, StringComparison.InvariantCultureIgnoreCase)));
-                    }
-                }
-            }
         }
 
         private void CoreWindow_Activated(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowActivatedEventArgs args)

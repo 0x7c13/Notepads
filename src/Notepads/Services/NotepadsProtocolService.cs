@@ -3,14 +3,11 @@ namespace Notepads.Services
 {
     using System;
     using System.Threading.Tasks;
-    using Windows.System;
 
     public enum NotepadsOperationProtocol
     {
-        Invalid,
-        OpenNewInstance,
-        OpenFileDraggedOutside,
-        CloseEditor,
+        Unrecognized,
+        OpenNewInstance
     }
 
     public static class NotepadsProtocolService
@@ -23,7 +20,7 @@ namespace Notepads.Services
 
             if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.InvariantCultureIgnoreCase))
             {
-                return NotepadsOperationProtocol.Invalid;
+                return NotepadsOperationProtocol.Unrecognized;
             }
 
             var operation = uriStr.Substring("notepads://".Length);
@@ -38,39 +35,24 @@ namespace Notepads.Services
                 return NotepadsOperationProtocol.OpenNewInstance;
             }
 
-            if (operation.StartsWith("OnFileDraggedOutside/", StringComparison.InvariantCultureIgnoreCase))
-            {
-                context = operation.Substring("OnFileDraggedOutside/".Length);
-                return NotepadsOperationProtocol.OpenFileDraggedOutside;
-            }
-
-            if (operation.StartsWith("CloseEditor/", StringComparison.InvariantCultureIgnoreCase))
-            {
-                context = operation.Substring("CloseEditor/".Length);
-                return NotepadsOperationProtocol.CloseEditor;
-            }
-
-            return NotepadsOperationProtocol.Invalid;
+            return NotepadsOperationProtocol.Unrecognized;
         }
 
-        public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation, string appInstanceId = null, string editorGuid = null, string fileToken = null)
+        public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation)
         {
-            var uriToLaunch = "notepads://";
-
-            switch (operation)
+            if (operation == NotepadsOperationProtocol.Unrecognized)
             {
-                case NotepadsOperationProtocol.OpenFileDraggedOutside:
-                    uriToLaunch += $"OnFileDraggedOutside/{appInstanceId}:{editorGuid}:{fileToken}";
-                    break;
-                case NotepadsOperationProtocol.CloseEditor:
-                    uriToLaunch += $"CloseEditor/{appInstanceId}:{editorGuid}";
-                    break;
+                return false;
             }
-
-            return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()), new LauncherOptions()
+            else if (operation == NotepadsOperationProtocol.OpenNewInstance)
             {
-                
-            });
+                var uriToLaunch = "notepads://";
+                return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()));
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
