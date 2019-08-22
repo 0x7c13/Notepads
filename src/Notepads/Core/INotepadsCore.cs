@@ -34,11 +34,9 @@ namespace Notepads.Core
 
         event KeyEventHandler TextEditorKeyDown;
 
-        TextEditor OpenNewTextEditor(Guid? id = null);
+        TextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1);
 
-        TextEditor OpenNewTextEditor(TextEditorMetaData metadata, StorageFile file = null, int atIndex = -1);
-
-        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null);
+        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null, int atIndex = -1);
 
         TextEditor OpenNewTextEditor(
             Guid id,

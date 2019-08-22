@@ -72,19 +72,12 @@ namespace Notepads.Core
             Sets.SetDraggedOutside += Sets_SetDraggedOutside;
             Sets.DragOver += Sets_DragOver;
             Sets.Drop += Sets_Drop;
-            Sets.DragStarting += Sets_DragStarting;
-            Sets.DropCompleted += Sets_DropCompleted;
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
             DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
-        }
-
-        private void Sets_DragStarting(UIElement sender, DragStartingEventArgs args)
-        {
-            args.AllowedOperations = DataPackageOperation.Copy;
         }
 
         private void Sets_DragOver(object sender, DragEventArgs e)
@@ -102,13 +95,12 @@ namespace Notepads.Core
 
             if (item is TextEditor editor)
             {
-                // JsonConvert.SerializeObject(data)
                 var data = JsonConvert.SerializeObject(editor.GetTextEditorMetaData());
+
                 args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
 
-                // Add our index so we know where to remove from later (if needed)
                 args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
-                // Add Window Id to know if we're transferring to a different window.
+
                 args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
 
                 args.Data.Properties.ApplicationName = "Notepads";
@@ -124,37 +116,17 @@ namespace Notepads.Core
             }
         }
 
-        private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
-        {
-            LoggingService.LogInfo("Sets_DragItemsCompleted: " + args.DropResult);
-            if (args.DropResult != DataPackageOperation.None)
-            {
-                var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
-
-                if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
-                {
-                    if (args.Items.FirstOrDefault() is TextEditor editor)
-                    {
-                        DeleteTextEditor(editor);
-                    }
-                    ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
-                }
-            }
-        }
-
         private async void Sets_Drop(object sender, DragEventArgs e)
         {
-            LoggingService.LogInfo("Sets_Drop");
-
             if (!(sender is SetsView))
             {
                 return;
             }
 
+            var deferral = e.GetDeferral();
+
             if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) && dataObj is string data)
             {
-                ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
-
                 var metadata = JsonConvert.DeserializeObject<TextEditorMetaData>(data);
                 if (metadata == null) return;
 
@@ -162,11 +134,21 @@ namespace Notepads.Core
 
                 if (metadata.HasEditingFile && e.DataView.Contains(StandardDataFormats.StorageItems))
                 {
-                    var storageItems = await e.DataView.GetStorageItemsAsync();
-                    if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
+                    try
                     {
-                        editingFile = file;
-                    };
+                        var storageItems = await e.DataView.GetStorageItemsAsync();
+                        if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
+                        {
+                            editingFile = file;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingService.LogError($"Failed to read storage file from dropped set: {ex.Message}");
+                        e.Handled = false;
+                        deferral.Complete();
+                        return;
+                    }
                 }
 
                 // First we need to get the position in the List to drop to
@@ -185,15 +167,46 @@ namespace Notepads.Core
                     }
                 }
 
-                OpenNewTextEditor(metadata, editingFile, index == -1 ? sets.Items.Count : index);
+                var atIndex = index == -1 ? sets.Items.Count : index;
+
+                OpenNewTextEditor(
+                    Guid.NewGuid(),
+                    metadata.OriginalText,
+                    editingFile,
+                    metadata.DateModifiedFileTime,
+                    EncodingUtility.GetEncodingByName(metadata.OriginalEncoding),
+                    LineEndingUtility.GetLineEndingByName(metadata.OriginalLineEncoding),
+                    metadata.IsModified,
+                    atIndex).Init(metadata);
+
+                ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
+
                 e.Handled = true;
+                deferral.Complete();
+            }
+            else
+            {
+                e.Handled = false;
+                deferral.Complete();
             }
         }
 
-        private void Sets_DropCompleted(UIElement sender, DropCompletedEventArgs args)
+        private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
-            LoggingService.LogInfo("Sets_DropCompleted: " + args.DropResult);
+            if (args.DropResult != DataPackageOperation.None)
+            {
+                var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
+                if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
+                {
+                    if (args.Items.FirstOrDefault() is TextEditor editor)
+                    {
+                        DeleteTextEditor(editor);
+                    }
+                    ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
+                }
+            }
         }
+
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
@@ -208,7 +221,7 @@ namespace Notepads.Core
             }
         }
 
-        public TextEditor OpenNewTextEditor(Guid? id = null)
+        public TextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1)
         {
             return OpenNewTextEditor(
                 id ?? Guid.NewGuid(),
@@ -217,10 +230,11 @@ namespace Notepads.Core
                 -1,
                 EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding,
-                false);
+                false,
+                atIndex);
         }
 
-        public async Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null)
+        public async Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null, int atIndex = -1)
         {
             if (FileOpened(file))
             {
@@ -239,50 +253,6 @@ namespace Notepads.Core
                 textFile.Encoding,
                 textFile.LineEnding,
                 false);
-        }
-
-        public TextEditor OpenNewTextEditor(TextEditorMetaData metadata, StorageFile file = null, int atIndex = -1)
-        {
-            var newEditor = OpenNewTextEditor(Guid.NewGuid(),
-                metadata.OriginalText,
-                file,
-                metadata.DateModifiedFileTime,
-                EncodingUtility.GetEncodingByName(metadata.OriginalEncoding),
-                LineEndingUtility.GetLineEndingByName(metadata.OriginalLineEncoding),
-                isModified: metadata.IsModified,
-                atIndex);
-
-            Encoding targetEncoding = null;
-            LineEnding? targetLineEnding = null;
-
-            if (!string.IsNullOrEmpty(metadata.TargetEncoding))
-            {
-                targetEncoding = EncodingUtility.GetEncodingByName(metadata.TargetEncoding);
-            }
-
-            if (!string.IsNullOrEmpty(metadata.TargetLineEnding))
-            {
-                targetLineEnding = LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding);
-            }
-
-            if (metadata.WorkingText != null)
-            {
-                newEditor.SetText(metadata.WorkingText);
-            }
-
-            if (targetEncoding != null)
-            {
-                newEditor.TryChangeEncoding(targetEncoding);
-            }
-
-            if (targetLineEnding != null)
-            {
-                newEditor.TryChangeLineEnding(targetLineEnding.Value);
-            }
-
-            newEditor.SetSelection(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
-
-            return newEditor;
         }
 
         public TextEditor OpenNewTextEditor(

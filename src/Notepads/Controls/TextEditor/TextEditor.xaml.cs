@@ -57,6 +57,8 @@ namespace Notepads.Controls.TextEditor
         public int SelectionStartPosition { get; set; }
 
         public int SelectionEndPosition { get; set; }
+
+        public bool WrapWord { get; set; }
     }
 
     public sealed partial class TextEditor : UserControl
@@ -200,7 +202,8 @@ namespace Notepads.Controls.TextEditor
                 HasEditingFile = EditingFile != null,
                 IsModified = IsModified,
                 SelectionStartPosition = TextEditorCore.Document.Selection.StartPosition,
-                SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition
+                SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition,
+                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords
             };
 
             var workingText = TextEditorCore.GetText();
@@ -333,11 +336,12 @@ namespace Notepads.Controls.TextEditor
             TargetLineEnding = null;
             if (resetText)
             {
-                SetText(textFile.Content);
+                TextEditorCore.SetText(textFile.Content);
             }
             if (resetOriginalSnapshot)
             {
-                OriginalSnapshot = new TextFile(TextEditorCore.GetText(), textFile.Encoding, textFile.LineEnding, textFile.DateModifiedFileTime);
+                textFile.Content = TextEditorCore.GetText();
+                OriginalSnapshot = textFile;
             }
             if (clearUndoQueue)
             {
@@ -347,21 +351,32 @@ namespace Notepads.Controls.TextEditor
             _loaded = true;
         }
 
+        public void Init(TextEditorMetaData metadata)
+        {
+            if (!string.IsNullOrEmpty(metadata.TargetEncoding))
+            {
+                TryChangeEncoding(EncodingUtility.GetEncodingByName(metadata.TargetEncoding));
+            }
+
+            if (!string.IsNullOrEmpty(metadata.TargetLineEnding))
+            {
+                TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding));
+            }
+
+            if (metadata.WorkingText != null)
+            {
+                TextEditorCore.SetText(metadata.WorkingText);
+            }
+
+            TextEditorCore.Document.Selection.StartPosition = metadata.SelectionStartPosition;
+            TextEditorCore.Document.Selection.EndPosition = metadata.SelectionEndPosition;
+            TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
+        }
+
         public void RevertAllChanges()
         {
             Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
             ChangeReverted?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void SetText(string text)
-        {
-            TextEditorCore.SetText(text);
-        }
-
-        public void SetSelection(int start, int end)
-        {
-            TextEditorCore.Document.Selection.StartPosition = start;
-            TextEditorCore.Document.Selection.EndPosition = end;
         }
 
         public bool TryChangeEncoding(Encoding encoding)

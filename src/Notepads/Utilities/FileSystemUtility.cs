@@ -25,10 +25,10 @@ namespace Notepads.Utilities
             DateModifiedFileTime = dateModifiedFileTime;
         }
 
-        public string Content { get; }
-        public Encoding Encoding { get; }
-        public LineEnding LineEnding { get; }
-        public long DateModifiedFileTime { get; }
+        public string Content { get; set; }
+        public Encoding Encoding { get; set; }
+        public LineEnding LineEnding { get; set; }
+        public long DateModifiedFileTime { get; set; }
     }
 
     public static class FileSystemUtility
