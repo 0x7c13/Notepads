@@ -421,12 +421,4 @@
     <value>Exit Full Screen</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
-  <data name="TextEditor_ShadowInstanceIndicator.Text" xml:space="preserve">
-    <value>Shadow Instance</value>
-    <comment>TextEditor: ShadowInstanceIndicator display text.</comment>
-  </data>
-  <data name="TextEditor_ShadowInstanceIndicator_Description" xml:space="preserve">
-    <value>This is a shadow instance of Notepads. Session snapshot and settings are disabled.</value>
-    <comment>TextEditor: ShadowInstanceIndicator Description display text.</comment>
-  </data>
 </root>

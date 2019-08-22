@@ -193,20 +193,23 @@ namespace Notepads.Core
 
         private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
-            if (args.DropResult != DataPackageOperation.None)
+            if (args.DropResult == DataPackageOperation.None) return;
+
+            var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
+
+            if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
             {
-                var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
-                if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
+                if (args.Items.FirstOrDefault() is TextEditor editor)
                 {
-                    if (args.Items.FirstOrDefault() is TextEditor editor)
-                    {
-                        DeleteTextEditor(editor);
-                    }
-                    ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
+                    DeleteTextEditor(editor);
                 }
             }
-        }
 
+            if (setDroppedToAnotherInstance.HasValue)
+            {
+                ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
+            }
+        }
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {

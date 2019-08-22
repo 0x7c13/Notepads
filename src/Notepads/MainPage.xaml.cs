@@ -379,7 +379,7 @@ namespace Notepads
 
                 if (!App.IsFirstInstance)
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+                    NotificationCenter.Instance.PostNotification("This is a shadow instance of Notepads. Session snapshot and settings are disabled.", 4000); //(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
                 }
                 _loaded = true;
             }
@@ -392,6 +392,20 @@ namespace Notepads
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            Application.Current.EnteredBackground -= App_EnteredBackground;
+            Application.Current.EnteredBackground += App_EnteredBackground;
+        }
+
+        private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+
+            if (EditorSettingsService.IsSessionSnapshotEnabled)
+            {
+                await SessionManager.SaveSessionAsync();
+            }
+
+            deferral.Complete();
         }
 
         public void ExecuteProtocol(Uri uri)
@@ -738,22 +752,22 @@ namespace Notepads
             else if (sender == ModificationIndicator)
             {
                 PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
-                ModificationIndicator.ContextFlyout.ShowAt(ModificationIndicator);
+                ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
             }
             else if (sender == LineColumnIndicator)
             {
             }
             else if (sender == LineEndingIndicator)
             {
-                LineEndingIndicator.ContextFlyout.ShowAt(LineEndingIndicator);
+                LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
             }
             else if (sender == EncodingIndicator)
             {
-                EncodingIndicator.ContextFlyout.ShowAt(EncodingIndicator);
+                EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
             }
             else if (sender == ShadowInstanceIndicator)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+                NotificationCenter.Instance.PostNotification("This is a shadow instance of Notepads. Session snapshot and settings are disabled.", 4000); //(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
             }
         }
 
