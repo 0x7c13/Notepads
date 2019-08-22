@@ -79,6 +79,13 @@ namespace Notepads.Utilities
 
             args = args.Trim();
 
+            if (args.StartsWith("notepads.exe",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                args = args.Substring("notepads.exe".Length);
+                args = args.Trim();
+            }
+
             if (args.StartsWith("notepads",
                 StringComparison.InvariantCultureIgnoreCase))
             {

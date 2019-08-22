@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Notepads.Commands;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
-    using Notepads.Commands;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
     using Windows.UI.Core;

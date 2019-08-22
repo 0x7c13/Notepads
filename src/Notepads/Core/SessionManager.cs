@@ -1,6 +1,10 @@
 ﻿
 namespace Notepads.Core
 {
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -9,10 +13,6 @@ namespace Notepads.Core
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.Foundation.Collections;
     using Windows.Storage;
 

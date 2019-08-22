@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Commands
 {
-    using System;
     using Notepads.Services;
+    using System;
     using Windows.System;
 
     public class KeyboardShortcut<T> : IKeyboardCommand<T>

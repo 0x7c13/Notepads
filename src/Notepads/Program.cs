@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads
 {
-    using Notepads.Settings;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using System.Collections.Generic;
     using System.Linq;
