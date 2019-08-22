@@ -39,23 +39,8 @@ namespace Notepads.Core
             _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionData>();
             _loaded = false;
 
-            _notepadsCore.TextEditorLoaded += (sender, textEditor) =>
-            {
-                textEditor.TextChanging += RemoveTextEditorData;
-                textEditor.EncodingChanged += RemoveTextEditorData;
-                textEditor.LineEndingChanged += RemoveTextEditorData;
-                textEditor.ChangeReverted += RemoveTextEditorData;
-                textEditor.EditorModificationStateChanged += RemoveTextEditorData;
-            };
-
-            _notepadsCore.TextEditorUnloaded += (sender, textEditor) =>
-            {
-                textEditor.TextChanging -= RemoveTextEditorData;
-                textEditor.EncodingChanged -= RemoveTextEditorData;
-                textEditor.LineEndingChanged -= RemoveTextEditorData;
-                textEditor.ChangeReverted -= RemoveTextEditorData;
-                textEditor.EditorModificationStateChanged -= RemoveTextEditorData;
-            };
+            _notepadsCore.TextEditorLoaded += (sender, textEditor) => { BindEditorStateChangeEvent(textEditor); };
+            _notepadsCore.TextEditorUnloaded += (sender, textEditor) => { UnbindEditorStateChangeEvent(textEditor); };
         }
 
         public bool IsBackupEnabled { get; set; }
@@ -262,6 +247,24 @@ namespace Notepads.Core
         public void ClearSessionData()
         {
             ApplicationData.Current.LocalSettings.Values.Remove(SessionDataKey);
+        }
+
+        private void BindEditorStateChangeEvent(TextEditor textEditor)
+        {
+            textEditor.TextChanging += RemoveTextEditorData;
+            textEditor.EncodingChanged += RemoveTextEditorData;
+            textEditor.LineEndingChanged += RemoveTextEditorData;
+            textEditor.ChangeReverted += RemoveTextEditorData;
+            textEditor.EditorModificationStateChanged += RemoveTextEditorData;
+        }
+
+        private void UnbindEditorStateChangeEvent(TextEditor textEditor)
+        {
+            textEditor.TextChanging -= RemoveTextEditorData;
+            textEditor.EncodingChanged -= RemoveTextEditorData;
+            textEditor.LineEndingChanged -= RemoveTextEditorData;
+            textEditor.ChangeReverted -= RemoveTextEditorData;
+            textEditor.EditorModificationStateChanged -= RemoveTextEditorData;
         }
 
         private async Task<TextEditor> RecoverTextEditorAsync(TextEditorSessionData textEditorData)

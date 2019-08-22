@@ -16,7 +16,6 @@ namespace Notepads
 
         private static IList<AppInstance> _instances;
 
-        #region Main
         static void Main(string[] args)
         {
             _instances = AppInstance.GetInstances();
@@ -41,7 +40,7 @@ namespace Notepads
             {
                 LoggingService.LogInfo($"[Main] [CommandActivated] CurrentDirectoryPath: {cmdActivatedArgs.Operation.CurrentDirectoryPath} Arguments: {cmdActivatedArgs.Operation.Arguments}");
 
-                var file = FileSystemUtility.GetAbsolutePathFromCommondLine(
+                var file = FileSystemUtility.GetAbsolutePathFromCommandLine(
                     cmdActivatedArgs.Operation.CurrentDirectoryPath, cmdActivatedArgs.Operation.Arguments);
                 if (file != null)
                 {
@@ -121,7 +120,5 @@ namespace Notepads
             // activeInstance might be closed, let's return the first instance
             return instances.FirstOrDefault();
         }
-
-        #endregion
     }
 }

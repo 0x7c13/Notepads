@@ -502,7 +502,7 @@ namespace Notepads
             if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
 
             if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) &&
-                dataObj is string data)
+                dataObj is TextEditorMetaData)
             {
                 // We should let NotepadsCore to handle set movement
                 return;

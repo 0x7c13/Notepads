@@ -61,7 +61,7 @@ namespace Notepads.Utilities
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommondLine(dir, args);
+            var path = GetAbsolutePathFromCommandLine(dir, args);
 
             if (string.IsNullOrEmpty(path))
             {
@@ -73,25 +73,13 @@ namespace Notepads.Utilities
             return await GetFile(path);
         }
 
-        public static string GetAbsolutePathFromCommondLine(string dir, string args)
+        public static string GetAbsolutePathFromCommandLine(string dir, string args)
         {
             if (string.IsNullOrEmpty(args)) return null;
 
             args = args.Trim();
 
-            if (args.StartsWith("notepads.exe",
-                StringComparison.InvariantCultureIgnoreCase))
-            {
-                args = args.Substring("notepads.exe".Length);
-                args = args.Trim();
-            }
-
-            if (args.StartsWith("notepads",
-                StringComparison.InvariantCultureIgnoreCase))
-            {
-                args = args.Substring("notepads".Length);
-                args = args.Trim();
-            }
+            args = RemoveAppNameFromCommandLineIfAny(args);
 
             if (string.IsNullOrEmpty(args))
             {
@@ -124,6 +112,25 @@ namespace Notepads.Utilities
             }
 
             return path;
+        }
+
+        private static string RemoveAppNameFromCommandLineIfAny(string args)
+        {
+            if (args.StartsWith("notepads.exe",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                args = args.Substring("notepads.exe".Length);
+                args = args.Trim();
+            }
+
+            if (args.StartsWith("notepads",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                args = args.Substring("notepads".Length);
+                args = args.Trim();
+            }
+
+            return args;
         }
 
         public static async Task<BasicProperties> GetFileProperties(StorageFile file)
