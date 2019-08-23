@@ -237,7 +237,7 @@ namespace Notepads.Core
                 atIndex);
         }
 
-        public async Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null, int atIndex = -1)
+        public async Task<TextEditor> OpenNewTextEditor(StorageFile file, bool ignoreFileSizeLimit, Guid? id = null, int atIndex = -1)
         {
             if (FileOpened(file))
             {
@@ -245,7 +245,7 @@ namespace Notepads.Core
                 return GetSelectedTextEditor();
             }
 
-            var textFile = await FileSystemUtility.ReadFile(file);
+            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
             var dateModifiedFileTime = await FileSystemUtility.GetDateModified(file);
 
             return OpenNewTextEditor(

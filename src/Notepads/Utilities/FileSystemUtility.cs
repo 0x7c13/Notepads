@@ -175,17 +175,17 @@ namespace Notepads.Utilities
             }
         }
 
-        public static async Task<TextFile> ReadFile(string filePath)
+        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit)
         {
             StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file);
+            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file)
+        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
-            if (fileProperties.Size > 1000 * 1024) // 1MB
+            if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
             {
                 throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
@@ -328,13 +328,16 @@ namespace Notepads.Utilities
         {
             try
             {
-                return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
+                {
+                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                }
             }
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
-                return null;
             }
+            return null;
         }
 
         public static async Task<bool> TryAddToFutureAccessList(string token, StorageFile file)

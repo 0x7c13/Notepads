@@ -316,18 +316,21 @@ namespace Notepads
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is FileActivatedEventArgs fileActivatedEventArgs)
+
+            switch (e.Parameter)
             {
-                _appLaunchFiles = fileActivatedEventArgs.Files;
-            }
-            else if (e.Parameter is CommandLineActivatedEventArgs commandLine)
-            {
-                _appLaunchCmdDir = commandLine.Operation.CurrentDirectoryPath;
-                _appLaunchCmdArgs = commandLine.Operation.Arguments;
-            }
-            else if (e.Parameter is ProtocolActivatedEventArgs protocol)
-            {
-                _appLaunchUri = protocol.Uri;
+                case null:
+                    return;
+                case FileActivatedEventArgs fileActivatedEventArgs:
+                    _appLaunchFiles = fileActivatedEventArgs.Files;
+                    break;
+                case CommandLineActivatedEventArgs commandLineActivatedEventArgs:
+                    _appLaunchCmdDir = commandLineActivatedEventArgs.Operation.CurrentDirectoryPath;
+                    _appLaunchCmdArgs = commandLineActivatedEventArgs.Operation.Arguments;
+                    break;
+                case ProtocolActivatedEventArgs protocol:
+                    _appLaunchUri = protocol.Uri;
+                    break;
             }
         }
 
@@ -360,13 +363,10 @@ namespace Notepads
             else if (_appLaunchUri != null)
             {
                 var operation = NotepadsProtocolService.GetOperationProtocol(_appLaunchUri, out var context);
-
                 if (operation == NotepadsOperationProtocol.OpenNewInstance || operation == NotepadsOperationProtocol.Unrecognized)
                 {
-                    NotepadsCore.OpenNewTextEditor();
-                    loadedCount++;
+                    // Do nothing
                 }
-
                 _appLaunchUri = null;
             }
 
@@ -674,7 +674,7 @@ namespace Notepads
             {
                 try
                 {
-                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile);
+                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile, ignoreFileSizeLimit: false);
                     selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
                     selectedEditor.StartCheckingFileStatusPeriodically();
                     selectedEditor.CloseSideBySideDiffViewer();
@@ -862,7 +862,7 @@ namespace Notepads
         {
             try
             {
-                await NotepadsCore.OpenNewTextEditor(file);
+                await NotepadsCore.OpenNewTextEditor(file, ignoreFileSizeLimit: false);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return true;
             }

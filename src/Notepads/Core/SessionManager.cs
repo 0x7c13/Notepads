@@ -288,11 +288,11 @@ namespace Notepads.Core
             }
             else if (lastSaved == null && pending == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.OpenNewTextEditor(sourceFile, textEditorData.Id);
+                textEditor = await _notepadsCore.OpenNewTextEditor(sourceFile, ignoreFileSizeLimit: true, textEditorData.Id);
             }
             else // File with pending changes
             {
-                TextFile textFile = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath);
+                TextFile textFile = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath, ignoreFileSizeLimit: true);
 
                 textEditor = _notepadsCore.OpenNewTextEditor(
                     textEditorData.Id,
@@ -311,7 +311,7 @@ namespace Notepads.Core
 
         private async Task ApplyChangesAsync(TextEditor textEditor, BackupMetadata backupMetadata)
         {
-            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath);
+            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath, ignoreFileSizeLimit: true);
             textEditor.Init(textFile, textEditor.EditingFile, resetOriginalSnapshot: false, isModified: true);
             textEditor.TryChangeEncoding(backupMetadata.Encoding);
             textEditor.TryChangeLineEnding(backupMetadata.LineEnding);
@@ -437,7 +437,7 @@ namespace Notepads.Core
         {
             public override Encoding ReadJson(JsonReader reader, Type objectType, Encoding existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                return EncodingUtility.GetEncodingByName((string)reader.Value, new UTF8Encoding(false));
+                return EncodingUtility.GetEncodingByName((string)reader.Value, fallbackEncoding: new UTF8Encoding(false));
             }
 
             public override void WriteJson(JsonWriter writer, Encoding value, JsonSerializer serializer)

@@ -36,7 +36,7 @@ namespace Notepads.Core
 
         TextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1);
 
-        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null, int atIndex = -1);
+        Task<TextEditor> OpenNewTextEditor(StorageFile file, bool ignoreFileSizeLimit, Guid? id = null, int atIndex = -1);
 
         TextEditor OpenNewTextEditor(
             Guid id,
