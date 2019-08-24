@@ -497,18 +497,21 @@ namespace Notepads
             }
         }
 
-        private async void RootGrid_OnDrop(object sender, DragEventArgs e)
+        private async void RootGrid_OnDrop(object sender, DragEventArgs args)
         {
-            if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+            if (args.DataView == null) return;
 
-            if (e.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) &&
-                dataObj is TextEditorMetaData)
+            if (!string.IsNullOrEmpty(args.DataView.Properties?.ApplicationName) &&
+                string.Equals(args.DataView.Properties?.ApplicationName, App.ApplicationName))
             {
                 // We should let NotepadsCore to handle set movement
+                args.Handled = false;
                 return;
             }
 
-            var storageItems = await e.DataView.GetStorageItemsAsync();
+            if (!args.DataView.Contains(StandardDataFormats.StorageItems)) return;
+
+            var storageItems = await args.DataView.GetStorageItemsAsync();
 
             foreach (var storageItem in storageItems)
             {

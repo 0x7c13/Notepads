@@ -61,7 +61,7 @@ namespace Notepads.Utilities
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommandLine(dir, args);
+            var path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
 
             if (string.IsNullOrEmpty(path))
             {
@@ -73,13 +73,13 @@ namespace Notepads.Utilities
             return await GetFile(path);
         }
 
-        public static string GetAbsolutePathFromCommandLine(string dir, string args)
+        public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
         {
             if (string.IsNullOrEmpty(args)) return null;
 
             args = args.Trim();
 
-            args = RemoveAppNameFromCommandLineIfAny(args);
+            args = RemoveAppNameFromCommandLineIfAny(args, appName);
 
             if (string.IsNullOrEmpty(args))
             {
@@ -114,19 +114,19 @@ namespace Notepads.Utilities
             return path;
         }
 
-        private static string RemoveAppNameFromCommandLineIfAny(string args)
+        private static string RemoveAppNameFromCommandLineIfAny(string args, string appName)
         {
-            if (args.StartsWith("notepads.exe",
+            if (args.StartsWith($"{appName}.exe",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                args = args.Substring("notepads.exe".Length);
+                args = args.Substring($"{appName}.exe".Length);
                 args = args.Trim();
             }
 
-            if (args.StartsWith("notepads",
+            if (args.StartsWith(appName,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                args = args.Substring("notepads".Length);
+                args = args.Substring(appName.Length);
                 args = args.Trim();
             }
 

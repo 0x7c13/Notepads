@@ -22,6 +22,8 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        public static string ApplicationName = "Notepads";
+
         public static Guid Id { get; } = Guid.NewGuid();
 
         public static bool IsFirstInstance;

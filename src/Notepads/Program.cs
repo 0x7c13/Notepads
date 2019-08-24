@@ -41,7 +41,7 @@ namespace Notepads
                 LoggingService.LogInfo($"[Main] [CommandActivated] CurrentDirectoryPath: {cmdActivatedArgs.Operation.CurrentDirectoryPath} Arguments: {cmdActivatedArgs.Operation.Arguments}");
 
                 var file = FileSystemUtility.GetAbsolutePathFromCommandLine(
-                    cmdActivatedArgs.Operation.CurrentDirectoryPath, cmdActivatedArgs.Operation.Arguments);
+                    cmdActivatedArgs.Operation.CurrentDirectoryPath, cmdActivatedArgs.Operation.Arguments, App.ApplicationName);
                 if (file != null)
                 {
                     AssignOrCreateInstanceForFile(file);
