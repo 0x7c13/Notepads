@@ -36,10 +36,6 @@ namespace Notepads.Controls.TextEditor
 
     public class TextEditorMetaData
     {
-        public string OriginalText { get; set; }
-
-        public string WorkingText { get; set; }
-
         public string OriginalEncoding { get; set; }
 
         public string OriginalLineEncoding { get; set; }
@@ -59,6 +55,12 @@ namespace Notepads.Controls.TextEditor
         public int SelectionEndPosition { get; set; }
 
         public bool WrapWord { get; set; }
+
+        public double FontSize { get; set; }
+
+        public double ScrollViewerHorizontalOffset { get; set; }
+
+        public double ScrollViewerVerticalOffset { get; set; }
     }
 
     public sealed partial class TextEditor : UserControl
@@ -191,11 +193,17 @@ namespace Notepads.Controls.TextEditor
             Unloaded += TextEditor_Unloaded;
         }
 
+        public string GetText()
+        {
+            return TextEditorCore.GetText();
+        }
+
         public TextEditorMetaData GetTextEditorMetaData()
         {
+            TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+
             var metaData = new TextEditorMetaData
             {
-                OriginalText = OriginalSnapshot.Content,
                 OriginalEncoding = EncodingUtility.GetEncodingName(OriginalSnapshot.Encoding),
                 OriginalLineEncoding = LineEndingUtility.GetLineEndingName(OriginalSnapshot.LineEnding),
                 DateModifiedFileTime = OriginalSnapshot.DateModifiedFileTime,
@@ -203,15 +211,11 @@ namespace Notepads.Controls.TextEditor
                 IsModified = IsModified,
                 SelectionStartPosition = TextEditorCore.Document.Selection.StartPosition,
                 SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition,
-                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords
+                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
+                ScrollViewerHorizontalOffset = horizontalOffset,
+                ScrollViewerVerticalOffset = verticalOffset,
+                FontSize = TextEditorCore.FontSize,
             };
-
-            var workingText = TextEditorCore.GetText();
-
-            if (!string.Equals(OriginalSnapshot.Content, workingText))
-            {
-                metaData.WorkingText = workingText;
-            }
 
             if (TargetEncoding != null)
             {
@@ -351,7 +355,7 @@ namespace Notepads.Controls.TextEditor
             _loaded = true;
         }
 
-        public void Init(TextEditorMetaData metadata)
+        public void ApplyChangesFrom(TextEditorMetaData metadata, string text = null)
         {
             if (!string.IsNullOrEmpty(metadata.TargetEncoding))
             {
@@ -363,14 +367,16 @@ namespace Notepads.Controls.TextEditor
                 TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding));
             }
 
-            if (metadata.WorkingText != null)
+            if (text != null)
             {
-                TextEditorCore.SetText(metadata.WorkingText);
+                TextEditorCore.SetText(text);
             }
 
             TextEditorCore.Document.Selection.StartPosition = metadata.SelectionStartPosition;
             TextEditorCore.Document.Selection.EndPosition = metadata.SelectionEndPosition;
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
+            TextEditorCore.FontSize = metadata.FontSize;
+            TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
         }
 
         public void RevertAllChanges()

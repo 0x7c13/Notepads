@@ -295,15 +295,31 @@ namespace Notepads.Utilities
             }
         }
 
+        internal static async Task DeleteFile(string originalContentFilePath)
+        {
+            try
+            {
+                var file = await GetFile(originalContentFilePath);
+                if (file != null)
+                {
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to delete file: {originalContentFilePath}, Exception: {ex.Message}");
+            }
+        }
+
         public static async Task<StorageFolder> GetOrCreateAppFolder(string folderName)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
+        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
-            return await folder.CreateFileAsync(fileName);
+            return await folder.CreateFileAsync(fileName, option);
         }
 
         public static async Task<bool> FileExists(StorageFile file)

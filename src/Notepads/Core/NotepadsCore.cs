@@ -59,6 +59,9 @@ namespace Notepads.Core
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
         private const string NotepadsInstanceId = "NotepadsInstanceId";
+        private const string NotepadsTextEditorOriginalContent = "NotepadsTextEditorOriginalContent";
+        private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
+        private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
             string defaultNewFileName,
@@ -93,27 +96,40 @@ namespace Notepads.Core
         {
             // In Initial Window we need to serialize our tab data.
             var item = args.Items.FirstOrDefault();
+            if (!(item is TextEditor editor)) return;
 
-            if (item is TextEditor editor)
+            try
             {
                 var data = JsonConvert.SerializeObject(editor.GetTextEditorMetaData());
 
-                args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
+                var originalText = editor.OriginalSnapshot.Content;
+                var pendingText = editor.GetText();
 
-                args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
+                args.Data.Properties.Add(NotepadsTextEditorOriginalContent, originalText);
 
-                args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
-
-                args.Data.Properties.ApplicationName = App.ApplicationName;
+                if (!string.Equals(originalText, pendingText))
+                {
+                    args.Data.Properties.Add(NotepadsTextEditorPendingContent, pendingText);
+                }
 
                 // Add Editing File
                 if (editor.EditingFile != null)
                 {
                     args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
+                    args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFile.Path);
                     args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
                 }
 
+                args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
+                args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
+                args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
+                args.Data.Properties.ApplicationName = App.ApplicationName;
+
                 ApplicationSettings.Write("SetDroppedToAnotherInstance", false);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 
@@ -124,93 +140,108 @@ namespace Notepads.Core
                 return;
             }
 
-            if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
-                !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
-            {
-                return;
-            }
+            var sets = sender as SetsView;
 
             var deferral = args.GetDeferral();
 
-            ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
-
-            if (args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) && dataObj is string data)
+            if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
+                !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
             {
-                TextEditorMetaData metaData;
-                try
-                {
-                    metaData = JsonConvert.DeserializeObject<TextEditorMetaData>(data);
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.LogError($"Failed to load TextEditorMetaData from dropped set: {ex.Message}");
-                    args.Handled = false;
-                    deferral.Complete();
-                    return;
-                }
+                deferral.Complete();
+                return;
+            }
 
-                if (metaData == null)
+            try
+            {
+                if (args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) &&
+                    dataObj is string data)
                 {
-                    args.Handled = false;
-                    deferral.Complete();
-                    return;
-                }
+                    TextEditorMetaData metaData = JsonConvert.DeserializeObject<TextEditorMetaData>(data);
 
-                StorageFile editingFile = null;
+                    if (args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFilePath,
+                            out object editingFilePathObj) && editingFilePathObj is string editingFilePath)
+                    {
+                        var editor = GetTextEditor(editingFilePath);
+                        if (editor != null)
+                        {
+                            SwitchTo(editor);
+                            NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                            throw new Exception("Failed to drop editor set: File already opened.");
+                        }
+                    }
 
-                if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
-                {
-                    try
+                    ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
+
+                    StorageFile editingFile = null;
+
+                    if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
                     {
                         var storageItems = await args.DataView.GetStorageItemsAsync();
                         if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
                         {
                             editingFile = file;
                         }
+                        else
+                        {
+                            throw new Exception("Failed to read storage file from dropped set: Expecting only one storage file.");
+                        }
                     }
-                    catch (Exception ex)
+
+                    string originalText = null;
+                    string pendingText = null;
+
+                    if (args.DataView.Properties.TryGetValue(NotepadsTextEditorOriginalContent, out object originalContentObj) &&
+                        originalContentObj is string originalContent)
                     {
-                        LoggingService.LogError($"Failed to read storage file from dropped set: {ex.Message}");
-                        args.Handled = false;
-                        deferral.Complete();
-                        return;
+                        originalText = originalContent;
                     }
+                    else
+                    {
+                        throw new Exception($"Failed to get original content from DataView: OriginalContent property Is null");
+                    }
+
+                    if (args.DataView.Properties.TryGetValue(NotepadsTextEditorPendingContent, out object pendingContentObj) &&
+                        pendingContentObj is string pendingContent)
+                    {
+                        pendingText = pendingContent;
+                    }
+
+                    var index = -1;
+
+                    // Determine which items in the list our pointer is in between.
+                    for (int i = 0; i < sets.Items.Count; i++)
+                    {
+                        var item = sets.ContainerFromIndex(i) as SetsViewItem;
+
+                        if (args.GetPosition(item).X - item.ActualWidth < 0)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    var atIndex = index == -1 ? sets.Items.Count : index;
+
+                    OpenNewTextEditor(
+                        Guid.NewGuid(),
+                        originalText,
+                        editingFile,
+                        metaData.DateModifiedFileTime,
+                        EncodingUtility.GetEncodingByName(metaData.OriginalEncoding),
+                        LineEndingUtility.GetLineEndingByName(metaData.OriginalLineEncoding),
+                        metaData.IsModified,
+                        atIndex).ApplyChangesFrom(metaData, pendingText);
+
+                    deferral.Complete();
                 }
-
-                // First we need to get the position in the List to drop to
-                var sets = sender as SetsView;
-                var index = -1;
-
-                // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items.Count; i++)
+                else
                 {
-                    var item = sets.ContainerFromIndex(i) as SetsViewItem;
-
-                    if (args.GetPosition(item).X - item.ActualWidth < 0)
-                    {
-                        index = i;
-                        break;
-                    }
+                    deferral.Complete();
                 }
-
-                var atIndex = index == -1 ? sets.Items.Count : index;
-
-                OpenNewTextEditor(
-                    Guid.NewGuid(),
-                    metaData.OriginalText,
-                    editingFile,
-                    metaData.DateModifiedFileTime,
-                    EncodingUtility.GetEncodingByName(metaData.OriginalEncoding),
-                    LineEndingUtility.GetLineEndingByName(metaData.OriginalLineEncoding),
-                    metaData.IsModified,
-                    atIndex).Init(metaData);
-
-                args.Handled = true;
-                deferral.Complete();
             }
-            else
+            catch (Exception ex)
             {
-                args.Handled = false;
+                LoggingService.LogException(ex);
                 deferral.Complete();
             }
         }
@@ -264,6 +295,7 @@ namespace Notepads.Core
             if (FileOpened(file))
             {
                 SwitchTo(file);
+                NotificationCenter.Instance.PostNotification("File already opened!", 2500);
                 return GetSelectedTextEditor();
             }
 
@@ -451,6 +483,17 @@ namespace Notepads.Core
             {
                 return _selectedTextEditor;
             }
+        }
+
+        public TextEditor GetTextEditor(string editingFilePath)
+        {
+            if (string.IsNullOrEmpty(editingFilePath))
+            {
+                return null;
+            }
+
+            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFile != null && 
+                string.Equals(editor.EditingFile.Path, editingFilePath, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public TextEditor[] GetAllTextEditors()

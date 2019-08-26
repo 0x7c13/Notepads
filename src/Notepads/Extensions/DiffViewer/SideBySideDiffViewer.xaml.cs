@@ -56,7 +56,7 @@ namespace Notepads.Extensions.DiffViewer
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),

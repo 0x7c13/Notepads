@@ -68,6 +68,8 @@ namespace Notepads.Core
 
         TextEditor GetSelectedTextEditor();
 
+        TextEditor GetTextEditor(string editingFilePath);
+
         TextEditor[] GetAllTextEditors();
 
         void FocusOnTextEditor(TextEditor textEditor);
