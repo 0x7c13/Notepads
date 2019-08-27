@@ -27,8 +27,6 @@
         <SplitView x:Name="RootSplitView"
                    Grid.Row="0"
                    AllowDrop="True" 
-                   Drop="RootGrid_OnDrop" 
-                   DragOver="RootGrid_OnDragOver"
                    IsPaneOpen="False"
                    OpenPaneLength="395"
                    DisplayMode="Overlay"

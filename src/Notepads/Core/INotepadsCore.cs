@@ -4,6 +4,7 @@ namespace Notepads.Core
     using Notepads.Controls.TextEditor;
     using Notepads.Utilities;
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Storage;
@@ -31,6 +32,8 @@ namespace Notepads.Core
         event EventHandler<TextEditor> TextEditorLineEndingChanged;
 
         event EventHandler<TextEditor> TextEditorModeChanged;
+
+        event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         event KeyEventHandler TextEditorKeyDown;
 

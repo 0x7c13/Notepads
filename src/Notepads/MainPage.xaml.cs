@@ -57,6 +57,7 @@ namespace Notepads
                 if (_notepadsCore == null)
                 {
                     _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"), new NotepadsExtensionProvider());
+                    _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
@@ -499,22 +500,8 @@ namespace Notepads
             }
         }
 
-        private async void RootGrid_OnDrop(object sender, DragEventArgs args)
+        private async void OnStorageItemsDropped(object sender, IReadOnlyList<IStorageItem> storageItems)
         {
-            if (args.DataView == null) return;
-
-            if (!string.IsNullOrEmpty(args.DataView.Properties?.ApplicationName) &&
-                string.Equals(args.DataView.Properties?.ApplicationName, App.ApplicationName))
-            {
-                // We should let NotepadsCore to handle set movement
-                args.Handled = false;
-                return;
-            }
-
-            if (!args.DataView.Contains(StandardDataFormats.StorageItems)) return;
-
-            var storageItems = await args.DataView.GetStorageItemsAsync();
-
             foreach (var storageItem in storageItems)
             {
                 if (storageItem is StorageFile file)
@@ -522,11 +509,6 @@ namespace Notepads
                     await OpenFile(file);
                 }
             }
-        }
-
-        private void RootGrid_OnDragOver(object sender, DragEventArgs e)
-        {
-            e.AcceptedOperation = DataPackageOperation.Link;
         }
 
         #endregion
