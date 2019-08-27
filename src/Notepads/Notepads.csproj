@@ -153,6 +153,7 @@
     </Compile>
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorStateMetaData.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\ISessionManager.cs" />
     <Compile Include="Core\NotepadsCore.cs" />

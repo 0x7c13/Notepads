@@ -213,7 +213,7 @@ namespace Notepads.Core
 
                     var atIndex = index == -1 ? sets.Items.Count : index;
 
-                    OpenNewTextEditor(
+                    var newEditor = OpenNewTextEditor(
                         Guid.NewGuid(),
                         lastSavedText,
                         editingFile,
@@ -221,7 +221,19 @@ namespace Notepads.Core
                         EncodingUtility.GetEncodingByName(metaData.LastSavedEncoding),
                         LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEnding),
                         metaData.IsModified,
-                        atIndex).ApplyChangesFrom(metaData, pendingText);
+                        atIndex);
+
+                     newEditor.ApplyChangesFrom(metaData, pendingText);
+
+                    if (metaData.IsContentPreviewPanelOpened)
+                    {
+                        newEditor.ShowHideContentPreview();
+                    }
+
+                    if (metaData.IsInDiffPreviewMode)
+                    {
+                        newEditor.OpenSideBySideDiffViewer();
+                    }
 
                     deferral.Complete();
                 }
