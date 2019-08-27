@@ -73,7 +73,6 @@ namespace Notepads.Core
             Sets.SetClosing += SetsView_OnSetClosing;
             Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
             Sets.SetDraggedOutside += Sets_SetDraggedOutside;
-            Sets.DragOver += Sets_DragOver;
             Sets.Drop += Sets_Drop;
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
@@ -81,15 +80,6 @@ namespace Notepads.Core
             _extensionProvider = extensionProvider;
             DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
-        }
-
-        private void Sets_DragOver(object sender, DragEventArgs args)
-        {
-            if (!string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
-                string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
-            {
-                args.AcceptedOperation = DataPackageOperation.Copy;
-            }
         }
 
         private void Sets_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
@@ -494,7 +484,7 @@ namespace Notepads.Core
                 return null;
             }
 
-            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFilePath != null && 
+            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFilePath != null &&
                 string.Equals(editor.EditingFilePath, editingFilePath, StringComparison.OrdinalIgnoreCase));
         }
 

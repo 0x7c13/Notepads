@@ -296,14 +296,14 @@ namespace Notepads.Utilities
             }
         }
 
-        internal static async Task DeleteFile(string filePath)
+        internal static async Task DeleteFile(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
         {
             try
             {
                 var file = await GetFile(filePath);
                 if (file != null)
                 {
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    await file.DeleteAsync(deleteOption);
                 }
             }
             catch (Exception ex)

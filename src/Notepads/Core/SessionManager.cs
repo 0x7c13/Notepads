@@ -14,7 +14,6 @@ namespace Notepads.Core
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Windows.Foundation.Collections;
     using Windows.Storage;
 
     internal class SessionManager : ISessionManager

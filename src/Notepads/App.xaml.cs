@@ -14,7 +14,6 @@ namespace Notepads
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
-    using Windows.Storage;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;

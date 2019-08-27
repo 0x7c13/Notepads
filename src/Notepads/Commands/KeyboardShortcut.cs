@@ -1,7 +1,6 @@
 ﻿
 namespace Notepads.Commands
 {
-    using Notepads.Services;
     using System;
     using Windows.System;
 
