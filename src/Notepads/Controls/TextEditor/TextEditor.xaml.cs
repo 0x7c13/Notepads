@@ -38,7 +38,7 @@ namespace Notepads.Controls.TextEditor
     {
         public string LastSavedEncoding { get; set; }
 
-        public string LastSavedLineEncoding { get; set; }
+        public string LastSavedLineEnding { get; set; }
 
         public long DateModifiedFileTime { get; set; }
 
@@ -220,7 +220,7 @@ namespace Notepads.Controls.TextEditor
             var metaData = new TextEditorStateMetaData
             {
                 LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding),
-                LastSavedLineEncoding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
+                LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
                 DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
                 HasEditingFile = EditingFile != null,
                 IsModified = IsModified,

@@ -219,7 +219,7 @@ namespace Notepads.Core
                         editingFile,
                         metaData.DateModifiedFileTime,
                         EncodingUtility.GetEncodingByName(metaData.LastSavedEncoding),
-                        LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEncoding),
+                        LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEnding),
                         metaData.IsModified,
                         atIndex).ApplyChangesFrom(metaData, pendingText);
 
