@@ -117,14 +117,14 @@ namespace Notepads.Utilities
         private static string RemoveAppNameFromCommandLineIfAny(string args, string appName)
         {
             if (args.StartsWith($"{appName}.exe",
-                StringComparison.InvariantCultureIgnoreCase))
+                StringComparison.OrdinalIgnoreCase))
             {
                 args = args.Substring($"{appName}.exe".Length);
                 args = args.Trim();
             }
 
             if (args.StartsWith(appName,
-                StringComparison.InvariantCultureIgnoreCase))
+                StringComparison.OrdinalIgnoreCase))
             {
                 args = args.Substring(appName.Length);
                 args = args.Trim();
@@ -247,6 +247,7 @@ namespace Notepads.Utilities
             return encoding;
         }
 
+        // Will throw if not succeeded, exception should be caught and handled by caller
         public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
@@ -295,11 +296,11 @@ namespace Notepads.Utilities
             }
         }
 
-        internal static async Task DeleteFile(string originalContentFilePath)
+        internal static async Task DeleteFile(string filePath)
         {
             try
             {
-                var file = await GetFile(originalContentFilePath);
+                var file = await GetFile(filePath);
                 if (file != null)
                 {
                     await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
@@ -307,7 +308,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to delete file: {originalContentFilePath}, Exception: {ex.Message}");
+                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
             }
         }
 

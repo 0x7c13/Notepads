@@ -5,6 +5,7 @@ namespace Notepads
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
@@ -39,7 +40,12 @@ namespace Notepads
             //await LoggingService.InitializeAsync();
             LoggingService.LogInfo($"Instance = {Id} IsFirstInstance: {IsFirstInstance}");
 
-            ApplicationData.Current.LocalSettings.Values["ActiveInstance"] = App.Id.ToString();
+            if (!IsFirstInstance)
+            {
+                Analytics.TrackEvent("ShadowInstanceLaunched");
+            }
+
+            ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
 
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;

@@ -59,7 +59,7 @@ namespace Notepads.Core
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
         private const string NotepadsInstanceId = "NotepadsInstanceId";
-        private const string NotepadsTextEditorOriginalContent = "NotepadsTextEditorOriginalContent";
+        private const string NotepadsTextEditorLastSavedContent = "NotepadsTextEditorLastSavedContent";
         private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
@@ -102,12 +102,12 @@ namespace Notepads.Core
             {
                 var data = JsonConvert.SerializeObject(editor.GetTextEditorMetaData());
 
-                var originalText = editor.OriginalSnapshot.Content;
+                var lastSavedText = editor.LastSavedSnapshot.Content;
                 var pendingText = editor.GetText();
 
-                args.Data.Properties.Add(NotepadsTextEditorOriginalContent, originalText);
+                args.Data.Properties.Add(NotepadsTextEditorLastSavedContent, lastSavedText);
 
-                if (!string.Equals(originalText, pendingText))
+                if (!string.Equals(lastSavedText, pendingText))
                 {
                     args.Data.Properties.Add(NotepadsTextEditorPendingContent, pendingText);
                 }
@@ -116,7 +116,7 @@ namespace Notepads.Core
                 if (editor.EditingFile != null)
                 {
                     args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
-                    args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFile.Path);
+                    args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFilePath);
                     args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
                 }
 
@@ -125,7 +125,7 @@ namespace Notepads.Core
                 args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
                 args.Data.Properties.ApplicationName = App.ApplicationName;
 
-                ApplicationSettings.Write("SetDroppedToAnotherInstance", false);
+                ApplicationSettingsStore.Write("SetDroppedToAnotherInstance", false);
             }
             catch (Exception ex)
             {
@@ -156,7 +156,7 @@ namespace Notepads.Core
                 if (args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj) &&
                     dataObj is string data)
                 {
-                    TextEditorMetaData metaData = JsonConvert.DeserializeObject<TextEditorMetaData>(data);
+                    TextEditorStateMetaData metaData = JsonConvert.DeserializeObject<TextEditorStateMetaData>(data);
 
                     if (args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFilePath,
                             out object editingFilePathObj) && editingFilePathObj is string editingFilePath)
@@ -170,7 +170,8 @@ namespace Notepads.Core
                         }
                     }
 
-                    ApplicationSettings.Write("SetDroppedToAnotherInstance", true);
+                    args.AcceptedOperation = DataPackageOperation.Move;
+                    ApplicationSettingsStore.Write("SetDroppedToAnotherInstance", true);
 
                     StorageFile editingFile = null;
 
@@ -187,17 +188,17 @@ namespace Notepads.Core
                         }
                     }
 
-                    string originalText = null;
+                    string lastSavedText = null;
                     string pendingText = null;
 
-                    if (args.DataView.Properties.TryGetValue(NotepadsTextEditorOriginalContent, out object originalContentObj) &&
-                        originalContentObj is string originalContent)
+                    if (args.DataView.Properties.TryGetValue(NotepadsTextEditorLastSavedContent, out object lastSavedContentObj) &&
+                        lastSavedContentObj is string lastSavedContent)
                     {
-                        originalText = originalContent;
+                        lastSavedText = lastSavedContent;
                     }
                     else
                     {
-                        throw new Exception($"Failed to get original content from DataView: OriginalContent property Is null");
+                        throw new Exception($"Failed to get last saved content from DataView: NotepadsTextEditorLastSavedContent property Is null");
                     }
 
                     if (args.DataView.Properties.TryGetValue(NotepadsTextEditorPendingContent, out object pendingContentObj) &&
@@ -224,11 +225,11 @@ namespace Notepads.Core
 
                     OpenNewTextEditor(
                         Guid.NewGuid(),
-                        originalText,
+                        lastSavedText,
                         editingFile,
                         metaData.DateModifiedFileTime,
-                        EncodingUtility.GetEncodingByName(metaData.OriginalEncoding),
-                        LineEndingUtility.GetLineEndingByName(metaData.OriginalLineEncoding),
+                        EncodingUtility.GetEncodingByName(metaData.LastSavedEncoding),
+                        LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEncoding),
                         metaData.IsModified,
                         atIndex).ApplyChangesFrom(metaData, pendingText);
 
@@ -248,7 +249,7 @@ namespace Notepads.Core
 
         private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
-            var setDroppedToAnotherInstance = ApplicationSettings.Read("SetDroppedToAnotherInstance") as bool?;
+            var setDroppedToAnotherInstance = ApplicationSettingsStore.Read("SetDroppedToAnotherInstance") as bool?;
 
             if (setDroppedToAnotherInstance.HasValue && setDroppedToAnotherInstance.Value)
             {
@@ -260,7 +261,7 @@ namespace Notepads.Core
 
             if (setDroppedToAnotherInstance.HasValue)
             {
-                ApplicationSettings.Write("SetDroppedToAnotherInstance", null);
+                ApplicationSettingsStore.Write("SetDroppedToAnotherInstance", null);
             }
         }
 
@@ -341,7 +342,7 @@ namespace Notepads.Core
 
             var textEditorSetsViewItem = new SetsViewItem
             {
-                Header = file == null ? DefaultNewFileName : file.Name,
+                Header = textEditor.EditingFileName ?? DefaultNewFileName,
                 Content = textEditor,
                 SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
                 Icon = new SymbolIcon(Symbol.Save)
@@ -389,7 +390,8 @@ namespace Notepads.Core
 
         public async Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file)
         {
-            await textEditor.SaveContentToFileAndUpdateEditorState(file);
+            await textEditor.SaveContentToFileAndUpdateEditorState(file); // Will throw if not succeeded
+            MarkTextEditorSetSaved(textEditor);
             TextEditorSaved?.Invoke(this, textEditor);
         }
 
@@ -408,7 +410,7 @@ namespace Notepads.Core
 
         public bool TryGetSharingContent(TextEditor textEditor, out string title, out string content)
         {
-            title = textEditor.EditingFile != null ? textEditor.EditingFile.Name : DefaultNewFileName;
+            title = textEditor.EditingFileName ?? DefaultNewFileName;
             content = textEditor.GetContentForSharing();
             return !string.IsNullOrEmpty(content);
         }
@@ -492,8 +494,8 @@ namespace Notepads.Core
                 return null;
             }
 
-            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFile != null && 
-                string.Equals(editor.EditingFile.Path, editingFilePath, StringComparison.InvariantCultureIgnoreCase));
+            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFilePath != null && 
+                string.Equals(editor.EditingFilePath, editingFilePath, StringComparison.OrdinalIgnoreCase));
         }
 
         public TextEditor[] GetAllTextEditors()
@@ -562,12 +564,10 @@ namespace Notepads.Core
             if (Sets.Items == null) return null;
             foreach (SetsViewItem setsItem in Sets.Items)
             {
-                if (setsItem.Content is TextEditor textEditor)
+                if (!(setsItem.Content is TextEditor textEditor)) continue;
+                if (textEditor.EditingFilePath != null && string.Equals(textEditor.EditingFilePath, file.Path, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (string.Equals(textEditor.EditingFile?.Path, file.Path))
-                    {
-                        return setsItem;
-                    }
+                    return setsItem;
                 }
             }
             return null;
@@ -602,9 +602,9 @@ namespace Notepads.Core
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item != null)
             {
-                if (textEditor.EditingFile != null)
+                if (textEditor.EditingFileName != null)
                 {
-                    item.Header = textEditor.EditingFile.Name;
+                    item.Header = textEditor.EditingFileName;
                 }
                 item.Icon.Visibility = Visibility.Collapsed;
             }

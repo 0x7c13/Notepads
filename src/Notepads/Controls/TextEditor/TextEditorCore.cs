@@ -155,6 +155,7 @@ namespace Notepads.Controls.TextEditor
             horizontalOffset = _contentScrollViewer.HorizontalOffset;
             verticalOffset = _contentScrollViewer.VerticalOffset;
         }
+
         public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
         {
             _contentScrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);

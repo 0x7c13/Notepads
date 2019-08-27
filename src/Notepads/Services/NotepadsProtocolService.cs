@@ -18,7 +18,7 @@ namespace Notepads.Services
 
             var uriStr = uri.ToString().Trim();
 
-            if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.OrdinalIgnoreCase))
             {
                 return NotepadsOperationProtocol.Unrecognized;
             }

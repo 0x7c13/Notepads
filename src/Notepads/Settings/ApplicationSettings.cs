@@ -1,10 +1,11 @@
 ﻿
 namespace Notepads.Settings
 {
+    using Notepads.Services;
     using System;
     using Windows.Storage;
 
-    public class ApplicationSettings
+    public class ApplicationSettingsStore
     {
         public static object Read(string key)
         {
@@ -14,15 +15,6 @@ namespace Notepads.Settings
             if (localSettings.Values.ContainsKey(key))
             {
                 obj = localSettings.Values[key];
-            }
-            else
-            {
-                //ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
-                //if (roamingSettings.Values.ContainsKey(key))
-                //{
-                //    obj = roamingSettings.Values[key];
-                //    WriteAsync(key, obj, false);
-                //}
             }
 
             return obj;
@@ -38,6 +30,21 @@ namespace Notepads.Settings
             //    ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
             //    roamingSettings.Values[key] = obj;
             //}
+        }
+
+        public static bool Remove(string key)
+        {
+            try
+            {
+                ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                return localSettings.Values.Remove(key);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to remove key [{key}] from application settings: {ex.Message}");
+            }
+
+            return false;
         }
     }
 }

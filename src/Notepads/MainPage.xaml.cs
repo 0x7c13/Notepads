@@ -8,10 +8,10 @@ namespace Notepads
     using Notepads.Core;
     using Notepads.Extensions;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
@@ -49,8 +49,6 @@ namespace Notepads
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore _notepadsCore;
-
-        private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
 
         private INotepadsCore NotepadsCore
         {
@@ -147,6 +145,7 @@ namespace Notepads
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
 
             Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
+            Window.Current.SizeChanged += WindowSizeChanged;
 
             InitControls();
 
@@ -235,19 +234,36 @@ namespace Notepads
 
         #region View Mode Switches
 
+        // Show hide ExitCompactOverlayButton and status bar based on current ViewMode
+        // Reset TitleBarReservedArea accordingly
+        private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
+            {
+                if (ExitCompactOverlayButton.Visibility == Visibility.Collapsed)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Visible;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                }
+            }
+            else // Default or FullScreen
+            {
+                if (ExitCompactOverlayButton.Visibility == Visibility.Visible)
+                {
+                    TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
+                    ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
+                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                }
+            }
+        }
+
         private async void EnterExitCompactOverlayMode()
         {
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
             {
                 var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
-                if (modeSwitched)
-                {
-                    TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
-                    ExitCompactOverlayButton.Visibility = Visibility.Visible;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
-                    Analytics.TrackEvent("EnteredCompactOverlayMode");
-                }
-                else
+                if (!modeSwitched)
                 {
                     LoggingService.LogError("Failed to enter CompactOverlay view mode.");
                     Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
@@ -256,13 +272,7 @@ namespace Notepads
             else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
             {
                 var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                if (modeSwitched)
-                {
-                    TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
-                    ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
-                }
-                else
+                if (!modeSwitched)
                 {
                     LoggingService.LogError("Failed to enter Default view mode.");
                     Analytics.TrackEvent("FailedToEnterDefaultViewMode");
@@ -279,16 +289,8 @@ namespace Notepads
             }
             else
             {
-                bool wasCompactOverlayMode = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
                 if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
                 {
-                    if (wasCompactOverlayMode)
-                    {
-                        TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
-                        ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                        if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
-                    }
-
                     LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
                 }
@@ -427,7 +429,7 @@ namespace Notepads
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
-                ApplicationData.Current.LocalSettings.Values["ActiveInstance"] = App.Id.ToString();
+                ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
@@ -585,7 +587,7 @@ namespace Notepads
         private void UpdatePathIndicator(TextEditor textEditor)
         {
             if (StatusBar == null) return;
-            PathIndicator.Text = textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName;
+            PathIndicator.Text = textEditor.EditingFilePath ?? _defaultNewFileName;
 
             if (textEditor.FileModificationState == FileModificationState.Untouched)
             {
@@ -658,7 +660,7 @@ namespace Notepads
                     NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
                     break;
                 case "RevertAllChanges":
-                    var fileName = (selectedTextEditor.EditingFile != null ? selectedTextEditor.EditingFile.Name : _defaultNewFileName);
+                    var fileName = selectedTextEditor.EditingFileName ?? _defaultNewFileName;
                     var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
                     {
                         selectedTextEditor.CloseSideBySideDiffViewer();
@@ -754,7 +756,7 @@ namespace Notepads
             }
             else if (sender == ModificationIndicator)
             {
-                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.IsInOriginalState(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
                 ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
             }
             else if (sender == LineColumnIndicator)
@@ -819,7 +821,7 @@ namespace Notepads
 
         private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
         {
-            var file = (textEditor.EditingFile != null ? textEditor.EditingFile.Path : _defaultNewFileName);
+            var file = textEditor.EditingFilePath ?? _defaultNewFileName;
 
             var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {

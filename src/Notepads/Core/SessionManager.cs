@@ -4,6 +4,7 @@ namespace Notepads.Core
     using Newtonsoft.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
@@ -39,8 +40,13 @@ namespace Notepads.Core
             _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionData>();
             _loaded = false;
 
-            _notepadsCore.TextEditorLoaded += (sender, textEditor) => { BindEditorStateChangeEvent(textEditor); };
-            _notepadsCore.TextEditorUnloaded += (sender, textEditor) => { UnbindEditorStateChangeEvent(textEditor); };
+            foreach (var editor in _notepadsCore.GetAllTextEditors())
+            {
+                BindEditorStateChangeEvent(this, editor);
+            }
+
+            _notepadsCore.TextEditorLoaded += BindEditorStateChangeEvent;
+            _notepadsCore.TextEditorUnloaded += UnbindEditorStateChangeEvent;
         }
 
         public bool IsBackupEnabled { get; set; }
@@ -52,7 +58,7 @@ namespace Notepads.Core
                 return 0; // Already loaded
             }
 
-            if (!ApplicationData.Current.LocalSettings.Values.TryGetValue(SessionDataKey, out object data))
+            if (!(ApplicationSettingsStore.Read(SessionDataKey) is string data))
             {
                 return 0; // No session data found
             }
@@ -61,7 +67,7 @@ namespace Notepads.Core
 
             try
             {
-                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>((string)data, _encodingConverter);
+                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data, _encodingConverter);
             }
             catch (Exception ex)
             {
@@ -178,12 +184,11 @@ namespace Notepads.Core
 
             try
             {
-                string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
-                IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
+                string sessionJsonStr = JsonConvert.SerializeObject(sessionData, _encodingConverter);
 
-                if (!settings.TryGetValue(SessionDataKey, out object currentValue) || !string.Equals((string)currentValue, sessionJson, StringComparison.OrdinalIgnoreCase))
+                if (!(ApplicationSettingsStore.Read(SessionDataKey) is string currentValue) || !string.Equals(currentValue, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
-                    settings[SessionDataKey] = sessionJson;
+                    ApplicationSettingsStore.Write(SessionDataKey, sessionJsonStr);
                     sessionDataSaved = true;
                 }
             }
@@ -246,25 +251,25 @@ namespace Notepads.Core
 
         public void ClearSessionData()
         {
-            ApplicationData.Current.LocalSettings.Values.Remove(SessionDataKey);
+            ApplicationSettingsStore.Remove(SessionDataKey);
         }
 
-        private void BindEditorStateChangeEvent(TextEditor textEditor)
+        private void BindEditorStateChangeEvent(object sender, TextEditor textEditor)
         {
-            textEditor.TextChanging += RemoveTextEditorData;
-            textEditor.EncodingChanged += RemoveTextEditorData;
-            textEditor.LineEndingChanged += RemoveTextEditorData;
-            textEditor.ChangeReverted += RemoveTextEditorData;
-            textEditor.EditorModificationStateChanged += RemoveTextEditorData;
+            textEditor.TextChanging += RemoveTextEditorSessionData;
+            textEditor.EncodingChanged += RemoveTextEditorSessionData;
+            textEditor.LineEndingChanged += RemoveTextEditorSessionData;
+            textEditor.ChangeReverted += RemoveTextEditorSessionData;
+            textEditor.EditorModificationStateChanged += RemoveTextEditorSessionData;
         }
 
-        private void UnbindEditorStateChangeEvent(TextEditor textEditor)
+        private void UnbindEditorStateChangeEvent(object sender, TextEditor textEditor)
         {
-            textEditor.TextChanging -= RemoveTextEditorData;
-            textEditor.EncodingChanged -= RemoveTextEditorData;
-            textEditor.LineEndingChanged -= RemoveTextEditorData;
-            textEditor.ChangeReverted -= RemoveTextEditorData;
-            textEditor.EditorModificationStateChanged -= RemoveTextEditorData;
+            textEditor.TextChanging -= RemoveTextEditorSessionData;
+            textEditor.EncodingChanged -= RemoveTextEditorSessionData;
+            textEditor.LineEndingChanged -= RemoveTextEditorSessionData;
+            textEditor.ChangeReverted -= RemoveTextEditorSessionData;
+            textEditor.EditorModificationStateChanged -= RemoveTextEditorSessionData;
         }
 
         private async Task<TextEditor> RecoverTextEditorAsync(TextEditorSessionData textEditorData)
@@ -312,20 +317,20 @@ namespace Notepads.Core
         private async Task ApplyChangesAsync(TextEditor textEditor, BackupMetadata backupMetadata)
         {
             TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath, ignoreFileSizeLimit: true);
-            textEditor.Init(textFile, textEditor.EditingFile, resetOriginalSnapshot: false, isModified: true);
+            textEditor.Init(textFile, textEditor.EditingFile, resetLastSavedSnapshot: false, isModified: true);
             textEditor.TryChangeEncoding(backupMetadata.Encoding);
             textEditor.TryChangeLineEnding(backupMetadata.LineEnding);
         }
 
         private async Task<BackupMetadata> SaveLastSavedChangesAsync(TextEditor textEditor)
         {
-            TextFile originalSnapshot = textEditor.OriginalSnapshot;
+            TextFile snapshot = textEditor.LastSavedSnapshot;
             StorageFile backupFile;
 
             try
             {
                 backupFile = await SessionUtility.CreateNewBackupFileAsync(textEditor.Id.ToString("N") + "-LastSaved");
-                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(originalSnapshot.Content, originalSnapshot.LineEnding), originalSnapshot.Encoding, backupFile);
+                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(snapshot.Content, snapshot.LineEnding), snapshot.Encoding, backupFile);
             }
             catch (Exception ex)
             {
@@ -336,9 +341,9 @@ namespace Notepads.Core
             return new BackupMetadata
             {
                 BackupFilePath = backupFile.Path,
-                Encoding = originalSnapshot.Encoding,
-                LineEnding = originalSnapshot.LineEnding,
-                DateModified = originalSnapshot.DateModifiedFileTime
+                Encoding = snapshot.Encoding,
+                LineEnding = snapshot.LineEnding,
+                DateModified = snapshot.DateModifiedFileTime
             };
         }
 
@@ -393,9 +398,9 @@ namespace Notepads.Core
             return textEditorId.ToString("N");
         }
 
-        private void RemoveTextEditorData(object sender, EventArgs e)
+        private void RemoveTextEditorSessionData(object sender, EventArgs e)
         {
-            if (_loaded && sender is TextEditor textEditor)
+            if (sender is TextEditor textEditor)
             {
                 _sessionData.TryRemove(textEditor.Id, out _);
             }

@@ -34,17 +34,17 @@ namespace Notepads.Controls.TextEditor
         RenamedMovedOrDeleted
     }
 
-    public class TextEditorMetaData
+    public class TextEditorStateMetaData
     {
-        public string OriginalEncoding { get; set; }
+        public string LastSavedEncoding { get; set; }
 
-        public string OriginalLineEncoding { get; set; }
+        public string LastSavedLineEncoding { get; set; }
 
         public long DateModifiedFileTime { get; set; }
 
-        public string TargetLineEnding { get; set; }
+        public string RequestedLineEnding { get; set; }
 
-        public string TargetEncoding { get; set; }
+        public string RequestedEncoding { get; set; }
 
         public bool HasEditingFile { get; set; }
 
@@ -91,18 +91,33 @@ namespace Notepads.Controls.TextEditor
 
         public FileType FileType { get; private set; }
 
-        public TextFile OriginalSnapshot { get; private set; }
+        public TextFile LastSavedSnapshot { get; private set; }
 
-        public LineEnding? TargetLineEnding { get; private set; }
+        public LineEnding? RequestedLineEnding { get; private set; }
 
-        public Encoding TargetEncoding { get; private set; }
+        public Encoding RequestedEncoding { get; private set; }
+
+        public string EditingFileName { get; private set; }
+
+        public string EditingFilePath { get; private set; }
 
         public StorageFile EditingFile
         {
             get => _editingFile;
             private set
             {
-                FileType = value == null ? FileType.TextFile : FileTypeUtility.GetFileTypeByFileName(value.Name);
+                if (value == null)
+                {
+                    EditingFileName = null;
+                    EditingFilePath = null;
+                    FileType = FileType.TextFile;
+                }
+                else
+                {
+                    EditingFileName = value.Name;
+                    EditingFilePath = value.Path;
+                    FileType = FileTypeUtility.GetFileTypeByFileName(value.Name);
+                }
                 _editingFile = value;
             }
         }
@@ -182,7 +197,7 @@ namespace Notepads.Controls.TextEditor
             {
                 if (EditorMode == TextEditorMode.DiffPreview)
                 {
-                    SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
+                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
                     Task.Factory.StartNew(
                         () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                             () => SideBySideDiffViewer.Focus()));
@@ -198,15 +213,15 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.GetText();
         }
 
-        public TextEditorMetaData GetTextEditorMetaData()
+        public TextEditorStateMetaData GetTextEditorMetaData()
         {
             TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
 
-            var metaData = new TextEditorMetaData
+            var metaData = new TextEditorStateMetaData
             {
-                OriginalEncoding = EncodingUtility.GetEncodingName(OriginalSnapshot.Encoding),
-                OriginalLineEncoding = LineEndingUtility.GetLineEndingName(OriginalSnapshot.LineEnding),
-                DateModifiedFileTime = OriginalSnapshot.DateModifiedFileTime,
+                LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding),
+                LastSavedLineEncoding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
+                DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
                 HasEditingFile = EditingFile != null,
                 IsModified = IsModified,
                 SelectionStartPosition = TextEditorCore.Document.Selection.StartPosition,
@@ -217,14 +232,14 @@ namespace Notepads.Controls.TextEditor
                 FontSize = TextEditorCore.FontSize,
             };
 
-            if (TargetEncoding != null)
+            if (RequestedEncoding != null)
             {
-                metaData.TargetEncoding = EncodingUtility.GetEncodingName(TargetEncoding);
+                metaData.RequestedEncoding = EncodingUtility.GetEncodingName(RequestedEncoding);
             }
 
-            if (TargetLineEnding != null)
+            if (RequestedLineEnding != null)
             {
-                metaData.TargetLineEnding = LineEndingUtility.GetLineEndingName(TargetLineEnding.Value);
+                metaData.RequestedLineEnding = LineEndingUtility.GetLineEndingName(RequestedLineEnding.Value);
             }
 
             return metaData;
@@ -295,7 +310,7 @@ namespace Notepads.Controls.TextEditor
             }
             else
             {
-                newState = await FileSystemUtility.GetDateModified(EditingFile) != OriginalSnapshot.DateModifiedFileTime ?
+                newState = await FileSystemUtility.GetDateModified(EditingFile) != LastSavedSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
             }
@@ -332,20 +347,20 @@ namespace Notepads.Controls.TextEditor
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool resetOriginalSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
+        public void Init(TextFile textFile, StorageFile file, bool resetLastSavedSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
         {
             _loaded = false;
             EditingFile = file;
-            TargetEncoding = null;
-            TargetLineEnding = null;
+            RequestedEncoding = null;
+            RequestedLineEnding = null;
             if (resetText)
             {
                 TextEditorCore.SetText(textFile.Content);
             }
-            if (resetOriginalSnapshot)
+            if (resetLastSavedSnapshot)
             {
                 textFile.Content = TextEditorCore.GetText();
-                OriginalSnapshot = textFile;
+                LastSavedSnapshot = textFile;
             }
             if (clearUndoQueue)
             {
@@ -355,16 +370,16 @@ namespace Notepads.Controls.TextEditor
             _loaded = true;
         }
 
-        public void ApplyChangesFrom(TextEditorMetaData metadata, string text = null)
+        public void ApplyChangesFrom(TextEditorStateMetaData metadata, string text = null)
         {
-            if (!string.IsNullOrEmpty(metadata.TargetEncoding))
+            if (!string.IsNullOrEmpty(metadata.RequestedEncoding))
             {
-                TryChangeEncoding(EncodingUtility.GetEncodingByName(metadata.TargetEncoding));
+                TryChangeEncoding(EncodingUtility.GetEncodingByName(metadata.RequestedEncoding));
             }
 
-            if (!string.IsNullOrEmpty(metadata.TargetLineEnding))
+            if (!string.IsNullOrEmpty(metadata.RequestedLineEnding))
             {
-                TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.TargetLineEnding));
+                TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.RequestedLineEnding));
             }
 
             if (text != null)
@@ -381,7 +396,7 @@ namespace Notepads.Controls.TextEditor
 
         public void RevertAllChanges()
         {
-            Init(OriginalSnapshot, EditingFile, clearUndoQueue: false);
+            Init(LastSavedSnapshot, EditingFile, clearUndoQueue: false);
             ChangeReverted?.Invoke(this, EventArgs.Empty);
         }
 
@@ -389,18 +404,18 @@ namespace Notepads.Controls.TextEditor
         {
             if (encoding == null) return false;
 
-            if (!EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
+            if (!EncodingUtility.Equals(LastSavedSnapshot.Encoding, encoding))
             {
-                TargetEncoding = encoding;
+                RequestedEncoding = encoding;
                 IsModified = true;
                 EncodingChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
 
-            if (TargetEncoding != null && EncodingUtility.Equals(OriginalSnapshot.Encoding, encoding))
+            if (RequestedEncoding != null && EncodingUtility.Equals(LastSavedSnapshot.Encoding, encoding))
             {
-                TargetEncoding = null;
-                IsModified = !IsInOriginalState();
+                RequestedEncoding = null;
+                IsModified = !NoChangesSinceLastSaved();
                 EncodingChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
@@ -409,18 +424,18 @@ namespace Notepads.Controls.TextEditor
 
         public bool TryChangeLineEnding(LineEnding lineEnding)
         {
-            if (OriginalSnapshot.LineEnding != lineEnding)
+            if (LastSavedSnapshot.LineEnding != lineEnding)
             {
-                TargetLineEnding = lineEnding;
+                RequestedLineEnding = lineEnding;
                 IsModified = true;
                 LineEndingChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
 
-            if (TargetLineEnding != null && OriginalSnapshot.LineEnding == lineEnding)
+            if (RequestedLineEnding != null && LastSavedSnapshot.LineEnding == lineEnding)
             {
-                TargetLineEnding = null;
-                IsModified = !IsInOriginalState();
+                RequestedLineEnding = null;
+                IsModified = !NoChangesSinceLastSaved();
                 LineEndingChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
@@ -429,12 +444,12 @@ namespace Notepads.Controls.TextEditor
 
         public LineEnding GetLineEnding()
         {
-            return TargetLineEnding ?? OriginalSnapshot.LineEnding;
+            return RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
         }
 
         public Encoding GetEncoding()
         {
-            return TargetEncoding ?? OriginalSnapshot.Encoding;
+            return RequestedEncoding ?? LastSavedSnapshot.Encoding;
         }
 
         private void OpenSplitView(IContentPreviewExtension extension)
@@ -481,7 +496,7 @@ namespace Notepads.Controls.TextEditor
 
         public void OpenSideBySideDiffViewer()
         {
-            if (string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText())) return;
+            if (string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText())) return;
             if (EditorMode == TextEditorMode.DiffPreview) return;
             if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
             EditorMode = TextEditorMode.DiffPreview;
@@ -489,7 +504,7 @@ namespace Notepads.Controls.TextEditor
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
-            SideBySideDiffViewer.RenderDiff(OriginalSnapshot.Content, TextEditorCore.GetText());
+            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
             SideBySideDiffViewer.Focus();
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
@@ -535,7 +550,7 @@ namespace Notepads.Controls.TextEditor
         public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
             if (EditorMode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
-            TextFile textFile = await SaveContentToFile(file);
+            TextFile textFile = await SaveContentToFile(file); // Will throw if not succeeded
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
             StartCheckingFileStatusPeriodically();
@@ -544,9 +559,9 @@ namespace Notepads.Controls.TextEditor
         public async Task<TextFile> SaveContentToFile(StorageFile file)
         {
             var text = TextEditorCore.GetText();
-            var encoding = TargetEncoding ?? OriginalSnapshot.Encoding;
-            var lineEnding = TargetLineEnding ?? OriginalSnapshot.LineEnding;
-            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
+            var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;
+            var lineEnding = RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
+            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file); // Will throw if not succeeded
             var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
@@ -579,23 +594,23 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        public bool IsInOriginalState(bool compareTextOnly = false)
+        public bool NoChangesSinceLastSaved(bool compareTextOnly = false)
         {
             if (!_loaded) return true;
 
             if (!compareTextOnly)
             {
-                if (TargetLineEnding != null)
+                if (RequestedLineEnding != null)
                 {
                     return false;
                 }
 
-                if (TargetEncoding != null)
+                if (RequestedEncoding != null)
                 {
                     return false;
                 }
             }
-            if (!string.Equals(OriginalSnapshot.Content, TextEditorCore.GetText()))
+            if (!string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText()))
             {
                 return false;
             }
@@ -633,11 +648,11 @@ namespace Notepads.Controls.TextEditor
             if (!args.IsContentChanging || !_loaded) return;
             if (IsModified)
             {
-                IsModified = !IsInOriginalState();
+                IsModified = !NoChangesSinceLastSaved();
             }
             else
             {
-                IsModified = !IsInOriginalState(compareTextOnly: true);
+                IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
         }

@@ -23,7 +23,7 @@ namespace Notepads
             if (_instances.Count == 0)
             {
                 IsFirstInstance = true;
-                ApplicationSettings.Write("ActiveInstance", null);
+                ApplicationSettingsStore.Write("ActiveInstance", null);
             }
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
@@ -102,7 +102,7 @@ namespace Notepads
                 return instances.FirstOrDefault();
             }
 
-            string activeInstance = ApplicationSettings.Read("ActiveInstance") as string;
+            string activeInstance = ApplicationSettingsStore.Read("ActiveInstance") as string;
 
             if (activeInstance == null)
             {

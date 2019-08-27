@@ -45,7 +45,7 @@ namespace Notepads.Services
                 ".js", ".ts", ".lua",
             });
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
-            savePicker.SuggestedFileName = textEditor.EditingFile == null ? defaultFileName : textEditor.EditingFile.Name;
+            savePicker.SuggestedFileName = textEditor.EditingFileName ?? defaultFileName;
             return savePicker;
         }
     }
