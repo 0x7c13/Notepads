@@ -93,14 +93,24 @@ namespace Notepads.Core
             bool canHandle = false;
             string dragUICaption = null;
 
+            if (args.DataView == null)
+            {
+                deferral.Complete();
+                return;
+            }
+
             if (!string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) &&
                 string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
             {
-                canHandle = true;
-                dragUICaption = "Move tab here";
+                args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj);
+                if (dataObj is string data)
+                {
+                    canHandle = true;
+                    dragUICaption = "Move tab here";
+                }
             }
 
-            if (!canHandle && args.DataView.Contains(Windows.ApplicationModel.DataTransfer.StandardDataFormats.StorageItems))
+            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 try
                 {
@@ -111,7 +121,11 @@ namespace Notepads.Core
                         dragUICaption = "Open with Notepads";
                     }
                 }
-                catch { }
+                catch
+                {
+                    deferral.Complete();
+                    return;
+                }
             }
 
             if (canHandle)
@@ -120,14 +134,17 @@ namespace Notepads.Core
                 args.AcceptedOperation = DataPackageOperation.Link;
                 try
                 {
-                    if (args.DragUIOverride != null && dragUICaption != null)
+                    if (args.DragUIOverride != null)
                     {
                         args.DragUIOverride.Caption = dragUICaption;
                         args.DragUIOverride.IsCaptionVisible = true;
                         args.DragUIOverride.IsGlyphVisible = false;
                     }
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
 
             deferral.Complete();
@@ -187,7 +204,7 @@ namespace Notepads.Core
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
                 !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
             {
-                if (!args.DataView.Contains(StandardDataFormats.StorageItems)) return;
+                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems)) return;
                 var fileDropDeferral = args.GetDeferral();
                 var storageItems = await args.DataView.GetStorageItemsAsync();
                 StorageItemsDropped?.Invoke(this, storageItems);
@@ -252,8 +269,6 @@ namespace Notepads.Core
                 }
 
                 ApplicationSettingsStore.Write(SetDragAndDropActionStatus, "Handled");
-
-                //deferral.Complete();
 
                 var index = -1;
 
