@@ -25,10 +25,10 @@ namespace Notepads.Utilities
             DateModifiedFileTime = dateModifiedFileTime;
         }
 
-        public string Content { get; }
-        public Encoding Encoding { get; }
-        public LineEnding LineEnding { get; }
-        public long DateModifiedFileTime { get; }
+        public string Content { get; set; }
+        public Encoding Encoding { get; set; }
+        public LineEnding LineEnding { get; set; }
+        public long DateModifiedFileTime { get; set; }
     }
 
     public static class FileSystemUtility
@@ -61,19 +61,30 @@ namespace Notepads.Utilities
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommondLine(dir, args);
+            var path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
 
             if (string.IsNullOrEmpty(path))
             {
                 return null;
             }
 
+            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
+
             return await GetFile(path);
         }
 
-        public static string GetAbsolutePathFromCommondLine(string dir, string args)
+        public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
         {
             if (string.IsNullOrEmpty(args)) return null;
+
+            args = args.Trim();
+
+            args = RemoveAppNameFromCommandLineIfAny(args, appName);
+
+            if (string.IsNullOrEmpty(args))
+            {
+                return null;
+            }
 
             string path = args;
 
@@ -101,6 +112,25 @@ namespace Notepads.Utilities
             }
 
             return path;
+        }
+
+        private static string RemoveAppNameFromCommandLineIfAny(string args, string appName)
+        {
+            if (args.StartsWith($"{appName}.exe",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Substring($"{appName}.exe".Length);
+                args = args.Trim();
+            }
+
+            if (args.StartsWith(appName,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Substring(appName.Length);
+                args = args.Trim();
+            }
+
+            return args;
         }
 
         public static async Task<BasicProperties> GetFileProperties(StorageFile file)
@@ -145,17 +175,17 @@ namespace Notepads.Utilities
             }
         }
 
-        public static async Task<TextFile> ReadFile(string filePath)
+        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit)
         {
             StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file);
+            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file)
+        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
-            if (fileProperties.Size > 1000 * 1024) // 1MB
+            if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
             {
                 throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
@@ -217,6 +247,7 @@ namespace Notepads.Utilities
             return encoding;
         }
 
+        // Will throw if not succeeded, exception should be caught and handled by caller
         public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
@@ -265,15 +296,31 @@ namespace Notepads.Utilities
             }
         }
 
+        internal static async Task DeleteFile(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
+        {
+            try
+            {
+                var file = await GetFile(filePath);
+                if (file != null)
+                {
+                    await file.DeleteAsync(deleteOption);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
+            }
+        }
+
         public static async Task<StorageFolder> GetOrCreateAppFolder(string folderName)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
+        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
-            return await folder.CreateFileAsync(fileName);
+            return await folder.CreateFileAsync(fileName, option);
         }
 
         public static async Task<bool> FileExists(StorageFile file)
@@ -298,13 +345,16 @@ namespace Notepads.Utilities
         {
             try
             {
-                return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
+                {
+                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                }
             }
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
-                return null;
             }
+            return null;
         }
 
         public static async Task<bool> TryAddToFutureAccessList(string token, StorageFile file)

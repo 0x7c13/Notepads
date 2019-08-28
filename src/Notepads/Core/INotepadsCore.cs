@@ -1,78 +1,84 @@
 ﻿
 namespace Notepads.Core
 {
-    using System;
-    using System.Text;
-    using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
     using Notepads.Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
 
     // INotepadsCore handles Tabs and TextEditor life cycle
     public interface INotepadsCore
     {
-        event EventHandler<TextEditor> TextEditorLoaded;
+        event EventHandler<ITextEditor> TextEditorLoaded;
 
-        event EventHandler<TextEditor> TextEditorUnloaded;
+        event EventHandler<ITextEditor> TextEditorUnloaded;
 
-        event EventHandler<TextEditor> TextEditorEditorModificationStateChanged;
+        event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
 
-        event EventHandler<TextEditor> TextEditorFileModificationStateChanged;
+        event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
 
-        event EventHandler<TextEditor> TextEditorSaved;
+        event EventHandler<ITextEditor> TextEditorSaved;
 
-        event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
+        event EventHandler<ITextEditor> TextEditorClosingWithUnsavedContent;
 
-        event EventHandler<TextEditor> TextEditorSelectionChanged;
+        event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
-        event EventHandler<TextEditor> TextEditorEncodingChanged;
+        event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
-        event EventHandler<TextEditor> TextEditorLineEndingChanged;
+        event EventHandler<ITextEditor> TextEditorLineEndingChanged;
 
-        event EventHandler<TextEditor> TextEditorModeChanged;
+        event EventHandler<ITextEditor> TextEditorModeChanged;
+
+        event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         event KeyEventHandler TextEditorKeyDown;
 
-        TextEditor OpenNewTextEditor(Guid? id = null);
+        ITextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1);
 
-        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null);
+        Task<ITextEditor> OpenNewTextEditor(StorageFile file, bool ignoreFileSizeLimit, Guid? id = null, int atIndex = -1);
 
-        TextEditor OpenNewTextEditor(
+        ITextEditor OpenNewTextEditor(
             Guid id,
             string text,
             StorageFile file,
             long dateModifiedFileTime,
             Encoding encoding,
             LineEnding lineEnding,
-            bool isModified);
+            bool isModified,
+            int atIndex = -1);
 
-        Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
+        Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
 
-        void DeleteTextEditor(TextEditor textEditor);
+        void DeleteTextEditor(ITextEditor textEditor);
 
         int GetNumberOfOpenedTextEditors();
 
-        bool TryGetSharingContent(TextEditor textEditor, out string title, out string content);
+        bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content);
 
         bool HaveUnsavedTextEditor();
 
-        void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding);
+        void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
-        void ChangeEncoding(TextEditor textEditor, Encoding encoding);
+        void ChangeEncoding(ITextEditor textEditor, Encoding encoding);
 
         void SwitchTo(bool next);
 
-        void SwitchTo(TextEditor textEditor);
+        void SwitchTo(ITextEditor textEditor);
 
-        TextEditor GetSelectedTextEditor();
+        ITextEditor GetSelectedTextEditor();
 
-        TextEditor[] GetAllTextEditors();
+        ITextEditor GetTextEditor(string editingFilePath);
 
-        void FocusOnTextEditor(TextEditor textEditor);
+        ITextEditor[] GetAllTextEditors();
+
+        void FocusOnTextEditor(ITextEditor textEditor);
 
         void FocusOnSelectedTextEditor();
 
-        void CloseTextEditor(TextEditor textEditor);
+        void CloseTextEditor(ITextEditor textEditor);
     }
 }

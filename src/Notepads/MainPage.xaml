@@ -27,8 +27,6 @@
         <SplitView x:Name="RootSplitView"
                    Grid.Row="0"
                    AllowDrop="True" 
-                   Drop="RootGrid_OnDrop" 
-                   DragOver="RootGrid_OnDragOver"
                    IsPaneOpen="False"
                    OpenPaneLength="395"
                    DisplayMode="Overlay"
@@ -252,6 +250,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Grid x:Name="FileModificationStateIndicator"
@@ -369,6 +368,15 @@
                             </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="6" Background="{StaticResource SystemControlForegroundAccentBrush}">
+                <TextBlock x:Name="ShadowInstanceIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           Text="Shadow Instance"
+                           Visibility="Collapsed"
+                           IsTapEnabled="True" 
+                           extensions:Mouse.Cursor="Hand"
+                           Tapped="StatusBarComponent_OnTapped">
                 </TextBlock>
             </Grid>
         </Grid>

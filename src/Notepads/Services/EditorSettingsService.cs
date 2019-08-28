@@ -34,7 +34,7 @@ namespace Notepads.Services
             {
                 _editorFontFamily = value;
                 OnFontFamilyChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorFontFamilyStr, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value, true);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Notepads.Services
             {
                 _editorFontSize = value;
                 OnFontSizeChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorFontSizeInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value, true);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Notepads.Services
             {
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Notepads.Services
             {
                 _editorDefaultLineEnding = value;
                 OnDefaultLineEndingChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
             }
         }
 
@@ -88,12 +88,12 @@ namespace Notepads.Services
 
                 if (value is UTF8Encoding)
                 {
-                    ApplicationSettings.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
+                    ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
                         Equals(value, new UTF8Encoding(true)), true);
                 }
 
                 OnDefaultEncodingChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Notepads.Services
             set
             {
                 _editorDefaultDecoding = value;
-                ApplicationSettings.Write(SettingsKey.EditorDefaultDecodingCodePageInt, value.CodePage, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, value.CodePage, true);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Notepads.Services
             {
                 _editorDefaultTabIndents = value;
                 OnDefaultTabIndentsChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorDefaultTabIndentsInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value, true);
             }
         }
 
@@ -140,23 +140,22 @@ namespace Notepads.Services
             {
                 _showStatusBar = value;
                 OnStatusBarVisibilityChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorShowStatusBarBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value, true);
             }
         }
 
-        private static bool _isSessionBackupAndRestoreEnabled;
+        private static bool _isSessionSnapshotEnabled;
 
-        public static bool IsSessionBackupAndRestoreEnabled
+        public static bool IsSessionSnapshotEnabled
         {
-            get => _isSessionBackupAndRestoreEnabled;
+            get => _isSessionSnapshotEnabled;
             set
             {
-                _isSessionBackupAndRestoreEnabled = value;
+                _isSessionSnapshotEnabled = value;
                 OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
-                ApplicationSettings.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
             }
         }
-
 
         public static void Initialize()
         {
@@ -174,12 +173,12 @@ namespace Notepads.Services
 
             InitializeStatusBarSettings();
 
-            InitializeSessionBackupAndRestoreSettings();
+            InitializeSessionSnapshotSettings();
         }
 
         private static void InitializeStatusBarSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorShowStatusBarBool) is bool showStatusBar)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorShowStatusBarBool) is bool showStatusBar)
             {
                 _showStatusBar = showStatusBar;
             }
@@ -189,21 +188,29 @@ namespace Notepads.Services
             }
         }
 
-        private static void InitializeSessionBackupAndRestoreSettings()
+        private static void InitializeSessionSnapshotSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+            // We should disable session snapshot feature on multi instances
+            if (!App.IsFirstInstance)
             {
-                _isSessionBackupAndRestoreEnabled = enableSessionBackupAndRestore;
+                _isSessionSnapshotEnabled = false;
             }
             else
             {
-                _isSessionBackupAndRestoreEnabled = false;
+                if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+                {
+                    _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
+                }
+                else
+                {
+                    _isSessionSnapshotEnabled = false;
+                }
             }
         }
 
         private static void InitializeLineEndingSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
             {
                 Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding);
                 _editorDefaultLineEnding = (LineEnding)lineEnding;
@@ -216,7 +223,7 @@ namespace Notepads.Services
 
         private static void InitializeTextWrappingSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
             {
                 Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping);
                 _editorDefaultTextWrapping = (TextWrapping)textWrapping;
@@ -231,13 +238,13 @@ namespace Notepads.Services
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            if (ApplicationSettings.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
             {
                 var encoding = Encoding.GetEncoding(encodingCodePage);
 
                 if (encoding is UTF8Encoding)
                 {
-                    if (ApplicationSettings.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is bool shouldEmitBom)
+                    if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is bool shouldEmitBom)
                     {
                         encoding = new UTF8Encoding(shouldEmitBom);
                     }
@@ -259,7 +266,7 @@ namespace Notepads.Services
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            if (ApplicationSettings.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
             {
                 try
                 {
@@ -282,7 +289,7 @@ namespace Notepads.Services
 
         private static void InitializeTabIndentsSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorDefaultTabIndentsInt) is int tabIndents)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTabIndentsInt) is int tabIndents)
             {
                 _editorDefaultTabIndents = tabIndents;
             }
@@ -294,7 +301,7 @@ namespace Notepads.Services
 
         private static void InitializeFontSettings()
         {
-            if (ApplicationSettings.Read(SettingsKey.EditorFontFamilyStr) is string fontFamily)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorFontFamilyStr) is string fontFamily)
             {
                 _editorFontFamily = fontFamily;
             }
@@ -303,7 +310,7 @@ namespace Notepads.Services
                 _editorFontFamily = "Consolas";
             }
 
-            if (ApplicationSettings.Read(SettingsKey.EditorFontSizeInt) is int fontSize)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorFontSizeInt) is int fontSize)
             {
                 _editorFontSize = fontSize;
             }

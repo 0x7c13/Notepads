@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Notepads.Commands;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
-    using Notepads.Commands;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
     using Windows.UI.Core;
@@ -16,7 +16,6 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Media.Imaging;
 
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
@@ -113,7 +112,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
@@ -148,6 +147,17 @@ namespace Notepads.Controls.TextEditor
         public string GetText()
         {
             return _content;
+        }
+
+        public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
+        {
+            horizontalOffset = _contentScrollViewer.HorizontalOffset;
+            verticalOffset = _contentScrollViewer.VerticalOffset;
+        }
+
+        public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
+        {
+            _contentScrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
