@@ -37,7 +37,7 @@ namespace Notepads
         public App()
         {
             //await LoggingService.InitializeAsync();
-            LoggingService.LogInfo($"Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
 
             if (!IsFirstInstance)
             {
@@ -167,7 +167,6 @@ namespace Notepads
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
-            Analytics.TrackEvent("AppLaunchSettings", appLaunchSettings);
 
             await ActivationService.ActivateAsync(rootFrame, e);
 

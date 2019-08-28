@@ -12,14 +12,15 @@ namespace Notepads.Controls.Settings
             InitializeComponent();
             ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
 
+            // Disable session snapshot toggle for shadow instances
             if (!App.IsFirstInstance)
             {
-                EnableSessionBackupAndRestoreToggleSwitch.IsOn = false;
-                EnableSessionBackupAndRestoreToggleSwitch.IsEnabled = false;
+                EnableSessionSnapshotToggleSwitch.IsOn = false;
+                EnableSessionSnapshotToggleSwitch.IsEnabled = false;
             }
             else
             {
-                EnableSessionBackupAndRestoreToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
+                EnableSessionSnapshotToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
             }
 
             Loaded += AdvancedSettings_Loaded;
@@ -28,15 +29,12 @@ namespace Notepads.Controls.Settings
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
-            if (App.IsFirstInstance)
-            {
-                EnableSessionBackupAndRestoreToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
-            }
+            EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
         }
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsSessionSnapshotEnabled = EnableSessionBackupAndRestoreToggleSwitch.IsOn;
+            EditorSettingsService.IsSessionSnapshotEnabled = EnableSessionSnapshotToggleSwitch.IsOn;
         }
 
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)

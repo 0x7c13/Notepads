@@ -227,9 +227,10 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeTab()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
+                    EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents)))
             });
         }
 
@@ -515,7 +516,7 @@ namespace Notepads
 
         #region Status Bar
 
-        private void SetupStatusBar(TextEditor textEditor)
+        private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
             UpdateFileModificationStateIndicator(textEditor);
@@ -544,7 +545,7 @@ namespace Notepads
             }
         }
 
-        private void UpdateFileModificationStateIndicator(TextEditor textEditor)
+        private void UpdateFileModificationStateIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
             if (textEditor.FileModificationState == FileModificationState.Untouched)
@@ -566,7 +567,7 @@ namespace Notepads
             }
         }
 
-        private void UpdatePathIndicator(TextEditor textEditor)
+        private void UpdatePathIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
             PathIndicator.Text = textEditor.EditingFilePath ?? _defaultNewFileName;
@@ -585,7 +586,7 @@ namespace Notepads
             }
         }
 
-        private void UpdateEditorModificationIndicator(TextEditor textEditor)
+        private void UpdateEditorModificationIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
             if (textEditor.IsModified)
@@ -614,7 +615,7 @@ namespace Notepads
             LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
         }
 
-        private void UpdateLineColumnIndicator(TextEditor textEditor)
+        private void UpdateLineColumnIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
@@ -738,7 +739,7 @@ namespace Notepads
             }
             else if (sender == ModificationIndicator)
             {
-                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) && selectedEditor.EditorMode != TextEditorMode.DiffPreview;
+                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) && selectedEditor.Mode != TextEditorMode.DiffPreview;
                 ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
             }
             else if (sender == LineColumnIndicator)
@@ -780,7 +781,7 @@ namespace Notepads
 
         #region NotepadsCore Events
 
-        private void OnTextEditorLoaded(object sender, TextEditor textEditor)
+        private void OnTextEditorLoaded(object sender, ITextEditor textEditor)
         {
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
@@ -789,7 +790,7 @@ namespace Notepads
             }
         }
 
-        private void OnTextEditorUnloaded(object sender, TextEditor textEditor)
+        private void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
@@ -801,7 +802,7 @@ namespace Notepads
             }
         }
 
-        private async void OnTextEditorClosingWithUnsavedContent(object sender, TextEditor textEditor)
+        private async void OnTextEditorClosingWithUnsavedContent(object sender, ITextEditor textEditor)
         {
             var file = textEditor.EditingFilePath ?? _defaultNewFileName;
 
@@ -820,7 +821,7 @@ namespace Notepads
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             // ignoring key events coming from inactive text editors
             if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
             _keyboardCommandHandler.Handle(e);
@@ -880,7 +881,7 @@ namespace Notepads
             return successCount;
         }
 
-        private async Task<bool> Save(TextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
+        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
         {
             if (textEditor == null) return false;
 

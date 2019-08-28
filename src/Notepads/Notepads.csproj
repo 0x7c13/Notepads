@@ -148,6 +148,7 @@
     <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
       <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\ITextEditor.cs" />
     <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
       <DependentUpon>TextEditor.xaml</DependentUpon>
     </Compile>

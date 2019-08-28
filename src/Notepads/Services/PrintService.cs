@@ -6,7 +6,7 @@ namespace Notepads.Services
 
     public static class PrintService
     {
-        public static void Print(TextEditor textEditor)
+        public static void Print(ITextEditor textEditor)
         {
             throw new NotImplementedException();
         }

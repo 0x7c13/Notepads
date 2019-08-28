@@ -17,7 +17,7 @@ namespace Notepads.Services
             return fileOpenPicker;
         }
 
-        public static FileSavePicker GetFileSavePicker(TextEditor textEditor, string defaultFileName, bool saveAs)
+        public static FileSavePicker GetFileSavePicker(ITextEditor textEditor, string defaultFileName, bool saveAs)
         {
             FileSavePicker savePicker = new FileSavePicker
             {

@@ -44,7 +44,7 @@
                 <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="EnableSessionBackupAndRestoreToggleSwitch" 
+                                  x:Name="EnableSessionSnapshotToggleSwitch" 
                                   Margin="0,0,0,0"/>
                     <TextBlock x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 </StackPanel>

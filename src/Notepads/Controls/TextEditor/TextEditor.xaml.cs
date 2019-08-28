@@ -34,9 +34,9 @@ namespace Notepads.Controls.TextEditor
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : UserControl
+    public sealed partial class TextEditor : UserControl, ITextEditor
     {
-        public Guid Id;
+        public Guid Id { get; set; }
 
         public INotepadsExtensionProvider ExtensionProvider;
 
@@ -46,7 +46,7 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler ModeChanged;
 
-        public event EventHandler EditorModificationStateChanged;
+        public event EventHandler ModificationStateChanged;
 
         public event EventHandler FileModificationStateChanged;
 
@@ -101,7 +101,7 @@ namespace Notepads.Controls.TextEditor
                 if (_isModified != value)
                 {
                     _isModified = value;
-                    EditorModificationStateChanged?.Invoke(this, EventArgs.Empty);
+                    ModificationStateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -137,16 +137,16 @@ namespace Notepads.Controls.TextEditor
 
         private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new SemaphoreSlim(1, 1);
 
-        private TextEditorMode _editorMode = TextEditorMode.Editing;
+        private TextEditorMode _mode = TextEditorMode.Editing;
 
-        public TextEditorMode EditorMode
+        public TextEditorMode Mode
         {
-            get => _editorMode;
+            get => _mode;
             private set
             {
-                if (_editorMode != value)
+                if (_mode != value)
                 {
-                    _editorMode = value;
+                    _mode = value;
                     ModeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -166,7 +166,7 @@ namespace Notepads.Controls.TextEditor
 
             ThemeSettingsService.OnThemeChanged += (sender, theme) =>
             {
-                if (EditorMode == TextEditorMode.DiffPreview)
+                if (Mode == TextEditorMode.DiffPreview)
                 {
                     SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
                     Task.Factory.StartNew(
@@ -184,7 +184,7 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.GetText();
         }
 
-        public TextEditorStateMetaData GetTextEditorMetaData()
+        public TextEditorStateMetaData GetTextEditorStateMetaData()
         {
             TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
 
@@ -202,7 +202,7 @@ namespace Notepads.Controls.TextEditor
                 ScrollViewerVerticalOffset = verticalOffset,
                 FontSize = TextEditorCore.FontSize,
                 IsContentPreviewPanelOpened = (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible),
-                IsInDiffPreviewMode = (EditorMode == TextEditorMode.DiffPreview)
+                IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
 
             if (RequestedEncoding != null)
@@ -343,7 +343,7 @@ namespace Notepads.Controls.TextEditor
             _loaded = true;
         }
 
-        public void ApplyChangesFrom(TextEditorStateMetaData metadata, string text = null)
+        public void ResetEditorState(TextEditorStateMetaData metadata, string newText = null)
         {
             if (!string.IsNullOrEmpty(metadata.RequestedEncoding))
             {
@@ -355,9 +355,9 @@ namespace Notepads.Controls.TextEditor
                 TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.RequestedLineEnding));
             }
 
-            if (text != null)
+            if (newText != null)
             {
-                TextEditorCore.SetText(text);
+                TextEditorCore.SetText(newText);
             }
 
             TextEditorCore.Document.Selection.StartPosition = metadata.SelectionStartPosition;
@@ -470,9 +470,9 @@ namespace Notepads.Controls.TextEditor
         public void OpenSideBySideDiffViewer()
         {
             if (string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText())) return;
-            if (EditorMode == TextEditorMode.DiffPreview) return;
+            if (Mode == TextEditorMode.DiffPreview) return;
             if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
-            EditorMode = TextEditorMode.DiffPreview;
+            Mode = TextEditorMode.DiffPreview;
             TextEditorCore.IsEnabled = false;
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
@@ -484,8 +484,8 @@ namespace Notepads.Controls.TextEditor
 
         public void CloseSideBySideDiffViewer()
         {
-            if (EditorMode != TextEditorMode.DiffPreview) return;
-            EditorMode = TextEditorMode.Editing;
+            if (Mode != TextEditorMode.DiffPreview) return;
+            Mode = TextEditorMode.Editing;
             TextEditorCore.IsEnabled = true;
             EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
@@ -494,10 +494,9 @@ namespace Notepads.Controls.TextEditor
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
-        public void ShowHideSideBySideDiffViewer()
+        private void ShowHideSideBySideDiffViewer()
         {
-            if (SideBySideDiffViewer == null) LoadSideBySideDiffViewer();
-            if (SideBySideDiffViewer.Visibility == Visibility.Collapsed)
+            if (Mode != TextEditorMode.DiffPreview)
             {
                 OpenSideBySideDiffViewer();
             }
@@ -522,7 +521,7 @@ namespace Notepads.Controls.TextEditor
 
         public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
         {
-            if (EditorMode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
+            if (Mode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
             TextFile textFile = await SaveContentToFile(file); // Will throw if not succeeded
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
@@ -546,22 +545,21 @@ namespace Notepads.Controls.TextEditor
                 TextEditorCore.Document.Selection.Text;
         }
 
-        public void TypeTab()
+        public void TypeText(string text)
         {
             if (TextEditorCore.IsEnabled)
             {
-                var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-                TextEditorCore.Document.Selection.TypeText(tabStr);
+                TextEditorCore.Document.Selection.TypeText(text);
             }
         }
 
         public void Focus()
         {
-            if (EditorMode == TextEditorMode.DiffPreview)
+            if (Mode == TextEditorMode.DiffPreview)
             {
                 SideBySideDiffViewer.Focus();
             }
-            else if (EditorMode == TextEditorMode.Editing)
+            else if (Mode == TextEditorMode.Editing)
             {
                 TextEditorCore.Focus(FocusState.Programmatic);
             }
@@ -632,7 +630,7 @@ namespace Notepads.Controls.TextEditor
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)
         {
-            if (!TextEditorCore.IsEnabled || EditorMode != TextEditorMode.Editing)
+            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)
             {
                 return;
             }
