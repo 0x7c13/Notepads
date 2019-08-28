@@ -1,6 +1,11 @@
 ﻿
 namespace Notepads.Core
 {
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Settings;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -9,11 +14,6 @@ namespace Notepads.Core
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
-    using Windows.Foundation.Collections;
     using Windows.Storage;
 
     internal class SessionManager : ISessionManager
@@ -39,23 +39,13 @@ namespace Notepads.Core
             _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionData>();
             _loaded = false;
 
-            _notepadsCore.TextEditorLoaded += (sender, textEditor) =>
+            foreach (var editor in _notepadsCore.GetAllTextEditors())
             {
-                textEditor.TextChanging += RemoveTextEditorData;
-                textEditor.EncodingChanged += RemoveTextEditorData;
-                textEditor.LineEndingChanged += RemoveTextEditorData;
-                textEditor.ChangeReverted += RemoveTextEditorData;
-                textEditor.EditorModificationStateChanged += RemoveTextEditorData;
-            };
+                BindEditorStateChangeEvent(this, editor);
+            }
 
-            _notepadsCore.TextEditorUnloaded += (sender, textEditor) =>
-            {
-                textEditor.TextChanging -= RemoveTextEditorData;
-                textEditor.EncodingChanged -= RemoveTextEditorData;
-                textEditor.LineEndingChanged -= RemoveTextEditorData;
-                textEditor.ChangeReverted -= RemoveTextEditorData;
-                textEditor.EditorModificationStateChanged -= RemoveTextEditorData;
-            };
+            _notepadsCore.TextEditorLoaded += BindEditorStateChangeEvent;
+            _notepadsCore.TextEditorUnloaded += UnbindEditorStateChangeEvent;
         }
 
         public bool IsBackupEnabled { get; set; }
@@ -67,7 +57,7 @@ namespace Notepads.Core
                 return 0; // Already loaded
             }
 
-            if (!ApplicationData.Current.LocalSettings.Values.TryGetValue(SessionDataKey, out object data))
+            if (!(ApplicationSettingsStore.Read(SessionDataKey) is string data))
             {
                 return 0; // No session data found
             }
@@ -76,7 +66,7 @@ namespace Notepads.Core
 
             try
             {
-                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>((string)data, _encodingConverter);
+                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data, _encodingConverter);
             }
             catch (Exception ex)
             {
@@ -84,11 +74,11 @@ namespace Notepads.Core
                 return 0;
             }
 
-            TextEditor selectedTextEditor = null;
+            ITextEditor selectedTextEditor = null;
 
             foreach (TextEditorSessionData textEditorData in sessionData.TextEditors)
             {
-                TextEditor textEditor;
+                ITextEditor textEditor;
 
                 try
                 {
@@ -133,13 +123,13 @@ namespace Notepads.Core
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            TextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
-            TextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
+            ITextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
+            ITextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
             FileSystemUtility.ClearFutureAccessList();
 
             NotepadsSessionDataV1 sessionData = new NotepadsSessionDataV1();
 
-            foreach (TextEditor textEditor in textEditors)
+            foreach (ITextEditor textEditor in textEditors)
             {
                 if (textEditor.EditingFile != null)
                 {
@@ -193,12 +183,11 @@ namespace Notepads.Core
 
             try
             {
-                string sessionJson = JsonConvert.SerializeObject(sessionData, _encodingConverter);
-                IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
+                string sessionJsonStr = JsonConvert.SerializeObject(sessionData, _encodingConverter);
 
-                if (!settings.TryGetValue(SessionDataKey, out object currentValue) || !string.Equals((string)currentValue, sessionJson, StringComparison.OrdinalIgnoreCase))
+                if (!(ApplicationSettingsStore.Read(SessionDataKey) is string currentValue) || !string.Equals(currentValue, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
-                    settings[SessionDataKey] = sessionJson;
+                    ApplicationSettingsStore.Write(SessionDataKey, sessionJsonStr);
                     sessionDataSaved = true;
                 }
             }
@@ -261,15 +250,33 @@ namespace Notepads.Core
 
         public void ClearSessionData()
         {
-            ApplicationData.Current.LocalSettings.Values.Remove(SessionDataKey);
+            ApplicationSettingsStore.Remove(SessionDataKey);
         }
 
-        private async Task<TextEditor> RecoverTextEditorAsync(TextEditorSessionData textEditorData)
+        private void BindEditorStateChangeEvent(object sender, ITextEditor textEditor)
+        {
+            textEditor.TextChanging += RemoveTextEditorSessionData;
+            textEditor.EncodingChanged += RemoveTextEditorSessionData;
+            textEditor.LineEndingChanged += RemoveTextEditorSessionData;
+            textEditor.ChangeReverted += RemoveTextEditorSessionData;
+            textEditor.ModificationStateChanged += RemoveTextEditorSessionData;
+        }
+
+        private void UnbindEditorStateChangeEvent(object sender, ITextEditor textEditor)
+        {
+            textEditor.TextChanging -= RemoveTextEditorSessionData;
+            textEditor.EncodingChanged -= RemoveTextEditorSessionData;
+            textEditor.LineEndingChanged -= RemoveTextEditorSessionData;
+            textEditor.ChangeReverted -= RemoveTextEditorSessionData;
+            textEditor.ModificationStateChanged -= RemoveTextEditorSessionData;
+        }
+
+        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionData textEditorData)
         {
             StorageFile sourceFile = await FileSystemUtility.GetFileFromFutureAccessList(ToToken(textEditorData.Id));
             BackupMetadata lastSaved = textEditorData.LastSaved;
             BackupMetadata pending = textEditorData.Pending;
-            TextEditor textEditor;
+            ITextEditor textEditor;
 
             if (sourceFile == null) // Untitled.txt or file not found
             {
@@ -285,11 +292,11 @@ namespace Notepads.Core
             }
             else if (lastSaved == null && pending == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.OpenNewTextEditor(sourceFile, textEditorData.Id);
+                textEditor = await _notepadsCore.OpenNewTextEditor(sourceFile, ignoreFileSizeLimit: true, textEditorData.Id);
             }
             else // File with pending changes
             {
-                TextFile textFile = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath);
+                TextFile textFile = await FileSystemUtility.ReadFile(lastSaved.BackupFilePath, ignoreFileSizeLimit: true);
 
                 textEditor = _notepadsCore.OpenNewTextEditor(
                     textEditorData.Id,
@@ -306,23 +313,23 @@ namespace Notepads.Core
             return textEditor;
         }
 
-        private async Task ApplyChangesAsync(TextEditor textEditor, BackupMetadata backupMetadata)
+        private async Task ApplyChangesAsync(ITextEditor textEditor, BackupMetadata backupMetadata)
         {
-            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath);
-            textEditor.Init(textFile, textEditor.EditingFile, resetOriginalSnapshot: false, isModified: true);
+            TextFile textFile = await FileSystemUtility.ReadFile(backupMetadata.BackupFilePath, ignoreFileSizeLimit: true);
+            textEditor.Init(textFile, textEditor.EditingFile, resetLastSavedSnapshot: false, isModified: true);
             textEditor.TryChangeEncoding(backupMetadata.Encoding);
             textEditor.TryChangeLineEnding(backupMetadata.LineEnding);
         }
 
-        private async Task<BackupMetadata> SaveLastSavedChangesAsync(TextEditor textEditor)
+        private async Task<BackupMetadata> SaveLastSavedChangesAsync(ITextEditor textEditor)
         {
-            TextFile originalSnapshot = textEditor.OriginalSnapshot;
+            TextFile snapshot = textEditor.LastSavedSnapshot;
             StorageFile backupFile;
 
             try
             {
                 backupFile = await SessionUtility.CreateNewBackupFileAsync(textEditor.Id.ToString("N") + "-LastSaved");
-                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(originalSnapshot.Content, originalSnapshot.LineEnding), originalSnapshot.Encoding, backupFile);
+                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(snapshot.Content, snapshot.LineEnding), snapshot.Encoding, backupFile);
             }
             catch (Exception ex)
             {
@@ -333,13 +340,13 @@ namespace Notepads.Core
             return new BackupMetadata
             {
                 BackupFilePath = backupFile.Path,
-                Encoding = originalSnapshot.Encoding,
-                LineEnding = originalSnapshot.LineEnding,
-                DateModified = originalSnapshot.DateModifiedFileTime
+                Encoding = snapshot.Encoding,
+                LineEnding = snapshot.LineEnding,
+                DateModified = snapshot.DateModifiedFileTime
             };
         }
 
-        private async Task<BackupMetadata> SavePendingChangesAsync(TextEditor textEditor)
+        private async Task<BackupMetadata> SavePendingChangesAsync(ITextEditor textEditor)
         {
             StorageFile backupFile;
             TextFile textFile;
@@ -390,9 +397,9 @@ namespace Notepads.Core
             return textEditorId.ToString("N");
         }
 
-        private void RemoveTextEditorData(object sender, EventArgs e)
+        private void RemoveTextEditorSessionData(object sender, EventArgs e)
         {
-            if (_loaded && sender is TextEditor textEditor)
+            if (sender is ITextEditor textEditor)
             {
                 _sessionData.TryRemove(textEditor.Id, out _);
             }
@@ -434,7 +441,7 @@ namespace Notepads.Core
         {
             public override Encoding ReadJson(JsonReader reader, Type objectType, Encoding existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                return EncodingUtility.GetEncodingByName((string)reader.Value, new UTF8Encoding(false));
+                return EncodingUtility.GetEncodingByName((string)reader.Value, fallbackEncoding: new UTF8Encoding(false));
             }
 
             public override void WriteJson(JsonWriter writer, Encoding value, JsonSerializer serializer)

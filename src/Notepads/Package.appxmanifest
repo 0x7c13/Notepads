@@ -5,8 +5,10 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"  
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap mp uap5 rescap">
+  IgnorableNamespaces="uap mp uap5 desktop4 iot2 rescap">
 
   <Identity
     Name="Notepads-Beta"
@@ -32,7 +34,9 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="Notepads.App">
+      EntryPoint="Notepads.App"
+      desktop4:SupportsMultipleInstances="true"
+      iot2:SupportsMultipleInstances="true">
       <uap:VisualElements
         DisplayName="Notepads - Beta"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -49,6 +53,12 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" BackgroundColor="#2f2f2f"/>
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="notepads">
+            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:DisplayName>Notepads URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="text">
             <uap:SupportedFileTypes>

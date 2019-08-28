@@ -2,7 +2,6 @@
 namespace Notepads.Services
 {
     using Notepads.Utilities;
-    using System;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml.Controls;
@@ -11,17 +10,42 @@ namespace Notepads.Services
     {
         public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e)
         {
-            if (e is LaunchActivatedEventArgs launchActivatedEventArgs && launchActivatedEventArgs.PrelaunchActivated == false)
+            if (e is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
-                LaunchActivated(rootFrame, launchActivatedEventArgs);
+                ProtocolActivated(rootFrame, protocolActivatedEventArgs);
             }
             else if (e is FileActivatedEventArgs fileActivatedEventArgs)
             {
                 await FileActivated(rootFrame, fileActivatedEventArgs);
             }
-            else
+            else if (e is CommandLineActivatedEventArgs commandLineActivatedEventArgs)
             {
-                await CommandActivated(rootFrame, e);
+                await CommandActivated(rootFrame, commandLineActivatedEventArgs);
+            }
+            else if (e is LaunchActivatedEventArgs launchActivatedEventArgs)
+            {
+                LaunchActivated(rootFrame, launchActivatedEventArgs);
+            }
+            else // For other types of activated events
+            {
+                if (rootFrame.Content == null)
+                {
+                    rootFrame.Navigate(typeof(MainPage));
+                }
+            }
+        }
+
+        private static void ProtocolActivated(Frame rootFrame, ProtocolActivatedEventArgs protocolActivatedEventArgs)
+        {
+            LoggingService.LogInfo($"[ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage), protocolActivatedEventArgs);
+            }
+            else if (rootFrame.Content is MainPage mainPage)
+            {
+                mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
             }
         }
 
@@ -51,25 +75,24 @@ namespace Notepads.Services
             }
         }
 
-        private static async Task CommandActivated(Frame rootFrame, IActivatedEventArgs e)
+        private static async Task CommandActivated(Frame rootFrame, CommandLineActivatedEventArgs commandLineActivatedEventArgs)
         {
+            LoggingService.LogInfo($"[CommandActivated] CurrentDirectoryPath: {commandLineActivatedEventArgs.Operation.CurrentDirectoryPath} " +
+                                   $"Arguments: {commandLineActivatedEventArgs.Operation.Arguments}");
+
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), e);
+                rootFrame.Navigate(typeof(MainPage), commandLineActivatedEventArgs);
             }
             else if (rootFrame.Content is MainPage mainPage)
             {
-                if (e.Kind == ActivationKind.CommandLineLaunch)
+                var file = await FileSystemUtility.OpenFileFromCommandLine(
+                    commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
+                    commandLineActivatedEventArgs.Operation.Arguments);
+
+                if (file != null)
                 {
-                    if (e is CommandLineActivatedEventArgs commandLine)
-                    {
-                        var file = await FileSystemUtility.OpenFileFromCommandLine(
-                            commandLine.Operation.CurrentDirectoryPath, commandLine.Operation.Arguments);
-                        if (file != null)
-                        {
-                            await mainPage.OpenFile(file);
-                        }
-                    }
+                    await mainPage.OpenFile(file);
                 }
             }
         }
