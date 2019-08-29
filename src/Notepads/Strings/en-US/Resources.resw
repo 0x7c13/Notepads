@@ -359,7 +359,7 @@
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
     <value>Ln {0}, Col {1} ({2} {3})</value>
-    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for selected word form. You can change the order but DO NOT REMOVE them from the string.</comment>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
     <value>Ln {0}, Col {1}</value>
