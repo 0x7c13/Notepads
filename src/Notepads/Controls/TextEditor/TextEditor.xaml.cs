@@ -124,6 +124,8 @@ namespace Notepads.Controls.TextEditor
         private bool _isModified;
 
         private FileModificationState _fileModificationState;
+        
+        private bool _isContentPreviewPanelOpened;
 
         private StorageFile _editingFile;
 
@@ -187,24 +189,24 @@ namespace Notepads.Controls.TextEditor
         public TextEditorStateMetaData GetTextEditorStateMetaData()
         {
             TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            TextEditorCore.GetTextSelectionPosition(out var textSelectionStartPosition, out var textSelectionEndPosition);
 
-            var metaData = new TextEditorStateMetaData
-            {
-                LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding),
-                LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
-                DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
-                HasEditingFile = EditingFile != null,
-                IsModified = IsModified,
-                SelectionStartPosition = TextEditorCore.Document.Selection.StartPosition,
-                SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition,
-                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
-                ScrollViewerHorizontalOffset = horizontalOffset,
-                ScrollViewerVerticalOffset = verticalOffset,
-                FontSize = TextEditorCore.FontSize,
-                IsContentPreviewPanelOpened = (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible),
-                IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
-            };
+            var metaData = new TextEditorStateMetaData();
 
+            metaData.LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding);
+            metaData.LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding);
+            metaData.DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime;
+            metaData.HasEditingFile = EditingFile != null;
+            metaData.IsModified = IsModified;
+            metaData.SelectionStartPosition = textSelectionStartPosition;
+            metaData.SelectionEndPosition = textSelectionEndPosition;
+            metaData.WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords;
+            metaData.ScrollViewerHorizontalOffset = horizontalOffset;
+            metaData.ScrollViewerVerticalOffset = verticalOffset;
+            metaData.FontSize = TextEditorCore.FontSize;
+            metaData.IsContentPreviewPanelOpened = _isContentPreviewPanelOpened;
+            metaData.IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview);
+            
             if (RequestedEncoding != null)
             {
                 metaData.RequestedEncoding = EncodingUtility.GetEncodingName(RequestedEncoding);
@@ -307,7 +309,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
-                    if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                    if (_isContentPreviewPanelOpened)
                     {
                         _contentPreviewExtension.IsExtensionEnabled = false;
                         CloseSplitView();
@@ -433,6 +435,7 @@ namespace Notepads.Controls.TextEditor
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
             Analytics.TrackEvent("MarkdownContentPreview_Opened");
+            _isContentPreviewPanelOpened = true;
         }
 
         private void CloseSplitView()
@@ -442,6 +445,7 @@ namespace Notepads.Controls.TextEditor
             SplitPanel.Visibility = Visibility.Collapsed;
             GridSplitter.Visibility = Visibility.Collapsed;
             TextEditorCore.Focus(FocusState.Programmatic);
+            _isContentPreviewPanelOpened = false;
         }
 
         public void ShowHideContentPreview()

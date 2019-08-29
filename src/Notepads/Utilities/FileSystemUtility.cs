@@ -175,13 +175,13 @@ namespace Notepads.Utilities
             }
         }
 
-        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit)
+        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
             StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit);
+            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit)
+        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding =  null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
@@ -193,7 +193,6 @@ namespace Notepads.Utilities
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             string text;
-            Encoding encoding;
             var bom = new byte[4];
 
             using (var inputStream = await file.OpenReadAsync())
@@ -205,9 +204,17 @@ namespace Notepads.Utilities
             using (var inputStream = await file.OpenReadAsync())
             using (var classicStream = inputStream.AsStreamForRead())
             {
-                var reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                StreamReader reader;
+                if (encoding != null)
+                {
+                    reader = new StreamReader(classicStream, encoding);
+                }
+                else
+                {
+                    reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                }
                 reader.Peek();
-                encoding = reader.CurrentEncoding;
+                if (encoding == null) encoding = reader.CurrentEncoding;
                 text = reader.ReadToEnd();
                 reader.Close();
             }
