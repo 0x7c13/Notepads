@@ -449,6 +449,7 @@ namespace Notepads.Core
             if (GetNumberOfOpenedTextEditors() > 1)
             {
                 Sets.SelectedItem = textEditorSetsViewItem;
+                //Sets.ScrollIntoView(textEditorSetsViewItem);
                 Sets.ScrollToLastSet();
             }
 

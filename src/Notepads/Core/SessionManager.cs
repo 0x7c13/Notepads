@@ -4,7 +4,6 @@ namespace Notepads.Core
     using Newtonsoft.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
-    using Notepads.Settings;
     using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
@@ -18,12 +17,11 @@ namespace Notepads.Core
 
     internal class SessionManager : ISessionManager
     {
-        private const string SessionDataKey = "NotepadsSessionData";
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
-
         private readonly INotepadsCore _notepadsCore;
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ConcurrentDictionary<Guid, TextEditorSessionData> _sessionData;
+        private string _lastSessionJsonStr;
         private bool _loaded;
         private Timer _timer;
 
@@ -55,7 +53,9 @@ namespace Notepads.Core
                 return 0; // Already loaded
             }
 
-            if (!(ApplicationSettingsStore.Read(SessionDataKey) is string data))
+            var data = await SessionUtility.GetSerializedSessionMetaDataAsync();
+
+            if (data == null)
             {
                 return 0; // No session data found
             }
@@ -69,6 +69,7 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
+                await SessionUtility.DeleteSerializedSessionMetaDataAsync();
                 return 0;
             }
 
@@ -154,7 +155,8 @@ namespace Notepads.Core
                         if (textEditor.EditingFile != null)
                         {
                             // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
-                            var lastSavedBackupFile = await SessionUtility.CreateNewBackupFileAsync(ToToken(textEditor.Id) + "-LastSaved");
+                            var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(ToToken(textEditor.Id) + "-LastSaved",
+                                CreationCollisionOption.ReplaceExisting);
 
                             if (!await BackupTextAsync(textEditor.LastSavedSnapshot.Content,
                                 textEditor.LastSavedSnapshot.Encoding,
@@ -170,7 +172,8 @@ namespace Notepads.Core
                         if (textEditor.EditingFile == null || !string.Equals(textEditor.LastSavedSnapshot.Content, textEditor.GetText()))
                         {
                             // Persist pending changes relative to the last save
-                            var pendingBackupFile = await SessionUtility.CreateNewBackupFileAsync(ToToken(textEditor.Id) + "-Pending");
+                            var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(ToToken(textEditor.Id) + "-Pending",
+                                CreationCollisionOption.ReplaceExisting);
 
                             if (!await BackupTextAsync(textEditor.GetText(),
                                     textEditor.LastSavedSnapshot.Encoding,
@@ -202,12 +205,15 @@ namespace Notepads.Core
 
             try
             {
-                string sessionJsonStr = JsonConvert.SerializeObject(sessionData);
+                string sessionJsonStr = JsonConvert.SerializeObject(sessionData, Formatting.Indented);
 
-                if (!(ApplicationSettingsStore.Read(SessionDataKey) is string currentValue) || !string.Equals(currentValue, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
+                if (_lastSessionJsonStr == null || !string.Equals(_lastSessionJsonStr, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
-                    ApplicationSettingsStore.Write(SessionDataKey, sessionJsonStr);
+                    // write
+                    await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
+                    _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
+                    
                 }
             }
             catch (Exception ex)
@@ -267,9 +273,10 @@ namespace Notepads.Core
             }
         }
 
-        public void ClearSessionData()
+        public async Task ClearSessionDataAsync()
         {
-            ApplicationSettingsStore.Remove(SessionDataKey);
+            _lastSessionJsonStr = null;
+            await SessionUtility.DeleteSerializedSessionMetaDataAsync();
         }
 
         private void BindEditorStateChangeEvent(object sender, ITextEditor textEditor)

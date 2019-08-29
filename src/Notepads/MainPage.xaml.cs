@@ -126,7 +126,7 @@ namespace Notepads
             };
 
             // Session backup and restore toggle
-            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += (sender, isSessionBackupAndRestoreEnabled) =>
+            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
                 if (isSessionBackupAndRestoreEnabled)
                 {
@@ -137,7 +137,7 @@ namespace Notepads
                 {
                     SessionManager.IsBackupEnabled = false;
                     SessionManager.StopSessionBackup();
-                    SessionManager.ClearSessionData();
+                    await SessionManager.ClearSessionDataAsync();
                 }
             };
 
@@ -795,13 +795,13 @@ namespace Notepads
             }
         }
 
-        private void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
+        private async void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
-                    SessionManager.ClearSessionData();
+                    await SessionManager.ClearSessionDataAsync();
                 }
                 Application.Current.Exit();
             }
