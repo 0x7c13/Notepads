@@ -125,6 +125,8 @@ namespace Notepads.Controls.TextEditor
 
         private FileModificationState _fileModificationState;
 
+        private bool _isContentPreviewPanelOpened;
+
         private StorageFile _editingFile;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
@@ -184,9 +186,11 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.GetText();
         }
 
+        // Make sure this method is thread safe
         public TextEditorStateMetaData GetTextEditorStateMetaData()
         {
             TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            TextEditorCore.GetTextSelectionPosition(out var textSelectionStartPosition, out var textSelectionEndPosition);
 
             var metaData = new TextEditorStateMetaData
             {
@@ -195,13 +199,14 @@ namespace Notepads.Controls.TextEditor
                 DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
                 HasEditingFile = EditingFile != null,
                 IsModified = IsModified,
-                SelectionStartPosition = TextEditorCore.Document.Selection.StartPosition,
-                SelectionEndPosition = TextEditorCore.Document.Selection.EndPosition,
-                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
+                SelectionStartPosition = textSelectionStartPosition,
+                SelectionEndPosition = textSelectionEndPosition,
+                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap ||
+                           TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
                 FontSize = TextEditorCore.FontSize,
-                IsContentPreviewPanelOpened = (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible),
+                IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
 
@@ -307,7 +312,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
-                    if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                    if (_isContentPreviewPanelOpened)
                     {
                         _contentPreviewExtension.IsExtensionEnabled = false;
                         CloseSplitView();
@@ -433,6 +438,7 @@ namespace Notepads.Controls.TextEditor
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
             Analytics.TrackEvent("MarkdownContentPreview_Opened");
+            _isContentPreviewPanelOpened = true;
         }
 
         private void CloseSplitView()
@@ -442,6 +448,7 @@ namespace Notepads.Controls.TextEditor
             SplitPanel.Visibility = Visibility.Collapsed;
             GridSplitter.Visibility = Visibility.Collapsed;
             TextEditorCore.Focus(FocusState.Programmatic);
+            _isContentPreviewPanelOpened = false;
         }
 
         public void ShowHideContentPreview()

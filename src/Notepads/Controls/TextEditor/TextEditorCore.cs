@@ -20,6 +20,10 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
+        public event EventHandler<TextWrapping> TextWrappingChanged;
+
+        public event EventHandler<double> FontSizeChanged;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -30,30 +34,40 @@ namespace Notepads.Controls.TextEditor
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
-        public event EventHandler<TextWrapping> TextWrappingChanged;
+        private int _textSelectionStartPosition = 0;
 
-        public event EventHandler<double> FontSizeChanged;
+        private int _textSelectionEndPosition = 0;
+
+        private double _contentScrollViewerHorizontalOffset = 0;
+
+        private double _contentScrollViewerVerticalOffset = 0;
 
         private const string ContentElementName = "ContentElement";
 
         private ScrollViewer _contentScrollViewer;
 
+        private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
+
         public new TextWrapping TextWrapping
         {
-            get => base.TextWrapping;
+            get => _textWrapping;
             set
             {
                 base.TextWrapping = value;
+                _textWrapping = value;
                 TextWrappingChanged?.Invoke(this, value);
             }
         }
 
+        private double _fontSize = EditorSettingsService.EditorFontSize;
+
         public new double FontSize
         {
-            get => base.FontSize;
+            get => _fontSize;
             set
             {
                 base.FontSize = value;
+                _fontSize = value;
                 FontSizeChanged?.Invoke(this, value);
             }
         }
@@ -73,6 +87,7 @@ namespace Notepads.Controls.TextEditor
             CopyingToClipboard += (sender, args) => CopyPlainTextToWindowsClipboard(args);
             Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
             TextChanging += OnTextChanging;
+            SelectionChanged += OnSelectionChanged;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
@@ -121,7 +136,9 @@ namespace Notepads.Controls.TextEditor
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
+            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
+
 
         public void Undo()
         {
@@ -144,15 +161,24 @@ namespace Notepads.Controls.TextEditor
             Document.SetText(TextSetOptions.None, text);
         }
 
+        // Thread safe
         public string GetText()
         {
             return _content;
         }
 
+        // Thread safe
         public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
         {
-            horizontalOffset = _contentScrollViewer.HorizontalOffset;
-            verticalOffset = _contentScrollViewer.VerticalOffset;
+            horizontalOffset = _contentScrollViewerHorizontalOffset;
+            verticalOffset = _contentScrollViewerVerticalOffset;
+        }
+
+        // Thread safe
+        public void GetTextSelectionPosition(out int startPosition, out int endPosition)
+        {
+            startPosition = _textSelectionStartPosition;
+            endPosition = _textSelectionEndPosition;
         }
 
         public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
@@ -169,8 +195,7 @@ namespace Notepads.Controls.TextEditor
                 _isLineCachePendingUpdate = false;
             }
 
-            var start = Document.Selection.StartPosition;
-            var end = Document.Selection.EndPosition;
+            GetTextSelectionPosition(out var start, out var end);
 
             lineIndex = 1;
             columnIndex = 1;
@@ -429,6 +454,17 @@ namespace Notepads.Controls.TextEditor
                 _content = TrimRichEditBoxText(_content);
                 _isLineCachePendingUpdate = true;
             }
+        }
+
+        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _textSelectionStartPosition = Document.Selection.StartPosition;
+            _textSelectionEndPosition = Document.Selection.EndPosition;
+        }
+        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)

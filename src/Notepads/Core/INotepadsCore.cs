@@ -43,11 +43,8 @@ namespace Notepads.Core
 
         ITextEditor OpenNewTextEditor(
             Guid id,
-            string text,
+            TextFile textFile,
             StorageFile file,
-            long dateModifiedFileTime,
-            Encoding encoding,
-            LineEnding lineEnding,
             bool isModified,
             int atIndex = -1);
 

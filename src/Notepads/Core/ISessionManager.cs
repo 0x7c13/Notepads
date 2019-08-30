@@ -15,6 +15,6 @@ namespace Notepads.Core
 
         void StopSessionBackup();
 
-        void ClearSessionData();
+        Task ClearSessionDataAsync();
     }
 }

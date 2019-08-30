@@ -16,15 +16,5 @@ namespace Notepads.Extensions
                     return null;
             }
         }
-
-        public IContentPreviewExtension GetDiffViewerExtension(FileType fileType)
-        {
-            return null;
-        }
-
-        public IContentExtension[] GetContentExtensions(FileType fileType)
-        {
-            return null;
-        }
     }
 }
