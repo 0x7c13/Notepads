@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
+    using Notepads.Utilities;
     using System;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.UI.Xaml;
-    using Notepads.Utilities;
 
     public interface ITextEditor
     {
@@ -41,11 +41,11 @@ namespace Notepads.Controls.TextEditor
 
         TextEditorMode Mode { get; }
 
-        void Init(TextFile textFile, 
-            StorageFile file, 
-            bool resetLastSavedSnapshot = true, 
-            bool clearUndoQueue = true, 
-            bool isModified = false, 
+        void Init(TextFile textFile,
+            StorageFile file,
+            bool resetLastSavedSnapshot = true,
+            bool clearUndoQueue = true,
+            bool isModified = false,
             bool resetText = true);
 
         string GetText();

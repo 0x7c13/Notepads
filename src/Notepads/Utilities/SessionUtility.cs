@@ -1,11 +1,9 @@
 ﻿
-using System.Linq;
-using Microsoft.Toolkit.Uwp.Helpers;
-using Notepads.Services;
-
 namespace Notepads.Utilities
 {
+    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Core;
+    using Notepads.Services;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -41,19 +39,18 @@ namespace Notepads.Utilities
         public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync()
         {
             StorageFolder backupFolder = await GetBackupFolderAsync();
-            var files = await backupFolder.GetFilesAsync();
-            return files.Where(file => !string.Equals(file.Name, SessionMetaDataFileName, StringComparison.OrdinalIgnoreCase)).ToList();
+            return await backupFolder.GetFilesAsync();
         }
 
         public static async Task<string> GetSerializedSessionMetaDataAsync()
         {
             try
             {
-                StorageFolder backupFolder = await GetBackupFolderAsync();
-                if (await backupFolder.FileExistsAsync(SessionMetaDataFileName))
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                if (await localFolder.FileExistsAsync(SessionMetaDataFileName))
                 {
-                    var data = await backupFolder.ReadTextFromFileAsync(SessionMetaDataFileName);
-                    LoggingService.LogInfo($"[SessionUtility] Session metadata Loaded from {backupFolder}");
+                    var data = await localFolder.ReadTextFromFileAsync(SessionMetaDataFileName);
+                    LoggingService.LogInfo($"[SessionUtility] Session metadata Loaded from {localFolder.Path}");
                     return data;
                 }
             }
@@ -67,24 +64,17 @@ namespace Notepads.Utilities
 
         public static async Task SaveSerializedSessionMetaDataAsync(string serializedData)
         {
-            StorageFolder backupFolder = await GetBackupFolderAsync();
-            await backupFolder.WriteTextToFileAsync(serializedData, SessionMetaDataFileName, CreationCollisionOption.ReplaceExisting);
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            await localFolder.WriteTextToFileAsync(serializedData, SessionMetaDataFileName, CreationCollisionOption.ReplaceExisting);
         }
 
         public static async Task DeleteSerializedSessionMetaDataAsync()
         {
-            try
+            StorageFolder backupFolder = await GetBackupFolderAsync();
+            if (await backupFolder.FileExistsAsync(SessionMetaDataFileName))
             {
-                StorageFolder backupFolder = await GetBackupFolderAsync();
-                if (await backupFolder.FileExistsAsync(SessionMetaDataFileName))
-                {
-                    var sessionDataFile = await backupFolder.GetFileAsync(SessionMetaDataFileName);
-                    await sessionDataFile.DeleteAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[SessionUtility] Failed to delete session meta data: {ex.Message}");
+                var sessionDataFile = await backupFolder.GetFileAsync(SessionMetaDataFileName);
+                await sessionDataFile.DeleteAsync();
             }
         }
 

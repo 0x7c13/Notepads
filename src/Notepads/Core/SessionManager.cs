@@ -69,7 +69,14 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
-                await SessionUtility.DeleteSerializedSessionMetaDataAsync();
+                try
+                {
+                    await SessionUtility.DeleteSerializedSessionMetaDataAsync();
+                }
+                catch
+                {
+                    // ignored
+                }
                 return 0;
             }
 
@@ -213,7 +220,7 @@ namespace Notepads.Core
                     await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
                     _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
-                    
+
                 }
             }
             catch (Exception ex)
@@ -276,7 +283,15 @@ namespace Notepads.Core
         public async Task ClearSessionDataAsync()
         {
             _lastSessionJsonStr = null;
-            await SessionUtility.DeleteSerializedSessionMetaDataAsync();
+            try
+            {
+                await SessionUtility.DeleteSerializedSessionMetaDataAsync();
+                LoggingService.LogInfo($"[SessionManager] Successfully deleted session meta data.");
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[SessionManager] Failed to delete session meta data: {ex.Message}");
+            }
         }
 
         private void BindEditorStateChangeEvent(object sender, ITextEditor textEditor)
@@ -332,13 +347,15 @@ namespace Notepads.Core
                     lastSavedText = lastSavedTextFile.Content;
                 }
 
-                textEditor = _notepadsCore.OpenNewTextEditor(
-                    editorSessionData.Id,
-                    lastSavedText,
-                    editingFile,
-                    editorSessionData.StateMetaData.DateModifiedFileTime,
+                var textFile = new TextFile(lastSavedText,
                     EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding),
                     LineEndingUtility.GetLineEndingByName(editorSessionData.StateMetaData.LastSavedLineEnding),
+                    editorSessionData.StateMetaData.DateModifiedFileTime);
+
+                textEditor = _notepadsCore.OpenNewTextEditor(
+                    editorSessionData.Id,
+                    textFile,
+                    editingFile,
                     editorSessionData.StateMetaData.IsModified);
 
                 if (pendingFile != null)

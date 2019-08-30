@@ -38,6 +38,10 @@ namespace Notepads.Controls.TextEditor
 
         private int _textSelectionEndPosition = 0;
 
+        private double _contentScrollViewerHorizontalOffset = 0;
+
+        private double _contentScrollViewerVerticalOffset = 0;
+
         private const string ContentElementName = "ContentElement";
 
         private ScrollViewer _contentScrollViewer;
@@ -132,7 +136,9 @@ namespace Notepads.Controls.TextEditor
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
+            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
+
 
         public void Undo()
         {
@@ -155,17 +161,20 @@ namespace Notepads.Controls.TextEditor
             Document.SetText(TextSetOptions.None, text);
         }
 
+        // Thread safe
         public string GetText()
         {
             return _content;
         }
 
+        // Thread safe
         public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
         {
-            horizontalOffset = _contentScrollViewer.HorizontalOffset;
-            verticalOffset = _contentScrollViewer.VerticalOffset;
+            horizontalOffset = _contentScrollViewerHorizontalOffset;
+            verticalOffset = _contentScrollViewerVerticalOffset;
         }
 
+        // Thread safe
         public void GetTextSelectionPosition(out int startPosition, out int endPosition)
         {
             startPosition = _textSelectionStartPosition;
@@ -451,6 +460,11 @@ namespace Notepads.Controls.TextEditor
         {
             _textSelectionStartPosition = Document.Selection.StartPosition;
             _textSelectionEndPosition = Document.Selection.EndPosition;
+        }
+        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)

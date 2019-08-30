@@ -620,10 +620,10 @@ namespace Notepads
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
 
-            var wordSelected = selectedCount > 1 ? 
-                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") : 
+            var wordSelected = selectedCount > 1 ?
+                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") :
                 _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_SingularSelectedWord");
-                
+
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount, wordSelected);
@@ -838,7 +838,20 @@ namespace Notepads
 
         private async Task OpenNewFiles()
         {
-            var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            IReadOnlyList<StorageFile> files;
+
+            try
+            {
+                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            }
+            catch (Exception ex)
+            {
+                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                NotepadsCore.FocusOnSelectedTextEditor();
+                return;
+            }
+
             if (files == null || files.Count == 0)
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
@@ -871,7 +884,6 @@ namespace Notepads
         public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
         {
             if (storageItems == null || storageItems.Count == 0) return 0;
-
             int successCount = 0;
             foreach (var storageItem in storageItems)
             {
@@ -904,7 +916,7 @@ namespace Notepads
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                    _notepadsCore.FocusOnTextEditor(textEditor);
+                    NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {
                         return false; // User cancelled
@@ -922,6 +934,7 @@ namespace Notepads
             {
                 var fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
+                NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
             }
         }

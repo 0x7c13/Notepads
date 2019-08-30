@@ -81,7 +81,7 @@ namespace Notepads
             if (instance.IsCurrentInstance)
             {
                 App.IsFirstInstance = IsFirstInstance;
-                global::Windows.UI.Xaml.Application.Start(p => new App());
+                Windows.UI.Xaml.Application.Start(p => new App());
                 IsFirstInstance = false;
             }
             else

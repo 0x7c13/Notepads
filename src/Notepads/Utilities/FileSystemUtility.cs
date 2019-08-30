@@ -17,7 +17,7 @@ namespace Notepads.Utilities
 
     public class TextFile
     {
-        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime)
+        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime = -1)
         {
             Content = content;
             Encoding = encoding;
@@ -181,7 +181,7 @@ namespace Notepads.Utilities
             return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding =  null)
+        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 

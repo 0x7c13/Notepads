@@ -124,7 +124,7 @@ namespace Notepads.Controls.TextEditor
         private bool _isModified;
 
         private FileModificationState _fileModificationState;
-        
+
         private bool _isContentPreviewPanelOpened;
 
         private StorageFile _editingFile;
@@ -186,27 +186,30 @@ namespace Notepads.Controls.TextEditor
             return TextEditorCore.GetText();
         }
 
+        // Make sure this method is thread safe
         public TextEditorStateMetaData GetTextEditorStateMetaData()
         {
             TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             TextEditorCore.GetTextSelectionPosition(out var textSelectionStartPosition, out var textSelectionEndPosition);
 
-            var metaData = new TextEditorStateMetaData();
+            var metaData = new TextEditorStateMetaData
+            {
+                LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding),
+                LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
+                DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
+                HasEditingFile = EditingFile != null,
+                IsModified = IsModified,
+                SelectionStartPosition = textSelectionStartPosition,
+                SelectionEndPosition = textSelectionEndPosition,
+                WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap ||
+                           TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
+                ScrollViewerHorizontalOffset = horizontalOffset,
+                ScrollViewerVerticalOffset = verticalOffset,
+                FontSize = TextEditorCore.FontSize,
+                IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
+                IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
+            };
 
-            metaData.LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding);
-            metaData.LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding);
-            metaData.DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime;
-            metaData.HasEditingFile = EditingFile != null;
-            metaData.IsModified = IsModified;
-            metaData.SelectionStartPosition = textSelectionStartPosition;
-            metaData.SelectionEndPosition = textSelectionEndPosition;
-            metaData.WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap || TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords;
-            metaData.ScrollViewerHorizontalOffset = horizontalOffset;
-            metaData.ScrollViewerVerticalOffset = verticalOffset;
-            metaData.FontSize = TextEditorCore.FontSize;
-            metaData.IsContentPreviewPanelOpened = _isContentPreviewPanelOpened;
-            metaData.IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview);
-            
             if (RequestedEncoding != null)
             {
                 metaData.RequestedEncoding = EncodingUtility.GetEncodingName(RequestedEncoding);

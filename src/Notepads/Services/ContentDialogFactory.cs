@@ -50,7 +50,7 @@ namespace Notepads.Services
             ContentDialog fileOpenErrorDialog = new ContentDialog
             {
                 Title = ResourceLoader.GetString("FileOpenErrorDialog_Title"),
-                Content = string.Format(ResourceLoader.GetString("FileOpenErrorDialog_Content"), filePath, errorMsg),
+                Content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileOpenErrorDialog_Content"), filePath, errorMsg),
                 PrimaryButtonText = ResourceLoader.GetString("FileOpenErrorDialog_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
