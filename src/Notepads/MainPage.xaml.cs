@@ -171,6 +171,7 @@ namespace Notepads
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
+            MenuExitButton.Click += (sender, args) => Application.Current.Exit();
 
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {

@@ -150,6 +150,14 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>-->
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
+                                        <MenuFlyoutItem Text="Exit" x:Name="MenuExitButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE7E8;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="Q" IsEnabled="True"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
