@@ -471,7 +471,7 @@ namespace Notepads
             if (EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 // Save session before app exit
-                await SessionManager.SaveSessionAsync();
+                await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 Application.Current.Exit();
             }
             else
@@ -798,8 +798,8 @@ namespace Notepads
             {
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
-                    await SessionManager.ClearSessionDataAsync()
-                        .ContinueWith(task => Application.Current.Exit());
+                    await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                    Application.Current.Exit();
                 }
                 else
                 {

@@ -97,13 +97,14 @@ namespace Notepads.Core
             }
 
             _notepadsCore.OpenTextEditors(recoveredEditor.ToArray(), sessionData.SelectedTextEditor);
+            _notepadsCore.SetSetsViewScrollViewerHorizontalOffset(sessionData.TabScrollViewerHorizontalOffset);
 
             _loaded = true;
 
             return _sessionData.Count;
         }
 
-        public async Task SaveSessionAsync()
+        public async Task SaveSessionAsync(Action actionAfterSaving = null)
         {
             if (!IsBackupEnabled)
             {
@@ -114,6 +115,8 @@ namespace Notepads.Core
             // Serialize saves
             await _semaphoreSlim.WaitAsync();
 
+            if (!IsBackupEnabled) return; // Check again after SemaphoreSlim released
+
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             ITextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
@@ -121,6 +124,8 @@ namespace Notepads.Core
             if (textEditors == null || textEditors.Length == 0)
             {
                 await ClearSessionDataAsync();
+                actionAfterSaving?.Invoke();
+                _semaphoreSlim.Release();
                 return;
             }
 
@@ -207,6 +212,9 @@ namespace Notepads.Core
                 }
             }
 
+            sessionData.TabScrollViewerHorizontalOffset =
+                _notepadsCore.GetSetsViewScrollViewerHorizontalOffset();
+
             bool sessionDataSaved = false;
 
             try
@@ -225,6 +233,8 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to save session metadata: {ex.Message}");
+                actionAfterSaving?.Invoke();
+                _semaphoreSlim.Release();
                 return; // Failed to save the session - do not proceed to delete backup files
             }
 
@@ -240,6 +250,7 @@ namespace Notepads.Core
                 LoggingService.LogInfo($"[SessionManager] Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
             }
 
+            actionAfterSaving?.Invoke();
             _semaphoreSlim.Release();
         }
 
@@ -429,6 +440,8 @@ namespace Notepads.Core
 
             public Guid SelectedTextEditor { get; set; }
 
+            public double TabScrollViewerHorizontalOffset { get; set; }
+
             public List<TextEditorSessionData> TextEditors { get; }
         }
 
@@ -448,18 +461,5 @@ namespace Notepads.Core
 
             public TextEditorStateMetaData StateMetaData { get; set; }
         }
-
-        //private class EncodingConverter : JsonConverter<Encoding>
-        //{
-        //    public override Encoding ReadJson(JsonReader reader, Type objectType, Encoding existingValue, bool hasExistingValue, JsonSerializer serializer)
-        //    {
-        //        return EncodingUtility.GetEncodingByName((string)reader.Value, fallbackEncoding: new UTF8Encoding(false));
-        //    }
-
-        //    public override void WriteJson(JsonWriter writer, Encoding value, JsonSerializer serializer)
-        //    {
-        //        writer.WriteValue(EncodingUtility.GetEncodingName(value));
-        //    }
-        //}
     }
 }

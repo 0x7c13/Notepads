@@ -44,6 +44,9 @@ namespace SetsView
         private bool _hasLoaded;
         private bool _isDragging;
 
+        private double _scrollViewerHorizontalOffset = .0f;
+        public double ScrollViewerHorizontalOffset => _scrollViewerHorizontalOffset;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SetsView"/> class.
         /// </summary>
@@ -90,12 +93,6 @@ namespace SetsView
         /// </summary>
         public event EventHandler<SetSelectedEventArgs> SetDoubleTapped;
 
-        public void ScrollToLastSet()
-        {
-            _setsScroller.UpdateLayout();
-            _setsScroller.ChangeView(double.MaxValue, 0.0f, 1.0f);
-        }
-
         /// <inheritdoc/>
         protected override DependencyObject GetContainerForItemOverride() => new SetsViewItem();
 
@@ -118,6 +115,7 @@ namespace SetsView
             if (_setsScroller != null)
             {
                 _setsScroller.Loaded -= SetsScrollViewer_Loaded;
+                _setsScroller.ViewChanged -= SetsScrollViewer_ViewChanged;
             }
 
             _setsContentPresenter = GetTemplateChild(SetsContentPresenterName) as ContentPresenter;
@@ -133,6 +131,7 @@ namespace SetsView
             if (_setsScroller != null)
             {
                 _setsScroller.Loaded += SetsScrollViewer_Loaded;
+                _setsScroller.ViewChanged += SetsScrollViewer_ViewChanged;
             }
         }
 
@@ -360,6 +359,23 @@ namespace SetsView
                 // If dragging the active set, there's an issue with the CP blanking.
                 SetsView_SelectionChanged(this, null);
             }
+        }
+
+        private void SetsScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
+        }
+
+        public void ScrollToLastSet()
+        {
+            _setsScroller.UpdateLayout();
+            _setsScroller.ChangeView(double.MaxValue, 0.0f, 1.0f);
+        }
+
+        public void ScrollTo(double offset)
+        {
+            _setsScroller.UpdateLayout();
+            _setsScroller.ChangeView(offset, 0.0f, 1.0f);
         }
     }
 }

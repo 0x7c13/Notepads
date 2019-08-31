@@ -140,6 +140,12 @@ namespace Notepads.Core
                     Sets.SelectedItem = editorSetsViewItem;
                 }
             }
+
+            if (selectedEditorId == null)
+            {
+                Sets.SelectedIndex = editors.Length - 1;
+                Sets.ScrollToLastSet();
+            }
         }
 
         public async Task<ITextEditor> CreateTextEditor(
@@ -313,6 +319,16 @@ namespace Notepads.Core
         {
             var item = GetTextEditorSetsViewItem(file);
             return item?.Content as ITextEditor;
+        }
+
+        public double GetSetsViewScrollViewerHorizontalOffset()
+        {
+            return Sets.ScrollViewerHorizontalOffset;
+        }
+
+        public void SetSetsViewScrollViewerHorizontalOffset(double offset)
+        {
+            Sets.ScrollTo(offset);
         }
 
         private void SwitchTo(StorageFile file)

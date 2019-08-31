@@ -85,5 +85,9 @@ namespace Notepads.Core
         void FocusOnSelectedTextEditor();
 
         void CloseTextEditor(ITextEditor textEditor);
+
+        double GetSetsViewScrollViewerHorizontalOffset();
+
+        void SetSetsViewScrollViewerHorizontalOffset(double offset);
     }
 }
