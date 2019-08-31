@@ -1,11 +1,11 @@
 ﻿
 namespace Notepads
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using System.Collections.Generic;
-    using System.Linq;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;

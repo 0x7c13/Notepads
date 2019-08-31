@@ -1,10 +1,6 @@
 ﻿
 namespace Notepads.Core
 {
-    using Newtonsoft.Json;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -13,6 +9,10 @@ namespace Notepads.Core
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.Storage;
 
     internal class SessionManager : ISessionManager
@@ -69,14 +69,7 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
-                try
-                {
-                    await SessionUtility.DeleteSerializedSessionMetaDataAsync();
-                }
-                catch
-                {
-                    // ignored
-                }
+                await ClearSessionDataAsync();
                 return 0;
             }
 
@@ -127,6 +120,7 @@ namespace Notepads.Core
 
             if (textEditors == null || textEditors.Length == 0)
             {
+                await ClearSessionDataAsync();
                 return;
             }
 

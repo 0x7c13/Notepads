@@ -1,6 +1,10 @@
 ﻿
 namespace Notepads
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -10,10 +14,6 @@ namespace Notepads
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
@@ -798,9 +798,13 @@ namespace Notepads
             {
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
-                    await SessionManager.ClearSessionDataAsync();
+                    await SessionManager.ClearSessionDataAsync()
+                        .ContinueWith(task => Application.Current.Exit());
                 }
-                Application.Current.Exit();
+                else
+                {
+                    Application.Current.Exit();
+                }
             }
         }
 

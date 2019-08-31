@@ -1,10 +1,10 @@
 ﻿
 namespace Notepads.Services
 {
-    using Notepads.Settings;
-    using Notepads.Utilities;
     using System;
     using System.Text;
+    using Notepads.Settings;
+    using Notepads.Utilities;
     using Windows.UI.Xaml;
 
     public static class EditorSettingsService

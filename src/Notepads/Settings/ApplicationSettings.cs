@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Settings
 {
-    using Notepads.Services;
     using System;
+    using Notepads.Services;
     using Windows.Storage;
 
     public class ApplicationSettingsStore

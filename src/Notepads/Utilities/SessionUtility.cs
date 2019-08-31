@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Utilities
 {
-    using Microsoft.Toolkit.Uwp.Helpers;
-    using Notepads.Core;
-    using Notepads.Services;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Core;
+    using Notepads.Services;
     using Windows.Storage;
 
     internal static class SessionUtility
@@ -70,10 +70,10 @@ namespace Notepads.Utilities
 
         public static async Task DeleteSerializedSessionMetaDataAsync()
         {
-            StorageFolder backupFolder = await GetBackupFolderAsync();
-            if (await backupFolder.FileExistsAsync(SessionMetaDataFileName))
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            if (await localFolder.FileExistsAsync(SessionMetaDataFileName))
             {
-                var sessionDataFile = await backupFolder.GetFileAsync(SessionMetaDataFileName);
+                var sessionDataFile = await localFolder.GetFileAsync(SessionMetaDataFileName);
                 await sessionDataFile.DeleteAsync();
             }
         }

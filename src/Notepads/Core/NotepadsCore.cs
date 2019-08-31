@@ -1,6 +1,11 @@
 ﻿
 namespace Notepads.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
@@ -8,11 +13,6 @@ namespace Notepads.Core
     using Notepads.Settings;
     using Notepads.Utilities;
     using SetsView;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Foundation.Collections;
     using Windows.Storage;
@@ -88,8 +88,8 @@ namespace Notepads.Core
 
         public void OpenNewTextEditor()
         {
-            var textFile = new TextFile(string.Empty, 
-                EditorSettingsService.EditorDefaultEncoding, 
+            var textFile = new TextFile(string.Empty,
+                EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding);
             var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, null);
             OpenTextEditor(newEditor);

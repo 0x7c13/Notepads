@@ -1,12 +1,11 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Utilities;
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Utilities;
     using Windows.Storage;
-    using Windows.UI.Xaml;
 
     public interface ITextEditor
     {

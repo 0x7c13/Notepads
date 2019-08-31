@@ -1,14 +1,14 @@
 ﻿
 namespace Notepads.Utilities
 {
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.AccessCache;

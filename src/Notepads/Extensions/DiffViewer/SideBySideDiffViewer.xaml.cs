@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
-    using Notepads.Commands;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Notepads.Commands;
+    using Notepads.Services;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
