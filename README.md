@@ -4,6 +4,9 @@
 [![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
 ![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
 [![Discord](https://img.shields.io/discord/588473626651787274.svg?style=flat-square)](https://discord.gg/VqetCub)
+[![Downloads](https://img.shields.io/github/downloads/JasonStein/Notepads/total.svg?style=flat-square)](https://github.com/JasonStein/Notepads/releases/)
+[![Contributors](https://img.shields.io/github/contributors/zedapp/zed?style=flat-square)](https://github.com/JasonStein/Notepads/graphs/contributors)
+
 
 ## What is Notepads and why do I care?
 
