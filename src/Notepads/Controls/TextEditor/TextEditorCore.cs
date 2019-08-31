@@ -113,6 +113,7 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
@@ -493,6 +494,35 @@ namespace Notepads.Controls.TextEditor
         {
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void DuplicateText()
+        {
+            var start = Document.Selection.StartPosition;
+            var end = Document.Selection.EndPosition;
+
+            if (end == start)
+            {
+                // Duplicate Line
+                var textRange = Document.GetRange(Document.Selection.StartPosition, Document.Selection.StartPosition);
+                textRange.Expand(TextRangeUnit.Line);
+                textRange.EndPosition -= 1;
+                textRange.Copy();
+
+                Document.Selection.StartPosition = textRange.EndPosition;
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + textRange.Text);
+            }
+            else
+            {
+                // Duplicate selection
+                var textRange = Document.GetRange(start, end);
+                textRange.Copy();
+
+                Document.Selection.EndKey(TextRangeUnit.Line, false);
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + textRange.Text);
+            }
+
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
