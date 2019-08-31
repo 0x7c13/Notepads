@@ -23,7 +23,7 @@ namespace Notepads.Controls.TextEditor
 
         public bool WrapWord { get; set; }
 
-        public double FontSize { get; set; }
+        public double FontZoomFactor { get; set; }
 
         public double ScrollViewerHorizontalOffset { get; set; }
 

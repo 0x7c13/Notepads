@@ -40,10 +40,6 @@ namespace Notepads.Controls.TextEditor
 
         public INotepadsExtensionProvider ExtensionProvider;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
-
-        private IContentPreviewExtension _contentPreviewExtension;
-
         public event EventHandler ModeChanged;
 
         public event EventHandler ModificationStateChanged;
@@ -58,7 +54,11 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler ChangeReverted;
 
-        public event RoutedEventHandler SelectionChanged;
+        public event EventHandler SelectionChanged;
+
+        public event EventHandler FileSaved;
+
+        public event EventHandler FileReloaded;
 
         public FileType FileType { get; private set; }
 
@@ -141,6 +141,10 @@ namespace Notepads.Controls.TextEditor
 
         private TextEditorMode _mode = TextEditorMode.Editing;
 
+        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+
+        private IContentPreviewExtension _contentPreviewExtension;
+
         public TextEditorMode Mode
         {
             get => _mode;
@@ -159,7 +163,7 @@ namespace Notepads.Controls.TextEditor
             InitializeComponent();
 
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
-            TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, args); };
+            TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, EventArgs.Empty); };
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
@@ -205,7 +209,7 @@ namespace Notepads.Controls.TextEditor
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontSize = TextEditorCore.FontSize,
+                FontZoomFactor = TextEditorCore.FontZoomFactor,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -227,6 +231,7 @@ namespace Notepads.Controls.TextEditor
         {
             StartCheckingFileStatusPeriodically();
         }
+
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
         {
             StopCheckingFileStatus();
@@ -348,6 +353,18 @@ namespace Notepads.Controls.TextEditor
             _loaded = true;
         }
 
+        public async Task ReloadFromEditingFile()
+        {
+            if (EditingFile != null)
+            {
+                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false);
+                Init(textFile, EditingFile, clearUndoQueue: false);
+                StartCheckingFileStatusPeriodically();
+                CloseSideBySideDiffViewer();
+                FileReloaded?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         public void ResetEditorState(TextEditorStateMetaData metadata, string newText = null)
         {
             if (!string.IsNullOrEmpty(metadata.RequestedEncoding))
@@ -365,10 +382,9 @@ namespace Notepads.Controls.TextEditor
                 TextEditorCore.SetText(newText);
             }
 
-            TextEditorCore.Document.Selection.StartPosition = metadata.SelectionStartPosition;
-            TextEditorCore.Document.Selection.EndPosition = metadata.SelectionEndPosition;
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
-            TextEditorCore.FontSize = metadata.FontSize;
+            TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
+            TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
         }
 
@@ -532,10 +548,11 @@ namespace Notepads.Controls.TextEditor
             TextFile textFile = await SaveContentToFile(file); // Will throw if not succeeded
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
+            FileSaved?.Invoke(this, EventArgs.Empty);
             StartCheckingFileStatusPeriodically();
         }
 
-        public async Task<TextFile> SaveContentToFile(StorageFile file)
+        private async Task<TextFile> SaveContentToFile(StorageFile file)
         {
             var text = TextEditorCore.GetText();
             var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;

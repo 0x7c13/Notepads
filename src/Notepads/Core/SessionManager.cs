@@ -37,11 +37,11 @@ namespace Notepads.Core
 
             foreach (var editor in _notepadsCore.GetAllTextEditors())
             {
-                BindEditorStateChangeEvent(this, editor);
+                BindEditorContentStateChangeEvent(this, editor);
             }
 
-            _notepadsCore.TextEditorLoaded += BindEditorStateChangeEvent;
-            _notepadsCore.TextEditorUnloaded += UnbindEditorStateChangeEvent;
+            _notepadsCore.TextEditorLoaded += BindEditorContentStateChangeEvent;
+            _notepadsCore.TextEditorUnloaded += UnbindEditorContentStateChangeEvent;
         }
 
         public bool IsBackupEnabled { get; set; }
@@ -80,7 +80,7 @@ namespace Notepads.Core
                 return 0;
             }
 
-            ITextEditor selectedTextEditor = null;
+            IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
 
             foreach (TextEditorSessionData textEditorData in sessionData.TextEditors)
             {
@@ -90,26 +90,20 @@ namespace Notepads.Core
                 {
                     textEditor = await RecoverTextEditorAsync(textEditorData);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LoggingService.LogError($"[SessionManager] Failed to recover TextEditor: {ex.Message}");
                     continue;
                 }
 
                 if (textEditor != null)
                 {
+                    recoveredEditor.Add(textEditor);
                     _sessionData.TryAdd(textEditor.Id, textEditorData);
-
-                    if (textEditor.Id == sessionData.SelectedTextEditor)
-                    {
-                        selectedTextEditor = textEditor;
-                    }
                 }
             }
 
-            if (selectedTextEditor != null)
-            {
-                _notepadsCore.SwitchTo(selectedTextEditor);
-            }
+            _notepadsCore.OpenTextEditors(recoveredEditor.ToArray(), sessionData.SelectedTextEditor);
 
             _loaded = true;
 
@@ -130,6 +124,12 @@ namespace Notepads.Core
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             ITextEditor[] textEditors = _notepadsCore.GetAllTextEditors();
+
+            if (textEditors == null || textEditors.Length == 0)
+            {
+                return;
+            }
+
             ITextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
             FileSystemUtility.ClearFutureAccessList();
 
@@ -143,7 +143,12 @@ namespace Notepads.Core
                     await FileSystemUtility.TryAddToFutureAccessList(ToToken(textEditor.Id), textEditor.EditingFile);
                 }
 
-                if (!_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionData textEditorData))
+                if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionData textEditorData))
+                {
+                    // Get latest state meta data
+                    textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+                }
+                else // Text content has been changed or editor has not backed up yet
                 {
                     textEditorData = new TextEditorSessionData
                     {
@@ -294,22 +299,22 @@ namespace Notepads.Core
             }
         }
 
-        private void BindEditorStateChangeEvent(object sender, ITextEditor textEditor)
+        private void BindEditorContentStateChangeEvent(object sender, ITextEditor textEditor)
         {
+            // All text or file related events
             textEditor.TextChanging += RemoveTextEditorSessionData;
-            textEditor.EncodingChanged += RemoveTextEditorSessionData;
-            textEditor.LineEndingChanged += RemoveTextEditorSessionData;
             textEditor.ChangeReverted += RemoveTextEditorSessionData;
-            textEditor.ModificationStateChanged += RemoveTextEditorSessionData;
+            textEditor.FileSaved += RemoveTextEditorSessionData;
+            textEditor.FileReloaded += RemoveTextEditorSessionData;
         }
 
-        private void UnbindEditorStateChangeEvent(object sender, ITextEditor textEditor)
+        private void UnbindEditorContentStateChangeEvent(object sender, ITextEditor textEditor)
         {
+            // All text or file related events
             textEditor.TextChanging -= RemoveTextEditorSessionData;
-            textEditor.EncodingChanged -= RemoveTextEditorSessionData;
-            textEditor.LineEndingChanged -= RemoveTextEditorSessionData;
             textEditor.ChangeReverted -= RemoveTextEditorSessionData;
-            textEditor.ModificationStateChanged -= RemoveTextEditorSessionData;
+            textEditor.FileSaved -= RemoveTextEditorSessionData;
+            textEditor.FileReloaded -= RemoveTextEditorSessionData;
         }
 
         private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionData editorSessionData)
@@ -332,7 +337,8 @@ namespace Notepads.Core
             }
             else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.OpenNewTextEditor(editingFile, ignoreFileSizeLimit: true, editorSessionData.Id);
+                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, ignoreFileSizeLimit: true);
+                textEditor.ResetEditorState(editorSessionData.StateMetaData);
             }
             else // File with pending changes
             {
@@ -341,8 +347,7 @@ namespace Notepads.Core
 
                 if (lastSavedFile != null)
                 {
-                    TextFile lastSavedTextFile = await FileSystemUtility.ReadFile(lastSavedFile,
-                        ignoreFileSizeLimit: true,
+                    TextFile lastSavedTextFile = await FileSystemUtility.ReadFile(lastSavedFile, ignoreFileSizeLimit: true,
                     EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding));
                     lastSavedText = lastSavedTextFile.Content;
                 }
@@ -352,7 +357,7 @@ namespace Notepads.Core
                     LineEndingUtility.GetLineEndingByName(editorSessionData.StateMetaData.LastSavedLineEnding),
                     editorSessionData.StateMetaData.DateModifiedFileTime);
 
-                textEditor = _notepadsCore.OpenNewTextEditor(
+                textEditor = _notepadsCore.CreateTextEditor(
                     editorSessionData.Id,
                     textFile,
                     editingFile,

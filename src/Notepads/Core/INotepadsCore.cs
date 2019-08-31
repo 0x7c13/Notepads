@@ -37,16 +37,22 @@ namespace Notepads.Core
 
         event KeyEventHandler TextEditorKeyDown;
 
-        ITextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1);
+        Task<ITextEditor> CreateTextEditor(
+            Guid id,
+            StorageFile file,
+            bool ignoreFileSizeLimit = false);
 
-        Task<ITextEditor> OpenNewTextEditor(StorageFile file, bool ignoreFileSizeLimit, Guid? id = null, int atIndex = -1);
-
-        ITextEditor OpenNewTextEditor(
+        ITextEditor CreateTextEditor(
             Guid id,
             TextFile textFile,
-            StorageFile file,
-            bool isModified,
-            int atIndex = -1);
+            StorageFile editingFile,
+            bool isModified);
+
+        void OpenNewTextEditor();
+
+        void OpenTextEditor(ITextEditor editor, int atIndex = -1);
+
+        void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
 
         Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
 
@@ -67,6 +73,8 @@ namespace Notepads.Core
         void SwitchTo(ITextEditor textEditor);
 
         ITextEditor GetSelectedTextEditor();
+
+        ITextEditor GetTextEditor(StorageFile file);
 
         ITextEditor GetTextEditor(string editingFilePath);
 

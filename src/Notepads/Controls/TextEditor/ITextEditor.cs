@@ -15,10 +15,11 @@ namespace Notepads.Controls.TextEditor
         event EventHandler FileModificationStateChanged;
         event EventHandler LineEndingChanged;
         event EventHandler EncodingChanged;
+        event EventHandler SelectionChanged;
         event EventHandler TextChanging;
         event EventHandler ChangeReverted;
-        event RoutedEventHandler SelectionChanged;
-
+        event EventHandler FileSaved;
+        event EventHandler FileReloaded;
         Guid Id { get; set; }
 
         FileType FileType { get; }
@@ -58,6 +59,8 @@ namespace Notepads.Controls.TextEditor
 
         void ResetEditorState(TextEditorStateMetaData metadata, string newText = null);
 
+        Task ReloadFromEditingFile();
+
         LineEnding GetLineEnding();
 
         Encoding GetEncoding();
@@ -79,8 +82,6 @@ namespace Notepads.Controls.TextEditor
         bool IsEditorEnabled();
 
         Task SaveContentToFileAndUpdateEditorState(StorageFile file);
-
-        Task<TextFile> SaveContentToFile(StorageFile file);
 
         string GetContentForSharing();
 

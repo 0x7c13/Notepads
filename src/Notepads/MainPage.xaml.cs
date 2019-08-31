@@ -226,7 +226,7 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
@@ -659,7 +659,7 @@ namespace Notepads
             }
         }
 
-        private async void ReloadFileFromDisk_OnClick(object sender, RoutedEventArgs e)
+        private async void ReloadFileFromDisk(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
 
@@ -667,15 +667,12 @@ namespace Notepads
             {
                 try
                 {
-                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile, ignoreFileSizeLimit: false);
-                    selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
-                    selectedEditor.StartCheckingFileStatusPeriodically();
-                    selectedEditor.CloseSideBySideDiffViewer();
+                    await selectedEditor.ReloadFromEditingFile();
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
+                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                     await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
@@ -868,7 +865,16 @@ namespace Notepads
         {
             try
             {
-                await NotepadsCore.OpenNewTextEditor(file, ignoreFileSizeLimit: false);
+                var openedEditor = NotepadsCore.GetTextEditor(file);
+                if (openedEditor != null)
+                {
+                    NotepadsCore.SwitchTo(openedEditor);
+                    NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                    return false;
+                }
+
+                var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
+                NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return true;
             }

@@ -24,6 +24,8 @@ namespace Notepads.Controls.TextEditor
 
         public event EventHandler<double> FontSizeChanged;
 
+        public event EventHandler<double> FontZoomFactorChanged;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -59,6 +61,7 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        private double _fontZoomFactor = 1.0f;
         private double _fontSize = EditorSettingsService.EditorFontSize;
 
         public new double FontSize
@@ -68,9 +71,19 @@ namespace Notepads.Controls.TextEditor
             {
                 base.FontSize = value;
                 _fontSize = value;
+                SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
+
+                var newZoomFactor = value / EditorSettingsService.EditorFontSize;
+                if (Math.Abs(newZoomFactor - _fontZoomFactor) > 0.00001)
+                {
+                    _fontZoomFactor = newZoomFactor;
+                    FontZoomFactorChanged?.Invoke(this, newZoomFactor);
+                }
             }
         }
+
+        public double FontZoomFactor => _fontZoomFactor;
 
         public TextEditorCore()
         {
@@ -100,7 +113,6 @@ namespace Notepads.Controls.TextEditor
             EditorSettingsService.OnFontSizeChanged += (sender, fontSize) =>
             {
                 FontSize = fontSize;
-                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             };
 
             EditorSettingsService.OnDefaultTextWrappingChanged += (sender, textWrapping) => { TextWrapping = textWrapping; };
@@ -136,6 +148,12 @@ namespace Notepads.Controls.TextEditor
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
+            _contentScrollViewer.BringIntoViewOnFocusChange = false;
+            _contentScrollViewer.ChangeView(
+                _contentScrollViewerHorizontalOffset,
+                _contentScrollViewerVerticalOffset, 
+                zoomFactor: null, 
+                disableAnimation: true);
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
 
@@ -181,9 +199,19 @@ namespace Notepads.Controls.TextEditor
             endPosition = _textSelectionEndPosition;
         }
 
+        public void SetTextSelectionPosition(int selectionStartPosition, int selectionEndPosition)
+        {
+            _textSelectionStartPosition = selectionStartPosition;
+            _textSelectionEndPosition = selectionEndPosition;
+            Document.Selection.StartPosition = selectionStartPosition;
+            Document.Selection.EndPosition = selectionEndPosition;
+        }
+
         public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
         {
-            _contentScrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
+            _contentScrollViewerHorizontalOffset = horizontalOffset;
+            _contentScrollViewerVerticalOffset = verticalOffset;
+            _contentScrollViewer?.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
@@ -418,20 +446,17 @@ namespace Notepads.Controls.TextEditor
 
         private void IncreaseFontSize(double delta)
         {
-            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize + delta);
             FontSize += delta;
         }
 
         private void DecreaseFontSize(double delta)
         {
             if (FontSize < delta + 2) return;
-            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize - delta);
             FontSize -= delta;
         }
 
         private void ResetFontSizeToDefault()
         {
-            SetDefaultTabStopAndLineSpacing(FontFamily, EditorSettingsService.EditorFontSize);
             FontSize = EditorSettingsService.EditorFontSize;
         }
 
@@ -461,6 +486,7 @@ namespace Notepads.Controls.TextEditor
             _textSelectionStartPosition = Document.Selection.StartPosition;
             _textSelectionEndPosition = Document.Selection.EndPosition;
         }
+
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
