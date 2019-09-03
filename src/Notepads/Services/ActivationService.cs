@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Services
 {
-    using Notepads.Utilities;
     using System.Threading.Tasks;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml.Controls;
 

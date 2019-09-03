@@ -1,6 +1,7 @@
 ﻿
 namespace Notepads.Core
 {
+    using System;
     using System.Threading.Tasks;
 
     internal interface ISessionManager
@@ -9,12 +10,12 @@ namespace Notepads.Core
 
         Task<int> LoadLastSessionAsync();
 
-        Task SaveSessionAsync();
+        Task SaveSessionAsync(Action actionAfterSaving = null);
 
         void StartSessionBackup(bool startImmediately = false);
 
         void StopSessionBackup();
 
-        void ClearSessionData();
+        Task ClearSessionDataAsync();
     }
 }

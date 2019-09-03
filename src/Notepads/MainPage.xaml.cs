@@ -1,6 +1,10 @@
 ﻿
 namespace Notepads
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -10,10 +14,6 @@ namespace Notepads
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
@@ -126,7 +126,7 @@ namespace Notepads
             };
 
             // Session backup and restore toggle
-            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += (sender, isSessionBackupAndRestoreEnabled) =>
+            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
                 if (isSessionBackupAndRestoreEnabled)
                 {
@@ -137,7 +137,7 @@ namespace Notepads
                 {
                     SessionManager.IsBackupEnabled = false;
                     SessionManager.StopSessionBackup();
-                    SessionManager.ClearSessionData();
+                    await SessionManager.ClearSessionDataAsync();
                 }
             };
 
@@ -226,7 +226,7 @@ namespace Notepads
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk_OnClick(this, new RoutedEventArgs()); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
@@ -471,7 +471,7 @@ namespace Notepads
             if (EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 // Save session before app exit
-                await SessionManager.SaveSessionAsync();
+                await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 Application.Current.Exit();
             }
             else
@@ -620,10 +620,10 @@ namespace Notepads
             if (StatusBar == null) return;
             textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
 
-            var wordSelected = selectedCount > 1 ? 
-                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") : 
+            var wordSelected = selectedCount > 1 ?
+                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") :
                 _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_SingularSelectedWord");
-                
+
             LineColumnIndicator.Text = selectedCount == 0
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount, wordSelected);
@@ -659,7 +659,7 @@ namespace Notepads
             }
         }
 
-        private async void ReloadFileFromDisk_OnClick(object sender, RoutedEventArgs e)
+        private async void ReloadFileFromDisk(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
 
@@ -667,15 +667,12 @@ namespace Notepads
             {
                 try
                 {
-                    var textFile = await FileSystemUtility.ReadFile(selectedEditor.EditingFile, ignoreFileSizeLimit: false);
-                    selectedEditor.Init(textFile, selectedEditor.EditingFile, clearUndoQueue: false);
-                    selectedEditor.StartCheckingFileStatusPeriodically();
-                    selectedEditor.CloseSideBySideDiffViewer();
+                    await selectedEditor.ReloadFromEditingFile();
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFile.Path, ex.Message);
+                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                     await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
@@ -795,15 +792,19 @@ namespace Notepads
             }
         }
 
-        private void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
+        private async void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
-                    SessionManager.ClearSessionData();
+                    await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                    Application.Current.Exit();
                 }
-                Application.Current.Exit();
+                else
+                {
+                    Application.Current.Exit();
+                }
             }
         }
 
@@ -838,7 +839,20 @@ namespace Notepads
 
         private async Task OpenNewFiles()
         {
-            var files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            IReadOnlyList<StorageFile> files;
+
+            try
+            {
+                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+            }
+            catch (Exception ex)
+            {
+                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                NotepadsCore.FocusOnSelectedTextEditor();
+                return;
+            }
+
             if (files == null || files.Count == 0)
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
@@ -855,7 +869,16 @@ namespace Notepads
         {
             try
             {
-                await NotepadsCore.OpenNewTextEditor(file, ignoreFileSizeLimit: false);
+                var openedEditor = NotepadsCore.GetTextEditor(file);
+                if (openedEditor != null)
+                {
+                    NotepadsCore.SwitchTo(openedEditor);
+                    NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                    return false;
+                }
+
+                var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
+                NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 return true;
             }
@@ -871,7 +894,6 @@ namespace Notepads
         public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
         {
             if (storageItems == null || storageItems.Count == 0) return 0;
-
             int successCount = 0;
             foreach (var storageItem in storageItems)
             {
@@ -904,7 +926,7 @@ namespace Notepads
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                    _notepadsCore.FocusOnTextEditor(textEditor);
+                    NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {
                         return false; // User cancelled
@@ -922,6 +944,7 @@ namespace Notepads
             {
                 var fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
+                NotepadsCore.FocusOnSelectedTextEditor();
                 return false;
             }
         }

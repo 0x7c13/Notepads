@@ -4,9 +4,8 @@ namespace Notepads.Controls.TextEditor
     using System;
     using System.Text;
     using System.Threading.Tasks;
-    using Windows.Storage;
-    using Windows.UI.Xaml;
     using Notepads.Utilities;
+    using Windows.Storage;
 
     public interface ITextEditor
     {
@@ -15,10 +14,11 @@ namespace Notepads.Controls.TextEditor
         event EventHandler FileModificationStateChanged;
         event EventHandler LineEndingChanged;
         event EventHandler EncodingChanged;
+        event EventHandler SelectionChanged;
         event EventHandler TextChanging;
         event EventHandler ChangeReverted;
-        event RoutedEventHandler SelectionChanged;
-
+        event EventHandler FileSaved;
+        event EventHandler FileReloaded;
         Guid Id { get; set; }
 
         FileType FileType { get; }
@@ -41,11 +41,11 @@ namespace Notepads.Controls.TextEditor
 
         TextEditorMode Mode { get; }
 
-        void Init(TextFile textFile, 
-            StorageFile file, 
-            bool resetLastSavedSnapshot = true, 
-            bool clearUndoQueue = true, 
-            bool isModified = false, 
+        void Init(TextFile textFile,
+            StorageFile file,
+            bool resetLastSavedSnapshot = true,
+            bool clearUndoQueue = true,
+            bool isModified = false,
             bool resetText = true);
 
         string GetText();
@@ -57,6 +57,8 @@ namespace Notepads.Controls.TextEditor
         TextEditorStateMetaData GetTextEditorStateMetaData();
 
         void ResetEditorState(TextEditorStateMetaData metadata, string newText = null);
+
+        Task ReloadFromEditingFile();
 
         LineEnding GetLineEnding();
 
@@ -79,8 +81,6 @@ namespace Notepads.Controls.TextEditor
         bool IsEditorEnabled();
 
         Task SaveContentToFileAndUpdateEditorState(StorageFile file);
-
-        Task<TextFile> SaveContentToFile(StorageFile file);
 
         string GetContentForSharing();
 

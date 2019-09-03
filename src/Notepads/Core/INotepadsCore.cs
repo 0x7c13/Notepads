@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
 
@@ -37,19 +37,22 @@ namespace Notepads.Core
 
         event KeyEventHandler TextEditorKeyDown;
 
-        ITextEditor OpenNewTextEditor(Guid? id = null, int atIndex = -1);
-
-        Task<ITextEditor> OpenNewTextEditor(StorageFile file, bool ignoreFileSizeLimit, Guid? id = null, int atIndex = -1);
-
-        ITextEditor OpenNewTextEditor(
+        Task<ITextEditor> CreateTextEditor(
             Guid id,
-            string text,
             StorageFile file,
-            long dateModifiedFileTime,
-            Encoding encoding,
-            LineEnding lineEnding,
-            bool isModified,
-            int atIndex = -1);
+            bool ignoreFileSizeLimit = false);
+
+        ITextEditor CreateTextEditor(
+            Guid id,
+            TextFile textFile,
+            StorageFile editingFile,
+            bool isModified);
+
+        void OpenNewTextEditor();
+
+        void OpenTextEditor(ITextEditor editor, int atIndex = -1);
+
+        void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
 
         Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
 
@@ -71,6 +74,8 @@ namespace Notepads.Core
 
         ITextEditor GetSelectedTextEditor();
 
+        ITextEditor GetTextEditor(StorageFile file);
+
         ITextEditor GetTextEditor(string editingFilePath);
 
         ITextEditor[] GetAllTextEditors();
@@ -80,5 +85,9 @@ namespace Notepads.Core
         void FocusOnSelectedTextEditor();
 
         void CloseTextEditor(ITextEditor textEditor);
+
+        double GetSetsViewScrollViewerHorizontalOffset();
+
+        void SetSetsViewScrollViewerHorizontalOffset(double offset);
     }
 }

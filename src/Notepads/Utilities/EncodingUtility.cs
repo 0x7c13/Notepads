@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Utilities
 {
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
 
     public static class EncodingUtility
     {

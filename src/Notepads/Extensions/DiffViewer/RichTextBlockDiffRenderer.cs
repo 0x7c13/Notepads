@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
-    using DiffPlex;
-    using DiffPlex.DiffBuilder;
-    using DiffPlex.DiffBuilder.Model;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DiffPlex;
+    using DiffPlex.DiffBuilder;
+    using DiffPlex.DiffBuilder.Model;
     using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Documents;
