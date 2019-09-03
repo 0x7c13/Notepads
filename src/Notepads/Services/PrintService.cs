@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Services
 {
-    using Notepads.Controls.TextEditor;
     using System;
+    using Notepads.Controls.TextEditor;
 
     public static class PrintService
     {

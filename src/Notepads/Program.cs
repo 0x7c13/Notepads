@@ -1,11 +1,11 @@
 ﻿
 namespace Notepads
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using System.Collections.Generic;
-    using System.Linq;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Storage;
@@ -81,7 +81,7 @@ namespace Notepads
             if (instance.IsCurrentInstance)
             {
                 App.IsFirstInstance = IsFirstInstance;
-                global::Windows.UI.Xaml.Application.Start(p => new App());
+                Windows.UI.Xaml.Application.Start(p => new App());
                 IsFirstInstance = false;
             }
             else

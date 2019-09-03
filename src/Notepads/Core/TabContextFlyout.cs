@@ -1,10 +1,10 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
     using System;
     using System.IO;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;

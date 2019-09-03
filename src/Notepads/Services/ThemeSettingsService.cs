@@ -1,10 +1,10 @@
 ﻿
 namespace Notepads.Services
 {
+    using System;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Settings;
-    using System;
     using Windows.ApplicationModel.Core;
     using Windows.UI;
     using Windows.UI.Core;
