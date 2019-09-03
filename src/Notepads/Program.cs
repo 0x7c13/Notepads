@@ -70,7 +70,7 @@ namespace Notepads
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
             App.IsFirstInstance = IsFirstInstance;
-            global::Windows.UI.Xaml.Application.Start(p => new App());
+            Windows.UI.Xaml.Application.Start(p => new App());
             IsFirstInstance = false;
         }
 

@@ -14,6 +14,7 @@ namespace Notepads.Core
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
 
     internal class SessionManager : ISessionManager
     {
@@ -130,18 +131,11 @@ namespace Notepads.Core
             }
 
             ITextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
-            FileSystemUtility.ClearFutureAccessList();
 
             NotepadsSessionData sessionData = new NotepadsSessionData();
 
             foreach (ITextEditor textEditor in textEditors)
             {
-                if (textEditor.EditingFile != null)
-                {
-                    // Add the opened file to FutureAccessList so we can access it next launch
-                    await FileSystemUtility.TryAddToFutureAccessList(ToToken(textEditor.Id), textEditor.EditingFile);
-                }
-
                 if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionData textEditorData))
                 {
                     // Get latest state meta data
@@ -156,7 +150,10 @@ namespace Notepads.Core
 
                     if (textEditor.EditingFile != null)
                     {
-                        textEditorData.EditingFileFutureAccessToken = ToToken(textEditor.Id);
+                        // Add the opened file to FutureAccessList so we can access it next launch
+                        var futureAccessToken = ToToken(textEditor.Id);
+                        await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                        textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                         textEditorData.EditingFileName = textEditor.EditingFileName;
                         textEditorData.EditingFilePath = textEditor.EditingFilePath;
                     }
@@ -241,6 +238,7 @@ namespace Notepads.Core
             if (sessionDataSaved)
             {
                 await DeleteOrphanedBackupFilesAsync(sessionData);
+                DeleteOrphanedTokensInFutureAccessList(sessionData);
             }
 
             stopwatch.Stop();
@@ -396,10 +394,12 @@ namespace Notepads.Core
             }
         }
 
+        // Cleanup orphaned/dangling backup files
         private async Task DeleteOrphanedBackupFilesAsync(NotepadsSessionData sessionData)
         {
             HashSet<string> backupPaths = sessionData.TextEditors
-                .SelectMany(te => new[] { te.LastSavedBackupFilePath, te.PendingBackupFilePath })
+                .SelectMany(editor => new[] { editor.LastSavedBackupFilePath, editor.PendingBackupFilePath })
+                .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync())
@@ -412,8 +412,39 @@ namespace Notepads.Core
                     }
                     catch (Exception ex)
                     {
-                        LoggingService.LogError($"[SessionManager] Failed to delete backup file: {ex.Message}");
+                        LoggingService.LogError($"[SessionManager] Failed to delete orphaned backup file: {ex.Message}");
                     }
+                }
+            }
+        }
+
+        // Cleanup orphaned/dangling entries in FutureAccessList
+        private void DeleteOrphanedTokensInFutureAccessList(NotepadsSessionData sessionData)
+        {
+            HashSet<string> tokens = sessionData.TextEditors
+                .SelectMany(editor => new[] { editor.EditingFileFutureAccessToken })
+                .Where(token => token != null)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var tokensToBeDeleted = new List<string>();
+
+            foreach (var entry in StorageApplicationPermissions.FutureAccessList.Entries)
+            {
+                if (!tokens.Contains(entry.Token))
+                {
+                    tokensToBeDeleted.Add(entry.Token);
+                }
+            }
+
+            foreach (var tokenToBeDel in tokensToBeDeleted)
+            {
+                try
+                {
+                    StorageApplicationPermissions.FutureAccessList.Remove(tokenToBeDel);
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[SessionManager] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
                 }
             }
         }
