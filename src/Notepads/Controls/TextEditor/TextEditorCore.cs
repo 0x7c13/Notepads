@@ -501,29 +501,41 @@ namespace Notepads.Controls.TextEditor
         {
             var start = Document.Selection.StartPosition;
             var end = Document.Selection.EndPosition;
-
+            
             if (end == start)
             {
                 // Duplicate Line
-                var textRange = Document.GetRange(Document.Selection.StartPosition, Document.Selection.StartPosition);
-                textRange.Expand(TextRangeUnit.Line);
-                textRange.EndPosition -= 1;
-                textRange.Copy();
+                GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+                var line = _contentLinesCache[lineIndex - 1];
+                Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
 
-                Document.Selection.StartPosition = textRange.EndPosition;
-                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + textRange.Text);
+                GetCurrentLineColumn(out int lineIndex2, out int columnIndex2, out int selectedCount2);
+                if (lineIndex != lineIndex2)
+                    Document.Selection.EndPosition -= 1;
+                
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
+
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
             else
             {
                 // Duplicate selection
                 var textRange = Document.GetRange(start, end);
-                textRange.Copy();
-
+                textRange.GetText(TextGetOptions.None, out string text);
                 Document.Selection.EndKey(TextRangeUnit.Line, false);
-                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + textRange.Text);
-            }
 
-            Document.Selection.StartPosition = Document.Selection.EndPosition;
+                if (text.EndsWith(RichEditBoxDefaultLineEnding))
+                {
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                    Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
+                    Document.Selection.EndPosition = Document.Selection.StartPosition;
+                }
+                else
+                {
+                    Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + text);
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                }
+            }            
         }
 
         private void ShowEasterEgg()
