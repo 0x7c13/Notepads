@@ -10,7 +10,9 @@ namespace Notepads.Core
     using System.Threading;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Notepads.Controls.TextEditor;
+    using Notepads.Core.SessionDataModels;
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.Storage;
@@ -21,7 +23,7 @@ namespace Notepads.Core
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
         private readonly SemaphoreSlim _semaphoreSlim;
-        private readonly ConcurrentDictionary<Guid, TextEditorSessionData> _sessionData;
+        private readonly ConcurrentDictionary<Guid, TextEditorSessionDataV1> _sessionData;
         private string _lastSessionJsonStr;
         private bool _loaded;
         private Timer _timer;
@@ -33,7 +35,7 @@ namespace Notepads.Core
         {
             _notepadsCore = notepadsCore;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
-            _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionData>();
+            _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
             _loaded = false;
 
             foreach (var editor in _notepadsCore.GetAllTextEditors())
@@ -61,11 +63,21 @@ namespace Notepads.Core
                 return 0; // No session data found
             }
 
-            NotepadsSessionData sessionData;
+            NotepadsSessionDataV1 sessionData;
 
             try
             {
-                sessionData = JsonConvert.DeserializeObject<NotepadsSessionData>(data);
+                var json = JObject.Parse(data);
+                var version = (int)json["Version"];
+
+                if (version == 1)
+                {
+                    sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data);
+                }
+                else
+                {
+                    throw new Exception($"Invalid version found in session metadata: {version}");
+                }
             }
             catch (Exception ex)
             {
@@ -76,7 +88,7 @@ namespace Notepads.Core
 
             IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
 
-            foreach (TextEditorSessionData textEditorData in sessionData.TextEditors)
+            foreach (var textEditorData in sessionData.TextEditors)
             {
                 ITextEditor textEditor;
 
@@ -98,7 +110,7 @@ namespace Notepads.Core
             }
 
             _notepadsCore.OpenTextEditors(recoveredEditor.ToArray(), sessionData.SelectedTextEditor);
-            _notepadsCore.SetSetsViewScrollViewerHorizontalOffset(sessionData.TabScrollViewerHorizontalOffset);
+            _notepadsCore.SetTabScrollViewerHorizontalOffset(sessionData.TabScrollViewerHorizontalOffset);
 
             _loaded = true;
 
@@ -132,18 +144,18 @@ namespace Notepads.Core
 
             ITextEditor selectedTextEditor = _notepadsCore.GetSelectedTextEditor();
 
-            NotepadsSessionData sessionData = new NotepadsSessionData();
+            NotepadsSessionDataV1 sessionData = new NotepadsSessionDataV1();
 
             foreach (ITextEditor textEditor in textEditors)
             {
-                if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionData textEditorData))
+                if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
                 {
                     // Get latest state meta data
                     textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
                 }
                 else // Text content has been changed or editor has not backed up yet
                 {
-                    textEditorData = new TextEditorSessionData
+                    textEditorData = new TextEditorSessionDataV1
                     {
                         Id = textEditor.Id,
                     };
@@ -210,7 +222,7 @@ namespace Notepads.Core
             }
 
             sessionData.TabScrollViewerHorizontalOffset =
-                _notepadsCore.GetSetsViewScrollViewerHorizontalOffset();
+                _notepadsCore.GetTabScrollViewerHorizontalOffset();
 
             bool sessionDataSaved = false;
 
@@ -320,7 +332,7 @@ namespace Notepads.Core
             textEditor.FileReloaded -= RemoveTextEditorSessionData;
         }
 
-        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionData editorSessionData)
+        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
         {
             StorageFile editingFile = null;
 
@@ -395,7 +407,7 @@ namespace Notepads.Core
         }
 
         // Cleanup orphaned/dangling backup files
-        private async Task DeleteOrphanedBackupFilesAsync(NotepadsSessionData sessionData)
+        private async Task DeleteOrphanedBackupFilesAsync(NotepadsSessionDataV1 sessionData)
         {
             HashSet<string> backupPaths = sessionData.TextEditors
                 .SelectMany(editor => new[] { editor.LastSavedBackupFilePath, editor.PendingBackupFilePath })
@@ -419,7 +431,7 @@ namespace Notepads.Core
         }
 
         // Cleanup orphaned/dangling entries in FutureAccessList
-        private void DeleteOrphanedTokensInFutureAccessList(NotepadsSessionData sessionData)
+        private void DeleteOrphanedTokensInFutureAccessList(NotepadsSessionDataV1 sessionData)
         {
             HashSet<string> tokens = sessionData.TextEditors
                 .SelectMany(editor => new[] { editor.EditingFileFutureAccessToken })
@@ -460,37 +472,6 @@ namespace Notepads.Core
             {
                 _sessionData.TryRemove(textEditor.Id, out _);
             }
-        }
-
-        private class NotepadsSessionData
-        {
-            public NotepadsSessionData()
-            {
-                TextEditors = new List<TextEditorSessionData>();
-            }
-
-            public Guid SelectedTextEditor { get; set; }
-
-            public double TabScrollViewerHorizontalOffset { get; set; }
-
-            public List<TextEditorSessionData> TextEditors { get; }
-        }
-
-        private class TextEditorSessionData
-        {
-            public Guid Id { get; set; }
-
-            public string LastSavedBackupFilePath { get; set; }
-
-            public string PendingBackupFilePath { get; set; }
-
-            public string EditingFileFutureAccessToken { get; set; }
-
-            public string EditingFileName { get; set; }
-
-            public string EditingFilePath { get; set; }
-
-            public TextEditorStateMetaData StateMetaData { get; set; }
         }
     }
 }

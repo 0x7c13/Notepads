@@ -134,6 +134,8 @@ namespace Notepads.Core
 
         public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
         {
+            bool selectedEditorFound = false;
+
             foreach (var textEditor in editors)
             {
                 var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
@@ -141,10 +143,11 @@ namespace Notepads.Core
                 if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
                 {
                     Sets.SelectedItem = editorSetsViewItem;
+                    selectedEditorFound = true;
                 }
             }
 
-            if (selectedEditorId == null)
+            if (selectedEditorId == null || !selectedEditorFound)
             {
                 Sets.SelectedIndex = editors.Length - 1;
                 Sets.ScrollToLastSet();
@@ -324,12 +327,12 @@ namespace Notepads.Core
             return item?.Content as ITextEditor;
         }
 
-        public double GetSetsViewScrollViewerHorizontalOffset()
+        public double GetTabScrollViewerHorizontalOffset()
         {
             return Sets.ScrollViewerHorizontalOffset;
         }
 
-        public void SetSetsViewScrollViewerHorizontalOffset(double offset)
+        public void SetTabScrollViewerHorizontalOffset(double offset)
         {
             Sets.ScrollTo(offset);
         }

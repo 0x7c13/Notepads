@@ -164,6 +164,9 @@ namespace Notepads
                 {
                     "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
                 },
+                {
+                    "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
+                },
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");

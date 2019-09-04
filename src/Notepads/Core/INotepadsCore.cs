@@ -86,8 +86,8 @@ namespace Notepads.Core
 
         void CloseTextEditor(ITextEditor textEditor);
 
-        double GetSetsViewScrollViewerHorizontalOffset();
+        double GetTabScrollViewerHorizontalOffset();
 
-        void SetSetsViewScrollViewerHorizontalOffset(double offset);
+        void SetTabScrollViewerHorizontalOffset(double offset);
     }
 }
