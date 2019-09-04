@@ -94,7 +94,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694)
 * Localization Contributors: 
-    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
+    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
     * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
     * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
@@ -106,6 +106,7 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
     * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
+    * [pt-BR][Brazilian]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
 
 ## Stay tuned 📢:
 

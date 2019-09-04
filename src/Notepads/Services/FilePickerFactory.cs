@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Services
 {
-    using Notepads.Controls.TextEditor;
     using System.Collections.Generic;
+    using Notepads.Controls.TextEditor;
     using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
@@ -17,7 +17,7 @@ namespace Notepads.Services
             return fileOpenPicker;
         }
 
-        public static FileSavePicker GetFileSavePicker(TextEditor textEditor, string defaultFileName, bool saveAs)
+        public static FileSavePicker GetFileSavePicker(ITextEditor textEditor, string defaultFileName, bool saveAs)
         {
             FileSavePicker savePicker = new FileSavePicker
             {
@@ -45,7 +45,7 @@ namespace Notepads.Services
                 ".js", ".ts", ".lua",
             });
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
-            savePicker.SuggestedFileName = textEditor.EditingFile == null ? defaultFileName : textEditor.EditingFile.Name;
+            savePicker.SuggestedFileName = textEditor.EditingFileName ?? defaultFileName;
             return savePicker;
         }
     }

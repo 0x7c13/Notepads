@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
     using System;
+    using Notepads.Services;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Animation;
 

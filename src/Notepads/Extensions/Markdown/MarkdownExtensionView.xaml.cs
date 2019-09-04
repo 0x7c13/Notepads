@@ -1,13 +1,13 @@
 ﻿
 namespace Notepads.Extensions.Markdown
 {
-    using Microsoft.Toolkit.Uwp.UI.Controls;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
     using System;
     using System.IO;
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;

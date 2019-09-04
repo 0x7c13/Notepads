@@ -1,12 +1,12 @@
 ﻿
 namespace Notepads.Extensions.DiffViewer
 {
-    using Notepads.Commands;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Notepads.Commands;
+    using Notepads.Services;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -56,7 +56,7 @@ namespace Notepads.Extensions.DiffViewer
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),

@@ -1,10 +1,10 @@
 ﻿
 namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
     using System;
     using System.IO;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -25,11 +25,11 @@ namespace Notepads.Core
         private string _containingFolderPath;
 
         private readonly INotepadsCore _notepadsCore;
-        private readonly TextEditor _textEditor;
+        private readonly ITextEditor _textEditor;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public TabContextFlyout(INotepadsCore notepadsCore, TextEditor textEditor)
+        public TabContextFlyout(INotepadsCore notepadsCore, ITextEditor textEditor)
         {
             _notepadsCore = notepadsCore;
             _textEditor = textEditor;
@@ -205,9 +205,9 @@ namespace Notepads.Core
             }
         }
 
-        private void ExecuteOnAllTextEditors(Action<TextEditor> action)
+        private void ExecuteOnAllTextEditors(Action<ITextEditor> action)
         {
-            foreach (TextEditor textEditor in _notepadsCore.GetAllTextEditors())
+            foreach (ITextEditor textEditor in _notepadsCore.GetAllTextEditors())
             {
                 action(textEditor);
             }

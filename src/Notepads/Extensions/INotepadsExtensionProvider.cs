@@ -6,9 +6,5 @@ namespace Notepads.Extensions
     public interface INotepadsExtensionProvider
     {
         IContentPreviewExtension GetContentPreviewExtension(FileType fileType);
-
-        IContentPreviewExtension GetDiffViewerExtension(FileType fileType);
-
-        IContentExtension[] GetContentExtensions(FileType fileType);
     }
 }

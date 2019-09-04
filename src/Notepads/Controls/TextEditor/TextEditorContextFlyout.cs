@@ -1,8 +1,8 @@
 ﻿
 namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Utilities;
     using System;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Text;
@@ -23,12 +23,12 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
-        private readonly TextEditor _textEditor;
+        private readonly ITextEditor _textEditor;
         private readonly TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public TextEditorContextFlyout(TextEditor editor, TextEditorCore editorCore)
+        public TextEditorContextFlyout(ITextEditor editor, TextEditorCore editorCore)
         {
             _textEditor = editor;
             _textEditorCore = editorCore;

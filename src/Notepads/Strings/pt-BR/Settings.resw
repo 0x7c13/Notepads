@@ -118,115 +118,99 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Závislosti a Odkazy</value>
+    <value>Dependências e referências</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>SOFTWARE JE POSKYTOVÁN  "TAK JAK JE ", BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NIKOLI VÝHRADNĚ, ZÁRUK PRODEJNOSTI, VHODNOSTI PRO URČITÝ ÚČEL A NEPORUŠENÍ PŘEDPISŮ. AUTOŘI NEBO DRŽITELÉ AUTORSKÝCH PRÁV NEJSOU V ŽÁDNÉM PŘÍPADĚ ODPOVĚDNI ZA JAKÉKOLI NÁROKY, ŠKODY NEBO JINÉ ZÁVAZKY, AŤ JIŽ V RÁMCI SMLOUVY, DELIKTŮ NEBO JINAK, VZNIKLÉ V SOUVISLOSTI S TÍMTO SOFTWAREM NEBO S JEHO POUŽÍVÁNÍM NEBO S JINÝM OBCHODOVÁNÍ SE SOFTWAREM.</value>
+    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Prohlášení</value>
+    <value>Aviso legal</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Design a implementace volně šiřitelného a open source distribuovaného text editoru od Jackie (Jiaqi) Liu</value>
+    <value>Editor de texto gratuito e de código aberto projetado e implementado por Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Pro kontaktování autorů:</value>
+    <value>Para contactar os autores:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Pro hlášení problémů a požadavků na nové funkce:</value>
+    <value>Para reportar problemas e pedidos de novas funcionalidades:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Zdrojový kód je dostupný na GitHubu:</value>
+    <value>Código fonte disponível no Github:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Pro více informací, prosím, navštivte náš web:</value>
+    <value>Para mais informações, visite o nosso site:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Prohlášení o zásadách ochrany osobních údajů</value>
+    <value>Declaração de privacidade</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>O programu</value>
+    <value>Sobre</value>
     <comment>AboutPage Title display text.</comment>
   </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads si bude pamatovat aktuální session pro příští spuštění a bude dělat pravidelné zálohy proti možné ztrátě neuložených dat. Notepads vás při vypínání aplikace NEBUDE vyzývat k uložení souborů, pokud je tato funkce zapnutá</value>
-    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Povolit zaznamenávání session</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Povolit zaznamenávání  session</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Nastavení zaznamenávání session</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
-  </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zobrazit stavový řádek</value>
+    <value>Mostrar barra de status</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zobrazit stavový řádek</value>
+    <value>Mostrar barra de status</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Nastavení Stavového Řádku</value>
+    <value>Configurações da barra de status</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Pokročilé</value>
+    <value>Avançado</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Barva zvýraznění</value>
+    <value>Cor de destaque</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Použít barvu zvýraznění z Windows</value>
+    <value>Usar cor de destaque do sistema</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Použít barvu zvýraznění z Windows</value>
+    <value>Usar cor de destaque do sistema</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Průhlednost akrylového odstínu pozadí</value>
+    <value>Opacidade do tom de fundo do acrílico.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Průhlednost odstínu pozadí</value>
+    <value>Opacidade do tom de fundo</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Tmavý</value>
+    <value>Escuro</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Světlý</value>
+    <value>Claro</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Motiv aplikace</value>
+    <value>Tema</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Použít Windows motiv</value>
+    <value>Usar configuração do sistema</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Přizpůsobení</value>
+    <value>Personalização</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
@@ -234,79 +218,95 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Záložní dekódování bude použitu, pokud nebude možné rozeznat kódování souboru. Dekódování ANSI je doporučeno pouze pro otvírání starších textových souborů.</value>
+    <value>A decodificação reserva será utilizada se a codificação do arquivo não for reconhecida. A decodificação ANSI só é recomendada para abrir arquivos de texto legado.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Záložní dekódování</value>
+    <value>Decodificação reserva</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (Doporučené)</value>
+    <value>UTF-8 (Recomendado)</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Aplikuje se pouze na nové dokumenty</value>
+    <value>Se aplica apenas a novos documentos.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Výchozí kódování</value>
+    <value>Codificação padrão</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Výchozí Font a Velikost</value>
+    <value>Fonte e tamanho padrão</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Aplikuje se pouze na nové dokumenty</value>
+    <value>Se aplica apenas a novos documentos.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Výchozí zakončení řádků</value>
+    <value>Terminação de linha padrão</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Výchozí (\t)</value>
+    <value>Padrão (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Nastavení pro chování klávesy tab, aplikuje se pouze na nové vložení uživatelem</value>
+    <value>As configurações do funcionamento da tecla tab, se aplicam apenas a novos tabs inserido pelo usuário.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 mezer</value>
+    <value>8 Espaços</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 mezery</value>
+    <value>4 Espaços</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Chování Klávesy Tab</value>
+    <value>Comportamento do tab</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 mezery</value>
+    <value>2 Espaços</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Zalamování Textu</value>
+    <value>Quebra automática</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zalamovat text</value>
+    <value>Ativar quebra de linha</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zalamovat text</value>
+    <value>Desativar quebra de linha</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Text a Editor</value>
+    <value>Editor e texto</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Protokol změn</value>
+    <value>Changelog</value>
     <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>O Notepads irá lembrar a sessão atual na próxima utilização do aplicativo e fará um backup periódico para prevenir perda acidental de dados das alterações não salvas. O aplicativo não irá te lembrar de salvar o seu trabalho se essa opção estiver ativada.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Ativar sessão instantânea</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Desativar sessão instantânea</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>Configurações de sessão instantânea</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

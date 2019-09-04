@@ -1,15 +1,16 @@
 ﻿
 namespace Notepads
 {
-    using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using Notepads.Services;
+    using Notepads.Settings;
+    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
@@ -21,6 +22,12 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        public static string ApplicationName = "Notepads";
+
+        public static Guid Id { get; } = Guid.NewGuid();
+
+        public static bool IsFirstInstance;
+
         private const string AppCenterSecret = null;
 
         /// <summary>
@@ -30,6 +37,14 @@ namespace Notepads
         public App()
         {
             //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+
+            if (!IsFirstInstance)
+            {
+                Analytics.TrackEvent("ShadowInstanceLaunched");
+            }
+
+            ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
 
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
@@ -149,10 +164,12 @@ namespace Notepads
                 {
                     "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
                 },
+                {
+                    "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
+                },
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
-            Analytics.TrackEvent("AppLaunchSettings", appLaunchSettings);
 
             await ActivationService.ActivateAsync(rootFrame, e);
 
