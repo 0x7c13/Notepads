@@ -429,4 +429,16 @@
     <value>kiválasztva</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
+  <data name="App_ShadowInstanceIndicator.Text" xml:space="preserve">
+    <value>Shadow Instance</value>
+    <comment>App: ShadowInstanceIndicator display text.</comment>
+  </data>
+  <data name="App_ShadowInstanceIndicator_Description" xml:space="preserve">
+    <value>This is a shadow instance of Notepads. Session snapshot and settings are disabled.</value>
+    <comment>App: ShadowInstanceIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>File already opened!</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
 </root>

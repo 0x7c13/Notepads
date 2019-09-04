@@ -372,7 +372,7 @@
             </Grid>
             <Grid Column="6" Background="{StaticResource SystemControlForegroundAccentBrush}">
                 <TextBlock x:Name="ShadowInstanceIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           Text="Shadow Instance"
+                           x:Uid="App_ShadowInstanceIndicator"
                            Visibility="Collapsed"
                            IsTapEnabled="True" 
                            extensions:Mouse.Cursor="Hand"

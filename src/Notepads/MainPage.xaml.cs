@@ -383,7 +383,7 @@ namespace Notepads
 
                 if (!App.IsFirstInstance)
                 {
-                    NotificationCenter.Instance.PostNotification("This is a shadow instance of Notepads. Session snapshot and settings are disabled.", 4000); //(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
                 }
                 _loaded = true;
             }
@@ -633,6 +633,10 @@ namespace Notepads
         {
             if (StatusBar == null) return;
             ShadowInstanceIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
+            if (ShadowInstanceIndicator.Visibility == Visibility.Visible)
+            {
+                ToolTipService.SetToolTip(ShadowInstanceIndicator, _resourceLoader.GetString("App_ShadowInstanceIndicator_Description"));
+            }
         }
 
         private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
@@ -757,7 +761,7 @@ namespace Notepads
             }
             else if (sender == ShadowInstanceIndicator)
             {
-                NotificationCenter.Instance.PostNotification("This is a shadow instance of Notepads. Session snapshot and settings are disabled.", 4000); //(_resourceLoader.GetString("TextEditor_ShadowInstanceIndicator_Description"), 4000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
             }
         }
 
@@ -873,7 +877,7 @@ namespace Notepads
                 if (openedEditor != null)
                 {
                     NotepadsCore.SwitchTo(openedEditor);
-                    NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
                     return false;
                 }
 

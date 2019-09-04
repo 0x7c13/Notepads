@@ -14,6 +14,7 @@ namespace Notepads.Core
     using Notepads.Utilities;
     using SetsView;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
@@ -57,6 +58,8 @@ namespace Notepads.Core
         private ITextEditor _selectedTextEditor;
 
         private ITextEditor[] _allTextEditors;
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
@@ -628,7 +631,7 @@ namespace Notepads.Core
                     if (editor != null)
                     {
                         SwitchTo(editor);
-                        NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
                         throw new Exception("Failed to drop editor set: File already opened.");
                     }
                 }
