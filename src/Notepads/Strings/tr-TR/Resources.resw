@@ -429,6 +429,14 @@
     <value>seçildi</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>Move tab here</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>Open with Notepads</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
   <data name="App_ShadowInstanceIndicator.Text" xml:space="preserve">
     <value>Shadow Instance</value>
     <comment>App: ShadowInstanceIndicator display text.</comment>

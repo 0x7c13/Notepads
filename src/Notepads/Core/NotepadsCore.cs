@@ -511,7 +511,7 @@ namespace Notepads.Core
                 if (dataObj is string data)
                 {
                     canHandle = true;
-                    dragUICaption = "Move tab here";
+                    dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_MoveTabHere");
                 }
             }
 
@@ -523,7 +523,7 @@ namespace Notepads.Core
                     if (items.Count > 0 && items.Any(i => i is StorageFile))
                     {
                         canHandle = true;
-                        dragUICaption = "Open with Notepads";
+                        dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_OpenWithNotepads");
                     }
                 }
                 catch
