@@ -166,7 +166,6 @@
                         Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
                         Key = VirtualKey.Z,
                         IsEnabled = false,
-
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
                     _redo.Click += (sender, args) => { _textEditorCore.Redo(); };
