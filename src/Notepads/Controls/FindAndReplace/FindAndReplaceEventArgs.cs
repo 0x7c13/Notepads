@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.FindAndReplace
+﻿namespace Notepads.Controls.FindAndReplace
 {
     using System;
 

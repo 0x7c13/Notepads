@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions
+﻿namespace Notepads.Extensions
 {
     public interface IContentExtension
     {

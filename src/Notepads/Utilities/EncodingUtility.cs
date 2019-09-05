@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     using System;
     using System.Collections.Generic;
@@ -108,7 +107,7 @@ namespace Notepads.Utilities
             switch (name)
             {
                 case "ANSI":
-                    return GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false); ;
+                    return GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
                 case "UTF-7":
                     return new UTF7Encoding();
                 case "UTF-8":

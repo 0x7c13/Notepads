@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     using System;
     using System.Collections.Generic;
@@ -8,28 +7,13 @@ namespace Notepads.Utilities
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Models;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
-
-    public class TextFile
-    {
-        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime = -1)
-        {
-            Content = content;
-            Encoding = encoding;
-            LineEnding = lineEnding;
-            DateModifiedFileTime = dateModifiedFileTime;
-        }
-
-        public string Content { get; set; }
-        public Encoding Encoding { get; set; }
-        public LineEnding LineEnding { get; set; }
-        public long DateModifiedFileTime { get; set; }
-    }
 
     public static class FileSystemUtility
     {

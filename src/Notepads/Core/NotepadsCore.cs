@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
     using System.Collections.Generic;
@@ -9,6 +8,7 @@ namespace Notepads.Core
     using Newtonsoft.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
+    using Notepads.Models;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;

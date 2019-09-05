@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
     using System.Collections.Concurrent;
@@ -13,6 +12,7 @@ namespace Notepads.Core
     using Newtonsoft.Json.Linq;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
+    using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.Storage;
@@ -236,7 +236,6 @@ namespace Notepads.Core
                     await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
                     _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
-
                 }
             }
             catch (Exception ex)

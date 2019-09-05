@@ -1,37 +1,17 @@
-﻿
-namespace Notepads.Extensions.Markdown
+﻿namespace Notepads.Extensions.Markdown
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
-
-    public class Downloader : IDisposable
-    {
-        public async Task<MemoryStream> GetDataFeed(string feedUrl)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var request = (HttpWebRequest)WebRequest.Create(feedUrl);
-                request.Method = "GET";
-                using (var response = (HttpWebResponse)await request.GetResponseAsync())
-                {
-                    response.GetResponseStream()?.CopyTo(ms);
-                    return ms;
-                }
-            }
-        }
-
-        public void Dispose() { }
-    }
 
     public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {

@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions
+﻿namespace Notepads.Extensions
 {
     using Notepads.Utilities;
 
