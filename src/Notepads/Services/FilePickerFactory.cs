@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
     using System.Collections.Generic;
     using Notepads.Controls.TextEditor;

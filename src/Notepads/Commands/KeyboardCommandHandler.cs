@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Commands
+﻿namespace Notepads.Commands
 {
     using System.Collections.Generic;
     using Windows.System;

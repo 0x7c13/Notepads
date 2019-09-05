@@ -1,5 +1,4 @@
-﻿
-namespace Notepads
+﻿namespace Notepads
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -117,7 +116,7 @@ namespace Notepads
                 }
             }
 
-            // activeInstance might be closed, let's return the first instance
+            // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
         }
     }

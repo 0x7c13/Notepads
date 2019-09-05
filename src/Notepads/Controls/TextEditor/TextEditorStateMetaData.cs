@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     public class TextEditorStateMetaData
     {

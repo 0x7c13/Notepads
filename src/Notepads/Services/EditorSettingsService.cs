@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
     using System;
     using System.Text;
@@ -107,7 +106,7 @@ namespace Notepads.Services
                 // We should always try get latest system ANSI code page.
                 if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false); ;
+                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
                 }
                 return _editorDefaultDecoding;
             }
