@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions.DiffViewer
+﻿namespace Notepads.Extensions.DiffViewer
 {
     using System;
     using System.Collections.Generic;

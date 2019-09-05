@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.Settings
+﻿namespace Notepads.Controls.Settings
 {
     using System;
     using Notepads.Services;

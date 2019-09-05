@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
     using System.Threading.Tasks;

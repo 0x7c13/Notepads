@@ -163,6 +163,8 @@
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
     <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
+    <Compile Include="Extensions\DiffViewer\BrushFactory.cs" />
+    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffContext.cs" />
     <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
@@ -170,6 +172,7 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotepadsProtocolService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
@@ -194,6 +197,7 @@
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
+    <Compile Include="Models\TextFile.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>

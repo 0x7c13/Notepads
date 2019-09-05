@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions.DiffViewer
+﻿namespace Notepads.Extensions.DiffViewer
 {
     public interface ISideBySideDiffViewer
     {

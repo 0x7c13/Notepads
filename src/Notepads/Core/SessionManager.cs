@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
     using System.Collections.Concurrent;
@@ -13,6 +12,7 @@ namespace Notepads.Core
     using Newtonsoft.Json.Linq;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
+    using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.Storage;
@@ -150,66 +150,17 @@ namespace Notepads.Core
             {
                 if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
                 {
-                    // Get latest state meta data
+                    // We will not create new backup files for this text editor unless it has content changes
+                    // But we should update latest TextEditor state meta data
                     textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
                 }
                 else // Text content has been changed or editor has not backed up yet
                 {
-                    textEditorData = new TextEditorSessionDataV1
+                    textEditorData = await BuildTextEditorSessionData(textEditor);
+                    if (textEditorData == null)
                     {
-                        Id = textEditor.Id,
-                    };
-
-                    if (textEditor.EditingFile != null)
-                    {
-                        // Add the opened file to FutureAccessList so we can access it next launch
-                        var futureAccessToken = ToToken(textEditor.Id);
-                        await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
-                        textEditorData.EditingFileFutureAccessToken = futureAccessToken;
-                        textEditorData.EditingFileName = textEditor.EditingFileName;
-                        textEditorData.EditingFilePath = textEditor.EditingFilePath;
+                        continue;
                     }
-
-                    if (textEditor.IsModified)
-                    {
-                        if (textEditor.EditingFile != null)
-                        {
-                            // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
-                            var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(ToToken(textEditor.Id) + "-LastSaved",
-                                CreationCollisionOption.ReplaceExisting);
-
-                            if (!await BackupTextAsync(textEditor.LastSavedSnapshot.Content,
-                                textEditor.LastSavedSnapshot.Encoding,
-                                textEditor.LastSavedSnapshot.LineEnding,
-                                lastSavedBackupFile))
-                            {
-                                continue;
-                            }
-
-                            textEditorData.LastSavedBackupFilePath = lastSavedBackupFile.Path;
-                        }
-
-                        if (textEditor.EditingFile == null || !string.Equals(textEditor.LastSavedSnapshot.Content, textEditor.GetText()))
-                        {
-                            // Persist pending changes relative to the last save
-                            var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(ToToken(textEditor.Id) + "-Pending",
-                                CreationCollisionOption.ReplaceExisting);
-
-                            if (!await BackupTextAsync(textEditor.GetText(),
-                                    textEditor.LastSavedSnapshot.Encoding,
-                                    textEditor.LastSavedSnapshot.LineEnding,
-                                    pendingBackupFile))
-                            {
-                                continue;
-                            }
-
-                            textEditorData.PendingBackupFilePath = pendingBackupFile.Path;
-                        }
-                    }
-
-                    textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
-
-                    // We will not create new backup files for this text editor unless it has changes
                     _sessionData.TryAdd(textEditor.Id, textEditorData);
                 }
 
@@ -236,7 +187,6 @@ namespace Notepads.Core
                     await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
                     _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
-
                 }
             }
             catch (Exception ex)
@@ -262,6 +212,68 @@ namespace Notepads.Core
 
             actionAfterSaving?.Invoke();
             _semaphoreSlim.Release();
+        }
+
+        private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
+        {
+            TextEditorSessionDataV1 textEditorData = new TextEditorSessionDataV1
+            {
+                Id = textEditor.Id,
+            };
+
+            if (textEditor.EditingFile != null)
+            {
+                // Add the opened file to FutureAccessList so we can access it next launch
+                var futureAccessToken = ToToken(textEditor.Id);
+                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                textEditorData.EditingFileFutureAccessToken = futureAccessToken;
+                textEditorData.EditingFileName = textEditor.EditingFileName;
+                textEditorData.EditingFilePath = textEditor.EditingFilePath;
+            }
+
+            if (textEditor.IsModified)
+            {
+                if (textEditor.EditingFile != null)
+                {
+                    // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
+                    var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
+                        ToToken(textEditor.Id) + "-LastSaved",
+                        CreationCollisionOption.ReplaceExisting);
+
+                    if (!await BackupTextAsync(textEditor.LastSavedSnapshot.Content,
+                        textEditor.LastSavedSnapshot.Encoding,
+                        textEditor.LastSavedSnapshot.LineEnding,
+                        lastSavedBackupFile))
+                    {
+                        return null; // Error: Failed to write backup text to file
+                    }
+
+                    textEditorData.LastSavedBackupFilePath = lastSavedBackupFile.Path;
+                }
+
+                if (textEditor.EditingFile == null ||
+                    !string.Equals(textEditor.LastSavedSnapshot.Content, textEditor.GetText()))
+                {
+                    // Persist pending changes relative to the last save
+                    var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
+                        ToToken(textEditor.Id) + "-Pending",
+                        CreationCollisionOption.ReplaceExisting);
+
+                    if (!await BackupTextAsync(textEditor.GetText(),
+                        textEditor.LastSavedSnapshot.Encoding,
+                        textEditor.LastSavedSnapshot.LineEnding,
+                        pendingBackupFile))
+                    {
+                        return null; // Error: Failed to write backup text to file
+                    }
+
+                    textEditorData.PendingBackupFilePath = pendingBackupFile.Path;
+                }
+            }
+
+            textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+
+            return textEditorData;
         }
 
         public void StartSessionBackup(bool startImmediately = false)

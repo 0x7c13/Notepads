@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
@@ -157,7 +156,6 @@ namespace Notepads.Controls.TextEditor
                 disableAnimation: true);
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
-
 
         public void Undo()
         {
@@ -525,7 +523,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                     _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
-                            _contentScrollViewer.VerticalOffset + -1 * mouseWheelDelta, null, true);
+                            _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
                 }
             }
         }

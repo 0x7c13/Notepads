@@ -1,11 +1,11 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
+    using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;

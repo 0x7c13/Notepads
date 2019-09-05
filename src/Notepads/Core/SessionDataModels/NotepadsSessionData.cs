@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Core.SessionDataModels
+﻿namespace Notepads.Core.SessionDataModels
 {
     using System;
     using System.Collections.Generic;

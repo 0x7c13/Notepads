@@ -1,9 +1,9 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
 

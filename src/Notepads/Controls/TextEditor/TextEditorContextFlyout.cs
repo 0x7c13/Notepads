@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     using System;
     using Notepads.Utilities;
@@ -167,7 +166,6 @@ namespace Notepads.Controls.TextEditor
                         Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
                         Key = VirtualKey.Z,
                         IsEnabled = false,
-
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
                     _redo.Click += (sender, args) => { _textEditorCore.Redo(); };

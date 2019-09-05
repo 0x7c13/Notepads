@@ -1,5 +1,4 @@
-﻿
-namespace Notepads
+﻿namespace Notepads
 {
     using System;
     using System.Collections.Generic;
@@ -101,7 +100,6 @@ namespace Notepads
         private ISessionManager _sessionManager;
 
         private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
-
 
         public MainPage()
         {

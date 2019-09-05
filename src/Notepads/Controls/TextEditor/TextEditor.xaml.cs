@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
@@ -10,6 +9,7 @@ namespace Notepads.Controls.TextEditor
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Extensions;
+    using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.ApplicationModel.Core;
