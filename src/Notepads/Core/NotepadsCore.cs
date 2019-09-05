@@ -14,6 +14,7 @@ namespace Notepads.Core
     using Notepads.Utilities;
     using SetsView;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
@@ -57,6 +58,8 @@ namespace Notepads.Core
         private ITextEditor _selectedTextEditor;
 
         private ITextEditor[] _allTextEditors;
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
@@ -131,6 +134,8 @@ namespace Notepads.Core
 
         public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
         {
+            bool selectedEditorFound = false;
+
             foreach (var textEditor in editors)
             {
                 var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
@@ -138,10 +143,11 @@ namespace Notepads.Core
                 if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
                 {
                     Sets.SelectedItem = editorSetsViewItem;
+                    selectedEditorFound = true;
                 }
             }
 
-            if (selectedEditorId == null)
+            if (selectedEditorId == null || !selectedEditorFound)
             {
                 Sets.SelectedIndex = editors.Length - 1;
                 Sets.ScrollToLastSet();
@@ -321,12 +327,12 @@ namespace Notepads.Core
             return item?.Content as ITextEditor;
         }
 
-        public double GetSetsViewScrollViewerHorizontalOffset()
+        public double GetTabScrollViewerHorizontalOffset()
         {
             return Sets.ScrollViewerHorizontalOffset;
         }
 
-        public void SetSetsViewScrollViewerHorizontalOffset(double offset)
+        public void SetTabScrollViewerHorizontalOffset(double offset)
         {
             Sets.ScrollTo(offset);
         }
@@ -505,7 +511,7 @@ namespace Notepads.Core
                 if (dataObj is string data)
                 {
                     canHandle = true;
-                    dragUICaption = "Move tab here";
+                    dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_MoveTabHere");
                 }
             }
 
@@ -517,7 +523,7 @@ namespace Notepads.Core
                     if (items.Count > 0 && items.Any(i => i is StorageFile))
                     {
                         canHandle = true;
-                        dragUICaption = "Open with Notepads";
+                        dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_OpenWithNotepads");
                     }
                 }
                 catch
@@ -628,7 +634,7 @@ namespace Notepads.Core
                     if (editor != null)
                     {
                         SwitchTo(editor);
-                        NotificationCenter.Instance.PostNotification("File already opened!", 2500);
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
                         throw new Exception("Failed to drop editor set: File already opened.");
                     }
                 }

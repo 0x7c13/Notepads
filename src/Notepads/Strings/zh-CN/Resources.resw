@@ -429,4 +429,24 @@
     <value>已选择</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>移动标签到此窗口</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>在Notepads中打开</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowInstanceIndicator.Text" xml:space="preserve">
+    <value>影子实例</value>
+    <comment>App: ShadowInstanceIndicator display text.</comment>
+  </data>
+  <data name="App_ShadowInstanceIndicator_Description" xml:space="preserve">
+    <value>这是Notepads的一个影子实例，快照备份功能和设置已被禁用。</value>
+    <comment>App: ShadowInstanceIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>文件已打开！</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
 </root>

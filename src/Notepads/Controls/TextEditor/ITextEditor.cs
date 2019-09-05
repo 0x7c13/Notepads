@@ -19,6 +19,7 @@ namespace Notepads.Controls.TextEditor
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
+
         Guid Id { get; set; }
 
         FileType FileType { get; }

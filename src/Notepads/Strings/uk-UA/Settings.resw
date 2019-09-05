@@ -130,7 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Безкошнтовний редактор з відкритим кодом, спроєктований та розроблений Jackie (Jiaqi) Liu</value>
+    <value>Безкоштовний редактор з відкритим кодом, спроєктований та розроблений Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads запам'ятає список відкритих файлів до наступного запуску та робитиме періодичне резервне копіювання відкритих документів щоб уникнути втрати незбережених змін. Notepads НЕ пропонуватиме вам зберігати ваші файли коли ви закриваєте Notepads, якщо ця опція увімкнена.</value>
+    <value>Notepads запам'ятає список відкритих файлів до наступного запуску та робитиме періодичне резервне копіювання відкритих документів щоб уникнути втрати незбережених змін. Notepads НЕ пропонуватиме вам зберігати ваші файли коли ви закриваєте Notepads, якщо ця опція увімкнена. Зверніть увагу, ця функція працює тільки в першому/основному вікні Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">

@@ -158,9 +158,11 @@
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\ISessionManager.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
+    <Compile Include="Core\SessionDataModels\NotepadsSessionData.cs" />
     <Compile Include="Core\SessionManager.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
+    <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
     <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
@@ -486,6 +488,7 @@
   <ItemGroup>
     <PRIResource Include="Strings\pt-BR\Settings.resw" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
