@@ -1,9 +1,26 @@
-# Notepads App [ Beta ] <img align="left" src="src/Notepads/Assets/StoreLogo.scale-200.png">
-
-[![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
-[![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
-![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
-[![Discord](https://img.shields.io/discord/588473626651787274.svg?style=flat-square)](https://discord.gg/VqetCub)
+<p align="center">
+  <img align="center" src="src/Notepads/Assets/StoreLogo.scale-400.png">
+</p>
+<h1 align="center">
+  Notepads
+</h1>
+<p align="center">
+  A modern, lightweight text editor with minimum design.
+</p>
+<p align="center">
+  <a href="https://www.microsoft.com/store/apps/9nhl4nsc67wm">
+    <img src="https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square" alt="Store link" />
+  </a>
+  <a href="https://github.com/JasonStein/Notepads/releases">
+    <img src="https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square" alt="Releases" />
+  </a>
+  <a>
+    <img src="https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square" alt="Platform" />
+  </a>
+  <a href="https://discord.gg/VqetCub">
+    <img src="https://img.shields.io/discord/588473626651787274.svg?style=flat-square" alt="Discord" />
+  </a>
+</p>
 
 ## What is Notepads and why do I care?
 
