@@ -1,5 +1,5 @@
 <p align="center">
-  <img align="center" src="src/Notepads/Assets/StoreLogo.scale-400.png">
+  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.png">
 </p>
 <h1 align="center">
   Notepads
