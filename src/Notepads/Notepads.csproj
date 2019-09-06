@@ -172,6 +172,9 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="NotepadsMainPage.IO.cs" />
+    <Compile Include="NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="NotepadsMainPage.ViewModes.cs" />
     <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotepadsProtocolService.cs" />
@@ -204,8 +207,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="NotepadsMainPage.xaml.cs">
+      <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -328,7 +331,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

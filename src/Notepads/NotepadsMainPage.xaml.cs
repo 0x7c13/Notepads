@@ -2,9 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
@@ -27,7 +24,7 @@
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
 
-    public sealed partial class MainPage : Page, INotificationDelegate
+    public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
         private readonly string _defaultNewFileName;
 
@@ -101,7 +98,7 @@
 
         private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
 
-        public MainPage()
+        public NotepadsMainPage()
         {
             InitializeComponent();
 
@@ -231,86 +228,6 @@
                     EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents)))
             });
         }
-
-        #region View Mode Switches
-
-        // Show hide ExitCompactOverlayButton and status bar based on current ViewMode
-        // Reset TitleBarReservedArea accordingly
-        private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
-        {
-            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-            {
-                if (ExitCompactOverlayButton.Visibility == Visibility.Collapsed)
-                {
-                    TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
-                    ExitCompactOverlayButton.Visibility = Visibility.Visible;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
-                }
-            }
-            else // Default or FullScreen
-            {
-                if (ExitCompactOverlayButton.Visibility == Visibility.Visible)
-                {
-                    TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
-                    ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
-                }
-            }
-        }
-
-        private async void EnterExitCompactOverlayMode()
-        {
-            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
-            {
-                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
-                if (!modeSwitched)
-                {
-                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
-                    Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
-                }
-            }
-            else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-            {
-                var modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                if (!modeSwitched)
-                {
-                    LoggingService.LogError("Failed to enter Default view mode.");
-                    Analytics.TrackEvent("FailedToEnterDefaultViewMode");
-                }
-            }
-        }
-
-        private void EnterExitFullScreenMode()
-        {
-            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
-            {
-                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
-                ApplicationView.GetForCurrentView().ExitFullScreenMode();
-            }
-            else
-            {
-                if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
-                {
-                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
-                }
-                else
-                {
-                    LoggingService.LogError("Failed to enter full screen view mode.");
-                    Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
-                }
-            }
-        }
-
-        private void ExitCompactOverlayButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-            {
-                EnterExitCompactOverlayMode();
-            }
-        }
-
-        #endregion
 
         #region Application Life Cycle & Window management 
 
@@ -499,275 +416,6 @@
             }
         }
 
-        private async void OnStorageItemsDropped(object sender, IReadOnlyList<IStorageItem> storageItems)
-        {
-            foreach (var storageItem in storageItems)
-            {
-                if (storageItem is StorageFile file)
-                {
-                    await OpenFile(file);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Status Bar
-
-        private void SetupStatusBar(ITextEditor textEditor)
-        {
-            if (textEditor == null) return;
-            UpdateFileModificationStateIndicator(textEditor);
-            UpdatePathIndicator(textEditor);
-            UpdateEditorModificationIndicator(textEditor);
-            UpdateLineColumnIndicator(textEditor);
-            UpdateLineEndingIndicator(textEditor.GetLineEnding());
-            UpdateEncodingIndicator(textEditor.GetEncoding());
-            UpdateShadowInstanceIndicator();
-        }
-
-        public void ShowHideStatusBar(bool showStatusBar)
-        {
-            if (showStatusBar)
-            {
-                if (StatusBar == null) { FindName("StatusBar"); } // Lazy loading   
-                SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
-            }
-            else
-            {
-                if (StatusBar != null)
-                {
-                    // If VS cannot find UnloadObject, ignore it. Reference: https://github.com/MicrosoftDocs/windows-uwp/issues/734
-                    UnloadObject(StatusBar);
-                }
-            }
-        }
-
-        private void UpdateFileModificationStateIndicator(ITextEditor textEditor)
-        {
-            if (StatusBar == null) return;
-            if (textEditor.FileModificationState == FileModificationState.Untouched)
-            {
-                FileModificationStateIndicatorIcon.Glyph = "";
-                FileModificationStateIndicator.Visibility = Visibility.Collapsed;
-            }
-            else if (textEditor.FileModificationState == FileModificationState.Modified)
-            {
-                FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
-                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
-                FileModificationStateIndicator.Visibility = Visibility.Visible;
-            }
-            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-            {
-                FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
-                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
-                FileModificationStateIndicator.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void UpdatePathIndicator(ITextEditor textEditor)
-        {
-            if (StatusBar == null) return;
-            PathIndicator.Text = textEditor.EditingFilePath ?? _defaultNewFileName;
-
-            if (textEditor.FileModificationState == FileModificationState.Untouched)
-            {
-                ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
-            }
-            else if (textEditor.FileModificationState == FileModificationState.Modified)
-            {
-                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
-            }
-            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-            {
-                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
-            }
-        }
-
-        private void UpdateEditorModificationIndicator(ITextEditor textEditor)
-        {
-            if (StatusBar == null) return;
-            if (textEditor.IsModified)
-            {
-                ModificationIndicator.Text = _resourceLoader.GetString("TextEditor_ModificationIndicator_Text");
-                ModificationIndicator.Visibility = Visibility.Visible;
-                ModificationIndicator.IsTapEnabled = true;
-            }
-            else
-            {
-                ModificationIndicator.Text = string.Empty;
-                ModificationIndicator.Visibility = Visibility.Collapsed;
-                ModificationIndicator.IsTapEnabled = false;
-            }
-        }
-
-        private void UpdateEncodingIndicator(Encoding encoding)
-        {
-            if (StatusBar == null) return;
-            EncodingIndicator.Text = EncodingUtility.GetEncodingName(encoding);
-        }
-
-        private void UpdateLineEndingIndicator(LineEnding lineEnding)
-        {
-            if (StatusBar == null) return;
-            LineEndingIndicator.Text = LineEndingUtility.GetLineEndingDisplayText(lineEnding);
-        }
-
-        private void UpdateLineColumnIndicator(ITextEditor textEditor)
-        {
-            if (StatusBar == null) return;
-            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
-
-            var wordSelected = selectedCount > 1 ?
-                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord") :
-                _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_SingularSelectedWord");
-
-            LineColumnIndicator.Text = selectedCount == 0
-                ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
-                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column, selectedCount, wordSelected);
-        }
-
-        private void UpdateShadowInstanceIndicator()
-        {
-            if (StatusBar == null) return;
-            ShadowInstanceIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
-            if (ShadowInstanceIndicator.Visibility == Visibility.Visible)
-            {
-                ToolTipService.SetToolTip(ShadowInstanceIndicator, _resourceLoader.GetString("App_ShadowInstanceIndicator_Description"));
-            }
-        }
-
-        private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is MenuFlyoutItem item)) return;
-
-            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedTextEditor == null) return;
-
-            switch ((string)item.Tag)
-            {
-                case "PreviewTextChanges":
-                    NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
-                    break;
-                case "RevertAllChanges":
-                    var fileName = selectedTextEditor.EditingFileName ?? _defaultNewFileName;
-                    var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(fileName, () =>
-                    {
-                        selectedTextEditor.CloseSideBySideDiffViewer();
-                        NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
-                    });
-                    await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
-                    break;
-            }
-        }
-
-        private async void ReloadFileFromDisk(object sender, RoutedEventArgs e)
-        {
-            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
-
-            if (selectedEditor?.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
-            {
-                try
-                {
-                    await selectedEditor.ReloadFromEditingFile();
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
-                }
-                catch (Exception ex)
-                {
-                    var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
-                    await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                    NotepadsCore.FocusOnSelectedTextEditor();
-                }
-            }
-        }
-
-        private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is MenuFlyoutItem item)) return;
-
-            var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
-            if (textEditor != null)
-            {
-                NotepadsCore.ChangeLineEnding(textEditor, lineEnding);
-            }
-        }
-
-        private void EncodingSelection_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is MenuFlyoutItem item)) return;
-
-            var encoding = EncodingUtility.GetEncodingByName((string)item.Tag);
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
-            if (textEditor != null)
-            {
-                NotepadsCore.ChangeEncoding(textEditor, encoding);
-            }
-        }
-
-        private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
-        {
-            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
-            if (selectedEditor == null) return;
-
-            if (sender == FileModificationStateIndicator)
-            {
-                if (selectedEditor.FileModificationState == FileModificationState.Modified)
-                {
-                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
-                }
-            }
-            else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
-            {
-                NotepadsCore.FocusOnSelectedTextEditor();
-
-                if (selectedEditor.FileModificationState == FileModificationState.Untouched)
-                {
-                    if (selectedEditor.EditingFile != null)
-                    {
-                        FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                    }
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.Modified)
-                {
-                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
-                }
-            }
-            else if (sender == ModificationIndicator)
-            {
-                PreviewTextChangesFlyoutItem.IsEnabled = !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) && selectedEditor.Mode != TextEditorMode.DiffPreview;
-                ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
-            }
-            else if (sender == LineColumnIndicator)
-            {
-            }
-            else if (sender == LineEndingIndicator)
-            {
-                LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
-            }
-            else if (sender == EncodingIndicator)
-            {
-                EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
-            }
-            else if (sender == ShadowInstanceIndicator)
-            {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
-            }
-        }
-
-        private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-        {
-            NotepadsCore.FocusOnSelectedTextEditor();
-        }
-
         #endregion
 
         #region InAppNotification
@@ -835,119 +483,14 @@
             _keyboardCommandHandler.Handle(e);
         }
 
-        #endregion
-
-        #region I/O
-
-        private async Task OpenNewFiles()
+        private async void OnStorageItemsDropped(object sender, IReadOnlyList<IStorageItem> storageItems)
         {
-            IReadOnlyList<StorageFile> files;
-
-            try
-            {
-                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
-            }
-            catch (Exception ex)
-            {
-                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
-                return;
-            }
-
-            if (files == null || files.Count == 0)
-            {
-                NotepadsCore.FocusOnSelectedTextEditor();
-                return;
-            }
-
-            foreach (var file in files)
-            {
-                await OpenFile(file);
-            }
-        }
-
-        public async Task<bool> OpenFile(StorageFile file)
-        {
-            try
-            {
-                var openedEditor = NotepadsCore.GetTextEditor(file);
-                if (openedEditor != null)
-                {
-                    NotepadsCore.SwitchTo(openedEditor);
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
-                    return false;
-                }
-
-                var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
-                NotepadsCore.OpenTextEditor(editor);
-                NotepadsCore.FocusOnSelectedTextEditor();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
-                return false;
-            }
-        }
-
-        public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
-        {
-            if (storageItems == null || storageItems.Count == 0) return 0;
-            int successCount = 0;
             foreach (var storageItem in storageItems)
             {
                 if (storageItem is StorageFile file)
                 {
-                    if (await OpenFile(file))
-                    {
-                        successCount++;
-                    }
+                    await OpenFile(file);
                 }
-            }
-            return successCount;
-        }
-
-        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
-        {
-            if (textEditor == null) return false;
-
-            if (ignoreUnmodifiedDocument && !textEditor.IsModified)
-            {
-                return true;
-            }
-
-            StorageFile file = null;
-            try
-            {
-                if (textEditor.EditingFile == null || saveAs ||
-                    FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
-                    !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
-                {
-                    NotepadsCore.SwitchTo(textEditor);
-                    file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs).PickSaveFileAsync();
-                    NotepadsCore.FocusOnTextEditor(textEditor);
-                    if (file == null)
-                    {
-                        return false; // User cancelled
-                    }
-                }
-                else
-                {
-                    file = textEditor.EditingFile;
-                }
-
-                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var fileSaveErrorDialog = ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
-                return false;
             }
         }
 

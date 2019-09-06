@@ -87,8 +87,7 @@ namespace SetsView
                         index = Items.Count - 1;
                     }
 
-                    var setItem = ContainerFromIndex(index) as SetsViewItem;
-                    if (setItem != null && setItem.IsEnabled && setItem.Visibility == Visibility.Visible)
+                    if (ContainerFromIndex(index) is SetsViewItem setItem && setItem.IsEnabled && setItem.Visibility == Visibility.Visible)
                     {
                         break;
                     }

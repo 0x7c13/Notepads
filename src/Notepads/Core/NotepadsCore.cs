@@ -721,9 +721,7 @@
 
         private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
-            var setDragAndDropActionStatus = ApplicationSettingsStore.Read(SetDragAndDropActionStatus) as string;
-
-            if (setDragAndDropActionStatus != null && setDragAndDropActionStatus == "Handled")
+            if (ApplicationSettingsStore.Read(SetDragAndDropActionStatus) is string setDragAndDropActionStatus && setDragAndDropActionStatus == "Handled")
             {
                 if (args.Items.FirstOrDefault() is ITextEditor editor)
                 {

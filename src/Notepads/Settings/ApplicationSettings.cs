@@ -4,7 +4,7 @@
     using Notepads.Services;
     using Windows.Storage;
 
-    public class ApplicationSettingsStore
+    public static class ApplicationSettingsStore
     {
         public static object Read(string key)
         {

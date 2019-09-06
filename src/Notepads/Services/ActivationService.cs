@@ -29,7 +29,7 @@
             {
                 if (rootFrame.Content == null)
                 {
-                    rootFrame.Navigate(typeof(MainPage));
+                    rootFrame.Navigate(typeof(NotepadsMainPage));
                 }
             }
         }
@@ -40,9 +40,9 @@
 
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), protocolActivatedEventArgs);
+                rootFrame.Navigate(typeof(NotepadsMainPage), protocolActivatedEventArgs);
             }
-            else if (rootFrame.Content is MainPage mainPage)
+            else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
                 mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
             }
@@ -58,7 +58,7 @@
 
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
+                rootFrame.Navigate(typeof(NotepadsMainPage), launchActivatedEventArgs.Arguments);
             }
         }
 
@@ -66,9 +66,9 @@
         {
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), fileActivatedEventArgs);
+                rootFrame.Navigate(typeof(NotepadsMainPage), fileActivatedEventArgs);
             }
-            else if (rootFrame.Content is MainPage mainPage)
+            else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
                 await mainPage.OpenFiles(fileActivatedEventArgs.Files);
             }
@@ -81,9 +81,9 @@
 
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), commandLineActivatedEventArgs);
+                rootFrame.Navigate(typeof(NotepadsMainPage), commandLineActivatedEventArgs);
             }
-            else if (rootFrame.Content is MainPage mainPage)
+            else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
                 var file = await FileSystemUtility.OpenFileFromCommandLine(
                     commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,

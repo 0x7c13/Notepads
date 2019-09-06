@@ -72,31 +72,29 @@
         private async Task<ImageSource> GetImageAsync(string url)
         {
             var imageUri = new Uri(url);
-            using (var d = new Downloader())
+
+            var feed = await Downloader.GetDataFeed(url);
+            feed.Seek(0, SeekOrigin.Begin);
+
+            using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
             {
-                var feed = await d.GetDataFeed(url);
-                feed.Seek(0, SeekOrigin.Begin);
-
-                using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
+                using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
                 {
-                    using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
-                    {
-                        writer.WriteBytes((byte[])feed.ToArray());
-                        writer.StoreAsync().GetResults();
-                    }
+                    writer.WriteBytes((byte[])feed.ToArray());
+                    writer.StoreAsync().GetResults();
+                }
 
-                    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
-                    {
-                        var image = new SvgImageSource();
-                        await image.SetSourceAsync(ms);
-                        return image;
-                    }
-                    else
-                    {
-                        var image = new BitmapImage();
-                        await image.SetSourceAsync(ms);
-                        return image;
-                    }
+                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                {
+                    var image = new SvgImageSource();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+                else
+                {
+                    var image = new BitmapImage();
+                    await image.SetSourceAsync(ms);
+                    return image;
                 }
             }
         }

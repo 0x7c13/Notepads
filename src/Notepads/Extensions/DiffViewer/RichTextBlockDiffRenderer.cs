@@ -22,7 +22,7 @@
             differ = new SideBySideDiffBuilder(new Differ());
         }
 
-        private static readonly char BreakingSpace = '-';
+        private const char BreakingSpace = '-';
         private Brush _defaultForeground;
 
         public Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext> GenerateDiffViewData(string leftText, string rightText, Brush defaultForeground)

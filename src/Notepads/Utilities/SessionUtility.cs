@@ -11,8 +11,8 @@
 
     internal static class SessionUtility
     {
-        private static string BackupFolderName = "BackupFiles";
-        private static string SessionMetaDataFileName = "NotepadsSessionData.json";
+        private const string BackupFolderName = "BackupFiles";
+        private const string SessionMetaDataFileName = "NotepadsSessionData.json";
         private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
         public static ISessionManager GetSessionManager(INotepadsCore notepadCore)
