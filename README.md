@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.png">
+  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.jpg">
 </p>
 <h1 align="center">
   Notepads
