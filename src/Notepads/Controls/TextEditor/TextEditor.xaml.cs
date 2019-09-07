@@ -60,6 +60,8 @@
 
         public event EventHandler FileReloaded;
 
+        public string FileNamePlaceholder { get; set; } = string.Empty;
+
         public FileType FileType { get; private set; }
 
         public TextFile LastSavedSnapshot { get; private set; }
@@ -198,6 +200,7 @@
 
             var metaData = new TextEditorStateMetaData
             {
+                FileNamePlaceholder = FileNamePlaceholder,
                 LastSavedEncoding = EncodingUtility.GetEncodingName(LastSavedSnapshot.Encoding),
                 LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
                 DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,

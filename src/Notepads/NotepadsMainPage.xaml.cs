@@ -26,8 +26,6 @@
 
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
-        private readonly string _defaultNewFileName;
-
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
 
         private string _appLaunchCmdDir;
@@ -52,7 +50,7 @@
             {
                 if (_notepadsCore == null)
                 {
-                    _notepadsCore = new NotepadsCore(Sets, _resourceLoader.GetString("TextEditor_DefaultNewFileName"), new NotepadsExtensionProvider());
+                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider());
                     _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
@@ -97,6 +95,8 @@
         private ISessionManager _sessionManager;
 
         private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
+
+        private readonly string _defaultNewFileName;
 
         public NotepadsMainPage()
         {
@@ -154,9 +154,9 @@
             ToolTipService.SetToolTip(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
-            NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(); };
+            NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(_defaultNewFileName); };
             MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
-            MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor();
+            MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
             MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
             MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
@@ -216,8 +216,8 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => NotepadsCore.CloseTextEditor(NotepadsCore.GetSelectedTextEditor())),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.T, (args) => NotepadsCore.OpenNewTextEditor()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.N, (args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.T, (args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
@@ -293,7 +293,7 @@
             {
                 if (loadedCount == 0)
                 {
-                    NotepadsCore.OpenNewTextEditor();
+                    NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
 
                 if (!App.IsFirstInstance)
@@ -460,7 +460,7 @@
 
         private async void OnTextEditorClosingWithUnsavedContent(object sender, ITextEditor textEditor)
         {
-            var file = textEditor.EditingFilePath ?? _defaultNewFileName;
+            var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
             var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
             {

@@ -46,9 +46,10 @@
             Guid id,
             TextFile textFile,
             StorageFile editingFile,
-            bool isModified);
+            string fileNamePlaceHolder,
+            bool isModified = false);
 
-        void OpenNewTextEditor();
+        void OpenNewTextEditor(string fileNamePlaceholder);
 
         void OpenTextEditor(ITextEditor editor, int atIndex = -1);
 

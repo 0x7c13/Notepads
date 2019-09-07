@@ -2,6 +2,8 @@
 {
     public class TextEditorStateMetaData
     {
+        public string FileNamePlaceholder { get; set; }
+
         public string LastSavedEncoding { get; set; }
 
         public string LastSavedLineEnding { get; set; }

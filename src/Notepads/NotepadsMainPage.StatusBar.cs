@@ -72,7 +72,7 @@
         private void UpdatePathIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            PathIndicator.Text = textEditor.EditingFilePath ?? _defaultNewFileName;
+            PathIndicator.Text = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
             if (textEditor.FileModificationState == FileModificationState.Untouched)
             {
@@ -158,7 +158,7 @@
                     NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
                     break;
                 case "RevertAllChanges":
-                    var fileName = selectedTextEditor.EditingFileName ?? _defaultNewFileName;
+                    var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
                     var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(
                         fileName, () =>
                         {
