@@ -275,8 +275,9 @@
                         _editorDefaultDecoding = new UTF8Encoding(false);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    LoggingService.LogError($"[EditorSettingsService] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
                     _editorDefaultDecoding = new UTF8Encoding(false);
                 }
             }

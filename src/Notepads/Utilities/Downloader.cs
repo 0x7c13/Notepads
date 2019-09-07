@@ -5,9 +5,9 @@
     using System.Net;
     using System.Threading.Tasks;
 
-    public class Downloader : IDisposable
+    public class Downloader
     {
-        public async Task<MemoryStream> GetDataFeed(string feedUrl)
+        public static async Task<MemoryStream> GetDataFeed(string feedUrl)
         {
             using (var ms = new MemoryStream())
             {
@@ -19,10 +19,6 @@
                     return ms;
                 }
             }
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

@@ -27,13 +27,9 @@
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
-            if (activatedArgs is FileActivatedEventArgs fileArgs)
+            if (activatedArgs is FileActivatedEventArgs)
             {
-                foreach (var file in fileArgs.Files)
-                {
-                    if (!(file is StorageFile)) continue;
-                    AssignOrCreateInstanceForFile((file as StorageFile).Path);
-                }
+                AssignOrCreateInstance();
             }
             else if (activatedArgs is CommandLineActivatedEventArgs cmdActivatedArgs)
             {
@@ -43,7 +39,7 @@
                     cmdActivatedArgs.Operation.CurrentDirectoryPath, cmdActivatedArgs.Operation.Arguments, App.ApplicationName);
                 if (file != null)
                 {
-                    AssignOrCreateInstanceForFile(file);
+                    AssignOrCreateInstance();
                 }
                 else
                 {
@@ -73,7 +69,7 @@
             IsFirstInstance = false;
         }
 
-        private static void AssignOrCreateInstanceForFile(string filePath)
+        private static void AssignOrCreateInstance()
         {
             var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString()));
 
@@ -101,9 +97,7 @@
                 return instances.FirstOrDefault();
             }
 
-            string activeInstance = ApplicationSettingsStore.Read("ActiveInstance") as string;
-
-            if (activeInstance == null)
+            if (!(ApplicationSettingsStore.Read("ActiveInstance") is string activeInstance))
             {
                 return null;
             }
