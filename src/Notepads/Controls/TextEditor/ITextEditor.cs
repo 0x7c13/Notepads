@@ -30,6 +30,8 @@
 
         Encoding RequestedEncoding { get; }
 
+        string FileNamePlaceholder { get; set; }
+
         string EditingFileName { get; }
 
         string EditingFilePath { get; }

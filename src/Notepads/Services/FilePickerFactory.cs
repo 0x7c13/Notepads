@@ -16,7 +16,7 @@
             return fileOpenPicker;
         }
 
-        public static FileSavePicker GetFileSavePicker(ITextEditor textEditor, string defaultFileName, bool saveAs)
+        public static FileSavePicker GetFileSavePicker(ITextEditor textEditor, bool saveAs)
         {
             FileSavePicker savePicker = new FileSavePicker
             {
@@ -44,7 +44,7 @@
                 ".js", ".ts", ".lua",
             });
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
-            savePicker.SuggestedFileName = textEditor.EditingFileName ?? defaultFileName;
+            savePicker.SuggestedFileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             return savePicker;
         }
     }

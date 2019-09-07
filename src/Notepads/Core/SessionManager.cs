@@ -8,6 +8,7 @@
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter.Analytics;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Notepads.Controls.TextEditor;
@@ -82,6 +83,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() {{ "Exception", ex.Message }});
                 await ClearSessionDataAsync();
                 return 0;
             }
@@ -99,6 +101,7 @@
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[SessionManager] Failed to recover TextEditor: {ex.Message}");
+                    Analytics.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() {{ "Exception", ex.Message }});
                     continue;
                 }
 
@@ -192,6 +195,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to save session metadata: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() {{ "Exception", ex.Message }});
                 actionAfterSaving?.Invoke();
                 _semaphoreSlim.Release();
                 return; // Failed to save the session - do not proceed to delete backup files
@@ -225,7 +229,11 @@
             {
                 // Add the opened file to FutureAccessList so we can access it next launch
                 var futureAccessToken = ToToken(textEditor.Id);
-                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                if (!await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile))
+                {
+                    Analytics.TrackEvent("SessionManager_FailedToAddTokenInFutureAccessList", 
+                        new Dictionary<string, string>() {{ "ItemCount", FileSystemUtility.GetFutureAccessListItemCount().ToString() }});
+                }
                 textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                 textEditorData.EditingFileName = textEditor.EditingFileName;
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;
@@ -323,6 +331,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionManager] Failed to delete session meta data: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() {{ "Exception", ex.Message }});
             }
         }
 
@@ -388,6 +397,7 @@
                     editorSessionData.Id,
                     textFile,
                     editingFile,
+                    editorSessionData.StateMetaData.FileNamePlaceholder,
                     editorSessionData.StateMetaData.IsModified);
 
                 if (pendingFile != null)
@@ -469,6 +479,7 @@
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[SessionManager] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() {{ "Exception", ex.Message }});
                 }
             }
         }

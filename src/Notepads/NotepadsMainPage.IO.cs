@@ -100,7 +100,7 @@
                     !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
                 {
                     NotepadsCore.SwitchTo(textEditor);
-                    file = await FilePickerFactory.GetFileSavePicker(textEditor, _defaultNewFileName, saveAs)
+                    file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs)
                         .PickSaveFileAsync();
                     NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)

@@ -364,5 +364,17 @@
             }
             return false;
         }
+
+        public static int GetFutureAccessListItemCount()
+        {
+            try
+            {
+                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
     }
 }

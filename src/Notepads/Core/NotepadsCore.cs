@@ -27,8 +27,6 @@
     {
         public SetsView Sets;
 
-        public readonly string DefaultNewFileName;
-
         public event EventHandler<ITextEditor> TextEditorLoaded;
 
         public event EventHandler<ITextEditor> TextEditorUnloaded;
@@ -70,7 +68,6 @@
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
-            string defaultNewFileName,
             INotepadsExtensionProvider extensionProvider)
         {
             Sets = sets;
@@ -85,16 +82,19 @@
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
-            DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
         }
 
-        public void OpenNewTextEditor()
+        public void OpenNewTextEditor(string fileNamePlaceholder)
         {
             var textFile = new TextFile(string.Empty,
                 EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding);
-            var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, null);
+            var newEditor = CreateTextEditor(
+                Guid.NewGuid(),
+                textFile,
+                null,
+                fileNamePlaceholder);
             OpenTextEditor(newEditor);
         }
 
@@ -160,18 +160,21 @@
             bool ignoreFileSizeLimit = false)
         {
             var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
-            return CreateTextEditor(id, textFile, file);
+            return CreateTextEditor(id, textFile, file, file.Name);
         }
 
-        public ITextEditor CreateTextEditor(Guid id,
+        public ITextEditor CreateTextEditor(
+            Guid id,
             TextFile textFile,
             StorageFile editingFile,
+            string fileNamePlaceholder,
             bool isModified = false)
         {
             TextEditor textEditor = new TextEditor
             {
                 Id = id,
-                ExtensionProvider = _extensionProvider
+                ExtensionProvider = _extensionProvider,
+                FileNamePlaceholder = fileNamePlaceholder
             };
 
             textEditor.Init(textFile, editingFile, isModified: isModified);
@@ -216,7 +219,7 @@
 
         public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content)
         {
-            title = textEditor.EditingFileName ?? DefaultNewFileName;
+            title = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             content = textEditor.GetContentForSharing();
             return !string.IsNullOrEmpty(content);
         }
@@ -348,7 +351,7 @@
         {
             var textEditorSetsViewItem = new SetsViewItem
             {
-                Header = textEditor.EditingFileName ?? DefaultNewFileName,
+                Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
                 SelectionIndicatorForeground =
                     Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
@@ -696,7 +699,7 @@
                     LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEnding),
                     metaData.DateModifiedFileTime);
 
-                var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, editingFile, metaData.IsModified);
+                var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, editingFile, metaData.FileNamePlaceholder, metaData.IsModified);
                 OpenTextEditor(newEditor, atIndex);
                 newEditor.ResetEditorState(metaData, pendingText);
 

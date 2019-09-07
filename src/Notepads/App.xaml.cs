@@ -169,6 +169,7 @@
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
+            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
             await ActivationService.ActivateAsync(rootFrame, e);
 
