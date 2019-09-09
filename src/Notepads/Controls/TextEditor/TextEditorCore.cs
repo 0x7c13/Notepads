@@ -567,32 +567,42 @@
                 // Duplicate Line
                 GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
                 var line = _contentLinesCache[lineIndex - 1];
-                Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
-
-                GetCurrentLineColumn(out int lineIndex2, out int columnIndex2, out int selectedCount2);
-                if (lineIndex != lineIndex2)
-                    Document.Selection.EndPosition -= 1;
+                var column = Document.Selection.EndPosition + line.Length + 1;
                 
+                if (columnIndex > 1)
+                {
+                    Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
+                    if (lineIndex < (_contentLinesCache.Length - 1))
+                        Document.Selection.EndPosition -= 1;
+                }
+                else
+                {
+                    Document.Selection.EndPosition += 1;
+                    Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
+                    if (lineIndex < (_contentLinesCache.Length -1 ))
+                        Document.Selection.EndPosition -= 1;
+                }
+
                 Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
 
-                Document.Selection.StartPosition = Document.Selection.EndPosition;
+                Document.Selection.StartPosition = Document.Selection.EndPosition = column;
             }
             else
             {
                 // Duplicate selection
                 var textRange = Document.GetRange(start, end);
                 textRange.GetText(TextGetOptions.None, out string text);
-                Document.Selection.EndKey(TextRangeUnit.Line, false);
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
 
                 if (text.EndsWith(RichEditBoxDefaultLineEnding))
                 {
-                    Document.Selection.SetText(TextSetOptions.None, text);
                     Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
+                    Document.Selection.SetText(TextSetOptions.None, text);                    
                     Document.Selection.EndPosition = Document.Selection.StartPosition;
                 }
                 else
                 {
-                    Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + text);
+                    Document.Selection.SetText(TextSetOptions.None, text);
                     Document.Selection.StartPosition = Document.Selection.EndPosition;
                 }
             }            
