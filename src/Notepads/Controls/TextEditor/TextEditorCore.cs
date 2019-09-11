@@ -139,6 +139,7 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
@@ -554,6 +555,50 @@
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void DuplicateText()
+        {
+            GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+            GetTextSelectionPosition(out var start, out var end);
+
+            if (end == start)
+            {
+                // Duplicate Line                
+                var line = _contentLinesCache[lineIndex - 1];
+                var column = Document.Selection.EndPosition + line.Length + 1;
+                
+                if (columnIndex == 1)
+                    Document.Selection.EndPosition += 1;
+
+                Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
+
+                if (lineIndex < (_contentLinesCache.Length - 1))
+                    Document.Selection.EndPosition -= 1;
+
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
+                Document.Selection.StartPosition = Document.Selection.EndPosition = column;
+            }
+            else
+            {
+                // Duplicate selection
+                var textRange = Document.GetRange(start, end);
+                textRange.GetText(TextGetOptions.None, out string text);
+
+                if (text.EndsWith(RichEditBoxDefaultLineEnding))
+                {
+                    Document.Selection.EndOf(TextRangeUnit.Line, false);
+
+                    if (lineIndex < (_contentLinesCache.Length - 1))
+                        Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
+                }
+                else
+                {              
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                }
+
+                Document.Selection.SetText(TextSetOptions.None, text);
+            }            
         }
 
         private void ShowEasterEgg()
