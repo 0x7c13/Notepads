@@ -229,11 +229,7 @@
             {
                 // Add the opened file to FutureAccessList so we can access it next launch
                 var futureAccessToken = ToToken(textEditor.Id);
-                if (!await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile))
-                {
-                    Analytics.TrackEvent("SessionManager_FailedToAddTokenInFutureAccessList", 
-                        new Dictionary<string, string>() {{ "ItemCount", FileSystemUtility.GetFutureAccessListItemCount().ToString() }});
-                }
+                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
                 textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                 textEditorData.EditingFileName = textEditor.EditingFileName;
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;

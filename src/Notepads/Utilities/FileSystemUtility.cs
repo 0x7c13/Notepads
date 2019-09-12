@@ -361,6 +361,12 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList", 
+                    new Dictionary<string, string>()
+                    {
+                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
+                        { "Exception", ex.Message }
+                    });
             }
             return false;
         }

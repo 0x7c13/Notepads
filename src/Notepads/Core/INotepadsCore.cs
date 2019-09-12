@@ -23,7 +23,7 @@
 
         event EventHandler<ITextEditor> TextEditorSaved;
 
-        event EventHandler<ITextEditor> TextEditorClosingWithUnsavedContent;
+        event EventHandler<ITextEditor> TextEditorClosing;
 
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
