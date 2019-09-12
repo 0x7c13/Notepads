@@ -38,11 +38,6 @@
             //await LoggingService.InitializeAsync();
             LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
 
-            if (!IsFirstInstance)
-            {
-                Analytics.TrackEvent("ShadowInstanceLaunched");
-            }
-
             ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
 
             UnhandledException += OnUnhandledException;
@@ -166,6 +161,9 @@
                 {
                     "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
                 },
+                {
+                    "IsShadowInstance", (!IsFirstInstance).ToString()
+                }
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");

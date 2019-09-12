@@ -29,35 +29,36 @@
 
             if (activatedArgs is FileActivatedEventArgs)
             {
-                AssignOrCreateInstance();
+                RedirectOrCreateNewInstance();
             }
             else if (activatedArgs is CommandLineActivatedEventArgs cmdActivatedArgs)
             {
-                LoggingService.LogInfo($"[Main] [CommandActivated] CurrentDirectoryPath: {cmdActivatedArgs.Operation.CurrentDirectoryPath} Arguments: {cmdActivatedArgs.Operation.Arguments}");
-
-                var file = FileSystemUtility.GetAbsolutePathFromCommandLine(
-                    cmdActivatedArgs.Operation.CurrentDirectoryPath, cmdActivatedArgs.Operation.Arguments, App.ApplicationName);
-                if (file != null)
-                {
-                    AssignOrCreateInstance();
-                }
-                else
-                {
-                    OpenNewInstance();
-                }
+                RedirectOrCreateNewInstance();
             }
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
                 LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
-                if (protocol == NotepadsOperationProtocol.OpenNewInstance || protocol == NotepadsOperationProtocol.Unrecognized)
+                if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
                     OpenNewInstance();
+                }
+                else
+                {
+                    RedirectOrCreateNewInstance();
                 }
             }
             else
             {
-                OpenNewInstance();
+                // The platform might provide a recommended instance.
+                if (AppInstance.RecommendedInstance != null)
+                {
+                    AppInstance.RecommendedInstance.RedirectActivationTo();
+                }
+                else
+                {
+                    RedirectOrCreateNewInstance();
+                }
             }
         }
 
@@ -69,7 +70,7 @@
             IsFirstInstance = false;
         }
 
-        private static void AssignOrCreateInstance()
+        private static void RedirectOrCreateNewInstance()
         {
             var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString()));
 

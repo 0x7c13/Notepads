@@ -11,6 +11,8 @@
 
     public static class NotepadsProtocolService
     {
+        private const string NewInstanceProtocolStr = "newinstance";
+
         public static NotepadsOperationProtocol GetOperationProtocol(Uri uri, out string context)
         {
             context = null;
@@ -29,7 +31,7 @@
                 operation = operation.Remove(operation.Length - 1);
             }
 
-            if (string.IsNullOrEmpty(operation))
+            if (!string.IsNullOrEmpty(operation) && string.Equals(NewInstanceProtocolStr, operation, StringComparison.OrdinalIgnoreCase))
             {
                 return NotepadsOperationProtocol.OpenNewInstance;
             }
@@ -45,7 +47,7 @@
             }
             else if (operation == NotepadsOperationProtocol.OpenNewInstance)
             {
-                var uriToLaunch = "notepads://";
+                var uriToLaunch = $"notepads://{NewInstanceProtocolStr}";
                 return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()));
             }
             else
