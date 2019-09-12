@@ -114,6 +114,27 @@
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
+                <controls:InAppNotification x:Name="GoToPlaceholder"
+                                            x:Load="false"
+                                            Padding="0"
+                                            Margin="0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Style="{StaticResource FindAndReplacePlaceholder}"
+                                            ShowDismissButton="True"
+                                            AnimationDuration="0:0:0.050"
+                                            VerticalOffset="10"
+                                            HorizontalOffset="-22"
+                                            FontWeight="Light"
+                                            BorderThickness="1"
+                                            Closed="GoToPlaceholder_Closed">
+                    <controls:InAppNotification.Content>
+                        <goTo:GoToControl x:Name="GoToControl" 
+                                                              Width="320"
+                                                              OnDismissKeyDown="GoToControl_OnDismissKeyDown"
+                                                              OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
+                    </controls:InAppNotification.Content>
+                </controls:InAppNotification>
             </Grid>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"

@@ -601,12 +601,12 @@
             }            
         }
 
-        public bool GoTo(int line)
+        public bool GoTo(string line)
         {
-            if (line == 0)
+            if (Convert.ToInt32(line) == 0 && int.TryParse(line, out int value))
                 return false;
 
-            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+            Document.Selection.SetIndex(TextRangeUnit.Paragraph, Convert.ToInt32(line), false);
 
             return true;
         }

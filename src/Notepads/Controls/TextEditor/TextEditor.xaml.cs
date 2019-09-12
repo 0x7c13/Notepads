@@ -8,6 +8,7 @@
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
+    using Notepads.Controls.GoTo;
     using Notepads.Extensions;
     using Notepads.Models;
     using Notepads.Services;
@@ -726,12 +727,59 @@
 
         public void ShowGoToControl()
         {
+            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)
+            {
+                return;
+            }
 
+            if (GoToPlaceholder == null)
+            {
+                FindName("GoToPlaceholder"); // Lazy loading
+            }
+
+            var goTo = (GoToControl)GoToPlaceholder.Content;
+
+            if (goTo == null) return;
+
+            GoToPlaceholder.Height = goTo.GetHeight();
+
+            if (GoToPlaceholder.Visibility == Visibility.Collapsed)
+            {
+                GoToPlaceholder.Show();
+            }
+
+            goTo.Focus();
         }
 
         public void HideGoToControl()
         {
+            GoToPlaceholder?.Dismiss();
+        }
 
+        private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
+        {
+            TextEditorCore.Focus(FocusState.Programmatic);
+            bool found = false;
+
+            found = TextEditorCore.GoTo(e.SearchLine);
+
+            if (!found)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+            }
+
+            HideGoToControl();
+        }
+
+        private void GoToPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        {
+            GoToPlaceholder.Visibility = Visibility.Collapsed;
+        }
+
+        private void GoToControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
+        {
+            GoToPlaceholder.Dismiss();
+            TextEditorCore.Focus(FocusState.Programmatic);
         }
     }
 }
