@@ -37,7 +37,7 @@
 
         public event EventHandler<ITextEditor> TextEditorSaved;
 
-        public event EventHandler<ITextEditor> TextEditorClosingWithUnsavedContent;
+        public event EventHandler<ITextEditor> TextEditorClosing;
 
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
@@ -436,11 +436,11 @@
         private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
         {
             if (!(e.Set.Content is ITextEditor textEditor)) return;
-            if (!textEditor.IsModified) return;
-            if (TextEditorClosingWithUnsavedContent != null)
+
+            if (TextEditorClosing != null)
             {
                 e.Cancel = true;
-                TextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
+                TextEditorClosing.Invoke(this, textEditor);
             }
         }
 

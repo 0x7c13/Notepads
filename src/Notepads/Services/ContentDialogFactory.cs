@@ -10,7 +10,7 @@
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
-        public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction)
+        public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction, Action cancelAction)
         {
             ContentDialog saveReminderDialog = new ContentDialog
             {
@@ -25,6 +25,7 @@
             };
             saveReminderDialog.PrimaryButtonClick += (dialog, eventArgs) => saveAndExitAction();
             saveReminderDialog.SecondaryButtonClick += (dialog, eventArgs) => discardAndExitAction();
+            saveReminderDialog.CloseButtonClick += (dialog, eventArgs) => cancelAction();
             return saveReminderDialog;
         }
 
