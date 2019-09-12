@@ -55,7 +55,7 @@
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
-                    _notepadsCore.TextEditorClosingWithUnsavedContent += OnTextEditorClosingWithUnsavedContent;
+                    _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
@@ -381,19 +381,19 @@
 
         private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            e.Handled = true;
+            var deferral = e.GetDeferral();
 
             if (EditorSettingsService.IsSessionSnapshotEnabled)
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
-                Application.Current.Exit();
+                deferral.Complete();
             }
             else
             {
                 if (!NotepadsCore.HaveUnsavedTextEditor())
                 {
-                    Application.Current.Exit();
+                    deferral.Complete();
                 }
 
                 ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
@@ -406,10 +406,23 @@
                                 NotepadsCore.DeleteTextEditor(textEditor);
                             }
                         }
+
+                        // Prevent app from closing if there is any tab still opens
+                        if (NotepadsCore.GetNumberOfOpenedTextEditors() > 0)
+                        {
+                            e.Handled = true;
+                        }
+
+                        deferral.Complete();
                     },
                     () =>
                     {
-                        Application.Current.Exit();
+                        deferral.Complete();
+                    },
+                    () =>
+                    {
+                        e.Handled = true;
+                        deferral.Complete();
                     });
 
                 await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
@@ -442,37 +455,41 @@
             }
         }
 
-        private async void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
+        private void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
-                if (EditorSettingsService.IsSessionSnapshotEnabled)
-                {
-                    await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
-                    Application.Current.Exit();
-                }
-                else
-                {
-                    Application.Current.Exit();
-                }
+                NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
             }
         }
 
-        private async void OnTextEditorClosingWithUnsavedContent(object sender, ITextEditor textEditor)
+        private async void OnTextEditorClosing(object sender, ITextEditor textEditor)
         {
-            var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
-
-            var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1 && textEditor.IsModified == false && textEditor.EditingFile == null)
             {
-                if (await Save(textEditor, saveAs: false))
-                {
-                    NotepadsCore.DeleteTextEditor(textEditor);
-                }
-            }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
+                // Do nothing
+                // Take no action if user is trying to close the last tab and the last tab is a new empty document
+            }
+            else if (!textEditor.IsModified)
+            {
+                NotepadsCore.DeleteTextEditor(textEditor);
+            }
+            else // Remind user to save uncommitted changes
+            {
+                var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-            setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
-            await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
-            NotepadsCore.FocusOnSelectedTextEditor();
+                var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+                {
+                    if (await Save(textEditor, saveAs: false))
+                    {
+                        NotepadsCore.DeleteTextEditor(textEditor);
+                    }
+                }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
+
+                setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
+                await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+                NotepadsCore.FocusOnSelectedTextEditor();
+            }
         }
 
         private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
