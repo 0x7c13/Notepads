@@ -11,6 +11,7 @@
     using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.ApplicationModel.Activation;
+    using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
@@ -56,6 +57,7 @@
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+                    _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
@@ -464,6 +466,28 @@
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
                 NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
+            }
+        }
+
+        private async void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
+        {
+            // Notepads should exit if last tab was dragged to another app instance
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1)
+            {
+                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                {	
+                    NotepadsCore.DeleteTextEditor(textEditor);
+                    await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                    CoreApplication.Exit();
+                }	
+                else	
+                {	
+                    CoreApplication.Exit();
+                }
+            }
+            else
+            {
+                NotepadsCore.DeleteTextEditor(textEditor);
             }
         }
 
