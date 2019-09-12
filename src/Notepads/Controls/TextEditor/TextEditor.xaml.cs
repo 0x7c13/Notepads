@@ -727,15 +727,10 @@
 
         public void ShowGoToControl()
         {
-            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)
-            {
-                return;
-            }
+            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
 
             if (GoToPlaceholder == null)
-            {
                 FindName("GoToPlaceholder"); // Lazy loading
-            }
 
             var goTo = (GoToControl)GoToPlaceholder.Content;
 
@@ -744,9 +739,7 @@
             GoToPlaceholder.Height = goTo.GetHeight();
 
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
-            {
                 GoToPlaceholder.Show();
-            }
 
             goTo.Focus();
         }
@@ -759,10 +752,8 @@
         private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
-            int line = Int32.TryParse(e.SearchLine, out int val) ? Convert.ToInt32(e.SearchLine) : 0;
-            bool found = false;
-
-            found = TextEditorCore.GoTo(line);
+            int line = int.TryParse(e.SearchLine, out _) ? Convert.ToInt32(e.SearchLine) : 0;
+            bool found = TextEditorCore.GoTo(line);
 
             if (!found)
             {
