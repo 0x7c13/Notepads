@@ -759,16 +759,20 @@
         private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
+            int line = Int32.TryParse(e.SearchLine, out int val) ? Convert.ToInt32(e.SearchLine) : 0;
             bool found = false;
 
-            found = TextEditorCore.GoTo(e.SearchLine);
+            found = TextEditorCore.GoTo(line);
 
             if (!found)
             {
+                GoToControl.Focus();
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
             }
-
-            HideGoToControl();
+            else
+            {
+                HideGoToControl();
+            }
         }
 
         private void GoToPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)

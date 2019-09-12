@@ -601,14 +601,18 @@
             }            
         }
 
-        public bool GoTo(string line)
+        public bool GoTo(int line)
         {
-            if (Convert.ToInt32(line) == 0 && int.TryParse(line, out int value))
+            if (line > 0 && line < _contentLinesCache.Length)
+            {
+                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+
+                return true;
+            }
+            else
+            {
                 return false;
-
-            Document.Selection.SetIndex(TextRangeUnit.Paragraph, Convert.ToInt32(line), false);
-
-            return true;
+            }
         }
 
         private void ShowEasterEgg()

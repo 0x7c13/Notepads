@@ -33,7 +33,7 @@
             </Grid>
 
             <Button x:Name="SearchButton"
-                    x:Uid="FindAndReplace_SearchButton"
+                    x:Uid="GoTo_SearchButton"
                     Padding="3,0,0,0"
                     Width="38"
                     Grid.Column="1" 
@@ -41,7 +41,7 @@
                     IsTabStop="False"
                     FontSize="16"
                     Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE721;" 
+                    Content="&#xEBE7;" 
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchButton_OnClick">
                 <Button.KeyboardAccelerators>
@@ -50,7 +50,7 @@
             </Button>
 
             <Button x:Name="DismissButton"
-                    x:Uid="FindAndReplace_DismissButton"
+                    x:Uid="GoTo_DismissButton"
                     IsTabStop="False"
                     Padding="0"
                     Width="32"
