@@ -10,6 +10,5 @@
         }
 
         public string SearchLine { get; }
-
     }
 }
