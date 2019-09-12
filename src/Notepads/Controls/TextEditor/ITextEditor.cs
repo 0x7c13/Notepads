@@ -96,5 +96,9 @@
         void ShowFindAndReplaceControl(bool showReplaceBar);
 
         void HideFindAndReplaceControl();
+
+        void ShowGoToControl();
+
+        void HideGoToControl();
     }
 }

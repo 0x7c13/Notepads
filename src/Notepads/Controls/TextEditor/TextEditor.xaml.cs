@@ -316,6 +316,7 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
@@ -721,6 +722,16 @@
         {
             FindAndReplacePlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        public void ShowGoToControl()
+        {
+
+        }
+
+        public void HideGoToControl()
+        {
+
         }
     }
 }

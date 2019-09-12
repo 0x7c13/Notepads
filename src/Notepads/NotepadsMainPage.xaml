@@ -126,7 +126,7 @@
                                                 <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_GoTo" x:Name="GoToButton">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_GoTo" x:Name="MenuGoToButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xEBE7;" />
                                             </MenuFlyoutItem.Icon>

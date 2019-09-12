@@ -163,6 +163,7 @@
             MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
+            MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
@@ -176,6 +177,7 @@
                     MenuSaveAsButton.IsEnabled = false;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
+                    MenuGoToButton.IsEnabled = false;
                     //MenuPrintButton.IsEnabled = false;
                 }
                 else if (selectedTextEditor.IsEditorEnabled() == false)
@@ -184,6 +186,7 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
+                    MenuGoToButton.IsEnabled = true;
                     //MenuPrintButton.IsEnabled = true;
                 }
                 else
@@ -192,6 +195,7 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = true;
                     MenuReplaceButton.IsEnabled = true;
+                    MenuGoToButton.IsEnabled = true;
                     //MenuPrintButton.IsEnabled = true;
                 }
 
