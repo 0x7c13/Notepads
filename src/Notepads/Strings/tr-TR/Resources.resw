@@ -449,4 +449,8 @@
     <value>Dosya zaten açık!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
+  <data name="MainMenu_Button_GoTo.Text" xml:space="preserve">
+    <value>Go To...</value>
+    <comment>MainMenu: "Go To..." button display text.</comment>
+  </data>
 </root>

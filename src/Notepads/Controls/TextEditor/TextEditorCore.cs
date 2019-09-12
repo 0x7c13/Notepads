@@ -601,6 +601,16 @@
             }            
         }
 
+        public bool GoTo(int line)
+        {
+            if (line == 0)
+                return false;
+
+            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+
+            return true;
+        }
+
         private void ShowEasterEgg()
         {
             //_contentScrollViewer.Background = new ImageBrush
