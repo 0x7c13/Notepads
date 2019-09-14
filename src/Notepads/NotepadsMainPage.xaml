@@ -126,14 +126,6 @@
                                                 <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_GoTo" x:Name="MenuGoToButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xEBE7;" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="G" Modifiers="Control" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
                                             <MenuFlyoutItem.Icon>
@@ -336,7 +328,9 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="3">
+            <Grid Column="3" x:Name="LineColumnIndicatorButton"
+                  IsTapEnabled="True" 
+                  extensions:Mouse.Cursor="Hand">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
             <Grid Column="4">
