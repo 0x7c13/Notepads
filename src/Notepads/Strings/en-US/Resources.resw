@@ -449,4 +449,16 @@
     <value>File already opened!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>New window</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Opens a new window</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>New Window</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
 </root>

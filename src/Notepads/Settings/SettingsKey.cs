@@ -2,6 +2,10 @@
 {
     internal static class SettingsKey
     {
+        // App related
+        internal static string AppVersionStr = "AppVersionStr";
+        internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool"; 
+
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";
         internal static string UseWindowsThemeBool = "UseWindowsThemeBool";
