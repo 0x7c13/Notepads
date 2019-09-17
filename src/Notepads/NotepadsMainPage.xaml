@@ -7,9 +7,6 @@
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -87,6 +84,14 @@
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New_Window" x:Name="MenuCreateNewWindowButton" AccessKey="N">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="N" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
@@ -370,14 +375,17 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="6" Background="{StaticResource SystemControlForegroundAccentBrush}">
-                <TextBlock x:Name="ShadowInstanceIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           x:Uid="App_ShadowInstanceIndicator"
-                           Visibility="Collapsed"
-                           IsTapEnabled="True" 
-                           extensions:Mouse.Cursor="Hand"
-                           Tapped="StatusBarComponent_OnTapped">
-                </TextBlock>
+            <Grid Column="6">
+                <Grid x:Name="ShadowWindowIndicator"
+                      Visibility="Collapsed"
+                      Padding="5,6,10,5"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon Glyph="&#xE737;" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                    </Viewbox>
+                </Grid>
             </Grid>
         </Grid>
 
