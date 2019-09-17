@@ -38,7 +38,7 @@
             //await LoggingService.InitializeAsync();
             LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
 
-            ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
@@ -162,7 +162,7 @@
                     "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
                 },
                 {
-                    "IsShadowInstance", (!IsFirstInstance).ToString()
+                    "IsShadowWindow", (!IsFirstInstance).ToString()
                 }
             };
 

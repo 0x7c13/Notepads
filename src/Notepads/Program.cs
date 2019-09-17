@@ -1,13 +1,12 @@
 ﻿namespace Notepads
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Notepads.Services;
     using Notepads.Settings;
-    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
-    using Windows.Storage;
 
     public static class Program
     {
@@ -17,12 +16,16 @@
 
         static void Main(string[] args)
         {
+            //UpdateAppVersion();
+
+            //UpdateJumpList().Wait();
+
             _instances = AppInstance.GetInstances();
 
             if (_instances.Count == 0)
             {
                 IsFirstInstance = true;
-                ApplicationSettingsStore.Write("ActiveInstance", null);
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
@@ -48,17 +51,28 @@
                     RedirectOrCreateNewInstance();
                 }
             }
-            else
+            else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
             {
-                // The platform might provide a recommended instance.
-                if (AppInstance.RecommendedInstance != null)
+                bool handled = false;
+
+                if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                 {
-                    AppInstance.RecommendedInstance.RedirectActivationTo();
+                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out var context);
+                    if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+                    {
+                        handled = true;
+                        OpenNewInstance();
+                    }
                 }
-                else
+
+                if (!handled)
                 {
                     RedirectOrCreateNewInstance();
                 }
+            }
+            else
+            {
+                RedirectOrCreateNewInstance();
             }
         }
 
@@ -89,6 +103,7 @@
         private static AppInstance GetLastActiveInstance()
         {
             var instances = AppInstance.GetInstances();
+
             if (instances.Count == 0)
             {
                 return null;
@@ -98,7 +113,7 @@
                 return instances.FirstOrDefault();
             }
 
-            if (!(ApplicationSettingsStore.Read("ActiveInstance") is string activeInstance))
+            if (!(ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is string activeInstance))
             {
                 return null;
             }
@@ -114,5 +129,29 @@
             // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
         }
+
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
+
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }
