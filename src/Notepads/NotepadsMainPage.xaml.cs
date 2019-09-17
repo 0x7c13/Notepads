@@ -24,6 +24,7 @@
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
@@ -237,7 +238,10 @@
 
         private async Task OpenNewAppInstance()
         {
-            await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
+            if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance))
+            {
+                Analytics.TrackEvent("FailedToOpenNewAppInstance");
+            }
         }
 
         #region Application Life Cycle & Window management 

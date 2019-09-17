@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
