@@ -5,6 +5,7 @@
         // App related
         internal static string AppVersionStr = "AppVersionStr";
         internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool"; 
+        internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
 
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";

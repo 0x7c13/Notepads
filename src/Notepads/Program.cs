@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
-    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
 
@@ -27,7 +26,7 @@
             if (_instances.Count == 0)
             {
                 IsFirstInstance = true;
-                ApplicationSettingsStore.Write("ActiveInstance", null);
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
@@ -105,6 +104,7 @@
         private static AppInstance GetLastActiveInstance()
         {
             var instances = AppInstance.GetInstances();
+
             if (instances.Count == 0)
             {
                 return null;
@@ -114,7 +114,7 @@
                 return instances.FirstOrDefault();
             }
 
-            if (!(ApplicationSettingsStore.Read("ActiveInstance") is string activeInstance))
+            if (!(ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is string activeInstance))
             {
                 return null;
             }
@@ -137,7 +137,7 @@
             string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
             string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
 
-            //if (currentVer != oldVer)
+            if (currentVer != oldVer)
             {
                 JumpListService.IsJumpListOutOfDate = true;
                 ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);

@@ -357,7 +357,7 @@
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
-                ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
@@ -477,8 +477,7 @@
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0 && !_appShouldExitAfterLastEditorClosed)
             {
-                NotepadsCore.OpenNewTextEditor(_defaultNewFileName);   
-            
+                NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
             }
         }
 
