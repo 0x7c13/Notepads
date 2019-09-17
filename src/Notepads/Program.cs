@@ -17,9 +17,9 @@
 
         static void Main(string[] args)
         {
-            UpdateAppVersion();
+            //UpdateAppVersion();
 
-            UpdateJumpList().Wait();
+            //UpdateJumpList().Wait();
 
             _instances = AppInstance.GetInstances();
 
@@ -131,28 +131,28 @@
             return instances.FirstOrDefault();
         }
 
-        private static void UpdateAppVersion()
-        {
-            var packageVer = Package.Current.Id.Version;
-            string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
-            string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
 
-            if (currentVer != oldVer)
-            {
-                JumpListService.IsJumpListOutOfDate = true;
-                ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
-            }
-        }
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
 
-        private static async Task UpdateJumpList()
-        {
-            if (JumpListService.IsJumpListOutOfDate)
-            {
-                if (await JumpListService.UpdateJumpList())
-                {
-                    JumpListService.IsJumpListOutOfDate = false;
-                }
-            }
-        }
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }

@@ -309,7 +309,7 @@
 
                 if (!App.IsFirstInstance)
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
                 }
                 _loaded = true;
             }
@@ -499,7 +499,7 @@
             }
             else
             {
-                NotepadsCore.DeleteTextEditor(textEditor);   
+                NotepadsCore.DeleteTextEditor(textEditor);
             }
         }
 

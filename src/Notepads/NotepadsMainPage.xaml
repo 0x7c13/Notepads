@@ -375,14 +375,17 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="6" Background="{StaticResource SystemControlForegroundAccentBrush}">
-                <TextBlock x:Name="ShadowInstanceIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           x:Uid="App_ShadowInstanceIndicator"
-                           Visibility="Collapsed"
-                           IsTapEnabled="True" 
-                           extensions:Mouse.Cursor="Hand"
-                           Tapped="StatusBarComponent_OnTapped">
-                </TextBlock>
+            <Grid Column="6">
+                <Grid x:Name="ShadowWindowIndicator"
+                      Visibility="Collapsed"
+                      Padding="5,6,10,5"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon Glyph="&#xE737;" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                    </Viewbox>
+                </Grid>
             </Grid>
         </Grid>
 

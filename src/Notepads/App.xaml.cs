@@ -162,7 +162,7 @@
                     "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
                 },
                 {
-                    "IsShadowInstance", (!IsFirstInstance).ToString()
+                    "IsShadowWindow", (!IsFirstInstance).ToString()
                 }
             };
 
