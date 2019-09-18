@@ -1,12 +1,11 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
 
     public static class EncodingUtility
     {
@@ -108,7 +107,7 @@ namespace Notepads.Utilities
             switch (name)
             {
                 case "ANSI":
-                    return GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false); ;
+                    return GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
                 case "UTF-7":
                     return new UTF7Encoding();
                 case "UTF-8":

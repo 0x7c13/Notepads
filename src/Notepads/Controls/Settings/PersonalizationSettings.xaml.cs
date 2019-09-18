@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.Settings
+﻿namespace Notepads.Controls.Settings
 {
     using Notepads.Services;
     using Windows.UI.Xaml;

@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Notepads.MainPage"
+    x:Class="Notepads.NotepadsMainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,9 +7,6 @@
     xmlns:sets="using:SetsView"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -27,8 +24,6 @@
         <SplitView x:Name="RootSplitView"
                    Grid.Row="0"
                    AllowDrop="True" 
-                   Drop="RootGrid_OnDrop" 
-                   DragOver="RootGrid_OnDragOver"
                    IsPaneOpen="False"
                    OpenPaneLength="395"
                    DisplayMode="Overlay"
@@ -89,6 +84,14 @@
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New_Window" x:Name="MenuCreateNewWindowButton" AccessKey="N">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="N" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
@@ -252,6 +255,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Grid x:Name="FileModificationStateIndicator"
@@ -267,7 +271,7 @@
                             <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem" 
                                             x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
                                             Tag="ReloadFileFromDisk" 
-                                            Click="ReloadFileFromDisk_OnClick">
+                                            Click="ReloadFileFromDisk">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72C;"/>
                                 </MenuFlyoutItem.Icon>
@@ -370,6 +374,18 @@
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
                 </TextBlock>
+            </Grid>
+            <Grid Column="6">
+                <Grid x:Name="ShadowWindowIndicator"
+                      Visibility="Collapsed"
+                      Padding="5,6,10,5"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon Glyph="&#xE737;" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                    </Viewbox>
+                </Grid>
             </Grid>
         </Grid>
 

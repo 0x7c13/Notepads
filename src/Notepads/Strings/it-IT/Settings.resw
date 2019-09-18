@@ -294,19 +294,19 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic session snapshot backup to prevent accidental data loss for uncommitted changes. Notepads will NOT remind you to save your work on app close if this feature is enabled.</value>
+    <value>Una volta abilitato, Notepads memorizzerà la sessione corrente per il prossimo avvio ed effettuerà periodicamente un backup dei file aperti per prevenire la perdita accidentale di dati in caso di modifiche non salvate. Notepads NON ti ricorderà di salvare il tuo lavoro alla chiusura se questa funzionalità viene attivata. Ricorda inoltre che lo snapshot della sessione funziona solo nella prima o nell'istanza pricipale di Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Abilita backup e ripristino della sessione</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Enable session backup and restore</value>
+    <value>Abilita backup e ripristino della sessione</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Session Backup Settings</value>
+    <value>Impostazioni del backup della sessione</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

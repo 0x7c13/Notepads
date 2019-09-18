@@ -1,21 +1,19 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     using System;
     using System.Threading.Tasks;
+    using Notepads.Controls.Dialog;
     using Windows.UI.Xaml.Controls;
 
-    public static class ContentDialogMaker
+    public static class DialogManager
     {
-        public static async void CreateContentDialog(ContentDialog dialog, bool awaitPreviousDialog) { await CreateDialog(dialog, awaitPreviousDialog); }
+        public static async Task<ContentDialogResult> OpenDialogAsync(NotepadsDialog dialog, bool awaitPreviousDialog) { return await OpenDialog(dialog, awaitPreviousDialog); }
 
-        public static async Task CreateContentDialogAsync(ContentDialog dialog, bool awaitPreviousDialog) { await CreateDialog(dialog, awaitPreviousDialog); }
-
-        public static ContentDialog ActiveDialog;
+        public static NotepadsDialog ActiveDialog;
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
 
-        static async Task CreateDialog(ContentDialog dialog, bool awaitPreviousDialog)
+        static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();
@@ -29,13 +27,15 @@ namespace Notepads.Utilities
                 }
                 else
                 {
+                    ActiveDialog.IsAborted = true;
                     ActiveDialog.Hide();
                 }
             }
 
             ActiveDialog = dialog;
-            await ActiveDialog.ShowAsync();
+            var result = await ActiveDialog.ShowAsync();
             nextAwaiter.SetResult(true);
+            return result;
         }
     }
 }

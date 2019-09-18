@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     using System;
     using Windows.Foundation;

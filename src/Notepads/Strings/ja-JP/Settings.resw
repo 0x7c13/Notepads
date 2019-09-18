@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Dependencies and References</value>
+    <value>使用・参照しているモジュール</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
@@ -126,31 +126,31 @@
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Disclaimer</value>
+    <value>免責事項</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Free and open source text editor designed and implemented by Jackie (Jiaqi) Liu</value>
+    <value>Jackie (Jiaqi) Liu がデザインと実装を行った、フリーなオープンソース テキストエディタ</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>To contact the authors:</value>
+    <value>作者の連絡先:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>For issue reporting and feature requests:</value>
+    <value>問題の報告と機能追加依頼の連絡先:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Source code is available on Github:</value>
+    <value>ソースコードはGithub にあります:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>For more info, please visit our website:</value>
+    <value>詳しくは我々のウェブサイトをご覧ください:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Privacy Statement</value>
+    <value>プライバシーについて</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
@@ -290,23 +290,23 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Changelog</value>
+    <value>変更履歴</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads は次回起動時に備えて現在の状態保存を行い、また定期的にセッション スナップショットのバックアップを行い、保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
+    <value>Notepads は次回起動時に備えて現在の状態を保存し、また定期的に内容をバックアップして明示的にファイルに保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>セッションのバックアップと復元を使用する</value>
+    <value>セッション スナップショットを使用する</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>セッションのバックアップと復元を使用する</value>
+    <value>セッション スナップショットを使用する</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>セッションのバックアップ設定</value>
+    <value>セッション スナップショット設定</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
 </root>

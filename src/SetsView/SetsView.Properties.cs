@@ -108,7 +108,6 @@ namespace SetsView
         public static readonly DependencyProperty SetsPaddingHeaderTemplateProperty =
             DependencyProperty.Register(nameof(SetsPaddingHeaderTemplate), typeof(DataTemplate), typeof(SetsView), new PropertyMetadata(null, OnLayoutEffectingPropertyChanged));
 
-
         /// <summary>
         /// Gets or sets the content to appear to the right or below the set strip.
         /// </summary>

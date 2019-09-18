@@ -290,11 +290,11 @@
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Változtatás</value>
+    <value>Változások</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva.</value>
+    <value>Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva. A munkamenet mentés csak az első vagy fő Notepads ablakban működik.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">

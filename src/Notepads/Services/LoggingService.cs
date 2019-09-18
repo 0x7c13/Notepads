@@ -1,7 +1,5 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
-    using Notepads.Utilities;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -9,6 +7,7 @@ namespace Notepads.Services
     using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.Core;
     using Windows.Storage;
 

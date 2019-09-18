@@ -1,8 +1,7 @@
-﻿
-namespace Notepads.Controls.Settings
+﻿namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
     using System;
+    using Notepads.Services;
     using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;

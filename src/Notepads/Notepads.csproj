@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -51,7 +51,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>ARM</PlatformTarget>
@@ -61,7 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -74,7 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\ARM64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>ARM64</PlatformTarget>
@@ -85,7 +85,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
     <OutputPath>bin\ARM64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -98,7 +98,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -109,7 +109,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -123,9 +123,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Commands\IKeyboardCommand.cs" />
     <Compile Include="Commands\IKeyboardCommandHandler.cs" />
     <Compile Include="Commands\KeyboardShortcut.cs" />
@@ -151,17 +148,23 @@
     <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
       <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\ITextEditor.cs" />
     <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
       <DependentUpon>TextEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorStateMetaData.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\ISessionManager.cs" />
     <Compile Include="Core\NotepadsCore.cs" />
+    <Compile Include="Core\SessionDataModels\NotepadsSessionData.cs" />
     <Compile Include="Core\SessionManager.cs" />
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
+    <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
+    <Compile Include="Extensions\DiffViewer\BrushFactory.cs" />
+    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffContext.cs" />
     <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
@@ -169,9 +172,15 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Services\JumpListService.cs" />
+    <Compile Include="NotepadsMainPage.IO.cs" />
+    <Compile Include="NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Services\LoggingService.cs" />
+    <Compile Include="Services\NotepadsProtocolService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
-    <Compile Include="Utilities\ContentDialogMaker.cs" />
+    <Compile Include="Utilities\DialogManager.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
@@ -179,12 +188,8 @@
       <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Services\ContentDialogFactory.cs" />
+    <Compile Include="Services\NotepadsDialogFactory.cs" />
     <Compile Include="Services\FilePickerFactory.cs" />
     <Compile Include="Services\PrintService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
@@ -195,8 +200,20 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
+    <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
+    <Compile Include="Models\TextFile.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NotepadsMainPage.xaml.cs">
+      <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -208,7 +225,6 @@
     <Content Include="Assets\appicon_bs.png" />
     <Content Include="Assets\appicon_w.png" />
     <Content Include="Assets\appicon_ws.png" />
-    <Content Include="Assets\EasterEgg.jpg" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
     <Content Include="Assets\LargeTile.scale-150.png" />
@@ -317,7 +333,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -373,7 +389,7 @@
       <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.8</Version>
+      <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>5.1.1</Version>
@@ -475,6 +491,13 @@
   <ItemGroup>
     <PRIResource Include="Strings\cs-CZ\Settings.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pt-BR\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pt-BR\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

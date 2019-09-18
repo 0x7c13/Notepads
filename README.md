@@ -1,9 +1,26 @@
-# Notepads App [ Beta ] <img align="left" src="src/Notepads/Assets/StoreLogo.scale-200.png">
-
-[![Store link](https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square)](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
-[![Beta release](https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square)](https://github.com/JasonStein/Notepads/releases)
-![Platform](https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square)
-[![Discord](https://img.shields.io/discord/588473626651787274.svg?style=flat-square)](https://discord.gg/VqetCub)
+<p align="center">
+  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.gif">
+</p>
+<h1 align="center">
+  Notepads
+</h1>
+<p align="center">
+  A modern, lightweight text editor with minimum design.
+</p>
+<p align="center">
+  <a href="https://www.microsoft.com/store/apps/9nhl4nsc67wm">
+    <img src="https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square" alt="Store link" />
+  </a>
+  <a href="https://github.com/JasonStein/Notepads/releases">
+    <img src="https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square" alt="Releases" />
+  </a>
+  <a>
+    <img src="https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square" alt="Platform" />
+  </a>
+  <a href="https://discord.gg/VqetCub">
+    <img src="https://img.shields.io/discord/588473626651787274.svg?style=flat-square" alt="Discord" />
+  </a>
+</p>
 
 ## What is Notepads and why do I care?
 
@@ -92,9 +109,9 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas)
 * Localization Contributors: 
-    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet)
+    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
     * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
     * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
@@ -106,6 +123,9 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
     * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
+    * [pt-BR][Brazilian]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
+
+[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 
 ## Stay tuned 📢:
 

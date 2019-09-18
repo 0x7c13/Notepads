@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist.</value>
+    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist. Sicherungen werden nur von der ersten Instanz von Notepads erstellt.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">

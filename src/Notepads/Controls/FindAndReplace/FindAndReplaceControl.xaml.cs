@@ -1,8 +1,7 @@
-﻿
-namespace Notepads.Controls.FindAndReplace
+﻿namespace Notepads.Controls.FindAndReplace
 {
-    using Notepads.Services;
     using System;
+    using Notepads.Services;
     using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
