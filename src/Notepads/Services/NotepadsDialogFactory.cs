@@ -1,7 +1,7 @@
 ﻿namespace Notepads.Services
 {
     using System;
-    using Notepads.Utilities;
+    using Notepads.Controls.Dialog;
     using Windows.ApplicationModel.Resources;
     using Windows.UI;
     using Windows.UI.Xaml;

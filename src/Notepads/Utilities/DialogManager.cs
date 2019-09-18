@@ -2,12 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Notepads.Controls.Dialog;
     using Windows.UI.Xaml.Controls;
-
-    public class NotepadsDialog : ContentDialog
-    {
-        public bool IsAborted = false;
-    }
 
     public static class DialogManager
     {

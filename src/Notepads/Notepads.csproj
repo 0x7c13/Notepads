@@ -200,6 +200,7 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
+    <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
