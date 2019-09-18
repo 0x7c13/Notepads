@@ -7,6 +7,7 @@
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -56,14 +57,56 @@
 
             LoggingService.LogError($"OnUnhandledException: {e.Exception}");
 
-            Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
                 {
                     "Message", e.Message
                 },
                 {
                     "Exception", e.Exception.ToString()
+                },
+                {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
+                {
+                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
+                },
+                {
+                    "Culture", SystemInformation.Culture.EnglishName
+                },
+                {
+                    "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0")
+                },
+                {
+                    "IsFirstRun", SystemInformation.IsFirstRun.ToString()
+                },
+                {
+                    "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString()
+                },
+                {
+                    "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}"
+                },
+                {
+                    "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "CurrentLaunchCount", SystemInformation.LaunchCount.ToString()
+                },
+                {
+                    "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString()
+                },
+                {
+                    "AppUptime", SystemInformation.AppUptime.ToString()
                 }
-            });
+            };
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
 
             // if you want to suppress and handle it manually, 
             // otherwise app shuts down.
