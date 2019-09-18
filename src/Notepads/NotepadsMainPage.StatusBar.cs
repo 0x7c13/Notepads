@@ -159,14 +159,13 @@
                     break;
                 case "RevertAllChanges":
                     var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
-                    var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(
+                    var revertAllChangesConfirmationDialog = NotepadsDialogFactory.GetRevertAllChangesConfirmationDialog(
                         fileName, () =>
                         {
                             selectedTextEditor.CloseSideBySideDiffViewer();
                             NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
                         });
-                    await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog,
-                        awaitPreviousDialog: true);
+                    await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
                     break;
             }
         }
@@ -186,10 +185,12 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog =
-                        ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
-                    await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                    NotepadsCore.FocusOnSelectedTextEditor();
+                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
+                    await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    if (!fileOpenErrorDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
                 }
             }
         }

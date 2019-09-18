@@ -20,9 +20,12 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
+                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                if (!fileOpenErrorDialog.IsAborted)
+                {
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
                 return;
             }
 
@@ -58,9 +61,12 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = ContentDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
+                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                if (!fileOpenErrorDialog.IsAborted)
+                {
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
                 return false;
             }
         }
@@ -100,8 +106,7 @@
                     !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
                 {
                     NotepadsCore.SwitchTo(textEditor);
-                    file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs)
-                        .PickSaveFileAsync();
+                    file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync();
                     NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {
@@ -118,10 +123,12 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog =
-                    ContentDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
-                await ContentDialogMaker.CreateContentDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
-                NotepadsCore.FocusOnSelectedTextEditor();
+                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
+                if (!fileSaveErrorDialog.IsAborted)
+                {
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
                 return false;
             }
         }

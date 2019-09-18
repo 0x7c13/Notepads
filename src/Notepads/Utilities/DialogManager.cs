@@ -4,17 +4,20 @@
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Controls;
 
-    public static class ContentDialogMaker
+    public class NotepadsDialog : ContentDialog
     {
-        public static async void CreateContentDialog(ContentDialog dialog, bool awaitPreviousDialog) { await CreateDialog(dialog, awaitPreviousDialog); }
+        public bool IsAborted = false;
+    }
 
-        public static async Task CreateContentDialogAsync(ContentDialog dialog, bool awaitPreviousDialog) { await CreateDialog(dialog, awaitPreviousDialog); }
+    public static class DialogManager
+    {
+        public static async Task<ContentDialogResult> OpenDialogAsync(NotepadsDialog dialog, bool awaitPreviousDialog) { return await OpenDialog(dialog, awaitPreviousDialog); }
 
-        public static ContentDialog ActiveDialog;
+        public static NotepadsDialog ActiveDialog;
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
 
-        static async Task CreateDialog(ContentDialog dialog, bool awaitPreviousDialog)
+        static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();
@@ -28,13 +31,15 @@
                 }
                 else
                 {
+                    ActiveDialog.IsAborted = true;
                     ActiveDialog.Hide();
                 }
             }
 
             ActiveDialog = dialog;
-            await ActiveDialog.ShowAsync();
+            var result = await ActiveDialog.ShowAsync();
             nextAwaiter.SetResult(true);
+            return result;
         }
     }
 }

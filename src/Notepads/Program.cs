@@ -1,7 +1,6 @@
 ﻿namespace Notepads
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Notepads.Services;
     using Notepads.Settings;
@@ -12,17 +11,11 @@
     {
         public static bool IsFirstInstance { get; set; }
 
-        private static IList<AppInstance> _instances;
-
         static void Main(string[] args)
         {
-            //UpdateAppVersion();
+            var instances = AppInstance.GetInstances();
 
-            //UpdateJumpList().Wait();
-
-            _instances = AppInstance.GetInstances();
-
-            if (_instances.Count == 0)
+            if (instances.Count == 0)
             {
                 IsFirstInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
@@ -129,29 +122,5 @@
             // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
         }
-
-        //private static void UpdateAppVersion()
-        //{
-        //    var packageVer = Package.Current.Id.Version;
-        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
-        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
-
-        //    if (currentVer != oldVer)
-        //    {
-        //        JumpListService.IsJumpListOutOfDate = true;
-        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
-        //    }
-        //}
-
-        //private static async Task UpdateJumpList()
-        //{
-        //    if (JumpListService.IsJumpListOutOfDate)
-        //    {
-        //        if (await JumpListService.UpdateJumpList())
-        //        {
-        //            JumpListService.IsJumpListOutOfDate = false;
-        //        }
-        //    }
-        //}
     }
 }
