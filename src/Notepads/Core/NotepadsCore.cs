@@ -210,6 +210,7 @@
         {
             if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
             item.IsEnabled = false;
             Sets.Items?.Remove(item);
         }

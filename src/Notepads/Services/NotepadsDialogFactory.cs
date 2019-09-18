@@ -1,18 +1,19 @@
 ﻿namespace Notepads.Services
 {
     using System;
+    using Notepads.Controls.Dialog;
     using Windows.ApplicationModel.Resources;
     using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public static class ContentDialogFactory
+    public static class NotepadsDialogFactory
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
-        public static ContentDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction, Action cancelAction)
+        public static NotepadsDialog GetAppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction, Action cancelAction)
         {
-            ContentDialog saveReminderDialog = new ContentDialog
+            NotepadsDialog saveReminderDialog = new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("AppCloseSaveReminderDialog_Title"),
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -29,9 +30,9 @@
             return saveReminderDialog;
         }
 
-        public static ContentDialog GetSetCloseSaveReminderDialog(string fileNameOrPath, Action saveAction, Action skipSavingAction)
+        public static NotepadsDialog GetSetCloseSaveReminderDialog(string fileNameOrPath, Action saveAction, Action skipSavingAction)
         {
-            ContentDialog setCloseSaveReminder = new ContentDialog
+            NotepadsDialog setCloseSaveReminder = new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("SetCloseSaveReminderDialog_Title"),
                 Content = string.Format(ResourceLoader.GetString("SetCloseSaveReminderDialog_Content"), fileNameOrPath),
@@ -45,9 +46,9 @@
             return setCloseSaveReminder;
         }
 
-        public static ContentDialog GetFileOpenErrorDialog(string filePath, string errorMsg)
+        public static NotepadsDialog GetFileOpenErrorDialog(string filePath, string errorMsg)
         {
-            ContentDialog fileOpenErrorDialog = new ContentDialog
+            NotepadsDialog fileOpenErrorDialog = new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("FileOpenErrorDialog_Title"),
                 Content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileOpenErrorDialog_Content"), filePath, errorMsg),
@@ -57,10 +58,10 @@
             return fileOpenErrorDialog;
         }
 
-        public static ContentDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
+        public static NotepadsDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
         {
             var content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
-            return new ContentDialog
+            return new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("FileSaveErrorDialog_Title"),
                 Content = content,
@@ -77,9 +78,9 @@
             return redButtonStyle;
         }
 
-        public static ContentDialog GetRevertAllChangesConfirmationDialog(string fileNameOrPath, Action confirmedAction)
+        public static NotepadsDialog GetRevertAllChangesConfirmationDialog(string fileNameOrPath, Action confirmedAction)
         {
-            ContentDialog revertAllChangesConfirmationDialog = new ContentDialog
+            NotepadsDialog revertAllChangesConfirmationDialog = new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_Title"),
                 Content = string.Format(ResourceLoader.GetString("RevertAllChangesConfirmationDialog_Content"), fileNameOrPath),

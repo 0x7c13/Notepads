@@ -35,16 +35,16 @@
         /// </summary>
         public App()
         {
-            //await LoggingService.InitializeAsync();
-            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
-
-            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
-
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
+
+            //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             InitializeComponent();
             Suspending += OnSuspending;
@@ -54,7 +54,7 @@
         {
             // Occurs when an exception is not handled on the UI thread.
 
-            LoggingService.LogException(e.Exception);
+            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
 
             Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
                 {
@@ -75,7 +75,7 @@
             // Occurs when an exception is not handled on a background thread.
             // ie. A task is fired and forgotten Task.Run(() => {...})
 
-            LoggingService.LogException(e.Exception);
+            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
             Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
                 {
@@ -230,5 +230,29 @@
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
+
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
+
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }

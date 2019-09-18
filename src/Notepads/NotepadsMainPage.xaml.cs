@@ -412,7 +412,7 @@
                 return;
             }
 
-            ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
+            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
@@ -448,7 +448,12 @@
                     deferral.Complete();
                 });
 
-            await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+            await DialogManager.OpenDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+
+            if (e.Handled && !appCloseSaveReminderDialog.IsAborted)
+            {
+                NotepadsCore.FocusOnSelectedTextEditor();
+            }
         }
 
         #endregion
@@ -522,7 +527,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
                 {
                     if (await Save(textEditor, saveAs: false))
                     {
@@ -531,8 +536,11 @@
                 }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
                 setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
-                await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
-                NotepadsCore.FocusOnSelectedTextEditor();
+                await DialogManager.OpenDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+                if (!setCloseSaveReminderDialog.IsAborted)
+                {
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
             }
         }
 

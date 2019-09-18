@@ -180,7 +180,7 @@
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotepadsProtocolService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
-    <Compile Include="Utilities\ContentDialogMaker.cs" />
+    <Compile Include="Utilities\DialogManager.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
@@ -189,7 +189,7 @@
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Services\ContentDialogFactory.cs" />
+    <Compile Include="Services\NotepadsDialogFactory.cs" />
     <Compile Include="Services\FilePickerFactory.cs" />
     <Compile Include="Services\PrintService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
@@ -200,6 +200,7 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
+    <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
