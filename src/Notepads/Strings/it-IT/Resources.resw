@@ -438,7 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Questa è un'istanza Shadow di Notepads. Lo snapshot della sessione e le impostazioni sono disattivate.</value>
+    <value>Questa è una finestra secondaria di Notepads. Lo snapshot della sessione e le impostazioni sono disattivate.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
@@ -446,15 +446,15 @@
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Opens a new window</value>
+    <value>Apre una nuova finestra</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>New window</value>
+    <value>Nuova finestra</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>New Window</value>
+    <value>Nuova finestra</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
 </root>
