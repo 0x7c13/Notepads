@@ -6,6 +6,7 @@ namespace SetsView
 {
     using System;
     using System.Linq;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Microsoft.Toolkit.Uwp.UI.Extensions;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.UI.Xaml;
@@ -23,6 +24,8 @@ namespace SetsView
     [TemplatePart(Name = SetsScrollViewerName, Type = typeof(ScrollViewer))]
     [TemplatePart(Name = SetsScrollBackButtonName, Type = typeof(ButtonBase))]
     [TemplatePart(Name = SetsScrollForwardButtonName, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = SetsItemsScrollViewerLeftSideShadowName, Type = typeof(DropShadowPanel))]
+    [TemplatePart(Name = SetsItemsScrollViewerRightSideShadowName, Type = typeof(DropShadowPanel))]
     public partial class SetsView : ListViewBase
     {
         private const int ScrollAmount = 50; // TODO: Should this be based on SetsWidthMode
@@ -31,6 +34,8 @@ namespace SetsView
         private const string SetsViewContainerName = "SetsViewContainer";
         private const string SetsItemsPresenterName = "SetsItemsPresenter";
         private const string SetsScrollViewerName = "ScrollViewer";
+        private const string SetsItemsScrollViewerLeftSideShadowName = "SetsItemsScrollViewerLeftSideShadow";
+        private const string SetsItemsScrollViewerRightSideShadowName = "SetsItemsScrollViewerRightSideShadow";
         private const string SetsScrollBackButtonName = "SetsScrollBackButton";
         private const string SetsScrollForwardButtonName = "SetsScrollForwardButton";
 
@@ -38,6 +43,8 @@ namespace SetsView
         private Grid _setsViewContainer;
         private ItemsPresenter _setItemsPresenter;
         private ScrollViewer _setsScroller;
+        private DropShadowPanel _setsItemsScrollViewerLeftSideShadow;
+        private DropShadowPanel _setsItemsScrollViewerRightSideShadow;
         private ButtonBase _setsScrollBackButton;
         private ButtonBase _setsScrollForwardButton;
 
@@ -151,7 +158,9 @@ namespace SetsView
 
             _setsScrollBackButton = _setsScroller.FindDescendantByName(SetsScrollBackButtonName) as ButtonBase;
             _setsScrollForwardButton = _setsScroller.FindDescendantByName(SetsScrollForwardButtonName) as ButtonBase;
-
+            _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
+            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel; 
+            
             if (_setsScrollBackButton != null)
             {
                 _setsScrollBackButton.Click += ScrollSetBackButton_Click;
@@ -198,6 +207,8 @@ namespace SetsView
                         if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
                     }
                 }
+
+                UpdateScrollViewerShadows();
             }
 
             // If our width can be effected by the selection, need to run algorithm.
@@ -319,6 +330,9 @@ namespace SetsView
         {
             // Keep track of drag so we don't modify content until done.
             _isDragging = true;
+
+            _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+            _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
         }
 
         private void SetsView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -353,6 +367,8 @@ namespace SetsView
                 }
 
                 SetDraggedOutside?.Invoke(this, new SetDraggedOutsideEventArgs(item, set));
+
+                UpdateScrollViewerShadows();
             }
             else
             {
@@ -364,6 +380,8 @@ namespace SetsView
         private void SetsScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
+
+            UpdateScrollViewerShadows();
         }
 
         public void ScrollToLastSet()
@@ -376,6 +394,45 @@ namespace SetsView
         {
             _setsScroller.UpdateLayout();
             _setsScroller.ChangeView(offset, 0.0f, 1.0f);
+        }
+
+        private void UpdateScrollViewerShadows()
+        {
+            if (_setsItemsScrollViewerLeftSideShadow == null ||
+                _setsItemsScrollViewerRightSideShadow == null)
+            {
+                return;
+            }
+
+            if (Items?.Count == 1)
+            {
+                _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Visible;
+                _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (SelectedIndex == 0)
+            {
+                if (Math.Abs(_scrollViewerHorizontalOffset) < 3)
+                {
+                    _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Visible;
+                    _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+            else if (SelectedIndex == Items?.Count - 1)
+            {
+                var offset = _setsScroller.ExtentWidth - _setsScroller.ViewportWidth - _scrollViewerHorizontalOffset;
+                if (Math.Abs(offset) < 3)
+                {
+                    _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+                    _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+
+            _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+            _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
         }
     }
 }
