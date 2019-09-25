@@ -33,7 +33,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
-            <x:Double x:Key="SetsEdgeShadowOpacity">0.5</x:Double>
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -68,7 +68,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
-            <x:Double x:Key="SetsEdgeShadowOpacity">1.0</x:Double>
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
@@ -125,7 +125,7 @@
 
     <Style x:Key="TopEdgeShadowStyle" 
            TargetType="toolkitControls:DropShadowPanel">
-        <Setter Property="BlurRadius" Value="10" />
+        <Setter Property="BlurRadius" Value="8" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -134,7 +134,7 @@
 
     <Style x:Key="BottomEdgeShadowStyle" 
         TargetType="toolkitControls:DropShadowPanel">
-        <Setter Property="BlurRadius" Value="10" />
+        <Setter Property="BlurRadius" Value="8" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -143,7 +143,7 @@
 
     <Style x:Key="SideEdgeShadowStyle" 
         TargetType="toolkitControls:DropShadowPanel">
-        <Setter Property="BlurRadius" Value="10" />
+        <Setter Property="BlurRadius" Value="8" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="Visibility" Value="Collapsed" />
     </Style>
@@ -305,8 +305,7 @@
                 Canvas.ZIndex="50"
                 Grid.Row="3"
                 Grid.ColumnSpan="6" 
-                Grid.Column="0"
-                OffsetY="-1">
+                Grid.Column="0">
                 <Grid Height="1"/>
             </toolkitControls:DropShadowPanel>
 
@@ -342,7 +341,7 @@
                 HorizontalAlignment="Left">
 
                 <toolkitControls:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="-10,0,10,32"></RectangleGeometry>
+                    <RectangleGeometry Rect="-8,0,8,32"></RectangleGeometry>
                 </toolkitControls:DropShadowPanel.Clip>
 
                 <Grid Width="1"/>
@@ -355,7 +354,7 @@
                 HorizontalAlignment="Right">
 
                 <toolkitControls:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="1,0,10,32"></RectangleGeometry>
+                    <RectangleGeometry Rect="1,0,8,32"></RectangleGeometry>
                 </toolkitControls:DropShadowPanel.Clip>
 
                 <Grid Width="1"/>
