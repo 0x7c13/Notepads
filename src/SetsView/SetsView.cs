@@ -396,6 +396,9 @@ namespace SetsView
             _setsScroller.ChangeView(offset, 0.0f, 1.0f);
         }
 
+        // HACK: Simulate left most and right most (tab) edge shadow
+        // since I am too lazy to figure out the "right way" to make shadow visible on scroll viewer edges
+        /// TODO This method should be removed when better solution is available in the future 
         private void UpdateScrollViewerShadows()
         {
             if (_setsItemsScrollViewerLeftSideShadow == null ||
