@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
                     xmlns:ex="using:Microsoft.Toolkit.Uwp.UI.Extensions"
-                    xmlns:controls="using:SetsView">
+                    xmlns:controls="using:SetsView"
+                    xmlns:toolkitControls="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
@@ -32,6 +33,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -66,6 +68,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
@@ -93,6 +96,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.0</x:Double>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -118,6 +122,31 @@
     <converters:BoolToObjectConverter x:Key="CloseCollapsingSizeConverter"
                                       FalseValue="{StaticResource SetsViewItemHeaderCloseWidth}"
                                       TrueValue="NaN" />
+
+    <Style x:Key="TopEdgeShadowStyle" 
+           TargetType="toolkitControls:DropShadowPanel">
+        <Setter Property="BlurRadius" Value="8" />
+        <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="BottomEdgeShadowStyle" 
+        TargetType="toolkitControls:DropShadowPanel">
+        <Setter Property="BlurRadius" Value="8" />
+        <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="SideEdgeShadowStyle" 
+        TargetType="toolkitControls:DropShadowPanel">
+        <Setter Property="BlurRadius" Value="8" />
+        <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+    </Style>
 
     <!--  Default style for compatibility with WPF migrators.  -->
     <Style TargetType="controls:SetsView">
@@ -191,6 +220,13 @@
                               Content="{TemplateBinding Header}"
                               ContentTemplate="{TemplateBinding HeaderTemplate}" />
 
+            <toolkitControls:DropShadowPanel
+                Style="{StaticResource BottomEdgeShadowStyle}"
+                Grid.Row="1"
+                Grid.Column="0">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
+
             <ContentPresenter Grid.Row="1"
                               Grid.Column="0"
                               Content="{TemplateBinding SetsStartHeader}"
@@ -217,11 +253,25 @@
                                 Padding="{TemplateBinding Padding}" />
             </ScrollViewer>
 
+            <toolkitControls:DropShadowPanel    
+                Style="{StaticResource BottomEdgeShadowStyle}"
+                Grid.Row="1"
+                Grid.Column="3">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
+
             <ContentPresenter Grid.Row="1"
                               Grid.Column="3"
                               HorizontalAlignment="Left"
                               Content="{TemplateBinding SetsActionHeader}"
                               ContentTemplate="{TemplateBinding SetsActionHeaderTemplate}" />
+
+            <toolkitControls:DropShadowPanel    
+                Style="{StaticResource BottomEdgeShadowStyle}"
+                Grid.Row="1"
+                Grid.Column="4">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="1"
                               Grid.Column="4"
@@ -229,19 +279,38 @@
                               Content="{TemplateBinding SetsPaddingHeader}"
                               ContentTemplate="{TemplateBinding SetsPaddingHeaderTemplate}" />
 
+            <toolkitControls:DropShadowPanel
+                Style="{StaticResource BottomEdgeShadowStyle}"
+                Grid.Row="1"
+                Grid.Column="5">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
+
             <ContentPresenter Grid.Row="1"
                               Grid.Column="5"
                               Content="{TemplateBinding SetsEndHeader}"
                               ContentTemplate="{TemplateBinding SetsEndHeaderTemplate}" />
 
             <ContentPresenter x:Name="SetsContentPresenter"
+                              Canvas.ZIndex="100"
                               Grid.Row="2"
-                              Grid.ColumnSpan="6" Grid.Column="0"
+                              Grid.ColumnSpan="6" 
+                              Grid.Column="0"
                               Background="{ThemeResource SetsViewItemHeaderBackgroundPressed}"
                               BorderBrush="{TemplateBinding BorderBrush}"
                               BorderThickness="{TemplateBinding BorderThickness}" />
 
+            <toolkitControls:DropShadowPanel    
+                Style="{StaticResource TopEdgeShadowStyle}"
+                Canvas.ZIndex="50"
+                Grid.Row="3"
+                Grid.ColumnSpan="6" 
+                Grid.Column="0">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
+
             <ContentPresenter Grid.Row="3"
+                              Canvas.ZIndex="50"
                               Grid.ColumnSpan="6" Grid.Column="0"
                               Content="{TemplateBinding Footer}"
                               ContentTemplate="{TemplateBinding FooterTemplate}" />
@@ -265,6 +334,39 @@
             <Grid.RenderTransform>
                 <ScaleTransform x:Name="LayoutRootScale" />
             </Grid.RenderTransform>
+
+            <toolkitControls:DropShadowPanel 
+                x:Name="ItemLeftSideShadow"
+                Style="{StaticResource SideEdgeShadowStyle}"
+                HorizontalAlignment="Left">
+
+                <toolkitControls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="-8,0,8,32"></RectangleGeometry>
+                </toolkitControls:DropShadowPanel.Clip>
+
+                <Grid Width="1"/>
+
+            </toolkitControls:DropShadowPanel>
+
+            <toolkitControls:DropShadowPanel 
+                x:Name="ItemRightSideShadow"
+                Style="{StaticResource SideEdgeShadowStyle}"
+                HorizontalAlignment="Right">
+
+                <toolkitControls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="1,0,8,32"></RectangleGeometry>
+                </toolkitControls:DropShadowPanel.Clip>
+
+                <Grid Width="1"/>
+
+            </toolkitControls:DropShadowPanel>
+
+            <toolkitControls:DropShadowPanel
+                x:Name="ItemBottomSideShadow"
+                Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1"/>
+            </toolkitControls:DropShadowPanel>
+
             <Rectangle x:Name="SelectionIndicator"
                        Height="2"
                        Margin="0,-1"
@@ -273,7 +375,7 @@
                        Opacity="0">
             </Rectangle>
 
-                <Grid Padding="{TemplateBinding Padding}">
+            <Grid Padding="{TemplateBinding Padding}">
                 <Grid x:Name="ContentPresenterGrid">
                     <Grid.RenderTransform>
                         <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
@@ -383,6 +485,23 @@
                                 <DiscreteObjectKeyFrame KeyTime="0"
                                                         Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
+
+                            <!--  Left, right and bottom shadows  -->
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
 
@@ -411,6 +530,23 @@
                                 <DiscreteObjectKeyFrame KeyTime="0"
                                                         Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
+
+                            <!--  Left, right and bottom shadows  -->
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
 
@@ -438,6 +574,23 @@
                                                            Storyboard.TargetProperty="Visibility">
                                 <DiscreteObjectKeyFrame KeyTime="0"
                                                         Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+
+                            <!--  Left, right and bottom shadows  -->
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="Collapsed" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -717,7 +870,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
+                            <toolkitControls:DropShadowPanel
+                                Style="{StaticResource BottomEdgeShadowStyle}"
+                                Grid.Column="0">
+                                <Grid Height="1"/>
+                            </toolkitControls:DropShadowPanel>
+
                             <RepeatButton x:Name="SetsScrollBackButton"
+                                          Grid.Column="0"
                                           VerticalAlignment="Stretch"
                                           Background="Transparent"
                                           BorderThickness="0"
@@ -729,10 +889,44 @@
                                 &#xE76B;
                             </RepeatButton>
 
+                            <toolkitControls:DropShadowPanel 
+                                x:Name="SetsItemsScrollViewerLeftSideShadow"
+                                Style="{StaticResource SideEdgeShadowStyle}"
+                                Grid.Column="1" 
+                                HorizontalAlignment="Left">
+
+                                <toolkitControls:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="-10,0,10,32"></RectangleGeometry>
+                                </toolkitControls:DropShadowPanel.Clip>
+
+                                <Grid Width="1"/>
+
+                            </toolkitControls:DropShadowPanel>
+
+                            <toolkitControls:DropShadowPanel 
+                                x:Name="SetsItemsScrollViewerRightSideShadow"
+                                Style="{StaticResource SideEdgeShadowStyle}"
+                                Grid.Column="1" 
+                                HorizontalAlignment="Right">
+
+                                <toolkitControls:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="1,0,10,32"></RectangleGeometry>
+                                </toolkitControls:DropShadowPanel.Clip>
+
+                                <Grid Width="1"/>
+
+                            </toolkitControls:DropShadowPanel>
+
                             <ScrollContentPresenter x:Name="ScrollContentPresenter"
                                                     Grid.Column="1"
                                                     TabFocusNavigation="Once"
-                                                    Margin="{TemplateBinding Padding}" />
+                                                    Margin="{TemplateBinding Padding}"/>
+
+                            <toolkitControls:DropShadowPanel
+                                Style="{StaticResource BottomEdgeShadowStyle}"
+                                Grid.Column="2">
+                                <Grid Height="1"/>
+                            </toolkitControls:DropShadowPanel>
 
                             <RepeatButton x:Name="SetsScrollForwardButton"
                                           Grid.Column="2"

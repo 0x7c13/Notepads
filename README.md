@@ -29,11 +29,12 @@ I have waited long enough for a modern windows 10 notepad app to come before I h
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Fluent design with built-in Tab system.
-* Blazingly fast, feels like win32 notepad.exe but looks better.
-* Launch from command line or PowerShell by typing: "notepads" or "notepads %path-to-your-file%".
+* Blazingly fast and lightweight.
+* Launch from command line or PowerShell by typing: "notepads" or "notepads <FilePath>".
 * Multi-line handwriting support.
 * Built-in Markdown file live preview.
 * Built-in diff viewer (Preview your changes).
+* Session snapshot and multi-instances.
 
 ![Screenshot Dark](ScreenShots/1.png?raw=true "Dark")
 ![Screenshot Markdown](ScreenShots/2.png?raw=true "Markdown")
@@ -86,7 +87,7 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 ## Disclaimer and Privacy statement:
 
-To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used but that’s it. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
+To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used plus some minimum telemetry to help me debug runtime errors. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
 
 On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good (To empower every person and every organization on the planet to achieve more😃). I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
