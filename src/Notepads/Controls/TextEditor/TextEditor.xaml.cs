@@ -165,26 +165,76 @@
             InitializeComponent();
 
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
-            TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, EventArgs.Empty); };
+            TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
-            ThemeSettingsService.OnThemeChanged += (sender, theme) =>
-            {
-                if (Mode == TextEditorMode.DiffPreview)
-                {
-                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
-                    Task.Factory.StartNew(
-                        () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                            () => SideBySideDiffViewer.Focus()));
-                }
-            };
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
 
             Loaded += TextEditor_Loaded;
             Unloaded += TextEditor_Unloaded;
+        }
+
+        // Unhook events and clear state
+        public void Dispose()
+        {
+            StopCheckingFileStatus();
+
+            TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
+            TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
+            TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
+
+            ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+
+            Loaded -= TextEditor_Loaded;
+            Unloaded -= TextEditor_Unloaded;
+
+            if (_contentPreviewExtension != null)
+            {
+                _contentPreviewExtension.Dispose();
+                _contentPreviewExtension = null;
+            }
+
+            if (SplitPanel != null)
+            {
+                SplitPanel.KeyDown -= SplitPanel_OnKeyDown;
+                UnloadObject(SplitPanel);
+            }
+
+            if (SideBySideDiffViewer != null)
+            {
+                SideBySideDiffViewer.OnCloseEvent -= SideBySideDiffViewer_OnCloseEvent;
+                SideBySideDiffViewer.Dispose();
+                UnloadObject(SideBySideDiffViewer);
+            }
+
+            if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Content is FindAndReplaceControl findAndReplaceControl)
+            {
+                findAndReplaceControl.Dispose();
+                FindAndReplacePlaceholder = null;
+                UnloadObject(FindAndReplacePlaceholder);
+            }
+
+            if (GridSplitter != null)
+            {
+                UnloadObject(GridSplitter);
+            }
+
+            TextEditorCore.Dispose();
+        }
+
+        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        {
+            if (Mode == TextEditorMode.DiffPreview)
+            {
+                SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+                Task.Factory.StartNew(
+                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        () => SideBySideDiffViewer.Focus()));
+            }
         }
 
         public string GetText()
@@ -273,12 +323,9 @@
 
         public void StopCheckingFileStatus()
         {
-            if (_fileStatusCheckerCancellationTokenSource != null)
+            if (_fileStatusCheckerCancellationTokenSource?.IsCancellationRequested == false)
             {
-                if (!_fileStatusCheckerCancellationTokenSource.IsCancellationRequested)
-                {
-                    _fileStatusCheckerCancellationTokenSource.Cancel();
-                }
+                _fileStatusCheckerCancellationTokenSource.Cancel();
             }
         }
 
@@ -628,15 +675,25 @@
         {
             FindName("SideBySideDiffViewer");
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
-            SideBySideDiffViewer.OnCloseEvent += (sender, args) => CloseSideBySideDiffViewer();
+            SideBySideDiffViewer.OnCloseEvent += SideBySideDiffViewer_OnCloseEvent;
         }
 
-        private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        private void SideBySideDiffViewer_OnCloseEvent(object sender, EventArgs e)
+        {
+            CloseSideBySideDiffViewer();
+        }
+
+        private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             _keyboardCommandHandler.Handle(e);
         }
 
-        private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        private void TextEditorCore_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             _keyboardCommandHandler.Handle(e);
         }

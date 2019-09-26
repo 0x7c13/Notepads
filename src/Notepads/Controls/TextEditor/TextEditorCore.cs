@@ -97,33 +97,80 @@
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
-            CopyingToClipboard += (sender, args) => CopyPlainTextToWindowsClipboard(args);
-            Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
+
+            CopyingToClipboard += TextEditorCore_CopyingToClipboard;
+            Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
             SelectionChanged += OnSelectionChanged;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
 
-            EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
-            {
-                FontFamily = new FontFamily(fontFamily);
-                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
-            };
-            EditorSettingsService.OnFontSizeChanged += (sender, fontSize) =>
-            {
-                FontSize = fontSize;
-            };
+            EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
+            EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
 
-            EditorSettingsService.OnDefaultTextWrappingChanged += (sender, textWrapping) => { TextWrapping = textWrapping; };
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            };
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+        }
+
+        private async void TextEditorCore_Paste(object sender, TextControlPasteEventArgs args)
+        {
+            await PastePlainTextFromWindowsClipboard(args);
+        }
+
+        private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        {
+            CopyPlainTextToWindowsClipboard(args);
+        }
+
+        // Unhook events and clear state
+        public void Dispose()
+        {
+            CopyingToClipboard -= TextEditorCore_CopyingToClipboard;
+            Paste -= TextEditorCore_Paste;
+            TextChanging -= OnTextChanging;
+            SelectionChanged -= OnSelectionChanged;
+
+            PointerWheelChanged -= OnPointerWheelChanged;
+
+            if (_contentScrollViewer != null)
+            {
+                _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
+            }
+
+            EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
+            EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
+
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+
+            SetText(string.Empty);
+            _contentLinesCache = null;
+        }
+
+        private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
+        {
+            FontFamily = new FontFamily(fontFamily);
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+        }
+
+        private void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
+        {
+            FontSize = fontSize;
+        }
+
+        private void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
+        {
+            TextWrapping = textWrapping;
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        {
+            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()

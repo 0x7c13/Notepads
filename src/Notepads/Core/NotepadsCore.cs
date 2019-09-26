@@ -213,6 +213,8 @@
             if (item == null) return;
             item.IsEnabled = false;
             Sets.Items?.Remove(item);
+            textEditor.Dispose();
+            item.Content = null;
         }
 
         public int GetNumberOfOpenedTextEditors()
