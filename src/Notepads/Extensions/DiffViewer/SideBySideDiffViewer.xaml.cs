@@ -36,19 +36,39 @@
             LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
 
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                LeftBox.SelectionHighlightColor =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                RightBox.SelectionHighlightColor =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            };
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
+            DismissButton.Click += DismissButton_OnClick;
             LayoutRoot.KeyDown += OnKeyDown;
             KeyDown += OnKeyDown;
             LeftBox.KeyDown += OnKeyDown;
             RightBox.KeyDown += OnKeyDown;
-            Loaded += (sender, args) => { Focus(); };
+            Loaded += SideBySideDiffViewer_Loaded;
+        }
+
+        public void Dispose()
+        {
+            StopRenderingAndClearCache();
+
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            
+            DismissButton.Click -= DismissButton_OnClick;
+            LayoutRoot.KeyDown -= OnKeyDown;
+            KeyDown -= OnKeyDown;
+            LeftBox.KeyDown -= OnKeyDown;
+            RightBox.KeyDown -= OnKeyDown;
+            Loaded -= SideBySideDiffViewer_Loaded;
+        }
+
+        private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            Focus();
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()

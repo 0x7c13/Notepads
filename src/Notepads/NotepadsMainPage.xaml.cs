@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -276,7 +277,16 @@
 
             if (!_loaded && EditorSettingsService.IsSessionSnapshotEnabled)
             {
-                loadedCount = await SessionManager.LoadLastSessionAsync();
+                try
+                {
+                    loadedCount = await SessionManager.LoadLastSessionAsync();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[SessionManager] Failed to LoadLastSessionAsync: {ex}");
+                    Analytics.TrackEvent("FailedToLoadLastSession", 
+                        new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                }
             }
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
@@ -529,14 +539,28 @@
 
                 var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
                 {
-                    if (await Save(textEditor, saveAs: false))
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
                     {
                         NotepadsCore.DeleteTextEditor(textEditor);
                     }
-                }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
+                }, () =>
+                {
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                    {
+                        NotepadsCore.DeleteTextEditor(textEditor);   
+                    }
+                });
 
-                setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
+                setCloseSaveReminderDialog.Opened += (s, a) =>
+                {
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                    {
+                        NotepadsCore.SwitchTo(textEditor);
+                    }
+                };
+
                 await DialogManager.OpenDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+
                 if (!setCloseSaveReminderDialog.IsAborted)
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
