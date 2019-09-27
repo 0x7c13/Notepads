@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Una volta abilitato, Notepads memorizzerà la sessione corrente per il prossimo avvio ed effettuerà periodicamente un backup dei file aperti per prevenire la perdita accidentale di dati in caso di modifiche non salvate. Notepads NON ti ricorderà di salvare il tuo lavoro alla chiusura se questa funzionalità viene attivata. Ricorda inoltre che lo snapshot della sessione funziona solo nella prima o nell'istanza pricipale di Notepads.</value>
+    <value>Una volta abilitato, Notepads memorizzerà la sessione corrente per il prossimo avvio ed effettuerà periodicamente un backup dei file aperti per prevenire la perdita accidentale di dati in caso di modifiche non salvate. Notepads NON ti ricorderà di salvare il tuo lavoro alla chiusura se questa funzionalità viene attivata. Ricorda inoltre che lo snapshot della sessione funziona solo nella prima o nella finestra pricipale di Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">

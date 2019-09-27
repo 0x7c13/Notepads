@@ -136,14 +136,26 @@
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
             </Grid>
+            <controls:DropShadowPanel    
+                Canvas.ZIndex="50"
+                Grid.Column="1"
+                ShadowOpacity="0.4"
+                BlurRadius="10"
+                Margin="-1,0"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Left">
+                <Grid Width="1"/>
+            </controls:DropShadowPanel>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"
+                              Canvas.ZIndex="100"
                               Padding="10,0,0,0"
                               Background="{ThemeResource SplitViewBackgroundThemeBrush}"
                               AutomationProperties.AccessibilityView="Raw"
                               Grid.Column="1"/>
             <controls:GridSplitter x:Name="GridSplitter"
                                    x:Load="False"
+                                   Canvas.ZIndex="150"
                                    Style="{StaticResource CustomGridSplitterStyle}"
                                    MinWidth="10"
                                    GripperCursor="Default"

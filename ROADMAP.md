@@ -13,8 +13,8 @@
 * Automatic file save and restore (Session snapshot).
 * Markdown file preview.
 * Diff viewer.
-* Native support for Multi-instances.
-* Publish 1.0 version of Notepads by end of August 2019.
+* Native support for app multi-instances.
+* Publish 1.0 version of Notepads by end of Summer 2019 (Sep-Oct).
 
 ## Phase 2 (By end of 2019):
 

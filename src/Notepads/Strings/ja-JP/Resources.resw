@@ -430,31 +430,31 @@
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Move tab here</value>
+    <value>タブをここに移動</value>
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Open with Notepads</value>
+    <value>Notepads で開く</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>This is a shadow window of Notepads. Session snapshot and settings are disabled.</value>
+    <value>これはシャドウ ウィンドウ（2番目以降のウィンドウ）です。セッション スナップショットと設定は無効になっています。</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>File already opened!</value>
+    <value>ファイルは既に開いています！</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Opens a new window</value>
+    <value>新規ウィンドウで開く</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>New window</value>
+    <value>新規ウィンドウ</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>New Window</value>
+    <value>新規ウィンドウ</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
 </root>

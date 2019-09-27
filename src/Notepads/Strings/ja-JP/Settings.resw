@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads は次回起動時に備えて現在の状態を保存し、また定期的に内容をバックアップして明示的にファイルに保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。</value>
+    <value>Notepads は次回起動時に備えて現在の状態を保存し、また定期的に内容をバックアップして明示的にファイルに保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。またこの機能はアプリの最初のウィンドウのみで動作し、シャドウ ウィンドウ（2番目以降のウィンドウ）では使用できません。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
