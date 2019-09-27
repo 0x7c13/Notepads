@@ -6,9 +6,15 @@
     using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
     {
+        event RoutedEventHandler Loaded;
+        event RoutedEventHandler Unloaded;
+
+        event KeyEventHandler KeyDown;
         event EventHandler ModeChanged;
         event EventHandler ModificationStateChanged;
         event EventHandler FileModificationStateChanged;
@@ -96,5 +102,7 @@
         void ShowFindAndReplaceControl(bool showReplaceBar);
 
         void HideFindAndReplaceControl();
+
+        void Dispose();
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
@@ -529,14 +530,28 @@
 
                 var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
                 {
-                    if (await Save(textEditor, saveAs: false))
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
                     {
                         NotepadsCore.DeleteTextEditor(textEditor);
                     }
-                }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
+                }, () =>
+                {
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                    {
+                        NotepadsCore.DeleteTextEditor(textEditor);   
+                    }
+                });
 
-                setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
+                setCloseSaveReminderDialog.Opened += (s, a) =>
+                {
+                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                    {
+                        NotepadsCore.SwitchTo(textEditor);
+                    }
+                };
+
                 await DialogManager.OpenDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+
                 if (!setCloseSaveReminderDialog.IsAborted)
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
