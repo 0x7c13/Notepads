@@ -276,7 +276,16 @@
 
             if (!_loaded && EditorSettingsService.IsSessionSnapshotEnabled)
             {
-                loadedCount = await SessionManager.LoadLastSessionAsync();
+                try
+                {
+                    loadedCount = await SessionManager.LoadLastSessionAsync();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[SessionManager] Failed to LoadLastSessionAsync: {ex}");
+                    Analytics.TrackEvent("FailedToLoadLastSession", 
+                        new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                }
             }
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)

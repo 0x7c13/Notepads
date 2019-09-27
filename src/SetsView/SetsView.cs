@@ -380,20 +380,17 @@ namespace SetsView
         private void SetsScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
-
             UpdateScrollViewerShadows();
         }
 
         public void ScrollToLastSet()
         {
-            _setsScroller.UpdateLayout();
-            _setsScroller.ChangeView(double.MaxValue, 0.0f, 1.0f);
+            ScrollTo(double.MaxValue);
         }
 
         public void ScrollTo(double offset)
         {
-            _setsScroller.UpdateLayout();
-            _setsScroller.ChangeView(offset, 0.0f, 1.0f);
+            _setsScroller?.ChangeView(offset, 0.0f, 1.0f);
         }
 
         // HACK: Simulate left most and right most (tab) edge shadow
