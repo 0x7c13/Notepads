@@ -24,7 +24,7 @@
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
         private readonly SemaphoreSlim _semaphoreSlim;
-        private readonly ConcurrentDictionary<Guid, TextEditorSessionDataV1> _sessionData;
+        private readonly ConcurrentDictionary<Guid, TextEditorSessionDataV1> _sessionDataCache;
         private string _lastSessionJsonStr;
         private bool _loaded;
         private Timer _timer;
@@ -36,7 +36,7 @@
         {
             _notepadsCore = notepadsCore;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
-            _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
+            _sessionDataCache = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
             _loaded = false;
 
             foreach (var editor in _notepadsCore.GetAllTextEditors())
@@ -108,7 +108,7 @@
                 if (textEditor != null)
                 {
                     recoveredEditor.Add(textEditor);
-                    _sessionData.TryAdd(textEditor.Id, textEditorData);
+                    _sessionDataCache.TryAdd(textEditor.Id, textEditorData);
                 }
             }
 
@@ -117,7 +117,7 @@
 
             _loaded = true;
 
-            return _sessionData.Count;
+            return _sessionDataCache.Count;
         }
 
         public async Task SaveSessionAsync(Action actionAfterSaving = null)
@@ -153,23 +153,11 @@
             {
                 try
                 {
-                    if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
-                    {
-                        // We will not create new backup files for this text editor unless it has content changes
-                        // But we should update latest TextEditor state meta data
-                        textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
-                    }
-                    else // Text content has been changed or editor has not backed up yet
-                    {
-                        textEditorData = await BuildTextEditorSessionData(textEditor);
-                        if (textEditorData == null)
-                        {
-                            continue;
-                        }
-                        _sessionData.TryAdd(textEditor.Id, textEditorData);
-                    }
+                    var textEditorSessionData = await GetTextEditorSessionData(textEditor);
 
-                    sessionData.TextEditors.Add(textEditorData);
+                    if (textEditorSessionData == null) continue;
+
+                    sessionData.TextEditors.Add(textEditorSessionData);
 
                     if (textEditor == selectedTextEditor)
                     {
@@ -224,6 +212,29 @@
 
             actionAfterSaving?.Invoke();
             _semaphoreSlim.Release();
+        }
+
+        private async Task<TextEditorSessionDataV1> GetTextEditorSessionData(ITextEditor textEditor)
+        {
+            if (_sessionDataCache.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorSessionData))
+            {
+                // We will not create new backup files for this text editor unless it has content changes
+                // But we should update latest TextEditor state meta data
+                textEditorSessionData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+            }
+            else // Text content has been changed or editor has not backed up yet
+            {
+                textEditorSessionData = await BuildTextEditorSessionData(textEditor);
+
+                if (textEditorSessionData == null)
+                {
+                    return null;
+                }
+
+                _sessionDataCache.TryAdd(textEditor.Id, textEditorSessionData);
+            }
+
+            return textEditorSessionData;
         }
 
         private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
@@ -497,7 +508,7 @@
         {
             if (sender is ITextEditor textEditor)
             {
-                _sessionData.TryRemove(textEditor.Id, out _);
+                _sessionDataCache.TryRemove(textEditor.Id, out _);
             }
         }
     }
