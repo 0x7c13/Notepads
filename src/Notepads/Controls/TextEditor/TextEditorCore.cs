@@ -137,7 +137,6 @@
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
-            SetText(string.Empty);
             _contentLinesCache = null;
         }
 

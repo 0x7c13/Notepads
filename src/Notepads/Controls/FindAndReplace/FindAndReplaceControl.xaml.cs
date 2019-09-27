@@ -26,8 +26,6 @@
         {
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
             Loaded -= FindAndReplaceControl_Loaded;
-            FindBar.Text = string.Empty;
-            ReplaceBar.Text = string.Empty;
         }
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
