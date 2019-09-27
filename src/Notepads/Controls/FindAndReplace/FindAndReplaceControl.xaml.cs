@@ -17,15 +17,25 @@
         public FindAndReplaceControl()
         {
             InitializeComponent();
-
             SetSelectionHighlightColor();
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+            Loaded += FindAndReplaceControl_Loaded;
+        }
 
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                SetSelectionHighlightColor();
-            };
+        public void Dispose()
+        {
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            Loaded -= FindAndReplaceControl_Loaded;
+        }
 
-            Loaded += (sender, args) => { Focus(FindAndReplaceMode.FindOnly); };
+        private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Focus(FindAndReplaceMode.FindOnly);
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
+        {
+            SetSelectionHighlightColor();
         }
 
         public double GetHeight(bool showReplaceBar)
