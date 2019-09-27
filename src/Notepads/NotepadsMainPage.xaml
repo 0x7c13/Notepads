@@ -75,7 +75,7 @@
                                 Margin="0,0,-1,0"
                                 BorderThickness="0"
                                 Background="Transparent"
-                                Style="{StaticResource ButtonRevealStyle}"
+                                Style="{ThemeResource ButtonRevealStyle}"
                                 Padding="0">
                                 <Viewbox MaxWidth="16" MaxHeight="16">
                                     <SymbolIcon Symbol="GlobalNavigationButton"/>
@@ -182,7 +182,7 @@
                                         Margin="-1,0,0,0"
                                         BorderThickness="0"
                                         Background="Transparent"
-                                        Style="{StaticResource ButtonRevealStyle}">
+                                        Style="{ThemeResource ButtonRevealStyle}">
                                         <Viewbox MaxWidth="16"
                                             MaxHeight="16">
                                             <FontIcon FontFamily="Segoe MDL2 Assets"
@@ -199,7 +199,7 @@
                                         Background="Transparent"
                                         Click="ExitCompactOverlayButton_OnClick"
                                         Visibility="Collapsed"
-                                        Style="{StaticResource ButtonRevealStyle}">
+                                        Style="{ThemeResource ButtonRevealStyle}">
                                         <Viewbox MaxWidth="19"
                                              MaxHeight="19">
                                             <FontIcon FontFamily="Segoe MDL2 Assets"
