@@ -1,7 +1,9 @@
 ﻿namespace Notepads.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter.Analytics;
 
     public enum NotepadsOperationProtocol
     {
@@ -17,23 +19,35 @@
         {
             context = null;
 
-            var uriStr = uri.ToString().Trim();
-
-            if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                return NotepadsOperationProtocol.Unrecognized;
+                var uriStr = uri.ToString().Trim();
+
+                if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.OrdinalIgnoreCase))
+                {
+                    return NotepadsOperationProtocol.Unrecognized;
+                }
+
+                var operation = uriStr.Substring("notepads://".Length);
+
+                if (operation.EndsWith("/"))
+                {
+                    operation = operation.Remove(operation.Length - 1);
+                }
+
+                if (!string.IsNullOrEmpty(operation) && string.Equals(NewInstanceProtocolStr, operation, StringComparison.OrdinalIgnoreCase))
+                {
+                    return NotepadsOperationProtocol.OpenNewInstance;
+                }
             }
-
-            var operation = uriStr.Substring("notepads://".Length);
-
-            if (operation.EndsWith("/"))
+            catch (Exception ex)
             {
-                operation = operation.Remove(operation.Length - 1);
-            }
-
-            if (!string.IsNullOrEmpty(operation) && string.Equals(NewInstanceProtocolStr, operation, StringComparison.OrdinalIgnoreCase))
-            {
-                return NotepadsOperationProtocol.OpenNewInstance;
+                LoggingService.LogError($"[NotepadsProtocolService] Failed to parse protocol: {uri}, exception: {ex}");
+                Analytics.TrackEvent("NotepadsProtocolService_FailedToParseProtocol", new Dictionary<string, string>()
+                {
+                    { "Protocol", uri.ToString() },
+                    { "Exception", ex.ToString() }
+                });
             }
 
             return NotepadsOperationProtocol.Unrecognized;
@@ -41,17 +55,30 @@
 
         public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation)
         {
-            if (operation == NotepadsOperationProtocol.Unrecognized)
+            try
             {
-                return false;
+                if (operation == NotepadsOperationProtocol.Unrecognized)
+                {
+                    return false;
+                }
+                else if (operation == NotepadsOperationProtocol.OpenNewInstance)
+                {
+                    var uriToLaunch = $"notepads://{NewInstanceProtocolStr}";
+                    return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()));
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else if (operation == NotepadsOperationProtocol.OpenNewInstance)
+            catch (Exception ex)
             {
-                var uriToLaunch = $"notepads://{NewInstanceProtocolStr}";
-                return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()));
-            }
-            else
-            {
+                LoggingService.LogError($"[NotepadsProtocolService] Failed to execute protocol: {operation.ToString()}, Exception: {ex}");
+                Analytics.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
+                {
+                    { "Protocol", operation.ToString() },
+                    { "Exception", ex.Message }
+                });
                 return false;
             }
         }

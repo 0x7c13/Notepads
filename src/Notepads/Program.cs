@@ -1,28 +1,24 @@
 ﻿namespace Notepads
 {
-    using System.Collections.Generic;
+    using System;
     using System.Linq;
     using Notepads.Services;
     using Notepads.Settings;
-    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
-    using Windows.Storage;
 
     public static class Program
     {
         public static bool IsFirstInstance { get; set; }
 
-        private static IList<AppInstance> _instances;
-
         static void Main(string[] args)
         {
-            _instances = AppInstance.GetInstances();
+            var instances = AppInstance.GetInstances();
 
-            if (_instances.Count == 0)
+            if (instances.Count == 0)
             {
                 IsFirstInstance = true;
-                ApplicationSettingsStore.Write("ActiveInstance", null);
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
@@ -48,17 +44,28 @@
                     RedirectOrCreateNewInstance();
                 }
             }
-            else
+            else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
             {
-                // The platform might provide a recommended instance.
-                if (AppInstance.RecommendedInstance != null)
+                bool handled = false;
+
+                if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                 {
-                    AppInstance.RecommendedInstance.RedirectActivationTo();
+                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out var context);
+                    if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+                    {
+                        handled = true;
+                        OpenNewInstance();
+                    }
                 }
-                else
+
+                if (!handled)
                 {
                     RedirectOrCreateNewInstance();
                 }
+            }
+            else
+            {
+                RedirectOrCreateNewInstance();
             }
         }
 
@@ -89,6 +96,7 @@
         private static AppInstance GetLastActiveInstance()
         {
             var instances = AppInstance.GetInstances();
+
             if (instances.Count == 0)
             {
                 return null;
@@ -98,7 +106,7 @@
                 return instances.FirstOrDefault();
             }
 
-            if (!(ApplicationSettingsStore.Read("ActiveInstance") is string activeInstance))
+            if (!(ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is string activeInstance))
             {
                 return null;
             }

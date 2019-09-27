@@ -21,7 +21,7 @@
             UpdateLineColumnIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
-            UpdateShadowInstanceIndicator();
+            UpdateShadowWindowIndicator();
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -134,14 +134,14 @@
                     selectedCount, wordSelected);
         }
 
-        private void UpdateShadowInstanceIndicator()
+        private void UpdateShadowWindowIndicator()
         {
             if (StatusBar == null) return;
-            ShadowInstanceIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
-            if (ShadowInstanceIndicator.Visibility == Visibility.Visible)
+            ShadowWindowIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
+            if (ShadowWindowIndicator.Visibility == Visibility.Visible)
             {
-                ToolTipService.SetToolTip(ShadowInstanceIndicator,
-                    _resourceLoader.GetString("App_ShadowInstanceIndicator_Description"));
+                ToolTipService.SetToolTip(ShadowWindowIndicator,
+                    _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
             }
         }
 
@@ -159,14 +159,13 @@
                     break;
                 case "RevertAllChanges":
                     var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
-                    var setCloseSaveReminderDialog = ContentDialogFactory.GetRevertAllChangesConfirmationDialog(
+                    var revertAllChangesConfirmationDialog = NotepadsDialogFactory.GetRevertAllChangesConfirmationDialog(
                         fileName, () =>
                         {
                             selectedTextEditor.CloseSideBySideDiffViewer();
                             NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
                         });
-                    await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog,
-                        awaitPreviousDialog: true);
+                    await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
                     break;
             }
         }
@@ -186,10 +185,12 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog =
-                        ContentDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
-                    await ContentDialogMaker.CreateContentDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                    NotepadsCore.FocusOnSelectedTextEditor();
+                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
+                    await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    if (!fileOpenErrorDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
                 }
             }
         }
@@ -274,10 +275,10 @@
             {
                 EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
             }
-            else if (sender == ShadowInstanceIndicator)
+            else if (sender == ShadowWindowIndicator)
             {
                 NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
+                    _resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
             }
         }
 

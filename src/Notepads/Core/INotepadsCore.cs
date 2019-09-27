@@ -33,6 +33,8 @@
 
         event EventHandler<ITextEditor> TextEditorModeChanged;
 
+        event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+
         event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         event KeyEventHandler TextEditorKeyDown;

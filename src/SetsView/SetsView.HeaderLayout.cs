@@ -162,6 +162,7 @@ namespace SetsView
                         setc.Width = GridLength.Auto;
                     }
                 }
+                UpdateScrollViewerShadows();
             }
         }
 

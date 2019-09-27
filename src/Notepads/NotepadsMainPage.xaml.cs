@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
@@ -23,6 +24,7 @@
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
@@ -37,6 +39,8 @@
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private bool _loaded = false;
+
+        private bool _appShouldExitAfterLastEditorClosed = false;
 
         private const int TitleBarReservedAreaDefaultWidth = 180;
 
@@ -56,6 +60,7 @@
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
                     _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+                    _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
@@ -157,6 +162,7 @@
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(_defaultNewFileName); };
             MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
+            MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstance();
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
             MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
             MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
@@ -222,11 +228,20 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.N, async (args) => await OpenNewAppInstance()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
                     EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents)))
             });
+        }
+
+        private async Task OpenNewAppInstance()
+        {
+            if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance))
+            {
+                Analytics.TrackEvent("FailedToOpenNewAppInstance");
+            }
         }
 
         #region Application Life Cycle & Window management 
@@ -298,7 +313,7 @@
 
                 if (!App.IsFirstInstance)
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowInstanceIndicator_Description"), 4000);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
                 }
                 _loaded = true;
             }
@@ -346,7 +361,7 @@
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
-                ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
@@ -388,44 +403,56 @@
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 deferral.Complete();
+                return;
             }
-            else
+
+            if (!NotepadsCore.HaveUnsavedTextEditor())
             {
-                if (!NotepadsCore.HaveUnsavedTextEditor())
+                deferral.Complete();
+                return;
+            }
+
+            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
+                async () =>
                 {
-                    deferral.Complete();
-                }
-
-                ContentDialog appCloseSaveReminderDialog = ContentDialogFactory.GetAppCloseSaveReminderDialog(
-                    async () =>
+                    var count = NotepadsCore.GetNumberOfOpenedTextEditors();
+                    
+                    foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
                         {
-                            if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
+                            if (count == 1)
                             {
-                                NotepadsCore.DeleteTextEditor(textEditor);
+                                _appShouldExitAfterLastEditorClosed = true;
                             }
+                            NotepadsCore.DeleteTextEditor(textEditor);
+                            count--;
                         }
+                    }
 
-                        // Prevent app from closing if there is any tab still opens
-                        if (NotepadsCore.GetNumberOfOpenedTextEditors() > 0)
-                        {
-                            e.Handled = true;
-                        }
-
-                        deferral.Complete();
-                    },
-                    () =>
-                    {
-                        deferral.Complete();
-                    },
-                    () =>
+                    // Prevent app from closing if there is any tab still opens
+                    if (count > 0)
                     {
                         e.Handled = true;
-                        deferral.Complete();
-                    });
+                    }
 
-                await ContentDialogMaker.CreateContentDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+                    deferral.Complete();
+                },
+                () =>
+                {
+                    deferral.Complete();
+                },
+                () =>
+                {
+                    e.Handled = true;
+                    deferral.Complete();
+                });
+
+            await DialogManager.OpenDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+
+            if (e.Handled && !appCloseSaveReminderDialog.IsAborted)
+            {
+                NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
 
@@ -457,9 +484,31 @@
 
         private void OnTextEditorUnloaded(object sender, ITextEditor textEditor)
         {
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0 && !_appShouldExitAfterLastEditorClosed)
             {
                 NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
+            }
+        }
+
+        private async void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
+        {
+            // Notepads should exit if last tab was dragged to another app instance
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1)
+            {
+                _appShouldExitAfterLastEditorClosed = true;
+
+                NotepadsCore.DeleteTextEditor(textEditor);
+
+                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                {
+                    await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                }
+
+                Application.Current.Exit();
+            }
+            else
+            {
+                NotepadsCore.DeleteTextEditor(textEditor);
             }
         }
 
@@ -478,7 +527,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = ContentDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
+                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
                 {
                     if (await Save(textEditor, saveAs: false))
                     {
@@ -487,8 +536,11 @@
                 }, () => { NotepadsCore.DeleteTextEditor(textEditor); });
 
                 setCloseSaveReminderDialog.Opened += (s, a) => { NotepadsCore.SwitchTo(textEditor); };
-                await ContentDialogMaker.CreateContentDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
-                NotepadsCore.FocusOnSelectedTextEditor();
+                await DialogManager.OpenDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
+                if (!setCloseSaveReminderDialog.IsAborted)
+                {
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
             }
         }
 

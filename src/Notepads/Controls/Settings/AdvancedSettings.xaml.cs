@@ -11,7 +11,7 @@
             InitializeComponent();
             ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
 
-            // Disable session snapshot toggle for shadow instances
+            // Disable session snapshot toggle for shadow windows
             if (!App.IsFirstInstance)
             {
                 EnableSessionSnapshotToggleSwitch.IsOn = false;

@@ -7,6 +7,7 @@
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -35,16 +36,16 @@
         /// </summary>
         public App()
         {
-            //await LoggingService.InitializeAsync();
-            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
-
-            ApplicationSettingsStore.Write("ActiveInstance", App.Id.ToString());
-
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
+
+            //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             InitializeComponent();
             Suspending += OnSuspending;
@@ -54,16 +55,58 @@
         {
             // Occurs when an exception is not handled on the UI thread.
 
-            LoggingService.LogException(e.Exception);
+            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
 
-            Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
                 {
                     "Message", e.Message
                 },
                 {
                     "Exception", e.Exception.ToString()
+                },
+                {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
+                {
+                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
+                },
+                {
+                    "Culture", SystemInformation.Culture.EnglishName
+                },
+                {
+                    "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0")
+                },
+                {
+                    "IsFirstRun", SystemInformation.IsFirstRun.ToString()
+                },
+                {
+                    "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString()
+                },
+                {
+                    "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}"
+                },
+                {
+                    "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "CurrentLaunchCount", SystemInformation.LaunchCount.ToString()
+                },
+                {
+                    "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString()
+                },
+                {
+                    "AppUptime", SystemInformation.AppUptime.ToString()
                 }
-            });
+            };
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
 
             // if you want to suppress and handle it manually, 
             // otherwise app shuts down.
@@ -75,7 +118,7 @@
             // Occurs when an exception is not handled on a background thread.
             // ie. A task is fired and forgotten Task.Run(() => {...})
 
-            LoggingService.LogException(e.Exception);
+            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
             Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
                 {
@@ -162,7 +205,7 @@
                     "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
                 },
                 {
-                    "IsShadowInstance", (!IsFirstInstance).ToString()
+                    "IsShadowWindow", (!IsFirstInstance).ToString()
                 }
             };
 
@@ -230,5 +273,29 @@
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
+
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
+
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }

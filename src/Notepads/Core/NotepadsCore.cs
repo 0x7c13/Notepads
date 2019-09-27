@@ -47,6 +47,8 @@
 
         public event EventHandler<ITextEditor> TextEditorModeChanged;
 
+        public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
@@ -208,6 +210,7 @@
         {
             if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
             item.IsEnabled = false;
             Sets.Items?.Remove(item);
         }
@@ -728,7 +731,7 @@
             {
                 if (args.Items.FirstOrDefault() is ITextEditor editor)
                 {
-                    DeleteTextEditor(editor);
+                    TextEditorMovedToAnotherAppInstance?.Invoke(this, editor);
                 }
             }
 

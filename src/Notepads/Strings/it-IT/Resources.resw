@@ -437,16 +437,24 @@
     <value>Apri con Notepads</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
-  <data name="App_ShadowInstanceIndicator.Text" xml:space="preserve">
-    <value>Istanza Shadow</value>
-    <comment>App: ShadowInstanceIndicator display text.</comment>
-  </data>
-  <data name="App_ShadowInstanceIndicator_Description" xml:space="preserve">
-    <value>Questa è un'istanza Shadow di Notepads. Lo snapshot della sessione e le impostazioni sono disattivate.</value>
-    <comment>App: ShadowInstanceIndicator Description display text.</comment>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>Questa è una finestra secondaria di Notepads. Lo snapshot della sessione e le impostazioni sono disattivate.</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
     <value>File already opened!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Apre una nuova finestra</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>Nuova finestra</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>Nuova finestra</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
   </data>
 </root>

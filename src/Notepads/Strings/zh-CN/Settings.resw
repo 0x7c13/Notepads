@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>开启此设置后，Notepads会定期保存当前应用状态并在下一次启动时自动恢复。当此设置打开后，关闭应用时Notepads将不会提醒你保存文件。另外请注意，快照备份在影子实例中将会被禁用，此设置只会作用于第一个被打开的主实例。</value>
+    <value>开启此设置后，Notepads会定期保存当前应用状态并在下一次启动时自动恢复。当此设置打开后，关闭应用时Notepads将不会提醒你保存文件。另外请注意，快照备份在影子窗口中将会被禁用，此设置只会作用于第一个被打开的窗口。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
