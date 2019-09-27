@@ -172,7 +172,7 @@
             string fileNamePlaceholder,
             bool isModified = false)
         {
-            TextEditor textEditor = new TextEditor
+            ITextEditor textEditor = new TextEditor
             {
                 Id = id,
                 ExtensionProvider = _extensionProvider,
@@ -182,19 +182,13 @@
             textEditor.Init(textFile, editingFile, isModified: isModified);
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
-            textEditor.SelectionChanged += TextEditor_SelectionChanged;
+            textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
-            textEditor.ModeChanged += TextEditor_ModeChanged;
-            textEditor.FileModificationStateChanged += (sender, args) =>
-            {
-                TextEditorFileModificationStateChanged?.Invoke(this, sender as ITextEditor);
-            };
-            textEditor.LineEndingChanged += (sender, args) =>
-            {
-                TextEditorLineEndingChanged?.Invoke(this, sender as ITextEditor);
-            };
-            textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as ITextEditor); };
+            textEditor.ModeChanged += TextEditor_OnModeChanged;
+            textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
+            textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
+            textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
 
             return textEditor;
         }
@@ -213,8 +207,25 @@
             if (item == null) return;
             item.IsEnabled = false;
             Sets.Items?.Remove(item);
+
+            if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
+            {
+                tabContextFlyout.Dispose();
+                item.ContextFlyout = null;
+            }
+
+            TextEditorUnloaded?.Invoke(this, textEditor);
+
+            textEditor.Loaded -= TextEditor_Loaded;
+            textEditor.Unloaded -= TextEditor_Unloaded;
+            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
+            textEditor.ModeChanged -= TextEditor_OnModeChanged;
+            textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
+            textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
+            textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
             textEditor.Dispose();
-            item.Content = null;
         }
 
         public int GetNumberOfOpenedTextEditors()
@@ -461,7 +472,7 @@
             TextEditorUnloaded?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_SelectionChanged(object sender, EventArgs e)
+        private void TextEditor_OnSelectionChanged(object sender, EventArgs e)
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorSelectionChanged?.Invoke(this, textEditor);
@@ -481,10 +492,28 @@
             TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_ModeChanged(object sender, EventArgs e)
+        private void TextEditor_OnModeChanged(object sender, EventArgs e)
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorModeChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileModificationStateChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorFileModificationStateChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnEncodingChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorEncodingChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnLineEndingChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
         private void OnAppAccentColorChanged(object sender, Color color)

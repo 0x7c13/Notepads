@@ -22,8 +22,8 @@
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
-        private readonly ITextEditor _textEditor;
-        private readonly TextEditorCore _textEditorCore;
+        private ITextEditor _textEditor;
+        private TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -43,6 +43,14 @@
             Items.Add(Share);
 
             Opening += TextEditorContextFlyout_Opening;
+        }
+
+        public void Dispose()
+        {
+            Opening -= TextEditorContextFlyout_Opening;
+
+            _textEditor = null;
+            _textEditorCore = null;
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)

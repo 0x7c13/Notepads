@@ -151,27 +151,35 @@
 
             foreach (ITextEditor textEditor in textEditors)
             {
-                if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
+                try
                 {
-                    // We will not create new backup files for this text editor unless it has content changes
-                    // But we should update latest TextEditor state meta data
-                    textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
-                }
-                else // Text content has been changed or editor has not backed up yet
-                {
-                    textEditorData = await BuildTextEditorSessionData(textEditor);
-                    if (textEditorData == null)
+                    if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
                     {
-                        continue;
+                        // We will not create new backup files for this text editor unless it has content changes
+                        // But we should update latest TextEditor state meta data
+                        textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
                     }
-                    _sessionData.TryAdd(textEditor.Id, textEditorData);
+                    else // Text content has been changed or editor has not backed up yet
+                    {
+                        textEditorData = await BuildTextEditorSessionData(textEditor);
+                        if (textEditorData == null)
+                        {
+                            continue;
+                        }
+                        _sessionData.TryAdd(textEditor.Id, textEditorData);
+                    }
+
+                    sessionData.TextEditors.Add(textEditorData);
+
+                    if (textEditor == selectedTextEditor)
+                    {
+                        sessionData.SelectedTextEditor = textEditor.Id;
+                    }
                 }
-
-                sessionData.TextEditors.Add(textEditorData);
-
-                if (textEditor == selectedTextEditor)
+                catch (Exception ex)
                 {
-                    sessionData.SelectedTextEditor = textEditor.Id;
+                    LoggingService.LogError($"[SessionManager] Failed to build TextEditor session data: {ex}");
+                    Analytics.TrackEvent("SessionManager_FailedToBuildTextEditorSessionData", new Dictionary<string, string>() {{ "Exception", ex.Message }});
                 }
             }
 

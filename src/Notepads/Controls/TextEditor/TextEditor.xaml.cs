@@ -40,6 +40,12 @@
 
         public INotepadsExtensionProvider ExtensionProvider;
 
+        public new event RoutedEventHandler Loaded;
+
+        public new event RoutedEventHandler Unloaded;
+
+        public new event KeyEventHandler KeyDown;
+
         public event EventHandler ModeChanged;
 
         public event EventHandler ModificationStateChanged;
@@ -174,8 +180,14 @@
 
             ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
 
-            Loaded += TextEditor_Loaded;
-            Unloaded += TextEditor_Unloaded;
+            base.Loaded += TextEditor_Loaded;
+            base.Unloaded += TextEditor_Unloaded;
+            base.KeyDown += TextEditor_KeyDown;
+        }
+
+        private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            KeyDown?.Invoke(this, e);
         }
 
         // Unhook events and clear state
@@ -187,10 +199,19 @@
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
 
+            if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
+            {
+                contextFlyout.Dispose();
+                TextEditorCore.ContextFlyout = null;
+            }
+
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
 
-            Loaded -= TextEditor_Loaded;
-            Unloaded -= TextEditor_Unloaded;
+            Unloaded?.Invoke(this, new RoutedEventArgs());
+
+            base.Loaded -= TextEditor_Loaded;
+            base.Unloaded -= TextEditor_Unloaded;
+            base.KeyDown -= TextEditor_KeyDown;
 
             if (_contentPreviewExtension != null)
             {
@@ -214,7 +235,6 @@
             if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Content is FindAndReplaceControl findAndReplaceControl)
             {
                 findAndReplaceControl.Dispose();
-                FindAndReplacePlaceholder = null;
                 UnloadObject(FindAndReplacePlaceholder);
             }
 
@@ -282,11 +302,13 @@
 
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
+            Loaded?.Invoke(this, e);
             StartCheckingFileStatusPeriodically();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
         {
+            Unloaded?.Invoke(this, e);
             StopCheckingFileStatus();
         }
 

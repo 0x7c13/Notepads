@@ -116,16 +116,6 @@
             _keyboardCommandHandler = GetKeyboardCommandHandler();
         }
 
-        private async void TextEditorCore_Paste(object sender, TextControlPasteEventArgs args)
-        {
-            await PastePlainTextFromWindowsClipboard(args);
-        }
-
-        private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
-        {
-            CopyPlainTextToWindowsClipboard(args);
-        }
-
         // Unhook events and clear state
         public void Dispose()
         {
@@ -481,6 +471,16 @@
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        private async void TextEditorCore_Paste(object sender, TextControlPasteEventArgs args)
+        {
+            await PastePlainTextFromWindowsClipboard(args);
+        }
+
+        private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        {
+            CopyPlainTextToWindowsClipboard(args);
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)
