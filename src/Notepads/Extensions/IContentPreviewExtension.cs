@@ -7,5 +7,7 @@
         void Bind(TextEditorCore editor);
 
         bool IsExtensionEnabled { get; set; }
+
+        void Dispose();
     }
 }

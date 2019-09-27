@@ -321,7 +321,7 @@ namespace SetsView
                 }
                 else
                 {
-                    Items.Remove(item);
+                    Items?.Remove(item);
                 }
             }
         }
