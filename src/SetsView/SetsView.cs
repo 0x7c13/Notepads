@@ -390,7 +390,15 @@ namespace SetsView
 
         public void ScrollTo(double offset)
         {
-            _setsScroller?.ChangeView(offset, 0.0f, 1.0f);
+            try
+            {
+                _setsScroller?.UpdateLayout();
+                _setsScroller?.ChangeView(offset, 0.0f, 1.0f);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"SetsView failed to scroll to offset: {(long)offset}, Exception: {ex}");
+            }
         }
 
         // HACK: Simulate left most and right most (tab) edge shadow
