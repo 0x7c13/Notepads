@@ -140,7 +140,7 @@
                 Canvas.ZIndex="50"
                 Grid.Column="1"
                 ShadowOpacity="0.4"
-                BlurRadius="10"
+                BlurRadius="12"
                 Margin="-1,0"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Left">
