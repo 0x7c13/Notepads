@@ -51,11 +51,6 @@
             GoToBar.Focus(FocusState.Programmatic);
         }
 
-        private void DismissButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            OnDismissKeyDown?.Invoke(sender, e);
-        }
-
         private void GoToBar_onTextChanged(object sender, TextChangedEventArgs e)
         {
             SearchButton.Visibility = !string.IsNullOrEmpty(GoToBar.Text) ? Visibility.Visible : Visibility.Collapsed;
@@ -79,6 +74,11 @@
             {
                 e.Handled = true;
             }
+        }
+
+        private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            OnDismissKeyDown?.Invoke(sender, e);
         }
     }
 }

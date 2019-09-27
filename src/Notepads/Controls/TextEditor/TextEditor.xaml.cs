@@ -751,7 +751,6 @@
 
         private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
         {
-            TextEditorCore.Focus(FocusState.Programmatic);
             int line = int.TryParse(e.SearchLine, out _) ? Convert.ToInt32(e.SearchLine) : 0;
             bool found = TextEditorCore.GoTo(line);
 
@@ -763,6 +762,7 @@
             else
             {
                 HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
             }
         }
 
