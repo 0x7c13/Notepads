@@ -34,6 +34,10 @@
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
+            <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
+                                   Color="Gray"
+                                   Opacity="0.3"
+                                   FallbackColor="Gray" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -69,6 +73,9 @@
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
+            <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
+                                   Color="Transparent"
+                                   FallbackColor="Transparent" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
@@ -97,6 +104,8 @@
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.0</x:Double>
+            <SolidColorBrush x:Key="SetsViewItemRevealBackgroundBrush"
+                             Color="Transparent" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -125,7 +134,7 @@
 
     <Style x:Key="TopEdgeShadowStyle" 
            TargetType="toolkitControls:DropShadowPanel">
-        <Setter Property="BlurRadius" Value="8" />
+        <Setter Property="BlurRadius" Value="10" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -134,7 +143,7 @@
 
     <Style x:Key="BottomEdgeShadowStyle" 
         TargetType="toolkitControls:DropShadowPanel">
-        <Setter Property="BlurRadius" Value="8" />
+        <Setter Property="BlurRadius" Value="10" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -431,9 +440,10 @@
 
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource SetsViewItemHeaderBackgroundPointerOver}" />
-                            <Setter Target="Icon.Foreground" Value="{ThemeResource SetsViewItemHeaderForegroundPointerOver}" />
+                            <Setter Target="LayoutRoot.(RevealBrush.State)" Value="PointerOver" />
+                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource SetsViewItemRevealBackgroundBrush}" />
                             <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SetsViewItemHeaderForegroundPointerOver}" />
+                            <Setter Target="Icon.Foreground" Value="{ThemeResource SetsViewItemHeaderForegroundPointerOver}" />
                         </VisualState.Setters>
 
                         <Storyboard>
@@ -453,7 +463,8 @@
 
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource SetsViewItemHeaderBackgroundPressed}" />
+                            <Setter Target="LayoutRoot.(RevealBrush.State)" Value="Pressed" />
+                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource SetsViewItemRevealBackgroundBrush}" />
                             <Setter Target="Icon.Foreground" Value="{ThemeResource SetsViewItemHeaderForegroundPressed}" />
                             <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SetsViewItemHeaderForegroundPressed}" />
                             <Setter Target="SelectionIndicator.Opacity" Value="0.4" />
@@ -884,7 +895,7 @@
                                           Delay="50"
                                           FontFamily="Segoe MDL2 Assets"
                                           Interval="100"
-                                          Style="{StaticResource RepeatButtonRevealStyle}"
+                                          Style="{ThemeResource RepeatButtonRevealStyle}"
                                           Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
                                 &#xE76B;
                             </RepeatButton>
@@ -936,7 +947,7 @@
                                           Delay="50"
                                           FontFamily="Segoe MDL2 Assets"
                                           Interval="100"
-                                          Style="{StaticResource RepeatButtonRevealStyle}"
+                                          Style="{ThemeResource RepeatButtonRevealStyle}"
                                           Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
                                 &#xE76C;
                             </RepeatButton>
