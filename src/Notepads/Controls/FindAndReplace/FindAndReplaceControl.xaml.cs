@@ -66,11 +66,6 @@
         {
             if (mode == FindAndReplaceMode.FindOnly)
             {
-                if (!string.IsNullOrEmpty(FindBar.Text))
-                {
-                    FindBar.SelectionStart = 0;
-                    FindBar.SelectionLength = FindBar.Text.Length;
-                }
                 FindBar.Focus(FocusState.Programmatic);
             }
             else

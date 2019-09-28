@@ -775,7 +775,12 @@
             {
                 case FindAndReplaceMode.FindOnly:
                     found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
-                    FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);
+                    // In case user hit "enter" key in search box instead of clicking on search button or hit F3
+                    // We should re-focus on FindAndReplaceControl to make the next search "flows"
+                    if (!(sender is Button))
+                    {
+                        FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);   
+                    }
                     break;
                 case FindAndReplaceMode.Replace:
                     found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
