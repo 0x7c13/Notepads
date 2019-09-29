@@ -48,6 +48,7 @@
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             InitializeComponent();
+
             Suspending += OnSuspending;
         }
 
@@ -64,12 +65,6 @@
                 },
                 {
                     "Exception", e.Exception.ToString()
-                },
-                {
-                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
-                },
-                {
-                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
                 },
                 {
                     "Culture", SystemInformation.Culture.EnglishName
@@ -103,6 +98,12 @@
                 },
                 {
                     "AppUptime", SystemInformation.AppUptime.ToString()
+                },
+                {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
+                {
+                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
                 }
             };
 
@@ -212,7 +213,14 @@
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
             Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
-            await ActivationService.ActivateAsync(rootFrame, e);
+            try
+            {
+                await ActivationService.ActivateAsync(rootFrame, e);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AppFailedToActivate", ex);
+            }
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();
