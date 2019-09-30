@@ -386,7 +386,7 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
+                //new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
@@ -816,16 +816,16 @@
             if (GoToPlaceholder == null)
                 FindName("GoToPlaceholder"); // Lazy loading
 
-            var goTo = (GoToControl)GoToPlaceholder.Content;
+            var goToControl = (GoToControl)GoToPlaceholder.Content;
 
-            if (goTo == null) return;
+            if (goToControl == null) return;
 
-            GoToPlaceholder.Height = goTo.GetHeight();
+            GoToPlaceholder.Height = goToControl.GetHeight();
 
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            goTo.Focus();
+            goToControl.Focus();
         }
 
         public void HideGoToControl()

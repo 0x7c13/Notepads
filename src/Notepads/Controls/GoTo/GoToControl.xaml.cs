@@ -20,12 +20,25 @@
 
             SetSelectionHighlightColor();
 
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                SetSelectionHighlightColor();
-            };
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
-            Loaded += (sender, args) => { Focus(); };
+            Loaded += GoToControl_Loaded;
+        }
+
+        public void Dispose()
+        {
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            Loaded -= GoToControl_Loaded;
+        }
+
+        private void GoToControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Focus();
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
+        {
+            SetSelectionHighlightColor();
         }
 
         public double GetHeight()
@@ -43,15 +56,10 @@
 
         public void Focus()
         {
-            if (!string.IsNullOrEmpty(GoToBar.Text))
-            {
-                GoToBar.SelectionStart = 0;
-                GoToBar.SelectionLength = GoToBar.Text.Length;
-            }
             GoToBar.Focus(FocusState.Programmatic);
         }
 
-        private void GoToBar_onTextChanged(object sender, TextChangedEventArgs e)
+        private void GoToBar_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             SearchButton.Visibility = !string.IsNullOrEmpty(GoToBar.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -63,7 +71,7 @@
             OnGoToButtonClicked?.Invoke(sender, new GoToEventArgs(GoToBar.Text));
         }
 
-        private void GoToBar_onKeyDown(object sender, KeyRoutedEventArgs e)
+        private void GoToBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(GoToBar.Text))
             {

@@ -251,8 +251,7 @@
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" MinWidth="4"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -262,10 +261,27 @@
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Grid x:Name="FileModificationStateIndicator"
-                      Padding="10,5,8,5"
+                      Padding="8,5,6,5"
                       IsTapEnabled="True" 
                       extensions:Mouse.Cursor="Hand"
                       Tapped="StatusBarComponent_OnTapped">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                            <Core:ChangePropertyAction PropertyName="Background">
+                                <Core:ChangePropertyAction.Value>
+                                    <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+
+                        <Core:EventTriggerBehavior EventName="PointerExited">
+                            <Core:ChangePropertyAction PropertyName="Background">
+                                <Core:ChangePropertyAction.Value>
+                                    <SolidColorBrush Color="Transparent"/>
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
                     <Viewbox>
                         <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
                     </Viewbox>
@@ -293,31 +309,13 @@
             </Grid>
             <Grid Column="1"
                   extensions:Mouse.Cursor="Hand">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent"/>
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-                
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
-                           Padding ="8,4,8,4"
+                           Padding ="4,4,8,4"
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped">
                 </TextBlock>
             </Grid>
-            <Grid Column="3"
+            <Grid Column="2"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -372,30 +370,11 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="4" x:Name="LineColumnIndicatorButton"
-                  IsTapEnabled="True" 
-                  extensions:Mouse.Cursor="Hand">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent"/>
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-                
+            <Grid Column="3" x:Name="LineColumnIndicatorButton"
+                  IsTapEnabled="False">
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
             </Grid>
-            <Grid Column="5"
+            <Grid Column="4"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -432,7 +411,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="6"
+            <Grid Column="5"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -470,7 +449,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="7"
+            <Grid Column="6"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -492,7 +471,7 @@
                 
                 <Grid x:Name="ShadowWindowIndicator"
                       Visibility="Collapsed"
-                      Padding="5,6,5,6"
+                      Padding="6,6,6,6"
                       IsTapEnabled="True"
                       Tapped="StatusBarComponent_OnTapped">
                     <Viewbox>

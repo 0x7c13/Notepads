@@ -5,10 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="250" Height="37">
+    d:DesignWidth="250" Height="36">
 
     <Grid x:Name="RootGrid">
-        <Grid Grid.Row="0" Padding="1, 1, 6, 1" Height="36" x:Name="GoToRootGrid">
+        <Grid Grid.Row="0" Padding="1, 1, 1, 1" Height="36" x:Name="GoToRootGrid">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -26,14 +26,13 @@
                          TextAlignment="Left"
                          BorderThickness="0"
                          FontSize="15"
-                         TextChanged="GoToBar_onTextChanged"
-                         KeyDown="GoToBar_onKeyDown" LostFocus="GoToBar_LostFocus"/>
+                         TextChanged="GoToBar_OnTextChanged"
+                         KeyDown="GoToBar_OnKeyDown" LostFocus="GoToBar_LostFocus"/>
             </Grid>
 
             <Button x:Name="SearchButton"
                     x:Uid="GoTo_SearchButton"
-                    Padding="3,0,0,0"
-                    Width="38"
+                    Width="36"
                     Grid.Column="1" 
                     Visibility="Collapsed"
                     IsTabStop="False"
@@ -42,9 +41,6 @@
                     Content="&#xEBE7;" 
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchButton_OnClick">
-                <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F3"/>
-                </Button.KeyboardAccelerators>
             </Button>
         </Grid>
     </Grid>
