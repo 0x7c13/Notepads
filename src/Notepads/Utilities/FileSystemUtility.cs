@@ -233,6 +233,10 @@
                 reader.Peek();
                 if (encoding == null) encoding = reader.CurrentEncoding;
                 text = reader.ReadToEnd();
+
+                // Removing null characters, so that RichEditBox won't stop reading characters in the middle of the file.
+                text = text.Replace("\0", "");
+
                 reader.Close();
             }
 
@@ -394,7 +398,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList", 
+                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
                     new Dictionary<string, string>()
                     {
                         { "ItemCount", GetFutureAccessListItemCount().ToString() },
