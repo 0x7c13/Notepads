@@ -313,6 +313,25 @@
                            Padding ="4,4,8,4"
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped">
+
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                            <Core:ChangePropertyAction PropertyName="Opacity">
+                                <Core:ChangePropertyAction.Value>
+                                    0.7
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+
+                        <Core:EventTriggerBehavior EventName="PointerExited">
+                            <Core:ChangePropertyAction PropertyName="Opacity">
+                                <Core:ChangePropertyAction.Value>
+                                    1.0
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+
                 </TextBlock>
             </Grid>
             <Grid Column="2"
@@ -337,7 +356,6 @@
                 
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
-                           TextDecorations="Underline"
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped"
                            >
