@@ -35,11 +35,12 @@
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
             Loaded += PersonalizationSettings_Loaded;
+            Unloaded += PersonalizationSettings_Unloaded;
+        }
 
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                BackgroundTintOpacitySlider.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            };
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        {
+            BackgroundTintOpacitySlider.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         private void PersonalizationSettings_Loaded(object sender, RoutedEventArgs e)
@@ -50,6 +51,20 @@
             BackgroundTintOpacitySlider.ValueChanged += BackgroundTintOpacitySlider_OnValueChanged;
             AccentColorToggle.Toggled += WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
+
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeModeDefaultButton.Checked -= ThemeRadioButton_OnChecked;
+            ThemeModeLightButton.Checked -= ThemeRadioButton_OnChecked;
+            ThemeModeDarkButton.Checked -= ThemeRadioButton_OnChecked;
+            BackgroundTintOpacitySlider.ValueChanged -= BackgroundTintOpacitySlider_OnValueChanged;
+            AccentColorToggle.Toggled -= WindowsAccentColorToggle_OnToggled;
+            AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
+
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void ThemeRadioButton_OnChecked(object sender, RoutedEventArgs e)

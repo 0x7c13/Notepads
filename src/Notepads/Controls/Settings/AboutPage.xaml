@@ -56,7 +56,7 @@
                         <Run x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle"/>
                     </Paragraph>
                     <Paragraph>
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                        <Hyperlink NavigateUri="https://www.NotepadsApp.com">
                             https://www.NotepadsApp.com
                         </Hyperlink>
                     </Paragraph>

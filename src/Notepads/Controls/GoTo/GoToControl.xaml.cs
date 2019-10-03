@@ -20,20 +20,24 @@
 
             SetSelectionHighlightColor();
 
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
-
             Loaded += GoToControl_Loaded;
+            Unloaded += GoToControl_Unloaded;
         }
 
         public void Dispose()
         {
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-            Loaded -= GoToControl_Loaded;
         }
 
         private void GoToControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus();
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private void GoToControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
