@@ -8,6 +8,7 @@
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
+    using Notepads.Controls.GoTo;
     using Notepads.Extensions;
     using Notepads.Models;
     using Notepads.Services;
@@ -385,6 +386,7 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                //new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
@@ -775,7 +777,12 @@
             {
                 case FindAndReplaceMode.FindOnly:
                     found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
-                    FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);
+                    // In case user hit "enter" key in search box instead of clicking on search button or hit F3
+                    // We should re-focus on FindAndReplaceControl to make the next search "flows"
+                    if (!(sender is Button))
+                    {
+                        FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);   
+                    }
                     break;
                 case FindAndReplaceMode.Replace:
                     found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
@@ -799,6 +806,58 @@
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
             FindAndReplacePlaceholder.Dismiss();
+            TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        public void ShowGoToControl()
+        {
+            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
+
+            if (GoToPlaceholder == null)
+                FindName("GoToPlaceholder"); // Lazy loading
+
+            var goToControl = (GoToControl)GoToPlaceholder.Content;
+
+            if (goToControl == null) return;
+
+            GoToPlaceholder.Height = goToControl.GetHeight();
+
+            if (GoToPlaceholder.Visibility == Visibility.Collapsed)
+                GoToPlaceholder.Show();
+
+            goToControl.Focus();
+        }
+
+        public void HideGoToControl()
+        {
+            GoToPlaceholder?.Dismiss();
+        }
+
+        private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
+        {
+            int line = int.TryParse(e.SearchLine, out _) ? Convert.ToInt32(e.SearchLine) : 0;
+            bool found = TextEditorCore.GoTo(line);
+
+            if (!found)
+            {
+                GoToControl.Focus();
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+            }
+            else
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void GoToPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        {
+            GoToPlaceholder.Visibility = Visibility.Collapsed;
+        }
+
+        private void GoToControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
+        {
+            GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
     }

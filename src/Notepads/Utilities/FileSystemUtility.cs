@@ -45,7 +45,16 @@
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
+            string path = null;
+
+            try
+            {
+                path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to parse command line: {args} with Exception: {ex}");
+            }
 
             if (string.IsNullOrEmpty(path))
             {
@@ -63,7 +72,7 @@
 
             args = args.Trim();
 
-            args = RemoveAppNameFromCommandLineIfAny(args, appName);
+            args = RemoveExecutableNameOrPathFromCommandLineArgs(args, appName);
 
             if (string.IsNullOrEmpty(args))
             {
@@ -72,9 +81,12 @@
 
             string path = args;
 
-            if (path.StartsWith("\"") && path.EndsWith("\"") && path.Length > 2)
+            // Get first quoted string if any
+            if (path.StartsWith("\"") && path.Length > 1)
             {
-                path = path.Substring(1, args.Length - 2);
+                var index = path.IndexOf('\"', 1);
+                if (index == -1) return null;
+                path = args.Substring(1, index - 1);
             }
 
             if (IsFullPath(path))
@@ -98,22 +110,43 @@
             return path;
         }
 
-        private static string RemoveAppNameFromCommandLineIfAny(string args, string appName)
+        private static string RemoveExecutableNameOrPathFromCommandLineArgs(string args, string appName)
         {
-            if (args.StartsWith($"{appName}.exe",
-                StringComparison.OrdinalIgnoreCase))
+            if (!args.StartsWith('\"'))
             {
-                args = args.Substring($"{appName}.exe".Length);
-                args = args.Trim();
+                // From Windows Command Line
+                // notepads <file> ...
+                // notepads.exe <file>
+
+                if (args.StartsWith($"{appName}.exe",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring($"{appName}.exe".Length);
+                }
+
+                if (args.StartsWith(appName,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring(appName.Length);
+                }
+            }
+            else if (args.StartsWith('\"') && args.Length > 1)
+            {
+                // From PowerShell or run
+                // "notepads" <file>
+                // "notepads.exe" <file>
+                // "<app-install-path><app-name>.exe"  <file> ...
+                var index = args.IndexOf('\"', 1);
+                if (index == -1) return null;
+                if (args.Length == index + 1) return null;
+                args = args.Substring(index + 1);
+            }
+            else
+            {
+                return null;
             }
 
-            if (args.StartsWith(appName,
-                StringComparison.OrdinalIgnoreCase))
-            {
-                args = args.Substring(appName.Length);
-                args = args.Trim();
-            }
-
+            args = args.Trim();
             return args;
         }
 

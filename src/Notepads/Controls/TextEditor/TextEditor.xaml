@@ -8,6 +8,7 @@
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
     xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
+    xmlns:goTo="using:Notepads.Controls.GoTo"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -111,6 +112,27 @@
                                                               Width="320"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
+                    </controls:InAppNotification.Content>
+                </controls:InAppNotification>
+                <controls:InAppNotification x:Name="GoToPlaceholder"
+                                            x:Load="false"
+                                            Padding="0"
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource FindAndReplacePlaceholder}"
+                                            ShowDismissButton="True"
+                                            AnimationDuration="0:0:0.050"
+                                            VerticalOffset="0"
+                                            HorizontalOffset="0"
+                                            FontWeight="Light"
+                                            BorderThickness="1"
+                                            Closed="GoToPlaceholder_Closed">
+                    <controls:InAppNotification.Content>
+                        <goTo:GoToControl x:Name="GoToControl" 
+                                                              Width="320"
+                                                              OnDismissKeyDown="GoToControl_OnDismissKeyDown"
+                                                              OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
             </Grid>

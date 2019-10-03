@@ -18,19 +18,25 @@
         {
             InitializeComponent();
             SetSelectionHighlightColor();
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+
             Loaded += FindAndReplaceControl_Loaded;
+            Unloaded += FindAndReplaceControl_Unloaded;
         }
 
         public void Dispose()
         {
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-            Loaded -= FindAndReplaceControl_Loaded;
         }
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus(FindAndReplaceMode.FindOnly);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private void FindAndReplaceControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
@@ -66,11 +72,6 @@
         {
             if (mode == FindAndReplaceMode.FindOnly)
             {
-                if (!string.IsNullOrEmpty(FindBar.Text))
-                {
-                    FindBar.SelectionStart = 0;
-                    FindBar.SelectionLength = FindBar.Text.Length;
-                }
                 FindBar.Focus(FocusState.Programmatic);
             }
             else

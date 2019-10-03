@@ -15,7 +15,24 @@
         {
             InitializeComponent();
             SetAppIconBasedOnTheme(ThemeSettingsService.ThemeMode);
-            ThemeSettingsService.OnThemeChanged += (sender, theme) => SetAppIconBasedOnTheme(theme);
+
+            Loaded += AboutPage_Loaded;
+            Unloaded += AboutPage_Unloaded;
+        }
+
+        private void AboutPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+        }
+
+        private void AboutPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+        }
+
+        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        {
+            SetAppIconBasedOnTheme(theme);
         }
 
         private void SetAppIconBasedOnTheme(ElementTheme theme)

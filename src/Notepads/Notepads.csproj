@@ -130,6 +130,10 @@
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GoTo\GoToControl.xaml.cs">
+      <DependentUpon>GoToControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GoTo\GoToEventArgs.cs" />
     <Compile Include="Controls\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -292,6 +296,10 @@
     <Page Include="Controls\FindAndReplace\FindAndReplaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GoTo\GoToControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Settings\AboutPage.xaml">
       <SubType>Designer</SubType>

@@ -656,6 +656,25 @@
             }
         }
 
+        public bool GoTo(int line)
+        {
+            if (_isLineCachePendingUpdate)
+            {
+                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _isLineCachePendingUpdate = false;
+            }
+
+            if (line > 0 && line < _contentLinesCache.Length)
+            {
+                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void ShowEasterEgg()
         {
             //_contentScrollViewer.Background = new ImageBrush

@@ -103,6 +103,10 @@
 
         void HideFindAndReplaceControl();
 
+        void ShowGoToControl();
+      
+        void HideGoToControl();
+
         void Dispose();
     }
 }

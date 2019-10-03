@@ -23,12 +23,19 @@
             }
 
             Loaded += AdvancedSettings_Loaded;
+            Unloaded += AdvancedSettings_Unloaded;
         }
 
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+        }
+
+        private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ShowStatusBarToggleSwitch.Toggled -= ShowStatusBarToggleSwitch_Toggled;
+            EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
         }
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)
