@@ -60,14 +60,14 @@
 
         public static NotepadsDialog GetFileHasNullCharErrorDialog(string filePath)
         {
-            NotepadsDialog fileOpenErrorDialog = new NotepadsDialog
+            NotepadsDialog fileHasNullCharacterDialog = new NotepadsDialog
             {
                 Title = ResourceLoader.GetString("FileHasNullCharacterError_Title"),
                 Content = string.Format(ResourceLoader.GetString("FileHasNullCharacterError_Content"), filePath),
                 PrimaryButtonText = ResourceLoader.GetString("FileHasNullCharacterError_PrimaryButtonText"),
                 RequestedTheme = ThemeSettingsService.ThemeMode
             };
-            return fileOpenErrorDialog;
+            return fileHasNullCharacterDialog;
         }
 
         public static NotepadsDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
