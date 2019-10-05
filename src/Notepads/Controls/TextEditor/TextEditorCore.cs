@@ -545,6 +545,7 @@
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
             var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
+            // Ctrl + Wheel -> zooming
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 !shift.HasFlag(CoreVirtualKeyStates.Down))
@@ -560,6 +561,7 @@
                 }
             }
 
+            // Enabling scrolling during text selection
             if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 !shift.HasFlag(CoreVirtualKeyStates.Down))
@@ -572,6 +574,16 @@
                     _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
                             _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
                 }
+            }
+
+            // Ctrl + Shift + Wheel -> horizontal scrolling
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                shift.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
+                    _contentScrollViewer.VerticalOffset, null, true);
             }
         }
 
