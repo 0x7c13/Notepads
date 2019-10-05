@@ -237,7 +237,6 @@
                 {
                     var fileHasNullCharError = NotepadsDialogFactory.GetFileHasNullCharErrorDialog(file.Path);
                     await DialogManager.OpenDialogAsync(fileHasNullCharError, awaitPreviousDialog: false);
-
                 }
                 reader.Close();
             }
