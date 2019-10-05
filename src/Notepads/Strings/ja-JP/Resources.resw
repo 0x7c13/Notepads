@@ -457,4 +457,13 @@
     <value>新規ウィンドウ</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="FileHasNullCharacterError_Content" xml:space="preserve">
+    <value>File "{0}" has null character and the file may doesn't display correctly."</value>
+  </data>
+  <data name="FileHasNullCharacterError_PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="FileHasNullCharacterError_Title" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>

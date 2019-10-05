@@ -58,6 +58,18 @@
             return fileOpenErrorDialog;
         }
 
+        public static NotepadsDialog GetFileHasNullCharErrorDialog(string filePath)
+        {
+            NotepadsDialog fileOpenErrorDialog = new NotepadsDialog
+            {
+                Title = ResourceLoader.GetString("FileHasNullCharacterError_Title"),
+                Content = string.Format(ResourceLoader.GetString("FileHasNullCharacterError_Content"), filePath),
+                PrimaryButtonText = ResourceLoader.GetString("FileHasNullCharacterError_PrimaryButtonText"),
+                RequestedTheme = ThemeSettingsService.ThemeMode
+            };
+            return fileOpenErrorDialog;
+        }
+
         public static NotepadsDialog GetFileSaveErrorDialog(string filePath, string errorMsg)
         {
             var content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);

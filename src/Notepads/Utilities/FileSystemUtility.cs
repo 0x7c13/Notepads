@@ -233,6 +233,12 @@
                 reader.Peek();
                 if (encoding == null) encoding = reader.CurrentEncoding;
                 text = reader.ReadToEnd();
+                if (text.Contains('\0'))
+                {
+                    var fileHasNullCharError = NotepadsDialogFactory.GetFileHasNullCharErrorDialog(file.Path);
+                    await DialogManager.OpenDialogAsync(fileHasNullCharError, awaitPreviousDialog: false);
+
+                }
                 reader.Close();
             }
 
