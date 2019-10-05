@@ -30,7 +30,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Fluent design with built-in Tab system.
 * Blazingly fast and lightweight.
-* Launch from command line or PowerShell by typing: "notepads" or "notepads <FilePath>".
+* Launch from command line or PowerShell by typing: "notepads" or "notepads %FilePath%".
 * Multi-line handwriting support.
 * Built-in Markdown file live preview.
 * Built-in diff viewer (Preview your changes).
