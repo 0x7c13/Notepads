@@ -9,7 +9,7 @@
 
     public sealed partial class AboutPage : Page
     {
-        public string AppVersion => $"v{GetAppVersion()} Beta";
+        public string AppVersion => $"v{GetAppVersion()}";
 
         public AboutPage()
         {
