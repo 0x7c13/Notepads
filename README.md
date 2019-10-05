@@ -132,3 +132,4 @@ On the other hand, you might noticed that I work for Microsoft. However, Notepad
 
 * [Original Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Notepads Discord Server](https://discord.gg/VqetCub)
+* [Notepads: Better Notepad! - YouTube Video made by Vasanth Developer](https://www.youtube.com/watch?v=7GXDrehNWb8)
