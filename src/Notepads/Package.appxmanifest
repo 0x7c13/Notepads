@@ -15,10 +15,10 @@
     Publisher="CN=jackil"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="77ab4c55-cc57-4187-a21f-b8adbd22d860" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Notepads</DisplayName>
+    <DisplayName>Notepads App</DisplayName>
     <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -95,6 +95,7 @@
           <uap:FileTypeAssociation Name="markdown">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="text/plain">.md</uap:FileType>
+              <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Markdown File</uap:DisplayName>
             <uap:Logo>Assets\md.png</uap:Logo>

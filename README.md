@@ -8,16 +8,16 @@
   A modern, lightweight text editor with minimum design.
 </p>
 <p align="center">
-  <a href="https://www.microsoft.com/store/apps/9nhl4nsc67wm">
+  <a style="text-decoration:none" href="https://www.microsoft.com/store/apps/9nhl4nsc67wm">
     <img src="https://img.shields.io/badge/Microsoft%20Store-Download-orange.svg?style=flat-square" alt="Store link" />
   </a>
-  <a href="https://github.com/JasonStein/Notepads/releases">
+  <a style="text-decoration:none" href="https://github.com/JasonStein/Notepads/releases">
     <img src="https://img.shields.io/github/release/jasonstein/notepads.svg?label=beta%20release&style=flat-square" alt="Releases" />
   </a>
-  <a>
+  <a style="text-decoration:none">
     <img src="https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square" alt="Platform" />
   </a>
-  <a href="https://discord.gg/VqetCub">
+  <a style="text-decoration:none" href="https://discord.gg/VqetCub">
     <img src="https://img.shields.io/discord/588473626651787274.svg?style=flat-square" alt="Discord" />
   </a>
 </p>
