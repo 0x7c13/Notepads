@@ -458,7 +458,7 @@
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="FileHasNullCharacterError_Content" xml:space="preserve">
-    <value>"Dosya "{0}" null karaktere sahip ve dosya düzgün görüntülenemeyebilir."</value>
+    <value>"Dosya "{0}" null karaktere sahip ve dosya düzgün görüntülenemeyebilir.</value>
   </data>
   <data name="FileHasNullCharacterError_PrimaryButtonText" xml:space="preserve">
     <value>Tamam</value>
