@@ -57,6 +57,7 @@
                 var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
+                MRUService.Add(file); // Remember recently used files
                 return true;
             }
             catch (Exception ex)

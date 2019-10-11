@@ -175,7 +175,7 @@
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            MainMenuButtonFlyout.Opening += (sender, o) =>
+            MainMenuButtonFlyout.Opening += async (sender, o) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
                 if (selectedTextEditor == null)
@@ -208,6 +208,8 @@
                 MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
+
+                await BuildOpenRecentButtonSubItems();
             };
 
             if (!App.IsFirstInstance)
@@ -215,6 +217,28 @@
                 MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
                 MenuSettingsButton.IsEnabled = false;
             }
+        }
+
+        private async Task BuildOpenRecentButtonSubItems()
+        {
+            MenuOpenRecentlyUsedFileButton?.Items?.Clear();
+
+            foreach (var item in await MRUService.Get())
+            {
+                if (item is StorageFile file)
+                {
+                    MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
+                    {
+                        Text = file.Path
+                    });
+                }
+            }
+
+            MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutSeparator());
+            MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
+            {
+                Text = "Clear Recently Opened"
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()

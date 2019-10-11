@@ -457,4 +457,8 @@
     <value>Neues Fenster</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>Open Recent</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
 </root>
