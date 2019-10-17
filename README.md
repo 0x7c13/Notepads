@@ -49,10 +49,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ![image](https://user-images.githubusercontent.com/1166162/62916469-75eb5800-bd4d-11e9-9f97-a632792400c0.png)
 
-## Things are not working or not implemented in this version:
-
-* File Print.
-
 ## Shortcuts:
 
 * Ctrl+N/T to create new tab.
@@ -61,10 +57,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Ctrl+P to toggle preivew split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
-
-## Author’s Notes:
-
-The beta is intended to collect feedback, report bugs and glitches. For issue reporting and feature requests, please use [Github Issues](https://github.com/JasonStein/Notepads/issues). You can also join Notepads Discord server and chat with me directly: [Notepads Discord Server](https://discord.gg/VqetCub)
 
 ## Platform limitations (UWP):
 
