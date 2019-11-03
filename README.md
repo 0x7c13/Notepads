@@ -24,16 +24,16 @@
 
 ## What is Notepads and why do I care?
 
-I have waited long enough for a modern windows 10 notepad app to come before I have to do it myself. Don’t get me wrong, Notepad++, VS Code and Sublime are good text editors. I have used most of them and I will continue to use them in the future. However, they are either too heavy or looks old. I really need a win32 notepad.exe replacement that feels light and looks cool to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
+I have waited long enough for a modern Windows 10 notepad app to come so I decided to create one myself. Don’t get me wrong, Notepad++, VS Code, and Sublime are good text editors. I have used most of them and I will continue to use them in the future. However, they are either too heavy or look old. I really wanted a win32 notepad.exe replacement that feels light and looks cool to help me get things done as quickly as possible and use it as a turnaround text editor to quickly modify config files or write some notes. Most importantly, it has to be blazingly fast and beautiful. 
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
-* Fluent design with a built-in Tab system.
+* Fluent design with a built-in tab system.
 * Blazingly fast and lightweight.
-* Launch from the command line or PowerShell by typing: "notepads" or "notepads %FilePath%".
+* Launch from the command line or PowerShell by typing: `notepads` or `notepads %FilePath%`.
 * Multi-line handwriting support.
 * Built-in Markdown live preview.
-* Built-in diff viewer (Preview your changes).
+* Built-in diff viewer (preview your changes).
 * Session snapshot and multi-instances.
 
 ![Screenshot Dark](ScreenShots/1.png?raw=true "Dark")
@@ -55,19 +55,19 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
-* Ctrl+P to toggle preivew split view for Markdown file.
+* Ctrl+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
 
 ## Platform limitations (UWP):
 
-* You won't be able to save files to system folders due to UWP restriction (windows, system32 etc.).
-* You can not associate potentially harmful file types (.ps1, .bat, .xaml etc) with Notepads.
+* You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
+* You cannot associate potentially harmful file types (.ps1, .bat, .xaml, etc.) with Notepads.
 * If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
-* Notepads does not work well with large file, so I am setting the file size limit to 1MB for now. I will add large file support later.
+* Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
 
 ## Downloads:
 
-Please head over to [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download latest release or get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+Please head over to the [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download the latest release. You can also get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
 ## Roadmap:
 
@@ -79,9 +79,9 @@ Please head over to [Github Releases](https://github.com/JasonStein/Notepads/rel
 
 ## Disclaimer and Privacy statement:
 
-To be 100% transparent, Notepads is not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used plus some minimum telemetry to help me debug runtime errors. I will not track your IP or listen your typings or read any of your files and send it over to me, or third parties. Feel free to check the source code as well.
+To be 100% transparent, Notepads does not and will never collect user information in terms of user privacy. I might use analytics tools to collect usage data like how many times it has been downloaded or been used plus some minimum telemetry to help me debug runtime errors. I will not track your IP or listen to your typings or read any of your files and send it over to me or third parties. Feel free to check the source code as well.
 
-On the other hand, you might noticed that I work for Microsoft. However, Notepads is just my personal side project and I do it for fun and for good (To empower every person and every organization on the planet to achieve more😃). I do not work for Windows team, nor do I work for any Microsoft’s UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+On the other hand, you might notice that I work for Microsoft. However, Notepads is my personal side project and I do it for fun and for good (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only a few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Contributing:
 
