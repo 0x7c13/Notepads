@@ -5,7 +5,7 @@
   Notepads
 </h1>
 <p align="center">
-  A modern, lightweight text editor with minimum design.
+  A modern, lightweight text editor with a minimalist design.
 </p>
 <p align="center">
   <a style="text-decoration:none" href="https://www.microsoft.com/store/apps/9nhl4nsc67wm">
