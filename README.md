@@ -24,7 +24,7 @@
 
 ## What is Notepads and why do I care?
 
-I waited long enough for a modern Windows 10 notepad app to come so I decided to create one myself. Don’t get me wrong, Notepad++, VS Code, and Sublime are good text editors. I have used them and I will continue to use them in the future. However, they are either too heavy or look old. I really wanted a win32 notepad.exe replacement that felt light and looked cool to help me get things done as quickly as possible (for example, as a turnaround text editor to quickly modify config files or write some notes). Most importantly, it had to be blazingly fast and beautiful. 
+I have been waiting long enough for a modern Windows 10 notepad app to come so I decide to create one myself. Don’t get me wrong, Notepad++, VS Code, and Sublime are great text editors. I have used them and I will continue to use them in the future. However, they are either too heavy or less interactive. I had a desire to replace a win32 notepad.exe with a software that was lightweight and looked impressive to get things done as quickly as possible (for example, as a turnaround text editor to quickly modify config files or write some notes). Most importantly, it had to be blazingly fast and appeal to everyone. 
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
@@ -86,11 +86,11 @@ To be 100% transparent:
 * I will not record your typings or read any of your files created in Notepads. 
 * No typings or files will be sent to me or third parties. 
 
-I might use analytics tools to collect basic usage data like how many times the program has been downloaded or been used plus some minimum telemetry to help me debug runtime errors. 
+I might use analytics tools to collect basic usage data such as how many times the program has been downloaded or been used plus some minimum telemetry to debug runtime errors. 
 
 Feel free to review the source code.
 
-You might notice that I work for Microsoft. However, Notepads is my personal side project and I do it for fun and for good (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only a few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only a few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Contributing:
 
