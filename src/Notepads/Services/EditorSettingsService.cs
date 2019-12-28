@@ -24,6 +24,8 @@
 
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
 
+        public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
+
         private static string _editorFontFamily;
 
         public static string EditorFontFamily
@@ -156,11 +158,26 @@
             }
         }
 
+        public static bool _isHighlightMisspelledWordsEnabled;
+
+        public static bool IsHighlightMisspelledWordsEnabled
+        {
+            get => _isHighlightMisspelledWordsEnabled;
+            set
+            {
+                _isHighlightMisspelledWordsEnabled = value;
+                OnHighlightMisspelledWordsChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value, true);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
 
             InitializeTextWrappingSettings();
+
+            InitializeSpellingSettings();
 
             InitializeLineEndingSettings();
 
@@ -230,6 +247,18 @@
             else
             {
                 _editorDefaultTextWrapping = TextWrapping.NoWrap;
+            }
+        }
+
+        private static void InitializeSpellingSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorHighlightMisspelledWordsBool) is bool highlightMisspelledWords)
+            {
+                _isHighlightMisspelledWordsEnabled = highlightMisspelledWords;
+            }
+            else
+            {
+                _isHighlightMisspelledWordsEnabled = false;
             }
         }
 
