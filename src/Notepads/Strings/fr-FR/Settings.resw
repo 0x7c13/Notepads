@@ -308,6 +308,7 @@
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>Paramètres de sauvegarde de session</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+  </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
     <value>Mettez en surbrillance les mots mal
  orthographiés</value>
