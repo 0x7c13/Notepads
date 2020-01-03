@@ -108,6 +108,7 @@
             };
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo);
 
             // if you want to suppress and handle it manually, 
             // otherwise app shuts down.
