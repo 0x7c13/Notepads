@@ -25,5 +25,6 @@
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
+        internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
     }
 }

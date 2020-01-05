@@ -309,4 +309,16 @@
     <value>快照备份设置</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>高亮拼写错误 (英文)</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>高亮拼写错误 (英文)</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>拼写检查</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
 </root>

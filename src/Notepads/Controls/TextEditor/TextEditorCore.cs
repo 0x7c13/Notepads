@@ -87,7 +87,7 @@
 
         public TextEditorCore()
         {
-            IsSpellCheckEnabled = false;
+            IsSpellCheckEnabled = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
@@ -109,6 +109,7 @@
             EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
+            EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
@@ -134,6 +135,7 @@
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
+            EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
@@ -154,6 +156,11 @@
         private void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
         {
             TextWrapping = textWrapping;
+        }
+
+        private void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
+        {
+            IsSpellCheckEnabled = isSpellCheckEnabled;
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)

@@ -37,6 +37,17 @@
                                   Margin="0,0,0,0"/>
                 </StackPanel>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_SpellingSettings_Title"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,30,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,0">
+                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="HighlightMisspelledWordsToggle" 
+                                  Margin="0,0,0,0"/>
+                </StackPanel>
+                <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,30,0,0"
