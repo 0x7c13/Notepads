@@ -16,7 +16,23 @@
 
             try
             {
-                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+                var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
+                foreach (var type in new List<string>()
+                    {
+                        ".txt", ".md", ".markdown",
+                        ".cfg", ".config", ".cnf", ".conf", ".ini", ".log",
+                        ".json", ".yml", ".yaml", ".xml", ".xaml",
+                        ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss",
+                        ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash",
+                        ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
+                        ".js", ".ts", ".lua",
+                        ".csv",
+                    })
+                {
+                    fileOpenPicker.FileTypeFilter.Add(type);
+                }
+
+                files = await fileOpenPicker.PickMultipleFilesAsync();
             }
             catch (Exception ex)
             {

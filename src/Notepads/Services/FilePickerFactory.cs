@@ -42,6 +42,7 @@
                 ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash",
                 ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
                 ".js", ".ts", ".lua",
+                ".csv",
             });
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             savePicker.SuggestedFileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
