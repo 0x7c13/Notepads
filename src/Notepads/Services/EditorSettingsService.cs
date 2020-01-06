@@ -171,6 +171,18 @@
             }
         }
 
+        public static bool _alwaysOpenNewWindow;
+
+        public static bool AlwaysOpenNewWindow
+        {
+            get => _alwaysOpenNewWindow;
+            set
+            {
+                _alwaysOpenNewWindow = value;
+                ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value, true);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -190,6 +202,8 @@
             InitializeStatusBarSettings();
 
             InitializeSessionSnapshotSettings();
+
+            InitializeAppOpeningPreferencesSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -346,6 +360,18 @@
             else
             {
                 _editorFontSize = 14;
+            }
+        }
+
+        private static void InitializeAppOpeningPreferencesSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
+            {
+                _alwaysOpenNewWindow = alwaysOpenNewWindow;
+            }
+            else
+            {
+                _alwaysOpenNewWindow = false;
             }
         }
     }
