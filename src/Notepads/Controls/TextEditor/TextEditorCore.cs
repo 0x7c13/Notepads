@@ -26,7 +26,7 @@
 
         public event EventHandler<double> FontZoomFactorChanged;
 
-        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopyPlainTextToWindowsClipboardRequested;
+        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
@@ -100,7 +100,7 @@
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
 
-            CopyingToClipboard += TextEditorCore_CopyingToClipboard;
+            CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
             SelectionChanged += OnSelectionChanged;
@@ -122,7 +122,7 @@
         // Unhook events and clear state
         public void Dispose()
         {
-            CopyingToClipboard -= TextEditorCore_CopyingToClipboard;
+            CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
             SelectionChanged -= OnSelectionChanged;
@@ -466,9 +466,9 @@
             await PastePlainTextFromWindowsClipboard(args);
         }
 
-        private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        private void TextEditorCore_CopySelectedTextToWindowsClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
-            CopyPlainTextToWindowsClipboardRequested?.Invoke(sender, args);
+            CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)

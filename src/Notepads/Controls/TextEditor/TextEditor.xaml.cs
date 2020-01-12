@@ -175,7 +175,7 @@
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
-            TextEditorCore.CopyPlainTextToWindowsClipboardRequested += TextEditorCore_CopyPlainTextToWindowsClipboardRequested;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
@@ -201,7 +201,7 @@
             TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
-            TextEditorCore.CopyPlainTextToWindowsClipboardRequested -= TextEditorCore_CopyPlainTextToWindowsClipboardRequested;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
@@ -666,7 +666,7 @@
             }
         }
 
-        public void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
+        public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
         {
             if (args != null)
             {
@@ -760,9 +760,9 @@
             TextChanging?.Invoke(this, EventArgs.Empty);
         }
 
-        private void TextEditorCore_CopyPlainTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
+        private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
         {
-            CopyPlainTextToWindowsClipboard(e);
+            CopySelectedTextToWindowsClipboard(e);
         }
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)
