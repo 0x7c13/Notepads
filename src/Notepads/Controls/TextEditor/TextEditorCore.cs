@@ -26,6 +26,8 @@
 
         public event EventHandler<double> FontZoomFactorChanged;
 
+        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopyPlainTextToWindowsClipboardRequested;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -298,26 +300,6 @@
             }
         }
 
-        public void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
-        {
-            if (args != null)
-            {
-                args.Handled = true;
-            }
-
-            try
-            {
-                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                dataPackage.SetText(Document.Selection.Text);
-                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                Clipboard.Flush();
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
-            }
-        }
-
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
         {
             if (args != null)
@@ -486,7 +468,7 @@
 
         private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
-            CopyPlainTextToWindowsClipboard(args);
+            CopyPlainTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)

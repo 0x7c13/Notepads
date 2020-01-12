@@ -7,6 +7,7 @@
     using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
@@ -72,6 +73,8 @@
         LineEnding GetLineEnding();
 
         Encoding GetEncoding();
+
+        void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
 
         void RevertAllChanges();
 
