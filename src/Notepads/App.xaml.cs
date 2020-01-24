@@ -171,6 +171,9 @@
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
+                {
                     "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
                 },
                 {
@@ -208,6 +211,12 @@
                 },
                 {
                     "IsShadowWindow", (!IsFirstInstance).ToString()
+                },
+                {
+                    "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString()
+                },
+                {
+                    "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString()
                 }
             };
 

@@ -118,7 +118,7 @@
                         Key = VirtualKey.C,
                         IsEnabled = false,
                     });
-                    _copy.Click += (sender, args) => _textEditorCore.CopyPlainTextToWindowsClipboard(null);
+                    _copy.Click += (sender, args) => _textEditor.CopySelectedTextToWindowsClipboard(null);
                 }
                 return _copy;
             }

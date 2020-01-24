@@ -14,6 +14,7 @@
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
@@ -174,6 +175,7 @@
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
@@ -199,6 +201,7 @@
             TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
@@ -663,6 +666,27 @@
             }
         }
 
+        public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+
+            try
+            {
+                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
+                dataPackage.SetText(text);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                Clipboard.Flush();
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
+            }
+        }
+
         public bool NoChangesSinceLastSaved(bool compareTextOnly = false)
         {
             if (!_loaded) return true;
@@ -734,6 +758,11 @@
                 IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
+        {
+            CopySelectedTextToWindowsClipboard(e);
         }
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)

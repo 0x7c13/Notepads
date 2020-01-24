@@ -9,6 +9,7 @@
         public AdvancedSettings()
         {
             InitializeComponent();
+
             ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
 
             // Disable session snapshot toggle for shadow windows
@@ -22,6 +23,8 @@
                 EnableSessionSnapshotToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
             }
 
+            AlwaysOpenNewWindowToggleSwitch.IsOn = EditorSettingsService.AlwaysOpenNewWindow;
+
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
         }
@@ -30,6 +33,7 @@
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+            AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
         }
 
         private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
@@ -46,6 +50,11 @@
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
+        }
+
+        private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
         }
     }
 }

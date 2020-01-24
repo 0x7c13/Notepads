@@ -26,6 +26,8 @@
 
         public event EventHandler<double> FontZoomFactorChanged;
 
+        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -98,7 +100,7 @@
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
 
-            CopyingToClipboard += TextEditorCore_CopyingToClipboard;
+            CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
             SelectionChanged += OnSelectionChanged;
@@ -120,7 +122,7 @@
         // Unhook events and clear state
         public void Dispose()
         {
-            CopyingToClipboard -= TextEditorCore_CopyingToClipboard;
+            CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
             SelectionChanged -= OnSelectionChanged;
@@ -298,26 +300,6 @@
             }
         }
 
-        public void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
-        {
-            if (args != null)
-            {
-                args.Handled = true;
-            }
-
-            try
-            {
-                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                dataPackage.SetText(Document.Selection.Text);
-                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                Clipboard.Flush();
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
-            }
-        }
-
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
         {
             if (args != null)
@@ -484,9 +466,9 @@
             await PastePlainTextFromWindowsClipboard(args);
         }
 
-        private void TextEditorCore_CopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        private void TextEditorCore_CopySelectedTextToWindowsClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
-            CopyPlainTextToWindowsClipboard(args);
+            CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)

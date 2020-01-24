@@ -89,7 +89,15 @@
             }
             else
             {
-                instance.RedirectActivationTo();
+                // open new instance if user prefers to
+                if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
+                {
+                    OpenNewInstance();
+                }
+                else
+                {
+                    instance.RedirectActivationTo();
+                }
             }
         }
 
