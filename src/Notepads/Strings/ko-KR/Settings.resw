@@ -334,7 +334,7 @@
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>환경 설정 열기</value>
+    <value>실행 설정</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
 </root>
