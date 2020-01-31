@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
+    <value>의존성 및 참조</value>
+    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
+    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
+    <value>면책</value>
+    <comment>AboutPage Disclaimer Title display text.</comment>
+  </data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
+    <value>Jackie (Jiaqi) Liu 가 제작한 무료 오픈소스 텍스트 에디터</value>
+    <comment>AboutPage NotepadsShortDescription display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
+    <value>제작자에게 연락:</value>
+    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
+    <value>문제 보고와 기능 추가 요청:</value>
+    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
+    <value>소스 코드는 Github에 공개:</value>
+    <comment>AboutPage Notepads SourceCode Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
+    <value>자세한 내용은 우리의 웹 사이트를 방문하십시오:</value>
+    <comment>AboutPage Notepads Website Title display text.</comment>
+  </data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+    <value>개인 정보 보호 정책</value>
+    <comment>AboutPage PrivacyStatementTitle display text.</comment>
+  </data>
+  <data name="AboutPage_Title.Content" xml:space="preserve">
+    <value>애플리케이션 정보</value>
+    <comment>AboutPage Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
+    <value>상태표시줄 보이기</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
+    <value>상태표시줄 보이기</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
+    <value>상태표시줄 설정</value>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+    <value>고급</value>
+    <comment>AdvancedPage Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
+    <value>강조 색상</value>
+    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>Windows 의 강조 색상 사용</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>Windows 의 강조 색상 사용</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
+    <value>아크릴 배경 색조 불투명도</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
+    <value>배경 색조 불투명도</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
+    <value>다크 모드</value>
+    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
+    <value>밝은 모드</value>
+    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
+    <value>테마</value>
+    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
+    <value>Windows 설정 사용</value>
+    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+    <value>개인 설정</value>
+    <comment>PersonalizationPage Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
+    <value>ANSI (Windows 코드 페이지)</value>
+    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
+    <value>파일 인코딩을 인식 할 수 없는 경우 대체 설정이 적용됩니다. ANSI는 레거시 파일을 열 경우에만 권장합니다.</value>
+    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
+    <value>대체 디코딩</value>
+    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
+    <value>UTF-8 (추천)</value>
+    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
+    <value>새 문서에만 적용됩니다.</value>
+    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
+    <value>기본 인코딩</value>
+    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
+    <value>기본 글꼴 및 크기</value>
+    <comment>TextAndEditorPage FontSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
+    <value>새 문서에만 적용됩니다.</value>
+    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
+    <value>기본 줄바꿈</value>
+    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
+    <value>탭 문자 (\t)</value>
+    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
+    <value>탭 키 동작 설정은 사용자가 삽입한 새 탭에만 적용됩니다.</value>
+    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
+    <value>공백 8개</value>
+    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
+    <value>공백 4개</value>
+    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
+    <value>탭 키 동작</value>
+    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
+    <value>공백 2개</value>
+    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
+    <value>텍스트 줄 바꿈</value>
+    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>단어 줄 바꿈</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>단어 줄 바꿈</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+    <value>텍스트 에디터</value>
+    <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>변경 내역</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>활성화되면 메모장은 다음 실행을 위해 현재 세션을 기억하고 커밋되지 않은 변경으로 인한 우발적 데이터 손실을 방지하기 위해 주기적 세션 스냅샷 백업을 수행합니다. 이 기능이 활성화 된 경우 종료 시에 변경 사항을 저장하라는 메시지를 표시하지 않습니다. 세션 스냅샷은 메모장의 첫 번째 또는 기본 창에서만 작동합니다.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>세션 스냅샷 사용</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>세션 스냅샷 사용</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>세션 스냅샷 설정</value>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>오타 강조표시</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>오타 강조표시</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>철자</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>활성화되면 메모장은 항상 새 탭을 만드는 대신 새 창에서 파일을 엽니다.</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>항상 새 창 열기</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>항상 새 창 열기</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>실행 설정</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+</root>
