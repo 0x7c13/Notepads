@@ -481,6 +481,9 @@
     <PRIResource Include="Strings\it-IT\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\ko-KR\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
     <PRIResource Include="Strings\en-US\Settings.resw" />
   </ItemGroup>
   <ItemGroup>
@@ -530,6 +533,9 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\pt-BR\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ko-KR\Settings.resw" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
