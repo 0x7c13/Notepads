@@ -679,7 +679,7 @@
                 var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
                 dataPackage.SetText(text);
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                Clipboard.Flush();
+                Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
             }
             catch (Exception ex)
             {
