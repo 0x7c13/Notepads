@@ -191,7 +191,7 @@
               <uap:FileType>.jspx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JSP File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\jsp.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
