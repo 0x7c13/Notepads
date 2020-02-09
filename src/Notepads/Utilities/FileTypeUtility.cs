@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     using System.Linq;
 
@@ -37,7 +36,7 @@ namespace Notepads.Utilities
                 return FileType.TextFile;
             }
 
-            if (ext == "md")
+            if (ext == "md" || ext == "markdown")
             {
                 return FileType.MarkdownFile;
             }

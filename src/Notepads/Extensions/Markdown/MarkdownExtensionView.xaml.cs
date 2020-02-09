@@ -1,36 +1,17 @@
-﻿
-namespace Notepads.Extensions.Markdown
+﻿namespace Notepads.Extensions.Markdown
 {
-    using Microsoft.Toolkit.Uwp.UI.Controls;
-    using Notepads.Controls.TextEditor;
     using System;
     using System.IO;
-    using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
-
-    public class Downloader : IDisposable
-    {
-        public async Task<MemoryStream> GetDataFeed(string feedUrl)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var request = (HttpWebRequest)WebRequest.Create(feedUrl);
-                request.Method = "GET";
-                using (var response = (HttpWebResponse)await request.GetResponseAsync())
-                {
-                    response.GetResponseStream()?.CopyTo(ms);
-                    return ms;
-                }
-            }
-        }
-
-        public void Dispose() { }
-    }
 
     public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {
@@ -56,7 +37,24 @@ namespace Notepads.Extensions.Markdown
         public MarkdownExtensionView()
         {
             InitializeComponent();
+            MarkdownTextBlock.LinkClicked += MarkdownTextBlock_OnLinkClicked;
+            MarkdownTextBlock.ImageClicked += MarkdownTextBlock_OnLinkClicked;
             MarkdownTextBlock.ImageResolving += MarkdownTextBlock_ImageResolving;
+        }
+
+        public void Dispose()
+        {
+            IsExtensionEnabled = false;
+
+            MarkdownTextBlock.LinkClicked -= MarkdownTextBlock_OnLinkClicked;
+            MarkdownTextBlock.ImageClicked -= MarkdownTextBlock_OnLinkClicked;
+            MarkdownTextBlock.ImageResolving -= MarkdownTextBlock_ImageResolving;
+            MarkdownTextBlock.Text = string.Empty;
+
+            _editorCore.TextChanged -= OnTextChanged;
+            _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
+            _editorCore.FontSizeChanged -= OnFontSizeChanged;
+            _editorCore = null;
         }
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
@@ -79,8 +77,9 @@ namespace Notepads.Extensions.Markdown
                     e.Handled = true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LoggingService.LogError($"Failed to resolve Markdown image [{e.Url}]: {ex.Message}");
                 e.Handled = false;
             }
 
@@ -90,31 +89,29 @@ namespace Notepads.Extensions.Markdown
         private async Task<ImageSource> GetImageAsync(string url)
         {
             var imageUri = new Uri(url);
-            using (var d = new Downloader())
+
+            var feed = await Downloader.GetDataFeed(url);
+            feed.Seek(0, SeekOrigin.Begin);
+
+            using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
             {
-                var feed = await d.GetDataFeed(url);
-                feed.Seek(0, SeekOrigin.Begin);
-
-                using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
+                using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
                 {
-                    using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
-                    {
-                        writer.WriteBytes((byte[])feed.ToArray());
-                        writer.StoreAsync().GetResults();
-                    }
+                    writer.WriteBytes((byte[])feed.ToArray());
+                    writer.StoreAsync().GetResults();
+                }
 
-                    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
-                    {
-                        var image = new SvgImageSource();
-                        await image.SetSourceAsync(ms);
-                        return image;
-                    }
-                    else
-                    {
-                        var image = new BitmapImage();
-                        await image.SetSourceAsync(ms);
-                        return image;
-                    }
+                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                {
+                    var image = new SvgImageSource();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+                else
+                {
+                    var image = new BitmapImage();
+                    await image.SetSourceAsync(ms);
+                    return image;
                 }
             }
         }
@@ -202,9 +199,9 @@ namespace Notepads.Extensions.Markdown
                 var uri = new Uri(e.Link);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                LoggingService.LogError($"Failed to open Markdown Link: {ex.Message}");
             }
         }
     }

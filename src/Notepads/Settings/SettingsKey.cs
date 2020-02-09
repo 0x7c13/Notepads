@@ -1,8 +1,13 @@
-﻿
-namespace Notepads.Settings
+﻿namespace Notepads.Settings
 {
     internal static class SettingsKey
     {
+        // App related
+        internal static string AppVersionStr = "AppVersionStr";
+        internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool"; 
+        internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
+        internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
+
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";
         internal static string UseWindowsThemeBool = "UseWindowsThemeBool";
@@ -20,5 +25,7 @@ namespace Notepads.Settings
         internal static string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
+        internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
+        internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
     }
 }

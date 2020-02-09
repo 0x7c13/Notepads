@@ -1,12 +1,11 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
-    using Notepads.Controls.TextEditor;
     using System;
+    using Notepads.Controls.TextEditor;
 
     public static class PrintService
     {
-        public static void Print(TextEditor textEditor)
+        public static void Print(ITextEditor textEditor)
         {
             throw new NotImplementedException();
         }

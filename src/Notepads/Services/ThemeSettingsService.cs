@@ -1,10 +1,9 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
+    using System;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Settings;
-    using System;
     using Windows.ApplicationModel.Core;
     using Windows.UI;
     using Windows.UI.Core;
@@ -40,7 +39,7 @@ namespace Notepads.Services
                         ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
                         SetRequestedTheme();
                     }
-                    ApplicationSettings.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
+                    ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
                 }
             }
         }
@@ -57,7 +56,7 @@ namespace Notepads.Services
                 {
                     AppAccentColor = new UISettings().GetColorValue(UIColorType.Accent);
                 }
-                ApplicationSettings.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
+                ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
             }
         }
 
@@ -74,7 +73,7 @@ namespace Notepads.Services
                 if (AppBackground != null)
                 {
                     AppBackground.Background = GetBackgroundBrush(ThemeMode);
-                    ApplicationSettings.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
+                    ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
                 }
             }
         }
@@ -88,7 +87,7 @@ namespace Notepads.Services
             {
                 _appAccentColor = value;
                 UpdateSystemAccentColorAndBrushes(value);
-                ApplicationSettings.Write(SettingsKey.AppAccentColorHexStr, value.ToHex(), true);
+                ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex(), true);
                 OnAccentColorChanged?.Invoke(null, value);
             }
         }
@@ -104,7 +103,7 @@ namespace Notepads.Services
 
         private static void InitializeAppAccentColor()
         {
-            if (ApplicationSettings.Read(SettingsKey.UseWindowsAccentColorBool) is bool useWindowsAccentColor)
+            if (ApplicationSettingsStore.Read(SettingsKey.UseWindowsAccentColorBool) is bool useWindowsAccentColor)
             {
                 _useWindowsAccentColor = useWindowsAccentColor;
             }
@@ -120,7 +119,7 @@ namespace Notepads.Services
 
             if (!UseWindowsAccentColor)
             {
-                if (ApplicationSettings.Read(SettingsKey.AppAccentColorHexStr) is string accentColorHexStr)
+                if (ApplicationSettingsStore.Read(SettingsKey.AppAccentColorHexStr) is string accentColorHexStr)
                 {
                     _appAccentColor = GetColor(accentColorHexStr);
                 }
@@ -140,7 +139,7 @@ namespace Notepads.Services
 
         private static void InitializeAppBackgroundPanelTintOpacity()
         {
-            if (ApplicationSettings.Read(SettingsKey.AppBackgroundTintOpacityDouble) is double tintOpacity)
+            if (ApplicationSettingsStore.Read(SettingsKey.AppBackgroundTintOpacityDouble) is double tintOpacity)
             {
                 _appBackgroundPanelTintOpacity = tintOpacity;
             }
@@ -152,7 +151,7 @@ namespace Notepads.Services
 
         private static void InitializeThemeMode()
         {
-            if (ApplicationSettings.Read(SettingsKey.UseWindowsThemeBool) is bool useWindowsTheme)
+            if (ApplicationSettingsStore.Read(SettingsKey.UseWindowsThemeBool) is bool useWindowsTheme)
             {
                 _useWindowsTheme = useWindowsTheme;
             }
@@ -168,7 +167,7 @@ namespace Notepads.Services
 
             if (!UseWindowsTheme)
             {
-                if (ApplicationSettings.Read(SettingsKey.RequestedThemeStr) is string themeModeStr)
+                if (ApplicationSettingsStore.Read(SettingsKey.RequestedThemeStr) is string themeModeStr)
                 {
                     if (Enum.TryParse(typeof(ElementTheme), themeModeStr, out var theme))
                     {
@@ -198,7 +197,7 @@ namespace Notepads.Services
         {
             ThemeMode = theme;
             SetRequestedTheme();
-            ApplicationSettings.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
+            ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
         }
 
         public static void SetRequestedTheme()
@@ -384,9 +383,9 @@ namespace Notepads.Services
                 {
                     ((SolidColorBrush)Application.Current.Resources[brush]).Color = color;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignore
+                    LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
             }
         }

@@ -1,8 +1,7 @@
-﻿
-namespace Notepads.Services
+﻿namespace Notepads.Services
 {
-    using Notepads.Controls.TextEditor;
     using System.Collections.Generic;
+    using Notepads.Controls.TextEditor;
     using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
@@ -17,7 +16,7 @@ namespace Notepads.Services
             return fileOpenPicker;
         }
 
-        public static FileSavePicker GetFileSavePicker(TextEditor textEditor, string defaultFileName, bool saveAs)
+        public static FileSavePicker GetFileSavePicker(ITextEditor textEditor, bool saveAs)
         {
             FileSavePicker savePicker = new FileSavePicker
             {
@@ -36,16 +35,17 @@ namespace Notepads.Services
             savePicker.FileTypeChoices.Add("Text Documents", new List<string>() { ".txt", ".md", });
             savePicker.FileTypeChoices.Add("All Supported Files", new List<string>()
             {
-                ".txt", ".md",
+                ".txt", ".md", ".markdown",
                 ".cfg", ".config", ".cnf", ".conf", ".ini", ".log",
                 ".json", ".yml", ".yaml", ".xml", ".xaml",
                 ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss",
                 ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash",
                 ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
                 ".js", ".ts", ".lua",
+                ".csv",
             });
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
-            savePicker.SuggestedFileName = textEditor.EditingFile == null ? defaultFileName : textEditor.EditingFile.Name;
+            savePicker.SuggestedFileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             return savePicker;
         }
     }

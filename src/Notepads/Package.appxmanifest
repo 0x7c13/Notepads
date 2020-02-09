@@ -5,18 +5,20 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"  
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap mp uap5 rescap">
+  IgnorableNamespaces="uap mp uap5 desktop4 iot2 rescap">
 
   <Identity
-    Name="Notepads-Beta"
-    Publisher="CN=Jackie Liu"
-    Version="0.9.7.0" />
+    Name="Notepads"
+    Publisher="CN=jackil"
+    Version="1.0.4.0" />
 
-  <mp:PhoneIdentity PhoneProductId="77ab4c55-cc57-4187-a21f-b8adbd22d860" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Notepads - Beta</DisplayName>
+    <DisplayName>Notepads App</DisplayName>
     <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -32,9 +34,11 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="Notepads.App">
+      EntryPoint="Notepads.App"
+      desktop4:SupportsMultipleInstances="true"
+      iot2:SupportsMultipleInstances="true">
       <uap:VisualElements
-        DisplayName="Notepads - Beta"
+        DisplayName="Notepads"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Notepads App"
@@ -49,6 +53,12 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" BackgroundColor="#2f2f2f"/>
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="notepads">
+            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:DisplayName>Notepads URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="text">
             <uap:SupportedFileTypes>
@@ -74,10 +84,19 @@
               <uap:FileType>.config</uap:FileType>
               <uap:FileType>.cnf</uap:FileType>
               <uap:FileType>.conf</uap:FileType>
-              <uap:FileType>.ini</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Configuration Settings</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\cfg.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="initialization">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ini</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Initialization File</uap:DisplayName>
+            <uap:Logo>Assets\ini.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -85,6 +104,7 @@
           <uap:FileTypeAssociation Name="markdown">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="text/plain">.md</uap:FileType>
+              <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Markdown File</uap:DisplayName>
             <uap:Logo>Assets\md.png</uap:Logo>
@@ -97,7 +117,17 @@
               <uap:FileType ContentType="text/plain">.log</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Log File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bib">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.bib</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>BibTeX File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -107,7 +137,7 @@
               <uap:FileType>.json</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JSON File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\json.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -118,7 +148,7 @@
               <uap:FileType>.yaml</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>YML File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\yml.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -128,21 +158,39 @@
               <uap:FileType>.xml</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>XML File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\xml.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="web">
+          <uap:FileTypeAssociation Name="html">
             <uap:SupportedFileTypes>
               <uap:FileType>.html</uap:FileType>
               <uap:FileType>.htm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>HTML File</uap:DisplayName>
+            <uap:Logo>Assets\html.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="asp">
+            <uap:SupportedFileTypes>
               <uap:FileType>.asp</uap:FileType>
               <uap:FileType>.aspx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ASP File</uap:DisplayName>
+            <uap:Logo>Assets\asp.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="jsp">
+            <uap:SupportedFileTypes>
               <uap:FileType>.jsp</uap:FileType>
               <uap:FileType>.jspx</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Web File</uap:DisplayName>
+            <uap:DisplayName>JSP File</uap:DisplayName>
             <uap:Logo>Assets\appicon_w.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
@@ -154,32 +202,59 @@
               <uap:FileType>.scss</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>CSS File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\css.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="script">
+          <uap:FileTypeAssociation Name="sh">
             <uap:SupportedFileTypes>
               <uap:FileType>.sh</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Shell Script File</uap:DisplayName>
+            <uap:Logo>Assets\sh.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rc">
+            <uap:SupportedFileTypes>
               <uap:FileType>.bashrc</uap:FileType>
               <uap:FileType>.rc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Runcom File</uap:DisplayName>
+            <uap:Logo>Assets\rc.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash">
+            <uap:SupportedFileTypes>
               <uap:FileType>.bash</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Script File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:DisplayName>Bash Script File</uap:DisplayName>
+            <uap:Logo>Assets\bash.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="javascript">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.js</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Javascript File</uap:DisplayName>
+            <uap:Logo>Assets\js.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="scripting">
             <uap:SupportedFileTypes>
-              <uap:FileType>.js</uap:FileType>
               <uap:FileType>.ts</uap:FileType>
               <uap:FileType>.lua</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Scripting Language File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -187,16 +262,43 @@
           <uap:FileTypeAssociation Name="c">
             <uap:SupportedFileTypes>
               <uap:FileType>.c</uap:FileType>
-              <uap:FileType>.cmake</uap:FileType>
+              <uap:FileType>.m</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>C File</uap:DisplayName>
+            <uap:Logo>Assets\c.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cpp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cc</uap:FileType>
+              <uap:FileType>.mm</uap:FileType>
+              <uap:FileType>.cpp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>C++ File</uap:DisplayName>
+            <uap:Logo>Assets\cpp.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="h">
+            <uap:SupportedFileTypes>
               <uap:FileType>.h</uap:FileType>
               <uap:FileType>.hpp</uap:FileType>
-              <uap:FileType>.cpp</uap:FileType>
-              <uap:FileType>.cc</uap:FileType>
-              <uap:FileType>.m</uap:FileType>
-              <uap:FileType>.mm</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>C and C++ File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:DisplayName>Header File</uap:DisplayName>
+            <uap:Logo>Assets\h.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cmake">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cmake</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Cmake File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -206,7 +308,7 @@
               <uap:FileType>.cs</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>C# File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\cs.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -216,7 +318,7 @@
               <uap:FileType>.php</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>PHP File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\php.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -226,7 +328,7 @@
               <uap:FileType>.py</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Python File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\py.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -237,7 +339,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>Ruby File</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\rb.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -246,7 +348,7 @@
               <uap:FileType>.java</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JAVA File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\java.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -256,7 +358,7 @@
               <uap:FileType>.vb</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Visual Basic File</uap:DisplayName>
-            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:Logo>Assets\vb.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

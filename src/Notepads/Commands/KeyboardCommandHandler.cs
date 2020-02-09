@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Commands
+﻿namespace Notepads.Commands
 {
     using System.Collections.Generic;
     using Windows.System;
@@ -10,6 +9,8 @@ namespace Notepads.Commands
     public class KeyboardCommandHandler : IKeyboardCommandHandler<KeyRoutedEventArgs>
     {
         public readonly ICollection<IKeyboardCommand<KeyRoutedEventArgs>> Commands;
+
+        private IKeyboardCommand<KeyRoutedEventArgs> _lastCommand;
 
         public KeyboardCommandHandler(ICollection<IKeyboardCommand<KeyRoutedEventArgs>> commands)
         {
@@ -26,9 +27,19 @@ namespace Notepads.Commands
             {
                 if (keyboardCommand.Hit(ctrlDown, altDown, shiftDown, args.Key))
                 {
+                    if (keyboardCommand.ShouldExecute(_lastCommand))
+                    {
+                        keyboardCommand.Execute(args);
+                    }
+
                     args.Handled = true;
-                    keyboardCommand.Execute(args);
+                    _lastCommand = keyboardCommand;
                 }
+            }
+
+            if (!args.Handled)
+            {
+                _lastCommand = null;
             }
         }
     }

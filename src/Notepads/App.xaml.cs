@@ -1,14 +1,16 @@
-﻿
-namespace Notepads
+﻿namespace Notepads
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
@@ -20,6 +22,14 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        public static string ApplicationName = "Notepads";
+
+        public static Guid Id { get; } = Guid.NewGuid();
+
+        public static bool IsFirstInstance;
+
+        private const string AppCenterSecret = null;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,9 +40,15 @@ namespace Notepads
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(null, services);
+            AppCenter.Start(AppCenterSecret, services);
+
+            //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             InitializeComponent();
+
             Suspending += OnSuspending;
         }
 
@@ -40,14 +56,59 @@ namespace Notepads
         {
             // Occurs when an exception is not handled on the UI thread.
 
-            Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
+            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
                 {
                     "Message", e.Message
                 },
                 {
                     "Exception", e.Exception.ToString()
+                },
+                {
+                    "Culture", SystemInformation.Culture.EnglishName
+                },
+                {
+                    "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0")
+                },
+                {
+                    "IsFirstRun", SystemInformation.IsFirstRun.ToString()
+                },
+                {
+                    "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString()
+                },
+                {
+                    "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}"
+                },
+                {
+                    "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+                },
+                {
+                    "CurrentLaunchCount", SystemInformation.LaunchCount.ToString()
+                },
+                {
+                    "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString()
+                },
+                {
+                    "AppUptime", SystemInformation.AppUptime.ToString()
+                },
+                {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
+                {
+                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
                 }
-            });
+            };
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo);
 
             // if you want to suppress and handle it manually, 
             // otherwise app shuts down.
@@ -58,6 +119,8 @@ namespace Notepads
         {
             // Occurs when an exception is not handled on a background thread.
             // ie. A task is fired and forgotten Task.Run(() => {...})
+
+            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
             Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
                 {
@@ -105,7 +168,11 @@ namespace Notepads
             ThemeSettingsService.Initialize();
             EditorSettingsService.Initialize();
 
-            Analytics.TrackEvent("AppLaunch_Settings", new Dictionary<string, string>() {
+            var appLaunchSettings = new Dictionary<string, string>()
+            {
+                {
+                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
+                },
                 {
                     "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
                 },
@@ -116,7 +183,7 @@ namespace Notepads
                     "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
                 },
                 {
-                    "AppBackgroundTintOpacity", $"{ThemeSettingsService.AppBackgroundPanelTintOpacity:0.0}"
+                    "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
                 },
                 {
                     "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
@@ -125,18 +192,45 @@ namespace Notepads
                     "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString()
                 },
                 {
-                    "EditorDefaultEncoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultEncoding)
+                    "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding)
                 },
                 {
                     "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
                 },
                 {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingBodyName(EditorSettingsService.EditorDefaultDecoding)
+                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
                 },
-            });
+                {
+                    "EditorFontFamily", EditorSettingsService.EditorFontFamily
+                },
+                {
+                    "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
+                },
+                {
+                    "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
+                },
+                {
+                    "IsShadowWindow", (!IsFirstInstance).ToString()
+                },
+                {
+                    "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString()
+                },
+                {
+                    "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString()
+                }
+            };
 
-            await ActivationService.ActivateAsync(rootFrame, e);
-            //await LoggingService.InitializeAsync();
+            LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
+            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+
+            try
+            {
+                await ActivationService.ActivateAsync(rootFrame, e);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AppFailedToActivate", ex);
+            }
 
             Window.Current.Activate();
             ExtendAcrylicIntoTitleBar();
@@ -162,7 +256,18 @@ namespace Notepads
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            var exception = new Exception($"Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
+            LoggingService.LogException(exception);
+            Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
+            {
+                {
+                    "Page", e.SourcePageType.FullName
+                },
+                {
+                    "Exception", e.Exception.Message
+                }
+            });
+            throw exception;
         }
 
         /// <summary>
@@ -186,5 +291,29 @@ namespace Notepads
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
+
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
+
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }

@@ -10,10 +10,11 @@
 ## Phase 1 (Summer 2019):
 
 * Improve Find and Replace UX.
-* Automatic file save and restore.
+* Automatic file save and restore (Session snapshot).
 * Markdown file preview.
 * Diff viewer.
-* Publish 1.0 version of Notepads by end of Augest 2019.
+* Native support for app multi-instances.
+* Publish 1.0 version of Notepads by end of Summer 2019 (Sep-Oct).
 
 ## Phase 2 (By end of 2019):
 

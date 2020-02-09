@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Commands
+﻿namespace Notepads.Commands
 {
     public interface IKeyboardCommandHandler<in T>
     {

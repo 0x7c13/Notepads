@@ -1,8 +1,7 @@
-﻿
-namespace Notepads.Controls.Settings
+﻿namespace Notepads.Controls.Settings
 {
-    using Notepads.Services;
     using System;
+    using Notepads.Services;
     using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -10,13 +9,30 @@ namespace Notepads.Controls.Settings
 
     public sealed partial class AboutPage : Page
     {
-        public string AppVersion => $"v{GetAppVersion()} Beta";
+        public string AppVersion => $"v{GetAppVersion()}";
 
         public AboutPage()
         {
             InitializeComponent();
             SetAppIconBasedOnTheme(ThemeSettingsService.ThemeMode);
-            ThemeSettingsService.OnThemeChanged += (sender, theme) => SetAppIconBasedOnTheme(theme);
+
+            Loaded += AboutPage_Loaded;
+            Unloaded += AboutPage_Unloaded;
+        }
+
+        private void AboutPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+        }
+
+        private void AboutPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+        }
+
+        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        {
+            SetAppIconBasedOnTheme(theme);
         }
 
         private void SetAppIconBasedOnTheme(ElementTheme theme)

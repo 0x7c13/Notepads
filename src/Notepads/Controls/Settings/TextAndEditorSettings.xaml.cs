@@ -1,11 +1,11 @@
 ﻿namespace Notepads.Controls.Settings
 {
-    using Services;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Services;
     using Utilities;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -59,6 +59,7 @@
             InitializeComponent();
 
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
+            HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
@@ -131,6 +132,7 @@
         private void TextAndEditorSettings_Loaded(object sender, RoutedEventArgs e)
         {
             TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
+            HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
             FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
 
@@ -249,6 +251,11 @@
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
+        }
+
+        private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
         }
     }
 }

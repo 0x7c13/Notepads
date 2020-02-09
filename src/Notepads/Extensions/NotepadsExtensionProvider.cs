@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions
+﻿namespace Notepads.Extensions
 {
     using Notepads.Extensions.Markdown;
     using Notepads.Utilities;
@@ -15,16 +14,6 @@ namespace Notepads.Extensions
                 default:
                     return null;
             }
-        }
-
-        public IContentPreviewExtension GetDiffViewerExtension(FileType fileType)
-        {
-            return null;
-        }
-
-        public IContentExtension[] GetContentExtensions(FileType fileType)
-        {
-            return null;
         }
     }
 }

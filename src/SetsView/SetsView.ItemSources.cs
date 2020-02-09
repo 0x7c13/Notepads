@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-
 namespace SetsView
 {
     using System.Reflection;
@@ -88,8 +87,7 @@ namespace SetsView
                         index = Items.Count - 1;
                     }
 
-                    var setItem = ContainerFromIndex(index) as SetsViewItem;
-                    if (setItem != null && setItem.IsEnabled && setItem.Visibility == Visibility.Visible)
+                    if (ContainerFromIndex(index) is SetsViewItem setItem && setItem.IsEnabled && setItem.Visibility == Visibility.Visible)
                     {
                         break;
                     }

@@ -1,12 +1,11 @@
-﻿
-namespace Notepads.Extensions.DiffViewer
+﻿namespace Notepads.Extensions.DiffViewer
 {
-    using Notepads.Commands;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Notepads.Commands;
+    using Notepads.Services;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -37,26 +36,46 @@ namespace Notepads.Extensions.DiffViewer
             LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
 
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                LeftBox.SelectionHighlightColor =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                RightBox.SelectionHighlightColor =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            };
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
+            DismissButton.Click += DismissButton_OnClick;
             LayoutRoot.KeyDown += OnKeyDown;
             KeyDown += OnKeyDown;
             LeftBox.KeyDown += OnKeyDown;
             RightBox.KeyDown += OnKeyDown;
-            Loaded += (sender, args) => { Focus(); };
+            Loaded += SideBySideDiffViewer_Loaded;
+        }
+
+        public void Dispose()
+        {
+            StopRenderingAndClearCache();
+
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            
+            DismissButton.Click -= DismissButton_OnClick;
+            LayoutRoot.KeyDown -= OnKeyDown;
+            KeyDown -= OnKeyDown;
+            LeftBox.KeyDown -= OnKeyDown;
+            RightBox.KeyDown -= OnKeyDown;
+            Loaded -= SideBySideDiffViewer_Loaded;
+        }
+
+        private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            Focus();
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.Escape, (args) =>
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),

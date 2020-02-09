@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.EventArgs
+﻿namespace Notepads.Controls.FindAndReplace
 {
     using System;
 

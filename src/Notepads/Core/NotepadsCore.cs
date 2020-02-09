@@ -1,16 +1,21 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Extensions;
-    using Notepads.Services;
-    using Notepads.Utilities;
-    using SetsView;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
+    using Notepads.Models;
+    using Notepads.Services;
+    using Notepads.Settings;
+    using Notepads.Utilities;
+    using SetsView;
+    using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources;
+    using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
     using Windows.UI.Xaml;
@@ -22,116 +27,86 @@ namespace Notepads.Core
     {
         public SetsView Sets;
 
-        public readonly string DefaultNewFileName;
+        public event EventHandler<ITextEditor> TextEditorLoaded;
 
-        public event EventHandler<TextEditor> TextEditorLoaded;
+        public event EventHandler<ITextEditor> TextEditorUnloaded;
 
-        public event EventHandler<TextEditor> TextEditorUnloaded;
+        public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
 
-        public event EventHandler<TextEditor> TextEditorEditorModificationStateChanged;
+        public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
 
-        public event EventHandler<TextEditor> TextEditorFileModificationStateChanged;
+        public event EventHandler<ITextEditor> TextEditorSaved;
 
-        public event EventHandler<TextEditor> TextEditorSaved;
+        public event EventHandler<ITextEditor> TextEditorClosing;
 
-        public event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
+        public event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
-        public event EventHandler<TextEditor> TextEditorSelectionChanged;
+        public event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
-        public event EventHandler<TextEditor> TextEditorEncodingChanged;
+        public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
 
-        public event EventHandler<TextEditor> TextEditorLineEndingChanged;
+        public event EventHandler<ITextEditor> TextEditorModeChanged;
 
-        public event EventHandler<TextEditor> TextEditorModeChanged;
+        public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+
+        public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
+        private ITextEditor _selectedTextEditor;
+
+        private ITextEditor[] _allTextEditors;
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
+        private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
+        private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
+        private const string NotepadsInstanceId = "NotepadsInstanceId";
+        private const string NotepadsTextEditorLastSavedContent = "NotepadsTextEditorLastSavedContent";
+        private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
+        private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
+
         public NotepadsCore(SetsView sets,
-            string defaultNewFileName,
             INotepadsExtensionProvider extensionProvider)
         {
             Sets = sets;
+            Sets.SelectionChanged += SetsView_OnSelectionChanged;
+            Sets.Items.VectorChanged += SetsView_OnItemsChanged;
             Sets.SetClosing += SetsView_OnSetClosing;
-            Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as TextEditor); };
+            Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as ITextEditor); };
+            Sets.SetDraggedOutside += Sets_SetDraggedOutside;
+            Sets.DragOver += Sets_DragOver;
+            Sets.Drop += Sets_Drop;
+            Sets.DragItemsStarting += Sets_DragItemsStarting;
+            Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
-            DefaultNewFileName = defaultNewFileName;
             ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
         }
 
-        public void OpenNewTextEditor()
+        public void OpenNewTextEditor(string fileNamePlaceholder)
         {
-            OpenNewTextEditor(string.Empty,
-                null,
-                -1,
+            var textFile = new TextFile(string.Empty,
                 EditorSettingsService.EditorDefaultEncoding,
                 EditorSettingsService.EditorDefaultLineEnding);
+            var newEditor = CreateTextEditor(
+                Guid.NewGuid(),
+                textFile,
+                null,
+                fileNamePlaceholder);
+            OpenTextEditor(newEditor);
         }
 
-        public async Task OpenNewTextEditor(StorageFile file)
+        public void OpenTextEditor(ITextEditor textEditor, int atIndex = -1)
         {
-            if (FileOpened(file))
-            {
-                SwitchTo(file);
-                return;
-            }
-
-            var textFile = await FileSystemUtility.ReadFile(file);
-            var dateModifiedFileTime = await FileSystemUtility.GetDateModified(file);
-
-            OpenNewTextEditor(textFile.Content,
-                file,
-                dateModifiedFileTime,
-                textFile.Encoding,
-                textFile.LineEnding);
-        }
-
-        private void OpenNewTextEditor(string text,
-            StorageFile file,
-            long dateModifiedFileTime,
-            Encoding encoding,
-            LineEnding lineEnding)
-        {
-            //LoggingService.LogInfo("Opening a text editor.");
-            var textEditor = new TextEditor
-            {
-                ExtensionProvider = _extensionProvider
-            };
-
-            textEditor.Init(new TextFile(text, encoding, lineEnding, dateModifiedFileTime), file);
-            textEditor.Loaded += TextEditor_Loaded;
-            textEditor.Unloaded += TextEditor_Unloaded;
-            textEditor.SelectionChanged += TextEditor_SelectionChanged;
-            textEditor.KeyDown += TextEditorKeyDown;
-            textEditor.EditorModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
-            textEditor.ModeChanged += TextEditor_ModeChanged;
-            textEditor.FileModificationStateChanged += (sender, args) => { TextEditorFileModificationStateChanged?.Invoke(this, sender as TextEditor); };
-            textEditor.LineEndingChanged += (sender, args) => { TextEditorLineEndingChanged?.Invoke(this, sender as TextEditor); };
-            textEditor.EncodingChanged += (sender, args) => { TextEditorEncodingChanged?.Invoke(this, sender as TextEditor); };
-
-            var newItem = new SetsViewItem
-            {
-                Header = file == null ? DefaultNewFileName : file.Name,
-                Content = textEditor,
-                SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
-                Icon = new SymbolIcon(Symbol.Save)
-                {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
-                }
-            };
-
-            if (newItem.Content == null || newItem.Content is Page)
-            {
-                throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
-            }
-
-            newItem.Icon.Visibility = Visibility.Collapsed;
-            newItem.ContextFlyout = new TabContextFlyout(this, textEditor);
+            SetsViewItem textEditorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
-            if (GetNumberOfOpenedTextEditors() == 1 && file != null)
+            // If index != -1, it means set was created after a drag and drop, we should skip this logic
+            if (GetNumberOfOpenedTextEditors() == 1 && textEditor.EditingFile != null && atIndex == -1)
             {
                 var selectedEditor = GetAllTextEditors().First();
                 if (selectedEditor.EditingFile == null && !selectedEditor.IsModified)
@@ -140,26 +115,117 @@ namespace Notepads.Core
                 }
             }
 
-            Sets.Items?.Add(newItem);
+            if (atIndex == -1)
+            {
+                Sets.Items?.Add(textEditorSetsViewItem);
+            }
+            else
+            {
+                Sets.Items?.Insert(atIndex, textEditorSetsViewItem);
+            }
 
             if (GetNumberOfOpenedTextEditors() > 1)
             {
-                Sets.SelectedItem = newItem;
+                Sets.SelectedItem = textEditorSetsViewItem;
+                if (atIndex == -1)
+                {
+                    Sets.ScrollToLastSet();
+                }
+            }
+        }
+
+        public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
+        {
+            bool selectedEditorFound = false;
+
+            foreach (var textEditor in editors)
+            {
+                var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
+                Sets.Items?.Add(editorSetsViewItem);
+                if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
+                {
+                    Sets.SelectedItem = editorSetsViewItem;
+                    selectedEditorFound = true;
+                }
+            }
+
+            if (selectedEditorId == null || !selectedEditorFound)
+            {
+                Sets.SelectedIndex = editors.Length - 1;
                 Sets.ScrollToLastSet();
             }
         }
 
-        public async Task SaveTextEditorContentToFile(TextEditor textEditor, StorageFile file)
+        public async Task<ITextEditor> CreateTextEditor(
+            Guid id,
+            StorageFile file,
+            bool ignoreFileSizeLimit = false)
         {
-            await textEditor.SaveToFile(file);
+            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
+            return CreateTextEditor(id, textFile, file, file.Name);
+        }
+
+        public ITextEditor CreateTextEditor(
+            Guid id,
+            TextFile textFile,
+            StorageFile editingFile,
+            string fileNamePlaceholder,
+            bool isModified = false)
+        {
+            ITextEditor textEditor = new TextEditor
+            {
+                Id = id,
+                ExtensionProvider = _extensionProvider,
+                FileNamePlaceholder = fileNamePlaceholder
+            };
+
+            textEditor.Init(textFile, editingFile, isModified: isModified);
+            textEditor.Loaded += TextEditor_Loaded;
+            textEditor.Unloaded += TextEditor_Unloaded;
+            textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
+            textEditor.KeyDown += TextEditorKeyDown;
+            textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
+            textEditor.ModeChanged += TextEditor_OnModeChanged;
+            textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
+            textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
+            textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
+
+            return textEditor;
+        }
+
+        public async Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file)
+        {
+            await textEditor.SaveContentToFileAndUpdateEditorState(file); // Will throw if not succeeded
+            MarkTextEditorSetSaved(textEditor);
             TextEditorSaved?.Invoke(this, textEditor);
         }
 
-        public void DeleteTextEditor(TextEditor textEditor)
+        public void DeleteTextEditor(ITextEditor textEditor)
         {
+            if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
             item.IsEnabled = false;
             Sets.Items?.Remove(item);
+
+            if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
+            {
+                tabContextFlyout.Dispose();
+                item.ContextFlyout = null;
+            }
+
+            TextEditorUnloaded?.Invoke(this, textEditor);
+
+            textEditor.Loaded -= TextEditor_Loaded;
+            textEditor.Unloaded -= TextEditor_Unloaded;
+            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
+            textEditor.ModeChanged -= TextEditor_OnModeChanged;
+            textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
+            textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
+            textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
+            textEditor.Dispose();
         }
 
         public int GetNumberOfOpenedTextEditors()
@@ -167,9 +233,9 @@ namespace Notepads.Core
             return Sets.Items?.Count ?? 0;
         }
 
-        public bool TryGetSharingContent(TextEditor textEditor, out string title, out string content)
+        public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content)
         {
-            title = textEditor.EditingFile != null ? textEditor.EditingFile.Name : DefaultNewFileName;
+            title = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             content = textEditor.GetContentForSharing();
             return !string.IsNullOrEmpty(content);
         }
@@ -179,19 +245,19 @@ namespace Notepads.Core
             if (Sets.Items == null || Sets.Items.Count == 0) return false;
             foreach (SetsViewItem setsItem in Sets.Items)
             {
-                if (!(setsItem.Content is TextEditor textEditor)) continue;
+                if (!(setsItem.Content is ITextEditor textEditor)) continue;
                 if (!textEditor.IsModified) continue;
                 return true;
             }
             return false;
         }
 
-        public void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding)
+        public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding)
         {
             textEditor.TryChangeLineEnding(lineEnding);
         }
 
-        public void ChangeEncoding(TextEditor textEditor, Encoding encoding)
+        public void ChangeEncoding(ITextEditor textEditor, Encoding encoding)
         {
             textEditor.TryChangeEncoding(encoding);
         }
@@ -216,11 +282,78 @@ namespace Notepads.Core
             }
         }
 
-        public void SwitchTo(TextEditor textEditor)
+        public void SwitchTo(ITextEditor textEditor)
         {
             var item = GetTextEditorSetsViewItem(textEditor);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
+            if (Sets.SelectedItem != item)
+            {
+                Sets.SelectedItem = item;
+                Sets.ScrollIntoView(item);
+            }
+        }
+
+        public ITextEditor GetSelectedTextEditor()
+        {
+            if (ThreadUtility.IsOnUIThread())
+            {
+                if ((!((Sets.SelectedItem as SetsViewItem)?.Content is ITextEditor textEditor))) return null;
+                return textEditor;
+            }
+            return _selectedTextEditor;
+        }
+
+        public ITextEditor GetTextEditor(string editingFilePath)
+        {
+            if (string.IsNullOrEmpty(editingFilePath)) return null;
+            return GetAllTextEditors().FirstOrDefault(editor => editor.EditingFilePath != null &&
+                string.Equals(editor.EditingFilePath, editingFilePath, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public ITextEditor[] GetAllTextEditors()
+        {
+            if (!ThreadUtility.IsOnUIThread()) return _allTextEditors;
+            if (Sets.Items == null) return Array.Empty<ITextEditor>();
+            var editors = new List<ITextEditor>();
+            foreach (SetsViewItem item in Sets.Items)
+            {
+                if (item.Content is ITextEditor textEditor)
+                {
+                    editors.Add(textEditor);
+                }
+            }
+            return editors.ToArray();
+        }
+
+        public void FocusOnSelectedTextEditor()
+        {
+            FocusOnTextEditor(GetSelectedTextEditor());
+        }
+
+        public void FocusOnTextEditor(ITextEditor textEditor)
+        {
+            textEditor?.Focus();
+        }
+
+        public void CloseTextEditor(ITextEditor textEditor)
+        {
+            var item = GetTextEditorSetsViewItem(textEditor);
+            item?.Close();
+        }
+
+        public ITextEditor GetTextEditor(StorageFile file)
+        {
+            var item = GetTextEditorSetsViewItem(file);
+            return item?.Content as ITextEditor;
+        }
+
+        public double GetTabScrollViewerHorizontalOffset()
+        {
+            return Sets.ScrollViewerHorizontalOffset;
+        }
+
+        public void SetTabScrollViewerHorizontalOffset(double offset)
+        {
+            Sets.ScrollTo(offset);
         }
 
         private void SwitchTo(StorageFile file)
@@ -230,59 +363,29 @@ namespace Notepads.Core
             Sets.ScrollIntoView(item);
         }
 
-        public TextEditor GetSelectedTextEditor()
+        private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
-            if ((!((Sets.SelectedItem as SetsViewItem)?.Content is TextEditor textEditor))) return null;
-            return textEditor;
-        }
-
-        public TextEditor[] GetAllTextEditors()
-        {
-            if (Sets.Items == null) return new TextEditor[0];
-            var editors = new List<TextEditor>();
-            foreach (SetsViewItem item in Sets.Items)
+            var textEditorSetsViewItem = new SetsViewItem
             {
-                if (item.Content is TextEditor textEditor)
+                Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                Content = textEditor,
+                SelectionIndicatorForeground =
+                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                Icon = new SymbolIcon(Symbol.Save)
                 {
-                    editors.Add(textEditor);
+                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
                 }
-            }
+            };
 
-            return editors.ToArray();
-        }
-
-        public void FocusOnSelectedTextEditor()
-        {
-            FocusOnTextEditor(GetSelectedTextEditor());
-        }
-
-        public void FocusOnTextEditor(TextEditor textEditor)
-        {
-            textEditor?.Focus();
-        }
-
-        public void CloseTextEditor(TextEditor textEditor)
-        {
-            var item = GetTextEditorSetsViewItem(textEditor);
-            item?.Close();
-        }
-
-        private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
-        {
-            //LoggingService.LogInfo("Closing a text editor.");
-            if (!(e.Set.Content is TextEditor textEditor)) return;
-            if (!textEditor.IsModified) return;
-            if (TextEditorClosingWithUnsavedContent != null)
+            if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)
             {
-                e.Cancel = true;
-                TextEditorClosingWithUnsavedContent.Invoke(this, textEditor);
+                throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
             }
-        }
 
-        private bool FileOpened(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            return item != null;
+            textEditorSetsViewItem.Icon.Visibility = textEditor.IsModified ? Visibility.Visible : Visibility.Collapsed;
+            textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor);
+
+            return textEditorSetsViewItem;
         }
 
         private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
@@ -290,23 +393,21 @@ namespace Notepads.Core
             if (Sets.Items == null) return null;
             foreach (SetsViewItem setsItem in Sets.Items)
             {
-                if (setsItem.Content is TextEditor textEditor)
+                if (!(setsItem.Content is ITextEditor textEditor)) continue;
+                if (textEditor.EditingFilePath != null && string.Equals(textEditor.EditingFilePath, file.Path, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (string.Equals(textEditor.EditingFile?.Path, file.Path))
-                    {
-                        return setsItem;
-                    }
+                    return setsItem;
                 }
             }
             return null;
         }
 
-        private SetsViewItem GetTextEditorSetsViewItem(TextEditor textEditor)
+        private SetsViewItem GetTextEditorSetsViewItem(ITextEditor textEditor)
         {
             if (Sets.Items == null) return null;
             foreach (SetsViewItem setsItem in Sets.Items)
             {
-                if (setsItem.Content is TextEditor editor)
+                if (setsItem.Content is ITextEditor editor)
                 {
                     if (textEditor == editor) return setsItem;
                 }
@@ -314,7 +415,7 @@ namespace Notepads.Core
             return null;
         }
 
-        private void MarkTextEditorSetNotSaved(TextEditor textEditor)
+        private void MarkTextEditorSetNotSaved(ITextEditor textEditor)
         {
             if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
@@ -324,41 +425,62 @@ namespace Notepads.Core
             }
         }
 
-        private void MarkTextEditorSetSaved(TextEditor textEditor)
+        private void MarkTextEditorSetSaved(ITextEditor textEditor)
         {
             if (textEditor == null) return;
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item != null)
             {
-                if (textEditor.EditingFile != null)
+                if (textEditor.EditingFileName != null)
                 {
-                    item.Header = textEditor.EditingFile.Name;
+                    item.Header = textEditor.EditingFileName;
                 }
                 item.Icon.Visibility = Visibility.Collapsed;
             }
         }
 
+        private void SetsView_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _selectedTextEditor = GetSelectedTextEditor();
+        }
+
+        private void SetsView_OnItemsChanged(object sender, IVectorChangedEventArgs e)
+        {
+            _allTextEditors = GetAllTextEditors();
+        }
+
+        private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
+        {
+            if (!(e.Set.Content is ITextEditor textEditor)) return;
+
+            if (TextEditorClosing != null)
+            {
+                e.Cancel = true;
+                TextEditorClosing.Invoke(this, textEditor);
+            }
+        }
+
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             TextEditorLoaded?.Invoke(this, textEditor);
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             TextEditorUnloaded?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_SelectionChanged(object sender, RoutedEventArgs e)
+        private void TextEditor_OnSelectionChanged(object sender, EventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             TextEditorSelectionChanged?.Invoke(this, textEditor);
         }
 
         private void TextEditor_OnEditorModificationStateChanged(object sender, EventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             if (textEditor.IsModified)
             {
                 MarkTextEditorSetNotSaved(textEditor);
@@ -370,10 +492,28 @@ namespace Notepads.Core
             TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
-        private void TextEditor_ModeChanged(object sender, EventArgs e)
+        private void TextEditor_OnModeChanged(object sender, EventArgs e)
         {
-            if (!(sender is TextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
             TextEditorModeChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileModificationStateChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorFileModificationStateChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnEncodingChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorEncodingChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnLineEndingChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
         private void OnAppAccentColorChanged(object sender, Color color)
@@ -385,5 +525,263 @@ namespace Notepads.Core
                 item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             }
         }
+
+        #region DragAndDrop
+
+        private async void Sets_DragOver(object sender, DragEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+
+            bool canHandle = false;
+            string dragUICaption = null;
+
+            if (args.DataView == null)
+            {
+                deferral.Complete();
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) &&
+                string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
+            {
+                args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj);
+                if (dataObj is string data)
+                {
+                    canHandle = true;
+                    dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_MoveTabHere");
+                }
+            }
+
+            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                try
+                {
+                    var items = await args.DataView.GetStorageItemsAsync();
+                    if (items.Count > 0 && items.Any(i => i is StorageFile))
+                    {
+                        canHandle = true;
+                        dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_OpenWithNotepads");
+                    }
+                }
+                catch
+                {
+                    deferral.Complete();
+                    return;
+                }
+            }
+
+            if (canHandle)
+            {
+                args.Handled = true;
+                args.AcceptedOperation = DataPackageOperation.Link;
+                try
+                {
+                    if (args.DragUIOverride != null)
+                    {
+                        args.DragUIOverride.Caption = dragUICaption;
+                        args.DragUIOverride.IsCaptionVisible = true;
+                        args.DragUIOverride.IsGlyphVisible = false;
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+
+            deferral.Complete();
+        }
+
+        private void Sets_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
+        {
+            // In Initial Window we need to serialize our tab data.
+            var item = args.Items.FirstOrDefault();
+            if (!(item is ITextEditor editor)) return;
+
+            try
+            {
+                var data = JsonConvert.SerializeObject(editor.GetTextEditorStateMetaData());
+
+                var lastSavedText = editor.LastSavedSnapshot.Content;
+                var pendingText = editor.GetText();
+
+                args.Data.Properties.Add(NotepadsTextEditorLastSavedContent, lastSavedText);
+
+                if (!string.Equals(lastSavedText, pendingText))
+                {
+                    args.Data.Properties.Add(NotepadsTextEditorPendingContent, pendingText);
+                }
+
+                // Add Editing File
+                if (editor.EditingFile != null)
+                {
+                    args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
+                    args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFilePath);
+                    args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
+                }
+
+                args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
+                args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
+                args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
+                args.Data.Properties.ApplicationName = App.ApplicationName;
+
+                ApplicationSettingsStore.Write(SetDragAndDropActionStatus, "Started");
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+            }
+        }
+
+        private async void Sets_Drop(object sender, DragEventArgs args)
+        {
+            if (!(sender is SetsView))
+            {
+                return;
+            }
+
+            var sets = sender as SetsView;
+
+            // Handle non Notepads drop event
+            if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
+                !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
+            {
+                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems)) return;
+                var fileDropDeferral = args.GetDeferral();
+                var storageItems = await args.DataView.GetStorageItemsAsync();
+                StorageItemsDropped?.Invoke(this, storageItems);
+                fileDropDeferral.Complete();
+                return;
+            }
+
+            var deferral = args.GetDeferral();
+
+            try
+            {
+                args.DataView.Properties.TryGetValue(NotepadsTextEditorMetaData, out object dataObj);
+
+                if (!(dataObj is string data)) throw new Exception("Failed to drop editor set: NotepadsTextEditorMetaData is invalid (Not String).");
+
+                TextEditorStateMetaData metaData = JsonConvert.DeserializeObject<TextEditorStateMetaData>(data);
+
+                if (args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFilePath,
+                        out object editingFilePathObj) && editingFilePathObj is string editingFilePath)
+                {
+                    var editor = GetTextEditor(editingFilePath);
+                    if (editor != null)
+                    {
+                        SwitchTo(editor);
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
+                        throw new Exception("Failed to drop editor set: File already opened.");
+                    }
+                }
+
+                StorageFile editingFile = null;
+
+                if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
+                {
+                    var storageItems = await args.DataView.GetStorageItemsAsync();
+                    if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
+                    {
+                        editingFile = file;
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to read storage file from dropped set: Expecting only one storage file.");
+                    }
+                }
+
+                string lastSavedText = null;
+                string pendingText = null;
+
+                if (args.DataView.Properties.TryGetValue(NotepadsTextEditorLastSavedContent, out object lastSavedContentObj) &&
+                    lastSavedContentObj is string lastSavedContent)
+                {
+                    lastSavedText = lastSavedContent;
+                }
+                else
+                {
+                    throw new Exception($"Failed to get last saved content from DataView: NotepadsTextEditorLastSavedContent property Is null");
+                }
+
+                if (args.DataView.Properties.TryGetValue(NotepadsTextEditorPendingContent, out object pendingContentObj) &&
+                    pendingContentObj is string pendingContent)
+                {
+                    pendingText = pendingContent;
+                }
+
+                ApplicationSettingsStore.Write(SetDragAndDropActionStatus, "Handled");
+
+                var index = -1;
+
+                // Determine which items in the list our pointer is in between.
+                for (int i = 0; i < sets.Items.Count; i++)
+                {
+                    var item = sets.ContainerFromIndex(i) as SetsViewItem;
+
+                    if (args.GetPosition(item).X - item.ActualWidth < 0)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                var atIndex = index == -1 ? sets.Items.Count : index;
+
+                var textFile = new TextFile(lastSavedText,
+                    EncodingUtility.GetEncodingByName(metaData.LastSavedEncoding),
+                    LineEndingUtility.GetLineEndingByName(metaData.LastSavedLineEnding),
+                    metaData.DateModifiedFileTime);
+
+                var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, editingFile, metaData.FileNamePlaceholder, metaData.IsModified);
+                OpenTextEditor(newEditor, atIndex);
+                newEditor.ResetEditorState(metaData, pendingText);
+
+                if (metaData.IsContentPreviewPanelOpened)
+                {
+                    newEditor.ShowHideContentPreview();
+                }
+
+                if (metaData.IsInDiffPreviewMode)
+                {
+                    newEditor.OpenSideBySideDiffViewer();
+                }
+
+                deferral.Complete();
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogException(ex);
+                deferral.Complete();
+            }
+        }
+
+        private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            if (ApplicationSettingsStore.Read(SetDragAndDropActionStatus) is string setDragAndDropActionStatus && setDragAndDropActionStatus == "Handled")
+            {
+                if (args.Items.FirstOrDefault() is ITextEditor editor)
+                {
+                    TextEditorMovedToAnotherAppInstance?.Invoke(this, editor);
+                }
+            }
+
+            ApplicationSettingsStore.Remove(SetDragAndDropActionStatus);
+        }
+
+        private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
+        {
+            if (Sets.Items.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            {
+                // Only allow untitled empty document to be dragged outside for now
+                if (!textEditor.IsModified && textEditor.EditingFile == null)
+                {
+                    DeleteTextEditor(textEditor);
+                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
+                }
+            }
+        }
+
+        #endregion
     }
 }

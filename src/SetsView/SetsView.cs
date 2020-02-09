@@ -4,9 +4,10 @@
 
 namespace SetsView
 {
-    using Microsoft.Toolkit.Uwp.UI.Extensions;
     using System;
     using System.Linq;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Microsoft.Toolkit.Uwp.UI.Extensions;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -23,6 +24,8 @@ namespace SetsView
     [TemplatePart(Name = SetsScrollViewerName, Type = typeof(ScrollViewer))]
     [TemplatePart(Name = SetsScrollBackButtonName, Type = typeof(ButtonBase))]
     [TemplatePart(Name = SetsScrollForwardButtonName, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = SetsItemsScrollViewerLeftSideShadowName, Type = typeof(DropShadowPanel))]
+    [TemplatePart(Name = SetsItemsScrollViewerRightSideShadowName, Type = typeof(DropShadowPanel))]
     public partial class SetsView : ListViewBase
     {
         private const int ScrollAmount = 50; // TODO: Should this be based on SetsWidthMode
@@ -31,6 +34,8 @@ namespace SetsView
         private const string SetsViewContainerName = "SetsViewContainer";
         private const string SetsItemsPresenterName = "SetsItemsPresenter";
         private const string SetsScrollViewerName = "ScrollViewer";
+        private const string SetsItemsScrollViewerLeftSideShadowName = "SetsItemsScrollViewerLeftSideShadow";
+        private const string SetsItemsScrollViewerRightSideShadowName = "SetsItemsScrollViewerRightSideShadow";
         private const string SetsScrollBackButtonName = "SetsScrollBackButton";
         private const string SetsScrollForwardButtonName = "SetsScrollForwardButton";
 
@@ -38,11 +43,16 @@ namespace SetsView
         private Grid _setsViewContainer;
         private ItemsPresenter _setItemsPresenter;
         private ScrollViewer _setsScroller;
+        private DropShadowPanel _setsItemsScrollViewerLeftSideShadow;
+        private DropShadowPanel _setsItemsScrollViewerRightSideShadow;
         private ButtonBase _setsScrollBackButton;
         private ButtonBase _setsScrollForwardButton;
 
         private bool _hasLoaded;
         private bool _isDragging;
+
+        private double _scrollViewerHorizontalOffset = .0f;
+        public double ScrollViewerHorizontalOffset => _scrollViewerHorizontalOffset;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SetsView"/> class.
@@ -90,12 +100,6 @@ namespace SetsView
         /// </summary>
         public event EventHandler<SetSelectedEventArgs> SetDoubleTapped;
 
-        public void ScrollToLastSet()
-        {
-            _setsScroller.UpdateLayout();
-            _setsScroller.ChangeView(double.MaxValue, 0.0f, 1.0f);
-        }
-
         /// <inheritdoc/>
         protected override DependencyObject GetContainerForItemOverride() => new SetsViewItem();
 
@@ -118,6 +122,7 @@ namespace SetsView
             if (_setsScroller != null)
             {
                 _setsScroller.Loaded -= SetsScrollViewer_Loaded;
+                _setsScroller.ViewChanged -= SetsScrollViewer_ViewChanged;
             }
 
             _setsContentPresenter = GetTemplateChild(SetsContentPresenterName) as ContentPresenter;
@@ -133,6 +138,7 @@ namespace SetsView
             if (_setsScroller != null)
             {
                 _setsScroller.Loaded += SetsScrollViewer_Loaded;
+                _setsScroller.ViewChanged += SetsScrollViewer_ViewChanged;
             }
         }
 
@@ -152,7 +158,9 @@ namespace SetsView
 
             _setsScrollBackButton = _setsScroller.FindDescendantByName(SetsScrollBackButtonName) as ButtonBase;
             _setsScrollForwardButton = _setsScroller.FindDescendantByName(SetsScrollForwardButtonName) as ButtonBase;
-
+            _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
+            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel; 
+            
             if (_setsScrollBackButton != null)
             {
                 _setsScrollBackButton.Click += ScrollSetBackButton_Click;
@@ -199,6 +207,8 @@ namespace SetsView
                         if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
                     }
                 }
+
+                UpdateScrollViewerShadows();
             }
 
             // If our width can be effected by the selection, need to run algorithm.
@@ -311,7 +321,7 @@ namespace SetsView
                 }
                 else
                 {
-                    Items.Remove(item);
+                    Items?.Remove(item);
                 }
             }
         }
@@ -320,6 +330,9 @@ namespace SetsView
         {
             // Keep track of drag so we don't modify content until done.
             _isDragging = true;
+
+            _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+            _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
         }
 
         private void SetsView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -354,12 +367,80 @@ namespace SetsView
                 }
 
                 SetDraggedOutside?.Invoke(this, new SetDraggedOutsideEventArgs(item, set));
+
+                UpdateScrollViewerShadows();
             }
             else
             {
                 // If dragging the active set, there's an issue with the CP blanking.
                 SetsView_SelectionChanged(this, null);
             }
+        }
+
+        private void SetsScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
+            UpdateScrollViewerShadows();
+        }
+
+        public void ScrollToLastSet()
+        {
+            ScrollTo(double.MaxValue);
+        }
+
+        public void ScrollTo(double offset)
+        {
+            try
+            {
+                _setsScroller?.UpdateLayout();
+                _setsScroller?.ChangeView(offset, 0.0f, 1.0f);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"SetsView failed to scroll to offset: {(long)offset}, Exception: {ex}");
+            }
+        }
+
+        // HACK: Simulate left most and right most (tab) edge shadow
+        // since I am too lazy to figure out the "right way" to make shadow visible on scroll viewer edges
+        /// TODO This method should be removed when better solution is available in the future 
+        private void UpdateScrollViewerShadows()
+        {
+            if (_setsItemsScrollViewerLeftSideShadow == null ||
+                _setsItemsScrollViewerRightSideShadow == null)
+            {
+                return;
+            }
+
+            if (Items?.Count == 1)
+            {
+                _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Visible;
+                _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (SelectedIndex == 0)
+            {
+                if (Math.Abs(_scrollViewerHorizontalOffset) < 3)
+                {
+                    _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Visible;
+                    _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+            else if (SelectedIndex == Items?.Count - 1)
+            {
+                var offset = _setsScroller.ExtentWidth - _setsScroller.ViewportWidth - _scrollViewerHorizontalOffset;
+                if (Math.Abs(offset) < 3)
+                {
+                    _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+                    _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+
+            _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+            _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
         }
     }
 }

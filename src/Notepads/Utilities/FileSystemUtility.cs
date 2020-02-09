@@ -1,34 +1,19 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Models;
+    using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
-
-    public class TextFile
-    {
-        public TextFile(string content, Encoding encoding, LineEnding lineEnding, long dateModifiedFileTime)
-        {
-            Content = content;
-            Encoding = encoding;
-            LineEnding = lineEnding;
-            DateModifiedFileTime = dateModifiedFileTime;
-        }
-
-        public string Content { get; }
-        public Encoding Encoding { get; }
-        public LineEnding LineEnding { get; }
-        public long DateModifiedFileTime { get; }
-    }
 
     public static class FileSystemUtility
     {
@@ -60,34 +45,48 @@ namespace Notepads.Utilities
 
         public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
         {
-            var path = GetAbsolutePathFromCommondLine(dir, args);
+            string path = null;
+
+            try
+            {
+                path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to parse command line: {args} with Exception: {ex}");
+            }
 
             if (string.IsNullOrEmpty(path))
             {
                 return null;
             }
 
-            try
-            {
-                return await StorageFile.GetFileFromPathAsync(path);
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
+            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
 
-            return null;
+            return await GetFile(path);
         }
 
-        public static string GetAbsolutePathFromCommondLine(string dir, string args)
+        public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
         {
             if (string.IsNullOrEmpty(args)) return null;
 
+            args = args.Trim();
+
+            args = RemoveExecutableNameOrPathFromCommandLineArgs(args, appName);
+
+            if (string.IsNullOrEmpty(args))
+            {
+                return null;
+            }
+
             string path = args;
 
-            if (path.StartsWith("\"") && path.EndsWith("\"") && path.Length > 2)
+            // Get first quoted string if any
+            if (path.StartsWith("\"") && path.Length > 1)
             {
-                path = path.Substring(1, args.Length - 2);
+                var index = path.IndexOf('\"', 1);
+                if (index == -1) return null;
+                path = args.Substring(1, index - 1);
             }
 
             if (IsFullPath(path))
@@ -109,6 +108,46 @@ namespace Notepads.Utilities
             }
 
             return path;
+        }
+
+        private static string RemoveExecutableNameOrPathFromCommandLineArgs(string args, string appName)
+        {
+            if (!args.StartsWith('\"'))
+            {
+                // From Windows Command Line
+                // notepads <file> ...
+                // notepads.exe <file>
+
+                if (args.StartsWith($"{appName}.exe",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring($"{appName}.exe".Length);
+                }
+
+                if (args.StartsWith(appName,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring(appName.Length);
+                }
+            }
+            else if (args.StartsWith('\"') && args.Length > 1)
+            {
+                // From PowerShell or run
+                // "notepads" <file>
+                // "notepads.exe" <file>
+                // "<app-install-path><app-name>.exe"  <file> ...
+                var index = args.IndexOf('\"', 1);
+                if (index == -1) return null;
+                if (args.Length == index + 1) return null;
+                args = args.Substring(index + 1);
+            }
+            else
+            {
+                return null;
+            }
+
+            args = args.Trim();
+            return args;
         }
 
         public static async Task<BasicProperties> GetFileProperties(StorageFile file)
@@ -141,11 +180,29 @@ namespace Notepads.Utilities
             }
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file)
+        public static async Task<StorageFile> GetFile(string filePath)
+        {
+            try
+            {
+                return await StorageFile.GetFileFromPathAsync(filePath);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
+        {
+            StorageFile file = await GetFile(filePath);
+            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
+        }
+
+        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
-            if (fileProperties.Size > 1000 * 1024) // 1MB
+            if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
             {
                 throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
@@ -153,7 +210,6 @@ namespace Notepads.Utilities
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             string text;
-            Encoding encoding;
             var bom = new byte[4];
 
             using (var inputStream = await file.OpenReadAsync())
@@ -165,9 +221,17 @@ namespace Notepads.Utilities
             using (var inputStream = await file.OpenReadAsync())
             using (var classicStream = inputStream.AsStreamForRead())
             {
-                var reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                StreamReader reader;
+                if (encoding != null)
+                {
+                    reader = new StreamReader(classicStream, encoding);
+                }
+                else
+                {
+                    reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
+                }
                 reader.Peek();
-                encoding = reader.CurrentEncoding;
+                if (encoding == null) encoding = reader.CurrentEncoding;
                 text = reader.ReadToEnd();
                 reader.Close();
             }
@@ -207,6 +271,7 @@ namespace Notepads.Utilities
             return encoding;
         }
 
+        // Will throw if not succeeded, exception should be caught and handled by caller
         public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
@@ -250,8 +315,24 @@ namespace Notepads.Utilities
                             "FileUpdateStatus", nameof(status)
                         }
                     });
-                    throw new Exception($"FileUpdateStatus: {nameof(status)}");
+                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }
+            }
+        }
+
+        internal static async Task DeleteFile(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
+        {
+            try
+            {
+                var file = await GetFile(filePath);
+                if (file != null)
+                {
+                    await file.DeleteAsync(deleteOption);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
             }
         }
 
@@ -261,9 +342,9 @@ namespace Notepads.Utilities
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName)
+        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
-            return await folder.CreateFileAsync(fileName);
+            return await folder.CreateFileAsync(fileName, option);
         }
 
         public static async Task<bool> FileExists(StorageFile file)
@@ -273,9 +354,65 @@ namespace Notepads.Utilities
                 using (var stream = await file.OpenStreamForReadAsync()) { }
                 return true;
             }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
             catch (Exception ex)
             {
-                return !(ex is FileNotFoundException);
+                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                return true;
+            }
+        }
+
+        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
+        {
+            try
+            {
+                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
+                {
+                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
+            }
+            return null;
+        }
+
+        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
+        {
+            try
+            {
+                if (await FileExists(file))
+                {
+                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList", 
+                    new Dictionary<string, string>()
+                    {
+                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
+                        { "Exception", ex.Message }
+                    });
+            }
+            return false;
+        }
+
+        public static int GetFutureAccessListItemCount()
+        {
+            try
+            {
+                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
+            }
+            catch
+            {
+                return -1;
             }
         }
     }

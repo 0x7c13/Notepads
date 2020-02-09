@@ -1,13 +1,13 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Commands;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Commands;
+    using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
     using Windows.UI.Core;
@@ -20,6 +20,14 @@ namespace Notepads.Controls.TextEditor
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
     public class TextEditorCore : RichEditBox
     {
+        public event EventHandler<TextWrapping> TextWrappingChanged;
+
+        public event EventHandler<double> FontSizeChanged;
+
+        public event EventHandler<double> FontZoomFactorChanged;
+
+        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -30,37 +38,58 @@ namespace Notepads.Controls.TextEditor
 
         private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
-        public event EventHandler<TextWrapping> TextWrappingChanged;
+        private int _textSelectionStartPosition = 0;
 
-        public event EventHandler<double> FontSizeChanged;
+        private int _textSelectionEndPosition = 0;
+
+        private double _contentScrollViewerHorizontalOffset = 0;
+
+        private double _contentScrollViewerVerticalOffset = 0;
 
         private const string ContentElementName = "ContentElement";
 
         private ScrollViewer _contentScrollViewer;
 
+        private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
+
         public new TextWrapping TextWrapping
         {
-            get => base.TextWrapping;
+            get => _textWrapping;
             set
             {
                 base.TextWrapping = value;
+                _textWrapping = value;
                 TextWrappingChanged?.Invoke(this, value);
             }
         }
 
+        private double _fontZoomFactor = 1.0f;
+        private double _fontSize = EditorSettingsService.EditorFontSize;
+
         public new double FontSize
         {
-            get => base.FontSize;
+            get => _fontSize;
             set
             {
                 base.FontSize = value;
+                _fontSize = value;
+                SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
+
+                var newZoomFactor = value / EditorSettingsService.EditorFontSize;
+                if (Math.Abs(newZoomFactor - _fontZoomFactor) > 0.00001)
+                {
+                    _fontZoomFactor = newZoomFactor;
+                    FontZoomFactorChanged?.Invoke(this, newZoomFactor);
+                }
             }
         }
 
+        public double FontZoomFactor => _fontZoomFactor;
+
         public TextEditorCore()
         {
-            IsSpellCheckEnabled = false;
+            IsSpellCheckEnabled = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
@@ -70,33 +99,76 @@ namespace Notepads.Controls.TextEditor
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
-            CopyingToClipboard += (sender, args) => CopyPlainTextToWindowsClipboard(args);
-            Paste += async (sender, args) => await PastePlainTextFromWindowsClipboard(args);
-            TextChanging += OnTextChanging;
 
-            SetDefaultTabStop(FontFamily, FontSize);
+            CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
+            Paste += TextEditorCore_Paste;
+            TextChanging += OnTextChanging;
+            SelectionChanged += OnSelectionChanged;
+
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
 
-            EditorSettingsService.OnFontFamilyChanged += (sender, fontFamily) =>
-            {
-                FontFamily = new FontFamily(fontFamily);
-                SetDefaultTabStop(FontFamily, FontSize);
-            };
-            EditorSettingsService.OnFontSizeChanged += (sender, fontSize) =>
-            {
-                FontSize = fontSize;
-                SetDefaultTabStop(FontFamily, FontSize);
-            };
+            EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
+            EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
+            EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
 
-            EditorSettingsService.OnDefaultTextWrappingChanged += (sender, textWrapping) => { TextWrapping = textWrapping; };
-            ThemeSettingsService.OnAccentColorChanged += (sender, color) =>
-            {
-                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            };
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+        }
+
+        // Unhook events and clear state
+        public void Dispose()
+        {
+            CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
+            Paste -= TextEditorCore_Paste;
+            TextChanging -= OnTextChanging;
+            SelectionChanged -= OnSelectionChanged;
+
+            PointerWheelChanged -= OnPointerWheelChanged;
+
+            if (_contentScrollViewer != null)
+            {
+                _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
+            }
+
+            EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
+            EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
+            EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
+
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+
+            _contentLinesCache = null;
+        }
+
+        private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
+        {
+            FontFamily = new FontFamily(fontFamily);
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+        }
+
+        private void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
+        {
+            FontSize = fontSize;
+        }
+
+        private void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
+        {
+            TextWrapping = textWrapping;
+        }
+
+        private void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
+        {
+            IsSpellCheckEnabled = isSpellCheckEnabled;
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        {
+            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -112,7 +184,9 @@ namespace Notepads.Controls.TextEditor
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, false, VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
 
@@ -120,6 +194,13 @@ namespace Notepads.Controls.TextEditor
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
+            _contentScrollViewer.BringIntoViewOnFocusChange = false;
+            _contentScrollViewer.ChangeView(
+                _contentScrollViewerHorizontalOffset,
+                _contentScrollViewerVerticalOffset,
+                zoomFactor: null,
+                disableAnimation: true);
+            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
 
         public void Undo()
@@ -143,9 +224,39 @@ namespace Notepads.Controls.TextEditor
             Document.SetText(TextSetOptions.None, text);
         }
 
+        // Thread safe
         public string GetText()
         {
             return _content;
+        }
+
+        // Thread safe
+        public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
+        {
+            horizontalOffset = _contentScrollViewerHorizontalOffset;
+            verticalOffset = _contentScrollViewerVerticalOffset;
+        }
+
+        // Thread safe
+        public void GetTextSelectionPosition(out int startPosition, out int endPosition)
+        {
+            startPosition = _textSelectionStartPosition;
+            endPosition = _textSelectionEndPosition;
+        }
+
+        public void SetTextSelectionPosition(int selectionStartPosition, int selectionEndPosition)
+        {
+            _textSelectionStartPosition = selectionStartPosition;
+            _textSelectionEndPosition = selectionEndPosition;
+            Document.Selection.StartPosition = selectionStartPosition;
+            Document.Selection.EndPosition = selectionEndPosition;
+        }
+
+        public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
+        {
+            _contentScrollViewerHorizontalOffset = horizontalOffset;
+            _contentScrollViewerVerticalOffset = verticalOffset;
+            _contentScrollViewer?.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
@@ -157,8 +268,7 @@ namespace Notepads.Controls.TextEditor
                 _isLineCachePendingUpdate = false;
             }
 
-            var start = Document.Selection.StartPosition;
-            var end = Document.Selection.EndPosition;
+            GetTextSelectionPosition(out var start, out var end);
 
             lineIndex = 1;
             columnIndex = 1;
@@ -190,26 +300,6 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        public void CopyPlainTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
-        {
-            if (args != null)
-            {
-                args.Handled = true;
-            }
-
-            try
-            {
-                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                dataPackage.SetText(Document.Selection.Text);
-                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                Clipboard.Flush();
-            }
-            catch (Exception)
-            {
-                // Ignore
-            }
-        }
-
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
         {
             if (args != null)
@@ -227,9 +317,9 @@ namespace Notepads.Controls.TextEditor
                 Document.Selection.SetText(TextSetOptions.None, text);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignore
+                LoggingService.LogError($"Failed to paste plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -283,7 +373,7 @@ namespace Notepads.Controls.TextEditor
             if (found)
             {
                 SetText(text);
-                Document.Selection.StartPosition = Int32.MaxValue;
+                Document.Selection.StartPosition = int.MaxValue;
                 Document.Selection.EndPosition = Document.Selection.StartPosition;
             }
 
@@ -371,27 +461,37 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
-        private void SetDefaultTabStop(FontFamily font, double fontSize)
+        private async void TextEditorCore_Paste(object sender, TextControlPasteEventArgs args)
+        {
+            await PastePlainTextFromWindowsClipboard(args);
+        }
+
+        private void TextEditorCore_CopySelectedTextToWindowsClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        {
+            CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
+        }
+
+        private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)
         {
             Document.DefaultTabStop = (float)FontUtility.GetTextSize(font, fontSize, "text").Width;
+            var format = Document.GetDefaultParagraphFormat();
+            format.SetLineSpacing(LineSpacingRule.AtLeast, (float)fontSize);
+            Document.SetDefaultParagraphFormat(format);
         }
 
         private void IncreaseFontSize(double delta)
         {
-            SetDefaultTabStop(FontFamily, FontSize + delta);
             FontSize += delta;
         }
 
         private void DecreaseFontSize(double delta)
         {
             if (FontSize < delta + 2) return;
-            SetDefaultTabStop(FontFamily, FontSize - delta);
             FontSize -= delta;
         }
 
         private void ResetFontSizeToDefault()
         {
-            SetDefaultTabStop(FontFamily, EditorSettingsService.EditorFontSize);
             FontSize = EditorSettingsService.EditorFontSize;
         }
 
@@ -416,12 +516,25 @@ namespace Notepads.Controls.TextEditor
             }
         }
 
+        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _textSelectionStartPosition = Document.Selection.StartPosition;
+            _textSelectionEndPosition = Document.Selection.EndPosition;
+        }
+
+        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+        }
+
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
             var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
+            // Ctrl + Wheel -> zooming
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 !shift.HasFlag(CoreVirtualKeyStates.Down))
@@ -437,6 +550,7 @@ namespace Notepads.Controls.TextEditor
                 }
             }
 
+            // Enabling scrolling during text selection
             if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 !shift.HasFlag(CoreVirtualKeyStates.Down))
@@ -447,8 +561,18 @@ namespace Notepads.Controls.TextEditor
                 {
                     var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                     _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
-                            _contentScrollViewer.VerticalOffset + -1 * mouseWheelDelta, null, true);
+                            _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
                 }
+            }
+
+            // Ctrl + Shift + Wheel -> horizontal scrolling
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                shift.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
+                    _contentScrollViewer.VerticalOffset, null, true);
             }
         }
 
@@ -460,11 +584,11 @@ namespace Notepads.Controls.TextEditor
             {
                 bool startBoundary = true;
                 if (pos > 0)
-                    startBoundary = !Char.IsLetterOrDigit(target[pos - 1]);
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
 
                 bool endBoundary = true;
                 if (pos + value.Length < target.Length)
-                    endBoundary = !Char.IsLetterOrDigit(target[pos + value.Length]);
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
 
                 if (startBoundary && endBoundary)
                     return pos;
@@ -479,6 +603,88 @@ namespace Notepads.Controls.TextEditor
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             Document.Selection.SetText(TextSetOptions.None, dateStr);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void DuplicateText()
+        {
+            try
+            {
+                GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+                GetTextSelectionPosition(out var start, out var end);
+
+                if (end == start)
+                {
+                    // Duplicate Line                
+                    var line = _contentLinesCache[lineIndex - 1];
+                    var column = Document.Selection.EndPosition + line.Length + 1;
+                
+                    if (columnIndex == 1)
+                        Document.Selection.EndPosition += 1;
+
+                    Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
+
+                    if (lineIndex < (_contentLinesCache.Length - 1))
+                        Document.Selection.EndPosition -= 1;
+
+                    Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
+                    Document.Selection.StartPosition = Document.Selection.EndPosition = column;
+                }
+                else
+                {
+                    // Duplicate selection
+                    var textRange = Document.GetRange(start, end);
+                    textRange.GetText(TextGetOptions.None, out string text);
+
+                    if (text.EndsWith(RichEditBoxDefaultLineEnding))
+                    {
+                        Document.Selection.EndOf(TextRangeUnit.Line, false);
+
+                        if (lineIndex < (_contentLinesCache.Length - 1))
+                            Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
+                    }
+                    else
+                    {              
+                        Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    }
+
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                } 
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[TextEditorCore] Failed to duplicate text: {ex}");
+                Analytics.TrackEvent("TextEditorCore_FailedToDuplicateText", new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+            }
+        }
+
+        public bool GoTo(int line)
+        {
+            if (_isLineCachePendingUpdate)
+            {
+                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _isLineCachePendingUpdate = false;
+            }
+
+            if (line > 0 && line < _contentLinesCache.Length)
+            {
+                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void ShowEasterEgg()
+        {
+            //_contentScrollViewer.Background = new ImageBrush
+            //{
+            //    ImageSource = new BitmapImage(new Uri(BaseUri, "/Assets/EasterEgg.jpg")),
+            //    AlignmentX = AlignmentX.Center,
+            //    AlignmentY = AlignmentY.Center,
+            //    Stretch = Stretch.Uniform
+            //};
         }
     }
 }

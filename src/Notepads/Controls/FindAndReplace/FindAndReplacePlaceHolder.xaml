@@ -82,8 +82,8 @@
                                 <CompositeTransform />
                             </Grid.RenderTransform>
 
-                            <controls:DropShadowPanel BlurRadius="10" ShadowOpacity="0.2"
-                                                      OffsetX="0.4" OffsetY="0.4"
+                            <controls:DropShadowPanel BlurRadius="10" ShadowOpacity="0.25"
+                                                      OffsetX="0" OffsetY="0"
                                                       HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                 <Grid Background="{TemplateBinding Background}" 
                                       BorderBrush="{TemplateBinding BorderBrush}" 

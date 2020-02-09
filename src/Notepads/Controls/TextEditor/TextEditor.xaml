@@ -8,6 +8,7 @@
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
     xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
+    xmlns:goTo="using:Notepads.Controls.GoTo"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -91,7 +92,7 @@
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
-                                       Padding="8 , 6, 10, 10"/>
+                                       Padding="8 , 6, 10, 6"/>
                 <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"
                                             Padding="0"
@@ -113,15 +114,48 @@
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
+                <controls:InAppNotification x:Name="GoToPlaceholder"
+                                            x:Load="false"
+                                            Padding="0"
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource FindAndReplacePlaceholder}"
+                                            ShowDismissButton="True"
+                                            AnimationDuration="0:0:0.050"
+                                            VerticalOffset="0"
+                                            HorizontalOffset="0"
+                                            FontWeight="Light"
+                                            BorderThickness="1"
+                                            Closed="GoToPlaceholder_Closed">
+                    <controls:InAppNotification.Content>
+                        <goTo:GoToControl x:Name="GoToControl" 
+                                                              Width="320"
+                                                              OnDismissKeyDown="GoToControl_OnDismissKeyDown"
+                                                              OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
+                    </controls:InAppNotification.Content>
+                </controls:InAppNotification>
             </Grid>
+            <controls:DropShadowPanel    
+                Canvas.ZIndex="50"
+                Grid.Column="1"
+                ShadowOpacity="0.4"
+                BlurRadius="12"
+                Margin="-1,0"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Left">
+                <Grid Width="1"/>
+            </controls:DropShadowPanel>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"
+                              Canvas.ZIndex="100"
                               Padding="10,0,0,0"
                               Background="{ThemeResource SplitViewBackgroundThemeBrush}"
                               AutomationProperties.AccessibilityView="Raw"
                               Grid.Column="1"/>
             <controls:GridSplitter x:Name="GridSplitter"
                                    x:Load="False"
+                                   Canvas.ZIndex="150"
                                    Style="{StaticResource CustomGridSplitterStyle}"
                                    MinWidth="10"
                                    GripperCursor="Default"

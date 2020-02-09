@@ -1,8 +1,7 @@
-﻿
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Utilities;
     using System;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Text;
@@ -23,12 +22,12 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
-        private readonly TextEditor _textEditor;
-        private readonly TextEditorCore _textEditorCore;
+        private ITextEditor _textEditor;
+        private TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public TextEditorContextFlyout(TextEditor editor, TextEditorCore editorCore)
+        public TextEditorContextFlyout(ITextEditor editor, TextEditorCore editorCore)
         {
             _textEditor = editor;
             _textEditorCore = editorCore;
@@ -44,6 +43,14 @@ namespace Notepads.Controls.TextEditor
             Items.Add(Share);
 
             Opening += TextEditorContextFlyout_Opening;
+        }
+
+        public void Dispose()
+        {
+            Opening -= TextEditorContextFlyout_Opening;
+
+            _textEditor = null;
+            _textEditorCore = null;
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
@@ -111,7 +118,7 @@ namespace Notepads.Controls.TextEditor
                         Key = VirtualKey.C,
                         IsEnabled = false,
                     });
-                    _copy.Click += (sender, args) => _textEditorCore.CopyPlainTextToWindowsClipboard(null);
+                    _copy.Click += (sender, args) => _textEditor.CopySelectedTextToWindowsClipboard(null);
                 }
                 return _copy;
             }
@@ -167,7 +174,6 @@ namespace Notepads.Controls.TextEditor
                         Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
                         Key = VirtualKey.Z,
                         IsEnabled = false,
-
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
                     _redo.Click += (sender, args) => { _textEditorCore.Redo(); };

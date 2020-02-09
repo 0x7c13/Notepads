@@ -2,7 +2,6 @@
     x:Class="Notepads.Extensions.Markdown.MarkdownExtensionView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Notepads.Extensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
@@ -20,8 +19,6 @@
             <controls:MarkdownTextBlock x:Name="MarkdownTextBlock"
                                         Margin="0"
                                         Padding="0"
-                                        LinkClicked="MarkdownTextBlock_OnLinkClicked"
-                                        ImageClicked="MarkdownTextBlock_OnLinkClicked"
                                         Background="Transparent"
                                         Header1Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                                         LinkForeground="{StaticResource SystemControlForegroundAccentBrush}"/>

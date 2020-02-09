@@ -1,0 +1,460 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>Há alterações não salvas.</value>
+    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Salvar Todos</value>
+    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>Descartar</value>
+    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>Você deseja salvar as alterações?</value>
+    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
+    <value>Depois das suas alterações</value>
+    <comment>DiffViewer: Header's text for new text (After changes).</comment>
+  </data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
+    <value>Antes das suas alterações</value>
+    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
+  </data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
+    <value>O Notepads, no momento, não suporta arquivos maiores que 1MB.</value>
+    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>Desculpe, o arquivo "{0}" não pôde ser aberto: {1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+    <value>Erro ao abrir o arquivo</value>
+    <comment>FileOpenErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>Desculpe, o arquivo "{0}" não pôde ser salvo: {1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+    <value>Erro ao salvar o arquivo</value>
+    <comment>FileSaveErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fechar</value>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
+    <value>Localizar</value>
+    <comment>FindAndReplace: Find bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
+    <value>Não localizado</value>
+    <comment>FindAndReplace: Notification message when target not found.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Substituir Tudo</value>
+    <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
+    <value>Substituir</value>
+    <comment>FindAndReplace: Replace bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Substituir</value>
+    <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Localizar próxima (F3)</value>
+    <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Opções de busca</value>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
+    <value>Diferenciar maiúsculas de minúsculas</value>
+    <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
+    <value>Coincidir palavra inteira</value>
+    <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Find.Text" xml:space="preserve">
+    <value>Localizar...</value>
+    <comment>MainMenu: "Find" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New.Text" xml:space="preserve">
+    <value>Novo</value>
+    <comment>MainMenu: "New" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open.Text" xml:space="preserve">
+    <value>Abrir...</value>
+    <comment>MainMenu: "Open" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Print.Text" xml:space="preserve">
+    <value>Imprimir...</value>
+    <comment>MainMenu: "Print" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
+    <value>Substituir...</value>
+    <comment>MainMenu: "Replace" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Save.Text" xml:space="preserve">
+    <value>Salvar</value>
+    <comment>MainMenu: "Save" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
+    <value>Salvar Todos</value>
+    <comment>MainMenu: "Save All" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
+    <value>Salvar Como...</value>
+    <comment>MainMenu: "Save As" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
+    <value>Configurações</value>
+    <comment>MainMenu: "Settings" button display text.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
+    <value>Todas as alterações incluindo texto, terminação e codificação de linha feitas no "{0}" serão revertidas!</value>
+    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Sim</value>
+    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
+    <value>Reverter todas as alterações?</value>
+    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>Salvar o arquivo "{0}"?</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Salvar</value>
+    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>Não Salvar</value>
+    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>Salvar as alterações?</value>
+    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
+    <value>Fechar</value>
+    <comment>Tab: ContextFlyout "Close" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
+    <value>Fechar Outros</value>
+    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
+    <value>Fechar à direita</value>
+    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
+    <value>Fechar Salvos</value>
+    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
+    <value>Copiar o caminho completo</value>
+    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
+    <value>Abrir pasta do arquivo</value>
+    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
+    <value>Copiar</value>
+    <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
+    <value>Recortar</value>
+    <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
+    <value>Colar</value>
+    <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
+    <value>Ativar pré-visualização</value>
+    <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
+    <value>Refazer</value>
+    <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
+    <value>Selecionar Tudo</value>
+    <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
+    <value>Compartilhar</value>
+    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
+    <value>Compartilhar o selecionado</value>
+    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
+    <value>Desfazer</value>
+    <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
+    <value>Quebra automática de linha</value>
+    <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
+  </data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
+    <value>Sem título.txt</value>
+    <comment>TextEditor: Default file name for new document.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
+    <value>Ln {0}, Col {1} ({2} {3})</value>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for selected word form. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
+    <value>Ln {0}, Col {1}</value>
+    <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
+    <value>Visualizar alterações no texto</value>
+    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
+    <value>Reverter todas as alterações</value>
+    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
+    <value>Modificado</value>
+    <comment>TextEditor: ModificationIndicator display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
+    <value>Copiado</value>
+    <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
+    <value>Salvo</value>
+    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>Pressione F11 para sair da tela cheia</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>Recarregar arquivo do disco</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>O arquivo foi modificado externamente!</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>O arquivo foi movido, renomeado ou deletado!</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>Arquivo recarregado</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>Manter na parte superior</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>Tela Cheia</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>Voltar para visualização completa</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>Sair da Tela Cheia</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
+  <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
+    <value>Não há nada para compartilhar, porque nenhum texto foi selecionado e o atual documento está vazio.</value>
+    <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
+    <value>selecionados</value>
+    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
+    <value>selecionado</value>
+    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>Mover a guia aqui</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>Abrir com o Notepads</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>Esta é uma janela de sombra do Notepads. A sessão instantânea e configurações estão desativadas.</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>Arquivo já aberto!</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Abre uma nova janela</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>Nova janela</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>Nova janela</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
+</root>

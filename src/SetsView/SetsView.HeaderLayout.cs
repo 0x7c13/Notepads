@@ -64,8 +64,7 @@ namespace SetsView
                         // Restore original widths
                         foreach (var item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
-                            if (set == null)
+                            if (!(ContainerFromItem(item) is SetsViewItem set))
                             {
                                 continue; // container not generated yet
                             }
@@ -81,8 +80,7 @@ namespace SetsView
                         // Calculate the width for each set from the provider and determine how much space they take.
                         foreach (var item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
-                            if (set == null)
+                            if (!(ContainerFromItem(item) is SetsViewItem set))
                             {
                                 continue; // container not generated yet
                             }
@@ -127,8 +125,7 @@ namespace SetsView
                         // TODO: Consolidate this logic with above better?
                         foreach (var item in Items)
                         {
-                            var set = ContainerFromItem(item) as SetsViewItem;
-                            if (set == null)
+                            if (!(ContainerFromItem(item) is SetsViewItem set))
                             {
                                 continue; // container not generated yet
                             }
@@ -165,6 +162,7 @@ namespace SetsView
                         setc.Width = GridLength.Auto;
                     }
                 }
+                UpdateScrollViewerShadows();
             }
         }
 
