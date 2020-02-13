@@ -8,7 +8,8 @@
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"  
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap mp uap5 desktop4 iot2 rescap">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap mp uap5 desktop4 iot2 rescap uap3">
 
   <Identity
     Name="Notepads"
@@ -32,6 +33,7 @@
   </Resources>
 
   <Applications>
+
     <Application Id="App"
       Executable="$targetnametoken$.exe"
       EntryPoint="Notepads.App"
@@ -364,7 +366,72 @@
         </uap:Extension>
       </Extensions>
     </Application>
+
+    <Application Id="AppExt"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="Notepads.App">
+      <uap:VisualElements
+        DisplayName="Notepads for Game Bar"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        Description="Notepads for Game Bar"
+        BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Notepads">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+          </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" BackgroundColor="#2f2f2f"/>
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+            Id="Notepads"
+            DisplayName="Notepads"
+            Description="Notepads extension for Game Bar"
+            PublicFolder="Gamebar">
+            <uap3:Properties>
+              <HomeMenuVisible>true</HomeMenuVisible>
+              <PinningSupported>true</PinningSupported>
+              <ActivateAfterInstall>true</ActivateAfterInstall>
+              <Window>
+                <Size>
+                  <Height>400</Height>
+                  <Width>400</Width>
+                  <MinHeight>400</MinHeight>
+                  <MinWidth>400</MinWidth>
+                  <MaxHeight>1000</MaxHeight>
+                  <MaxWidth>1000</MaxWidth>
+                </Size>
+                <ResizeSupported>
+                  <Horizontal>true</Horizontal>
+                  <Vertical>true</Vertical>
+                </ResizeSupported>
+              </Window>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
   </Applications>
+
+  <Extensions>
+    <!-- Enlighten COM on where to find Metadata Based Marshaling (MBM) data for the Game Bar private types 
+    <Path> is a required element (by VS) and has to point to a binary in the package, but it's not used when the class id is 00000355-0000-0000-C000-000000000046 (MBM). Due to that we just put the Microsoft.Gaming.XboxGameBar.winmd here. -->
+    <Extension Category="windows.activatableClass.proxyStub">
+      <ProxyStub ClassId="00000355-0000-0000-C000-000000000046">
+        <Path>Microsoft.Gaming.XboxGameBar.winmd</Path>
+        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IGbrtServerApiFactory" InterfaceId="ACEC8903-5583-4D21-ACF4-EC79559B9B05" />
+        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IGbrtServerApiFactoryFactory" InterfaceId="38ADF632-990F-4D5F-A2A7-5A05C0533962" />
+        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionActivatedEventArgsPrivate" InterfaceId="782535A7-9407-4572-BFCB-316B4086F102" />
+        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionHost" InterfaceId="5D12BC93-212B-4B9F-9091-76B73BF56525" />
+        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionPrivate" InterfaceId="22ABA97F-FB0F-4439-9BDD-2C67B2D5AA8F" />
+      </ProxyStub>
+    </Extension>
+  </Extensions>
 
   <Capabilities>
     <Capability Name="internetClient" />

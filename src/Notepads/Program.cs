@@ -13,6 +13,15 @@
 
         static void Main(string[] args)
         {
+            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
+
+            if (activatedArgs == null)
+            {
+                // No activated event args, so this is not an activation via the multi-instance ID
+                // Just create a new instance and let App OnActivated resolve the launch
+                OpenNewInstance(false);
+            }
+
             var instances = AppInstance.GetInstances();
 
             if (instances.Count == 0)
@@ -20,8 +29,6 @@
                 IsFirstInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
-
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
             if (activatedArgs is FileActivatedEventArgs)
             {
@@ -37,7 +44,7 @@
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    OpenNewInstance();
+                    OpenNewInstance(true);
                 }
                 else
                 {
@@ -54,7 +61,7 @@
                     if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                     {
                         handled = true;
-                        OpenNewInstance();
+                        OpenNewInstance(true);
                     }
                 }
 
@@ -69,12 +76,24 @@
             }
         }
 
-        private static void OpenNewInstance()
+        private static void OpenNewInstance(bool registerInstance)
         {
-            AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
-            App.IsFirstInstance = IsFirstInstance;
+            if (registerInstance)
+            {
+                AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
+                App.IsFirstInstance = IsFirstInstance;
+            }
+            else
+            {
+                App.IsFirstInstance = true;
+            }
+
             Windows.UI.Xaml.Application.Start(p => new App());
-            IsFirstInstance = false;
+
+            if (registerInstance)
+            {
+                IsFirstInstance = false;
+            }
         }
 
         private static void RedirectOrCreateNewInstance()
@@ -92,7 +111,7 @@
                 // open new instance if user prefers to
                 if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
                 {
-                    OpenNewInstance();
+                    OpenNewInstance(true);
                 }
                 else
                 {

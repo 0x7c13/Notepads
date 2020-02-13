@@ -7,6 +7,7 @@
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Microsoft.Gaming.XboxGameBar;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Services;
     using Notepads.Settings;
@@ -27,8 +28,11 @@
         public static Guid Id { get; } = Guid.NewGuid();
 
         public static bool IsFirstInstance;
+        public static bool IsUiExt = false;
 
         private const string AppCenterSecret = null;
+
+        private XboxGameBarUIExtension XboxGameBarUIExtension = null;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -151,10 +155,38 @@
             base.OnFileActivated(args);
         }
 
+        //protected override async void OnActivated(IActivatedEventArgs args)
+        //{
+        //    await ActivateAsync(args);
+        //    base.OnActivated(args);
+        //}
+
         protected override async void OnActivated(IActivatedEventArgs args)
         {
+            XboxGameBarUIExtensionActivatedEventArgs uiExtArgs = null;
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                var protocolArgs = args as IProtocolActivatedEventArgs;
+                string protocolString = protocolArgs.Uri.AbsoluteUri;
+                if (protocolString.StartsWith("ms-gamebaruiextension"))
+                {
+                    uiExtArgs = args as XboxGameBarUIExtensionActivatedEventArgs;
+                }
+            }
+
+            IsUiExt = uiExtArgs != null;
+
             await ActivateAsync(args);
             base.OnActivated(args);
+
+            if (IsUiExt)
+            {
+                IsFirstInstance = true;
+                XboxGameBarUIExtension = new XboxGameBarUIExtension(
+                    uiExtArgs,
+                    Window.Current.CoreWindow,
+                    Window.Current.Content as Frame);
+            }
         }
 
         private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
@@ -233,7 +265,11 @@
             }
 
             Window.Current.Activate();
-            ExtendAcrylicIntoTitleBar();
+
+            if (IsUiExt != true)
+            {
+                ExtendAcrylicIntoTitleBar();
+            }
         }
 
         private Frame CreateRootFrame(IActivatedEventArgs e)
