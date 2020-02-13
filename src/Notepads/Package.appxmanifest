@@ -375,7 +375,8 @@
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Notepads for Game Bar"
-        BackgroundColor="transparent">
+        BackgroundColor="transparent"
+        AppListEntry="none">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Notepads">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
