@@ -457,4 +457,52 @@
     <value>New Window</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>Go To Line</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>Line number exceeds beyond the total number of lines!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>You can only type a number!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Go To Line</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_InsertDateTimeButtonDisplayText" xml:space="preserve">
+    <value>Date/Time</value>
+    <comment>TextEditor: ContextFlyout "Insert Date/Time" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>Search in web</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>Restore Default Zoom</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>Zoom In</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>Zoom Out</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FlyoutItem_GoToLine.Label" xml:space="preserve">
+    <value>Go To Line</value>
+    <comment>TextEditor: LineColumnIndicator "GoToLine" FlyoutItem display text. Option to go to certain line will be presented.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FlyoutItem_HighlightCurrentLine.Content" xml:space="preserve">
+    <value>Highlight Current Line</value>
+    <comment>TextEditor: LineColumnIndicator "HighlightCurrentLine" FlyoutItem display text. Current line will be highlighted.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FlyoutItem_WrapWord.Content" xml:space="preserve">
+    <value>Wrap Word</value>
+    <comment>TextEditor: LineColumnIndicator "WrapWord" FlyoutItem display text. Text wrapping settings of document will be changed</comment>
+  </data>
 </root>

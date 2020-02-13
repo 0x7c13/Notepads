@@ -19,6 +19,7 @@
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
             UpdateLineColumnIndicator(textEditor);
+            UpdateFontZoomIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
             UpdateShadowWindowIndicator();
@@ -134,6 +135,19 @@
                     selectedCount, wordSelected);
         }
 
+        private void UpdateFontZoomIndicator(ITextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            var fontZoomFactor = textEditor.GetCurrentFontZoomFactor();
+            FontZoomIndicator.Text = (Math.Round(fontZoomFactor * 100)).ToString() + "%";
+            if (fontZoomFactor < 0.1)
+                FontZoomSlider.Value = 10;
+            else if (fontZoomFactor > 5)
+                FontZoomSlider.Value = 500;
+            else
+                FontZoomSlider.Value = fontZoomFactor * 100;
+        }
+
         private void UpdateShadowWindowIndicator()
         {
             if (StatusBar == null) return;
@@ -193,6 +207,63 @@
                     }
                 }
             }
+        }
+
+        private void LineColumnIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBox)
+            {
+                switch ((string)checkBox.Name)
+                {
+                    case "WrapWord":
+                        EditorSettingsService.EditorDefaultTextWrapping = (bool)WrapWord.IsChecked ? TextWrapping.Wrap : TextWrapping.NoWrap;
+                        EditorSettingsService.EditorDefaultLineHighlighterViewState = (bool)HighlightCurrentLine.IsChecked;
+                        break;
+                    case "HighlightCurrentLine":
+                        EditorSettingsService.EditorDefaultLineHighlighterViewState = (bool)HighlightCurrentLine.IsChecked;
+                        break;
+                }
+            }
+            else if (sender is AppBarButton appBarButton && appBarButton.Name == "GoToLine")
+            {
+                LineColumnIndicatorFlyout.Hide();
+                NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
+            }
+            else
+                return;
+        }
+
+        private void FontZoomIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is AppBarButton button)) return;
+
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
+
+            switch ((string)button.Name)
+            {
+                case "ZoomIn":
+                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
+                    break;
+                case "ZoomOut":
+                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
+                    break;
+                case "RestoreDefaultZoom":
+                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(100);
+                    FontZoomIndicatorFlyout.Hide();
+                    break;
+            }
+        }
+
+        private void FontZoomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!(sender is Slider item)) return;
+
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
+
+            if (e.NewValue != e.OldValue)
+                selectedTextEditor.SetCurrentFontZoomFactor(e.NewValue);
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
@@ -266,6 +337,16 @@
             }
             else if (sender == LineColumnIndicator)
             {
+                LineColumnIndicator?.ContextFlyout.ShowAt(LineColumnIndicator);
+                LineColumnIndicatorFlyout.Opened += (s_flyout, e_flyout) =>
+                {
+                    WrapWord.IsChecked = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
+                    HighlightCurrentLine.IsChecked = EditorSettingsService.EditorDefaultLineHighlighterViewState;
+                };
+            }
+            else if (sender == FontZoomIndicator)
+            {
+                FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
             }
             else if (sender == LineEndingIndicator)
             {

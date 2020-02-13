@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -205,6 +205,7 @@
     <Compile Include="Services\EditorSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
+    <Compile Include="Utilities\SearchEngineUtility.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
@@ -318,6 +319,10 @@
     <Content Include="Assets\rc.targetsize-16.png" />
     <Content Include="Assets\rc.targetsize-32.png" />
     <Content Include="Assets\rc.targetsize-48.png" />
+    <Content Include="Assets\search_bing.png" />
+    <Content Include="Assets\search_custom.png" />
+    <Content Include="Assets\search_duckduckgo.png" />
+    <Content Include="Assets\search_google.png" />
     <Content Include="Assets\sh.png" />
     <Content Include="Assets\sh.targetsize-16.png" />
     <Content Include="Assets\sh.targetsize-32.png" />
@@ -444,6 +449,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\FindAndReplace\FindAndReplacePlaceholder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resource\CustomAppBarButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resource\CustomCheckBoxStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

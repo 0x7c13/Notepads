@@ -27,6 +27,8 @@
 
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
+        event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+
         event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
         event EventHandler<ITextEditor> TextEditorLineEndingChanged;

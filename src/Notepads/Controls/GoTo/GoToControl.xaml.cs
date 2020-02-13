@@ -2,6 +2,7 @@
 {
     using System;
     using Notepads.Services;
+    using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -13,6 +14,18 @@
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
 
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
+
+        private int CurrentLine { get; set; }
+
+        private int MaxLine { get; set; }
+
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        public void SetLineData(int currentLine, int maxLine)
+        {
+            CurrentLine = currentLine;
+            MaxLine = maxLine;
+        }
 
         public GoToControl()
         {
@@ -60,6 +73,8 @@
 
         public void Focus()
         {
+            GoToBar.Text = "";
+            GoToBar.SelectedText = CurrentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -91,6 +106,28 @@
         private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
         {
             OnDismissKeyDown?.Invoke(sender, e);
+        }
+
+        private void DismissButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            OnDismissKeyDown?.Invoke(sender, e);
+        }
+
+        private void GoToBar_BeforeTextChanging(TextBox sender, TextBoxBeforeTextChangingEventArgs args)
+        {
+            if (args.NewText == "")
+                return;
+
+            if (!int.TryParse(args.NewText, out var line) || args.NewText.Contains(" "))
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_InvalidInput"), 1500);
+                args.Cancel = true;
+            }
+            else if (line > MaxLine)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
+                args.Cancel = true;
+            }
         }
     }
 }

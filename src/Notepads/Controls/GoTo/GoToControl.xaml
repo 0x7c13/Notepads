@@ -13,6 +13,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -26,8 +27,9 @@
                          TextAlignment="Left"
                          BorderThickness="0"
                          FontSize="15"
+                         BeforeTextChanging="GoToBar_BeforeTextChanging"
                          TextChanged="GoToBar_OnTextChanged"
-                         KeyDown="GoToBar_OnKeyDown" LostFocus="GoToBar_LostFocus"/>
+                         KeyDown="GoToBar_OnKeyDown"/>
             </Grid>
 
             <Button x:Name="SearchButton"
@@ -41,6 +43,21 @@
                     Content="&#xEBE7;" 
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchButton_OnClick">
+            </Button>
+
+            <Button x:Name="DismissButton"
+                    x:Uid="FindAndReplace_DismissButton"
+                    IsTabStop="False"
+                    Width="36"
+                    Grid.Column="2" 
+                    FontSize="16"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE894;" 
+                    FontFamily="Segoe MDL2 Assets" 
+                    Click="DismissButton_OnClick" >
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape"/>
+                </Button.KeyboardAccelerators>
             </Button>
         </Grid>
     </Grid>

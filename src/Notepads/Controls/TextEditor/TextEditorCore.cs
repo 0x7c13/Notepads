@@ -28,6 +28,8 @@
 
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
 
+        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -178,13 +180,14 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(0.1)), // (VirtualKey)187: =
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(0.1)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
@@ -298,6 +301,19 @@
 
                 length += line.Length + 1;
             }
+        }
+
+        public double GetCurrentFontZoomFactor()
+        {
+            return FontZoomFactor;
+        }
+
+        public void SetCurrentFontZoomFactor(double fontZoomFactor)
+        {
+            if (fontZoomFactor == 100)
+                ResetFontSizeToDefault();
+            else if (fontZoomFactor >= 10)
+                FontSize = (fontZoomFactor / 100) * EditorSettingsService.EditorFontSize;
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
@@ -481,13 +497,13 @@
 
         private void IncreaseFontSize(double delta)
         {
-            FontSize += delta;
+            FontSize = FontSize + delta * EditorSettingsService.EditorFontSize;
         }
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize < delta + 2) return;
-            FontSize -= delta;
+            if (FontSize < 0.11 * EditorSettingsService.EditorFontSize) return;
+            FontSize = FontSize - delta * EditorSettingsService.EditorFontSize;
         }
 
         private void ResetFontSizeToDefault()
@@ -526,6 +542,8 @@
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
             _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+
+            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -542,11 +560,11 @@
                 var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                 if (mouseWheelDelta > 0)
                 {
-                    IncreaseFontSize(1);
+                    IncreaseFontSize(0.1);
                 }
                 else if (mouseWheelDelta < 0)
                 {
-                    DecreaseFontSize(1);
+                    DecreaseFontSize(0.1);
                 }
             }
 
@@ -674,6 +692,12 @@
             {
                 return false;
             }
+        }
+
+        public async void SearchInWeb()
+        {
+            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlFromSearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
+            await Launcher.LaunchUriAsync(searchUri);
         }
 
         private void ShowEasterEgg()
