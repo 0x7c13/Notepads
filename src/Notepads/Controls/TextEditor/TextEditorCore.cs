@@ -497,13 +497,13 @@
 
         private void IncreaseFontSize(double delta)
         {
-            FontSize = FontSize + delta * EditorSettingsService.EditorFontSize;
+            FontSize += delta * EditorSettingsService.EditorFontSize;
         }
 
         private void DecreaseFontSize(double delta)
         {
             if (FontSize < 0.11 * EditorSettingsService.EditorFontSize) return;
-            FontSize = FontSize - delta * EditorSettingsService.EditorFontSize;
+            FontSize -= delta * EditorSettingsService.EditorFontSize;
         }
 
         private void ResetFontSizeToDefault()
