@@ -19,7 +19,6 @@
         private MenuFlyoutItem _undo;
         private MenuFlyoutItem _redo;
         private MenuFlyoutItem _selectAll;
-        private MenuFlyoutItem _insertDateTime;
         private MenuFlyoutItem _webSearch;
         private MenuFlyoutItem _wordWrap;
         private MenuFlyoutItem _previewToggle;
@@ -41,7 +40,6 @@
             Items.Add(Redo);
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
-            Items.Add(InsertDateTime);
             Items.Add(WebSearch);
             Items.Add(WordWrap);
             Items.Add(PreviewToggle);
@@ -208,36 +206,6 @@
                     };
                 }
                 return _selectAll;
-            }
-        }
-
-        public MenuFlyoutItem InsertDateTime
-        {
-            get
-            {
-                if (_insertDateTime != null) return _insertDateTime;
-
-                _insertDateTime = new MenuFlyoutItem
-                {
-                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_InsertDateTimeButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uEC92"
-                    }
-                };
-                _insertDateTime.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                {
-                    Key = VirtualKey.F5,
-                    IsEnabled = false,
-                });
-                _insertDateTime.Click += (sender, args) =>
-                {
-                    var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
-                    _textEditorCore.Document.Selection.SetText(TextSetOptions.None, dateStr);
-                    _textEditorCore.Document.Selection.StartPosition = _textEditorCore.Document.Selection.EndPosition;
-                };
-                return _insertDateTime;
             }
         }
 

@@ -209,7 +209,7 @@
             }
         }
 
-        private void LineColumnIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        /*private void LineColumnIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox)
             {
@@ -217,10 +217,10 @@
                 {
                     case "WrapWord":
                         EditorSettingsService.EditorDefaultTextWrapping = (bool)WrapWord.IsChecked ? TextWrapping.Wrap : TextWrapping.NoWrap;
-                        EditorSettingsService.EditorDefaultLineHighlighterViewState = (bool)HighlightCurrentLine.IsChecked;
+                        EditorSettingsService.IsLineHighlighterEnabled = (bool)HighlightCurrentLine.IsChecked;
                         break;
                     case "HighlightCurrentLine":
-                        EditorSettingsService.EditorDefaultLineHighlighterViewState = (bool)HighlightCurrentLine.IsChecked;
+                        EditorSettingsService.IsLineHighlighterEnabled = (bool)HighlightCurrentLine.IsChecked;
                         break;
                 }
             }
@@ -231,7 +231,7 @@
             }
             else
                 return;
-        }
+        }*/
 
         private void FontZoomIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
@@ -246,7 +246,8 @@
                     NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
                     break;
                 case "ZoomOut":
-                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
+                    if (FontZoomSlider.Value >= 20)
+                        NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
                     break;
                 case "RestoreDefaultZoom":
                     NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(100);
@@ -337,16 +338,18 @@
             }
             else if (sender == LineColumnIndicator)
             {
-                LineColumnIndicator?.ContextFlyout.ShowAt(LineColumnIndicator);
+                selectedEditor.ShowGoToControl();
+                /*LineColumnIndicator?.ContextFlyout.ShowAt(LineColumnIndicator);
                 LineColumnIndicatorFlyout.Opened += (s_flyout, e_flyout) =>
                 {
                     WrapWord.IsChecked = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
-                    HighlightCurrentLine.IsChecked = EditorSettingsService.EditorDefaultLineHighlighterViewState;
-                };
+                    HighlightCurrentLine.IsChecked = EditorSettingsService.IsLineHighlighterEnabled;
+                };*/
             }
             else if (sender == FontZoomIndicator)
             {
                 FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
+                FontZoomIndicatorFlyout.Opened += (s_flyout, e_flyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
             }
             else if (sender == LineEndingIndicator)
             {

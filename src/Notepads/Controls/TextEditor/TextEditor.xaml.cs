@@ -190,11 +190,12 @@
             base.Unloaded += TextEditor_Unloaded;
             base.KeyDown += TextEditor_KeyDown;
 
-            base.SizeChanged += (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            TextEditorCore.ScrollViewerOffsetChanged += (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += (sender, visibility) => ToggleLineHighlighterView(visibility);
-            TextEditorCore.FontSizeChanged += (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            TextEditorCore.TextWrappingChanged += (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += LineHighlighter_OnViewStateChanged;
+            TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
+            TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
+            TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
+            TextEditorCore.ScrollViewerOffsetChanged += LineHighlighter_OnScrolled;
+            base.SizeChanged += LineHighlighter_WindowSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         }
@@ -228,11 +229,12 @@
             base.Unloaded -= TextEditor_Unloaded;
             base.KeyDown -= TextEditor_KeyDown;
 
-            base.SizeChanged -= (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            TextEditorCore.ScrollViewerOffsetChanged -= (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= (sender, visibility) => ToggleLineHighlighterView(visibility);
-            TextEditorCore.FontSizeChanged -= (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
-            TextEditorCore.TextWrappingChanged -= (s, e) => ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= LineHighlighter_OnViewStateChanged;
+            TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
+            TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
+            TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
+            TextEditorCore.ScrollViewerOffsetChanged -= LineHighlighter_OnScrolled;
+            base.SizeChanged -= LineHighlighter_WindowSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
@@ -637,8 +639,6 @@
             lineIndex = line;
             columnIndex = column;
             selectedCount = selected;
-
-            ToggleLineHighlighterView(EditorSettingsService.EditorDefaultLineHighlighterViewState);
         }
 
         public double GetCurrentFontZoomFactor()
@@ -958,25 +958,23 @@
             TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
             LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
 
-            Thickness LineHighlighterBorderThickness = new Thickness(0.1 * LineHighlighter.Height);
+            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
 
-            Thickness LineHighlighterMargin;
-            TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
-            LineHighlighterMargin.Top = TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset;
+            TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
+            var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
 
-            if (LineHighlighterMargin.Top >= 0)
+            if (lineHighlighterMargin.Top >= 0)
             {
                 LineHighlighter.Visibility = Visibility.Visible;
-                LineHighlighter.Margin = LineHighlighterMargin;
-                LineHighlighter.BorderThickness = LineHighlighterBorderThickness;
+                LineHighlighter.Margin = lineHighlighterMargin;
+                LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness);
             }
             else
             {
-                if (LineHighlighter.Height + highlightRect.Y - verticalOffset > 0)
+                if (LineHighlighter.Height + lineHighlighterMargin.Top > TextEditorCore.Padding.Top)
                 {
-                    LineHighlighterBorderThickness = new Thickness(0.1 * LineHighlighter.Height, 0, 0.1 * LineHighlighter.Height, 0.1 * LineHighlighter.Height);
-                    LineHighlighter.BorderThickness = LineHighlighterBorderThickness;
-                    LineHighlighter.Height -= verticalOffset - highlightRect.Y - TextEditorCore.Padding.Top;
+                    LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness, 0, lineHighlighterBorderThickness, lineHighlighterBorderThickness);
+                    LineHighlighter.Height += lineHighlighterMargin.Top;
                     LineHighlighter.Visibility = Visibility.Visible;
                 }
                 else
@@ -984,15 +982,47 @@
             }
         }
 
-        private void ToggleLineHighlighterView(bool toggleLineHighlighterView)
+        private void LineHighlighter_OnViewStateChanged(object sender, bool e)
         {
-            if (toggleLineHighlighterView)
+            if (e)
             {
                 LineHighlighter.Visibility = Visibility.Visible;
                 DrawLineHighlighter();
             }
             else
+            {
                 LineHighlighter.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+                DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+                DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnFontSizeChanged(object sender, double e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+                DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled)
+                DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+                DrawLineHighlighter();
         }
     }
 }

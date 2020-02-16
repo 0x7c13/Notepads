@@ -502,8 +502,8 @@
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize < 0.11 * EditorSettingsService.EditorFontSize) return;
-            FontSize -= delta * EditorSettingsService.EditorFontSize;
+            if (FontSize > 0.1 * EditorSettingsService.EditorFontSize)
+                FontSize -= delta * EditorSettingsService.EditorFontSize;
         }
 
         private void ResetFontSizeToDefault()

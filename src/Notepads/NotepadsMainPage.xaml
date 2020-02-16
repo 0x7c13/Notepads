@@ -411,7 +411,7 @@
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped">
-                    <TextBlock.ContextFlyout>
+                    <!--<TextBlock.ContextFlyout>
                         <Flyout x:Name="LineColumnIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <StackPanel Width="170">
                                 <CheckBox x:Name="WrapWord" 
@@ -441,7 +441,7 @@
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
                         </Flyout>
-                    </TextBlock.ContextFlyout>
+                    </TextBlock.ContextFlyout>-->
                 </TextBlock>
             </Grid>
             <Grid Column="4"
@@ -470,7 +470,7 @@
                     <TextBlock.ContextFlyout>
                         <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <StackPanel>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Margin="-10,0,-10,0">
                                     <AppBarButton x:Name="ZoomOut" 
                                                   x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
                                                   LabelPosition="Collapsed"
@@ -504,7 +504,7 @@
                                     </AppBarButton>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,-10,0,0">
-                                    <TextBlock x:Name="MinZoom" Text="10%" Margin="39,0,0,0" FontSize="10"/>
+                                    <TextBlock x:Name="MinZoom" Text="10%" Margin="30,0,0,0" FontSize="10"/>
                                     <TextBlock x:Name="MaxZoom" Text="500%" Margin="108,0,0,0" FontSize="10"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-15,0,0">
@@ -514,7 +514,7 @@
                                 <AppBarButton x:Name="RestoreDefaultZoom"
                                               x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
                                               Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
-                                              HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="-10,0,-10,-5"
                                               Icon="Undo" 
                                               Click="FontZoomIndicatoFlyoutSelection_OnClick">
                                     <AppBarButton.KeyboardAccelerators>

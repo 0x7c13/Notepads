@@ -217,6 +217,15 @@
                 },
                 {
                     "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString()
+                },
+                {
+                    "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString()
+                },
+                {
+                    "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString()
+                },
+                {
+                    "EditorCustomMadeSearchUrl", EditorSettingsService.EditorCustomMadeSearchUrl.ToString()
                 }
             };
 

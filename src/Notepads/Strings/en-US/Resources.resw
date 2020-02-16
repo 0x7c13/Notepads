@@ -505,4 +505,8 @@
     <value>Wrap Word</value>
     <comment>TextEditor: LineColumnIndicator "WrapWord" FlyoutItem display text. Text wrapping settings of document will be changed</comment>
   </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>Go To:</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
 </root>

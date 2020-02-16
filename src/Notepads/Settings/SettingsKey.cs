@@ -19,7 +19,7 @@
         internal static string EditorFontFamilyStr = "EditorFontFamilyStr";
         internal static string EditorFontSizeInt = "EditorFontSizeInt";
         internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
-        internal static string EditorDefaultLineHighlighterViewStateStr = "EditorDefaultLineHighlighterViewStateStr";
+        internal static string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
         internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
         internal static string EditorDefaultEncodingCodePageInt = "EditorDefaultEncodingCodePageInt";
         internal static string EditorDefaultDecodingCodePageInt = "EditorDefaultDecodingCodePageInt";

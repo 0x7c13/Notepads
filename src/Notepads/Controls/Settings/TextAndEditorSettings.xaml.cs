@@ -60,7 +60,7 @@
 
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
             HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            LineHighlighterToggle.IsOn = EditorSettingsService.EditorDefaultLineHighlighterViewState;
+            LineHighlighterToggle.IsOn = EditorSettingsService.IsLineHighlighterEnabled;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
@@ -318,7 +318,7 @@
 
         private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.EditorDefaultLineHighlighterViewState = LineHighlighterToggle.IsOn;
+            EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
         }
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
