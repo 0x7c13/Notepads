@@ -246,8 +246,7 @@
                     NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
                     break;
                 case "ZoomOut":
-                    if (FontZoomSlider.Value >= 20)
-                        NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
+                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
                     break;
                 case "RestoreDefaultZoom":
                     NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(100);
