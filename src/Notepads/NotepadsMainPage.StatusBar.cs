@@ -142,9 +142,9 @@
             FontZoomIndicator.Text = fontZoomFactor.ToString() + "%";
             FontZoomSlider.Value = fontZoomFactor;
             if (fontZoomFactor > 500)
-                FontZoomSliderZoomFactorComprer.Visibility = Visibility.Visible;
+                FontZoomSliderZoomFactorComparer.Visibility = Visibility.Visible;
             else
-                FontZoomSliderZoomFactorComprer.Visibility = Visibility.Collapsed;
+                FontZoomSliderZoomFactorComparer.Visibility = Visibility.Collapsed;
         }
 
         private void UpdateShadowWindowIndicator()

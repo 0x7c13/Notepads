@@ -508,7 +508,7 @@
                                     <TextBlock x:Name="MaxZoom" Text="500%" Margin="108,0,0,0" FontSize="10"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-15,0,0">
-                                    <TextBlock x:Name="FontZoomSliderZoomFactorComprer" Text=">" VerticalAlignment="Center" FontSize="15" Visibility="Collapsed"/>
+                                    <TextBlock x:Name="FontZoomSliderZoomFactorComparer" Text=">" VerticalAlignment="Center" FontSize="15" Visibility="Collapsed"/>
                                     <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" VerticalAlignment="Center" FontSize="15"/>
                                     <TextBlock Text="%" VerticalAlignment="Center" FontSize="15"/>
                                 </StackPanel>
