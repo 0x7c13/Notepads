@@ -138,14 +138,13 @@
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            var fontZoomFactor = textEditor.GetCurrentFontZoomFactor();
-            FontZoomIndicator.Text = (Math.Round(fontZoomFactor * 100)).ToString() + "%";
-            if (fontZoomFactor < 0.1)
-                FontZoomSlider.Value = 10;
-            else if (fontZoomFactor > 5)
-                FontZoomSlider.Value = 500;
+            var fontZoomFactor = Math.Round(textEditor.GetCurrentFontZoomFactor() * 100);
+            FontZoomIndicator.Text = fontZoomFactor.ToString() + "%";
+            FontZoomSlider.Value = fontZoomFactor;
+            if (fontZoomFactor > 500)
+                FontZoomSliderZoomFactorComprer.Visibility = Visibility.Visible;
             else
-                FontZoomSlider.Value = fontZoomFactor * 100;
+                FontZoomSliderZoomFactorComprer.Visibility = Visibility.Collapsed;
         }
 
         private void UpdateShadowWindowIndicator()
@@ -243,13 +242,13 @@
             switch ((string)button.Name)
             {
                 case "ZoomIn":
-                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
+                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
                     break;
                 case "ZoomOut":
-                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
+                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
                     break;
                 case "RestoreDefaultZoom":
-                    NotepadsCore.GetSelectedTextEditor().SetCurrentFontZoomFactor(100);
+                    selectedTextEditor.SetCurrentFontZoomFactor(100);
                     FontZoomIndicatorFlyout.Hide();
                     break;
             }

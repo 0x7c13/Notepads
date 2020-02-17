@@ -310,10 +310,9 @@
 
         public void SetCurrentFontZoomFactor(double fontZoomFactor)
         {
-            if (fontZoomFactor == 100)
-                ResetFontSizeToDefault();
-            else if (fontZoomFactor >= 10)
-                FontSize = (fontZoomFactor / 100) * EditorSettingsService.EditorFontSize;
+            var fontZoomFactorInt = Math.Round(fontZoomFactor);
+            if (fontZoomFactorInt >= 10 && fontZoomFactorInt <= 500)
+                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
