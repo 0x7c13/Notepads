@@ -695,7 +695,7 @@
 
         public async void SearchInWeb()
         {
-            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlFromSearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
+            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
             await Launcher.LaunchUriAsync(searchUri);
         }
 

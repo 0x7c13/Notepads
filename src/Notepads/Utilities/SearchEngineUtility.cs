@@ -21,7 +21,7 @@
             {SearchEngine.Custom, ""}
         };
 
-        public static string GetSearchUrlFromSearchEngine(SearchEngine searchEngine)
+        public static string GetSearchUrlBySearchEngine(SearchEngine searchEngine)
         {
             return searchEngine != SearchEngine.Custom ? SearchEngineUrlDictionary[searchEngine] : EditorSettingsService.EditorCustomMadeSearchUrl;
         }
