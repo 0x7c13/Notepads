@@ -111,7 +111,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
 * Localization Contributors: 
     * [fr-FR][French]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
