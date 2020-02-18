@@ -982,9 +982,9 @@
             }
         }
 
-        private void LineHighlighter_OnViewStateChanged(object sender, bool e)
+        private void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
         {
-            if (e)
+            if (enabled)
             {
                 LineHighlighter.Visibility = Visibility.Visible;
                 DrawLineHighlighter();

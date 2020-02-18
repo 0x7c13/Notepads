@@ -223,9 +223,6 @@
                 },
                 {
                     "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString()
-                },
-                {
-                    "EditorCustomMadeSearchUrl", EditorSettingsService.EditorCustomMadeSearchUrl.ToString()
                 }
             };
 

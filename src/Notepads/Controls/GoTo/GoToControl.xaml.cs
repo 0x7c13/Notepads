@@ -15,16 +15,16 @@
 
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
 
-        private int CurrentLine { get; set; }
+        private int _currentLine { get; set; }
 
-        private int MaxLine { get; set; }
+        private int _maxLine { get; set; }
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public void SetLineData(int currentLine, int maxLine)
         {
-            CurrentLine = currentLine;
-            MaxLine = maxLine;
+            _currentLine = currentLine;
+            _maxLine = maxLine;
         }
 
         public GoToControl()
@@ -74,7 +74,7 @@
         public void Focus()
         {
             GoToBar.Text = "";
-            GoToBar.SelectedText = CurrentLine.ToString();
+            GoToBar.SelectedText = _currentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -123,7 +123,7 @@
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_InvalidInput"), 1500);
                 args.Cancel = true;
             }
-            else if (line > MaxLine)
+            else if (line > _maxLine)
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
                 args.Cancel = true;
