@@ -50,6 +50,10 @@
 
         private const string ContentElementName = "ContentElement";
 
+        private const double _minimumZoomFactor = 10;
+
+        private const double _maximumZoomFactor = 500;
+
         private ScrollViewer _contentScrollViewer;
 
         private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
@@ -86,8 +90,6 @@
                 }
             }
         }
-
-        public double FontZoomFactor => _fontZoomFactor;
 
         public TextEditorCore()
         {
@@ -305,13 +307,13 @@
 
         public double GetCurrentFontZoomFactor()
         {
-            return FontZoomFactor;
+            return _fontZoomFactor;
         }
 
         public void SetCurrentFontZoomFactor(double fontZoomFactor)
         {
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
-            if (fontZoomFactorInt >= 10 && fontZoomFactorInt <= 500)
+            if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
                 FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
         }
 

@@ -321,9 +321,9 @@
 
         private static void InitializeLineHighlighterSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool lineHighlighterStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
             {
-                _isLineHighlighterEnabled = lineHighlighterStr;
+                _isLineHighlighterEnabled = isLineHighlighterEnabled;
             }
             else
             {
@@ -401,8 +401,10 @@
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
             {
-                Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine);
-                _editorDefaultSearchEngine = (SearchEngine)searchEngine;
+                if(Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
+                    _editorDefaultSearchEngine = (SearchEngine)searchEngine;
+                else
+                    _editorDefaultSearchEngine = SearchEngine.Bing;
                 _editorCustomMadeSearchUrl = customMadesearchUrl;
             }
             else

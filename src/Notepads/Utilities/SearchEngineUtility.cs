@@ -11,9 +11,9 @@
         Custom
     }
 
-    class SearchEngineUtility
+    public static class SearchEngineUtility
     {
-        private static Dictionary<SearchEngine, string> SearchEngineUrlDictionary = new Dictionary<SearchEngine, string>
+        private static readonly Dictionary<SearchEngine, string> SearchEngineUrlDictionary = new Dictionary<SearchEngine, string>
         {
             {SearchEngine.Bing, "https://www.bing.com/search?q={0}&form=NPCTXT"},
             {SearchEngine.Google, "https://www.google.com/search?q={0}&oq={0}"},

@@ -71,6 +71,8 @@
 
         public event EventHandler FileReloaded;
 
+        private const char RichEditBoxDefaultLineEnding = '\r';
+
         public string FileNamePlaceholder { get; set; } = string.Empty;
 
         public FileType FileType { get; private set; }
@@ -313,7 +315,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontZoomFactor = TextEditorCore.FontZoomFactor,
+                //FontZoomFactor = TextEditorCore.FontZoomFactor,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -915,7 +917,9 @@
                 GoToPlaceholder.Show();
 
             GetCurrentLineColumn(out var line, out var column, out var selectedLength);
-            var maxLine = TextEditorCore.GetText().Length - TextEditorCore.GetText().Replace("\r", string.Empty).Length + 1;
+            var maxLine = TextEditorCore.GetText().Length 
+                - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
+                + 1;
             goToControl.SetLineData(line, maxLine);
             goToControl.Focus();
         }

@@ -12,6 +12,8 @@
 
     public sealed partial class NotepadsMainPage
     {
+        private const double _maximumZoomFactor = 500;
+
         private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
@@ -141,7 +143,7 @@
             var fontZoomFactor = Math.Round(textEditor.GetCurrentFontZoomFactor() * 100);
             FontZoomIndicator.Text = fontZoomFactor.ToString() + "%";
             FontZoomSlider.Value = fontZoomFactor;
-            if (fontZoomFactor > 500)
+            if (fontZoomFactor > _maximumZoomFactor)
                 FontZoomSliderZoomFactorComparer.Visibility = Visibility.Visible;
             else
                 FontZoomSliderZoomFactorComparer.Visibility = Visibility.Collapsed;
@@ -261,7 +263,7 @@
             var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedTextEditor == null) return;
 
-            if (e.NewValue != e.OldValue)
+            if (Math.Abs(e.NewValue - e.OldValue) > 0.1)
                 selectedTextEditor.SetCurrentFontZoomFactor(e.NewValue);
         }
 
