@@ -195,18 +195,26 @@
                 case "BingRadioButton":
                     EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
                     CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
                 case "GoogleRadioButton":
                     EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
                     CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
                 case "DuckDuckGoRadioButton":
                     EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
                     CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
                 case "CustomSearchUrlRadioButton":
                     CustomSearchUrl.IsEnabled = true;
                     CustomSearchUrl.Focus(FocusState.Programmatic);
+                    CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
+                    if (IsValidUrl(CustomSearchUrl.Text))
+                        CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    else
+                        CustomUrlErrorReport.Visibility = Visibility.Visible;
                     EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
                     break;
             }
@@ -337,6 +345,11 @@
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
             else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+
+            if (IsValidUrl(CustomSearchUrl.Text))
+                CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+            else
+                CustomUrlErrorReport.Visibility = Visibility.Visible;
         }
 
         private bool IsValidUrl(string url)
