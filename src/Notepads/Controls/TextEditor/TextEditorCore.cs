@@ -283,8 +283,8 @@
                 + 1;
             selectedCount = start != end && !string.IsNullOrEmpty(_content)
                 ? ((_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + 2 * ((_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Length
-                - (_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length))
+                + (2 * ((_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Length
+                - (_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length)))
                 : 0;
             if (end > _content.Length)
                 selectedCount -= 2;
