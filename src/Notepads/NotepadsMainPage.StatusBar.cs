@@ -9,6 +9,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using System.Globalization;
 
     public sealed partial class NotepadsMainPage
     {
@@ -138,8 +139,8 @@
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            var fontZoomFactor = Math.Round(textEditor.GetCurrentFontZoomFactor());
-            FontZoomIndicator.Text = fontZoomFactor.ToString() + "%";
+            var fontZoomFactor = Math.Round(textEditor.GetFontZoomFactor());
+            FontZoomIndicator.Text = fontZoomFactor.ToString(CultureInfo.InvariantCulture) + "%";
             FontZoomSlider.Value = fontZoomFactor;
         }
 
@@ -204,31 +205,7 @@
             }
         }
 
-        /*private void LineColumnIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox checkBox)
-            {
-                switch ((string)checkBox.Name)
-                {
-                    case "WrapWord":
-                        EditorSettingsService.EditorDefaultTextWrapping = (bool)WrapWord.IsChecked ? TextWrapping.Wrap : TextWrapping.NoWrap;
-                        EditorSettingsService.IsLineHighlighterEnabled = (bool)HighlightCurrentLine.IsChecked;
-                        break;
-                    case "HighlightCurrentLine":
-                        EditorSettingsService.IsLineHighlighterEnabled = (bool)HighlightCurrentLine.IsChecked;
-                        break;
-                }
-            }
-            else if (sender is AppBarButton appBarButton && appBarButton.Name == "GoToLine")
-            {
-                LineColumnIndicatorFlyout.Hide();
-                NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
-            }
-            else
-                return;
-        }*/
-
-        private void FontZoomIndicatoFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is AppBarButton button)) return;
 
@@ -238,17 +215,17 @@
             switch ((string)button.Name)
             {
                 case "ZoomIn":
-                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value % 10 > 0 
+                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0 
                         ? Math.Ceiling(FontZoomSlider.Value / 10) * 10
                         : FontZoomSlider.Value + 10);
                     break;
                 case "ZoomOut":
-                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value % 10 > 0
+                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0
                         ? Math.Floor(FontZoomSlider.Value / 10) * 10
                         : FontZoomSlider.Value - 10);
                     break;
                 case "RestoreDefaultZoom":
-                    selectedTextEditor.SetCurrentFontZoomFactor(100);
+                    selectedTextEditor.SetFontZoomFactor(100);
                     FontZoomIndicatorFlyout.Hide();
                     break;
             }
@@ -262,7 +239,7 @@
             if (selectedTextEditor == null) return;
 
             if (Math.Abs(e.NewValue - e.OldValue) > 0.1)
-                selectedTextEditor.SetCurrentFontZoomFactor(e.NewValue);
+                selectedTextEditor.SetFontZoomFactor(e.NewValue);
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
@@ -337,12 +314,6 @@
             else if (sender == LineColumnIndicator)
             {
                 selectedEditor.ShowGoToControl();
-                /*LineColumnIndicator?.ContextFlyout.ShowAt(LineColumnIndicator);
-                LineColumnIndicatorFlyout.Opened += (s_flyout, e_flyout) =>
-                {
-                    WrapWord.IsChecked = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
-                    HighlightCurrentLine.IsChecked = EditorSettingsService.IsLineHighlighterEnabled;
-                };*/
             }
             else if (sender == FontZoomIndicator)
             {

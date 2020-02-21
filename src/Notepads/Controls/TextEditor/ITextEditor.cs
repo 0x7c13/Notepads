@@ -91,9 +91,9 @@
 
         void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
 
-        double GetCurrentFontZoomFactor();
+        double GetFontZoomFactor();
 
-        void SetCurrentFontZoomFactor(double fontZoomFactor);
+        void SetFontZoomFactor(double fontZoomFactor);
 
         bool IsEditorEnabled();
 

@@ -446,12 +446,12 @@ namespace SetsView
 
         private void UpdateScrollViewerNavigateButtons()
         {
-            if (_setsScroller.HorizontalOffset == _setsScroller.ScrollableWidth)
+            if (Math.Abs(_setsScroller.HorizontalOffset - _setsScroller.ScrollableWidth) < 0.1)
             {
                 _setsScrollBackButton.IsEnabled = true;
                 _setsScrollForwardButton.IsEnabled = false;
             }
-            else if (_setsScroller.HorizontalOffset == 0)
+            else if (Math.Abs(_setsScroller.HorizontalOffset) < 0.1)
             {
                 _setsScrollBackButton.IsEnabled = false;
                 _setsScrollForwardButton.IsEnabled = true;

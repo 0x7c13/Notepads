@@ -411,37 +411,6 @@
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped">
-                    <!--<TextBlock.ContextFlyout>
-                        <Flyout x:Name="LineColumnIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <StackPanel Width="170">
-                                <CheckBox x:Name="WrapWord" 
-                                          x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_WrapWord"
-                                          Style="{StaticResource CustomCheckBoxContentToLeftStyle}"
-                                          Click="LineColumnIndicatoFlyoutSelection_OnClick"/>
-                                <CheckBox x:Name="HighlightCurrentLine" 
-                                          x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_HighlightCurrentLine"
-                                          Style="{StaticResource CustomCheckBoxContentToLeftStyle}"
-                                          Click="LineColumnIndicatoFlyoutSelection_OnClick"/>
-                                <AppBarButton x:Name="GoToLine" 
-                                              x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_GoToLine" 
-                                              Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
-                                              VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="-10,0,-10,0"
-                                              Click="LineColumnIndicatoFlyoutSelection_OnClick">
-                                    <AppBarButton.Icon>
-                                        <FontIcon Glyph="&#xEE35;" FontFamily="Segoe MDL2 Assets"/>
-                                    </AppBarButton.Icon>
-                                    <AppBarButton.KeyboardAccelerators>
-                                        <KeyboardAccelerator Key="G" Modifiers="Control" IsEnabled="False"/>
-                                    </AppBarButton.KeyboardAccelerators>
-                                </AppBarButton>
-                            </StackPanel>
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                        </Flyout>
-                    </TextBlock.ContextFlyout>-->
                 </TextBlock>
             </Grid>
             <Grid Column="4"
@@ -476,7 +445,7 @@
                                                   LabelPosition="Collapsed"
                                                   VerticalAlignment="Center" Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Minus" 
-                                                  Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                         <AppBarButton.Icon>
                                             <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets"/>
                                         </AppBarButton.Icon>
@@ -494,7 +463,7 @@
                                                   LabelPosition="Collapsed" 
                                                   VerticalAlignment="Center" Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Plus" 
-                                                  Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                         <AppBarButton.Icon>
                                             <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets"/>
                                         </AppBarButton.Icon>
@@ -516,7 +485,7 @@
                                               Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
                                               HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="-10,0,-10,-5"
                                               Icon="Undo" 
-                                              Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                              Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                     <AppBarButton.KeyboardAccelerators>
                                         <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
                                     </AppBarButton.KeyboardAccelerators>

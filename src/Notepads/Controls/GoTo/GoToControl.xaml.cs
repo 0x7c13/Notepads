@@ -15,9 +15,9 @@
 
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
 
-        private int _currentLine { get; set; }
+        private int _currentLine;
 
-        private int _maxLine { get; set; }
+        private int _maxLine;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -115,8 +115,7 @@
 
         private void GoToBar_BeforeTextChanging(TextBox sender, TextBoxBeforeTextChangingEventArgs args)
         {
-            if (args.NewText == "")
-                return;
+            if (string.IsNullOrEmpty(args.NewText)) return;
 
             if (!int.TryParse(args.NewText, out var line) || args.NewText.Contains(" "))
             {

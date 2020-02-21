@@ -315,7 +315,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                //FontZoomFactor = TextEditorCore.FontZoomFactor,
+                FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -643,14 +643,14 @@
             selectedCount = selected;
         }
 
-        public double GetCurrentFontZoomFactor()
+        public double GetFontZoomFactor()
         {
-            return TextEditorCore.GetCurrentFontZoomFactor();
+            return TextEditorCore.GetFontZoomFactor();
         }
 
-        public void SetCurrentFontZoomFactor(double fontZoomFactor)
+        public void SetFontZoomFactor(double fontZoomFactor)
         {
-            TextEditorCore.SetCurrentFontZoomFactor(fontZoomFactor);
+            TextEditorCore.SetFontZoomFactor(fontZoomFactor);
         }
 
         public bool IsEditorEnabled()
@@ -979,7 +979,9 @@
                     LineHighlighter.Visibility = Visibility.Visible;
                 }
                 else
+                {
                     LineHighlighter.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -998,32 +1000,27 @@
 
         private void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled)
-                DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled)
-                DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         private void LineHighlighter_OnFontSizeChanged(object sender, double e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled)
-                DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         private void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled)
-                DrawLineHighlighter();
+            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled)
-                DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
     }
 }

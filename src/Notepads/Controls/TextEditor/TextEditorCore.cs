@@ -318,12 +318,12 @@
             }*/
         }
 
-        public double GetCurrentFontZoomFactor()
+        public double GetFontZoomFactor()
         {
             return _fontZoomFactor;
         }
 
-        public void SetCurrentFontZoomFactor(double fontZoomFactor)
+        public void SetFontZoomFactor(double fontZoomFactor)
         {
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
@@ -514,7 +514,7 @@
             if (_fontZoomFactor<_maximumZoomFactor)
             {
                 if (_fontZoomFactor % 10 > 0)
-                    SetCurrentFontZoomFactor(Math.Ceiling(_fontZoomFactor / 10) * 10);
+                    SetFontZoomFactor(Math.Ceiling(_fontZoomFactor / 10) * 10);
                 else
                     FontSize += delta * EditorSettingsService.EditorFontSize;
             }
@@ -526,7 +526,7 @@
             {
                 {
                     if (_fontZoomFactor % 10 > 0)
-                        SetCurrentFontZoomFactor(Math.Floor(_fontZoomFactor / 10) * 10);
+                        SetFontZoomFactor(Math.Floor(_fontZoomFactor / 10) * 10);
                     else
                         FontSize -= delta * EditorSettingsService.EditorFontSize;
                 }
