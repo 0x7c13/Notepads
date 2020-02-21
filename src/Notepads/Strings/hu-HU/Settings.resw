@@ -337,4 +337,32 @@
     <value>Indítási Beállítások</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
+    <value>Highlight Current Line</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Show border around current line</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Show border around current line</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>Custom Search Engine</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>*Enter a url of format https://www.example.com/search?q={0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>Settings for default seaarch engine choosen when a web search is done.</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>Default Search Engine</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
 </root>

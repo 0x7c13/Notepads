@@ -410,7 +410,7 @@
             else
             {
                 _editorDefaultSearchEngine = SearchEngine.Bing;
-                _editorCustomMadeSearchUrl = "";
+                _editorCustomMadeSearchUrl = string.Empty;
             }
         }
 

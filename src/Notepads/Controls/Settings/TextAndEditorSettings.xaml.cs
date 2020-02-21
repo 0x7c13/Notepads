@@ -211,10 +211,7 @@
                     CustomSearchUrl.IsEnabled = true;
                     CustomSearchUrl.Focus(FocusState.Programmatic);
                     CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
-                    if (IsValidUrl(CustomSearchUrl.Text))
-                        CustomUrlErrorReport.Visibility = Visibility.Collapsed;
-                    else
-                        CustomUrlErrorReport.Visibility = Visibility.Visible;
+                    CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
                     EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
                     break;
             }
@@ -332,24 +329,22 @@
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
             EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
-
-            if (IsValidUrl(CustomSearchUrl.Text))
-                CustomUrlErrorReport.Visibility = Visibility.Collapsed;
-            else
-                CustomUrlErrorReport.Visibility = Visibility.Visible;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked)
+            if (CustomSearchUrlRadioButton.IsChecked != null &&
+                (IsValidUrl(CustomSearchUrl.Text) && (bool) CustomSearchUrlRadioButton.IsChecked))
+            {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+            }
             else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+            }
 
-            if (IsValidUrl(CustomSearchUrl.Text))
-                CustomUrlErrorReport.Visibility = Visibility.Collapsed;
-            else
-                CustomUrlErrorReport.Visibility = Visibility.Visible;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private bool IsValidUrl(string url)
@@ -362,9 +357,11 @@
                         return false;
                 }
                 else
+                {
                     return false;
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

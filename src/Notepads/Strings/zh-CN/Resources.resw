@@ -457,4 +457,40 @@
     <value>新建窗口</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>转到此行</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>跳转至(指定行):</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>行数超过当前文本总行数!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>请输入合法数字!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>跳转至指定行</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>在互联网中搜索</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>重置缩放</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>放大</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>缩小</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
 </root>
