@@ -32,9 +32,9 @@
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
-        private string[] _contentLinesCache;
+        /*private string[] _contentLinesCache;
 
-        private bool _isLineCachePendingUpdate = true;
+        private bool _isLineCachePendingUpdate = true;*/
 
         private string _content = string.Empty;
 
@@ -145,7 +145,7 @@
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
-            _contentLinesCache = null;
+            //_contentLinesCache = null;
         }
 
         private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
@@ -267,15 +267,25 @@
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_isLineCachePendingUpdate)
+            /*if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }
+            }*/
 
             GetTextSelectionPosition(out var start, out var end);
 
-            lineIndex = 1;
+            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length 
+                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
+                + 1;
+            columnIndex = start 
+                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                + 1;
+            selectedCount = start != end && !string.IsNullOrEmpty(_content)
+                ? (_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length :
+                0; //Not counting the line ending character
+
+            /*lineIndex = 1;
             columnIndex = 1;
             selectedCount = 0;
 
@@ -302,7 +312,7 @@
                 }
 
                 length += line.Length + 1;
-            }
+            }*/
         }
 
         public double GetCurrentFontZoomFactor()
@@ -542,7 +552,7 @@
             {
                 Document.GetText(TextGetOptions.None, out _content);
                 _content = TrimRichEditBoxText(_content);
-                _isLineCachePendingUpdate = true;
+                //_isLineCachePendingUpdate = true;
             }
         }
 
@@ -646,16 +656,18 @@
 
                 if (end == start)
                 {
-                    // Duplicate Line                
-                    var line = _contentLinesCache[lineIndex - 1];
+                    // Duplicate Line
+                    var lineStart = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
+                    var lineEnd = (_content + RichEditBoxDefaultLineEnding).IndexOf(RichEditBoxDefaultLineEnding, end);
+                    var line = _content.Substring(lineStart, lineEnd - lineStart);
                     var column = Document.Selection.EndPosition + line.Length + 1;
-                
+
                     if (columnIndex == 1)
                         Document.Selection.EndPosition += 1;
 
                     Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
 
-                    if (lineIndex < (_contentLinesCache.Length - 1))
+                    if (lineIndex < _content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length + 1)
                         Document.Selection.EndPosition -= 1;
 
                     Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
@@ -671,7 +683,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (lineIndex < (_contentLinesCache.Length - 1))
+                        if (lineIndex < (_content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length) + 1)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -691,21 +703,14 @@
 
         public bool GoTo(int line)
         {
-            if (_isLineCachePendingUpdate)
+            /*if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }
+            }*/
 
-            if (line > 0 && line < _contentLinesCache.Length)
-            {
-                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+            return true;
         }
 
         public async void SearchInWeb()
