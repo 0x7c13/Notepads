@@ -12,8 +12,6 @@
 
     public sealed partial class NotepadsMainPage
     {
-        private const double _maximumZoomFactor = 500;
-
         private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
