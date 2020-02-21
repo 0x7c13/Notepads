@@ -329,7 +329,6 @@
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
             EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
-
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
@@ -337,9 +336,13 @@
         {
             if (CustomSearchUrlRadioButton.IsChecked != null && 
                 (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
+            {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+            }
             else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+            }
 
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }

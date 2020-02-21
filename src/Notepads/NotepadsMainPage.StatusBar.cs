@@ -239,7 +239,9 @@
             if (selectedTextEditor == null) return;
 
             if (Math.Abs(e.NewValue - e.OldValue) > 0.1)
+            {
                 selectedTextEditor.SetFontZoomFactor(e.NewValue);
+            }
         }
 
         private void LineEndingSelection_OnClick(object sender, RoutedEventArgs e)
