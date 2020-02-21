@@ -140,13 +140,9 @@
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            var fontZoomFactor = Math.Round(textEditor.GetCurrentFontZoomFactor() * 100);
+            var fontZoomFactor = Math.Round(textEditor.GetCurrentFontZoomFactor());
             FontZoomIndicator.Text = fontZoomFactor.ToString() + "%";
             FontZoomSlider.Value = fontZoomFactor;
-            if (fontZoomFactor > _maximumZoomFactor)
-                FontZoomSliderZoomFactorComparer.Visibility = Visibility.Visible;
-            else
-                FontZoomSliderZoomFactorComparer.Visibility = Visibility.Collapsed;
         }
 
         private void UpdateShadowWindowIndicator()
@@ -244,10 +240,14 @@
             switch ((string)button.Name)
             {
                 case "ZoomIn":
-                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value + 10);
+                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value % 10 > 0 
+                        ? Math.Ceiling(FontZoomSlider.Value / 10) * 10
+                        : FontZoomSlider.Value + 10);
                     break;
                 case "ZoomOut":
-                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value - 10);
+                    selectedTextEditor.SetCurrentFontZoomFactor(FontZoomSlider.Value % 10 > 0
+                        ? Math.Floor(FontZoomSlider.Value / 10) * 10
+                        : FontZoomSlider.Value - 10);
                     break;
                 case "RestoreDefaultZoom":
                     selectedTextEditor.SetCurrentFontZoomFactor(100);

@@ -69,7 +69,7 @@
             }
         }
 
-        private double _fontZoomFactor = 1.0f;
+        private double _fontZoomFactor = 100;
         private double _fontSize = EditorSettingsService.EditorFontSize;
 
         public new double FontSize
@@ -82,8 +82,8 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = value / EditorSettingsService.EditorFontSize;
-                if (Math.Abs(newZoomFactor - _fontZoomFactor) > 0.00001)
+                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
                     FontZoomFactorChanged?.Invoke(this, newZoomFactor);
@@ -498,13 +498,26 @@
 
         private void IncreaseFontSize(double delta)
         {
-            FontSize += delta * EditorSettingsService.EditorFontSize;
+            if (_fontZoomFactor<_maximumZoomFactor)
+            {
+                if (_fontZoomFactor % 10 > 0)
+                    SetCurrentFontZoomFactor(Math.Ceiling(_fontZoomFactor / 10) * 10);
+                else
+                    FontSize += delta * EditorSettingsService.EditorFontSize;
+            }
         }
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize > 0.1 * EditorSettingsService.EditorFontSize)
-                FontSize -= delta * EditorSettingsService.EditorFontSize;
+            if (_fontZoomFactor>_minimumZoomFactor)
+            {
+                {
+                    if (_fontZoomFactor % 10 > 0)
+                        SetCurrentFontZoomFactor(Math.Floor(_fontZoomFactor / 10) * 10);
+                    else
+                        FontSize -= delta * EditorSettingsService.EditorFontSize;
+                }
+            }
         }
 
         private void ResetFontSizeToDefault()
