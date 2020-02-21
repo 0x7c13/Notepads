@@ -28,11 +28,13 @@
 
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
 
+        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
-        private string[] _contentLinesCache;
+        /*private string[] _contentLinesCache;
 
-        private bool _isLineCachePendingUpdate = true;
+        private bool _isLineCachePendingUpdate = true;*/
 
         private string _content = string.Empty;
 
@@ -47,6 +49,10 @@
         private double _contentScrollViewerVerticalOffset = 0;
 
         private const string ContentElementName = "ContentElement";
+
+        private const double _minimumZoomFactor = 10;
+
+        private const double _maximumZoomFactor = 500;
 
         private ScrollViewer _contentScrollViewer;
 
@@ -63,7 +69,7 @@
             }
         }
 
-        private double _fontZoomFactor = 1.0f;
+        private double _fontZoomFactor = 100;
         private double _fontSize = EditorSettingsService.EditorFontSize;
 
         public new double FontSize
@@ -76,16 +82,14 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = value / EditorSettingsService.EditorFontSize;
-                if (Math.Abs(newZoomFactor - _fontZoomFactor) > 0.00001)
+                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
                     FontZoomFactorChanged?.Invoke(this, newZoomFactor);
                 }
             }
         }
-
-        public double FontZoomFactor => _fontZoomFactor;
 
         public TextEditorCore()
         {
@@ -141,7 +145,7 @@
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
-            _contentLinesCache = null;
+            //_contentLinesCache = null;
         }
 
         private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
@@ -178,13 +182,14 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(0.1)), // (VirtualKey)187: =
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(0.1)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
@@ -262,15 +267,25 @@
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            if (_isLineCachePendingUpdate)
+            /*if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }
+            }*/
 
             GetTextSelectionPosition(out var start, out var end);
 
-            lineIndex = 1;
+            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length 
+                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
+                + 1;
+            columnIndex = start 
+                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                + 1;
+            selectedCount = start != end && !string.IsNullOrEmpty(_content)
+                ? (_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length :
+                0; //Not counting the line ending character
+
+            /*lineIndex = 1;
             columnIndex = 1;
             selectedCount = 0;
 
@@ -297,7 +312,19 @@
                 }
 
                 length += line.Length + 1;
-            }
+            }*/
+        }
+
+        public double GetCurrentFontZoomFactor()
+        {
+            return _fontZoomFactor;
+        }
+
+        public void SetCurrentFontZoomFactor(double fontZoomFactor)
+        {
+            var fontZoomFactorInt = Math.Round(fontZoomFactor);
+            if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
+                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
@@ -481,13 +508,26 @@
 
         private void IncreaseFontSize(double delta)
         {
-            FontSize += delta;
+            if (_fontZoomFactor<_maximumZoomFactor)
+            {
+                if (_fontZoomFactor % 10 > 0)
+                    SetCurrentFontZoomFactor(Math.Ceiling(_fontZoomFactor / 10) * 10);
+                else
+                    FontSize += delta * EditorSettingsService.EditorFontSize;
+            }
         }
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize < delta + 2) return;
-            FontSize -= delta;
+            if (_fontZoomFactor>_minimumZoomFactor)
+            {
+                {
+                    if (_fontZoomFactor % 10 > 0)
+                        SetCurrentFontZoomFactor(Math.Floor(_fontZoomFactor / 10) * 10);
+                    else
+                        FontSize -= delta * EditorSettingsService.EditorFontSize;
+                }
+            }
         }
 
         private void ResetFontSizeToDefault()
@@ -512,7 +552,7 @@
             {
                 Document.GetText(TextGetOptions.None, out _content);
                 _content = TrimRichEditBoxText(_content);
-                _isLineCachePendingUpdate = true;
+                //_isLineCachePendingUpdate = true;
             }
         }
 
@@ -526,6 +566,8 @@
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
             _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+
+            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -542,11 +584,11 @@
                 var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                 if (mouseWheelDelta > 0)
                 {
-                    IncreaseFontSize(1);
+                    IncreaseFontSize(0.1);
                 }
                 else if (mouseWheelDelta < 0)
                 {
-                    DecreaseFontSize(1);
+                    DecreaseFontSize(0.1);
                 }
             }
 
@@ -614,16 +656,18 @@
 
                 if (end == start)
                 {
-                    // Duplicate Line                
-                    var line = _contentLinesCache[lineIndex - 1];
+                    // Duplicate Line
+                    var lineStart = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
+                    var lineEnd = (_content + RichEditBoxDefaultLineEnding).IndexOf(RichEditBoxDefaultLineEnding, end);
+                    var line = _content.Substring(lineStart, lineEnd - lineStart);
                     var column = Document.Selection.EndPosition + line.Length + 1;
-                
+
                     if (columnIndex == 1)
                         Document.Selection.EndPosition += 1;
 
                     Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
 
-                    if (lineIndex < (_contentLinesCache.Length - 1))
+                    if (lineIndex < _content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length + 1)
                         Document.Selection.EndPosition -= 1;
 
                     Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
@@ -639,7 +683,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (lineIndex < (_contentLinesCache.Length - 1))
+                        if (lineIndex < (_content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length) + 1)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -659,21 +703,20 @@
 
         public bool GoTo(int line)
         {
-            if (_isLineCachePendingUpdate)
+            /*if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }
+            }*/
 
-            if (line > 0 && line < _contentLinesCache.Length)
-            {
-                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+            return true;
+        }
+
+        public async void SearchInWeb()
+        {
+            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
+            await Launcher.LaunchUriAsync(searchUri);
         }
 
         private void ShowEasterEgg()

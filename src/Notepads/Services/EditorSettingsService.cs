@@ -14,6 +14,8 @@
 
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
 
+        public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
+
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
 
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
@@ -62,6 +64,19 @@
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
+            }
+        }
+
+        private static bool _isLineHighlighterEnabled;
+
+        public static bool IsLineHighlighterEnabled
+        {
+            get => _isLineHighlighterEnabled;
+            set
+            {
+                _isLineHighlighterEnabled = value;
+                OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value, true);
             }
         }
 
@@ -132,6 +147,30 @@
             }
         }
 
+        private static SearchEngine _editorDefaultSearchEngine;
+
+        public static SearchEngine EditorDefaultSearchEngine
+        {
+            get => _editorDefaultSearchEngine;
+            set
+            {
+                _editorDefaultSearchEngine = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString(), true);
+            }
+        }
+
+        private static string _editorCustomMadeSearchUrl;
+
+        public static string EditorCustomMadeSearchUrl
+        {
+            get => _editorCustomMadeSearchUrl;
+            set
+            {
+                _editorCustomMadeSearchUrl = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value, true);
+            }
+        }
+
         private static bool _showStatusBar;
 
         public static bool ShowStatusBar
@@ -191,6 +230,8 @@
 
             InitializeSpellingSettings();
 
+            InitializeLineHighlighterSettings();
+
             InitializeLineEndingSettings();
 
             InitializeEncodingSettings();
@@ -198,6 +239,8 @@
             InitializeDecodingSettings();
 
             InitializeTabIndentsSettings();
+
+            InitializeSearchEngineSettings();
 
             InitializeStatusBarSettings();
 
@@ -276,6 +319,18 @@
             }
         }
 
+        private static void InitializeLineHighlighterSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
+            {
+                _isLineHighlighterEnabled = isLineHighlighterEnabled;
+            }
+            else
+            {
+                _isLineHighlighterEnabled = true;
+            }
+        }
+
         private static void InitializeEncodingSettings()
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -339,6 +394,23 @@
             else
             {
                 _editorDefaultTabIndents = -1;
+            }
+        }
+
+        private static void InitializeSearchEngineSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
+            {
+                if(Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
+                    _editorDefaultSearchEngine = (SearchEngine)searchEngine;
+                else
+                    _editorDefaultSearchEngine = SearchEngine.Bing;
+                _editorCustomMadeSearchUrl = customMadesearchUrl;
+            }
+            else
+            {
+                _editorDefaultSearchEngine = SearchEngine.Bing;
+                _editorCustomMadeSearchUrl = "";
             }
         }
 

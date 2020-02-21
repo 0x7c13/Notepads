@@ -41,6 +41,8 @@
 
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
+        public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
@@ -183,6 +185,7 @@
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged += TextEditor_OnModeChanged;
@@ -220,6 +223,7 @@
             textEditor.Unloaded -= TextEditor_Unloaded;
             textEditor.KeyDown -= TextEditorKeyDown; 
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged -= TextEditor_OnModeChanged;
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
@@ -476,6 +480,12 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorSelectionChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFontZoomFactorChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorFontZoomFactorChanged?.Invoke(this, textEditor);
         }
 
         private void TextEditor_OnEditorModificationStateChanged(object sender, EventArgs e)

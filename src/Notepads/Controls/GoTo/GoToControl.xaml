@@ -11,11 +11,15 @@
         <Grid Grid.Row="0" Padding="1, 1, 1, 1" Height="36" x:Name="GoToRootGrid">
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
+            <TextBlock Grid.Column="0" x:Uid="GoTo_GoToBarLabel" Margin="5,4,10,0"/>
+            
+            <Grid Grid.Column="1">
                 <TextBox x:Name="GoToBar"
                          x:Uid="GoTo_GoToBar"
                          Style="{StaticResource TransparentTextBoxStyle}"
@@ -26,14 +30,15 @@
                          TextAlignment="Left"
                          BorderThickness="0"
                          FontSize="15"
+                         BeforeTextChanging="GoToBar_BeforeTextChanging"
                          TextChanged="GoToBar_OnTextChanged"
-                         KeyDown="GoToBar_OnKeyDown" LostFocus="GoToBar_LostFocus"/>
+                         KeyDown="GoToBar_OnKeyDown"/>
             </Grid>
 
             <Button x:Name="SearchButton"
                     x:Uid="GoTo_SearchButton"
                     Width="36"
-                    Grid.Column="1" 
+                    Grid.Column="2" 
                     Visibility="Collapsed"
                     IsTabStop="False"
                     FontSize="16"
@@ -41,6 +46,21 @@
                     Content="&#xEBE7;" 
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchButton_OnClick">
+            </Button>
+
+            <Button x:Name="DismissButton"
+                    x:Uid="FindAndReplace_DismissButton"
+                    IsTabStop="False"
+                    Width="36"
+                    Grid.Column="3" 
+                    FontSize="16"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE894;" 
+                    FontFamily="Segoe MDL2 Assets" 
+                    Click="DismissButton_OnClick" >
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape"/>
+                </Button.KeyboardAccelerators>
             </Button>
         </Grid>
     </Grid>

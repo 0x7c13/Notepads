@@ -258,6 +258,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Grid x:Name="FileModificationStateIndicator"
@@ -389,10 +390,148 @@
                 </TextBlock>
             </Grid>
             <Grid Column="3" x:Name="LineColumnIndicatorButton"
-                  IsTapEnabled="False">
-                <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"/>
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                    <!--<TextBlock.ContextFlyout>
+                        <Flyout x:Name="LineColumnIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <StackPanel Width="170">
+                                <CheckBox x:Name="WrapWord" 
+                                          x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_WrapWord"
+                                          Style="{StaticResource CustomCheckBoxContentToLeftStyle}"
+                                          Click="LineColumnIndicatoFlyoutSelection_OnClick"/>
+                                <CheckBox x:Name="HighlightCurrentLine" 
+                                          x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_HighlightCurrentLine"
+                                          Style="{StaticResource CustomCheckBoxContentToLeftStyle}"
+                                          Click="LineColumnIndicatoFlyoutSelection_OnClick"/>
+                                <AppBarButton x:Name="GoToLine" 
+                                              x:Uid="TextEditor_LineColumnIndicator_FlyoutItem_GoToLine" 
+                                              Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="-10,0,-10,0"
+                                              Click="LineColumnIndicatoFlyoutSelection_OnClick">
+                                    <AppBarButton.Icon>
+                                        <FontIcon Glyph="&#xEE35;" FontFamily="Segoe MDL2 Assets"/>
+                                    </AppBarButton.Icon>
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="G" Modifiers="Control" IsEnabled="False"/>
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                            </StackPanel>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                        </Flyout>
+                    </TextBlock.ContextFlyout>-->
+                </TextBlock>
             </Grid>
             <Grid Column="4"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <TextBlock x:Name="FontZoomIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                    <TextBlock.ContextFlyout>
+                        <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="-10,0,-10,0">
+                                    <AppBarButton x:Name="ZoomOut" 
+                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
+                                                  LabelPosition="Collapsed"
+                                                  VerticalAlignment="Center" Width="40"
+                                                  KeyboardAcceleratorTextOverride="Ctrl+Minus" 
+                                                  Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets"/>
+                                        </AppBarButton.Icon>
+                                        <AppBarButton.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="Subtract" Modifiers="Control" IsEnabled="False"/>
+                                        </AppBarButton.KeyboardAccelerators>
+                                    </AppBarButton>
+                                    <Slider x:Name="FontZoomSlider" 
+                                            Style="{StaticResource CustomSliderStyle}"
+                                            Minimum="10" Maximum="500" Value="100"
+                                            VerticalAlignment="Center" Width="150"
+                                            ValueChanged="FontZoomSlider_ValueChanged"/>
+                                    <AppBarButton x:Name="ZoomIn"
+                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
+                                                  LabelPosition="Collapsed" 
+                                                  VerticalAlignment="Center" Width="40"
+                                                  KeyboardAcceleratorTextOverride="Ctrl+Plus" 
+                                                  Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets"/>
+                                        </AppBarButton.Icon>
+                                        <AppBarButton.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="Add" Modifiers="Control" IsEnabled="False"/>
+                                        </AppBarButton.KeyboardAccelerators>
+                                    </AppBarButton>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,-10,0,0">
+                                    <TextBlock x:Name="MinZoom" Text="10%" Margin="30,0,0,0" FontSize="10"/>
+                                    <TextBlock x:Name="MaxZoom" Text="500%" Margin="108,0,0,0" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-15,0,0">
+                                    <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" VerticalAlignment="Center" FontSize="15"/>
+                                    <TextBlock Text="%" VerticalAlignment="Center" FontSize="15"/>
+                                </StackPanel>
+                                <AppBarButton x:Name="RestoreDefaultZoom"
+                                              x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
+                                              Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="-10,0,-10,-5"
+                                              Icon="Undo" 
+                                              Click="FontZoomIndicatoFlyoutSelection_OnClick">
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                            </StackPanel>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                        </Flyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="5"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -429,7 +568,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="5"
+            <Grid Column="6"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -467,7 +606,7 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
-            <Grid Column="6"
+            <Grid Column="7"
                   extensions:Mouse.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">

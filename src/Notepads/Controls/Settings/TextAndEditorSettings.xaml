@@ -48,6 +48,17 @@
                                   Margin="0,0,0,0"/>
                 </StackPanel>
                 <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Title"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,30,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,0">
+                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="LineHighlighterToggle" 
+                                  Margin="0,0,0,0"/>
+                </StackPanel>
+                <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Margin="0,30,0,0"
@@ -123,7 +134,43 @@
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_FourSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabFourSpacesRadioButton" Tag="4" GroupName="TabBehaviorGroup"/>
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_EightSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabEightSpacesRadioButton" Tag="8" GroupName="TabBehaviorGroup"/>
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Title"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="SearchEnginePanel" Margin="0,10,0,0">
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="BingRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_bing.png" Width="20" Stretch="Uniform"/>
+                            <TextBlock Text="Bing" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="GoogleRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_google.png" Width="20" Stretch="Uniform"/>
+                            <TextBlock Text="Google" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="DuckDuckGoRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_duckduckgo.png" Width="20" Stretch="Uniform"/>
+                            <TextBlock Text="Duck Duck Go" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CustomSearchUrlRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_custom.png" Width="20" Stretch="Uniform"/>
+                            <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton" Text="Custom Search Engine" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <StackPanel  Margin="28,5,0,10">
+                        <TextBox x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
+                        <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

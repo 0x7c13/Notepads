@@ -19,11 +19,14 @@
         internal static string EditorFontFamilyStr = "EditorFontFamilyStr";
         internal static string EditorFontSizeInt = "EditorFontSizeInt";
         internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
+        internal static string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
         internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
         internal static string EditorDefaultEncodingCodePageInt = "EditorDefaultEncodingCodePageInt";
         internal static string EditorDefaultDecodingCodePageInt = "EditorDefaultDecodingCodePageInt";
         internal static string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
+        internal static string EditorDefaultSearchEngineStr = "EditorDefaultSearchUrlStr";
+        internal static string EditorCustomMadeSearchUrlStr = "EditorCustomMadeSearchUrlStr";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
