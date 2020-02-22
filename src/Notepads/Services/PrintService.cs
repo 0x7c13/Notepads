@@ -7,7 +7,12 @@
     {
         public static void Print(ITextEditor textEditor)
         {
-            throw new NotImplementedException();
+            return;
+        }
+
+        public static void PrintAll(ITextEditor[] textEditors)
+        {
+            return;
         }
     }
 }

@@ -174,6 +174,8 @@
             //LineColumnIndicatorButton.Tapped += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
+            MenuPrintButton.Click += (sender, args) => PrintService.Print(NotepadsCore.GetSelectedTextEditor());
+            MenuPrintAllButton.Click += (sender, args) => PrintService.PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             MainMenuButtonFlyout.Opening += (sender, o) =>
@@ -185,7 +187,7 @@
                     MenuSaveAsButton.IsEnabled = false;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
-                    //MenuPrintButton.IsEnabled = false;
+                    MenuPrintButton.IsEnabled = false;
                 }
                 else if (selectedTextEditor.IsEditorEnabled() == false)
                 {
@@ -193,7 +195,7 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
-                    //MenuPrintButton.IsEnabled = true;
+                    MenuPrintButton.IsEnabled = false;
                 }
                 else
                 {
@@ -201,7 +203,7 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = true;
                     MenuReplaceButton.IsEnabled = true;
-                    //MenuPrintButton.IsEnabled = true;
+                    MenuPrintButton.IsEnabled = !string.IsNullOrEmpty(selectedTextEditor.GetText());
                 }
 
                 MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
@@ -209,6 +211,7 @@
                 MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
+                MenuPrintAllButton.IsEnabled = NotepadsCore.HaveNonemptyTextEditor();
             };
 
             if (!App.IsFirstInstance)
