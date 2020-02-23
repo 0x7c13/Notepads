@@ -282,12 +282,11 @@
                 - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
                 + 1;
             selectedCount = start != end && !string.IsNullOrEmpty(_content)
-                ? ((_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + (2 * ((_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Length
-                - (_content + RichEditBoxDefaultLineEnding).Substring(start, end - start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length)))
+                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
                 : 0;
-            if (end > _content.Length)
-                selectedCount -= 2;
+            if (end > _content.Length) selectedCount -= 2;
+
             /*lineIndex = 1;
             columnIndex = 1;
             selectedCount = 0;
