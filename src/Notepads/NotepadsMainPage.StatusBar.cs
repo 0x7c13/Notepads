@@ -1,6 +1,7 @@
 ﻿namespace Notepads
 {
     using System;
+    using System.Globalization;
     using System.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
