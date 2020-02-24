@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
@@ -354,9 +355,9 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
         {
-            if (FindNextAndSelect(searchText, matchCase, matchWholeWord))
+            if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex))
             {
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
                 return true;
@@ -365,26 +366,38 @@
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
         {
             var found = false;
 
-            var pos = 0;
-            var searchTextLength = searchText.Length;
-            var replaceTextLength = replaceText.Length;
-
             var text = GetText();
 
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
-
-            while (pos != -1)
+            if (useRegex)
             {
-                found = true;
-                text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
-                pos += replaceTextLength;
+                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                if(regex.IsMatch(text))
+                {
+                    text = regex.Replace(text, replaceText);
+                    found = true;
+                }
+            }
+            else
+            {
+                var pos = 0;
+                var searchTextLength = searchText.Length;
+                var replaceTextLength = replaceText.Length;
+
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
                 pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+
+                while (pos != -1)
+                {
+                    found = true;
+                    text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
+                    pos += replaceTextLength;
+                    pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+                }
             }
 
             if (found)
@@ -397,7 +410,7 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool stopAtEof = true)
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, bool stopAtEof = true)
         {
             if (string.IsNullOrEmpty(searchText))
             {
@@ -406,9 +419,43 @@
 
             var text = GetText();
 
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
             if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+
+            if (useRegex)
+            {
+                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                var match = regex.Match(text, Document.Selection.EndPosition);
+
+                if (match.Success)
+                {
+                    Document.Selection.StartPosition = match.Index;
+                    Document.Selection.EndPosition = match.Index + match.Length;
+                }
+                else
+                {
+                    if (!stopAtEof)
+                    {
+                        match = regex.Match(text, 0);
+
+                        if (match.Success)
+                        {
+                            Document.Selection.StartPosition = match.Index;
+                            Document.Selection.EndPosition = match.Index + match.Length;
+                        }
+                    }
+                }
+
+                if (!match.Success)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
             var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
 
