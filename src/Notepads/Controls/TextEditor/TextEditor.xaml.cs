@@ -315,7 +315,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontZoomFactor = TextEditorCore.GetFontZoomFactor()/100,
+                FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -802,6 +802,11 @@
                 IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
+
+            if (GoToPlaceholder!=null)
+            {
+                GoToPlaceholder.Dismiss();
+            }
         }
 
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
@@ -816,13 +821,9 @@
                 return;
             }
 
-            switch (GoToPlaceholder)
+            if (GoToPlaceholder != null)
             {
-                case null:
-                    break;
-                case InAppNotification inAppNotification when inAppNotification.Visibility == Visibility.Visible:
-                    GoToPlaceholder.Dismiss();
-                    break;
+                GoToPlaceholder.Dismiss();
             }
 
             if (FindAndReplacePlaceholder == null)
@@ -895,13 +896,9 @@
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
 
-            switch (FindAndReplacePlaceholder)
+            if (FindAndReplacePlaceholder != null)
             {
-                case null:
-                    break;
-                case InAppNotification inAppNotification when inAppNotification.Visibility == Visibility.Visible:
-                    FindAndReplacePlaceholder.Dismiss();
-                    break;
+                FindAndReplacePlaceholder.Dismiss();
             }
 
             if (GoToPlaceholder == null)

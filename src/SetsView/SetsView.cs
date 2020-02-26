@@ -381,7 +381,7 @@ namespace SetsView
         {
             _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
             UpdateScrollViewerShadows();
-            //UpdateScrollViewerNavigateButtons();
+            UpdateScrollViewerNavigateButtons();
         }
 
         public void ScrollToLastSet()

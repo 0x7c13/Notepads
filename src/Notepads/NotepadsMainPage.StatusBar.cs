@@ -10,6 +10,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using System.Globalization;
 
     public sealed partial class NotepadsMainPage
     {
