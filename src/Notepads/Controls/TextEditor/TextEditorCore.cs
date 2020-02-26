@@ -32,9 +32,9 @@
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
-        /*private string[] _contentLinesCache;
+        private string[] _contentLinesCache;
 
-        private bool _isLineCachePendingUpdate = true;*/
+        private bool _isLineCachePendingUpdate = true;
 
         private string _content = string.Empty;
 
@@ -145,7 +145,7 @@
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
-            //_contentLinesCache = null;
+            _contentLinesCache = null;
         }
 
         private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
@@ -267,27 +267,15 @@
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way 
         public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
         {
-            /*if (_isLineCachePendingUpdate)
+            if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }*/
+            }
 
             GetTextSelectionPosition(out var start, out var end);
 
-            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length 
-                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
-                + 1;
-            columnIndex = start 
-                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
-                + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(_content)
-                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                : 0;
-            if (end > _content.Length) selectedCount -= 2;
-
-            /*lineIndex = 1;
+            lineIndex = 1;
             columnIndex = 1;
             selectedCount = 0;
 
@@ -314,8 +302,25 @@
                 }
 
                 length += line.Length + 1;
-            }*/
+            }
         }
+
+        /*public void GetCurrentLineColumn2(out int lineIndex, out int columnIndex, out int selectedCount)
+        {
+            GetTextSelectionPosition(out var start, out var end);
+
+            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length
+                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                + 1;
+            columnIndex = start
+                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                + 1;
+            selectedCount = start != end && !string.IsNullOrEmpty(_content)
+                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                : 0;
+            if (end > _content.Length) selectedCount -= 2;
+        }*/
 
         public double GetFontZoomFactor()
         {
@@ -560,7 +565,7 @@
             {
                 Document.GetText(TextGetOptions.None, out _content);
                 _content = TrimRichEditBoxText(_content);
-                //_isLineCachePendingUpdate = true;
+                _isLineCachePendingUpdate = true;
             }
         }
 
@@ -711,11 +716,11 @@
 
         public bool GoTo(int line)
         {
-            /*if (_isLineCachePendingUpdate)
+            if (_isLineCachePendingUpdate)
             {
                 _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
-            }*/
+            }
 
             Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
             return true;
