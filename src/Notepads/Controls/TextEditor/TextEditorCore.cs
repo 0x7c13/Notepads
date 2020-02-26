@@ -51,9 +51,9 @@
 
         private const string ContentElementName = "ContentElement";
 
-        private const double _minimumZoomFactor = 10;
+        private readonly double _minimumZoomFactor = 10;
 
-        private const double _maximumZoomFactor = 500;
+        private readonly double _maximumZoomFactor = 500;
 
         private ScrollViewer _contentScrollViewer;
 
@@ -305,6 +305,23 @@
                 length += line.Length + 1;
             }
         }
+
+        /*public void GetCurrentLineColumn2(out int lineIndex, out int columnIndex, out int selectedCount)
+        {
+            GetTextSelectionPosition(out var start, out var end);
+
+            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length
+                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                + 1;
+            columnIndex = start
+                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                + 1;
+            selectedCount = start != end && !string.IsNullOrEmpty(_content)
+                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                : 0;
+            if (end > _content.Length) selectedCount -= 2;
+        }*/
 
         public double GetFontZoomFactor()
         {
@@ -560,7 +577,7 @@
 
         private void DecreaseFontSize(double delta)
         {
-            if (_fontZoomFactor>_minimumZoomFactor)
+            if (_fontZoomFactor > _minimumZoomFactor)
             {
                 if (_fontZoomFactor % 10 > 0)
                 {

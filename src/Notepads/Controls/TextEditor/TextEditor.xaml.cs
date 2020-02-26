@@ -315,7 +315,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontZoomFactor = TextEditorCore.GetFontZoomFactor()/100,
+                FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -802,6 +802,8 @@
                 IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
+
+            GoToPlaceholder?.Dismiss();
         }
 
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
@@ -816,14 +818,7 @@
                 return;
             }
 
-            switch (GoToPlaceholder)
-            {
-                case null:
-                    break;
-                case InAppNotification inAppNotification when inAppNotification.Visibility == Visibility.Visible:
-                    GoToPlaceholder.Dismiss();
-                    break;
-            }
+            GoToPlaceholder?.Dismiss();
 
             if (FindAndReplacePlaceholder == null)
             {
@@ -887,7 +882,7 @@
 
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
-            FindAndReplacePlaceholder.Dismiss();
+            FindAndReplacePlaceholder?.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
@@ -895,14 +890,7 @@
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
 
-            switch (FindAndReplacePlaceholder)
-            {
-                case null:
-                    break;
-                case InAppNotification inAppNotification when inAppNotification.Visibility == Visibility.Visible:
-                    FindAndReplacePlaceholder.Dismiss();
-                    break;
-            }
+            FindAndReplacePlaceholder?.Dismiss();
 
             if (GoToPlaceholder == null)
                 FindName("GoToPlaceholder"); // Lazy loading
