@@ -122,7 +122,7 @@
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_InvalidInput"), 1500);
                 args.Cancel = true;
             }
-            else if (line > _maxLine)
+            else if (line > _maxLine || line == 0)
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
                 args.Cancel = true;
