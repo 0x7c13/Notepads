@@ -1,7 +1,6 @@
 ﻿namespace Notepads.Controls.TextEditor
 {
     using System;
-    using System.Globalization;
     using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;

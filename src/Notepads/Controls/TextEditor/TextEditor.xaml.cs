@@ -803,10 +803,7 @@
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
 
-            if (GoToPlaceholder!=null)
-            {
-                GoToPlaceholder.Dismiss();
-            }
+            GoToPlaceholder?.Dismiss();
         }
 
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
@@ -821,10 +818,7 @@
                 return;
             }
 
-            if (GoToPlaceholder != null)
-            {
-                GoToPlaceholder.Dismiss();
-            }
+            GoToPlaceholder?.Dismiss();
 
             if (FindAndReplacePlaceholder == null)
             {
@@ -888,7 +882,7 @@
 
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
-            FindAndReplacePlaceholder.Dismiss();
+            FindAndReplacePlaceholder?.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
@@ -896,10 +890,7 @@
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
 
-            if (FindAndReplacePlaceholder != null)
-            {
-                FindAndReplacePlaceholder.Dismiss();
-            }
+            FindAndReplacePlaceholder?.Dismiss();
 
             if (GoToPlaceholder == null)
                 FindName("GoToPlaceholder"); // Lazy loading

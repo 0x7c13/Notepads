@@ -50,9 +50,9 @@
 
         private const string ContentElementName = "ContentElement";
 
-        private const double _minimumZoomFactor = 10;
+        private readonly double _minimumZoomFactor = 10;
 
-        private const double _maximumZoomFactor = 500;
+        private readonly double _maximumZoomFactor = 500;
 
         private ScrollViewer _contentScrollViewer;
 
