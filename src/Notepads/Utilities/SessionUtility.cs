@@ -64,6 +64,17 @@
         public static async Task SaveSerializedSessionMetaDataAsync(string serializedData)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+
+            // Attempt to delete session meta data file first in case it was not been deleted
+            try
+            {
+                await DeleteSerializedSessionMetaDataAsync();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             await localFolder.WriteTextToFileAsync(serializedData, SessionMetaDataFileName, CreationCollisionOption.ReplaceExisting);
         }
 
