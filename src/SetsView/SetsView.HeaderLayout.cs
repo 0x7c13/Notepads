@@ -163,6 +163,7 @@ namespace SetsView
                     }
                 }
                 UpdateScrollViewerShadows();
+                UpdateScrollViewerNavigateButtons();
             }
         }
 

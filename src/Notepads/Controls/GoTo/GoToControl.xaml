@@ -32,8 +32,7 @@
                          FontSize="15"
                          BeforeTextChanging="GoToBar_BeforeTextChanging"
                          TextChanged="GoToBar_OnTextChanged"
-                         KeyDown="GoToBar_OnKeyDown"
-                         LostFocus="GoToBar_LostFocus"/>
+                         KeyDown="GoToBar_OnKeyDown"/>
             </Grid>
 
             <Button x:Name="SearchButton"
