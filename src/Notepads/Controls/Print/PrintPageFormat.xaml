@@ -1,0 +1,34 @@
+﻿<Page
+    x:Class="Notepads.Controls.Print.PrintPageFormat"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads.Controls.Print"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid x:Name="PrintableArea">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name="Header" Grid.Row="0" Visibility="Visible">
+            <TextBlock x:Name="HeaderTextBlock" Foreground="Black" TextAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <RichTextBlock Foreground="Black" x:Name="TextContent" Grid.Row="1" OverflowContentTarget="{Binding ElementName=ContinuationPageLinkedContainer}"
+            IsTextSelectionEnabled="True" TextAlignment="Left" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Paragraph x:Name="TextEditorContent"></Paragraph>
+        </RichTextBlock>
+        
+        <RichTextBlockOverflow x:Name="ContinuationPageLinkedContainer" Grid.Row="2"/>
+
+        <StackPanel x:Name="Footer" Grid.Row="3">
+            <TextBlock x:Name="FooterTextBlock" Foreground="Black" TextAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+    </Grid>
+</Page>

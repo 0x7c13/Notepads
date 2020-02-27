@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <SplitView x:Name="RootSplitView"
@@ -164,6 +165,7 @@
                                                 <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="PrintSettingsSeparator" />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
@@ -615,5 +617,6 @@
             </Grid>
         </Grid>
 
+        <Canvas Grid.Row="2" x:Name="PrintCanvas" Opacity="0"/>
     </Grid>
 </Page>

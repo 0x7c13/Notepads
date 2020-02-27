@@ -134,6 +134,12 @@
       <DependentUpon>GoToControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GoTo\GoToEventArgs.cs" />
+    <Compile Include="Controls\Print\ContinuationPage.xaml.cs">
+      <DependentUpon>ContinuationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
+      <DependentUpon>PrintPageFormat.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -403,6 +409,14 @@
     <Page Include="Controls\GoTo\GoToControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Print\ContinuationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Print\PrintPageFormat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Settings\AboutPage.xaml">
       <SubType>Designer</SubType>
