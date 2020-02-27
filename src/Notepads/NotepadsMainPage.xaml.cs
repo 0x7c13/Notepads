@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Notepads.Commands;
+    using Notepads.Controls.Print;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
     using Notepads.Core;
@@ -165,7 +166,7 @@
             }
             else
             {
-                PrintService.RegisterForPrinting(this);
+                PrintArgs.RegisterForPrinting(this);
             }
         }
 
@@ -187,8 +188,8 @@
             //LineColumnIndicatorButton.Tapped += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
-            MenuPrintButton.Click += async (sender, args) => await PrintService.Print(NotepadsCore.GetSelectedTextEditor());
-            MenuPrintAllButton.Click += async (sender, args) => await PrintService.PrintAll(NotepadsCore.GetAllTextEditors());
+            MenuPrintButton.Click += async (sender, args) => await Print(NotepadsCore.GetSelectedTextEditor());
+            MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             MainMenuButtonFlyout.Opening += (sender, o) =>
@@ -248,8 +249,8 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, async (args) => await PrintService.Print(NotepadsCore.GetSelectedTextEditor())),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.P, async (args) => await PrintService.PrintAll(NotepadsCore.GetAllTextEditors())),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, async (args) => await Print(NotepadsCore.GetSelectedTextEditor())),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.P, async (args) => await PrintAll(NotepadsCore.GetAllTextEditors())),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.N, async (args) => await OpenNewAppInstance()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),

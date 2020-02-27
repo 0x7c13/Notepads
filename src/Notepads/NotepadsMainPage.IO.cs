@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Windows.Graphics.Printing;
     using Windows.Storage;
+    using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -146,6 +148,43 @@
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
                 return false;
+            }
+        }
+
+        public async Task Print(ITextEditor textEditor)
+        {
+            //Genarate single item array for the text editor
+            var singleTextEditorArray = new ITextEditor[] { textEditor };
+
+            // Initialize print content
+            PrintArgs.PreparePrintContent(singleTextEditorArray);
+
+            if (PrintManager.IsSupported() && !string.IsNullOrEmpty(textEditor.GetText()))
+            {
+                // Show print UI
+                await PrintArgs.ShowPrintUIAsync();
+            }
+            else if (!PrintManager.IsSupported())
+            {
+                // Printing is not supported on this device
+                NotificationCenter.Instance.PostNotification("Printing is not supported on this device", 1500);
+            }
+        }
+
+        public async Task PrintAll(ITextEditor[] textEditors)
+        {
+            // Initialize print content
+            PrintArgs.PreparePrintContent(textEditors);
+
+            if (PrintManager.IsSupported() && NotepadsCore.HaveNonemptyTextEditor())
+            {
+                // Show print UI
+                await PrintArgs.ShowPrintUIAsync();
+            }
+            else if (!PrintManager.IsSupported())
+            {
+                // Printing is not supported on this device
+                NotificationCenter.Instance.PostNotification("Printing is not supported on this device", 1500);
             }
         }
     }

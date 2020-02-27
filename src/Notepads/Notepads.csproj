@@ -137,6 +137,7 @@
     <Compile Include="Controls\Print\ContinuationPage.xaml.cs">
       <DependentUpon>ContinuationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Print\PrintArgs.cs" />
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
@@ -201,7 +202,6 @@
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\NotepadsDialogFactory.cs" />
     <Compile Include="Services\FilePickerFactory.cs" />
-    <Compile Include="Services\PrintService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
     <Compile Include="Utilities\FileSystemUtility.cs" />
