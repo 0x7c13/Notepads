@@ -492,6 +492,8 @@
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         public void RevertAllChanges()
