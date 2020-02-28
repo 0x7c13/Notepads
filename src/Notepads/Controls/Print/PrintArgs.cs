@@ -192,8 +192,7 @@
                         lastRTBOOnPage = AddOnePrintPreviewPage(lastRTBOOnPage, pageDescription, count);
                     }
 
-                    count += 1;
-
+                    count += 1; 
                 } while (count < _firstPage.Count);
 
                 PrintDocument printDoc = (PrintDocument)sender;
@@ -235,7 +234,6 @@
                 {
                     header.Visibility = Visibility.Collapsed;
                 }
-
 
                 StackPanel footer = (StackPanel)page.FindName("Footer");
                 if (!string.IsNullOrEmpty(_footerText))
