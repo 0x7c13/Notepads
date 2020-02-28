@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Vannak nem mentett módosítások</value>
+    <value>Vannak nem mentett módosítások.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">

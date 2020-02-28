@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>У вас є незбережені зміни</value>
+    <value>У вас є незбережені зміни.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">

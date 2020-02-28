@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Es exisitieren nicht gespeicherte Änderungen</value>
+    <value>Es exisitieren nicht gespeicherte Änderungen.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads unterstützt zurzeit keine Dateien größer als 1MB</value>
+    <value>Notepads unterstützt zurzeit keine Dateien größer als 1MB.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">

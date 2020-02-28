@@ -390,7 +390,7 @@
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Archivo de volver a cargar desde el disco!</value>
+    <value>Archivo de volver a cargar desde el disco</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
@@ -398,7 +398,7 @@
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>Archivo ha sido movido, renombrado o borrado</value>
+    <value>Archivo ha sido movido, renombrado o borrado!</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">

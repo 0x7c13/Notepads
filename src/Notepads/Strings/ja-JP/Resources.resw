@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>ファイル "{0}" に加えられた全ての文章・行末・エンコーディングの変更は元に戻ります。</value>
+    <value>ファイル "{0}" に加えられた全ての文章・行末・エンコーディングの変更は元に戻ります!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">

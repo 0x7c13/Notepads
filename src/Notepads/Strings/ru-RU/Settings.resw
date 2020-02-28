@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Acrylic background tint opacity</value>
+    <value>Acrylic background tint opacity.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -230,7 +230,7 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Only apply to new document.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Only apply to new document</value>
+    <value>Only apply to new document.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Settings for tab key behavior, only apply to new tabs inserted by user</value>
+    <value>Settings for tab key behavior, only apply to new tabs inserted by user.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
