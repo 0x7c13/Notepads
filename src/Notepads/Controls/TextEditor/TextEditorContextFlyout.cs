@@ -301,7 +301,7 @@
                 };
                 _previewToggle.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    Modifiers = VirtualKeyModifiers.Control,
+                    Modifiers = VirtualKeyModifiers.Menu,
                     Key = VirtualKey.P,
                     IsEnabled = false,
                 });
