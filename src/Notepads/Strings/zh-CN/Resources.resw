@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>您有尚未保存的内容</value>
+    <value>您有尚未保存的内容。</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads 暂时不支持打开 1MB 以上的文件</value>
+    <value>Notepads 暂时不支持打开 1MB 以上的文件。</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>查找…</value>
+    <value>查找...</value>
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
@@ -226,15 +226,15 @@
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>打开…</value>
+    <value>打开...</value>
     <comment>MainMenu: "Open" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>打印…</value>
+    <value>打印...</value>
     <comment>MainMenu: "Print" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>替换…</value>
+    <value>替换...</value>
     <comment>MainMenu: "Replace" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Save.Text" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>另存为…</value>
+    <value>另存为...</value>
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
