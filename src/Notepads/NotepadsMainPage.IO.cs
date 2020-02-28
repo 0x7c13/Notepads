@@ -74,6 +74,7 @@
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 MRUService.Add(file); // Remember recently used files
+                BuildOpenRecentButtonSubItems();
                 return true;
             }
             catch (Exception ex)
