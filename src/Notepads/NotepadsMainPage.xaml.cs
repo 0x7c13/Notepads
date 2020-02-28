@@ -175,7 +175,7 @@
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            MainMenuButtonFlyout.Opening += async (sender, o) =>
+            MainMenuButtonFlyout.Opening += (sender, o) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
                 if (selectedTextEditor == null)
@@ -209,8 +209,10 @@
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
 
-                await BuildOpenRecentButtonSubItems();
+                //await BuildOpenRecentButtonSubItems();
             };
+
+            BuildOpenRecentButtonSubItems();
 
             if (!App.IsFirstInstance)
             {
@@ -219,26 +221,44 @@
             }
         }
 
-        private async Task BuildOpenRecentButtonSubItems()
+        private async void BuildOpenRecentButtonSubItems()
         {
-            MenuOpenRecentlyUsedFileButton?.Items?.Clear();
+            var menuFlyoutSubItem = new MenuFlyoutSubItem();
+            var fontIcon = new FontIcon();
+            fontIcon.Glyph = "\xE81C";
+            //MenuOpenRecentlyUsedFileButton?.Items?.Clear();
+            menuFlyoutSubItem.Text = "Open Recent";
+            menuFlyoutSubItem.Icon = fontIcon;
 
             foreach (var item in await MRUService.Get())
             {
                 if (item is StorageFile file)
                 {
-                    MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
+                    /*MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
+                    {
+                        Text = file.Path
+                    });*/
+
+                    menuFlyoutSubItem?.Items?.Add(new MenuFlyoutItem()
                     {
                         Text = file.Path
                     });
                 }
             }
 
-            MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutSeparator());
+            /*MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutSeparator());
             MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
             {
                 Text = "Clear Recently Opened"
+            });*/
+
+            menuFlyoutSubItem?.Items?.Add(new MenuFlyoutSeparator());
+            menuFlyoutSubItem?.Items?.Add(new MenuFlyoutItem()
+            {
+                Text = "Clear Recently Opened"
             });
+            MainMenuButtonFlyout.Items.RemoveAt(3);
+            MainMenuButtonFlyout.Items.Insert(3, menuFlyoutSubItem);
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
