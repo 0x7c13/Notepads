@@ -16,6 +16,7 @@
             if (!string.IsNullOrEmpty(headerText))
             {
                 Header.Visibility = Visibility.Visible;
+                Header.Margin = new Thickness(0, 0, 0, textEditorFontSize + 6);
                 HeaderTextBlock.Text = headerText;
                 HeaderTextBlock.FontFamily = textEditorFontFamily;
                 HeaderTextBlock.FontSize = textEditorFontSize + 4;
