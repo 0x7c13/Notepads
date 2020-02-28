@@ -167,7 +167,7 @@
             else if (!PrintManager.IsSupported())
             {
                 // Printing is not supported on this device
-                NotificationCenter.Instance.PostNotification("Printing is not supported on this device", 1500);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintNotSupported"), 1500);
             }
         }
 
@@ -184,7 +184,7 @@
             else if (!PrintManager.IsSupported())
             {
                 // Printing is not supported on this device
-                NotificationCenter.Instance.PostNotification("Printing is not supported on this device", 1500);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintNotSupported"), 1500);
             }
         }
     }

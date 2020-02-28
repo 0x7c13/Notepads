@@ -159,7 +159,7 @@
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_PrintAll" x:Name="MenuPrintAllButton">
                                             <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE749;"/>
+                                                <FontIcon Glyph="&#xF56D;"/>
                                             </MenuFlyoutItem.Icon>
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>

@@ -134,8 +134,8 @@
       <DependentUpon>GoToControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GoTo\GoToEventArgs.cs" />
-    <Compile Include="Controls\Print\ContinuationPage.xaml.cs">
-      <DependentUpon>ContinuationPage.xaml</DependentUpon>
+    <Compile Include="Controls\Print\ContinuationPageFormat.xaml.cs">
+      <DependentUpon>ContinuationPageFormat.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Print\PrintArgs.cs" />
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
@@ -410,7 +410,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Print\ContinuationPage.xaml">
+    <Page Include="Controls\Print\ContinuationPageFormat.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

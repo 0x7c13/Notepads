@@ -3,15 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Notepads.Controls.TextEditor;
+    using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.Resources;
     using Windows.Graphics.Printing;
+    using Windows.Graphics.Printing.OptionDetails;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Printing;
-    using Windows.ApplicationModel.Core;
     using Windows.UI.Xaml.Media;
-    using Windows.Graphics.Printing.OptionDetails;
     using Notepads.Services;
+    using Notepads.Controls.TextEditor;
 
     public static class PrintArgs
     {
@@ -53,11 +54,6 @@
         private static List<UIElement> _printPreviewPages;
 
         /// <summary>
-        /// Event callback which is called after print preview pages are generated.
-        /// </summary>
-        private static event EventHandler PreviewPagesCreated;
-
-        /// <summary>
         /// First page in the printing-content series
         /// From this "virtual sized" paged content is split(text is flowing) to "printing pages"
         /// </summary>
@@ -78,6 +74,8 @@
                 return _sourcePage.FindName("PrintCanvas") as Canvas;
             }
         }
+
+        private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         /// <summary>
         /// Method that will generate print content for the scenario
@@ -189,7 +187,7 @@
 
                     // We know there are more pages to be added as long as the last RichTextBoxOverflow added to a print preview
                     // page has extra content
-                    while (lastRTBOOnPage.HasOverflowContent && lastRTBOOnPage.Visibility == Windows.UI.Xaml.Visibility.Visible)
+                    while (lastRTBOOnPage.HasOverflowContent && lastRTBOOnPage.Visibility == Visibility.Visible)
                     {
                         lastRTBOOnPage = AddOnePrintPreviewPage(lastRTBOOnPage, pageDescription, count);
                     }
@@ -197,12 +195,6 @@
                     count += 1;
 
                 } while (count < _firstPage.Count);
-
-
-                if (PreviewPagesCreated != null)
-                {
-                    PreviewPagesCreated.Invoke(_printPreviewPages, null);
-                }
 
                 PrintDocument printDoc = (PrintDocument)sender;
 
@@ -260,7 +252,7 @@
             else
             {
                 // Flow content (text) from previous pages
-                page = new ContinuationPage(lastRTBOAdded,
+                page = new ContinuationPageFormat(lastRTBOAdded,
                     new FontFamily(EditorSettingsService.EditorFontFamily),
                     EditorSettingsService.EditorFontSize,
                     _headerText,
@@ -292,7 +284,7 @@
             textLink = (RichTextBlockOverflow)page.FindName("ContinuationPageLinkedContainer");
 
             // Check if this is the last page
-            if (!textLink.HasOverflowContent && textLink.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            if (!textLink.HasOverflowContent && textLink.Visibility == Visibility.Visible)
             {
                 PrintCanvas.UpdateLayout();
             }
@@ -359,24 +351,23 @@
                 displayedOptions.Add(StandardPrintTaskOptions.Orientation);
                 displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
 
-                // Add Header and Footer text options
-                PrintCustomTextOptionDetails headerText = printDetailedOptions.CreateTextOption("HeaderText", "Header");
-                PrintCustomTextOptionDetails footerText = printDetailedOptions.CreateTextOption("FooterText", "Footer");
-                headerText.TrySetValue(_headerText);
-                footerText.TrySetValue(_footerText);
-                displayedOptions.Add("HeaderText");
-                displayedOptions.Add("FooterText");
-
                 // Add Margin setting in % options
-                PrintCustomTextOptionDetails leftMargin = printDetailedOptions.CreateTextOption("LeftMargin", "Horizontal Margin (in %)");
-                PrintCustomTextOptionDetails topMargin = printDetailedOptions.CreateTextOption("TopMargin", "Vertical Margin (in %)");
-                leftMargin.Description = "In % of paper width";
-                topMargin.Description = "In % of paper width";
+                PrintCustomTextOptionDetails leftMargin = printDetailedOptions.CreateTextOption("LeftMargin", _resourceLoader.GetString("Print_LeftMarginEntry_Title"));
+                PrintCustomTextOptionDetails topMargin = printDetailedOptions.CreateTextOption("TopMargin", _resourceLoader.GetString("Print_TopMarginEntry_Title"));
+                leftMargin.Description = topMargin.Description = _resourceLoader.GetString("Print_MarginEntry_Description");
                 leftMargin.TrySetValue(Math.Round(100 * _applicationContentMarginLeft, 1).ToString());
                 topMargin.TrySetValue(Math.Round(100 * _applicationContentMarginTop, 1).ToString());
                 displayedOptions.Add("LeftMargin");
                 displayedOptions.Add("TopMargin");
 
+                // Add Header and Footer text options
+                PrintCustomTextOptionDetails headerText = printDetailedOptions.CreateTextOption("HeaderText", _resourceLoader.GetString("Print_HeaderEntry_Title"));
+                PrintCustomTextOptionDetails footerText = printDetailedOptions.CreateTextOption("FooterText", _resourceLoader.GetString("Print_FooterEntry_Title"));
+                headerText.TrySetValue(_headerText);
+                footerText.TrySetValue(_footerText);
+                displayedOptions.Add("HeaderText");
+                displayedOptions.Add("FooterText");
+                
                 displayedOptions.Add(StandardPrintTaskOptions.Collation);
                 displayedOptions.Add(StandardPrintTaskOptions.Duplex);
                 displayedOptions.Add(StandardPrintTaskOptions.CustomPageRanges);
@@ -402,7 +393,7 @@
                     {
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
-                            NotificationCenter.Instance.PostNotification("Failed to print", 1500);
+                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintFailed"), 1500);
                         });
                     }
                 };
@@ -448,12 +439,12 @@
                 var leftMarginValueConverterArg = double.TryParse(leftMargin.Value.ToString(), out var leftMarginValue);
                 if (leftMarginValue > 50 || leftMarginValue < 0 || !leftMarginValueConverterArg)
                 {
-                    leftMargin.ErrorText = "Value out of range";
+                    leftMargin.ErrorText = _resourceLoader.GetString("Print_ErrorMsg_ValueOutOfRange");
                     return;
                 }
                 else if (Math.Round(leftMarginValue, 1) != leftMarginValue)
                 {
-                    leftMargin.ErrorText = "Can only accept upto one decimal place";
+                    leftMargin.ErrorText = _resourceLoader.GetString("Print_ErrorMsg_DecimalOutOfRange");
                     return;
                 }
                 leftMargin.ErrorText = string.Empty;
@@ -465,14 +456,14 @@
             {
                 PrintCustomTextOptionDetails topMargin = (PrintCustomTextOptionDetails)sender.Options["TopMargin"];
                 var topMarginValueConverterArg = double.TryParse(topMargin.Value.ToString(), out var topMarginValue);
-                if (Math.Round(topMarginValue, 1) != topMarginValue)
+                if (topMarginValue > 50 || topMarginValue < 0 || !topMarginValueConverterArg)
                 {
-                    topMargin.ErrorText = "Can only accept upto one decimal place";
+                    topMargin.ErrorText = _resourceLoader.GetString("Print_ErrorMsg_ValueOutOfRange");
                     return;
                 }
-                else if (topMarginValue > 100 || topMarginValue < 0 || !topMarginValueConverterArg)
+                else if (Math.Round(topMarginValue, 1) != topMarginValue)
                 {
-                    topMargin.ErrorText = "Value out of range";
+                    topMargin.ErrorText = _resourceLoader.GetString("Print_ErrorMsg_DecimalOutOfRange");
                     return;
                 }
                 topMargin.ErrorText = string.Empty;
@@ -502,7 +493,8 @@
             }
             catch (Exception e)
             {
-                NotificationCenter.Instance.PostNotification("Error printing: " + e.Message + ", hr=" + e.HResult, 1500);
+                NotificationCenter.Instance.PostNotification(
+                    _resourceLoader.GetString("Print_NotificationMsg_PrintError") + " " + e.Message + ", hr=" + e.HResult, 1500);
             }
         }
     }
