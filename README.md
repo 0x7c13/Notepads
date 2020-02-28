@@ -55,7 +55,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
-* Ctrl+P to toggle preview split view for Markdown file.
+* Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
 
 ## Platform limitations (UWP):
