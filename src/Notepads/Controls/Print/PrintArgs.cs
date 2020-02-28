@@ -345,9 +345,10 @@
                 // Choose the printer options to be shown.
                 // The order in which the options are appended determines the order in which they appear in the UI
                 displayedOptions.Clear();
-                displayedOptions.Add(StandardPrintTaskOptions.Copies);
                 displayedOptions.Add(StandardPrintTaskOptions.Orientation);
+                displayedOptions.Add(StandardPrintTaskOptions.Copies);
                 displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
+                displayedOptions.Add(StandardPrintTaskOptions.InputBin);
 
                 // Add Margin setting in % options
                 PrintCustomTextOptionDetails leftMargin = printDetailedOptions.CreateTextOption("LeftMargin", _resourceLoader.GetString("Print_LeftMarginEntry_Title"));
@@ -365,15 +366,14 @@
                 footerText.TrySetValue(_footerText);
                 displayedOptions.Add("HeaderText");
                 displayedOptions.Add("FooterText");
-                
-                displayedOptions.Add(StandardPrintTaskOptions.Collation);
-                displayedOptions.Add(StandardPrintTaskOptions.Duplex);
+
                 displayedOptions.Add(StandardPrintTaskOptions.CustomPageRanges);
+                displayedOptions.Add(StandardPrintTaskOptions.Duplex);
+                displayedOptions.Add(StandardPrintTaskOptions.Collation);
                 displayedOptions.Add(StandardPrintTaskOptions.NUp);
                 displayedOptions.Add(StandardPrintTaskOptions.MediaType);
-                displayedOptions.Add(StandardPrintTaskOptions.InputBin);
                 displayedOptions.Add(StandardPrintTaskOptions.Bordering);
-                displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
+                //displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
                 displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
                 displayedOptions.Add(StandardPrintTaskOptions.HolePunch);
                 displayedOptions.Add(StandardPrintTaskOptions.Staple);
