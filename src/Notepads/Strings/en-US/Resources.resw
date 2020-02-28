@@ -537,4 +537,8 @@
     <value>Vertical Margin (in %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title</comment>
   </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>Use Regular Expression</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
 </root>

@@ -67,7 +67,8 @@
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedRight">
                         <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle"/>
-                        <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle"/>
+                        <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle" Click="OptionButtonFlyoutItem_OnClick"/>
+                        <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex" x:Name="UseRegexToggle" Click="OptionButtonFlyoutItem_OnClick"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
