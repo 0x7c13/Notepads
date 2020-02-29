@@ -256,6 +256,18 @@
             return false;
         }
 
+        public bool HaveNonemptyTextEditor()
+        {
+            if (Sets.Items == null || Sets.Items.Count <= 1) return false;
+            foreach (SetsViewItem setsItem in Sets.Items)
+            {
+                if (!(setsItem.Content is ITextEditor textEditor)) continue;
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
+                return true;
+            }
+            return false;
+        }
+
         public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding)
         {
             textEditor.TryChangeLineEnding(lineEnding);

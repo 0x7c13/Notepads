@@ -69,6 +69,8 @@
 
         bool HaveUnsavedTextEditor();
 
+        bool HaveNonemptyTextEditor();
+
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
         void ChangeEncoding(ITextEditor textEditor, Encoding encoding);

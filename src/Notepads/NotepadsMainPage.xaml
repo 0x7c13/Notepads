@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <SplitView x:Name="RootSplitView"
@@ -151,11 +152,20 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator />
-                                        <!--<MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print" Click="MenuPrintButton_OnClick">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>-->
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_PrintAll" x:Name="MenuPrintAllButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xF56D;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="PrintSettingsSeparator" />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
@@ -607,5 +617,6 @@
             </Grid>
         </Grid>
 
+        <Canvas Grid.Row="2" x:Name="PrintCanvas" Opacity="0"/>
     </Grid>
 </Page>
