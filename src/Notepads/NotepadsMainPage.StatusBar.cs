@@ -1,6 +1,7 @@
 ﻿namespace Notepads
 {
     using System;
+    using System.Globalization;
     using System.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -19,6 +20,7 @@
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
             UpdateLineColumnIndicator(textEditor);
+            UpdateFontZoomIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
             UpdateShadowWindowIndicator();
@@ -134,6 +136,14 @@
                     selectedCount, wordSelected);
         }
 
+        private void UpdateFontZoomIndicator(ITextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+            var fontZoomFactor = Math.Round(textEditor.GetFontZoomFactor());
+            FontZoomIndicator.Text = fontZoomFactor.ToString(CultureInfo.InvariantCulture) + "%";
+            FontZoomSlider.Value = fontZoomFactor;
+        }
+
         private void UpdateShadowWindowIndicator()
         {
             if (StatusBar == null) return;
@@ -192,6 +202,45 @@
                         NotepadsCore.FocusOnSelectedTextEditor();
                     }
                 }
+            }
+        }
+
+        private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is AppBarButton button)) return;
+
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
+
+            switch ((string)button.Name)
+            {
+                case "ZoomIn":
+                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0 
+                        ? Math.Ceiling(FontZoomSlider.Value / 10) * 10
+                        : FontZoomSlider.Value + 10);
+                    break;
+                case "ZoomOut":
+                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0
+                        ? Math.Floor(FontZoomSlider.Value / 10) * 10
+                        : FontZoomSlider.Value - 10);
+                    break;
+                case "RestoreDefaultZoom":
+                    selectedTextEditor.SetFontZoomFactor(100);
+                    FontZoomIndicatorFlyout.Hide();
+                    break;
+            }
+        }
+
+        private void FontZoomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!(sender is Slider item)) return;
+
+            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedTextEditor == null) return;
+
+            if (Math.Abs(e.NewValue - e.OldValue) > 0.1)
+            {
+                selectedTextEditor.SetFontZoomFactor(e.NewValue);
             }
         }
 
@@ -266,6 +315,12 @@
             }
             else if (sender == LineColumnIndicator)
             {
+                selectedEditor.ShowGoToControl();
+            }
+            else if (sender == FontZoomIndicator)
+            {
+                FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
+                FontZoomIndicatorFlyout.Opened += (s_flyout, e_flyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
             }
             else if (sender == LineEndingIndicator)
             {

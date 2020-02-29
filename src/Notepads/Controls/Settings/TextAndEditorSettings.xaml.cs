@@ -51,7 +51,7 @@
 
         public int[] FontSizes = new int[]
         {
-            8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72
+            8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
         };
 
         public TextAndEditorSettings()
@@ -60,6 +60,7 @@
 
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
             HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
+            LineHighlighterToggle.IsOn = EditorSettingsService.IsLineHighlighterEnabled;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
@@ -126,6 +127,31 @@
                 TabEightSpacesRadioButton.IsChecked = true;
             }
 
+            // Search Engine
+            switch (EditorSettingsService.EditorDefaultSearchEngine)
+            {
+                case SearchEngine.Bing:
+                    BingRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Google:
+                    GoogleRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.DuckDuckGo:
+                    DuckDuckGoRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Custom:
+                    CustomSearchUrlRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = true;
+                    break;
+            }
+            if (!string.IsNullOrEmpty(EditorSettingsService.EditorCustomMadeSearchUrl))
+            {
+                CustomSearchUrl.Text = EditorSettingsService.EditorCustomMadeSearchUrl;
+            }
+
             Loaded += TextAndEditorSettings_Loaded;
         }
 
@@ -133,6 +159,7 @@
         {
             TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
             HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
+            LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
             FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
 
@@ -152,6 +179,42 @@
             TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabFourSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabEightSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
+
+            BingRadioButton.Checked += SearchEngineRadioButton_Checked;
+            GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
+            DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
+            CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
+        }
+
+        private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Name)
+            {
+                case "BingRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "GoogleRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "DuckDuckGoRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "CustomSearchUrlRadioButton":
+                    CustomSearchUrl.IsEnabled = true;
+                    CustomSearchUrl.Focus(FocusState.Programmatic);
+                    CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
+                    CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+                    EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    break;
+            }
         }
 
         private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -256,6 +319,53 @@
         private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
+        }
+
+        private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
+        }
+
+        private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (CustomSearchUrlRadioButton.IsChecked != null &&
+                (IsValidUrl(CustomSearchUrl.Text) && (bool) CustomSearchUrlRadioButton.IsChecked))
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+            }
+            else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+            }
+
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private bool IsValidUrl(string url)
+        {
+            try
+            {
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                {
+                    if (string.Format(url, "s") == url)
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

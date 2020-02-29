@@ -22,6 +22,7 @@
         event EventHandler LineEndingChanged;
         event EventHandler EncodingChanged;
         event EventHandler SelectionChanged;
+        event EventHandler FontZoomFactorChanged;
         event EventHandler TextChanging;
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
@@ -89,6 +90,10 @@
         void CloseSideBySideDiffViewer();
 
         void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+
+        double GetFontZoomFactor();
+
+        void SetFontZoomFactor(double fontZoomFactor);
 
         bool IsEditorEnabled();
 

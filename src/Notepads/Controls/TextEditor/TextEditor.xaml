@@ -22,6 +22,8 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.5"
                                      Color="LightGray"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="#CACACA"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
@@ -30,12 +32,16 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.3"
                                      Color="Black"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="#363636"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="{ThemeResource SystemColorGrayTextColor}"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -89,6 +95,7 @@
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
+                <Border x:Name="LineHighlighter" BorderBrush="{ThemeResource LineHighlightBorderBrush}" VerticalAlignment="Top" Visibility="Collapsed"/>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
@@ -118,13 +125,13 @@
                                             x:Load="false"
                                             Padding="0"
                                             Margin="0"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
                                             Style="{StaticResource FindAndReplacePlaceholder}"
                                             ShowDismissButton="True"
                                             AnimationDuration="0:0:0.050"
                                             VerticalOffset="0"
-                                            HorizontalOffset="0"
+                                            HorizontalOffset="-22"
                                             FontWeight="Light"
                                             BorderThickness="1"
                                             Closed="GoToPlaceholder_Closed">

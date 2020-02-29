@@ -18,6 +18,7 @@
         private MenuFlyoutItem _undo;
         private MenuFlyoutItem _redo;
         private MenuFlyoutItem _selectAll;
+        private MenuFlyoutItem _webSearch;
         private MenuFlyoutItem _wordWrap;
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
@@ -38,6 +39,7 @@
             Items.Add(Redo);
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
+            Items.Add(WebSearch);
             Items.Add(WordWrap);
             Items.Add(PreviewToggle);
             Items.Add(Share);
@@ -76,6 +78,7 @@
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
+            WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
 
@@ -83,6 +86,7 @@
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
+            WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
 
@@ -204,6 +208,35 @@
             }
         }
 
+        public MenuFlyoutItem WebSearch
+        {
+            get
+            {
+                if (_webSearch != null) return _webSearch;
+
+                _webSearch = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_WebSearchButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE721"
+                    }
+                };
+                _webSearch.KeyboardAccelerators.Add(new KeyboardAccelerator()
+                {
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.E,
+                    IsEnabled = false,
+                });
+                _webSearch.Click += (sender, args) =>
+                {
+                    _textEditorCore.SearchInWeb();
+                };
+                return _webSearch;
+            }
+        }
+
         public MenuFlyoutItem Share
         {
             get
@@ -268,7 +301,7 @@
                 };
                 _previewToggle.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    Modifiers = VirtualKeyModifiers.Control,
+                    Modifiers = VirtualKeyModifiers.Menu,
                     Key = VirtualKey.P,
                     IsEnabled = false,
                 });

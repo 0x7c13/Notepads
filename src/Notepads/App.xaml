@@ -30,6 +30,8 @@
                 <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

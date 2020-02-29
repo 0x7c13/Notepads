@@ -27,6 +27,8 @@
 
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
+        event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+
         event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
         event EventHandler<ITextEditor> TextEditorLineEndingChanged;
@@ -66,6 +68,8 @@
         bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content);
 
         bool HaveUnsavedTextEditor();
+
+        bool HaveNonemptyTextEditor();
 
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 

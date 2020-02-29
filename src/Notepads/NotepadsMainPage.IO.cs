@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Windows.Graphics.Printing;
     using Windows.Storage;
+    using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -149,6 +151,41 @@
                 }
                 return false;
             }
+        }
+
+        public async Task Print(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+            await PrintAll(new[] {textEditor});
+        }
+
+        public async Task PrintAll(ITextEditor[] textEditors)
+        {
+            if (textEditors == null || textEditors.Length == 0) return;
+            
+            // Initialize print content
+            PrintArgs.PreparePrintContent(textEditors);
+
+            if (PrintManager.IsSupported() && HaveNonemptyTextEditor(textEditors))
+            {
+                // Show print UI
+                await PrintArgs.ShowPrintUIAsync();
+            }
+            else if (!PrintManager.IsSupported())
+            {
+                // Printing is not supported on this device
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintNotSupported"), 1500);
+            }
+        }
+
+        private bool HaveNonemptyTextEditor(ITextEditor[] textEditors)
+        {
+            foreach (ITextEditor textEditor in textEditors)
+            {
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
+                return true;
+            }
+            return false;
         }
     }
 }

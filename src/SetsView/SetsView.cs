@@ -381,6 +381,7 @@ namespace SetsView
         {
             _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
             UpdateScrollViewerShadows();
+            UpdateScrollViewerNavigateButtons();
         }
 
         public void ScrollToLastSet()
@@ -441,6 +442,25 @@ namespace SetsView
 
             _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
             _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
+        }
+
+        private void UpdateScrollViewerNavigateButtons()
+        {
+            if (Math.Abs(_setsScroller.HorizontalOffset - _setsScroller.ScrollableWidth) < 0.1)
+            {
+                _setsScrollBackButton.IsEnabled = true;
+                _setsScrollForwardButton.IsEnabled = false;
+            }
+            else if (Math.Abs(_setsScroller.HorizontalOffset) < 0.1)
+            {
+                _setsScrollBackButton.IsEnabled = false;
+                _setsScrollForwardButton.IsEnabled = true;
+            }
+            else
+            {
+                _setsScrollBackButton.IsEnabled = true;
+                _setsScrollForwardButton.IsEnabled = true;
+            }
         }
     }
 }
