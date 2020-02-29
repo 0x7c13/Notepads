@@ -153,13 +153,18 @@
 
         public async Task Print(ITextEditor textEditor)
         {
-            //Genarate single item array for the text editor
-            var singleTextEditorArray = new ITextEditor[] { textEditor };
+            if (textEditor == null) return;
+            await PrintAll(new[] {textEditor});
+        }
 
+        public async Task PrintAll(ITextEditor[] textEditors)
+        {
+            if (textEditors == null || textEditors.Length == 0) return;
+            
             // Initialize print content
-            PrintArgs.PreparePrintContent(singleTextEditorArray);
+            PrintArgs.PreparePrintContent(textEditors);
 
-            if (PrintManager.IsSupported() && !string.IsNullOrEmpty(textEditor.GetText()))
+            if (PrintManager.IsSupported() && HaveNonemptyTextEditor(textEditors))
             {
                 // Show print UI
                 await PrintArgs.ShowPrintUIAsync();
@@ -171,21 +176,14 @@
             }
         }
 
-        public async Task PrintAll(ITextEditor[] textEditors)
+        private bool HaveNonemptyTextEditor(ITextEditor[] textEditors)
         {
-            // Initialize print content
-            PrintArgs.PreparePrintContent(textEditors);
-
-            if (PrintManager.IsSupported() && NotepadsCore.HaveNonemptyTextEditor())
+            foreach (ITextEditor textEditor in textEditors)
             {
-                // Show print UI
-                await PrintArgs.ShowPrintUIAsync();
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
+                return true;
             }
-            else if (!PrintManager.IsSupported())
-            {
-                // Printing is not supported on this device
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintNotSupported"), 1500);
-            }
+            return false;
         }
     }
 }

@@ -906,7 +906,7 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            GetCurrentLineColumn(out var line, out var column, out var selectedLength);
+            GetCurrentLineColumn(out var line, out _, out _);
             var maxLine = TextEditorCore.GetText().Length 
                 - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
                 + 1;

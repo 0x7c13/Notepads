@@ -5,9 +5,6 @@
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
 
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PrintPageFormat : Page
     {
         public RichTextBlock TextContentBlock { get; set; }
@@ -48,8 +45,7 @@
                 FooterTextBlock.FontSize = textEditorFontSize;
             }
 
-            var run = new Run();
-            run.Text = textEditorText;
+            var run = new Run {Text = textEditorText};
             TextEditorContent.Inlines.Add(run);
         }
     }
