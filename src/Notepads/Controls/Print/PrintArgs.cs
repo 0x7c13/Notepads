@@ -67,13 +67,7 @@
         /// <summary>
         ///  A hidden canvas used to hold pages we wish to print
         /// </summary>
-        private static Canvas PrintCanvas
-        {
-            get
-            {
-                return _sourcePage.FindName("PrintCanvas") as Canvas;
-            }
-        }
+        private static Canvas PrintCanvas => _sourcePage.FindName("PrintCanvas") as Canvas;
 
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -81,7 +75,7 @@
         /// Method that will generate print content for the scenario
         /// It will create the first page from which content will flow
         /// </summary>
-        /// <param name="page">The page to print</param>
+        /// <param name="textEditors">Array of Notepads ITextEditors to print</param>
         public static void PreparePrintContent(ITextEditor[] textEditors)
         {
             // Clear the cache of preview pages
@@ -95,9 +89,10 @@
 
             foreach (var textEditor in textEditors)
             {
-                if (!string.IsNullOrEmpty(textEditor.GetText()))
+                var textDocument = textEditor.GetText();
+                if (!string.IsNullOrEmpty(textDocument))
                 {
-                    var page = new PrintPageFormat(textEditor.GetText(),
+                    var page = new PrintPageFormat(textDocument,
                         new FontFamily(EditorSettingsService.EditorFontFamily),
                         EditorSettingsService.EditorFontSize,
                         _headerText,
@@ -175,7 +170,7 @@
                 // Get the PrintTaskOptions
                 PrintTaskOptions printingOptions = ((PrintTaskOptions)e.PrintTaskOptions);
 
-                // Get the page description to deterimine how big the page is
+                // Get the page description to determine how big the page is
                 PrintPageDescription pageDescription = printingOptions.GetPageDescription(0);
 
                 var count = 0;
@@ -370,7 +365,7 @@
                 displayedOptions.Add(StandardPrintTaskOptions.CustomPageRanges);
                 displayedOptions.Add(StandardPrintTaskOptions.Duplex);
                 displayedOptions.Add(StandardPrintTaskOptions.Collation);
-                displayedOptions.Add(StandardPrintTaskOptions.NUp);
+                //displayedOptions.Add(StandardPrintTaskOptions.NUp);
                 displayedOptions.Add(StandardPrintTaskOptions.MediaType);
                 displayedOptions.Add(StandardPrintTaskOptions.Bordering);
                 //displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
@@ -406,7 +401,7 @@
         /// This is the event handler for PrintManager option changed.
         /// </summary>
         /// <param name="sender">PrintTaskOptionDetails</param>
-        /// <param name="e">PrintTaskOptionChangedEventArgs </param>
+        /// <param name="args">PrintTaskOptionChangedEventArgs </param>
         private static async void PrintDetailedOptions_OptionChanged(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
         {
             bool invalidatePreview = false;

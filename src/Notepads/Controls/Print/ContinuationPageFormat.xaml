@@ -21,7 +21,7 @@
 
         <RichTextBlockOverflow x:Name="ContinuationPageLinkedContainer" Grid.Row="1"/>
 
-        <StackPanel x:Name="Footer" Grid.Row="3">
+        <StackPanel x:Name="Footer" Grid.Row="2">
             <TextBlock x:Name="FooterTextBlock" Foreground="Black" TextAlignment="Center" TextWrapping="Wrap"/>
         </StackPanel>
     </Grid>
