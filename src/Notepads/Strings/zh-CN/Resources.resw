@@ -497,4 +497,48 @@
     <value>使用正则表达式查找</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>打印全部...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>仅支持到小数点后一位</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>数值超出范围</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>页脚</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>页眉</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>水平边距 (%)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>打印纸所占百分比数值</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>打印错误:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>打印失败</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>此设备不支持打印</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>垂直边距  (%)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
 </root>
