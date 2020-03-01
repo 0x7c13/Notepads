@@ -545,4 +545,8 @@
     <value>Vertical Margin (in %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>Clear Recently Opened</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
 </root>

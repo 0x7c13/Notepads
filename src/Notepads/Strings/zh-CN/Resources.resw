@@ -545,4 +545,8 @@
     <value>垂直边距  (%)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>清除最近打开记录</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
 </root>

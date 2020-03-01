@@ -229,11 +229,7 @@
                 MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
                     "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
                 MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
-
-                //await BuildOpenRecentButtonSubItems();
             };
-
-            BuildOpenRecentButtonSubItems();
 
             if (!App.IsFirstInstance)
             {
@@ -242,44 +238,54 @@
             }
         }
 
-        private async void BuildOpenRecentButtonSubItems()
+        private async Task BuildOpenRecentButtonSubItems()
         {
-            var menuFlyoutSubItem = new MenuFlyoutSubItem();
-            var fontIcon = new FontIcon();
-            fontIcon.Glyph = "\xE81C";
-            //MenuOpenRecentlyUsedFileButton?.Items?.Clear();
-            menuFlyoutSubItem.Text = "Open Recent";
-            menuFlyoutSubItem.Icon = fontIcon;
+            var openRecentSubItem = new MenuFlyoutSubItem
+            {
+                Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
+                Icon = new FontIcon {Glyph = "\xE81C"},
+                Name = "MenuOpenRecentlyUsedFileButton",
+            };
 
             foreach (var item in await MRUService.Get())
             {
                 if (item is StorageFile file)
                 {
-                    /*MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
+                    var newItem = new MenuFlyoutItem()
                     {
-                        Text = file.Path
-                    });*/
-
-                    menuFlyoutSubItem?.Items?.Add(new MenuFlyoutItem()
-                    {
-                        Text = file.Path
-                    });
+                        Text = file.Path,
+                    };
+                    newItem.Click += async (sender, args) => { await OpenFile(file); };
+                    openRecentSubItem?.Items?.Add(newItem);
                 }
             }
 
-            /*MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutSeparator());
-            MenuOpenRecentlyUsedFileButton?.Items?.Add(new MenuFlyoutItem()
-            {
-                Text = "Clear Recently Opened"
-            });*/
+            openRecentSubItem?.Items?.Add(new MenuFlyoutSeparator());
 
-            menuFlyoutSubItem?.Items?.Add(new MenuFlyoutSeparator());
-            menuFlyoutSubItem?.Items?.Add(new MenuFlyoutItem()
+            var clearRecentlyOpenedSubItem = 
+                new MenuFlyoutItem()
+                {
+                    Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
+                };
+            clearRecentlyOpenedSubItem.Click += async (sender, args) =>
             {
-                Text = "Clear Recently Opened"
-            });
-            MainMenuButtonFlyout.Items.RemoveAt(3);
-            MainMenuButtonFlyout.Items.Insert(3, menuFlyoutSubItem);
+                MRUService.ClearAll();
+                await BuildOpenRecentButtonSubItems();
+
+            };
+            openRecentSubItem?.Items?.Add(clearRecentlyOpenedSubItem);
+
+            if (MainMenuButtonFlyout.Items != null)
+            {
+                var oldOpenRecentSubItem = MainMenuButtonFlyout.Items.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
+                if (oldOpenRecentSubItem != null)
+                {
+                    MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
+                }
+
+                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);  
+            }
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -401,6 +407,8 @@
                 SessionManager.IsBackupEnabled = true;
                 SessionManager.StartSessionBackup();
             }
+
+            await BuildOpenRecentButtonSubItems();
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;

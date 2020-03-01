@@ -102,11 +102,6 @@
                                                 <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSubItem x:Uid="MainMenu_Button_Open_Recent" x:Name="MenuOpenRecentlyUsedFileButton" >
-                                            <MenuFlyoutSubItem.Icon>
-                                                <FontIcon Glyph="&#xE81C;" />
-                                            </MenuFlyoutSubItem.Icon>
-                                        </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
                                             <MenuFlyoutItem.KeyboardAccelerators>

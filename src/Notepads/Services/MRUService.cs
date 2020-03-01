@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Windows.Storage;
+    using Microsoft.AppCenter.Analytics;
 
     public static class MRUService
     {
@@ -16,15 +17,30 @@
         {
             IList<IStorageItem> items = new List<IStorageItem>();
 
-            var mru = Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList;
-
-            for (int i = 0; i < mru.Entries.Count; i++)
+            try
             {
-                if (i >= top) break;
-                items.Add(await mru.GetItemAsync(mru.Entries[i].Token));
+                var mru = Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList;
+
+                for (int i = 0; i < mru.Entries.Count; i++)
+                {
+                    if (i >= top) break;
+                    items.Add(await mru.GetItemAsync(mru.Entries[i].Token));
+                }
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("MRUService_FailedToGetMostRecentlyUsedList", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() }
+                });
             }
 
             return items;
+        }
+
+        public static void ClearAll()
+        {
+            Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Clear();
         }
     }
 }
