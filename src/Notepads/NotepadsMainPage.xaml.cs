@@ -249,7 +249,7 @@
 
             var MRUFileList = new HashSet<string>();
 
-            foreach (var item in await MRUService.Get())
+            foreach (var item in await MRUService.Get(top: 10))
             {
                 if (item is StorageFile file)
                 {
@@ -261,8 +261,9 @@
                     }
                     var newItem = new MenuFlyoutItem()
                     {
-                        Text = file.Path,
+                        Text = file.Path
                     };
+                    ToolTipService.SetToolTip(newItem, file.Path);
                     newItem.Click += async (sender, args) => { await OpenFile(file); };
                     openRecentSubItem?.Items?.Add(newItem);
                     MRUFileList.Add(file.Path);

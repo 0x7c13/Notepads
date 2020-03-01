@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
     using Microsoft.AppCenter.Analytics;
 
     public static class MRUService
@@ -34,7 +35,17 @@
                 for (int i = 0; i < mru.Entries.Count; i++)
                 {
                     if (i >= top) break;
-                    items.Add(await mru.GetItemAsync(mru.Entries[i].Token));
+
+                    try
+                    {
+                        items.Add(await mru.GetItemAsync(mru.Entries[i].Token, AccessCacheOptions.SuppressAccessTimeUpdate));
+                    }
+                    catch (Exception)
+                    {
+                        // File might be renamed or deleted
+                        // We should continue in case of GetItemAsync() failure
+                        continue;
+                    }
                 }
             }
             catch (Exception ex)
