@@ -171,6 +171,7 @@
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="MaxWidth" Value="1200" />
                                             </Style>
                                         </MenuFlyout.MenuFlyoutPresenterStyle>
                                     </MenuFlyout>
