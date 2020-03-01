@@ -247,16 +247,25 @@
                 Name = "MenuOpenRecentlyUsedFileButton",
             };
 
+            var MRUFileList = new HashSet<string>();
+
             foreach (var item in await MRUService.Get())
             {
                 if (item is StorageFile file)
                 {
+                    if (MRUFileList.Contains(file.Path))
+                    {
+                        // MRU might contains files with same path (User opens a recently used file after renaming it)
+                        // So we need to do the decouple here
+                        continue;
+                    }
                     var newItem = new MenuFlyoutItem()
                     {
                         Text = file.Path,
                     };
                     newItem.Click += async (sender, args) => { await OpenFile(file); };
                     openRecentSubItem?.Items?.Add(newItem);
+                    MRUFileList.Add(file.Path);
                 }
             }
 

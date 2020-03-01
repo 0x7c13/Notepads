@@ -10,7 +10,17 @@
     {
         public static void Add(IStorageItem item)
         {
-            Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Add(item);
+            try
+            {
+                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Add(item);
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("MRUService_FailedToAddStorageItemToMRU", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() }
+                });
+            }
         }
 
         public static async Task<IList<IStorageItem>> Get(int top = 10)
@@ -29,7 +39,7 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("MRUService_FailedToGetMostRecentlyUsedList", new Dictionary<string, string>()
+                Analytics.TrackEvent("MRUService_FailedToGetMRU", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() }
                 });
@@ -40,7 +50,17 @@
 
         public static void ClearAll()
         {
-            Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Clear();
+            try
+            {
+                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Clear();
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() }
+                });
+            }
         }
     }
 }
