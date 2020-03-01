@@ -59,7 +59,7 @@
             }
         }
 
-        public async Task<bool> OpenFile(StorageFile file)
+        public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
         {
             try
             {
@@ -76,7 +76,10 @@
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 MRUService.Add(file); // Remember recently used files
-                await BuildOpenRecentButtonSubItems();
+                if (rebuildOpenRecentItems)
+                {
+                    await BuildOpenRecentButtonSubItems();   
+                }
                 return true;
             }
             catch (Exception ex)
@@ -99,13 +102,13 @@
             {
                 if (storageItem is StorageFile file)
                 {
-                    if (await OpenFile(file))
+                    if (await OpenFile(file, rebuildOpenRecentItems: false))
                     {
                         successCount++;
                     }
                 }
             }
-
+            await BuildOpenRecentButtonSubItems();
             return successCount;
         }
 
