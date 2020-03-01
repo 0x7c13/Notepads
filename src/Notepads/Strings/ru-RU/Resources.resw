@@ -460,6 +460,7 @@
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
     <value>Open Recent</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
     <value>Go To Line</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
