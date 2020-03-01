@@ -432,6 +432,10 @@
                     {
                         HideFindAndReplaceControl();
                     }
+                    else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+                    {
+                        HideGoToControl();
+                    }
                 }),
             });
         }
