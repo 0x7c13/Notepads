@@ -102,6 +102,7 @@
                                                 <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
@@ -170,6 +171,7 @@
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="MaxWidth" Value="1200" />
                                             </Style>
                                         </MenuFlyout.MenuFlyoutPresenterStyle>
                                     </MenuFlyout>
