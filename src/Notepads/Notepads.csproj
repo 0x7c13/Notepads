@@ -187,6 +187,7 @@
     <Compile Include="NotepadsMainPage.IO.cs" />
     <Compile Include="NotepadsMainPage.StatusBar.cs" />
     <Compile Include="NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Services\MRUService.cs" />
     <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotepadsProtocolService.cs" />

@@ -457,6 +457,10 @@
     <value>Yeni Pencere</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>Open Recent</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
     <value>Go To Line</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
@@ -540,5 +544,9 @@
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
     <value>Vertical Margin (in %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>Clear Recently Opened</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
 </root>
