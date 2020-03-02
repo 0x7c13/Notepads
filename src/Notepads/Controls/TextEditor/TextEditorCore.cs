@@ -775,6 +775,12 @@
 
         public async void SearchInWeb()
         {
+            if (string.IsNullOrEmpty(Document.Selection.Text.Trim())) return;
+            if(Uri.TryCreate(Document.Selection.Text.Trim(), UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
+            {
+                await Launcher.LaunchUriAsync(webUrl);
+                return;
+            }
             var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
             await Launcher.LaunchUriAsync(searchUri);
         }
