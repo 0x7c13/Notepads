@@ -641,6 +641,12 @@
     <PRIResource Include="Strings\ko-KR\Settings.resw" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\hi-IN\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hi-IN\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
     <PRIResource Include="Strings\or-IN\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
