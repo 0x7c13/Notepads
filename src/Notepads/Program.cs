@@ -27,14 +27,14 @@
             {
                 RedirectOrCreateNewInstance();
             }
-            else if (activatedArgs is CommandLineActivatedEventArgs cmdActivatedArgs)
+            else if (activatedArgs is CommandLineActivatedEventArgs)
             {
                 RedirectOrCreateNewInstance();
             }
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
                 LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
+                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
                     OpenNewInstance();
@@ -50,7 +50,7 @@
 
                 if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                 {
-                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out var context);
+                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
                     if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                     {
                         handled = true;
