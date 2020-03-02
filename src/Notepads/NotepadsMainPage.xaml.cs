@@ -291,7 +291,7 @@
                     MRUService.ClearAll();
                     await BuildOpenRecentButtonSubItems();
                 };
-                openRecentSubItem?.Items?.Add(clearRecentlyOpenedSubItem);
+                openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
                 openRecentSubItem.IsEnabled = true;
             }
 

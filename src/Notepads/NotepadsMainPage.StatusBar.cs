@@ -233,7 +233,7 @@
 
         private void FontZoomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (!(sender is Slider item)) return;
+            if (!(sender is Slider)) return;
 
             var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedTextEditor == null) return;

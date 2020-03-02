@@ -193,7 +193,6 @@
     <Compile Include="Services\NotepadsProtocolService.cs" />
     <Compile Include="Services\NotificationCenter.cs" />
     <Compile Include="Utilities\DialogManager.cs" />
-    <Compile Include="Utilities\FilePathUtility.cs" />
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
