@@ -270,20 +270,6 @@
                 }
             }
 
-            openRecentSubItem?.Items?.Add(new MenuFlyoutSeparator());
-
-            var clearRecentlyOpenedSubItem = 
-                new MenuFlyoutItem()
-                {
-                    Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
-                };
-            clearRecentlyOpenedSubItem.Click += async (sender, args) =>
-            {
-                MRUService.ClearAll();
-                await BuildOpenRecentButtonSubItems();
-            };
-            openRecentSubItem?.Items?.Add(clearRecentlyOpenedSubItem);
-
             if (MainMenuButtonFlyout.Items != null)
             {
                 var oldOpenRecentSubItem = MainMenuButtonFlyout.Items.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
@@ -291,9 +277,30 @@
                 {
                     MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
                 }
+            }
 
-                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
-                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);  
+            if (openRecentSubItem.Items.Count > 0)
+            {
+                openRecentSubItem?.Items?.Add(new MenuFlyoutSeparator());
+
+                var clearRecentlyOpenedSubItem =
+                    new MenuFlyoutItem()
+                    {
+                        Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
+                    };
+                clearRecentlyOpenedSubItem.Click += async (sender, args) =>
+                {
+                    MRUService.ClearAll();
+                    await BuildOpenRecentButtonSubItems();
+
+                };
+                openRecentSubItem?.Items?.Add(clearRecentlyOpenedSubItem);
+
+                if (MainMenuButtonFlyout.Items != null)
+                {
+                    var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+                    MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
+                }
             }
         }
 
