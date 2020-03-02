@@ -541,4 +541,12 @@
     <value>ରେଗୁଲାର୍ ଏକ୍ସପ୍ରେସନ</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>ସମ୍ପ୍ରତି ଖୋଲନ୍ତୁ</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>ନିକଟରେ ଖୋଲାଯାଇଥିବା ସଫା କରନ୍ତୁ</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
 </root>
