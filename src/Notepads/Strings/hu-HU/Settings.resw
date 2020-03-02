@@ -338,31 +338,31 @@
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Highlight Current Line</value>
+    <value>Aktuális Sor Kiemelése</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>Szegély mutatása az aktuális sor körül</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>Szegély mutatása az aktuális sor körül</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Custom Search Engine</value>
+    <value>Egyéni Keresőmotor</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Enter a url of format https://www.example.com/search?q={0}</value>
+    <value>*Írja be az url-t a következő formátumban https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Settings for default search engine choosen when a web search is done.</value>
+    <value>Alapértelmezett keresőmotor beállítások a weben való kereséskor lesz kiválasztva.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Default Search Engine</value>
+    <value>Alapértelmezett Keresőmotor</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
 </root>
