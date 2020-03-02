@@ -158,7 +158,7 @@
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ओके</value>
+    <value>ठीक</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ओके</value>
+    <value>ठीक</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
@@ -540,5 +540,13 @@
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
     <value>रेग्युलर एक्स्प्रेशन</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>हाल ही में खुला</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>हाल ही में खोला गया को साफ़ करें</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
 </root>
