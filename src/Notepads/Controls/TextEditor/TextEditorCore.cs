@@ -296,9 +296,13 @@
                 if (line.Length + length >= end)
                 {
                     if (i == lineIndex - 1)
+                    {
                         selectedCount = end - start;
+                        if (Document.Selection.Text.EndsWith(RichEditBoxDefaultLineEnding)) selectedCount += 1;
+                    } 
                     else
-                        selectedCount = end - start + (i - lineIndex);
+                        selectedCount = end - start + (i - lineIndex) + 1;
+                    if (end > _content.Length) selectedCount -= 2;
                     return;
                 }
 
