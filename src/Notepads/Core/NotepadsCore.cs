@@ -298,6 +298,12 @@
             }
         }
 
+        public void SwitchTo(int index)
+        {
+            if (Sets.Items == null || index < 0 || index >= Sets.Items.Count) return;
+            Sets.SelectedIndex = index;
+        }
+
         public void SwitchTo(ITextEditor textEditor)
         {
             var item = GetTextEditorSetsViewItem(textEditor);

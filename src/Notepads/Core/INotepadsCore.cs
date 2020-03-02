@@ -77,6 +77,8 @@
 
         void SwitchTo(bool next);
 
+        void SwitchTo(int index);
+
         void SwitchTo(ITextEditor textEditor);
 
         ITextEditor GetSelectedTextEditor();
