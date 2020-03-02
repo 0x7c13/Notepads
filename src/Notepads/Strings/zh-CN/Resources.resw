@@ -457,6 +457,10 @@
     <value>新建窗口</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>打开最近的文件</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
     <value>转到此行</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
@@ -540,5 +544,9 @@
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
     <value>垂直边距  (%)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>清除最近打开记录</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
 </root>

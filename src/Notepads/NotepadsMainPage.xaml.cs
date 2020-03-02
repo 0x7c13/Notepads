@@ -238,6 +238,70 @@
             }
         }
 
+        private async Task BuildOpenRecentButtonSubItems()
+        {
+            var openRecentSubItem = new MenuFlyoutSubItem
+            {
+                Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
+                Icon = new FontIcon {Glyph = "\xE81C"},
+                Name = "MenuOpenRecentlyUsedFileButton",
+            };
+
+            var MRUFileList = new HashSet<string>();
+
+            foreach (var item in await MRUService.Get(top: 10))
+            {
+                if (item is StorageFile file)
+                {
+                    if (MRUFileList.Contains(file.Path))
+                    {
+                        // MRU might contains files with same path (User opens a recently used file after renaming it)
+                        // So we need to do the decouple here
+                        continue;
+                    }
+                    var newItem = new MenuFlyoutItem()
+                    {
+                        Text = file.Path
+                    };
+                    ToolTipService.SetToolTip(newItem, file.Path);
+                    newItem.Click += async (sender, args) => { await OpenFile(file); };
+                    openRecentSubItem.Items?.Add(newItem);
+                    MRUFileList.Add(file.Path);
+                }
+            }
+
+            var oldOpenRecentSubItem = MainMenuButtonFlyout.Items?.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
+            if (oldOpenRecentSubItem != null)
+            {
+                MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
+            }
+
+            openRecentSubItem.IsEnabled = false;
+            if (openRecentSubItem.Items?.Count > 0)
+            {
+                openRecentSubItem.Items?.Add(new MenuFlyoutSeparator());
+
+                var clearRecentlyOpenedSubItem =
+                    new MenuFlyoutItem()
+                    {
+                        Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
+                    };
+                clearRecentlyOpenedSubItem.Click += async (sender, args) =>
+                {
+                    MRUService.ClearAll();
+                    await BuildOpenRecentButtonSubItems();
+                };
+                openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
+                openRecentSubItem.IsEnabled = true;
+            }
+
+            if (MainMenuButtonFlyout.Items != null)
+            {
+                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
+            }
+        }
+
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
@@ -357,6 +421,8 @@
                 SessionManager.IsBackupEnabled = true;
                 SessionManager.StartSessionBackup();
             }
+
+            await BuildOpenRecentButtonSubItems();
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
