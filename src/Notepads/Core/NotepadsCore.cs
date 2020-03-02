@@ -743,11 +743,11 @@
                 var index = -1;
 
                 // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items.Count; i++)
+                for (int i = 0; i < sets.Items?.Count; i++)
                 {
                     var item = sets.ContainerFromIndex(i) as SetsViewItem;
 
-                    if (args.GetPosition(item).X - item.ActualWidth < 0)
+                    if (args.GetPosition(item).X - item?.ActualWidth < 0)
                     {
                         index = i;
                         break;
@@ -799,7 +799,7 @@
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
-            if (Sets.Items.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)
