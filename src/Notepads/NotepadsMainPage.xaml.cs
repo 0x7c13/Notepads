@@ -265,23 +265,21 @@
                     };
                     ToolTipService.SetToolTip(newItem, file.Path);
                     newItem.Click += async (sender, args) => { await OpenFile(file); };
-                    openRecentSubItem?.Items?.Add(newItem);
+                    openRecentSubItem.Items?.Add(newItem);
                     MRUFileList.Add(file.Path);
                 }
             }
 
-            if (MainMenuButtonFlyout.Items != null)
+            var oldOpenRecentSubItem = MainMenuButtonFlyout.Items?.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
+            if (oldOpenRecentSubItem != null)
             {
-                var oldOpenRecentSubItem = MainMenuButtonFlyout.Items.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
-                if (oldOpenRecentSubItem != null)
-                {
-                    MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
-                }
+                MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
             }
 
-            if (openRecentSubItem.Items.Count > 0)
+            openRecentSubItem.IsEnabled = false;
+            if (openRecentSubItem.Items?.Count > 0)
             {
-                openRecentSubItem?.Items?.Add(new MenuFlyoutSeparator());
+                openRecentSubItem.Items?.Add(new MenuFlyoutSeparator());
 
                 var clearRecentlyOpenedSubItem =
                     new MenuFlyoutItem()
@@ -292,15 +290,15 @@
                 {
                     MRUService.ClearAll();
                     await BuildOpenRecentButtonSubItems();
-
                 };
                 openRecentSubItem?.Items?.Add(clearRecentlyOpenedSubItem);
+                openRecentSubItem.IsEnabled = true;
+            }
 
-                if (MainMenuButtonFlyout.Items != null)
-                {
-                    var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
-                    MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
-                }
+            if (MainMenuButtonFlyout.Items != null)
+            {
+                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
             }
         }
 
