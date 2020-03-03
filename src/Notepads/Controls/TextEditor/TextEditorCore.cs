@@ -775,7 +775,6 @@
 
         public async void SearchInWeb()
         {
-            if (string.IsNullOrEmpty(Document.Selection.Text.Trim())) return;
             try
             {
                 if (Uri.TryCreate(Document.Selection.Text.Trim(), UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
