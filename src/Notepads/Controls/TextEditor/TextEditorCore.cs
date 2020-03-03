@@ -519,7 +519,8 @@
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
                 {
                     return;
                 }
