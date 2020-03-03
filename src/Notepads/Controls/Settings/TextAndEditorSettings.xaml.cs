@@ -9,6 +9,7 @@
     using Utilities;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class TextAndEditorSettings : Page
     {
@@ -41,10 +42,20 @@
             {
                 if (_availableFonts == null)
                 {
-                    var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-                    _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    try
+                    {
+                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+                        _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        Analytics.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
+                        {
+                            { "Exception", ex.ToString() }
+                        });
+                        _availableFonts = new List<string>();
+                    }
                 }
-
                 return _availableFonts;
             }
         }
