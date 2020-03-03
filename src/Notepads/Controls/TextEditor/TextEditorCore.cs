@@ -775,8 +775,15 @@
 
         public async void SearchInWeb()
         {
-            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
-            await Launcher.LaunchUriAsync(searchUri);
+            try
+            {
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
+                await Launcher.LaunchUriAsync(searchUri);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to open search link: {ex.Message}");
+            }
         }
 
         private void ShowEasterEgg()

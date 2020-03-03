@@ -13,7 +13,8 @@
         {
             try
             {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Add(item);
+                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList
+                    .Add(item, string.Empty, RecentStorageItemVisibility.AppAndSystem);
             }
             catch (Exception ex)
             {
