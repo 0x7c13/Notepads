@@ -466,7 +466,7 @@
                                         </AppBarButton.KeyboardAccelerators>
                                     </AppBarButton>
                                     <Slider x:Name="FontZoomSlider" 
-                                            Style="{StaticResource CustomSliderStyle}"
+                                            Style="{StaticResource ZoomSliderStyle}"
                                             Minimum="10" Maximum="500" Value="100"
                                             VerticalAlignment="Center" Width="150"
                                             Margin="5"
