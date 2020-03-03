@@ -53,9 +53,6 @@
         {
             Opening -= TabContextFlyout_Opening;
             Closed -= TabContextFlyout_Closed;
-
-            _notepadsCore = null;
-            _textEditor = null;
         }
 
         private void TabContextFlyout_Opening(object sender, object e)

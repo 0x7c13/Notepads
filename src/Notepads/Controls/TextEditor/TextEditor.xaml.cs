@@ -220,7 +220,6 @@
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
                 contextFlyout.Dispose();
-                TextEditorCore.ContextFlyout = null;
             }
 
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
@@ -243,7 +242,6 @@
             if (_contentPreviewExtension != null)
             {
                 _contentPreviewExtension.Dispose();
-                _contentPreviewExtension = null;
             }
 
             if (SplitPanel != null)
