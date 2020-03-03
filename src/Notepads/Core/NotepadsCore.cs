@@ -214,7 +214,6 @@
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
             {
                 tabContextFlyout.Dispose();
-                item.ContextFlyout = null;
             }
 
             TextEditorUnloaded?.Invoke(this, textEditor);
