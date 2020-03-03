@@ -60,6 +60,25 @@
                                   Margin="0,0,0,0"/>
                     <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 </StackPanel>
+                <TextBlock
+                    x:Uid="/Settings/AdvancedPage_LogEntrySettings_Title"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,40">
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_LogEntrySettings_EnableLogEntryToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="LogEntryToggleSwitch" 
+                                  Margin="0,0,0,0"/>
+                    <RichTextBlock Margin="0,8,0,0" FontSize="12" FontStyle="Italic" IsTextSelectionEnabled="False">
+                        <Paragraph>
+                            <Run x:Uid="/Settings/AdvancedPage_EnableLogEntry_Description" />
+                            <Hyperlink NavigateUri="https://support.microsoft.com/help/260563/how-to-use-notepad-to-create-a-log-file" TextDecorations="None">
+                                <Run x:Uid="/Settings/AdvancedPage_EnableLogEntry_Description_Hyperlink"/>
+                            </Hyperlink>
+                        </Paragraph>
+                    </RichTextBlock>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
 

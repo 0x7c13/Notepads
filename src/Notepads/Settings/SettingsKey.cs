@@ -30,5 +30,6 @@
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
+        internal static string EditorEnableLogEntryBool = "EditorEnableLogEntryBool";
     }
 }

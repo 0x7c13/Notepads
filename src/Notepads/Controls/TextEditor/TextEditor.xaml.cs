@@ -20,6 +20,7 @@
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -335,6 +336,7 @@
         {
             Loaded?.Invoke(this, e);
             StartCheckingFileStatusPeriodically();
+            if (EditorSettingsService.EnableLogEntry) NewLogEntry();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -1016,6 +1018,28 @@
         private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
         {
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+        }
+
+        private void NewLogEntry()
+        {
+            var docText = TextEditorCore.GetText();
+            if (!docText.StartsWith(".LOG")) return;
+
+            TextEditorCore.Document.Selection.StartPosition = docText.Length;
+
+            if (docText[TextEditorCore.Document.Selection.StartPosition - 1] == RichEditBoxDefaultLineEnding)
+            {
+                TextEditorCore.Document.Selection.SetText(TextSetOptions.None, DateTime.Now.ToString("h:mm tt dd-MMM-yy")
+                    + RichEditBoxDefaultLineEnding);
+            }
+            else
+            {
+                TextEditorCore.Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding
+                    + DateTime.Now.ToString("h:mm tt dd-MMM-yy")
+                    + RichEditBoxDefaultLineEnding);
+            }
+
+            TextEditorCore.Document.Selection.StartPosition = TextEditorCore.Document.Selection.EndPosition;
         }
     }
 }

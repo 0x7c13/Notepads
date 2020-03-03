@@ -365,4 +365,24 @@
     <value>Default Search Engine</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
+  <data name="AdvancedPage_EnableLogEntry_Description.Text" xml:space="preserve">
+    <value>Once enabled, when legacy notepad style log files (files that start with .LOG) are opened current date-time is added to the end of the file and user is prompted to type entry in the next line.</value>
+    <comment>AdvancedPage LogEntrySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_EnableLogEntry_Description_Hyperlink.Text" xml:space="preserve">
+    <value>More details...</value>
+    <comment>AdvancedPage LogEntrySettings Description Hyperlink display text.</comment>
+  </data>
+  <data name="AdvancedPage_LogEntrySettings_EnableLogEntryToggleSwitch.OffContent" xml:space="preserve">
+    <value>Enable auto-logging</value>
+    <comment>AdvancedPage LogEntrySettings LogEntryToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LogEntrySettings_EnableLogEntryToggleSwitch.OnContent" xml:space="preserve">
+    <value>Enable auto-logging</value>
+    <comment>AdvancedPage LogEntrySettings LogEntryToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LogEntrySettings_Title.Text" xml:space="preserve">
+    <value>Log File Preferences</value>
+    <comment>AdvancedPage LogEntrySettings Title display text.</comment>
+  </data>
 </root>

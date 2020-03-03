@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Controls.Settings
 {
     using Notepads.Services;
+    using System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -25,6 +26,8 @@
 
             AlwaysOpenNewWindowToggleSwitch.IsOn = EditorSettingsService.AlwaysOpenNewWindow;
 
+            LogEntryToggleSwitch.IsOn = EditorSettingsService.EnableLogEntry;
+
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
         }
@@ -34,6 +37,7 @@
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
+            LogEntryToggleSwitch.Toggled += LogEntryToggleSwitch_Toggled;
         }
 
         private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
@@ -55,6 +59,11 @@
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
+        }
+
+        private void LogEntryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.EnableLogEntry = LogEntryToggleSwitch.IsOn;
         }
     }
 }

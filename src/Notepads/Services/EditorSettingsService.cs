@@ -222,6 +222,18 @@
             }
         }
 
+        private static bool _enableLogEntry;
+
+        public static bool EnableLogEntry
+        {
+            get => _enableLogEntry;
+            set
+            {
+                _enableLogEntry = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableLogEntryBool, value, true);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -247,6 +259,8 @@
             InitializeSessionSnapshotSettings();
 
             InitializeAppOpeningPreferencesSettings();
+
+            InitializeLogEntrySettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -444,6 +458,18 @@
             else
             {
                 _alwaysOpenNewWindow = false;
+            }
+        }
+
+        private static void InitializeLogEntrySettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableLogEntryBool) is bool enableLogEntry)
+            {
+                _enableLogEntry = enableLogEntry;
+            }
+            else
+            {
+                _enableLogEntry = true;
             }
         }
     }
