@@ -776,14 +776,16 @@
 
         public async void SearchInWeb()
         {
+            var searchString = Document.Selection.Text.Trim().Length <= 2000 ? Document.Selection.Text.Trim() : Document.Selection.Text.Trim().Substring(0, 2000);
+
             try
             {
-                if (Uri.TryCreate(Document.Selection.Text.Trim(), UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
+                if (Uri.TryCreate(searchString, UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
                 {
                     await Launcher.LaunchUriAsync(webUrl);
                     return;
                 }
-                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", searchString.Split(null))));
                 await Launcher.LaunchUriAsync(searchUri);
             }
             catch (Exception ex)
