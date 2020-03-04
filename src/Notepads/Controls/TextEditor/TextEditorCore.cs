@@ -776,10 +776,15 @@
 
         public async void SearchInWeb()
         {
-            var searchString = Document.Selection.Text.Trim().Length <= 2000 ? Document.Selection.Text.Trim() : Document.Selection.Text.Trim().Substring(0, 2000);
-
             try
             {
+                var selectedText = Document.Selection.Text.Trim();
+
+                // The maximum length of a URL in the address bar is 2048 characters
+                // Let's take 2000 here to make sure we are not exceeding the limit
+                // Otherwise we will see " Invalid URI: The uri string is too long" exception
+                var searchString = selectedText.Length <= 2000 ? selectedText : selectedText.Substring(0, 2000);
+
                 if (Uri.TryCreate(searchString, UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
                 {
                     await Launcher.LaunchUriAsync(webUrl);
