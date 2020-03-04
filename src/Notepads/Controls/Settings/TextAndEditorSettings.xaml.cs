@@ -7,6 +7,7 @@
     using System.Threading;
     using Services;
     using Utilities;
+    using Windows.Globalization;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Microsoft.AppCenter.Analytics;
@@ -44,7 +45,7 @@
                 {
                     try
                     {
-                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
                         _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
                     }
                     catch (Exception ex)
