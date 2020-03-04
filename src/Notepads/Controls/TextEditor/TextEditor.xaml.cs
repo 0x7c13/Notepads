@@ -239,10 +239,7 @@
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
-            if (_contentPreviewExtension != null)
-            {
-                _contentPreviewExtension.Dispose();
-            }
+            _contentPreviewExtension?.Dispose();
 
             if (SplitPanel != null)
             {
