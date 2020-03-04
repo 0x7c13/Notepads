@@ -121,7 +121,7 @@
                         <Run x:Uid="/Settings/AboutPage_Disclaimer_Content"/>
                     </Paragraph>
                     <Paragraph>
-                        <LineBreak /> Copyright (c) 2019 Jackie (Jiaqi) Liu.
+                        <LineBreak /> Copyright (c) 2020 Jackie (Jiaqi) Liu.
                     </Paragraph>
                     <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" >
