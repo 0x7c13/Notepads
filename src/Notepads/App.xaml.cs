@@ -32,7 +32,7 @@
 
         private const string AppCenterSecret = null;
 
-        private XboxGameBarUIExtension XboxGameBarUIExtension = null;
+        private XboxGameBarWidget XboxGameBarWidget = null;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -163,14 +163,14 @@
 
         protected override async void OnActivated(IActivatedEventArgs args)
         {
-            XboxGameBarUIExtensionActivatedEventArgs uiExtArgs = null;
+            XboxGameBarWidgetActivatedEventArgs uiExtArgs = null;
             if (args.Kind == ActivationKind.Protocol)
             {
                 var protocolArgs = args as IProtocolActivatedEventArgs;
                 string protocolString = protocolArgs.Uri.AbsoluteUri;
-                if (protocolString.StartsWith("ms-gamebaruiextension"))
+                if (protocolString.StartsWith("ms-gamebarwidget"))
                 {
-                    uiExtArgs = args as XboxGameBarUIExtensionActivatedEventArgs;
+                    uiExtArgs = args as XboxGameBarWidgetActivatedEventArgs;
                 }
             }
 
@@ -182,7 +182,7 @@
             if (IsUiExt)
             {
                 IsFirstInstance = true;
-                XboxGameBarUIExtension = new XboxGameBarUIExtension(
+                XboxGameBarWidget = new XboxGameBarWidget(
                     uiExtArgs,
                     Window.Current.CoreWindow,
                     Window.Current.Content as Frame);
