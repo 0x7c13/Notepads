@@ -294,15 +294,15 @@
     <comment>Tab: ContextFlyout "Close" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>다른 것 닫기</value>
+    <value>다른 파일들 닫기</value>
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>오른쪽으로 닫기</value>
+    <value>오른쪽으로 최소화</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>저장된 것 닫기</value>
+    <value>저장된 파일 닫기</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
@@ -458,7 +458,7 @@
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Open Recent</value>
+    <value>최근 항목</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
@@ -470,11 +470,11 @@
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Line number exceeds beyond the total number of lines!</value>
+    <value>줄 번호가 이 파일의 줄 수를 초과합니다!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>You can only type a number!</value>
+    <value>숫자만 입력할 수 있습니다!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -482,7 +482,7 @@
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Search in web</value>
+    <value>웹에서 검색</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
@@ -498,7 +498,7 @@
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Use Regular Expression</value>
+    <value>정규식 사용</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
@@ -546,7 +546,7 @@
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Clear Recently Opened</value>
+    <value>최근 항목 지우기</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
 </root>
