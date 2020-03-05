@@ -143,26 +143,26 @@
                 <StackPanel x:Name="SearchEnginePanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="BingRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_bing.png" Width="20" Stretch="Uniform"/>
-                            <TextBlock Text="Bing" Margin="5,0,0,0"/>
+                            <Image Source="ms-appx:///Assets/search_bing.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock Text="Bing" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="GoogleRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_google.png" Width="20" Stretch="Uniform"/>
-                            <TextBlock Text="Google" Margin="5,0,0,0"/>
+                            <Image Source="ms-appx:///Assets/search_google.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock Text="Google" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="DuckDuckGoRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_duckduckgo.png" Width="20" Stretch="Uniform"/>
-                            <TextBlock Text="Duck Duck Go" Margin="5,0,0,0"/>
+                            <Image Source="ms-appx:///Assets/search_duckduckgo.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock Text="Duck Duck Go" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CustomSearchUrlRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_custom.png" Width="20" Stretch="Uniform"/>
-                            <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton" Text="Custom Search Engine" Margin="5,0,0,0"/>
+                            <Image Source="ms-appx:///Assets/search_custom.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton" Text="Custom Search Engine" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
                     <StackPanel  Margin="28,5,0,10">
