@@ -280,6 +280,7 @@
                                     {"Exception", ex.ToString()},
                                     {"IsChangingOpacityOnly", changingOpacityOnly.ToString()}
                                 });
+                            return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
                         }
                     }
                 }
