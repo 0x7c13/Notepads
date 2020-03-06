@@ -27,6 +27,8 @@
 
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
+        event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+
         event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
         event EventHandler<ITextEditor> TextEditorLineEndingChanged;
@@ -67,11 +69,15 @@
 
         bool HaveUnsavedTextEditor();
 
+        bool HaveNonemptyTextEditor();
+
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
         void ChangeEncoding(ITextEditor textEditor, Encoding encoding);
 
         void SwitchTo(bool next);
+
+        void SwitchTo(int index);
 
         void SwitchTo(ITextEditor textEditor);
 

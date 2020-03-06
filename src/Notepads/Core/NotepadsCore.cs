@@ -41,6 +41,8 @@
 
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
 
+        public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
 
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
@@ -183,6 +185,7 @@
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged += TextEditor_OnModeChanged;
@@ -211,7 +214,6 @@
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
             {
                 tabContextFlyout.Dispose();
-                item.ContextFlyout = null;
             }
 
             TextEditorUnloaded?.Invoke(this, textEditor);
@@ -220,6 +222,7 @@
             textEditor.Unloaded -= TextEditor_Unloaded;
             textEditor.KeyDown -= TextEditorKeyDown; 
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged -= TextEditor_OnModeChanged;
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
@@ -247,6 +250,18 @@
             {
                 if (!(setsItem.Content is ITextEditor textEditor)) continue;
                 if (!textEditor.IsModified) continue;
+                return true;
+            }
+            return false;
+        }
+
+        public bool HaveNonemptyTextEditor()
+        {
+            if (Sets.Items == null || Sets.Items.Count <= 1) return false;
+            foreach (SetsViewItem setsItem in Sets.Items)
+            {
+                if (!(setsItem.Content is ITextEditor textEditor)) continue;
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
                 return true;
             }
             return false;
@@ -280,6 +295,12 @@
                 if (selected == 0) Sets.SelectedIndex = setsCount - 1;
                 else Sets.SelectedIndex -= 1;
             }
+        }
+
+        public void SwitchTo(int index)
+        {
+            if (Sets.Items == null || index < 0 || index >= Sets.Items.Count) return;
+            Sets.SelectedIndex = index;
         }
 
         public void SwitchTo(ITextEditor textEditor)
@@ -476,6 +497,12 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorSelectionChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFontZoomFactorChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorFontZoomFactorChanged?.Invoke(this, textEditor);
         }
 
         private void TextEditor_OnEditorModificationStateChanged(object sender, EventArgs e)
@@ -715,11 +742,11 @@
                 var index = -1;
 
                 // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items.Count; i++)
+                for (int i = 0; i < sets.Items?.Count; i++)
                 {
                     var item = sets.ContainerFromIndex(i) as SetsViewItem;
 
-                    if (args.GetPosition(item).X - item.ActualWidth < 0)
+                    if (args.GetPosition(item).X - item?.ActualWidth < 0)
                     {
                         index = i;
                         break;
@@ -771,7 +798,7 @@
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
-            if (Sets.Items.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)

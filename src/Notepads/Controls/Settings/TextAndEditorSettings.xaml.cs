@@ -7,8 +7,10 @@
     using System.Threading;
     using Services;
     using Utilities;
+    using Windows.Globalization;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class TextAndEditorSettings : Page
     {
@@ -41,10 +43,20 @@
             {
                 if (_availableFonts == null)
                 {
-                    var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-                    _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    try
+                    {
+                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
+                        _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        Analytics.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
+                        {
+                            { "Exception", ex.ToString() }
+                        });
+                        _availableFonts = new List<string>();
+                    }
                 }
-
                 return _availableFonts;
             }
         }
@@ -60,6 +72,7 @@
 
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
             HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
+            LineHighlighterToggle.IsOn = EditorSettingsService.IsLineHighlighterEnabled;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
@@ -126,6 +139,31 @@
                 TabEightSpacesRadioButton.IsChecked = true;
             }
 
+            // Search Engine
+            switch (EditorSettingsService.EditorDefaultSearchEngine)
+            {
+                case SearchEngine.Bing:
+                    BingRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Google:
+                    GoogleRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.DuckDuckGo:
+                    DuckDuckGoRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Custom:
+                    CustomSearchUrlRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = true;
+                    break;
+            }
+            if (!string.IsNullOrEmpty(EditorSettingsService.EditorCustomMadeSearchUrl))
+            {
+                CustomSearchUrl.Text = EditorSettingsService.EditorCustomMadeSearchUrl;
+            }
+
             Loaded += TextAndEditorSettings_Loaded;
         }
 
@@ -133,6 +171,7 @@
         {
             TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
             HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
+            LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
             FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
 
@@ -152,6 +191,42 @@
             TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabFourSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabEightSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
+
+            BingRadioButton.Checked += SearchEngineRadioButton_Checked;
+            GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
+            DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
+            CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
+        }
+
+        private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Name)
+            {
+                case "BingRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "GoogleRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "DuckDuckGoRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "CustomSearchUrlRadioButton":
+                    CustomSearchUrl.IsEnabled = true;
+                    CustomSearchUrl.Focus(FocusState.Programmatic);
+                    CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
+                    CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+                    EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    break;
+            }
         }
 
         private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -256,6 +331,53 @@
         private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
+        }
+
+        private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
+        }
+
+        private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (CustomSearchUrlRadioButton.IsChecked != null &&
+                (IsValidUrl(CustomSearchUrl.Text) && (bool) CustomSearchUrlRadioButton.IsChecked))
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+            }
+            else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+            }
+
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private bool IsValidUrl(string url)
+        {
+            try
+            {
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                {
+                    if (string.Format(url, "s") == url)
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

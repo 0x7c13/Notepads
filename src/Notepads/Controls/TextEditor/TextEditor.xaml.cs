@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.GoTo;
@@ -64,9 +65,13 @@
 
         public event EventHandler SelectionChanged;
 
+        public event EventHandler FontZoomFactorChanged;
+
         public event EventHandler FileSaved;
 
         public event EventHandler FileReloaded;
+
+        private const char RichEditBoxDefaultLineEnding = '\r';
 
         public string FileNamePlaceholder { get; set; } = string.Empty;
 
@@ -186,6 +191,15 @@
             base.Loaded += TextEditor_Loaded;
             base.Unloaded += TextEditor_Unloaded;
             base.KeyDown += TextEditor_KeyDown;
+
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += LineHighlighter_OnViewStateChanged;
+            TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
+            TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
+            TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
+            TextEditorCore.ScrollViewerOffsetChanged += LineHighlighter_OnScrolled;
+            base.SizeChanged += LineHighlighter_WindowSizeChanged;
+
+            TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         }
 
         private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -206,7 +220,6 @@
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
                 contextFlyout.Dispose();
-                TextEditorCore.ContextFlyout = null;
             }
 
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
@@ -217,11 +230,16 @@
             base.Unloaded -= TextEditor_Unloaded;
             base.KeyDown -= TextEditor_KeyDown;
 
-            if (_contentPreviewExtension != null)
-            {
-                _contentPreviewExtension.Dispose();
-                _contentPreviewExtension = null;
-            }
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= LineHighlighter_OnViewStateChanged;
+            TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
+            TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
+            TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
+            TextEditorCore.ScrollViewerOffsetChanged -= LineHighlighter_OnScrolled;
+            base.SizeChanged -= LineHighlighter_WindowSizeChanged;
+
+            TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
+
+            _contentPreviewExtension?.Dispose();
 
             if (SplitPanel != null)
             {
@@ -240,6 +258,12 @@
             {
                 findAndReplaceControl.Dispose();
                 UnloadObject(FindAndReplacePlaceholder);
+            }
+
+            if (GoToPlaceholder != null && GoToPlaceholder.Content is GoToControl goToControl)
+            {
+                goToControl.Dispose();
+                UnloadObject(GoToPlaceholder);
             }
 
             if (GridSplitter != null)
@@ -286,7 +310,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontZoomFactor = TextEditorCore.FontZoomFactor,
+                FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -389,8 +413,8 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                //new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
@@ -402,6 +426,10 @@
                     else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
                     {
                         HideFindAndReplaceControl();
+                    }
+                    else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+                    {
+                        HideGoToControl();
                     }
                 }),
             });
@@ -463,6 +491,8 @@
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         public void RevertAllChanges()
@@ -614,6 +644,16 @@
             selectedCount = selected;
         }
 
+        public double GetFontZoomFactor()
+        {
+            return TextEditorCore.GetFontZoomFactor();
+        }
+
+        public void SetFontZoomFactor(double fontZoomFactor)
+        {
+            TextEditorCore.SetFontZoomFactor(fontZoomFactor);
+        }
+
         public bool IsEditorEnabled()
         {
             return TextEditorCore.IsEnabled;
@@ -741,6 +781,11 @@
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        private void TextEditorCore_OnFontZoomFactorChanged(object sender, double e)
+        {
+            FontZoomFactorChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             _keyboardCommandHandler.Handle(e);
@@ -758,6 +803,8 @@
                 IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
+
+            GoToPlaceholder?.Dismiss();
         }
 
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
@@ -771,6 +818,8 @@
             {
                 return;
             }
+
+            GoToPlaceholder?.Dismiss();
 
             if (FindAndReplacePlaceholder == null)
             {
@@ -805,7 +854,7 @@
             switch (e.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
+                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, e.UseRegex, false);
                     // In case user hit "enter" key in search box instead of clicking on search button or hit F3
                     // We should re-focus on FindAndReplaceControl to make the next search "flows"
                     if (!(sender is Button))
@@ -814,10 +863,10 @@
                     }
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex);
                     break;
             }
 
@@ -834,13 +883,15 @@
 
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
-            FindAndReplacePlaceholder.Dismiss();
+            FindAndReplacePlaceholder?.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
 
         public void ShowGoToControl()
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
+
+            FindAndReplacePlaceholder?.Dismiss();
 
             if (GoToPlaceholder == null)
                 FindName("GoToPlaceholder"); // Lazy loading
@@ -854,6 +905,11 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
+            GetCurrentLineColumn(out var line, out _, out _);
+            var maxLine = TextEditorCore.GetText().Length 
+                - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
+                + 1;
+            goToControl.SetLineData(line, maxLine);
             goToControl.Focus();
         }
 
@@ -888,6 +944,75 @@
         {
             GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        private void DrawLineHighlighter()
+        {
+            TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
+            LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
+
+            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
+
+            TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
+            var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
+
+            if (lineHighlighterMargin.Top >= 0)
+            {
+                LineHighlighter.Visibility = Visibility.Visible;
+                LineHighlighter.Margin = lineHighlighterMargin;
+                LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness);
+            }
+            else
+            {
+                if (LineHighlighter.Height + lineHighlighterMargin.Top > TextEditorCore.Padding.Top)
+                {
+                    LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness, 0, lineHighlighterBorderThickness, lineHighlighterBorderThickness);
+                    LineHighlighter.Height += lineHighlighterMargin.Top;
+                    LineHighlighter.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    LineHighlighter.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
+        {
+            if (enabled)
+            {
+                LineHighlighter.Visibility = Visibility.Visible;
+                DrawLineHighlighter();
+            }
+            else
+            {
+                LineHighlighter.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnFontSizeChanged(object sender, double e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+        }
+
+        private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
     }
 }

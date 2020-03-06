@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
@@ -28,6 +29,8 @@
 
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
 
+        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+
         private const char RichEditBoxDefaultLineEnding = '\r';
 
         private string[] _contentLinesCache;
@@ -48,6 +51,10 @@
 
         private const string ContentElementName = "ContentElement";
 
+        private readonly double _minimumZoomFactor = 10;
+
+        private readonly double _maximumZoomFactor = 500;
+
         private ScrollViewer _contentScrollViewer;
 
         private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
@@ -63,7 +70,7 @@
             }
         }
 
-        private double _fontZoomFactor = 1.0f;
+        private double _fontZoomFactor = 100;
         private double _fontSize = EditorSettingsService.EditorFontSize;
 
         public new double FontSize
@@ -76,16 +83,14 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = value / EditorSettingsService.EditorFontSize;
-                if (Math.Abs(newZoomFactor - _fontZoomFactor) > 0.00001)
+                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
                     FontZoomFactorChanged?.Invoke(this, newZoomFactor);
                 }
             }
         }
-
-        public double FontZoomFactor => _fontZoomFactor;
 
         public TextEditorCore()
         {
@@ -178,13 +183,14 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(2)), // (VirtualKey)187: =
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(2)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(2)), // (VirtualKey)189: -
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(0.1)), // (VirtualKey)187: =
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(0.1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(0.1)), // (VirtualKey)189: -
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDataTimeString()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
@@ -300,6 +306,35 @@
             }
         }
 
+        /*public void GetCurrentLineColumn2(out int lineIndex, out int columnIndex, out int selectedCount)
+        {
+            GetTextSelectionPosition(out var start, out var end);
+
+            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length
+                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                + 1;
+            columnIndex = start
+                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                + 1;
+            selectedCount = start != end && !string.IsNullOrEmpty(_content)
+                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+                : 0;
+            if (end > _content.Length) selectedCount -= 2;
+        }*/
+
+        public double GetFontZoomFactor()
+        {
+            return _fontZoomFactor;
+        }
+
+        public void SetFontZoomFactor(double fontZoomFactor)
+        {
+            var fontZoomFactorInt = Math.Round(fontZoomFactor);
+            if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
+                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
+        }
+
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
         {
             if (args != null)
@@ -337,9 +372,9 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
         {
-            if (FindNextAndSelect(searchText, matchCase, matchWholeWord))
+            if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex))
             {
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
                 return true;
@@ -348,26 +383,38 @@
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord)
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
         {
             var found = false;
 
-            var pos = 0;
-            var searchTextLength = searchText.Length;
-            var replaceTextLength = replaceText.Length;
-
             var text = GetText();
 
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
-
-            while (pos != -1)
+            if (useRegex)
             {
-                found = true;
-                text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
-                pos += replaceTextLength;
+                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                if(regex.IsMatch(text))
+                {
+                    text = regex.Replace(text, replaceText);
+                    found = true;
+                }
+            }
+            else
+            {
+                var pos = 0;
+                var searchTextLength = searchText.Length;
+                var replaceTextLength = replaceText.Length;
+
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
                 pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+
+                while (pos != -1)
+                {
+                    found = true;
+                    text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
+                    pos += replaceTextLength;
+                    pos = matchWholeWord ? IndexOfWholeWord(text, pos, searchText, comparison) : text.IndexOf(searchText, pos, comparison);
+                }
             }
 
             if (found)
@@ -380,7 +427,7 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool stopAtEof = true)
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, bool stopAtEof = true)
         {
             if (string.IsNullOrEmpty(searchText))
             {
@@ -389,9 +436,43 @@
 
             var text = GetText();
 
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
             if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+
+            if (useRegex)
+            {
+                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                var match = regex.Match(text, Document.Selection.EndPosition);
+
+                if (match.Success)
+                {
+                    Document.Selection.StartPosition = match.Index;
+                    Document.Selection.EndPosition = match.Index + match.Length;
+                }
+                else
+                {
+                    if (!stopAtEof)
+                    {
+                        match = regex.Match(text, 0);
+
+                        if (match.Success)
+                        {
+                            Document.Selection.StartPosition = match.Index;
+                            Document.Selection.EndPosition = match.Index + match.Length;
+                        }
+                    }
+                }
+
+                if (!match.Success)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
+
+            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
             var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
 
@@ -438,7 +519,8 @@
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
                 {
                     return;
                 }
@@ -481,13 +563,32 @@
 
         private void IncreaseFontSize(double delta)
         {
-            FontSize += delta;
+            if (_fontZoomFactor<_maximumZoomFactor)
+            {
+                if (_fontZoomFactor % 10 > 0)
+                {
+                    SetFontZoomFactor(Math.Ceiling(_fontZoomFactor / 10) * 10);
+                }
+                else
+                {
+                    FontSize += delta * EditorSettingsService.EditorFontSize;
+                }
+            }
         }
 
         private void DecreaseFontSize(double delta)
         {
-            if (FontSize < delta + 2) return;
-            FontSize -= delta;
+            if (_fontZoomFactor > _minimumZoomFactor)
+            {
+                if (_fontZoomFactor % 10 > 0)
+                {
+                    SetFontZoomFactor(Math.Floor(_fontZoomFactor / 10) * 10);
+                }
+                else
+                {
+                    FontSize -= delta * EditorSettingsService.EditorFontSize;
+                }
+            }
         }
 
         private void ResetFontSizeToDefault()
@@ -526,6 +627,8 @@
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
             _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+
+            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -542,11 +645,11 @@
                 var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                 if (mouseWheelDelta > 0)
                 {
-                    IncreaseFontSize(1);
+                    IncreaseFontSize(0.1);
                 }
                 else if (mouseWheelDelta < 0)
                 {
-                    DecreaseFontSize(1);
+                    DecreaseFontSize(0.1);
                 }
             }
 
@@ -614,16 +717,18 @@
 
                 if (end == start)
                 {
-                    // Duplicate Line                
-                    var line = _contentLinesCache[lineIndex - 1];
+                    // Duplicate Line
+                    var lineStart = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
+                    var lineEnd = (_content + RichEditBoxDefaultLineEnding).IndexOf(RichEditBoxDefaultLineEnding, end);
+                    var line = _content.Substring(lineStart, lineEnd - lineStart);
                     var column = Document.Selection.EndPosition + line.Length + 1;
-                
+
                     if (columnIndex == 1)
                         Document.Selection.EndPosition += 1;
 
                     Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
 
-                    if (lineIndex < (_contentLinesCache.Length - 1))
+                    if (lineIndex < _content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length + 1)
                         Document.Selection.EndPosition -= 1;
 
                     Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
@@ -639,7 +744,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (lineIndex < (_contentLinesCache.Length - 1))
+                        if (lineIndex < (_content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length) + 1)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -665,14 +770,32 @@
                 _isLineCachePendingUpdate = false;
             }
 
-            if (line > 0 && line < _contentLinesCache.Length)
+            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+            return true;
+        }
+
+        public async void SearchInWeb()
+        {
+            try
             {
-                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-                return true;
+                var selectedText = Document.Selection.Text.Trim();
+
+                // The maximum length of a URL in the address bar is 2048 characters
+                // Let's take 2000 here to make sure we are not exceeding the limit
+                // Otherwise we will see "Invalid URI: The uri string is too long" exception
+                var searchString = selectedText.Length <= 2000 ? selectedText : selectedText.Substring(0, 2000);
+
+                if (Uri.TryCreate(searchString, UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
+                {
+                    await Launcher.LaunchUriAsync(webUrl);
+                    return;
+                }
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", searchString.Split(null))));
+                await Launcher.LaunchUriAsync(searchUri);
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                LoggingService.LogError($"Failed to open search link: {ex.Message}");
             }
         }
 
