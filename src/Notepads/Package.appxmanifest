@@ -416,6 +416,29 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
+
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+            Id="NotepadsSettings"
+            DisplayName="Notepads Settings"
+            Description="Settings for Notepads for Game Bar"
+            PublicFolder="GameBar">
+            <uap3:Properties>
+              <GameBarWidget Type="Settings">
+                <Window>
+                  <Size>
+                    <Height>400</Height>
+                    <Width>200</Width>
+                  </Size>
+                  <ResizeSupported>
+                    <Horizontal>false</Horizontal>
+                    <Vertical>false</Vertical>
+                  </ResizeSupported>
+                </Window>
+              </GameBarWidget>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
       </Extensions>
     </Application>
 

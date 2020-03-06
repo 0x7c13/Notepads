@@ -215,6 +215,16 @@
                 MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
                 MenuSettingsButton.IsEnabled = false;
             }
+
+            if (App.IsGameBarWidget)
+            {
+                MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
+                MenuSettingsSeparator.Visibility = Visibility.Collapsed;
+
+                MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
+                MenuFullScreenButton.Visibility = Visibility.Collapsed;
+                MenuSettingsButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()

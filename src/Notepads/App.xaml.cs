@@ -28,11 +28,11 @@
         public static Guid Id { get; } = Guid.NewGuid();
 
         public static bool IsFirstInstance;
-        public static bool IsUiExt = false;
+        public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
 
-        private XboxGameBarWidget XboxGameBarWidget = null;
+        private XboxGameBarWidget m_xboxGameBarWidget = null;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -155,35 +155,29 @@
             base.OnFileActivated(args);
         }
 
-        //protected override async void OnActivated(IActivatedEventArgs args)
-        //{
-        //    await ActivateAsync(args);
-        //    base.OnActivated(args);
-        //}
-
         protected override async void OnActivated(IActivatedEventArgs args)
         {
-            XboxGameBarWidgetActivatedEventArgs uiExtArgs = null;
+            XboxGameBarWidgetActivatedEventArgs uiWidgetArgs = null;
             if (args.Kind == ActivationKind.Protocol)
             {
                 var protocolArgs = args as IProtocolActivatedEventArgs;
                 string protocolString = protocolArgs.Uri.AbsoluteUri;
                 if (protocolString.StartsWith("ms-gamebarwidget"))
                 {
-                    uiExtArgs = args as XboxGameBarWidgetActivatedEventArgs;
+                    uiWidgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
                 }
             }
 
-            IsUiExt = uiExtArgs != null;
+            IsGameBarWidget = uiWidgetArgs != null;
 
             await ActivateAsync(args);
             base.OnActivated(args);
 
-            if (IsUiExt)
+            if (IsGameBarWidget)
             {
                 IsFirstInstance = true;
-                XboxGameBarWidget = new XboxGameBarWidget(
-                    uiExtArgs,
+                m_xboxGameBarWidget = new XboxGameBarWidget(
+                    uiWidgetArgs,
                     Window.Current.CoreWindow,
                     Window.Current.Content as Frame);
             }
@@ -266,10 +260,7 @@
 
             Window.Current.Activate();
 
-            if (IsUiExt != true)
-            {
-                ExtendAcrylicIntoTitleBar();
-            }
+            ExtendAcrylicIntoTitleBar();
         }
 
         private Frame CreateRootFrame(IActivatedEventArgs e)
@@ -322,10 +313,13 @@
 
         private void ExtendAcrylicIntoTitleBar()
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            if (!IsGameBarWidget)
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
         }
 
         //private static void UpdateAppVersion()
