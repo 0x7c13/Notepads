@@ -123,7 +123,18 @@
                 // We should always try get latest system ANSI code page.
                 if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
+                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
+                    {
+                        _editorDefaultDecoding = systemDefaultANSIEncoding;
+                    }
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
+                    {
+                        _editorDefaultDecoding = currentCultureANSIEncoding;
+                    }
+                    else
+                    {
+                        _editorDefaultDecoding = new UTF8Encoding(false);
+                    }
                 }
                 return _editorDefaultDecoding;
             }

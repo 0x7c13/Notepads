@@ -460,10 +460,19 @@
 
         public async Task ReloadFromEditingFile()
         {
+            await ReloadFromEditingFile(null);
+        }
+
+        public async Task ReloadFromEditingFile(Encoding encoding)
+        {
             if (EditingFile != null)
             {
-                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false);
+                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
                 Init(textFile, EditingFile, clearUndoQueue: false);
+                if (encoding != null)
+                {
+                    EncodingChanged?.Invoke(this, EventArgs.Empty);
+                }
                 StartCheckingFileStatusPeriodically();
                 CloseSideBySideDiffViewer();
                 FileReloaded?.Invoke(this, EventArgs.Empty);

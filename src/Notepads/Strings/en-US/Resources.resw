@@ -549,4 +549,8 @@
     <value>Clear Recently Opened</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
+  <data name="Tab_ContextFlyout_ReopenWithEncodingDisplayText" xml:space="preserve">
+    <value>Reopen with Encoding</value>
+    <comment>Tab: ContextFlyout "Reopen with Encoding" button display text.</comment>
+  </data>
 </root>
