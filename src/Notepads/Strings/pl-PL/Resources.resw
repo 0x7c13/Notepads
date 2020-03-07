@@ -298,11 +298,11 @@
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Close to the Right</value>
+    <value>Zamknij karty z prawej strony</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Close Saved</value>
+    <value>Zamknij zapisane karty</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
