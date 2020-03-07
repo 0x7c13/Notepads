@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Zależności i referencje</value>
+    <value>Użyte biblioteki oraz licencje</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
@@ -130,7 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Darmowy oraz otwarto żródłowy edytor tekstu zaprojektowany i zaprogramowany przez Jackie (Jiaqi) Liu</value>
+    <value>Darmowy, otwartożródłowy edytor tekstu stworzony przez Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
@@ -162,7 +162,7 @@
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Pokazuj pasek stanu</value>
+    <value>Ukryj pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
@@ -178,19 +178,19 @@
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Użyj koloru wiodącego systemu Windows</value>
+    <value>Użyj koloru wiodącego systemu</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Używaj koloru wiodącego systemu Windows</value>
+    <value>Użyj koloru wiodącego systemu</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Rozmycie tła.</value>
+    <value>Poziom akrylowego rozmycia tła.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Poziom rozmycia tła</value>
+    <value>Rozmycia tła</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
@@ -230,23 +230,23 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Zastosuj tylko dla nowego dokumentu.</value>
+    <value>Wybierz sposób domyślnego kodowania.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Kodowanie domyślne</value>
+    <value>Domyślne kodowanie</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Czcionka domyślna &amp; Rozmiar</value>
+    <value>Czcionka domyślna i jej rozmiar</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Zastosuj tylko dla nowego dokumentu.</value>
+    <value>Wybierz domyślne kończenie lini.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Domyślne zakończenie lini</value>
+    <value>Domyślne kończenie lini</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Ustawienia zachowania klawisza Tab, dotyczy tylko wstawionych przez użytkownika.</value>
+    <value>Ustawienia zachowania klawisza Tab, dotyczy tylko danych wpisanych przez użytkownika.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
@@ -278,7 +278,7 @@
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zawijaj słowo</value>
+    <value>Zawijaj tekst</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Gdy włączone, Notepads zapamięta obecną sesję do następnego uruchomienia programu i zrobi kopię okresowej migawki sesji aby zapobiec przypadkowej utracie danych w przypadku niezatwierdzonych zmian. Notepads NIE BĘDZIE przypominał o zapisie Twojej pracy przy zamykaniu aplikacji gdy ta opcja jest włączona. UWAGA: migawka sesji działa tylko w pierwszym lub głównym oknie Notepads.</value>
+    <value>Gdy włączone, Notepads zapamięta obecną sesję do następnego uruchomienia programu. Zrobi także kopię okresowej migawki sesji aby zapobiec przypadkowej utracie danych w przypadku niezapisania zmian. Notepads NIE BĘDZIE przypominał o zapisie Twojej pracy przy zamykaniu aplikacji gdy ta opcja jest włączona. UWAGA: Migawka sesji działa tylko w pierwszym lub głównym oknie Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -338,15 +338,15 @@
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Wyróżnij aktualnie edytowaną linie</value>
+    <value>Wyróżnij edycję lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Pokaż ramkę wokół obecnej edytowanej lini</value>
+    <value>Brak wyróżnienia lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Pokaż ramkę wokół obecnej edytowanej lini</value>
+    <value>Wyróżnienie edytowanej lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
@@ -358,7 +358,7 @@
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Ustawienia domyślnego silnika wyszukiwania wybrane gdy wyszukiwana fraza jest gotowa.</value>
+    <value>Wybierz domyślny silnik wyszukiwanki internetowej.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
