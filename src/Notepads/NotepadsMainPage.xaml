@@ -152,7 +152,7 @@
                                                 <KeyboardAccelerator Key="F12" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name ="MenuSettingsSeparator"/>
+                                        <MenuFlyoutSeparator/>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>

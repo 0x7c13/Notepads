@@ -240,7 +240,7 @@
             if (App.IsGameBarWidget)
             {
                 MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
-                MenuSettingsSeparator.Visibility = Visibility.Collapsed;
+                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
 
                 MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
                 MenuFullScreenButton.Visibility = Visibility.Collapsed;
