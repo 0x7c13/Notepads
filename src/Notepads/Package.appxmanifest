@@ -392,7 +392,7 @@
             Id="Notepads"
             DisplayName="Notepads"
             Description="Notepads widget for Game Bar"
-            PublicFolder="Gamebar">
+            PublicFolder="GameBar\Notepads">
             <uap3:Properties>
               <GameBarWidget Type="Standard">
                 <HomeMenuVisible>true</HomeMenuVisible>
@@ -416,13 +416,13 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
-
+<!--
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Name="microsoft.gameBarUIExtension"
             Id="NotepadsSettings"
             DisplayName="Notepads Settings"
             Description="Settings for Notepads for Game Bar"
-            PublicFolder="GameBar">
+            PublicFolder="GameBar\Notepads">
             <uap3:Properties>
               <GameBarWidget Type="Settings">
                 <Window>
@@ -439,9 +439,9 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
+-->
       </Extensions>
     </Application>
-
   </Applications>
 
   <Extensions>
