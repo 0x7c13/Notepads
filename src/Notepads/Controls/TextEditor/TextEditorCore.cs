@@ -764,14 +764,15 @@
 
         public bool GoTo(int line)
         {
-            if (_isLineCachePendingUpdate)
+            try
             {
-                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-                _isLineCachePendingUpdate = false;
+                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                return true;
             }
-
-            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async void SearchInWeb()
