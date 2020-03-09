@@ -929,8 +929,12 @@
 
         private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
         {
-            int line = int.TryParse(e.SearchLine, out _) ? Convert.ToInt32(e.SearchLine) : 0;
-            bool found = TextEditorCore.GoTo(line);
+            var found = false;
+
+            if (int.TryParse(e.SearchLine, out var line))
+            { 
+                found = TextEditorCore.GoTo(line);
+            }
 
             if (!found)
             {

@@ -118,251 +118,251 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Abhängigkeiten und Referenzen</value>
+    <value>Użyte biblioteki oraz licencje</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</value>
+    <value>OPROGRAMOWANIE JEST DOSTARCZANE „W TAKIM STANIE, W JAKIM JEST”. NIE DAJEMY ŻADNEJ GWARANCJI NA JEGO DZIAŁANIE. W ŻADNYM WYPADKU AUTORZY LUB POSIADACZE PRAW AUTORSKICH NIE PONOSZĄ ODPOWIEDZIALNOŚCI ZA JAKIEKOLWIEK ROSZCZENIA, SZKODY LUB INNE ODPOWIEDZIALNOŚCI.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Disclaimer</value>
+    <value>Oświadczenie</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Kostenloser Open-Source Texteditor entworfen und implementiert durch Jackie (Jiaqi) Liu</value>
+    <value>Darmowy, otwartożródłowy edytor tekstu stworzony przez Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Autoren kontaktieren:</value>
+    <value>Kontakt z autorami:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Für Fehlermeldungen oder Featureanfrage:</value>
+    <value>Zgłoś błąd lub zaproponuj funkcję:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Quellcode verfügbar auf Github:</value>
+    <value>Kod źródłowy dostępny jest w serwisie Github:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Mehr Informationen auf unserer Website:</value>
+    <value>Po więcej informacji, odwiedź naszą stronę:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Datenschutzerklärung</value>
+    <value>Polityka prywatności</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>Über</value>
+    <value>O programie</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
+    <value>Pokazuj pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
+    <value>Pokazuj pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Statusleisteneinstellungen</value>
+    <value>Ustawienia pasku stanu</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Erweitert</value>
+    <value>Zaawansowane</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Akzentfarbe</value>
+    <value>Kolor wiodący</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
+    <value>Użyj koloru wiodącego systemu</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
+    <value>Użyj koloru wiodącego systemu</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Acryl Hintergrundfarbton Transparenz.</value>
+    <value>Poziom akrylowego rozmycia tła.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Hintergrundfarbton Transparenz</value>
+    <value>Rozmycia tła</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Dunkel</value>
+    <value>Ciemny</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Hell</value>
+    <value>Jasny</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Design Modus</value>
+    <value>Motyw</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Windows Modus verwenden</value>
+    <value>Użyj motywu systemu Windows</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Personalisierung</value>
+    <value>Personalizacja</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows Zeichensatz)</value>
+    <value>ANSI (strona kodowa systemu Windows)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Die Fallback-Dekodierung wird verwendet, wenn die Codierung einer Datei nicht erkannt wird. ANSI wird nur für alte Textdateien empfohlen.</value>
+    <value>Dekodowanie rezerwowe zostanie zastosowane, jeśli kodowanie pliku nie zostanie rozpoznane. Dekodowanie ANSI jest zalecane tylko do otwierania starszych plików tekstowych.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Fallback-Dekodierung</value>
+    <value>Dekodowanie rezerwowe</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (Empfohlen)</value>
+    <value>UTF-8 (Zalecane)</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
+    <value>Wybierz sposób domyślnego kodowania.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Codierung</value>
+    <value>Domyślne kodowanie</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Standard Schiftart &amp; Größe</value>
+    <value>Czcionka domyślna i jej rozmiar</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
+    <value>Wybierz domyślne kończenie lini.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Zeilenumbruch</value>
+    <value>Domyślne kończenie lini</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Standard (\t)</value>
+    <value>Domyślne (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Tabulatortaste, gilt nur für neu eingefügte Tabs.</value>
+    <value>Ustawienia zachowania klawisza Tab, dotyczy tylko danych wpisanych przez użytkownika.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Leerzeichen</value>
+    <value>8 Spacji</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Leerzeichen</value>
+    <value>4 Spacje</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tabulatortastenverhalten</value>
+    <value>Zachowanie klawisza Tab</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Leerzeichen</value>
+    <value>2 Spacje</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Textumbruch</value>
+    <value>Zawijanie tekstu</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
+    <value>Zawijaj tekst</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
+    <value>Zawijanie słowa</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Text &amp; Editor</value>
+    <value>Tekst i edytor</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Änderungsprotokoll</value>
+    <value>Lista zmian</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist. Sicherungen werden nur vom ersten oder vom Hauptfenster von Notepads erstellt.</value>
+    <value>Gdy włączone, Notepads zapamięta obecną sesję do następnego uruchomienia programu. Zrobi także kopię okresowej migawki sesji aby zapobiec przypadkowej utracie danych w przypadku niezapisania zmian. Notepads NIE BĘDZIE przypominał o zapisie Twojej pracy przy zamykaniu aplikacji gdy ta opcja jest włączona. UWAGA: Migawka sesji działa tylko w pierwszym lub głównym oknie Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <value>Włącz migawkę sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <value>Włącz migawkę sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Sitzungssicherungseinstellungen</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+    <value>Ustawienia migawki sesji</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
+    <value>Wyróżnij błędnie zapisane słowa</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
+    <value>Wyróżnij błędnie zapisane słowa</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>Rechtschreibung</value>
+    <value>Pisownia</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Wenn aktiviert, Notepads öffnet Dateien immer in einem neuen Fenster anstelle eines neuen Reiters.</value>
+    <value>Gdy włączone, Notepads będzie zawsze otwierał plik w nowym oknie zamiast tworzyć nową kartę.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
+    <value>Zawsze otwieraj nowe okno</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
+    <value>Zawsze otwieraj nowe okno</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Startpräferenzen</value>
+    <value>Preferencje uruchomienia</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Aktuelle Zeile hervorheben</value>
+    <value>Wyróżnij edycji</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Rahmen um aktuelle Zeile anzeigen</value>
+    <value>Wyróżnienie edytowanej lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Rahmen um aktuelle Zeile anzeigen</value>
+    <value>Wyróżnienie edytowanej lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Benutzerdefinierte Suchmaschine</value>
+    <value>Niestandardowy silnik wyszukiwarki</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*URL Format beachten: https://www.example.com/search?q={0}</value>
+    <value>*Wprowadź adres URL o formacie https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Standardsuchmaschine für die Websuche.</value>
+    <value>Wybierz domyślny silnik wyszukiwanki internetowej.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Standardsuchmaschine</value>
+    <value>Domyślny silnik wyszukiwarki</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
 </root>
