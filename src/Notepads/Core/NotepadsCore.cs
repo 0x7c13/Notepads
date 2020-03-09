@@ -272,11 +272,6 @@
             textEditor.TryChangeLineEnding(lineEnding);
         }
 
-        public void ChangeEncoding(ITextEditor textEditor, Encoding encoding)
-        {
-            textEditor.TryChangeEncoding(encoding);
-        }
-
         public void SwitchTo(bool next)
         {
             if (Sets.Items == null) return;

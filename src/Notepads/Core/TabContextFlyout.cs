@@ -1,19 +1,15 @@
 ﻿namespace Notepads.Core
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Text;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
-    using Microsoft.AppCenter.Analytics;
 
     public class TabContextFlyout : MenuFlyout
     {
@@ -21,7 +17,6 @@
         private MenuFlyoutItem _closeOthers;
         private MenuFlyoutItem _closeRight;
         private MenuFlyoutItem _closeSaved;
-        private MenuFlyoutSubItem _reopenWithEncoding;
         private MenuFlyoutItem _copyFullPath;
         private MenuFlyoutItem _openContainingFolder;
 
@@ -42,8 +37,6 @@
             Items.Add(CloseOthers);
             Items.Add(CloseRight);
             Items.Add(CloseSaved);
-            Items.Add(new MenuFlyoutSeparator());
-            Items.Add(ReopenWithEncoding);
             Items.Add(new MenuFlyoutSeparator());
             Items.Add(CopyFullPath);
             Items.Add(OpenContainingFolder);
@@ -171,55 +164,6 @@
                     };
                 }
                 return _closeSaved;
-            }
-        }
-
-        private MenuFlyoutSubItem ReopenWithEncoding
-        {
-            get
-            {
-                if (_reopenWithEncoding == null)
-                {
-                    _reopenWithEncoding = new MenuFlyoutSubItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_ReopenWithEncodingDisplayText") };
-
-                    var appAndSystemANSIEncodings = new HashSet<Encoding>();
-
-                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
-                    {
-                        appAndSystemANSIEncodings.Add(systemDefaultANSIEncoding);
-                    }
-                    if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
-                    {
-                        appAndSystemANSIEncodings.Add(currentCultureANSIEncoding);
-                    }
-
-                    if (appAndSystemANSIEncodings.Count > 0)
-                    {
-                        foreach (var encoding in appAndSystemANSIEncodings)
-                        {
-                            var encodingItem =
-                                new MenuFlyoutItem()
-                                {
-                                    Text = encoding.EncodingName
-                                };
-                            encodingItem.Click += (sender, args) => { _textEditor.ReloadFromEditingFile(encoding); };
-                            _reopenWithEncoding.Items?.Add(encodingItem);
-                        }
-                        _reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
-                    }
-
-                    foreach (var encoding in EncodingUtility.GetAllSupportedANSIEncodings())
-                    {
-                        var encodingItem =
-                            new MenuFlyoutItem()
-                            {
-                                Text = encoding.EncodingName
-                            };
-                        encodingItem.Click += (sender, args) => { _textEditor.ReloadFromEditingFile(encoding); };
-                        _reopenWithEncoding.Items?.Add(encodingItem);
-                    }
-                }
-                return _reopenWithEncoding;
             }
         }
 

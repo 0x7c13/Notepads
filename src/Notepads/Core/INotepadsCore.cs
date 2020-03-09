@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
     using Notepads.Models;
@@ -72,8 +71,6 @@
         bool HaveNonemptyTextEditor();
 
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
-
-        void ChangeEncoding(ITextEditor textEditor, Encoding encoding);
 
         void SwitchTo(bool next);
 

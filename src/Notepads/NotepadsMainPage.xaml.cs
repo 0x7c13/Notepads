@@ -191,6 +191,8 @@
             MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
+            BuildEncodingSelectionFlyout();
+
             MainMenuButtonFlyout.Opening += (sender, o) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();

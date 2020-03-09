@@ -16,6 +16,52 @@
 
         private static Encoding _currentCultureANSIEncoding;
 
+        // https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+        private static readonly Dictionary<int, string> ANSIEncodings = new Dictionary<int, string>()
+        {
+            { 1252,    "Western (Windows 1252)" },
+            { 28591,   "Western (ISO 8859-1)" },
+            { 28593,   "Western (ISO 8859-3)" },
+            { 28605,   "Western (ISO 8859-15)" },
+            { 10000,   "Western (Mac Roman)" },
+            { 437,     "DOS (CP 437)" },
+            { 1256,    "Arabic (Windows 1256)" },
+            { 28596,   "Arabic (ISO 8859-6)" },
+            { 1257,    "Baltic (Windows 1257)" },
+            { 28594,   "Baltic (ISO 8859-4)" },
+            { 1250,    "Central European (Windows 1250)" },
+            { 28592,   "Central European (ISO 8859-2)" },
+            { 852,     "Central European (CP 852)" },
+            { 1251,    "Cyrillic (Windows 1251)" },
+            { 866,     "Cyrillic (CP 866)" },
+            { 28595,   "Cyrillic (ISO 8859-5)" },
+            { 20866,   "Cyrillic (K018-R)" },
+            { 21866,   "Cyrillic (K018-U)" },
+            //{ ,      "Cyrillic (K018-RU)" },
+            { 28603,   "Estonian (ISO 8859-13)" },
+            { 1253,    "Greek (Windows 1253)" },
+            { 28597,   "Greek (ISO 8859-7)" },
+            { 1255,    "Hebrew (Windows 1255)" },
+            { 28598,   "Hebrew (ISO 8859-8)" },
+            { 932,     "Japanese (Shift JIS)" },
+            { 51932,   "Japanese (EUC-JP)" },
+            { 51949,   "Korean (EUC-KR)" },
+            { 865,     "Nordic DOS (CP 865)" },
+            //{ ,      "Nordic (ISO 8859-10)" },
+            //{ ,      "Romanian (ISO 8859-16)" },
+            //{ ,      "Simplified Chinese (GBK) gbk" },
+            { 936,     "Simplified Chinese (GB 2312)" },
+            { 54936,   "Simplified Chinese (6818030)" },
+            //{ ,      "Tajik (K018-T) koi8t" },
+            { 874,     "Thai (Windows 874)" },
+            { 1254,    "Turkish (Windows 1254)" },
+            { 28599,   "Turkish (ISO 8859-9)" },
+            { 950,     "Traditional Chinese (Big5)" },
+            //{ ,      "Traditional Chinese (Big5-HKSCS)" },
+            { 1258,    "Vietnamese (Windows 1258)" },
+            { 850,     "Western European DOS (CP 850)" }
+        };
+
         public static string GetEncodingName(Encoding encoding)
         {
             var encodingName = "ANSI";
@@ -73,17 +119,9 @@
                     encodingName = "UTF-32 LE";
                 }
             }
-            else
+            else if (ANSIEncodings.ContainsKey(encoding.CodePage))
             {
-                try
-                {
-                    encodingName = encoding.EncodingName;
-                    LoggingService.LogInfo($"Encoding name: {encodingName}");
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.LogException(ex);
-                }
+                encodingName = ANSIEncodings[encoding.CodePage];
             }
 
             return encodingName;
@@ -151,16 +189,16 @@
                 case "UTF-32 LE":
                     return new UTF32Encoding(false, false);
                 default:
+                {
+                    foreach (var ansiEncoding in ANSIEncodings)
+                    {
+                        if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return Encoding.GetEncoding(ansiEncoding.Key);
+                        }
+                    }
                     return fallbackEncoding ?? new UTF8Encoding(false);
-                    //    try
-                    //    {
-                    //        return Encoding.GetEncoding(name);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        LoggingService.LogException(ex);
-                    //        return fallbackEncoding ?? new UTF8Encoding(false);
-                    //    }
+                }
             }
         }
 
@@ -230,52 +268,6 @@
             {
                 return _allSupportedANSIEncodings;
             }
-
-            // https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
-            var ANSIEncodings = new Dictionary<int, string>()
-            {
-                { 1252,    "Western (Windows 1252) windows1252" },
-                { 28591,   "Western (ISO 8859-1) iso88591" },
-                { 28593,   "Western (ISO 8859-3) iso88593" },
-                { 28605,   "Western (ISO 8859-15) iso885915" },
-                { 10000,   "Western (Mac Roman) macroman" },
-                { 437,     "DOS (CP 437) cp437" },
-                { 1256,    "Arabic (Windows 1256) windows1256" },
-                { 28596,   "Arabic (ISO 8859-6) iso88596" },
-                { 1257,    "Baltic (Windows 1257) winclows1257" },
-                { 28594,   "Baltic (ISO 8859-4) iso88594" },
-                { 1250,    "Central European (Windows 1250) windows1250" },
-                { 28592,   "Central European (ISO 8859-2) iso88592" },
-                { 852,     "Central European (CP 852) cp852" },
-                { 1251,    "Cyrillic (Windows 1251) windows1251" },
-                { 866,     "Cyrillic (CP 866) cp866" },
-                { 28595,   "Cyrillic (ISO 8859-5) is088595" },
-                { 20866,   "Cyrillic (K018-R) koi8r" },
-                { 21866,   "Cyrillic (K018-U) koiSu" },
-                //{ ,      "Cyrillic (K018-RU) koi8ru" },
-                { 28603,   "Estonian (ISO 8859-13) iso885913" },
-                { 1253,    "Greek (Windows 1253) windows1253" },
-                { 28597,   "Greek (ISO 8859-7) iso88597" },
-                { 1255,    "Hebrew (Windows 1255) windows1255" },
-                { 28598,   "Hebrew (ISO 8859-8) iso88598" },
-                { 932,     "Japanese (Shift JIS) shiftjis" },
-                { 51932,   "Japanese (EUC-JP) eucjp" },
-                { 51949,   "Korean (EUC-KR) euckr" },
-                { 865,     "Nordic DOS (CP 865) cp865" },
-                //{ ,      "Nordic (ISO 8859-10) iso885910" },
-                //{ ,      "Romanian (ISO 8859-16) iso885916" },
-                //{ ,      "Simplified Chinese (GBK) gbk" },
-                { 936,     "Simplified Chinese (GB 2312) gb2312" },
-                { 54936,   "Simplified Chinese (6818030) gb18030" },
-                //{ ,      "Tajik (K018-T) koi8t" },
-                { 874,     "Thai (Windows 874) windows874" },
-                { 1254,    "Turkish (Windows 1254) windows1254" },
-                { 28599,   "Turkish (ISO 8859-9) iso88599" },
-                { 950,     "Traditional Chinese (Big5) cp950" },
-                //{ ,      "Traditional Chinese (Big5-HKSCS) big5hkscs" },
-                { 1258,    "Vietnamese (Windows 1258) windows1258" },
-                { 850,     "Western European DOS (CP 850) cp850" }
-            };
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
