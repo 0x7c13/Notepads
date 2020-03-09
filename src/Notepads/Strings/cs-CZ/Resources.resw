@@ -457,4 +457,96 @@
     <value>Nové Okno</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>Open Recent</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>Go To Line</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>Go To:</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>Line number exceeds beyond the total number of lines!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>You can only type a number!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Go To Line</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>Search in web</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>Restore Default Zoom</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>Zoom In</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>Zoom Out</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>Use Regular Expression</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>Print All...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>Can only accept upto one decimal place</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>Value out of range</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>Footer</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>Header</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>Horizontal Margin (in %)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>In % of paper width</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>Error printing:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>Failed to print</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>Printing is not supported on this device</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>Vertical Margin (in %)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>Clear Recently Opened</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
 </root>

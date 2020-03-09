@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Windows.Graphics.Printing;
     using Windows.Storage;
+    using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -57,7 +59,7 @@
             }
         }
 
-        public async Task<bool> OpenFile(StorageFile file)
+        public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
         {
             try
             {
@@ -73,6 +75,11 @@
                 var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
+                MRUService.Add(file); // Remember recently used files
+                if (rebuildOpenRecentItems)
+                {
+                    await BuildOpenRecentButtonSubItems();   
+                }
                 return true;
             }
             catch (Exception ex)
@@ -95,13 +102,13 @@
             {
                 if (storageItem is StorageFile file)
                 {
-                    if (await OpenFile(file))
+                    if (await OpenFile(file, rebuildOpenRecentItems: false))
                     {
                         successCount++;
                     }
                 }
             }
-
+            await BuildOpenRecentButtonSubItems();
             return successCount;
         }
 
@@ -147,6 +154,41 @@
                 }
                 return false;
             }
+        }
+
+        public async Task Print(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+            await PrintAll(new[] {textEditor});
+        }
+
+        public async Task PrintAll(ITextEditor[] textEditors)
+        {
+            if (textEditors == null || textEditors.Length == 0) return;
+            
+            // Initialize print content
+            PrintArgs.PreparePrintContent(textEditors);
+
+            if (PrintManager.IsSupported() && HaveNonemptyTextEditor(textEditors))
+            {
+                // Show print UI
+                await PrintArgs.ShowPrintUIAsync();
+            }
+            else if (!PrintManager.IsSupported())
+            {
+                // Printing is not supported on this device
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_PrintNotSupported"), 1500);
+            }
+        }
+
+        private bool HaveNonemptyTextEditor(ITextEditor[] textEditors)
+        {
+            foreach (ITextEditor textEditor in textEditors)
+            {
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
+                return true;
+            }
+            return false;
         }
     }
 }

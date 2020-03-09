@@ -199,8 +199,16 @@
 
             if (sessionDataSaved)
             {
-                await DeleteOrphanedBackupFilesAsync(sessionData);
-                DeleteOrphanedTokensInFutureAccessList(sessionData);
+                try
+                {
+                    await DeleteOrphanedBackupFilesAsync(sessionData);
+                    DeleteOrphanedTokensInFutureAccessList(sessionData);
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles", 
+                        new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                }
             }
 
             stopwatch.Stop();

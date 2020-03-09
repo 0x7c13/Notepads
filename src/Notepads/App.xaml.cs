@@ -114,9 +114,7 @@
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
             Crashes.TrackError(e.Exception, diagnosticInfo);
 
-            // if you want to suppress and handle it manually, 
-            // otherwise app shuts down.
-            e.Handled = true;
+            e.Handled = true; // !e.Message.Contains("0x80040154", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -243,6 +241,12 @@
                 },
                 {
                     "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString()
+                },
+                {
+                    "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString()
+                },
+                {
+                    "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString()
                 }
             };
 

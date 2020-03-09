@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Notepads.Commands;
+    using Notepads.Controls.Print;
     using Notepads.Controls.Settings;
     using Notepads.Controls.TextEditor;
     using Notepads.Core;
@@ -26,6 +27,7 @@
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
+    using Windows.Graphics.Printing;
 
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
@@ -63,6 +65,7 @@
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
+                    _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
                     _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
@@ -153,6 +156,18 @@
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            //Register for printing
+            if (!PrintManager.IsSupported())
+            {
+                MenuPrintButton.Visibility = Visibility.Collapsed;
+                MenuPrintAllButton.Visibility = Visibility.Collapsed;
+                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PrintArgs.RegisterForPrinting(this);
+            }
         }
 
         private void InitControls()
@@ -170,9 +185,10 @@
             MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
-            //LineColumnIndicatorButton.Tapped += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowGoToControl();
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
+            MenuPrintButton.Click += async (sender, args) => await Print(NotepadsCore.GetSelectedTextEditor());
+            MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             MainMenuButtonFlyout.Opening += (sender, o) =>
@@ -184,7 +200,8 @@
                     MenuSaveAsButton.IsEnabled = false;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
-                    //MenuPrintButton.IsEnabled = false;
+                    MenuPrintButton.IsEnabled = false;
+                    MenuPrintAllButton.IsEnabled = false;
                 }
                 else if (selectedTextEditor.IsEditorEnabled() == false)
                 {
@@ -192,7 +209,6 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = false;
                     MenuReplaceButton.IsEnabled = false;
-                    //MenuPrintButton.IsEnabled = true;
                 }
                 else
                 {
@@ -200,7 +216,12 @@
                     MenuSaveAsButton.IsEnabled = true;
                     MenuFindButton.IsEnabled = true;
                     MenuReplaceButton.IsEnabled = true;
-                    //MenuPrintButton.IsEnabled = true;
+
+                    if (PrintManager.IsSupported())
+                    {
+                        MenuPrintButton.IsEnabled = !string.IsNullOrEmpty(selectedTextEditor.GetText());
+                        MenuPrintAllButton.IsEnabled = NotepadsCore.HaveNonemptyTextEditor();
+                    }
                 }
 
                 MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
@@ -227,6 +248,70 @@
             }
         }
 
+        private async Task BuildOpenRecentButtonSubItems()
+        {
+            var openRecentSubItem = new MenuFlyoutSubItem
+            {
+                Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
+                Icon = new FontIcon {Glyph = "\xE81C"},
+                Name = "MenuOpenRecentlyUsedFileButton",
+            };
+
+            var MRUFileList = new HashSet<string>();
+
+            foreach (var item in await MRUService.Get(top: 10))
+            {
+                if (item is StorageFile file)
+                {
+                    if (MRUFileList.Contains(file.Path))
+                    {
+                        // MRU might contains files with same path (User opens a recently used file after renaming it)
+                        // So we need to do the decouple here
+                        continue;
+                    }
+                    var newItem = new MenuFlyoutItem()
+                    {
+                        Text = file.Path
+                    };
+                    ToolTipService.SetToolTip(newItem, file.Path);
+                    newItem.Click += async (sender, args) => { await OpenFile(file); };
+                    openRecentSubItem.Items?.Add(newItem);
+                    MRUFileList.Add(file.Path);
+                }
+            }
+
+            var oldOpenRecentSubItem = MainMenuButtonFlyout.Items?.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
+            if (oldOpenRecentSubItem != null)
+            {
+                MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
+            }
+
+            openRecentSubItem.IsEnabled = false;
+            if (openRecentSubItem.Items?.Count > 0)
+            {
+                openRecentSubItem.Items?.Add(new MenuFlyoutSeparator());
+
+                var clearRecentlyOpenedSubItem =
+                    new MenuFlyoutItem()
+                    {
+                        Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
+                    };
+                clearRecentlyOpenedSubItem.Click += async (sender, args) =>
+                {
+                    MRUService.ClearAll();
+                    await BuildOpenRecentButtonSubItems();
+                };
+                openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
+                openRecentSubItem.IsEnabled = true;
+            }
+
+            if (MainMenuButtonFlyout.Items != null)
+            {
+                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
+            }
+        }
+
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
@@ -239,8 +324,19 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.O, async (args) => await OpenNewFiles()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.S, async (args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, async (args) => await Print(NotepadsCore.GetSelectedTextEditor())),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.P, async (args) => await PrintAll(NotepadsCore.GetAllTextEditors())),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.N, async (args) => await OpenNewAppInstance()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number1, (args) => NotepadsCore.SwitchTo(0)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number2, (args) => NotepadsCore.SwitchTo(1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number3, (args) => NotepadsCore.SwitchTo(2)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number4, (args) => NotepadsCore.SwitchTo(3)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number5, (args) => NotepadsCore.SwitchTo(4)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number6, (args) => NotepadsCore.SwitchTo(5)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number7, (args) => NotepadsCore.SwitchTo(6)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number8, (args) => NotepadsCore.SwitchTo(7)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number9, (args) => NotepadsCore.SwitchTo(8)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
@@ -344,6 +440,8 @@
                 SessionManager.IsBackupEnabled = true;
                 SessionManager.StartSessionBackup();
             }
+
+            await BuildOpenRecentButtonSubItems();
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
