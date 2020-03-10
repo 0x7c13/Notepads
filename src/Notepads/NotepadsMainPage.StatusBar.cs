@@ -35,7 +35,7 @@
                 if (StatusBar == null)
                 {
                     FindName("StatusBar");
-                    BuildEncodingSelectionFlyout();
+                    BuildEncodingIndicatorFlyout();
                 } // Lazy loading   
 
                 SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
@@ -338,7 +338,7 @@
             NotepadsCore.FocusOnSelectedTextEditor();
         }
 
-        private void BuildEncodingSelectionFlyout()
+        private void BuildEncodingIndicatorFlyout()
         {
             if (StatusBar == null) return;
 
