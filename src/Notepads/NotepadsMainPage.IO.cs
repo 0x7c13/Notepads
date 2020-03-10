@@ -75,8 +75,8 @@
                 var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
-                MRUService.Add(file); // Remember recently used files
-                if (rebuildOpenRecentItems)
+                var success = MRUService.TryAdd(file); // Remember recently used files
+                if (success && rebuildOpenRecentItems)
                 {
                     await BuildOpenRecentButtonSubItems();   
                 }
@@ -108,11 +108,14 @@
                     }
                 }
             }
-            await BuildOpenRecentButtonSubItems();
+            if (successCount > 0)
+            {
+                await BuildOpenRecentButtonSubItems();   
+            }
             return successCount;
         }
 
-        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
+        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
 
@@ -142,6 +145,11 @@
                 }
 
                 await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+                var success = MRUService.TryAdd(file); // Remember recently used files
+                if (success && rebuildOpenRecentItems)
+                {
+                    await BuildOpenRecentButtonSubItems();
+                }
                 return true;
             }
             catch (Exception ex)
