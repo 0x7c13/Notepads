@@ -397,11 +397,26 @@
             reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
             saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
 
+            var reopenWithEncodingOthers = new MenuFlyoutSubItem()
+            {
+                Text = "More encodings",
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
+            var saveWithEncodingOthers = new MenuFlyoutSubItem()
+            {
+                Text = "More encodings",
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
             // Add legacy ANSI encodings
             foreach (var encoding in EncodingUtility.GetAllSupportedANSIEncodings())
             {
-                AddEncodingItem(encoding, reopenWithEncoding, saveWithEncoding);
+                AddEncodingItem(encoding, reopenWithEncodingOthers, saveWithEncodingOthers);
             }
+
+            reopenWithEncoding.Items?.Add(reopenWithEncodingOthers);
+            saveWithEncoding.Items?.Add(saveWithEncodingOthers);
 
             EncodingSelectionFlyout.Items?.Add(reopenWithEncoding);
             EncodingSelectionFlyout.Items?.Add(saveWithEncoding);
@@ -409,7 +424,7 @@
 
         private void AddEncodingItem(Encoding encoding, MenuFlyoutSubItem reopenWithEncoding, MenuFlyoutSubItem saveWithEncoding)
         {
-            const int EncodingMenuFlyoutItemHeight = 28;
+            const int EncodingMenuFlyoutItemHeight = 30;
             const int EncodingMenuFlyoutItemFontSize = 14;
 
             var reopenWithEncodingItem =
