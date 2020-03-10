@@ -183,6 +183,7 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Services\FileTypeService.cs" />
     <Compile Include="Services\JumpListService.cs" />
     <Compile Include="NotepadsMainPage.IO.cs" />
     <Compile Include="NotepadsMainPage.StatusBar.cs" />

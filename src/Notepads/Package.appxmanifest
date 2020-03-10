@@ -362,6 +362,166 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="go">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.go</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Go File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="srt">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.srt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Subtitle file</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ass">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ass</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Aegisub Advanced Subtitle file</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ssa">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ssa</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sub Station Alpha Subtitle File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vue">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.vue</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Vue File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vuerc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.vuerc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Vue Config File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitconfig">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitconfig</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Config File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitignore">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitignore</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Ignore File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitattributes">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitattributes</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Attributes File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="project">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.project</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Project File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="prj">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.prj</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Project File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="npmrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.npmrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NPM Config File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_history">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_history</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Bash History File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cgi">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cgi</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>CGI File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pl">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.pl</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Perl File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="buildpath">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.buildpath</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Build Path File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
