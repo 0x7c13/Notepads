@@ -428,7 +428,7 @@
                 <Window>
                   <Size>
                     <Height>400</Height>
-                    <Width>200</Width>
+                    <Width>300</Width>
                   </Size>
                   <ResizeSupported>
                     <Horizontal>false</Horizontal>

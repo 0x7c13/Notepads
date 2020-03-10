@@ -33,9 +33,6 @@
 
         private const string AppCenterSecret = null;
 
-        private XboxGameBarWidget m_xboxGameBarWidget = null;
-        private XboxGameBarWidget m_xboxGameBarSettingsWidget = null;
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -157,52 +154,8 @@
 
         protected override async void OnActivated(IActivatedEventArgs args)
         {
-            XboxGameBarWidgetActivatedEventArgs widgetArgs = null;
-            if (args.Kind == ActivationKind.Protocol)
-            {
-                var protocolArgs = args as IProtocolActivatedEventArgs;
-                string protocolString = protocolArgs.Uri.AbsoluteUri;
-                if (protocolString.StartsWith("ms-gamebarwidget"))
-                {
-                    widgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
-                }
-            }
-
-            IsGameBarWidget = widgetArgs != null;
-
             await ActivateAsync(args);
             base.OnActivated(args);
-
-            if (IsGameBarWidget)
-            {
-                IsFirstInstance = true;
-
-                if (widgetArgs.AppExtensionId == "Notepads")
-                {
-
-                    m_xboxGameBarWidget = new XboxGameBarWidget(
-                        widgetArgs,
-                        Window.Current.CoreWindow,
-                        Window.Current.Content as Frame);
-                }
-                else if(widgetArgs.AppExtensionId == "NotepadsSettings")
-                {
-                    Frame rootFrame = Window.Current.Content as Frame;
-
-                    //m_xboxGameBarSettingsWidget = new XboxGameBarWidget(
-                    //    widgetArgs,
-                    //    Window.Current.CoreWindow,
-                    //    Window.Current.Content as Frame);
-                    
-                    //rootFrame.Navigate(typeof(SettingsPage), widgetArgs.Uri);
-                    //SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else
-                {
-                    // Unknown - Game Bar should never send an unknown App Extension Id
-                    return;
-                }
-            }
         }
 
         private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
