@@ -9,6 +9,7 @@
     using Microsoft.AppCenter.Crashes;
     using Microsoft.Gaming.XboxGameBar;
     using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Controls.Settings;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -33,6 +34,7 @@
         private const string AppCenterSecret = null;
 
         private XboxGameBarWidget m_xboxGameBarWidget = null;
+        private XboxGameBarWidget m_xboxGameBarSettingsWidget = null;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -155,18 +157,18 @@
 
         protected override async void OnActivated(IActivatedEventArgs args)
         {
-            XboxGameBarWidgetActivatedEventArgs uiWidgetArgs = null;
+            XboxGameBarWidgetActivatedEventArgs widgetArgs = null;
             if (args.Kind == ActivationKind.Protocol)
             {
                 var protocolArgs = args as IProtocolActivatedEventArgs;
                 string protocolString = protocolArgs.Uri.AbsoluteUri;
                 if (protocolString.StartsWith("ms-gamebarwidget"))
                 {
-                    uiWidgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
+                    widgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
                 }
             }
 
-            IsGameBarWidget = uiWidgetArgs != null;
+            IsGameBarWidget = widgetArgs != null;
 
             await ActivateAsync(args);
             base.OnActivated(args);
@@ -174,10 +176,32 @@
             if (IsGameBarWidget)
             {
                 IsFirstInstance = true;
-                m_xboxGameBarWidget = new XboxGameBarWidget(
-                    uiWidgetArgs,
-                    Window.Current.CoreWindow,
-                    Window.Current.Content as Frame);
+
+                if (widgetArgs.AppExtensionId == "Notepads")
+                {
+
+                    m_xboxGameBarWidget = new XboxGameBarWidget(
+                        widgetArgs,
+                        Window.Current.CoreWindow,
+                        Window.Current.Content as Frame);
+                }
+                else if(widgetArgs.AppExtensionId == "NotepadsSettings")
+                {
+                    Frame rootFrame = Window.Current.Content as Frame;
+
+                    //m_xboxGameBarSettingsWidget = new XboxGameBarWidget(
+                    //    widgetArgs,
+                    //    Window.Current.CoreWindow,
+                    //    Window.Current.Content as Frame);
+                    
+                    //rootFrame.Navigate(typeof(SettingsPage), widgetArgs.Uri);
+                    //SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
+                }
+                else
+                {
+                    // Unknown - Game Bar should never send an unknown App Extension Id
+                    return;
+                }
             }
         }
 
