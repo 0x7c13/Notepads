@@ -346,14 +346,14 @@
 
             var reopenWithEncoding = new MenuFlyoutSubItem()
             {
-                Text = "Reopen with Encoding",
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding"),
                 FlowDirection = FlowDirection.RightToLeft,
                 Name = "ReopenWithEncoding"
             };
 
             var saveWithEncoding = new MenuFlyoutSubItem()
             {
-                Text = "Save with Encoding",
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding"),
                 FlowDirection = FlowDirection.RightToLeft,
                 Name = "SaveWithEncoding"
             };
@@ -399,13 +399,13 @@
 
             var reopenWithEncodingOthers = new MenuFlyoutSubItem()
             {
-                Text = "More encodings",
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
                 FlowDirection = FlowDirection.RightToLeft,
             };
 
             var saveWithEncodingOthers = new MenuFlyoutSubItem()
             {
-                Text = "More encodings",
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
                 FlowDirection = FlowDirection.RightToLeft,
             };
 

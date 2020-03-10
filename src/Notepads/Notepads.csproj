@@ -657,6 +657,12 @@
     <PRIResource Include="Strings\cs-CZ\Settings.resw" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
     <PRIResource Include="Strings\pt-BR\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
