@@ -6,7 +6,6 @@
     using System.Text;
     using System.Threading;
     using Microsoft.AppCenter.Analytics;
-    using Notepads.Services;
 
     public static class EncodingUtility
     {
@@ -123,7 +122,7 @@
                     q is UnicodeEncoding ||
                     q is UTF32Encoding)
                 {
-                    return Encoding.Equals(p, q);
+                    return Encoding.Equals(p, q); // To make sure we compare bigEndian and byteOrderMark flags
                 }
                 else
                 {
