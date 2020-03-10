@@ -27,8 +27,9 @@
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
+    using Microsoft.Gaming.XboxGameBar;
     using Windows.Graphics.Printing;
-
+    
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
@@ -50,6 +51,9 @@
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore _notepadsCore;
+
+        private XboxGameBarWidget _widget;  // maintain throughout the lifetime of the notepads widget
+        private XboxGameBarWidgetControl _widgetControl;
 
         private INotepadsCore NotepadsCore
         {
@@ -236,6 +240,16 @@
                 MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
                 MenuSettingsButton.IsEnabled = false;
             }
+
+            if (App.IsGameBarWidget)
+            {
+                MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
+                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
+
+                MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
+                MenuFullScreenButton.Visibility = Visibility.Collapsed;
+                MenuSettingsButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async Task BuildOpenRecentButtonSubItems()
@@ -362,6 +376,17 @@
                     break;
                 case ProtocolActivatedEventArgs protocol:
                     _appLaunchUri = protocol.Uri;
+                    break;
+                case XboxGameBarWidget widget:
+                    _widget = widget;
+                    _widgetControl = new XboxGameBarWidgetControl(_widget);
+                    _widget.SettingsClicked += Widget_SettingsClicked;
+                    //_widget.PinnedChanged += Widget_PinnedChanged;
+                    //_widget.FavoritedChanged += Widget_FavoritedChanged;
+                    //_widget.RequestedThemeChanged += Widget_RequestedThemeChanged;
+                    //_widget.VisibleChanged += Widget_VisibleChanged;
+                    //_widget.WindowStateChanged += Widget_WindowStateChanged;
+                    //_widget.GameBarDisplayModeChanged += Widget_GameBarDisplayModeChanged;
                     break;
             }
         }
@@ -563,6 +588,15 @@
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
+        }
+
+        #endregion
+
+        #region XboxGameBar
+
+        private async void Widget_SettingsClicked(XboxGameBarWidget sender, object args)
+        {
+            await _widget.ActivateSettingsAsync();
         }
 
         #endregion

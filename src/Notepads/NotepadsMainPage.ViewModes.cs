@@ -34,47 +34,53 @@
 
         private async void EnterExitCompactOverlayMode()
         {
-            if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
+            if (!App.IsGameBarWidget)
             {
-                var modeSwitched = await ApplicationView.GetForCurrentView()
-                    .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
-                if (!modeSwitched)
+                if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
                 {
-                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
-                    Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
+                    var modeSwitched = await ApplicationView.GetForCurrentView()
+                        .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                    if (!modeSwitched)
+                    {
+                        LoggingService.LogError("Failed to enter CompactOverlay view mode.");
+                        Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
+                    }
                 }
-            }
-            else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-            {
-                var modeSwitched = await ApplicationView.GetForCurrentView()
-                    .TryEnterViewModeAsync(ApplicationViewMode.Default);
-                if (!modeSwitched)
+                else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
                 {
-                    LoggingService.LogError("Failed to enter Default view mode.");
-                    Analytics.TrackEvent("FailedToEnterDefaultViewMode");
+                    var modeSwitched = await ApplicationView.GetForCurrentView()
+                        .TryEnterViewModeAsync(ApplicationViewMode.Default);
+                    if (!modeSwitched)
+                    {
+                        LoggingService.LogError("Failed to enter Default view mode.");
+                        Analytics.TrackEvent("FailedToEnterDefaultViewMode");
+                    }
                 }
             }
         }
 
         private void EnterExitFullScreenMode()
         {
-            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+            if(!App.IsGameBarWidget)
             {
-                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
-                ApplicationView.GetForCurrentView().ExitFullScreenMode();
-            }
-            else
-            {
-                if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
+                if (ApplicationView.GetForCurrentView().IsFullScreenMode)
                 {
-                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
-                    NotificationCenter.Instance.PostNotification(
-                        _resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
+                    LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
+                    ApplicationView.GetForCurrentView().ExitFullScreenMode();
                 }
                 else
                 {
-                    LoggingService.LogError("Failed to enter full screen view mode.");
-                    Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
+                    if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
+                    {
+                        LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
+                        NotificationCenter.Instance.PostNotification(
+                            _resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
+                    }
+                    else
+                    {
+                        LoggingService.LogError("Failed to enter full screen view mode.");
+                        Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
+                    }
                 }
             }
         }

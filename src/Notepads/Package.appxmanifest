@@ -391,51 +391,77 @@
           <uap3:AppExtension Name="microsoft.gameBarUIExtension"
             Id="Notepads"
             DisplayName="Notepads"
-            Description="Notepads extension for Game Bar"
-            PublicFolder="Gamebar">
+            Description="Notepads widget for Game Bar"
+            PublicFolder="GameBar\Notepads">
             <uap3:Properties>
-              <HomeMenuVisible>true</HomeMenuVisible>
-              <PinningSupported>true</PinningSupported>
-              <ActivateAfterInstall>true</ActivateAfterInstall>
-              <Window>
-                <Size>
-                  <Height>400</Height>
-                  <Width>400</Width>
-                  <MinHeight>400</MinHeight>
-                  <MinWidth>400</MinWidth>
-                  <MaxHeight>1000</MaxHeight>
-                  <MaxWidth>1000</MaxWidth>
-                </Size>
-                <ResizeSupported>
-                  <Horizontal>true</Horizontal>
-                  <Vertical>true</Vertical>
-                </ResizeSupported>
-              </Window>
+              <GameBarWidget Type="Standard">
+                <HomeMenuVisible>true</HomeMenuVisible>
+                <PinningSupported>true</PinningSupported>
+                <ActivateAfterInstall>true</ActivateAfterInstall>
+                <SettingsSupported AppExtensionId="NotepadsSettings" />
+                <Window>
+                  <Size>
+                    <Height>400</Height>
+                    <Width>400</Width>
+                    <MinHeight>400</MinHeight>
+                    <MinWidth>400</MinWidth>
+                    <MaxHeight>1000</MaxHeight>
+                    <MaxWidth>1000</MaxWidth>
+                  </Size>
+                  <ResizeSupported>
+                    <Horizontal>true</Horizontal>
+                    <Vertical>true</Vertical>
+                  </ResizeSupported>
+                </Window>
+              </GameBarWidget>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+            Id="NotepadsSettings"
+            DisplayName="Notepads Settings"
+            Description="Notepads widget for Game Bar settings"
+            PublicFolder="GameBar\Notepads">
+            <uap3:Properties>
+              <GameBarWidget Type="Settings">
+                <Window>
+                  <Size>
+                    <Height>400</Height>
+                    <Width>300</Width>
+                  </Size>
+                  <ResizeSupported>
+                    <Horizontal>false</Horizontal>
+                    <Vertical>false</Vertical>
+                  </ResizeSupported>
+                </Window>
+              </GameBarWidget>
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
       </Extensions>
     </Application>
-
   </Applications>
 
   <Extensions>
     <!-- Enlighten COM on where to find Metadata Based Marshaling (MBM) data for the Game Bar private types 
-    <Path> is a required element (by VS) and has to point to a binary in the package, but it's not used when the class id is 00000355-0000-0000-C000-000000000046 (MBM). Due to that we just put the Microsoft.Gaming.XboxGameBar.winmd here. -->
+    <Path> is a required element (by VS) and has to point to a binary in the package, but it's not used when the class id is
+    00000355-0000-0000-C000-000000000046 (MBM). Due to that we just put the Microsoft.Gaming.XboxGameBar.winmd here. -->
     <Extension Category="windows.activatableClass.proxyStub">
       <ProxyStub ClassId="00000355-0000-0000-C000-000000000046">
         <Path>Microsoft.Gaming.XboxGameBar.winmd</Path>
-        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IGbrtServerApiFactory" InterfaceId="ACEC8903-5583-4D21-ACF4-EC79559B9B05" />
-        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IGbrtServerApiFactoryFactory" InterfaceId="38ADF632-990F-4D5F-A2A7-5A05C0533962" />
-        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionActivatedEventArgsPrivate" InterfaceId="782535A7-9407-4572-BFCB-316B4086F102" />
-        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionHost" InterfaceId="5D12BC93-212B-4B9F-9091-76B73BF56525" />
-        <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarUIExtensionPrivate" InterfaceId="22ABA97F-FB0F-4439-9BDD-2C67B2D5AA8F" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarWidgetAuthHost" InterfaceId="DC263529-B12F-469E-BB35-B94069F5B15A" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarWidgetControlHost" InterfaceId="C309CAC7-8435-4082-8F37-784523747047" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarNavigationKeyCombo" InterfaceId="5EEA3DBF-09BB-42A5-B491-CF561E33C172" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarWidgetActivatedEventArgsPrivate" InterfaceId="782535A7-9407-4572-BFCB-316B4086F102" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarWidgetHost" InterfaceId="5D12BC93-212B-4B9F-9091-76B73BF56525" />
+          <Interface Name="Microsoft.Gaming.XboxGameBar.Private.IXboxGameBarWidgetPrivate" InterfaceId="22ABA97F-FB0F-4439-9BDD-2C67B2D5AA8F" />
       </ProxyStub>
     </Extension>
   </Extensions>
 
   <Capabilities>
     <Capability Name="internetClient" />
-    <rescap:Capability Name="confirmAppClose"/>
+      <rescap:Capability Name="confirmAppClose"/>
   </Capabilities>
 </Package>

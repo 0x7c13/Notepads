@@ -1,8 +1,11 @@
 ﻿namespace Notepads.Services
 {
     using System.Threading.Tasks;
+    using Microsoft.Gaming.XboxGameBar;
+    using Notepads.Controls.Settings;
     using Notepads.Utilities;
     using Windows.ApplicationModel.Activation;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public static class ActivationService
@@ -25,11 +28,42 @@
             {
                 LaunchActivated(rootFrame, launchActivatedEventArgs);
             }
+            else if (e is XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
+            {
+                GameBarActivated(rootFrame, xboxGameBarWidgetActivatedEventArgs);
+            }
             else // For other types of activated events
             {
                 if (rootFrame.Content == null)
                 {
                     rootFrame.Navigate(typeof(NotepadsMainPage));
+                }
+            }
+        }
+
+        public static void GameBarActivated(Frame rootFrame, XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
+        {
+            LoggingService.LogInfo($"[XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
+
+            if (xboxGameBarWidgetActivatedEventArgs != null)
+            {
+                if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
+                {
+                    App.IsFirstInstance = true;
+
+                    var xboxGameBarWidget = new XboxGameBarWidget(
+                        xboxGameBarWidgetActivatedEventArgs,
+                        Window.Current.CoreWindow,
+                        rootFrame);
+
+                    if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "Notepads")
+                    {
+                        rootFrame.Navigate(typeof(NotepadsMainPage), xboxGameBarWidget);
+                    }
+                    else if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "NotepadsSettings")
+                    {
+                        rootFrame.Navigate(typeof(SettingsPage), xboxGameBarWidget);
+                    }
                 }
             }
         }
