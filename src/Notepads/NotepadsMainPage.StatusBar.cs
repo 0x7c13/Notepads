@@ -35,6 +35,7 @@
                 if (StatusBar == null)
                 {
                     FindName("StatusBar");
+                    BuildEncodingSelectionFlyout();
                 } // Lazy loading   
 
                 SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
@@ -339,9 +340,11 @@
 
         private void BuildEncodingSelectionFlyout()
         {
+            if (StatusBar == null) return;
+
             if (EncodingSelectionFlyout.Items?.Count > 0)
             {
-                EncodingSelectionFlyout.Items?.Clear();
+                return;
             }
 
             var reopenWithEncoding = new MenuFlyoutSubItem()
