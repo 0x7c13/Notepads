@@ -66,62 +66,49 @@
         {
             var encodingName = "ANSI";
 
-            if (encoding is UTF7Encoding)
+            switch (encoding)
             {
-                encodingName = "UTF-7";
-            }
-            else if (encoding is UTF8Encoding)
-            {
-                if (Equals(encoding, new UTF8Encoding(true)))
-                {
+                case UTF7Encoding _:
+                    encodingName = "UTF-7";
+                    break;
+                case UTF8Encoding _ when Equals(encoding, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)):
                     encodingName = "UTF-8-BOM";
-                }
-                else
-                {
+                    break;
+                case UTF8Encoding _ when Equals(encoding, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)):
                     encodingName = "UTF-8";
-                }
-            }
-            else if (encoding is UnicodeEncoding)
-            {
-                if (Equals(encoding, new UnicodeEncoding(bigEndian: true, byteOrderMark: true)))
-                {
+                    break;
+                case UnicodeEncoding _ when Equals(encoding, new UnicodeEncoding(bigEndian: true, byteOrderMark: true)):
                     encodingName = "UTF-16 BE BOM";
-                }
-                else if (Equals(encoding, new UnicodeEncoding(bigEndian: false, byteOrderMark: true)))
-                {
+                    break;
+                case UnicodeEncoding _ when Equals(encoding, new UnicodeEncoding(bigEndian: false, byteOrderMark: true)):
                     encodingName = "UTF-16 LE BOM";
-                }
-                else if (Equals(encoding, new UnicodeEncoding(bigEndian: true, byteOrderMark: false)))
-                {
+                    break;
+                case UnicodeEncoding _ when Equals(encoding, new UnicodeEncoding(bigEndian: true, byteOrderMark: false)):
                     encodingName = "UTF-16 BE";
-                }
-                else if (Equals(encoding, new UnicodeEncoding(bigEndian: false, byteOrderMark: false)))
-                {
+                    break;
+                case UnicodeEncoding _ when Equals(encoding, new UnicodeEncoding(bigEndian: false, byteOrderMark: false)):
                     encodingName = "UTF-16 LE";
-                }
-            }
-            else if (encoding is UTF32Encoding)
-            {
-                if (Equals(encoding, new UTF32Encoding(bigEndian: true, byteOrderMark: true)))
-                {
+                    break;
+                case UTF32Encoding _ when Equals(encoding, new UTF32Encoding(bigEndian: true, byteOrderMark: true)):
                     encodingName = "UTF-32 BE BOM";
-                }
-                if (Equals(encoding, new UTF32Encoding(bigEndian: false, byteOrderMark: true)))
-                {
+                    break;
+                case UTF32Encoding _ when Equals(encoding, new UTF32Encoding(bigEndian: false, byteOrderMark: true)):
                     encodingName = "UTF-32 LE BOM";
-                }
-                else if (Equals(encoding, new UTF32Encoding(bigEndian: true, byteOrderMark: false)))
-                {
+                    break;
+                case UTF32Encoding _ when Equals(encoding, new UTF32Encoding(bigEndian: true, byteOrderMark: false)):
                     encodingName = "UTF-32 BE";
-                }
-                else if (Equals(encoding, new UTF32Encoding(bigEndian: false, byteOrderMark: false)))
-                {
+                    break;
+                case UTF32Encoding _ when Equals(encoding, new UTF32Encoding(bigEndian: false, byteOrderMark: false)):
                     encodingName = "UTF-32 LE";
+                    break;
+                default:
+                {
+                    if (ANSIEncodings.ContainsKey(encoding.CodePage))
+                    {
+                        encodingName = ANSIEncodings[encoding.CodePage];
+                    }
+                    break;
                 }
-            }
-            else if (ANSIEncodings.ContainsKey(encoding.CodePage))
-            {
-                encodingName = ANSIEncodings[encoding.CodePage];
             }
 
             return encodingName;
@@ -153,18 +140,8 @@
             {
                 case "ANSI":
                 {
-                    if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
-                    {
-                        return systemDefaultANSIEncoding;
-                    }
-                    else if (TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
-                    {
-                        return currentCultureANSIEncoding;
-                    }
-                    else
-                    {
-                        return new UTF8Encoding(false);
-                    }
+                    if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding)) return systemDefaultANSIEncoding; 
+                    else return TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding) ? currentCultureANSIEncoding : new UTF8Encoding(false);
                 }
                 case "UTF-7":
                     return new UTF7Encoding();
