@@ -259,7 +259,6 @@
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
     <value>Todos los cambios incluyendo texto, fin de línea y codificación hechos a ¨{0}" serán revertidos!</value>
-    <value>All changes including text, line ending and encoding made to "{0}" will be reverted!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
