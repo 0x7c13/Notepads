@@ -118,435 +118,435 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>ବାତିଲ୍ କରନ୍ତୁ</value>
+    <value>Anuluj</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>ଅସଞ୍ଚିତ ପରିବର୍ତ୍ତନଗୁଡିକ ଅଛି।</value>
+    <value>Zapisać?</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ସମସ୍ତ ସଞ୍ଚୟ କରି ପ୍ରସ୍ଥାନ</value>
+    <value>Zapisz i zamknij</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>ପରିତ୍ୟାଗ ଏବଂ ପ୍ରସ୍ଥାନ</value>
+    <value>Odrzuć zmiany</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>ଆପଣ ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?</value>
+    <value>Nie zapisano zmian</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>ଅଂଶୀଦାର କରିବାକୁ କିଛି ନାହିଁ କାରଣ କୌଣସି ପାଠ୍ୟ ଚୟନ ହୋଇନାହିଁ ଏବଂ ସାମ୍ପ୍ରତିକ ଡକ୍ୟୁମେଣ୍ଟ ଖାଲି ଅଛି |</value>
+    <value>Nie ma nic do udostępnienia, ponieważ żaden tekst nie jest zaznaczony lub dokument jest pusty.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>ଆପଣଙ୍କର ପରିବର୍ତ୍ତନଗୁଡିକୁ ପରେ</value>
+    <value>Po dokonaniu zmian</value>
     <comment>DiffViewer: Header's text for new text (After changes).</comment>
   </data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>ଆପଣଙ୍କର ପରିବର୍ତ୍ତନଗୁଡିକୁ ପୂର୍ବରୁ</value>
+    <value>Przed dokonaniem zmian</value>
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>ଏହି ମୁହୂର୍ତ୍ତରେ Notepads 1MB ରୁ ଅଧିକ ଫାଇଲକୁ ସପୋର୍ଟ କରେନାହିଁ |</value>
+    <value>Notepads nie wspiera plików większych niż 1MB w obecnej fazie rozwoju.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>ଦୁଃଖିତ, ଫାଇଲ୍ "{0}" ଖୋଲାଯାଇ ପାରିଲା ନାହିଁ: {1}</value>
+    <value>Niestety, plik "{0}" nie może zostać otworzony: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ଠିକ୍ ଅଛି</value>
+    <value>OK</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>ଫାଇଲ୍ ଖୋଲା ତ୍ରୁଟି</value>
+    <value>Błąd podczas otwierania pliku</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>ଦୁଃଖିତ, ଫାଇଲ୍ "{0}" ସଞ୍ଚୟ ହୋଇପାରିଲା ନାହିଁ: {1}</value>
+    <value>Niestety, plik "{0}" nie może zostać zapisany: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ଠିକ୍ ଅଛି</value>
+    <value>OK</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>ଫାଇଲ ସଞ୍ଚୟ ତ୍ରୁଟି</value>
+    <value>Błąd zapisu pliku</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ବନ୍ଦ କର</value>
+    <value>Zamknij</value>
     <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
-    <value>ଖୋଜ</value>
+    <value>Znajdź</value>
     <comment>FindAndReplace: Find bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>ମିଳିଲା ନାହିଁ</value>
+    <value>Nie znaleziono</value>
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ସବୁ ପରିବର୍ତ୍ତନ କରନ୍ତୁ</value>
+    <value>Zamień wszystkie</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
-    <value>ପରିବର୍ତ୍ତନ କରନ୍ତୁ</value>
+    <value>Zamień</value>
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ପରିବର୍ତ୍ତନ କରନ୍ତୁ</value>
+    <value>Zamień</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ପରବର୍ତ୍ତୀ ଖୋଜ (F3)</value>
+    <value>Znajdź następny (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ସନ୍ଧାନ ବିକଳ୍ପଗୁଡ଼ିକ</value>
+    <value>Opcje szukania</value>
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>କେସ୍ ମିଳାନ୍ତୁ</value>
+    <value>Uwzględniaj wielkość liter</value>
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>ସମସ୍ତ ଶବ୍ଦ ମିଳାନ୍ତୁ</value>
+    <value>Uwzględniaj całe wyrazy</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>ସନ୍ଧାନ...</value>
+    <value>Znajdź...</value>
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>ନୂତନ</value>
+    <value>Nowy</value>
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>ଖୋଲନ୍ତୁ...</value>
+    <value>Otwórz...</value>
     <comment>MainMenu: "Open" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>ମୁଦ୍ରଣ...</value>
+    <value>Drukuj...</value>
     <comment>MainMenu: "Print" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>ପରିବର୍ତ୍ତନ କରନ୍ତୁ...</value>
+    <value>Zamień...</value>
     <comment>MainMenu: "Replace" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Save.Text" xml:space="preserve">
-    <value>ସଞ୍ଚୟ କରନ୍ତୁ</value>
+    <value>Zapisz</value>
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>ସବୁ ସଞ୍ଚୟ କରନ୍ତୁ</value>
+    <value>Zapisz wszystkie</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>କା ପରି ସେଭ୍ କରନ୍ତୁ...</value>
+    <value>Zapisz jako...</value>
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>ସେଟିଙ୍ଗ୍ସ</value>
+    <value>Ustawienia</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>ବାତିଲ୍ କରନ୍ତୁ</value>
+    <value>Anuluj</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>ଟେକ୍ସଟ୍, ଲାଇନ୍ ଏଣ୍ଡିଙ୍ଗ୍ ଏବଂ ଏନକୋଡିଂ ସହିତ "{0}" ର ସମସ୍ତ ପରିବର୍ତ୍ତନ ଫେରସ୍ତ ହେବ!</value>
+    <value>Wszystkie zmiany takie jak tekst, zakończenia lini oraz kodowanie dokonane w "{0}" zostaną przywrócone!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ହଁ</value>
+    <value>Tak</value>
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>ଆପଣ ସମସ୍ତ ପରିବର୍ତ୍ତନକୁ ଫେରାଇବାକୁ ନିଶ୍ଚିତ କି?</value>
+    <value>Czy chcesz przywrócić wszystkie zmiany?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>ବାତିଲ୍ କରନ୍ତୁ</value>
+    <value>Anuluj</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>ଫାଇଲ୍ "{0}" ସଞ୍ଚୟ କରନ୍ତୁ?</value>
+    <value>Zapisać plik "{0}"?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>ସଞ୍ଚୟ କରନ୍ତୁ</value>
+    <value>Zapisz</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>ସଞ୍ଚୟ କରନ୍ତୁ ନାହିଁ</value>
+    <value>Nie zapisuj</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>ଆପଣଙ୍କର ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ କରନ୍ତୁ</value>
+    <value>Zapisać zmiany?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
-    <value>ବନ୍ଦ କର</value>
+    <value>Zamknij</value>
     <comment>Tab: ContextFlyout "Close" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>ଆକୁ ଛାଡି ସବୁ ବନ୍ଦ କରନ୍ତୁ</value>
+    <value>Zamknij inne karty</value>
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>ଡାହାଣ ପଟୁ ସବୁ ବନ୍ଦ କରନ୍ତୁ</value>
+    <value>Zamknij karty z prawej strony</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>ସଞ୍ଚିଥିବା ବନ୍ଦ କରନ୍ତୁ</value>
+    <value>Zamknij zapisane karty</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>ପୂର୍ଣ୍ଣ ପଥ କପି କରନ୍ତୁ</value>
+    <value>Kopiuj ścieżkę do pliku</value>
     <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
-    <value>ଧାରକ ଫୋଲ୍ଡର ଖୋଲନ୍ତୁ</value>
+    <value>Otwórz lokalizację pliku</value>
     <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
-    <value>ନକଲ</value>
+    <value>Kopiuj</value>
     <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
-    <value>କାଟ</value>
+    <value>Wytnij</value>
     <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
-    <value>ଲେପନ</value>
+    <value>Wklej</value>
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>ପ୍ରିଭ୍ଯୁ ଟୋଗଲ୍ କରନ୍ତୁ</value>
+    <value>Zmień widok</value>
     <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
-    <value>ପୁନର୍ବାର କରନ୍ତୁ</value>
+    <value>Wykonaj ponownie</value>
     <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
-    <value>ସମସ୍ତ ଚୟନ କରନ୍ତୁ</value>
+    <value>Zaznacz wszystko</value>
     <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
-    <value>ଅଂଶୀଦାର କରନ୍ତୁ</value>
+    <value>Udostępnij</value>
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>ଚୟନିତ ଅଂଶୀଦାର କରନ୍ତୁ</value>
+    <value>Udostępnij zaznaczony tekst</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
-    <value>ପୂର୍ବବତ୍ କରନ୍ତୁ</value>
+    <value>Cofnij</value>
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>ୱର୍ଡ ରାପ୍</value>
+    <value>Zawijanie tekstu</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>ଆଖ୍ୟାବିହୀନ.txt</value>
+    <value>Bez tytułu.txt</value>
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>ଲଁନ୍ {0}, ସ୍ତମ୍ଭ {1} ({2} {3})</value>
+    <value>Linia {0}, Kolumna {1} (Zaznaczono {2} znak{3}ów)</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>ଲଁନ୍ {0}, ସ୍ତମ୍ଭ {1}</value>
+    <value>Lina {0}, Kolumna {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>ପାଠ୍ୟ ପରିବର୍ତ୍ତନ ପୂର୍ବାବଲୋକନ</value>
+    <value>Pokaż zmiany</value>
     <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>ସମସ୍ତ ପରିବର୍ତ୍ତନଗୁଡିକର ଫେରସ୍ତ</value>
+    <value>Odrzuć wszystkie zmiany</value>
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>ପରିବର୍ତ୍ତିତ</value>
+    <value>Zmodyfikowany</value>
     <comment>TextEditor: ModificationIndicator display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>କପି ହେଲା</value>
+    <value>Skopiowano</value>
     <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
-    <value>ସଞ୍ଚୟ ହେଲା</value>
+    <value>Zapisano</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>ପୂର୍ଣ୍ଣ ସ୍କ୍ରୀନରୁ ବାହାରିବା ପାଇଁ F11 ଦବାନ୍ତୁ</value>
+    <value>Naciśnij F11 aby opuścić tryb pełnoekranowy</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>ଡିସ୍କରୁ ପୁନଃଲୋଡ୍ କରନ୍ତୁ!</value>
+    <value>Przeładuj plik z dysku</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>ଫାଇଲ୍ ବାହାରେ ସଂଶୋଧିତ ହୋଇଛି!</value>
+    <value>Plik został zmodyfikowany przez inny program!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>ଫାଇଲ୍ ସ୍ଥାନାନ୍ତରିତ ହୋଇଛି, ନାମ ପରିବର୍ତ୍ତନ ହୋଇଛି କିମ୍ବା ଡିଲିଟ୍ ହୋଇଛି!</value>
+    <value>Plik został przeniesiony, usunięty lub jego nazwa została zmieniona!</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>ଫାଇଲ୍ ପୁନଃଲୋଡ୍ ହେଲା</value>
+    <value>Przeładowano plik</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>କମ୍ପାକ୍ଟ ଓଭରଲେ</value>
+    <value>Tryb kompaktowy</value>
     <comment>App: "Compact Overlay" display text</comment>
   </data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>ପୂର୍ଣ୍ଣ ସ୍କ୍ରୀନ</value>
+    <value>Tryb pełnoekranowy</value>
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>କମ୍ପାକ୍ଟ ଓଭରଲେ ଛାଡନ୍ତୁ</value>
+    <value>Opuść Tryb Kompaktowy</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>ପୂର୍ଣ୍ଣ ସ୍କ୍ରିନ୍ ଛାଡନ୍ତୁ</value>
+    <value>Opuść Tryb pełnoekranowy</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>ଚୟନୀତ</value>
+    <value>zaznaczono</value>
     <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>ଚୟନୀତ</value>
+    <value>zaznaczono</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>ଟ୍ୟାବ୍ କୁ ଘୁଞ୍ଚାନ୍ତୁ</value>
+    <value>Przenieś tą kartę tutaj</value>
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Notepads ସହିତ ଖୋଲନ୍ତୁ</value>
+    <value>Otwórz przez Notepads</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>ଏହା ହେଉଛି Notepads ଛାୟା ୱିଣ୍ଡୋ | ଅଧିବେଶନ ସ୍ନାପସଟ୍ ଏବଂ ସେଟିଙ୍ଗ୍ସ ଅକ୍ଷମ ହୋଇଛି |</value>
+    <value>To jest cień okna Notepads. Migawka sesji i ustawienia są wyłączone.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>ଫାଇଲ୍ ପୂର୍ବରୁ ଖୋଲା ଯାଇଛି!</value>
+    <value>Plik jest już otworzony!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>ନୂତନ ୱିଣ୍ଡୋ</value>
+    <value>Nowe okno</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>ଏକ ନୂତନ ୱିଣ୍ଡୋ ଖୋଲିବ</value>
+    <value>Otwiera nowe okno</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>ନୂତନ ୱିଣ୍ଡୋ</value>
+    <value>Nowe okno</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>Ostatnio używane</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>ଲାଇନକୁ ଯାଆନ୍ତୁ</value>
+    <value>Idź do lini</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>ଲାଇନ ସଂଖ୍ୟା ସମୁଦାୟ ଧାଡି ସଂଖ୍ୟା ବାହାରେ!</value>
+    <value>Wpisana wartość przekracza całkowitą ilość lini!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>ଆପଣ କେବଳ ଏକ ନମ୍ବର ଟାଇପ୍ କରିପାରିବେ!</value>
+    <value>Możesz wpisywać tylko liczby!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>ଲାଇନକୁ ଯାଆନ୍ତୁ</value>
+    <value>Idź do lini</value>
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>ଇଣ୍ଟରନେଟ୍ ସନ୍ଧାନ କରନ୍ତୁ</value>
+    <value>Wyszukaj w Internecie</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ ଜୁମ୍ ପୁନଃସ୍ଥାପନ</value>
+    <value>Przywróć domyślne przybliżenie</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>ବଡ କର</value>
+    <value>Powiększ</value>
     <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>ଛୋଟ କର</value>
+    <value>Pomniejsz</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>ଲାଇନକୁ:</value>
+    <value>Idź do:</value>
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>ସମସ୍ତ ମୁଦ୍ରଣ କରନ୍ତୁ...</value>
+    <value>Wydrukuj wszystkie...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>କେବଳ ଗୋଟିଏ ଦଶମିକ ସ୍ଥାନ ପର୍ଯ୍ୟନ୍ତ ଗ୍ରହଣ କରିପାରିବ</value>
-    <comment>Print: Error message when decimal places for margin entry exceeds limit</comment>
+    <value>Może przyjąć tylko jedno miejsce po przecinku</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>ମୂଲ୍ୟ ସୀମା ବାହାରେ</value>
-    <comment>Print: Error message when value for margin entry exceeds limit</comment>
+    <value>Wartość poza zakresem</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>ନିମ୍ନଭାଗ</value>
-    <comment>Print: PrintManager custom option "FooterText" title</comment>
+    <value>Stopka</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>ଶୀର୍ଷଲେଖ</value>
-    <comment>Print: PrintManager custom option "HeaderText" title</comment>
+    <value>Nagłówek</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>ଭୂସମାନ୍ତର ମାର୍ଜିନ୍ (% ରେ)</value>
-    <comment>Print: PrintManager custom option "LeftMargin" title</comment>
+    <value>Margines poziomy (w procentach)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>କାଗଜ ମୋଟେଇର % ରେ</value>
-    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description</comment>
+    <value>Procent szerokości papieru</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>ମୁଦ୍ରଣ ତ୍ରୁଟି:</value>
-    <comment>Print: Notification message when error occurs while showing print ui</comment>
+    <value>Błąd modułu drukowania:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>ମୁଦ୍ରଣ କରିବାରେ ବିଫଳ</value>
-    <comment>Print: Notification message on print failure</comment>
+    <value>Błąd druku</value>
+    <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>ଏହି ଡିଭାଇସରେ ମୁଦ୍ରଣ ସମର୍ଥିତ ନାହିଁ </value>
-    <comment>Print: Notification message when printing attempted in a non-supported device</comment>
+    <value>To urządzenie nie wspiera drukowania</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>ଭର୍ଟିକାଲ୍ ମାର୍ଜିନ୍ (% ରେ)</value>
-    <comment>Print: PrintManager custom option "TopMargin" title</comment>
+    <value>Margines poziomy (w procentach)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>ରେଗୁଲାର୍ ଏକ୍ସପ୍ରେସନ</value>
+    <value>Wyrażenia regularne</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
-  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>ସମ୍ପ୍ରତି ଖୋଲନ୍ତୁ</value>
-    <comment>MainMenu: "Open Recent" button display text.</comment>
-  </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>ନିକଟରେ ଖୋଲାଯାଇଥିବା ସଫା କରନ୍ତୁ</value>
+    <value>Wyczyść historię ostatni używanych plików</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">

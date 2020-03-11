@@ -183,6 +183,7 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Services\FileTypeService.cs" />
     <Compile Include="Services\JumpListService.cs" />
     <Compile Include="NotepadsMainPage.IO.cs" />
     <Compile Include="NotepadsMainPage.StatusBar.cs" />
@@ -655,6 +656,12 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\cs-CZ\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Settings.resw" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\pt-BR\Resources.resw" />

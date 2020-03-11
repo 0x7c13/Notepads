@@ -1,7 +1,9 @@
 ﻿namespace Notepads
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -33,6 +35,7 @@
                 if (StatusBar == null)
                 {
                     FindName("StatusBar");
+                    BuildEncodingIndicatorFlyout();
                 } // Lazy loading   
 
                 SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
@@ -256,18 +259,6 @@
             }
         }
 
-        private void EncodingSelection_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (!(sender is MenuFlyoutItem item)) return;
-
-            var encoding = EncodingUtility.GetEncodingByName((string) item.Tag);
-            var textEditor = NotepadsCore.GetSelectedTextEditor();
-            if (textEditor != null)
-            {
-                NotepadsCore.ChangeEncoding(textEditor, encoding);
-            }
-        }
-
         private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
@@ -320,7 +311,7 @@
             else if (sender == FontZoomIndicator)
             {
                 FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
-                FontZoomIndicatorFlyout.Opened += (s_flyout, e_flyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
+                FontZoomIndicatorFlyout.Opened += (sflyout, eflyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
             }
             else if (sender == LineEndingIndicator)
             {
@@ -328,6 +319,11 @@
             }
             else if (sender == EncodingIndicator)
             {
+                var reopenWithEncoding = EncodingSelectionFlyout?.Items?.FirstOrDefault(i => i.Name.Equals("ReopenWithEncoding"));
+                if (reopenWithEncoding != null)
+                {
+                    reopenWithEncoding.IsEnabled = selectedEditor.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+                }
                 EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
             }
             else if (sender == ShadowWindowIndicator)
@@ -340,6 +336,145 @@
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
             NotepadsCore.FocusOnSelectedTextEditor();
+        }
+
+        private void BuildEncodingIndicatorFlyout()
+        {
+            if (StatusBar == null) return;
+
+            if (EncodingSelectionFlyout.Items?.Count > 0)
+            {
+                return;
+            }
+
+            var reopenWithEncoding = new MenuFlyoutSubItem()
+            {
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding"),
+                FlowDirection = FlowDirection.RightToLeft,
+                Name = "ReopenWithEncoding"
+            };
+
+            var saveWithEncoding = new MenuFlyoutSubItem()
+            {
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding"),
+                FlowDirection = FlowDirection.RightToLeft,
+                Name = "SaveWithEncoding"
+            };
+            
+            // Add suggested ANSI encodings
+            var appAndSystemANSIEncodings = new HashSet<Encoding>();
+
+            if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
+            {
+                appAndSystemANSIEncodings.Add(systemDefaultANSIEncoding);
+            }
+            if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
+            {
+                appAndSystemANSIEncodings.Add(currentCultureANSIEncoding);
+            }
+
+            if (appAndSystemANSIEncodings.Count > 0)
+            {
+                foreach (var encoding in appAndSystemANSIEncodings)
+                {
+                    AddEncodingItem(encoding, reopenWithEncoding, saveWithEncoding);
+                }
+                reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+                saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+            }
+            
+            // Add Unicode encodings
+            var unicodeEncodings = new List<Encoding>
+            {
+                new UTF8Encoding(false), // "UTF-8"
+                new UTF8Encoding(true), // "UTF-8-BOM"
+                new UnicodeEncoding(false, true), // "UTF-16 LE BOM"
+                new UnicodeEncoding(true, true), // "UTF-16 BE BOM"
+            };
+
+            foreach (var encoding in unicodeEncodings)
+            {
+                AddEncodingItem(encoding, reopenWithEncoding, saveWithEncoding);
+            }
+
+            reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+            saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+
+            var reopenWithEncodingOthers = new MenuFlyoutSubItem()
+            {
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
+            var saveWithEncodingOthers = new MenuFlyoutSubItem()
+            {
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
+            // Add legacy ANSI encodings
+            foreach (var encoding in EncodingUtility.GetAllSupportedANSIEncodings())
+            {
+                AddEncodingItem(encoding, reopenWithEncodingOthers, saveWithEncodingOthers);
+            }
+
+            reopenWithEncoding.Items?.Add(reopenWithEncodingOthers);
+            saveWithEncoding.Items?.Add(saveWithEncodingOthers);
+
+            EncodingSelectionFlyout.Items?.Add(reopenWithEncoding);
+            EncodingSelectionFlyout.Items?.Add(saveWithEncoding);
+        }
+
+        private void AddEncodingItem(Encoding encoding, MenuFlyoutSubItem reopenWithEncoding, MenuFlyoutSubItem saveWithEncoding)
+        {
+            const int EncodingMenuFlyoutItemHeight = 30;
+            const int EncodingMenuFlyoutItemFontSize = 14;
+
+            var reopenWithEncodingItem =
+                new MenuFlyoutItem()
+                {
+                    Text = EncodingUtility.GetEncodingName(encoding),
+                    FlowDirection = FlowDirection.LeftToRight,
+                    Height = EncodingMenuFlyoutItemHeight,
+                    FontSize = EncodingMenuFlyoutItemFontSize
+                };
+            reopenWithEncodingItem.Click += async (sender, args) =>
+            {
+                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+                if (selectedTextEditor != null)
+                {
+                    try
+                    {
+                        await selectedTextEditor.ReloadFromEditingFile(encoding);
+                        NotificationCenter.Instance.PostNotification(
+                            _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);   
+                    }
+                    catch (Exception ex)
+                    {
+                        var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                        await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                        if (!fileOpenErrorDialog.IsAborted)
+                        {
+                            NotepadsCore.FocusOnSelectedTextEditor();
+                        }
+                    }
+                }
+            };
+            reopenWithEncoding.Items?.Add(reopenWithEncodingItem);
+
+            var saveWithEncodingItem =
+                new MenuFlyoutItem()
+                {
+                    Text = EncodingUtility.GetEncodingName(encoding),
+                    FlowDirection = FlowDirection.LeftToRight,
+                    Height = EncodingMenuFlyoutItemHeight,
+                    FontSize = EncodingMenuFlyoutItemFontSize
+                };
+            saveWithEncodingItem.Click += (sender, args) =>
+            {
+                NotepadsCore.GetSelectedTextEditor()?.TryChangeEncoding(encoding);
+            };
+            saveWithEncoding.Items?.Add(saveWithEncodingItem);
         }
     }
 }
