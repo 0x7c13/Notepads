@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
     using Notepads.Models;
@@ -43,6 +44,7 @@
         Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false);
 
         ITextEditor CreateTextEditor(
