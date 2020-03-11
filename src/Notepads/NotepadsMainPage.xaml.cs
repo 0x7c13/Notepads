@@ -128,25 +128,31 @@
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
+            EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ()=>
+                {
+                    if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                });
             };
 
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
-                if (isSessionBackupAndRestoreEnabled)
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    SessionManager.IsBackupEnabled = true;
-                    SessionManager.StartSessionBackup(startImmediately: true);
-                }
-                else
-                {
-                    SessionManager.IsBackupEnabled = false;
-                    SessionManager.StopSessionBackup();
-                    await SessionManager.ClearSessionDataAsync();
-                }
+                    if (isSessionBackupAndRestoreEnabled)
+                    {
+                        SessionManager.IsBackupEnabled = true;
+                        SessionManager.StartSessionBackup(startImmediately: true);
+                    }
+                    else
+                    {
+                        SessionManager.IsBackupEnabled = false;
+                        SessionManager.StopSessionBackup();
+                        await SessionManager.ClearSessionDataAsync();
+                    }
+                });
             };
 
             // Sharing

@@ -977,42 +977,60 @@
             }
         }
 
-        private void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
+        private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
         {
-            if (enabled)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                LineHighlighter.Visibility = Visibility.Visible;
-                DrawLineHighlighter();
-            }
-            else
+                if (enabled)
+                {
+                    LineHighlighter.Visibility = Visibility.Visible;
+                    DrawLineHighlighter();
+                }
+                else
+                {
+                    LineHighlighter.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
+        private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                LineHighlighter.Visibility = Visibility.Collapsed;
-            }
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
+        private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnFontSizeChanged(object sender, double e)
+        private async void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        private async void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-        }
-
-        private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
     }
 }

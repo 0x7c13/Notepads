@@ -149,31 +149,46 @@
             _contentLinesCache = null;
         }
 
-        private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
+        private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
         {
-            FontFamily = new FontFamily(fontFamily);
-            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                FontFamily = new FontFamily(fontFamily);
+                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+            });
         }
 
-        private void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
+        private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
         {
-            FontSize = fontSize;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                FontSize = fontSize;
+            });
         }
 
-        private void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
+        private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
         {
-            TextWrapping = textWrapping;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                TextWrapping = textWrapping;
+            });
         }
 
-        private void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
+        private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
         {
-            IsSpellCheckEnabled = isSpellCheckEnabled;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                IsSpellCheckEnabled = isSpellCheckEnabled;
+            });
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
         {
-            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
