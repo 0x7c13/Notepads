@@ -414,11 +414,11 @@
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Opuść Tryb Kompaktowy</value>
+    <value>Opuść tryb kompaktowy</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Opuść Tryb pełnoekranowy</value>
+    <value>Opuść tryb pełnoekranowy</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
@@ -550,19 +550,19 @@
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>Więcej sposobów kodowania</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Reopen with Encoding</value>
+    <value>Otwórz ponownie z kodowaniem</value>
     <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Save with Encoding</value>
+    <value>Zapisz z kodowaniem</value>
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>Niepoprawne wyrażenie regularne!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
 </root>
