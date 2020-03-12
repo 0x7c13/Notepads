@@ -120,33 +120,41 @@
             NotificationCenter.Instance.SetNotificationDelegate(this);
 
             // Setup theme
-            ThemeSettingsService.AppBackground = RootGrid;
-            ThemeSettingsService.SetRequestedTheme();
+            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
+            ThemeSettingsService.OnRequestThemeUpdate += ThemeSettingsService_OnRequestThemeUpdate;
+            ThemeSettingsService.OnRequestAccentColorUpdate += ThemeSettingsService_OnRequestAccentColorUpdate;
+            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
 
             // Setup custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
+            EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ()=>
+                {
+                    if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                });
             };
 
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
-                if (isSessionBackupAndRestoreEnabled)
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    SessionManager.IsBackupEnabled = true;
-                    SessionManager.StartSessionBackup(startImmediately: true);
-                }
-                else
-                {
-                    SessionManager.IsBackupEnabled = false;
-                    SessionManager.StopSessionBackup();
-                    await SessionManager.ClearSessionDataAsync();
-                }
+                    if (isSessionBackupAndRestoreEnabled)
+                    {
+                        SessionManager.IsBackupEnabled = true;
+                        SessionManager.StartSessionBackup(startImmediately: true);
+                    }
+                    else
+                    {
+                        SessionManager.IsBackupEnabled = false;
+                        SessionManager.StopSessionBackup();
+                        await SessionManager.ClearSessionDataAsync();
+                    }
+                });
             };
 
             // Sharing
@@ -172,6 +180,30 @@
             {
                 PrintArgs.RegisterForPrinting(this);
             }
+        }
+
+        private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                ThemeSettingsService.SetRequestedAccentColor();
+            });
+        }
+
+        private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
+            });
+        }
+
+        private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                RootGrid.Background = backgroundBrush;
+            });
         }
 
         private void InitControls()

@@ -27,6 +27,13 @@
 
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
+
+            if (App.IsGameBarWidget)
+            {
+                // these settings don't make sense for Game Bar, there can be only one
+                LaunchPreferenceSettingsTitle.Visibility = Visibility.Collapsed;
+                LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)

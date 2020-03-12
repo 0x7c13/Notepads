@@ -86,7 +86,6 @@
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
-            ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
         }
 
         public void OpenNewTextEditor(string fileNamePlaceholder)
@@ -134,6 +133,8 @@
                     Sets.ScrollToLastSet();
                 }
             }
+
+            textEditor.AccentColorChanged += TextEditor_AccentColorChanged;
         }
 
         public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
@@ -543,7 +544,7 @@
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
-        private void OnAppAccentColorChanged(object sender, Color color)
+        private void TextEditor_AccentColorChanged(object sender, Color e)
         {
             if (Sets.Items == null) return;
             foreach (SetsViewItem item in Sets.Items)
