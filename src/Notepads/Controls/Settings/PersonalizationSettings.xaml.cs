@@ -36,6 +36,13 @@
 
             Loaded += PersonalizationSettings_Loaded;
             Unloaded += PersonalizationSettings_Unloaded;
+
+            if (App.IsGameBarWidget)
+            {
+                // Game Bar widgets do not support transparency, disable this setting
+                BackgroundTintTitle.Visibility = Visibility.Collapsed;
+                BackgroundTintTitleControls.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
