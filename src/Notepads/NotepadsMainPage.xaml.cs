@@ -120,8 +120,10 @@
             NotificationCenter.Instance.SetNotificationDelegate(this);
 
             // Setup theme
-            ThemeSettingsService.AppBackground = RootGrid;
-            ThemeSettingsService.SetRequestedTheme();
+            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
+            ThemeSettingsService.OnRequestThemeUpdate += ThemeSettingsService_OnRequestThemeUpdate;
+            ThemeSettingsService.OnRequestAccentColorUpdate += ThemeSettingsService_OnRequestAccentColorUpdate;
+            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
 
             // Setup custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
@@ -178,6 +180,30 @@
             {
                 PrintArgs.RegisterForPrinting(this);
             }
+        }
+
+        private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                ThemeSettingsService.SetRequestedAccentColor();
+            });
+        }
+
+        private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
+            });
+        }
+
+        private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                RootGrid.Background = backgroundBrush;
+            });
         }
 
         private void InitControls()

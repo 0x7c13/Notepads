@@ -65,10 +65,13 @@
             Focus();
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()

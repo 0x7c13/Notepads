@@ -3,6 +3,7 @@
     using System;
     using Notepads.Services;
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -39,9 +40,12 @@
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
         {
-            SetSelectionHighlightColor();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SetSelectionHighlightColor();
+            });
         }
 
         public double GetHeight(bool showReplaceBar)

@@ -19,6 +19,7 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -70,6 +71,8 @@
         public event EventHandler FileSaved;
 
         public event EventHandler FileReloaded;
+
+        public event EventHandler<Color> AccentColorChanged;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
@@ -187,6 +190,7 @@
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
             ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             base.Loaded += TextEditor_Loaded;
             base.Unloaded += TextEditor_Unloaded;
@@ -223,6 +227,7 @@
             }
 
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
             Unloaded?.Invoke(this, new RoutedEventArgs());
 
@@ -283,6 +288,14 @@
                     () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                         () => SideBySideDiffViewer.Focus()));
             }
+        }
+
+        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        {
+            Dispatcher.RunAsync(() =>
+            {
+                AccentColorChanged?.Invoke(this, color);
+            });
         }
 
         public string GetText()
