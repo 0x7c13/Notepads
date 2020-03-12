@@ -397,25 +397,24 @@
                 AddEncodingItem(encoding, reopenWithEncoding, saveWithEncoding);
             }
 
-            var reopenWithEncodingOthers = new MenuFlyoutSubItem()
-            {
-                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
-            var saveWithEncodingOthers = new MenuFlyoutSubItem()
-            {
-                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
             // Add legacy ANSI encodings
             var ANSIEncodings = EncodingUtility.GetAllSupportedANSIEncodings();
-
             if (ANSIEncodings.Length > 0)
             {
                 reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
                 saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+
+                var reopenWithEncodingOthers = new MenuFlyoutSubItem()
+                {
+                    Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                    FlowDirection = FlowDirection.RightToLeft,
+                };
+
+                var saveWithEncodingOthers = new MenuFlyoutSubItem()
+                {
+                    Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                    FlowDirection = FlowDirection.RightToLeft,
+                };
 
                 foreach (var encoding in ANSIEncodings)
                 {
