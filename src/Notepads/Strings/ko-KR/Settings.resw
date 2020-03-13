@@ -134,15 +134,15 @@
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>제작자에게 연락:</value>
+    <value>제작자에게 연락하기:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>문제 보고와 기능 추가 요청:</value>
+    <value>문제 보고와 기능 추가 요청하기:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>소스 코드는 Github에 공개:</value>
+    <value>소스 코드는 Github에 공개됩니다:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>개인 정보 보호 정책</value>
+    <value>개인정보 보호 정책</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
@@ -174,11 +174,11 @@
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>강조 색상</value>
+    <value>테마 컬러</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows 의 강조 색상 사용</value>
+    <value>Windows 테마 컬러 사용</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>아크릴 배경 색조 불투명도.</value>
+    <value>아크릴 배경 색조 불투명도</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -194,19 +194,19 @@
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>다크 모드</value>
+    <value>어둡게</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>밝은 모드</value>
+    <value>밝게</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>테마</value>
+    <value>색 테마</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Windows 설정 사용</value>
+    <value>기본 Windows 모드 사용</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
@@ -278,15 +278,15 @@
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>단어 줄 바꿈</value>
+    <value>단어 단위로 자동 개행</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>단어 줄 바꿈</value>
+    <value>단어 단위로 자동 개행</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>텍스트 에디터</value>
+    <value>에디터 설정</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
@@ -310,11 +310,11 @@
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>오타 강조표시</value>
+    <value>오타 강조</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>오타 강조표시</value>
+    <value>오타 강조</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
@@ -338,31 +338,31 @@
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Highlight Current Line</value>
+    <value>선택한 줄 강조 표시</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>선택한 줄 주위에 테두리 표시</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>선택한 줄 주위에 테두리 표시</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Custom Search Engine</value>
+    <value>사용자 지정 검색 엔진</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Enter a url of format https://www.example.com/search?q={0}</value>
+    <value>*https://www.example.com/search?q={0} 형식의 URL을 입력하세요</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Settings for default search engine choosen when a web search is done.</value>
+    <value>웹 검색 수행 시 선택된 기본 검색 엔진에 대한 설정입니다.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Default Search Engine</value>
+    <value>기본 검색 엔진</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
 </root>

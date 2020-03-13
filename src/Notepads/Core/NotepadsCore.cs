@@ -161,9 +161,10 @@
         public async Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false)
         {
-            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
+            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit, encoding);
             return CreateTextEditor(id, textFile, file, file.Name);
         }
 
@@ -270,11 +271,6 @@
         public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding)
         {
             textEditor.TryChangeLineEnding(lineEnding);
-        }
-
-        public void ChangeEncoding(ITextEditor textEditor, Encoding encoding)
-        {
-            textEditor.TryChangeEncoding(encoding);
         }
 
         public void SwitchTo(bool next)
