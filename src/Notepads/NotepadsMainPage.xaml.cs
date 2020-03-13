@@ -559,11 +559,11 @@
 
                     deferral.Complete();
                 },
-                () =>
+                discardAndExitAction: () =>
                 {
                     deferral.Complete();
                 },
-                () =>
+                cancelAction: () =>
                 {
                     e.Handled = true;
                     deferral.Complete();
