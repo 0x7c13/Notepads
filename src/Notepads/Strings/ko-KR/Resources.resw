@@ -158,7 +158,7 @@
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>확인</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>확인</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
@@ -550,7 +550,7 @@
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>더보기</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
@@ -562,7 +562,7 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>유효하지 않은 정규식입니다!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
 </root>
