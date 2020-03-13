@@ -475,6 +475,7 @@
                 }
                 StartCheckingFileStatusPeriodically();
                 CloseSideBySideDiffViewer();
+                HideGoToControl();
                 FileReloaded?.Invoke(this, EventArgs.Empty);
             }
         }

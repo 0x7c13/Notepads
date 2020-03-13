@@ -397,29 +397,33 @@
                 AddEncodingItem(encoding, reopenWithEncoding, saveWithEncoding);
             }
 
-            reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
-            saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
-
-            var reopenWithEncodingOthers = new MenuFlyoutSubItem()
-            {
-                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
-            var saveWithEncodingOthers = new MenuFlyoutSubItem()
-            {
-                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
             // Add legacy ANSI encodings
-            foreach (var encoding in EncodingUtility.GetAllSupportedANSIEncodings())
+            var ANSIEncodings = EncodingUtility.GetAllSupportedANSIEncodings();
+            if (ANSIEncodings.Length > 0)
             {
-                AddEncodingItem(encoding, reopenWithEncodingOthers, saveWithEncodingOthers);
-            }
+                reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+                saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
 
-            reopenWithEncoding.Items?.Add(reopenWithEncodingOthers);
-            saveWithEncoding.Items?.Add(saveWithEncodingOthers);
+                var reopenWithEncodingOthers = new MenuFlyoutSubItem()
+                {
+                    Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                    FlowDirection = FlowDirection.RightToLeft,
+                };
+
+                var saveWithEncodingOthers = new MenuFlyoutSubItem()
+                {
+                    Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings"),
+                    FlowDirection = FlowDirection.RightToLeft,
+                };
+
+                foreach (var encoding in ANSIEncodings)
+                {
+                    AddEncodingItem(encoding, reopenWithEncodingOthers, saveWithEncodingOthers);
+                }
+
+                reopenWithEncoding.Items?.Add(reopenWithEncodingOthers);
+                saveWithEncoding.Items?.Add(saveWithEncodingOthers);
+            }
 
             EncodingSelectionFlyout.Items?.Add(reopenWithEncoding);
             EncodingSelectionFlyout.Items?.Add(saveWithEncoding);
