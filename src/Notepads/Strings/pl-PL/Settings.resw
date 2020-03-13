@@ -282,7 +282,7 @@
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zawijanie słowa</value>
+    <value>Zawijaj tekst</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
@@ -338,15 +338,15 @@
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Wyróżnij edycji</value>
+    <value>Wyróżnienie lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wyróżnienie edytowanej lini</value>
+    <value>Wyróżnienie aktualnej lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wyróżnienie edytowanej lini</value>
+    <value>Wyróżnienie aktualnej lini</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
