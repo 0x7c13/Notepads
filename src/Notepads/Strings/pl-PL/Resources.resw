@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -53,6 +53,7 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
+
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -121,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Nie zapisano zmian.</value>
+    <value>Zapisać dokonane zmiany?</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -133,7 +134,7 @@
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Zapisać?</value>
+    <value>Nie zapisano zmian</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -273,7 +274,7 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Zapisać plik "{0}"?</value>
+    <value>Zmiany w pliku "{0}" nie zostały zapisane</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -285,7 +286,7 @@
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Zapisać zmiany?</value>
+    <value>Zapisać dokonane zmiany?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
@@ -373,7 +374,7 @@
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>Zmodyfikowany</value>
+    <value>Zmodyfikowano</value>
     <comment>TextEditor: ModificationIndicator display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
@@ -433,7 +434,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Otwórz przez Notepads</value>
+    <value>Otwórz za pomocą Notepads</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
