@@ -276,10 +276,14 @@
                     if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(false);
                     return true;
                 }
+                else
+                {
+                    Analytics.TrackEvent("UnableToDetectEncoding");
+                }
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToGuessEncoding", new Dictionary<string, string>() {
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() {
                     {
                         "Exception", ex.ToString()
                     },
