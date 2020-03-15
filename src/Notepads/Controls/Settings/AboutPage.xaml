@@ -107,6 +107,9 @@
                         <Hyperlink NavigateUri="https://github.com/Sergio0694/UICompositionAnimations">UICompositionAnimations</Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/CharsetDetector/UTF-unknown">UTF-unknown</Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/mmanela/diffplex">DiffPlex</Hyperlink>
                     </Paragraph>
                 </RichTextBlock>
