@@ -214,11 +214,11 @@
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows 默认代码页)</value>
+    <value>ANSI (Windows 当前默认代码页)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>如果文件开头不含有BOM(字节顺序标记)，Notepads将使用此编码作为默认读取编码. 如果你有中文文件打开显示为乱码，可以尝试以ANSI编码方式打开。</value>
+    <value>如果文件开头不含有BOM(字节顺序标记)，Notepads将使用此编码作为默认读取编码。如果选择自动猜测识别编码，Notepads将会猜测文件编码并打开。</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -226,7 +226,7 @@
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (强烈推荐)</value>
+    <value>UTF-8</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
@@ -364,5 +364,9 @@
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
     <value>默认搜索引擎</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>自动猜测识别编码 (推荐)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
 </root>
