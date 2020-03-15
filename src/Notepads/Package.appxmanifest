@@ -522,6 +522,16 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sql">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.sql</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SQL File</uap:DisplayName>
+            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

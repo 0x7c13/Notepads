@@ -14,6 +14,7 @@
     using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
+    using UtfUnknown;
 
     public static class FileSystemUtility
     {
@@ -213,31 +214,86 @@
             var bom = new byte[4];
 
             using (var inputStream = await file.OpenReadAsync())
-            using (var classicStream = inputStream.AsStreamForRead())
+            using (var stream = inputStream.AsStreamForRead())
             {
-                classicStream.Read(bom, 0, 4);
-            }
+                stream.Read(bom, 0, 4); // Read BOM values
+                stream.Position = 0; // Reset stream position
 
-            using (var inputStream = await file.OpenReadAsync())
-            using (var classicStream = inputStream.AsStreamForRead())
-            {
-                StreamReader reader;
-                if (encoding != null)
-                {
-                    reader = new StreamReader(classicStream, encoding);
-                }
-                else
-                {
-                    reader = HasBom(bom) ? new StreamReader(classicStream) : new StreamReader(classicStream, EditorSettingsService.EditorDefaultDecoding);
-                }
+                var reader = CreateStreamReader(stream, bom, encoding);
+
                 reader.Peek();
                 if (encoding == null) encoding = reader.CurrentEncoding;
+
                 text = reader.ReadToEnd();
                 reader.Close();
             }
 
             encoding = FixUtf8Bom(encoding, bom);
             return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), fileProperties.DateModified.ToFileTime());
+        }
+
+        private static StreamReader CreateStreamReader(Stream stream, byte[] bom, Encoding encoding = null)
+        {
+            StreamReader reader;
+            if (encoding != null)
+            {
+                reader = new StreamReader(stream, encoding);
+            }
+            else
+            {
+                if (HasBom(bom))
+                {
+                    reader = new StreamReader(stream);
+                }
+                else // No BOM, need to guess or use default decoding set by user
+                {
+                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    {
+                        var success = TryGuessEncoding(stream, out var autoEncoding);
+                        stream.Position = 0; // Reset stream position
+                        reader = success ? new StreamReader(stream, autoEncoding) : new StreamReader(stream);
+                    }
+                    else
+                    {
+                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);   
+                    }
+                }
+            }
+            return reader;
+        }
+
+        private static bool TryGuessEncoding(Stream stream, out Encoding encoding)
+        {
+            encoding = null;
+
+            try
+            {
+                var result = CharsetDetector.DetectFromStream(stream);
+                if (result.Detected?.Encoding != null) // Detected can be null
+                {
+                    encoding = result.Detected.Encoding;
+                    // Let's treat ASCII as UTF-8 for better accuracy
+                    if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(false);
+                    return true;
+                }
+                else
+                {
+                    Analytics.TrackEvent("UnableToDetectEncoding");
+                }
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() {
+                    {
+                        "Exception", ex.ToString()
+                    },
+                    {
+                        "Message", ex.Message
+                    }
+                });
+            }
+
+            return false;
         }
 
         private static bool HasBom(byte[] bom)
