@@ -22,6 +22,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Microsoft.AppCenter.Analytics;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -771,6 +772,7 @@
                 }
 
                 deferral.Complete();
+                Analytics.TrackEvent("OnSetDropped");
             }
             catch (Exception ex)
             {

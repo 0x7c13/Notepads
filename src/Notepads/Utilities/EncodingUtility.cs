@@ -36,7 +36,6 @@
             { 28595,   "Cyrillic (ISO 8859-5)" },
             { 20866,   "Cyrillic (K018-R)" },
             { 21866,   "Cyrillic (K018-U)" },
-            //{ ,      "Cyrillic (K018-RU)" },
             { 28603,   "Estonian (ISO 8859-13)" },
             { 1253,    "Greek (Windows 1253)" },
             { 28597,   "Greek (ISO 8859-7)" },
@@ -46,24 +45,19 @@
             { 51932,   "Japanese (EUC-JP)" },
             { 51949,   "Korean (EUC-KR)" },
             { 865,     "Nordic DOS (CP 865)" },
-            //{ ,      "Nordic (ISO 8859-10)" },
-            //{ ,      "Romanian (ISO 8859-16)" },
-            //{ ,      "Simplified Chinese (GBK) gbk" },
             { 936,     "Simplified Chinese (GB 2312)" },
             { 54936,   "Simplified Chinese (6818030)" },
-            //{ ,      "Tajik (K018-T) koi8t" },
             { 874,     "Thai (Windows 874)" },
             { 1254,    "Turkish (Windows 1254)" },
             { 28599,   "Turkish (ISO 8859-9)" },
             { 950,     "Traditional Chinese (Big5)" },
-            //{ ,      "Traditional Chinese (Big5-HKSCS)" },
             { 1258,    "Vietnamese (Windows 1258)" },
             { 850,     "Western European DOS (CP 850)" }
         };
 
         public static string GetEncodingName(Encoding encoding)
         {
-            var encodingName = "ANSI";
+            string encodingName;
 
             switch (encoding)
             {
@@ -106,6 +100,18 @@
                     {
                         encodingName = ANSIEncodings[encoding.CodePage];
                     }
+                    else
+                    {
+                        Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() {
+                            {
+                                "CodePage", encoding.CodePage.ToString()
+                            },
+                            {
+                                "WebName", encoding.WebName
+                            }
+                        });
+                        encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
+                    }
                     break;
                 }
             }
@@ -133,7 +139,7 @@
             return false;
         }
 
-        public static Encoding GetEncodingByName(string name, Encoding fallbackEncoding = null)
+        public static Encoding GetEncodingByName(string name)
         {
             switch (name)
             {
@@ -173,7 +179,24 @@
                             return Encoding.GetEncoding(ansiEncoding.Key);
                         }
                     }
-                    return fallbackEncoding ?? new UTF8Encoding(false);
+
+                    try
+                    {
+                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        return Encoding.GetEncoding(name);
+                    }
+                    catch (Exception ex)
+                    {
+                        Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>() {
+                            {
+                                "EncodingName", name
+                            },
+                            {
+                                "Exception", ex.ToString()
+                            }
+                        });
+                    }
+                    return new UTF8Encoding(false);
                 }
             }
         }

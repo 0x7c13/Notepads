@@ -269,7 +269,7 @@
             try
             {
                 var result = CharsetDetector.DetectFromStream(stream);
-                if (result.Detected.Encoding != null)
+                if (result.Detected?.Encoding != null) // Detected can be null
                 {
                     encoding = result.Detected.Encoding;
                     // Let's treat ASCII as UTF-8 for better accuracy

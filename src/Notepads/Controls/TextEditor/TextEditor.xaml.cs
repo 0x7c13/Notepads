@@ -475,6 +475,7 @@
                 CloseSideBySideDiffViewer();
                 HideGoToControl();
                 FileReloaded?.Invoke(this, EventArgs.Empty);
+                Analytics.TrackEvent(encoding == null ? "OnFileReloaded" : "OnFileReopenedWithEncoding");
             }
         }
 
