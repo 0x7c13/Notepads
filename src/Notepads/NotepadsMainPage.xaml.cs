@@ -694,6 +694,7 @@
                 if (storageItem is StorageFile file)
                 {
                     await OpenFile(file);
+                    Analytics.TrackEvent("OnStorageFileDropped");
                 }
             }
         }

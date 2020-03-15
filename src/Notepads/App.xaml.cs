@@ -196,7 +196,7 @@
                     "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
                 },
                 {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
+                    "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
                 },
                 {
                     "EditorFontFamily", EditorSettingsService.EditorFontFamily
