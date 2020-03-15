@@ -262,7 +262,7 @@
             return reader;
         }
 
-        private static bool TryGuessEncoding(Stream stream, out Encoding encoding)
+        public static bool TryGuessEncoding(Stream stream, out Encoding encoding)
         {
             encoding = null;
 
