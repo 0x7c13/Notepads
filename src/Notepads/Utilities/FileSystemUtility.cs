@@ -219,7 +219,7 @@
                 stream.Read(bom, 0, 4); // Read BOM values
                 stream.Position = 0; // Reset stream position
 
-                var reader = CreateStreamReader(encoding, stream, bom);
+                var reader = CreateStreamReader(stream, bom, encoding);
 
                 reader.Peek();
                 if (encoding == null) encoding = reader.CurrentEncoding;
@@ -232,7 +232,7 @@
             return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), fileProperties.DateModified.ToFileTime());
         }
 
-        private static StreamReader CreateStreamReader(Encoding encoding, Stream stream, byte[] bom)
+        private static StreamReader CreateStreamReader(Stream stream, byte[] bom, Encoding encoding = null)
         {
             StreamReader reader;
             if (encoding != null)
@@ -245,36 +245,48 @@
                 {
                     reader = new StreamReader(stream);
                 }
-                else
+                else // No BOM, need to guess or use default decoding set by user
                 {
-                    var success = TryAutoDetectedEncoding(stream, out var autoEncoding);
-                    stream.Position = 0; // Reset stream position
-                    reader = success ? new StreamReader(stream, autoEncoding) : new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);
+                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    {
+                        var success = TryGuessEncoding(stream, out var autoEncoding);
+                        stream.Position = 0; // Reset stream position
+                        reader = success ? new StreamReader(stream, autoEncoding) : new StreamReader(stream);
+                    }
+                    else
+                    {
+                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);   
+                    }
                 }
             }
             return reader;
         }
 
-        private static bool TryAutoDetectedEncoding(Stream stream, out Encoding encoding)
+        private static bool TryGuessEncoding(Stream stream, out Encoding encoding)
         {
             encoding = null;
 
-            if (true) // auto detect
+            try
             {
-                try
+                var result = CharsetDetector.DetectFromStream(stream);
+                if (result.Detected.Encoding != null)
                 {
-                    var result = CharsetDetector.DetectFromStream(stream);
-                    if (result.Detected.Encoding != null)
+                    encoding = result.Detected.Encoding;
+                    // Let's treat ASCII as UTF-8 for better accuracy
+                    if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(false);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("FailedToGuessEncoding", new Dictionary<string, string>() {
                     {
-                        encoding = result.Detected.Encoding;
-                        if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(false);
-                        return true;
+                        "Exception", ex.ToString()
+                    },
+                    {
+                        "Message", ex.Message
                     }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                });
             }
 
             return false;

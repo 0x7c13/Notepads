@@ -469,10 +469,8 @@
             {
                 var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
                 Init(textFile, EditingFile, clearUndoQueue: false);
-                if (encoding != null)
-                {
-                    EncodingChanged?.Invoke(this, EventArgs.Empty);
-                }
+                LineEndingChanged?.Invoke(this, EventArgs.Empty);
+                EncodingChanged?.Invoke(this, EventArgs.Empty);
                 StartCheckingFileStatusPeriodically();
                 CloseSideBySideDiffViewer();
                 HideGoToControl();
