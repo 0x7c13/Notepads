@@ -565,4 +565,12 @@
     <value>Niepoprawne wyrażenie regularne!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>Automatyczne przewidywanie kodowania</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>Nie można określić typu kodowania</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
 </root>
