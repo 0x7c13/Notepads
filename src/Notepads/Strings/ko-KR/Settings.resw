@@ -366,7 +366,7 @@
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Auto guess Encoding (추천)</value>
+    <value>자동으로 인코딩 결정 (추천)
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
 </root>
