@@ -221,15 +221,49 @@
 
                 var reader = CreateStreamReader(stream, bom, encoding);
 
-                reader.Peek();
-                if (encoding == null) encoding = reader.CurrentEncoding;
+                string PeekAndRead()
+                {
+                    if (encoding == null)
+                    {
+                        reader.Peek();
+                        encoding = reader.CurrentEncoding;
+                    }
+                    var str = reader.ReadToEnd();
+                    reader.Close();
+                    return str;
+                }
 
-                text = reader.ReadToEnd();
-                reader.Close();
+                try
+                {
+                    text = PeekAndRead();
+                }
+                catch (DecoderFallbackException) 
+                {
+                    stream.Position = 0; // Reset stream position
+                    encoding = GetFallBackEncoding();
+                    reader = new StreamReader(stream, encoding);
+                    text = PeekAndRead();
+                }
             }
 
             encoding = FixUtf8Bom(encoding, bom);
             return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), fileProperties.DateModified.ToFileTime());
+        }
+
+        private static Encoding GetFallBackEncoding()
+        {
+            if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding))
+            {
+                return systemDefaultEncoding;
+            }
+            else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding))
+            {
+                return currentCultureEncoding;
+            }
+            else
+            {
+                return new UTF8Encoding(false);
+            }
         }
 
         private static StreamReader CreateStreamReader(Stream stream, byte[] bom, Encoding encoding = null)
@@ -251,7 +285,9 @@
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
-                        reader = success ? new StreamReader(stream, autoEncoding) : new StreamReader(stream);
+                        reader = success ? 
+                            new StreamReader(stream, autoEncoding) : 
+                            new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
                     }
                     else
                     {
@@ -271,9 +307,7 @@
                 var result = CharsetDetector.DetectFromStream(stream);
                 if (result.Detected?.Encoding != null) // Detected can be null
                 {
-                    encoding = result.Detected.Encoding;
-                    // Let's treat ASCII as UTF-8 for better accuracy
-                    if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(false);
+                    encoding = AnalyzeAndGuessEncoding(result);
                     return true;
                 }
                 else
@@ -294,6 +328,58 @@
             }
 
             return false;
+        }
+
+        private static Encoding AnalyzeAndGuessEncoding(DetectionResult result)
+        {
+            Encoding encoding = result.Detected.Encoding;
+            var confidence = result.Detected.Confidence;
+            var foundBetterMatch = false;
+
+            // Let's treat ASCII as UTF-8 for better accuracy
+            if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+
+            // Try find a better match based on User's current Windows ANSI code page
+            // Priority: UTF-8 > SystemDefaultANSIEncoding (Codepage: 0) > CurrentCultureANSIEncoding
+            if (!(encoding is UTF8Encoding))
+            {
+                foreach (var detail in result.Details)
+                {
+                    if (detail.Encoding is UTF8Encoding)
+                    {
+                        foundBetterMatch = true;
+                    }
+                    else if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding) 
+                             && EncodingUtility.Equals(systemDefaultEncoding, detail.Encoding))
+                    {
+                        foundBetterMatch = true;
+                    }
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding) 
+                             && EncodingUtility.Equals(currentCultureEncoding, detail.Encoding))
+                    {
+                        foundBetterMatch = true;
+                    }
+
+                    if (foundBetterMatch)
+                    {
+                        encoding = detail.Encoding;
+                        confidence = detail.Confidence;
+                        break;
+                    }
+                }
+            }
+
+            // We should fall back to UTF-8 and give it a try if:
+            // 1. Detected Encoding is not UTF-8
+            // 2. Detected Encoding is not SystemDefaultANSIEncoding (Codepage: 0)
+            // 3. Detected Encoding is not CurrentCultureANSIEncoding
+            // 4. Confidence of detected Encoding is below 50%
+            if (!foundBetterMatch && confidence < 0.5f)
+            {
+                encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+            }
+
+            return encoding;
         }
 
         private static bool HasBom(byte[] bom)
