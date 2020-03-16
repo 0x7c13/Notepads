@@ -106,7 +106,7 @@
 
         public static string GetEncodingName(Encoding encoding)
         {
-            string encodingName;
+            string encodingName = "Unknown";
 
             switch (encoding)
             {
@@ -151,15 +151,29 @@
                     }
                     else
                     {
-                        Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() {
-                            {
-                                "CodePage", encoding.CodePage.ToString()
-                            },
-                            {
-                                "WebName", encoding.WebName
-                            }
-                        });
-                        encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
+                        try
+                        {
+                            encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
+                            Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() {
+                                {
+                                    "CodePage", encoding.CodePage.ToString()
+                                },
+                                {
+                                    "WebName", encoding.WebName
+                                }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>() {
+                                {
+                                    "Exception", ex.ToString()
+                                },
+                                {
+                                    "Message", ex.Message
+                                }
+                            });
+                        }
                     }
                     break;
                 }
