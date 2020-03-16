@@ -22,6 +22,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Microsoft.AppCenter.Analytics;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -161,9 +162,10 @@
         public async Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false)
         {
-            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
+            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit, encoding);
             return CreateTextEditor(id, textFile, file, file.Name);
         }
 
@@ -214,7 +216,6 @@
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
             {
                 tabContextFlyout.Dispose();
-                item.ContextFlyout = null;
             }
 
             TextEditorUnloaded?.Invoke(this, textEditor);
@@ -273,11 +274,6 @@
             textEditor.TryChangeLineEnding(lineEnding);
         }
 
-        public void ChangeEncoding(ITextEditor textEditor, Encoding encoding)
-        {
-            textEditor.TryChangeEncoding(encoding);
-        }
-
         public void SwitchTo(bool next)
         {
             if (Sets.Items == null) return;
@@ -296,6 +292,12 @@
                 if (selected == 0) Sets.SelectedIndex = setsCount - 1;
                 else Sets.SelectedIndex -= 1;
             }
+        }
+
+        public void SwitchTo(int index)
+        {
+            if (Sets.Items == null || index < 0 || index >= Sets.Items.Count) return;
+            Sets.SelectedIndex = index;
         }
 
         public void SwitchTo(ITextEditor textEditor)
@@ -737,11 +739,11 @@
                 var index = -1;
 
                 // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items.Count; i++)
+                for (int i = 0; i < sets.Items?.Count; i++)
                 {
                     var item = sets.ContainerFromIndex(i) as SetsViewItem;
 
-                    if (args.GetPosition(item).X - item.ActualWidth < 0)
+                    if (args.GetPosition(item).X - item?.ActualWidth < 0)
                     {
                         index = i;
                         break;
@@ -770,6 +772,7 @@
                 }
 
                 deferral.Complete();
+                Analytics.TrackEvent("OnSetDropped");
             }
             catch (Exception ex)
             {
@@ -793,7 +796,7 @@
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
-            if (Sets.Items.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)

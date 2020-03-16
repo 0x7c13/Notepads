@@ -54,7 +54,6 @@
             _editorCore.TextChanged -= OnTextChanged;
             _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
             _editorCore.FontSizeChanged -= OnFontSizeChanged;
-            _editorCore = null;
         }
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)

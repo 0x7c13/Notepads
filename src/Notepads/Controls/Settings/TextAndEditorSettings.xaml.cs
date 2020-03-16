@@ -7,8 +7,10 @@
     using System.Threading;
     using Services;
     using Utilities;
+    using Windows.Globalization;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class TextAndEditorSettings : Page
     {
@@ -41,10 +43,20 @@
             {
                 if (_availableFonts == null)
                 {
-                    var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-                    _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    try
+                    {
+                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
+                        _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        Analytics.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
+                        {
+                            { "Exception", ex.ToString() }
+                        });
+                        _availableFonts = new List<string>();
+                    }
                 }
-
                 return _availableFonts;
             }
         }
@@ -100,7 +112,11 @@
             }
 
             // Decoding
-            if (EditorSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
+            if (EditorSettingsService.EditorDefaultDecoding == null)
+            {
+                AutoGuessDecodingRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
             {
                 Utf8DecodingRadioButton.IsChecked = true;
             }
@@ -174,6 +190,7 @@
 
             Utf8DecodingRadioButton.Checked += DecodingRadioButton_Checked;
             AnsiDecodingRadioButton.Checked += DecodingRadioButton_Checked;
+            AutoGuessDecodingRadioButton.Checked += DecodingRadioButton_Checked;
 
             TabDefaultRadioButton.Checked += TabBehaviorRadioButton_Checked;
             TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
@@ -265,19 +282,24 @@
 
             switch (radioButton.Tag)
             {
+                case "Auto":
+                    EditorSettingsService.EditorDefaultDecoding = null;
+                    break;
                 case "UTF-8":
                     EditorSettingsService.EditorDefaultDecoding = new UTF8Encoding(false);
                     break;
                 case "ANSI":
-                    try
+                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding))
                     {
-                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        var decoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
-                        EditorSettingsService.EditorDefaultDecoding = decoding;
+                        EditorSettingsService.EditorDefaultDecoding = systemDefaultEncoding;
                     }
-                    catch (Exception)
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding))
                     {
-                        Utf8DecodingRadioButton.IsChecked = true;
+                        EditorSettingsService.EditorDefaultDecoding = currentCultureEncoding;
+                    }
+                    else
+                    {
+                        AutoGuessDecodingRadioButton.IsChecked = true;
                     }
                     break;
             }

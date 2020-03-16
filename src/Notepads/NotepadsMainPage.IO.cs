@@ -19,17 +19,7 @@
             try
             {
                 var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in new List<string>()
-                    {
-                        ".txt", ".md", ".markdown",
-                        ".cfg", ".config", ".cnf", ".conf", ".ini", ".log",
-                        ".json", ".yml", ".yaml", ".xml", ".xaml",
-                        ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss",
-                        ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash",
-                        ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
-                        ".js", ".ts", ".lua",
-                        ".csv",
-                    })
+                foreach (var type in FileTypeService.AllSupportedFileExtensions)
                 {
                     fileOpenPicker.FileTypeFilter.Add(type);
                 }
@@ -75,8 +65,8 @@
                 var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
-                MRUService.Add(file); // Remember recently used files
-                if (rebuildOpenRecentItems)
+                var success = MRUService.TryAdd(file); // Remember recently used files
+                if (success && rebuildOpenRecentItems)
                 {
                     await BuildOpenRecentButtonSubItems();   
                 }
@@ -108,11 +98,14 @@
                     }
                 }
             }
-            await BuildOpenRecentButtonSubItems();
+            if (successCount > 0)
+            {
+                await BuildOpenRecentButtonSubItems();   
+            }
             return successCount;
         }
 
-        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false)
+        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
 
@@ -142,6 +135,11 @@
                 }
 
                 await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+                var success = MRUService.TryAdd(file); // Remember recently used files
+                if (success && rebuildOpenRecentItems)
+                {
+                    await BuildOpenRecentButtonSubItems();
+                }
                 return true;
             }
             catch (Exception ex)

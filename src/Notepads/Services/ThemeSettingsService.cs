@@ -1,6 +1,8 @@
 ﻿namespace Notepads.Services
 {
     using System;
+    using System.Collections.Generic;
+    using Microsoft.AppCenter.Analytics;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Settings;
@@ -72,7 +74,7 @@
                 _appBackgroundPanelTintOpacity = value;
                 if (AppBackground != null)
                 {
-                    AppBackground.Background = GetBackgroundBrush(ThemeMode);
+                    AppBackground.Background = GetBackgroundBrush(ThemeMode, changingOpacityOnly: true);
                     ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
                 }
             }
@@ -238,7 +240,7 @@
             }
         }
 
-        private static Brush GetBackgroundBrush(ElementTheme theme)
+        private static Brush GetBackgroundBrush(ElementTheme theme, bool changingOpacityOnly = false)
         {
             if (theme == ElementTheme.Dark)
             {
@@ -250,23 +252,36 @@
                     }
                     else
                     {
-                        var brush = new UICompositionAnimations.Brushes.AcrylicBrush()
+                        try
                         {
-                            Source = AcrylicBackgroundSource.HostBackdrop,
-                            BlurAmount = 8,
-                            Tint = Color.FromArgb(255, 50, 50, 50),
-                            TintMix = (float)AppBackgroundPanelTintOpacity,
-                            TextureUri = "/Assets/noise_low.png".ToAppxUri(),
-                        };
-                        return brush;
+                            var brush = new UICompositionAnimations.Brushes.AcrylicBrush()
+                            {
+                                Source = AcrylicBackgroundSource.HostBackdrop,
+                                BlurAmount = 8,
+                                Tint = Color.FromArgb(255, 50, 50, 50),
+                                TintMix = (float)AppBackgroundPanelTintOpacity,
+                                TextureUri = "/Assets/noise_low.png".ToAppxUri(),
+                            };
 
-                        //return PipelineBuilder.FromHostBackdropBrush()
-                        //    .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                        //    .Opacity((float)AppBackgroundPanelTintOpacity)
-                        //    .Blend(PipelineBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
-                        //    .Tint(Color.FromArgb(255, 50, 50, 50), (float)AppBackgroundPanelTintOpacity)
-                        //    .Blend(PipelineBuilder.FromTiles("/Assets/noise_low.png".ToAppxUri()), BlendEffectMode.Overlay, Placement.Background)
-                        //    .AsBrush();
+                            return brush;
+
+                            //return PipelineBuilder.FromHostBackdropBrush()
+                            //    .Effect(source => new LuminanceToAlphaEffect { Source = source })
+                            //    .Opacity((float)AppBackgroundPanelTintOpacity)
+                            //    .Blend(PipelineBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
+                            //    .Tint(Color.FromArgb(255, 50, 50, 50), (float)AppBackgroundPanelTintOpacity)
+                            //    .Blend(PipelineBuilder.FromTiles("/Assets/noise_low.png".ToAppxUri()), BlendEffectMode.Overlay, Placement.Background)
+                            //    .AsBrush();
+                        }
+                        catch (Exception ex)
+                        {
+                            Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
+                                new Dictionary<string, string> {
+                                    {"Exception", ex.ToString()},
+                                    {"IsChangingOpacityOnly", changingOpacityOnly.ToString()}
+                                });
+                            return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
+                        }
                     }
                 }
                 else
@@ -387,6 +402,16 @@
                 {
                     LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
+            }
+
+            try
+            {
+                // Overwrite MenuFlyoutSubItemRevealBackgroundSubMenuOpened resource color
+                ((RevealBackgroundBrush)Application.Current.Resources["SystemControlHighlightAccent3RevealBackgroundBrush"]).Color = color;
+            }
+            catch (Exception)
+            {
+                // ignore
             }
         }
 

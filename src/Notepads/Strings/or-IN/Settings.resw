@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
+    <value>ନିର୍ଭରଶୀଳତା ଏବଂ ସନ୍ଦର୍ଭ</value>
+    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
+    <value>କୌଣସି ପ୍ରକାରର ୱାରେଣ୍ଟି ବିନା ସଫ୍ଟୱେୟାର “ଯେପରି” ପ୍ରଦାନ କରାଯାଇଛି, ୱାରେଣ୍ଟିର ବାଣିଜ୍ୟ ଯୋଗ୍ୟତା, ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ ଫିଟ୍ ଏବଂ ଉଲ୍ଲଂଘନ ସହିତ ସୀମିତ ନୁହେଁ | କୌଣସି ଘଟଣାରେ ଲେଖକ କିମ୍ବା କପିରାଇଟ୍ ହୋଲ୍ଡରମାନେ କୌଣସି ଦାବି, କ୍ଷତି କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଦାୟିତ୍ବ ପାଇଁ ଦାୟୀ ରହିବେ ନାହିଁ, ଯାହା କୌଣସି ଚୁକ୍ତିନାମା, ଟର୍ଟ କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଜ୍ଞାନ, ସଫ୍ଟୱେୟାରର ବ୍ୟବହାର କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଡିଲ୍ ସହିତ ସଂଯୋଗରେ |</value>
+    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
+    <value>ପ୍ରତ୍ୟାଖ୍ୟାନ</value>
+    <comment>AboutPage Disclaimer Title display text.</comment>
+  </data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
+    <value>ମାଗଣା ଏବଂ ମୁକ୍ତ ଉତ୍ସ ପାଠ୍ୟ ସମ୍ପାଦକ ଜ୍ୟାକି (ଜିଆକି) ଲିୟୁ ଦ୍ୱାରା ପରିକଳ୍ପିତ ଏବଂ କାର୍ଯ୍ୟକାରୀ |</value>
+    <comment>AboutPage NotepadsShortDescription display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
+    <value>ଲେଖକମାନଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରିବାକୁ:</value>
+    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
+    <value>ରିପୋର୍ଟ ଏବଂ ବୈଶିଷ୍ଟ୍ୟ ଅନୁରୋଧ ପ୍ରଦାନ କରିବାକୁ:</value>
+    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
+    <value>Github ରେ ଉତ୍ସ କୋଡ୍ ଉପଲବ୍ଧ:</value>
+    <comment>AboutPage Notepads SourceCode Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
+    <value>ଅଧିକ ସୂଚନା ପାଇଁ, ଦୟାକରି ଆମର ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ:</value>
+    <comment>AboutPage Notepads Website Title display text.</comment>
+  </data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+    <value>ଗୋପନୀୟତା ବିବୃତ୍ତି</value>
+    <comment>AboutPage PrivacyStatementTitle display text.</comment>
+  </data>
+  <data name="AboutPage_Title.Content" xml:space="preserve">
+    <value>ବିଷୟରେ</value>
+    <comment>AboutPage Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
+    <value>ଷ୍ଟାଟସ୍ ବାର୍ ଦେଖାନ୍ତୁ</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
+    <value>ଷ୍ଟାଟସ୍ ବାର୍ ଦେଖାନ୍ତୁ</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
+    <value>ଷ୍ଟାଟସ୍ ବାର୍ ସେଟିଙ୍ଗ୍ସ</value>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+    <value>ଅଭିନବ</value>
+    <comment>AdvancedPage Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
+    <value>ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ</value>
+    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>ମୋର Windows ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>ମୋର Windows ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
+    <value>ଆକ୍ରିଲିକ୍ ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ୍ ସ୍ୱଚ୍ଛତା</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
+    <value>ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ ସ୍ୱଚ୍ଛତା</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
+    <value>ଅନ୍ଧକାର</value>
+    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
+    <value>ଆଲୋକ</value>
+    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
+    <value>ଥିମ୍ ମୋଡ୍</value>
+    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
+    <value>ମୋ Windows ମୋଡ୍ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+    <value>ବ୍ୟକ୍ତିଗତକରଣ</value>
+    <comment>PersonalizationPage Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
+    <value>ANSI (Windows କୋଡ୍ ପୃଷ୍ଠା)</value>
+    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
+    <value>ଯଦି ଫାଇଲର ଏନକୋଡିଂ ଚିହ୍ନଟ ହୋଇପାରିବ ନାହିଁ ତେବେ ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ ବ୍ୟବହାର ହେବ | </value>
+    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
+    <value>ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ</value>
+    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
+    <value>UTF-8</value>
+    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
+    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
+    <value>ଡିଫଲ୍ଟ ଏନକୋଡିଂ</value>
+    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
+    <value>ଡିଫଲ୍ଟ ଫଣ୍ଟ ଏବଂ ଆକାର</value>
+    <comment>TextAndEditorPage FontSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
+    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
+    <value>ଡିଫଲ୍ଟ ଲାଇନ ଶେଷ</value>
+    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
+    <value>ଡିଫଲ୍ଟ (\t)</value>
+    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
+    <value>ଟ୍ୟାବ୍ କି ଆଚରଣ ପାଇଁ ସେଟିଙ୍ଗ୍ସ କେବଳ ଉପଭୋକ୍ତା ଦ୍ୱାରା ସନ୍ନିବେଶିତ ନୂତନ ଟ୍ୟାବଗୁଡ଼ିକ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
+    <value>୮ ଟି ସ୍ଥାନ</value>
+    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
+    <value>୪ ଟି ସ୍ଥାନ</value>
+    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
+    <value>ଟ୍ୟାବ୍ ଆଚରଣ</value>
+    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
+    <value>୨ ଟି ସ୍ଥାନ</value>
+    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
+    <value>ଟେକ୍ଷ୍ଟ ରାପିଙ୍ଗ୍</value>
+    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>ରାପ୍ ୱର୍ଡ</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>ରାପ୍ ୱର୍ଡ</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+    <value>ପାଠ ଏବଂ ସମ୍ପାଦକ</value>
+    <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>ଚେଜ୍ଞ୍ଜଲଗ୍</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ପରବର୍ତ୍ତୀ ଉନ୍ମୋଚନ ପାଇଁ ସାମ୍ପ୍ରତିକ ଅଧିବେଶନକୁ ମନେ ରଖିବ ଏବଂ ଅନାବଶ୍ୟକ ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ପାଇଁ ଆକସ୍ମିକ ତଥ୍ୟ ନଷ୍ଟକୁ ରୋକିବା ପାଇଁ ଏକ ପର୍ଯ୍ୟାୟ ଅଧିବେଶନ ସ୍ନାପସଟ୍ ବ୍ୟାକଅପ୍ କରିବ | ଯଦି ଏହି ବୈଶିଷ୍ଟ୍ୟ ସକ୍ଷମ ହୋଇଛି, Notepads ଆପଣଙ୍କୁ ଆପ୍ ବନ୍ଦରେ ଆପଣଙ୍କର କାର୍ଯ୍ୟ ସଞ୍ଚୟ କରିବାକୁ ମନେ ପକାଇବ ନାହିଁ | ଦୟାକରି ଏହା ମଧ୍ୟ ମନେରଖନ୍ତୁ ଯେ ଅଧିବେଶନ ସ୍ନାପସଟ୍ କେବଳ Notepads ପ୍ରଥମ କିମ୍ବା ମୁଖ୍ୟ ୱିଣ୍ଡୋରେ କାମ କରେ |</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସକ୍ଷମ କରନ୍ତୁ</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସକ୍ଷମ କରନ୍ତୁ</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସେଟିଙ୍ଗ୍ସ</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>ଭୁଲ ବନାନ ଶବ୍ଦଗୁଡ଼ିକୁ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>ଭୁଲ ବନାନ ଶବ୍ଦଗୁଡ଼ିକୁ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>ବନାନ</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ସବୁବେଳେ ଏକ ନୂଆ ଟ୍ୟାବ୍ ତିଆରି କରିବା ପରିବର୍ତ୍ତେ ଏକ ନୂତନ ୱିଣ୍ଡୋରେ ଫାଇଲ୍ ଖୋଲିବ |</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>ସର୍ବଦା ନୂତନ ୱିଣ୍ଡୋ ଖୋଲ</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>ସର୍ବଦା ନୂତନ ୱିଣ୍ଡୋ ଖୋଲ</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>ପସନ୍ଦଗୁଡିକ ଆରମ୍ଭ କରନ୍ତୁ</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
+    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ଚାରିପାଖରେ ପରିସର ଦେଖାନ୍ତୁ |</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ଚାରିପାଖରେ ପରିସର ଦେଖାନ୍ତୁ |</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>କଷ୍ଟମ୍ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>*ଏହି ଫର୍ମାଟ୍ ର ଏକ URL ପ୍ରବେଶ କରନ୍ତୁ https://www.example.com/search?q= {0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>ଇଣ୍ଟରନେଟରେ ସନ୍ଧାନ କରିବା ସମୟରେ ଡିଫଲ୍ଟ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍ ପାଇଁ ମନୋନୀତ ସେଟିଂ</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>ଡିଫଲ୍ଟ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>Auto guess Encoding (ପରାମର୍ଶିତ)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+</root>

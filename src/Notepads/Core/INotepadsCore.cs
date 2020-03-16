@@ -44,6 +44,7 @@
         Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false);
 
         ITextEditor CreateTextEditor(
@@ -73,9 +74,9 @@
 
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
-        void ChangeEncoding(ITextEditor textEditor, Encoding encoding);
-
         void SwitchTo(bool next);
+
+        void SwitchTo(int index);
 
         void SwitchTo(ITextEditor textEditor);
 

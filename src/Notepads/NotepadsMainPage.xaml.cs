@@ -182,7 +182,18 @@
             MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
             MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
             MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-            MenuSaveAllButton.Click += async (sender, args) => { foreach (var textEditor in NotepadsCore.GetAllTextEditors()) await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true); };
+            MenuSaveAllButton.Click += async (sender, args) =>
+            {
+                var success = false;
+                foreach (var textEditor in NotepadsCore.GetAllTextEditors())
+                {
+                    if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
+                }
+                if (success)
+                {
+                    await BuildOpenRecentButtonSubItems();
+                }
+            };
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
@@ -318,6 +329,15 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.P, async (args) => await PrintAll(NotepadsCore.GetAllTextEditors())),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.R, (args) => { ReloadFileFromDisk(this, new RoutedEventArgs()); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.N, async (args) => await OpenNewAppInstance()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number1, (args) => NotepadsCore.SwitchTo(0)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number2, (args) => NotepadsCore.SwitchTo(1)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number3, (args) => NotepadsCore.SwitchTo(2)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number4, (args) => NotepadsCore.SwitchTo(3)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number5, (args) => NotepadsCore.SwitchTo(4)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number6, (args) => NotepadsCore.SwitchTo(5)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number7, (args) => NotepadsCore.SwitchTo(6)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number8, (args) => NotepadsCore.SwitchTo(7)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number9, (args) => NotepadsCore.SwitchTo(8)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
@@ -519,7 +539,7 @@
                     
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
-                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true))
+                        if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false))
                         {
                             if (count == 1)
                             {
@@ -534,15 +554,16 @@
                     if (count > 0)
                     {
                         e.Handled = true;
+                        await BuildOpenRecentButtonSubItems();
                     }
 
                     deferral.Complete();
                 },
-                () =>
+                discardAndExitAction: () =>
                 {
                     deferral.Complete();
                 },
-                () =>
+                cancelAction: () =>
                 {
                     e.Handled = true;
                     deferral.Complete();
@@ -673,6 +694,7 @@
                 if (storageItem is StorageFile file)
                 {
                     await OpenFile(file);
+                    Analytics.TrackEvent("OnStorageFileDropped");
                 }
             }
         }
