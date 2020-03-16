@@ -9,12 +9,13 @@
 
     public static class MRUService
     {
-        public static void Add(IStorageItem item)
+        public static bool TryAdd(IStorageItem item)
         {
             try
             {
                 Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList
                     .Add(item, string.Empty, RecentStorageItemVisibility.AppAndSystem);
+                return true;
             }
             catch (Exception ex)
             {
@@ -22,6 +23,7 @@
                 {
                     { "Exception", ex.ToString() }
                 });
+                return false;
             }
         }
 

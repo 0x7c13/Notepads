@@ -429,6 +429,16 @@
                     LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
             }
+
+            try
+            {
+                // Overwrite MenuFlyoutSubItemRevealBackgroundSubMenuOpened resource color
+                ((RevealBackgroundBrush)Application.Current.Resources["SystemControlHighlightAccent3RevealBackgroundBrush"]).Color = color;
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
         }
 
         private static Color GetColor(string hex)
