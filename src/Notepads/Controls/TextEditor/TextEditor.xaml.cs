@@ -847,7 +847,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus(showReplaceBar ? FindAndReplaceMode.Replace : FindAndReplaceMode.FindOnly);
+            findAndReplace.Focus();
         }
 
         public void HideFindAndReplaceControl()
@@ -869,7 +869,7 @@
                     // We should re-focus on FindAndReplaceControl to make the next search "flows"
                     if (!(sender is Button))
                     {
-                        FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);   
+                        FindAndReplaceControl.Focus();   
                     }
                     break;
                 case FindAndReplaceMode.Replace:
