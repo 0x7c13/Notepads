@@ -50,9 +50,6 @@
         public void Dispose()
         {
             Opening -= TextEditorContextFlyout_Opening;
-
-            _textEditor = null;
-            _textEditorCore = null;
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)

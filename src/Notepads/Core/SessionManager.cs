@@ -199,8 +199,16 @@
 
             if (sessionDataSaved)
             {
-                await DeleteOrphanedBackupFilesAsync(sessionData);
-                DeleteOrphanedTokensInFutureAccessList(sessionData);
+                try
+                {
+                    await DeleteOrphanedBackupFilesAsync(sessionData);
+                    DeleteOrphanedTokensInFutureAccessList(sessionData);
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles", 
+                        new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                }
             }
 
             stopwatch.Stop();
@@ -388,7 +396,8 @@
             }
             else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, ignoreFileSizeLimit: true);
+                var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
+                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
                 textEditor.ResetEditorState(editorSessionData.StateMetaData);
             }
             else // File with pending changes

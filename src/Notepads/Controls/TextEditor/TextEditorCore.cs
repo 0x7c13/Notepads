@@ -372,30 +372,45 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
         {
-            if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex))
+            if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex, out var error))
             {
+                regexError = error;
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
                 return true;
             }
 
+            regexError = error;
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex)
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
         {
+            regexError = null;
             var found = false;
-
             var text = GetText();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return false;
+            }
 
             if (useRegex)
             {
-                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-                if(regex.IsMatch(text))
+                try
                 {
-                    text = regex.Replace(text, replaceText);
-                    found = true;
+                    Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                    if(regex.IsMatch(text))
+                    {
+                        text = regex.Replace(text, replaceText);
+                        found = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    regexError = ex.Message;
+                    found = false;
                 }
             }
             else
@@ -427,8 +442,10 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, bool stopAtEof = true)
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError, bool stopAtEof = true)
         {
+            regexError = null;
+
             if (string.IsNullOrEmpty(searchText))
             {
                 return false;
@@ -440,36 +457,44 @@
 
             if (useRegex)
             {
-                Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-
-                var match = regex.Match(text, Document.Selection.EndPosition);
-
-                if (match.Success)
+                try
                 {
-                    Document.Selection.StartPosition = match.Index;
-                    Document.Selection.EndPosition = match.Index + match.Length;
-                }
-                else
-                {
-                    if (!stopAtEof)
+                    Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                    var match = regex.Match(text, Document.Selection.EndPosition);
+
+                    if (match.Success)
                     {
-                        match = regex.Match(text, 0);
-
-                        if (match.Success)
+                        Document.Selection.StartPosition = match.Index;
+                        Document.Selection.EndPosition = match.Index + match.Length;
+                    }
+                    else
+                    {
+                        if (!stopAtEof)
                         {
-                            Document.Selection.StartPosition = match.Index;
-                            Document.Selection.EndPosition = match.Index + match.Length;
+                            match = regex.Match(text, 0);
+
+                            if (match.Success)
+                            {
+                                Document.Selection.StartPosition = match.Index;
+                                Document.Selection.EndPosition = match.Index + match.Length;
+                            }
                         }
                     }
-                }
 
-                if (!match.Success)
+                    if (!match.Success)
+                    {
+                        Document.Selection.StartPosition = Document.Selection.EndPosition;
+                        return false;
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
                 {
-                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    regexError = ex.Message;
                     return false;
                 }
-
-                return true;
             }
 
             StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
@@ -519,7 +544,8 @@
                     e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab)
+                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
                 {
                     return;
                 }
@@ -763,20 +789,40 @@
 
         public bool GoTo(int line)
         {
-            if (_isLineCachePendingUpdate)
+            try
             {
-                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-                _isLineCachePendingUpdate = false;
+                Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                return true;
             }
-
-            Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async void SearchInWeb()
         {
-            var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", Document.Selection.Text.Trim().Split(null))));
-            await Launcher.LaunchUriAsync(searchUri);
+            try
+            {
+                var selectedText = Document.Selection.Text.Trim();
+
+                // The maximum length of a URL in the address bar is 2048 characters
+                // Let's take 2000 here to make sure we are not exceeding the limit
+                // Otherwise we will see "Invalid URI: The uri string is too long" exception
+                var searchString = selectedText.Length <= 2000 ? selectedText : selectedText.Substring(0, 2000);
+
+                if (Uri.TryCreate(searchString, UriKind.Absolute, out var webUrl) && (webUrl.Scheme == Uri.UriSchemeHttp || webUrl.Scheme == Uri.UriSchemeHttps))
+                {
+                    await Launcher.LaunchUriAsync(webUrl);
+                    return;
+                }
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine), string.Join("+", searchString.Split(null))));
+                await Launcher.LaunchUriAsync(searchUri);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"Failed to open search link: {ex.Message}");
+            }
         }
 
         private void ShowEasterEgg()

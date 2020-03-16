@@ -110,9 +110,7 @@
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
             Crashes.TrackError(e.Exception, diagnosticInfo);
 
-            // if you want to suppress and handle it manually, 
-            // otherwise app shuts down.
-            e.Handled = true;
+            e.Handled = true; // !e.Message.Contains("0x80040154", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -198,7 +196,7 @@
                     "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
                 },
                 {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
+                    "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
                 },
                 {
                     "EditorFontFamily", EditorSettingsService.EditorFontFamily

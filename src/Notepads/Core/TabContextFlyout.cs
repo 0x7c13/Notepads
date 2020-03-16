@@ -23,8 +23,8 @@
         private string _filePath;
         private string _containingFolderPath;
 
-        private INotepadsCore _notepadsCore;
-        private ITextEditor _textEditor;
+        private readonly INotepadsCore _notepadsCore;
+        private readonly ITextEditor _textEditor;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -53,9 +53,6 @@
         {
             Opening -= TabContextFlyout_Opening;
             Closed -= TabContextFlyout_Closed;
-
-            _notepadsCore = null;
-            _textEditor = null;
         }
 
         private void TabContextFlyout_Opening(object sender, object e)
