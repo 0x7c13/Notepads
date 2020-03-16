@@ -465,27 +465,26 @@
                     encoding = null;
                 }
 
-                if (encoding != null)
-                {
-                    try
-                    {
-                        await selectedTextEditor.ReloadFromEditingFile(encoding);
-                        NotificationCenter.Instance.PostNotification(
-                            _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
-                    }
-                    catch (Exception ex)
-                    {
-                        var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
-                        await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                        if (!fileOpenErrorDialog.IsAborted)
-                        {
-                            NotepadsCore.FocusOnSelectedTextEditor();
-                        }
-                    }
-                }
-                else
+                if (encoding == null)
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_EncodingCannotBeDetermined"), 2500);
+                    return;
+                }
+
+                try
+                {
+                    await selectedTextEditor.ReloadFromEditingFile(encoding);
+                    NotificationCenter.Instance.PostNotification(
+                        _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                }
+                catch (Exception ex)
+                {
+                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                    await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    if (!fileOpenErrorDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
                 }
             };
             return autoGuessEncodingItem;
