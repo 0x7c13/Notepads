@@ -339,12 +339,19 @@
             // Let's treat ASCII as UTF-8 for better accuracy
             if (EncodingUtility.Equals(encoding, Encoding.ASCII)) encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+            // If confidence is above 80%, we should just use it
+            if (confidence > 0.80f && result.Details.Count == 1) return encoding;
+
             // Try find a better match based on User's current Windows ANSI code page
             // Priority: UTF-8 > SystemDefaultANSIEncoding (Codepage: 0) > CurrentCultureANSIEncoding
             if (!(encoding is UTF8Encoding))
             {
                 foreach (var detail in result.Details)
                 {
+                    if (detail.Confidence <= 0.5f)
+                    {
+                        continue;
+                    }
                     if (detail.Encoding is UTF8Encoding)
                     {
                         foundBetterMatch = true;

@@ -16,7 +16,56 @@
         private static Encoding _currentCultureANSIEncoding;
 
         // https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+        // Name is using format of "<CountryOrRegion> (<.NET Name>)"
         private static readonly Dictionary<int, string> ANSIEncodings = new Dictionary<int, string>()
+        {
+            { 1252,    "Western (windows-1252)" },
+            { 28591,   "Western (iso-8859-1)" },
+            { 28593,   "Western (iso-8859-3)" },
+            { 28605,   "Western (iso-8859-15)" },
+            { 10000,   "Western (macintosh)" },
+            { 437,     "DOS (IBM437)" },
+            { 1256,    "Arabic (windows-1256)" },
+            { 28596,   "Arabic (iso-8859-6)" },
+            { 1257,    "Baltic (windows-1257)" },
+            { 28594,   "Baltic (iso-8859-4)" },
+            { 1250,    "Central European (windows-1250)" },
+            { 10029,   "Central European (x-mac-ce)" },
+            { 28592,   "Central European (iso-8859-2)" },
+            { 852,     "Central European (ibm852)" },
+            { 1251,    "Cyrillic (windows-1251)" },
+            { 10007,   "Cyrillic (x-mac-cyrillic)" },
+            { 866,     "Cyrillic (cp866)" },
+            { 855,     "Cyrillic (IBM855)" },
+            { 28595,   "Cyrillic (iso-8859-5)" },
+            { 20866,   "Cyrillic (koi8-r)" },
+            { 21866,   "Cyrillic (koi8-u)" },
+            { 28603,   "Estonian (iso-8859-13)" },
+            { 1253,    "Greek (windows-1253)" },
+            { 28597,   "Greek (iso-8859-7)" },
+            { 1255,    "Hebrew (windows-1255)" },
+            { 28598,   "Hebrew (iso-8859-8)" },
+            { 932,     "Japanese (shift_jis)" },
+            { 51932,   "Japanese (euc-jp)" },
+            { 50220,   "Japanese (iso-2022-jp)" },
+            { 51949,   "Korean (euc-kr)" },
+            { 949,     "Korean (ks_c_5601-1987)" },
+            { 50225,   "Korean (iso-2022-kr)" },
+            { 865,     "Nordic DOS (IBM865)" },
+            { 936,     "Simplified Chinese (gb2312)" },
+            { 54936,   "Simplified Chinese (GB18030)" },
+            { 874,     "Thai (windows-874)" },
+            { 1254,    "Turkish (windows-1254)" },
+            { 28599,   "Turkish (iso-8859-9)" },
+            { 950,     "Traditional Chinese (big5)" },
+            { 1258,    "Vietnamese (windows-1258)" },
+            { 850,     "Western European DOS (ibm850)" }
+        };
+        
+        // Previously used Encoding names by Notepads
+        // Containing misspelled Encoding names as well as old names
+        // This list will eventually be removed in future version
+        private static readonly Dictionary<int, string> DeprecatedANSIEncodings = new Dictionary<int, string>()
         {
             { 1252,    "Western (Windows 1252)" },
             { 28591,   "Western (ISO 8859-1)" },
@@ -176,6 +225,16 @@
                     {
                         if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
                         {
+                            return Encoding.GetEncoding(ansiEncoding.Key);
+                        }
+                    }
+
+                    // Hot-fix for legacy/deprecated names used in previous version of Notepads
+                    foreach (var ansiEncoding in DeprecatedANSIEncodings)
+                    {
+                        if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Analytics.TrackEvent("GetEncodingByName_FoundDeprecatedEncodingName");
                             return Encoding.GetEncoding(ansiEncoding.Key);
                         }
                     }
