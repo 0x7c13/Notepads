@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>활성화되면 메모장은 다음 실행을 위해 현재 세션을 기억하고 커밋되지 않은 변경으로 인한 우발적 데이터 손실을 방지하기 위해 주기적 세션 스냅샷 백업을 수행합니다. 이 기능이 활성화 된 경우 종료 시에 변경 사항을 저장하라는 메시지를 표시하지 않습니다. 세션 스냅샷은 메모장의 첫 번째 또는 기본 창에서만 작동합니다.</value>
+    <value>활성화되면 메모장은 다음 실행을 위해 현재 세션을 기억하고 저장되지 않은 변경으로 인한 우발적인 데이터 손실을 방지하기 위해 주기적으로 세션 스냅샷을 백업합니다. 이 기능이 활성화 된 경우 종료 시에 변경 사항을 저장하라는 메시지를 표시하지 않습니다. 세션 스냅샷은 메모장의 첫 번째 또는 기본 창에서만 작동합니다.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -366,7 +366,7 @@
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Auto guess Encoding (추천)</value>
+    <value>자동으로 인코딩 결정 (추천)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
 </root>
