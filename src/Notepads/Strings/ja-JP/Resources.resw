@@ -549,4 +549,28 @@
     <value>Clear Recently Opened</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
+    <value>More Encodings</value>
+    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
+    <value>エンコード付きで再度開く</value>
+    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
+    <value>エンコード付きで保存</value>
+    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
+    <value>Invalid regular expression!</value>
+    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>Auto Guess Encoding</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>Encoding cannot be determined</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
 </root>
