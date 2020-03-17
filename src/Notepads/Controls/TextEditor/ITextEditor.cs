@@ -73,6 +73,8 @@
 
         Task ReloadFromEditingFile();
 
+        Task ReloadFromEditingFile(Encoding encoding);
+
         LineEnding GetLineEnding();
 
         Encoding GetEncoding();

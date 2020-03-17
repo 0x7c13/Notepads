@@ -575,10 +575,6 @@
                            Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem Text="UTF-8" Tag="UTF-8" Click="EncodingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="UTF-8-BOM" Tag="UTF-8-BOM" Click="EncodingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="UTF-16 LE BOM" Tag="UTF-16 LE BOM" Click="EncodingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="UTF-16 BE BOM" Tag="UTF-16 BE BOM" Click="EncodingSelection_OnClick"/>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />

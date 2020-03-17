@@ -32,18 +32,8 @@
                 savePicker.DefaultFileExtension = textEditor.EditingFile.FileType;
             }
 
-            savePicker.FileTypeChoices.Add("Text Documents", new List<string>() { ".txt", ".md", });
-            savePicker.FileTypeChoices.Add("All Supported Files", new List<string>()
-            {
-                ".txt", ".md", ".markdown",
-                ".cfg", ".config", ".cnf", ".conf", ".ini", ".log",
-                ".json", ".yml", ".yaml", ".xml", ".xaml",
-                ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss",
-                ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash",
-                ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java",
-                ".js", ".ts", ".lua",
-                ".csv",
-            });
+            savePicker.FileTypeChoices.Add("Text Documents", new List<string>() { ".txt", ".md", ".markdown", ".csv" });
+            savePicker.FileTypeChoices.Add("All Supported Files", FileTypeService.AllSupportedFileExtensions);
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             savePicker.SuggestedFileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             return savePicker;
