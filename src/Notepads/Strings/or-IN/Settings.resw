@@ -366,7 +366,7 @@
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Auto guess Encoding (ପରାମର୍ଶିତ)</value>
+    <value>ସ୍ୱତଃ ଏନକୋଡିଂ ର ଅନୁମାନ (ପରାମର୍ଶିତ)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
 </root>

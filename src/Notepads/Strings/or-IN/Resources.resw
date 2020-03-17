@@ -550,27 +550,27 @@
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>ଅଧିକ ଏନକୋଡିଂ</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Reopen with Encoding</value>
+    <value>ଏନକୋଡିଂ ସହିତ ଖୋଲନ୍ତୁ</value>
     <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Save with Encoding</value>
+    <value>ଏନକୋଡିଂ ସହିତ ସଞ୍ଚନ୍ତୁ</value>
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>ଅବୈଧ ରେଗୁଲାର୍ ଏକ୍ସପ୍ରେସନ!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
+    <value>ସ୍ୱତଃ ଏନକୋଡିଂ ର ଅନୁମାନ</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
+    <value>ଏନକୋଡିଂ ନିର୍ଣ୍ଣୟ କରାଯାଇପାରିଲା ନାହିଁ</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
 </root>
