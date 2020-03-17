@@ -831,9 +831,9 @@
         private void AddIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
-            GetCurrentLineColumn(out var startLine, out var _, out var _);
+            GetCurrentLineColumn(out var startLine, out var column, out var _);
 
-            var startLineInitialIndex = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
+            var startLineInitialIndex = start - column + 1;
 
             var endLine = (_content + RichEditBoxDefaultLineEnding).Substring(0, end - 1 > 0 ? end - 1 : 0).Length
                 - _content.Substring(0, end - 1 > 0 ? end - 1 : 0).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
@@ -863,9 +863,9 @@
         private void RemoveIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
-            GetCurrentLineColumn(out var startLine, out var _, out var _);
+            GetCurrentLineColumn(out var startLine, out var column, out var _);
 
-            var startLineInitialIndex = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
+            var startLineInitialIndex = start - column + 1;
             var endLineFinalIndex = (_content + RichEditBoxDefaultLineEnding).IndexOf(RichEditBoxDefaultLineEnding, end - 1 > 0 ? end - 1 : 0) + 1;
 
             var endLine = (_content + RichEditBoxDefaultLineEnding).Substring(0, end - 1 > 0 ? end - 1 : 0).Length
@@ -887,7 +887,7 @@
 
                     try
                     {
-                        for (var c = 0; _contentLinesCache[i][c] == ' '; c++)
+                        for (var c = 0; c < _contentLinesCache[i].Length && _contentLinesCache[i][c] == ' '; c++)
                         {
                             spaceCount++;
                         }
@@ -924,7 +924,7 @@
                     else
                         start -= _contentLinesCache[i].Length - indentedStringBuilder.Length + 1;
 
-                    if ((_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length + 1 < startLine)
+                    if (start < startLineInitialIndex)
                     {
                         if (end == start) end = startLineInitialIndex;
                         start = startLineInitialIndex;
@@ -933,7 +933,16 @@
             }
 
             Document.Selection.SetRange(startLineInitialIndex, endLineFinalIndex);
-            if (indentedStringBuilder.Length > 0) Document.Selection.TypeText(indentedStringBuilder.ToString());
+            if (string.IsNullOrEmpty(Document.Selection.Text)) return;
+            try
+            {
+                Document.Selection.TypeText(indentedStringBuilder.ToString());
+            }
+            catch (Exception)
+            {
+                Document.Selection.SetRange(startLineInitialIndex, endLineFinalIndex - 1);
+                Document.Selection.SetText(TextSetOptions.None, indentedStringBuilder.ToString());
+            }
             Document.Selection.SetRange(start, end);
         }
 
