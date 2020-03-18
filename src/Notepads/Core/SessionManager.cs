@@ -396,7 +396,8 @@
             }
             else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, ignoreFileSizeLimit: true);
+                var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
+                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
                 textEditor.ResetEditorState(editorSessionData.StateMetaData);
             }
             else // File with pending changes

@@ -110,15 +110,7 @@
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
             Crashes.TrackError(e.Exception, diagnosticInfo);
 
-            if (e.Message.Contains("0x80040154", StringComparison.InvariantCultureIgnoreCase))
-            {
-                // To keep track of "Class not registered (Exception from HRESULT: 0x80040154)" exception
-                e.Handled = false;
-            }
-            else
-            {
-                e.Handled = true;   
-            }
+            e.Handled = true; // !e.Message.Contains("0x80040154", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -204,7 +196,7 @@
                     "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
                 },
                 {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
+                    "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
                 },
                 {
                     "EditorFontFamily", EditorSettingsService.EditorFontFamily

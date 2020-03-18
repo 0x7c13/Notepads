@@ -119,18 +119,34 @@
         {
             get
             {
+                if (_editorDefaultDecoding == null)
+                {
+                    return null;
+                }
                 // If it is not UTF-8 meaning user is using ANSI decoding,
                 // We should always try get latest system ANSI code page.
-                if (!(_editorDefaultDecoding is UTF8Encoding))
+                else if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
+                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
+                    {
+                        _editorDefaultDecoding = systemDefaultANSIEncoding;
+                    }
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
+                    {
+                        _editorDefaultDecoding = currentCultureANSIEncoding;
+                    }
+                    else
+                    {
+                        _editorDefaultDecoding = new UTF8Encoding(false); // Fall back to UTF-8 (no BOM)
+                    }
                 }
                 return _editorDefaultDecoding;
             }
             set
             {
                 _editorDefaultDecoding = value;
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, value.CodePage, true);
+                var codePage = value?.CodePage ?? -1;
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage, true);
             }
         }
 
@@ -361,27 +377,33 @@
 
         private static void InitializeDecodingSettings()
         {
-            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
             {
                 try
                 {
-                    _editorDefaultDecoding = Encoding.GetEncoding(decodingCodePage);
-                    if (_editorDefaultDecoding is UTF8Encoding)
+                    if (decodingCodePage == -1)
                     {
-                        _editorDefaultDecoding = new UTF8Encoding(false);
+                        _editorDefaultDecoding = null; // Meaning we should guess encoding during runtime
+                    }
+                    else
+                    {
+                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        _editorDefaultDecoding = Encoding.GetEncoding(decodingCodePage);
+                        if (_editorDefaultDecoding is UTF8Encoding)
+                        {
+                            _editorDefaultDecoding = new UTF8Encoding(false);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[EditorSettingsService] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
-                    _editorDefaultDecoding = new UTF8Encoding(false);
+                    _editorDefaultDecoding = null;
                 }
             }
             else
             {
-                _editorDefaultDecoding = new UTF8Encoding(false);
+                _editorDefaultDecoding = null; // Default to null
             }
         }
 
