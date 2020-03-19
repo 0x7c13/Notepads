@@ -861,7 +861,7 @@
             
             // Handle single line selection scenario where part of the line is selected
             if (start == end ||
-                startLine == endLine && end - start < _contentLinesCache[startLine - 1].Length)
+                (startLine == endLine && end - start < _contentLinesCache[startLine - 1].Length))
             {
                 Document.Selection.TypeText(tabStr);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
@@ -894,8 +894,6 @@
 
             Document.Selection.SetRange(start, end);
         }
-
-
 
         private void RemoveIndentation()
         {
