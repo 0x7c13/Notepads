@@ -920,7 +920,7 @@
                     var spaceCount = 0;
                     var indentAmount = EditorSettingsService.EditorDefaultTabIndents == -1 ? 4 : EditorSettingsService.EditorDefaultTabIndents;
 
-                    for (var c = 0; c < _contentLinesCache[i].Length && _contentLinesCache[i][c] == ' '; c++)
+                    for (var charIndex = 0; charIndex < _contentLinesCache[i].Length && _contentLinesCache[i][charIndex] == ' '; charIndex++)
                     {
                         spaceCount++;
                     }

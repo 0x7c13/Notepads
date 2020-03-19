@@ -646,15 +646,14 @@
             }
         }
 
-        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int maxLine)
+        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int lineCount)
         {
-            TextEditorCore.GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount, out int lineCount);
+            TextEditorCore.GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount, out lineCount);
             startLine = startLineIndex;
             endLine = endLineIndex;
             startColumn = startColumnIndex;
             endColumn = endColumnIndex;
             selected = selectedCount;
-            maxLine = lineCount;
         }
 
         public double GetFontZoomFactor()
@@ -926,8 +925,8 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var maxLine);
-            goToControl.SetLineData(startLine, maxLine);
+            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var lineCount);
+            goToControl.SetLineData(startLine, lineCount);
             goToControl.Focus();
         }
 
