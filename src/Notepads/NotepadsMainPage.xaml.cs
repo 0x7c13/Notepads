@@ -693,6 +693,11 @@
             {
                 if (storageItem is StorageFile file)
                 {
+                    try
+                    {
+                        file = await StorageFile.GetFileFromPathAsync(file.Path);
+                    }
+                    catch (Exception) { }
                     await OpenFile(file);
                     Analytics.TrackEvent("OnStorageFileDropped");
                 }
