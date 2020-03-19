@@ -194,6 +194,7 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
             });
         }
@@ -848,7 +849,11 @@
         private void AddIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
-            GetLineColumnSelection(out var startLine, out var endLine, out _,  out _, out _, out _);
+            GetLineColumnSelection(out var startLine, out var endLine, out var startColumn, out var endColumn, out _, out _);
+
+            var startLineInitialIndex = start - startColumn + 1;
+            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
+            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
 
             var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1
                 ? "\t"
@@ -865,13 +870,111 @@
 
             var indentAmount = EditorSettingsService.EditorDefaultTabIndents == -1 ? 1 : EditorSettingsService.EditorDefaultTabIndents;
             start += indentAmount;
-            for (var i = startLine; i < endLine + 1; i++)
+
+            var indentedStringBuilder = new StringBuilder();
+            for (var i = startLine - 1; i < endLine; i++)
             {
-                Document.Selection.SetIndex(TextRangeUnit.Paragraph, i, false);
-                Document.Selection.TypeText(tabStr);
+                indentedStringBuilder.Append(string.Concat(tabStr, _contentLinesCache[i], i < endLine - 1 ? RichEditBoxDefaultLineEnding.ToString() : string.Empty));
                 end += indentAmount;
             }
 
+            if (string.Equals(_content.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex),
+                indentedStringBuilder.ToString())) return;
+
+            if (Document.Selection.Text.EndsWith(RichEditBoxDefaultLineEnding) && endLineFinalIndex < _content.Length)
+            {
+                indentedStringBuilder.Append(RichEditBoxDefaultLineEnding);
+                if (string.Equals(_content.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex),
+                    indentedStringBuilder.ToString())) return;
+            }
+
+            Document.SetText(TextSetOptions.None,
+                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
+
+            Document.Selection.SetRange(start, end);
+        }
+
+
+
+        private void RemoveIndentation()
+        {
+            GetTextSelectionPosition(out var start, out var end);
+            GetLineColumnSelection(out var startLine, out var endLine, out var startColumn, out var endColumn, out _, out _);
+
+            var startLineInitialIndex = start - startColumn + 1;
+            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
+            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
+
+            if (startLineInitialIndex == endLineFinalIndex) return;
+
+            var indentedStringBuilder = new StringBuilder();
+            for (var i = startLine - 1; i < endLine; i++)
+            {
+                var lineTrailingString = i < endLine - 1 ? RichEditBoxDefaultLineEnding.ToString() : string.Empty;
+                if (_contentLinesCache[i].StartsWith('\t'))
+                {
+                    indentedStringBuilder.Append(_contentLinesCache[i].Remove(0, 1) + lineTrailingString);
+                    end--;
+                }
+                else
+                {
+                    var spaceCount = 0;
+                    var indentAmount = EditorSettingsService.EditorDefaultTabIndents == -1 ? 4 : EditorSettingsService.EditorDefaultTabIndents;
+
+                    for (var c = 0; c < _contentLinesCache[i].Length && _contentLinesCache[i][c] == ' '; c++)
+                    {
+                        spaceCount++;
+                    }
+
+                    if (spaceCount == 0)
+                    {
+                        indentedStringBuilder.Append(_contentLinesCache[i] + lineTrailingString);
+                        continue;
+                    }
+
+                    var insufficientSpace = spaceCount % indentAmount;
+
+                    if (insufficientSpace > 0)
+                    {
+                        indentedStringBuilder.Append(_contentLinesCache[i].Remove(0, insufficientSpace) + lineTrailingString);
+                        end -= insufficientSpace;
+                    }
+                    else
+                    {
+                        indentedStringBuilder.Append(_contentLinesCache[i].Remove(0, indentAmount) + lineTrailingString);
+                        end -= indentAmount;
+                    }
+                }
+
+                if (i == startLine - 1)
+                {
+                    if (startLine == endLine)
+                        start -= _contentLinesCache[i].Length - indentedStringBuilder.Length;
+                    else
+                        start -= _contentLinesCache[i].Length - indentedStringBuilder.Length + 1;
+
+                    if (start < startLineInitialIndex)
+                    {
+                        if (end == start) end = startLineInitialIndex;
+                        start = startLineInitialIndex;
+                    }
+                }
+            }
+
+            if (string.Equals(_content.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex),
+                indentedStringBuilder.ToString())) return;
+
+            if (Document.Selection.Text.EndsWith(RichEditBoxDefaultLineEnding) && endLineFinalIndex < _content.Length)
+            {
+                indentedStringBuilder.Append(RichEditBoxDefaultLineEnding);
+                if (string.Equals(_content.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex),
+                    indentedStringBuilder.ToString())) return;
+            }
+
+            Document.SetText(TextSetOptions.None,
+                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
             Document.Selection.SetRange(start, end);
         }
 
