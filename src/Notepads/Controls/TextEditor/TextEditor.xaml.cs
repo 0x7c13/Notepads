@@ -648,12 +648,7 @@
 
         public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int lineCount)
         {
-            TextEditorCore.GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount, out lineCount);
-            startLine = startLineIndex;
-            endLine = endLineIndex;
-            startColumn = startColumnIndex;
-            endColumn = endColumnIndex;
-            selected = selectedCount;
+            TextEditorCore.GetLineColumnSelection(out startLine, out endLine, out startColumn, out endColumn, out selected, out lineCount);
         }
 
         public double GetFontZoomFactor()

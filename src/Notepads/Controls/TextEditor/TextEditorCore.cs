@@ -858,10 +858,9 @@
             var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1
                 ? "\t"
                 : new string(' ', EditorSettingsService.EditorDefaultTabIndents);
-            
+
             // Handle single line selection scenario where part of the line is selected
-            if (start == end ||
-                (startLine == endLine && end - start < _contentLinesCache[startLine - 1].Length))
+            if (startLine == endLine)
             {
                 Document.Selection.TypeText(tabStr);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
