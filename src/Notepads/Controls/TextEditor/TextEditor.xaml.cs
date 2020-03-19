@@ -646,14 +646,15 @@
             }
         }
 
-        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected)
+        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int maxLine)
         {
-            TextEditorCore.GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount);
+            TextEditorCore.GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount, out int lineCount);
             startLine = startLineIndex;
             endLine = endLineIndex;
             startColumn = startColumnIndex;
             endColumn = endColumnIndex;
             selected = selectedCount;
+            maxLine = lineCount;
         }
 
         public double GetFontZoomFactor()
@@ -925,10 +926,7 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            GetLineColumnSelection(out var startLine, out var endLine, out _, out _, out _);
-            var maxLine = TextEditorCore.GetText().Length 
-                - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
-                + 1;
+            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var maxLine);
             goToControl.SetLineData(startLine, maxLine);
             goToControl.Focus();
         }

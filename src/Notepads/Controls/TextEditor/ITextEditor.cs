@@ -96,7 +96,8 @@
             out int endLineIndex, 
             out int startColumnIndex, 
             out int endColumnIndex, 
-            out int selectedCount);
+            out int selectedCount,
+            out int lineCount);
 
         double GetFontZoomFactor();
 

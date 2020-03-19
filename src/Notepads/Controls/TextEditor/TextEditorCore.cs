@@ -273,7 +273,8 @@
             out int endLineIndex, 
             out int startColumnIndex, 
             out int endColumnIndex, 
-            out int selectedCount)
+            out int selectedCount,
+            out int lineCount)
         {
             if (_isLineCachePendingUpdate)
             {
@@ -288,11 +289,12 @@
             endLineIndex = 1;
             endColumnIndex = 1;
             selectedCount = 0;
+            lineCount = _contentLinesCache.Length - 1;
 
             var length = 0;
             bool startLocated = false;
 
-            for (int i = 0; i < _contentLinesCache.Length; i++)
+            for (int i = 0; i < lineCount + 1; i++)
             {
                 var line = _contentLinesCache[i];
 
@@ -757,15 +759,13 @@
         {
             try
             {
-                GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount);
+                GetLineColumnSelection(out int startLineIndex, out int endLineIndex, out int startColumnIndex, out int endColumnIndex, out int selectedCount, out int lineCount);
                 GetTextSelectionPosition(out var start, out var end);
 
                 if (end == start)
                 {
                     // Duplicate Line
-                    var lineStart = (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start);
-                    var lineEnd = (_content + RichEditBoxDefaultLineEnding).IndexOf(RichEditBoxDefaultLineEnding, end);
-                    var line = _content.Substring(lineStart, lineEnd - lineStart);
+                    var line = _contentLinesCache[startLineIndex - 1];
                     var column = Document.Selection.EndPosition + line.Length + 1;
 
                     if (startColumnIndex == 1)
@@ -773,7 +773,7 @@
 
                     Document.Selection.EndOf(TextRangeUnit.Paragraph, false);
 
-                    if (startLineIndex < _content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length + 1)
+                    if (startLineIndex < lineCount)
                         Document.Selection.EndPosition -= 1;
 
                     Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + line);
@@ -789,7 +789,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (startLineIndex < (_content.Length - _content.Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length) + 1)
+                        if (startLineIndex < lineCount)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -848,7 +848,7 @@
         private void AddIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
-            GetLineColumnSelection(out var startLine, out var endLine, out var startColumn,  out var endColumn, out var _);
+            GetLineColumnSelection(out var startLine, out var endLine, out _,  out _, out _, out _);
 
             var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1
                 ? "\t"

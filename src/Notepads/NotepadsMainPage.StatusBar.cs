@@ -128,7 +128,7 @@
         private void UpdateLineColumnIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            textEditor.GetLineColumnSelection(out var startLineIndex, out var endLineIndex, out var startColumn, out var endColumn, out var selectedCount);
+            textEditor.GetLineColumnSelection(out var startLineIndex, out _, out var startColumn, out _, out var selectedCount, out _);
 
             var wordSelected = selectedCount > 1
                 ? _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord")
