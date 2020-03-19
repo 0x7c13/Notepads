@@ -91,7 +91,13 @@
 
         void CloseSideBySideDiffViewer();
 
-        void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+        void GetLineColumnSelection(
+            out int startLineIndex, 
+            out int endLineIndex, 
+            out int startColumnIndex, 
+            out int endColumnIndex, 
+            out int selectedCount,
+            out int lineCount);
 
         double GetFontZoomFactor();
 

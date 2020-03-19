@@ -500,6 +500,7 @@
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+            TextEditorCore.ClearUndoQueue();
 
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
@@ -645,12 +646,9 @@
             }
         }
 
-        public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
+        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int lineCount)
         {
-            TextEditorCore.GetCurrentLineColumn(out int line, out int column, out int selected);
-            lineIndex = line;
-            columnIndex = column;
-            selectedCount = selected;
+            TextEditorCore.GetLineColumnSelection(out startLine, out endLine, out startColumn, out endColumn, out selected, out lineCount);
         }
 
         public double GetFontZoomFactor()
@@ -922,11 +920,8 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            GetCurrentLineColumn(out var line, out _, out _);
-            var maxLine = TextEditorCore.GetText().Length 
-                - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
-                + 1;
-            goToControl.SetLineData(line, maxLine);
+            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var lineCount);
+            goToControl.SetLineData(startLine, lineCount);
             goToControl.Focus();
         }
 
