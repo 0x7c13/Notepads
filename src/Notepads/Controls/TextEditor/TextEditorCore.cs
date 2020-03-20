@@ -275,7 +275,8 @@
             out int startColumnIndex, 
             out int endColumnIndex, 
             out int selectedCount,
-            out int lineCount)
+            out int lineCount,
+            LineEnding lineEnding = LineEnding.Crlf)
         {
             if (_isLineCachePendingUpdate)
             {
@@ -308,7 +309,7 @@
 
                 if (line.Length + length >= end)
                 {
-                    if (i == startLineIndex - 1)
+                    if (i == startLineIndex - 1 || lineEnding == LineEnding.Lf)
                         selectedCount = end - start;
                     else
                         selectedCount = end - start + (i - startLineIndex) + 1;
