@@ -316,7 +316,7 @@
                     endColumnIndex = end - length + 1;
 
                     // Reposition end position to previous line's end position if last selected char is RichEditBoxDefaultLineEnding ('\r')
-                    if (endColumnIndex == 1 && endLineIndex > 1)
+                    if (endColumnIndex == 1 && end != start)
                     {
                         endLineIndex--;
                         endColumnIndex = _contentLinesCache[i - 1].Length + 1;
