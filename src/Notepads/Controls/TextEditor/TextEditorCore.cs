@@ -311,7 +311,7 @@
                     if (i == startLineIndex - 1)
                         selectedCount = end - start;
                     else
-                        selectedCount = end - start + (i - startLineIndex);
+                        selectedCount = end - start + (i - startLineIndex) + 1;
                     endLineIndex = i + 1;
                     endColumnIndex = end - length + 1;
 
