@@ -7,11 +7,14 @@
 
     public static class DialogManager
     {
-        public static async Task<ContentDialogResult> OpenDialogAsync(NotepadsDialog dialog, bool awaitPreviousDialog) { return await OpenDialog(dialog, awaitPreviousDialog); }
-
         public static NotepadsDialog ActiveDialog;
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
+
+        public static async Task<ContentDialogResult> OpenDialogAsync(NotepadsDialog dialog, bool awaitPreviousDialog)
+        {
+            return await OpenDialog(dialog, awaitPreviousDialog);
+        }
 
         static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
         {
