@@ -239,10 +239,7 @@
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
-            if (_contentPreviewExtension != null)
-            {
-                _contentPreviewExtension.Dispose();
-            }
+            _contentPreviewExtension?.Dispose();
 
             if (SplitPanel != null)
             {
@@ -463,13 +460,22 @@
 
         public async Task ReloadFromEditingFile()
         {
+            await ReloadFromEditingFile(null);
+        }
+
+        public async Task ReloadFromEditingFile(Encoding encoding)
+        {
             if (EditingFile != null)
             {
-                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false);
+                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
                 Init(textFile, EditingFile, clearUndoQueue: false);
+                LineEndingChanged?.Invoke(this, EventArgs.Empty);
+                EncodingChanged?.Invoke(this, EventArgs.Empty);
                 StartCheckingFileStatusPeriodically();
                 CloseSideBySideDiffViewer();
+                HideGoToControl();
                 FileReloaded?.Invoke(this, EventArgs.Empty);
+                Analytics.TrackEvent(encoding == null ? "OnFileReloaded" : "OnFileReopenedWithEncoding");
             }
         }
 
@@ -494,6 +500,7 @@
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+            TextEditorCore.ClearUndoQueue();
 
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
@@ -639,12 +646,9 @@
             }
         }
 
-        public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
+        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int lineCount)
         {
-            TextEditorCore.GetCurrentLineColumn(out int line, out int column, out int selected);
-            lineIndex = line;
-            columnIndex = column;
-            selectedCount = selected;
+            TextEditorCore.GetLineColumnSelection(out startLine, out endLine, out startColumn, out endColumn, out selected, out lineCount);
         }
 
         public double GetFontZoomFactor()
@@ -841,7 +845,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus(showReplaceBar ? FindAndReplaceMode.Replace : FindAndReplaceMode.FindOnly);
+            findAndReplace.Focus();
         }
 
         public void HideFindAndReplaceControl()
@@ -853,29 +857,37 @@
         {
             TextEditorCore.Focus(FocusState.Programmatic);
             bool found = false;
+            string regexError = null;
 
             switch (e.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, e.UseRegex, false);
+                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError, false);
                     // In case user hit "enter" key in search box instead of clicking on search button or hit F3
                     // We should re-focus on FindAndReplaceControl to make the next search "flows"
                     if (!(sender is Button))
                     {
-                        FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);   
+                        FindAndReplaceControl.Focus();   
                     }
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex);
+                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex);
+                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError);
                     break;
             }
 
             if (!found)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+                if (e.UseRegex && !string.IsNullOrEmpty(regexError))
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_InvalidRegex"), 1500);
+                }
+                else
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);   
+                }
             }
         }
 
@@ -908,11 +920,8 @@
             if (GoToPlaceholder.Visibility == Visibility.Collapsed)
                 GoToPlaceholder.Show();
 
-            GetCurrentLineColumn(out var line, out _, out _);
-            var maxLine = TextEditorCore.GetText().Length 
-                - TextEditorCore.GetText().Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length 
-                + 1;
-            goToControl.SetLineData(line, maxLine);
+            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var lineCount);
+            goToControl.SetLineData(startLine, lineCount);
             goToControl.Focus();
         }
 
@@ -923,8 +932,12 @@
 
         private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
         {
-            int line = int.TryParse(e.SearchLine, out _) ? Convert.ToInt32(e.SearchLine) : 0;
-            bool found = TextEditorCore.GoTo(line);
+            var found = false;
+
+            if (int.TryParse(e.SearchLine, out var line))
+            { 
+                found = TextEditorCore.GoTo(line);
+            }
 
             if (!found)
             {

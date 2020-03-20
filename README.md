@@ -83,14 +83,14 @@ To be 100% transparent:
 
 * Notepads does not and will never collect user information in terms of user privacy.
 * I will not track your IP. 
-* I will not record your typings or read any of your files created in Notepads. 
+* I will not record your typings or read any of your files created in Notepads including file name and file path. 
 * No typings or files will be sent to me or third parties. 
 
-I might use analytics tools to collect basic usage data such as how many times the program has been downloaded or been used plus some minimum telemetry to debug runtime errors. 
+I am using analytics service "AppCenter" to collect basic usage data plus some minimum telemetry to help me debug runtime errors. Here is the thread I made clear on this topic: https://github.com/JasonStein/Notepads/issues/334 
 
-Feel free to review the source code.
+Feel free to review the source code or build your own version of Notepads since it is 100% open sourced.
 
-You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project which is like only a few weeks back. So don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project, so don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Contributing:
 
@@ -105,6 +105,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
 * [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
+* [UTF-unknown](https://github.com/CharsetDetector/UTF-unknown)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
 ## Special Thanks:
@@ -128,7 +129,8 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
     * [pt-BR][Brazilian]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
     * [ko-KR][Korean]: [Donghyeok Tak](https://github.com/tdh8316)
-    * [hi-IN][Hindi (India)]/[or-IN][Odia (India)] [Soumya Ranjan Mahunt](https://github.com/soumyamahunt)
+    * [hi-IN][Hindi (India)]/[or-IN][Odia (India)]: [Soumya Ranjan Mahunt](https://github.com/soumyamahunt)
+    * [pl-PL][Polish]: [Daxxxis](https://github.com/Daxxxis)
 
 [![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 
