@@ -310,7 +310,7 @@
                     encoding = AnalyzeAndGuessEncoding(result);
                     return true;
                 }
-                else
+                else if (stream.Length > 0) // We do not care about empty file
                 {
                     Analytics.TrackEvent("UnableToDetectEncoding");
                 }
