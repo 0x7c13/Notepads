@@ -320,6 +320,7 @@
                     {
                         endLineIndex--;
                         endColumnIndex = _contentLinesCache[i - 1].Length + 1;
+                        if (endLineIndex == startLineIndex) selectedCount++;
                     }
 
                     return;
