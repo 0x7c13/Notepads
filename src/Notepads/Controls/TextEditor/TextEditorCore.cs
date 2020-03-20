@@ -309,7 +309,7 @@
 
                 if (line.Length + length >= end)
                 {
-                    if (i == startLineIndex - 1 || lineEnding == LineEnding.Lf)
+                    if (i == startLineIndex - 1 || lineEnding != LineEnding.Crlf)
                         selectedCount = end - start;
                     else
                         selectedCount = end - start + (i - startLineIndex) + 1;
