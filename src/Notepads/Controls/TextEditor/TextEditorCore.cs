@@ -790,7 +790,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (startLineIndex < lineCount)
+                        if (startLineIndex < lineCount && end < _content.Length)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
