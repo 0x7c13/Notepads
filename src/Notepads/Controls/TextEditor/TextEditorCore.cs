@@ -134,6 +134,7 @@
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
+            Window.Current.CoreWindow.Activated += (sender, args) =>
             {
                 if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
                     args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
