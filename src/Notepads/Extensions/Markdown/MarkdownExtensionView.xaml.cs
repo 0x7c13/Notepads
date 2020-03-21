@@ -17,6 +17,8 @@
     {
         private bool _isExtensionEnabled;
 
+        private string _parentPath;
+
         public bool IsExtensionEnabled
         {
             get => _isExtensionEnabled;
@@ -115,7 +117,7 @@
             }
         }
 
-        public void Bind(TextEditorCore editorCore)
+        public void Bind(TextEditorCore editorCore, string parentPath)
         {
             if (_editorCore != null)
             {
@@ -128,6 +130,8 @@
             _editorCore.TextChanged += OnTextChanged;
             _editorCore.TextWrappingChanged += OnTextWrappingChanged;
             _editorCore.FontSizeChanged += OnFontSizeChanged;
+
+            _parentPath = parentPath;
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -195,8 +199,16 @@
 
             try
             {
-                var uri = new Uri(e.Link);
-                await Windows.System.Launcher.LaunchUriAsync(uri);
+                try
+                {
+                    var uri = new Uri(e.Link);
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                }
+                catch (Exception)
+                {
+                    var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(_parentPath + e.Link.Replace('/', Path.DirectorySeparatorChar));
+                    await Windows.System.Launcher.LaunchFileAsync(file);
+                }
             }
             catch (Exception ex)
             {
