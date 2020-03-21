@@ -30,7 +30,7 @@
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Focus(FindAndReplaceMode.FindOnly);
+            Focus();
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
@@ -68,26 +68,9 @@
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
-        public void Focus(FindAndReplaceMode mode)
+        public void Focus()
         {
-            if (mode == FindAndReplaceMode.FindOnly)
-            {
-                FindBar.SelectionStart = 0;
-                FindBar.SelectionLength = FindBar.Text.Length;
-                FindBar.Focus(FocusState.Programmatic);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(FindBar.Text))
-                {
-                    FindBar.SelectionStart = FindBar.Text.Length;
-                }
-                if (!string.IsNullOrEmpty(ReplaceBar.Text))
-                {
-                    ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
-                }
-                ReplaceBar.Focus(FocusState.Programmatic);
-            }
+            FindBar.Focus(FocusState.Programmatic);
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
@@ -133,11 +116,31 @@
             if (e.Key == VirtualKey.Tab)
             {
                 e.Handled = true;
+                if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible) ReplaceBar.Focus(FocusState.Programmatic);
             }
+        }
+
+        private void FindBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
+            FindBar.SelectionStart = 0;
+            FindBar.SelectionLength = FindBar.Text.Length;
         }
 
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.Tab)
+            {
+                e.Handled = true;
+                if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible) FindBar.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            FindBar.SelectionStart = FindBar.Text.Length;
+            ReplaceBar.SelectionStart = 0;
+            ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_OnTextChanged(object sender, TextChangedEventArgs e)

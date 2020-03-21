@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.1.4.0" />
+    Version="1.1.6.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -117,7 +117,7 @@
               <uap:FileType ContentType="text/plain">.log</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Log File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\log.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -127,7 +127,7 @@
               <uap:FileType ContentType="text/plain">.bib</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>BibTeX File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\bib.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -378,7 +378,7 @@
               <uap:FileType>.srt</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Subtitle file</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\srt.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -388,7 +388,7 @@
               <uap:FileType>.ass</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Aegisub Advanced Subtitle file</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\ass.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -398,7 +398,7 @@
               <uap:FileType>.ssa</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Sub Station Alpha Subtitle File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\ssa.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -408,7 +408,7 @@
               <uap:FileType>.vue</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Vue File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\vue.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -418,7 +418,7 @@
               <uap:FileType>.vuerc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Vue Config File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\vue.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -508,7 +508,7 @@
               <uap:FileType>.pl</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Perl File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\perl.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -528,7 +528,7 @@
               <uap:FileType>.sql</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>SQL File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\sql.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

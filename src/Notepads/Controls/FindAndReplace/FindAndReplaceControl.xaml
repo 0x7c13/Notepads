@@ -36,7 +36,8 @@
                          BorderThickness="0"
                          FontSize="15"
                          TextChanged="FindBar_OnTextChanged"
-                         KeyDown="FindBar_OnKeyDown"/>
+                         KeyDown="FindBar_OnKeyDown"
+                         GotFocus="FindBar_GotFocus"/>
             </Grid>
 
             <Button x:Name="SearchButton"
@@ -110,7 +111,8 @@
                              BorderThickness="0"
                              FontSize="15"
                              TextChanged="ReplaceBar_OnTextChanged"
-                             KeyDown="ReplaceBar_OnKeyDown"/>
+                             KeyDown="ReplaceBar_OnKeyDown"
+                             GotFocus="ReplaceBar_GotFocus"/>
                 </Grid>
 
                 <Button x:Name="ReplaceButton"
