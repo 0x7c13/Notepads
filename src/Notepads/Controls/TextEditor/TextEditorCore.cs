@@ -50,6 +50,14 @@
 
         private double _contentScrollViewerVerticalOffset = 0;
 
+        private double _contentScrollViewerHorizontalOffsetLastKnownPosition = 0;
+
+        private double _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
+
+        private bool _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+
+        private bool _loaded = false;
+
         private const string ContentElementName = "ContentElement";
 
         private readonly double _minimumZoomFactor = 10;
@@ -113,6 +121,8 @@
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
+            LostFocus += TextEditorCore_LostFocus;
+            Loaded += TextEditorCore_Loaded;
 
             EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
@@ -123,6 +133,33 @@
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            {
+                if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
+                    args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
+                {
+                    _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+                }
+            };
+        }
+
+        private void TextEditorCore_Loaded(object sender, RoutedEventArgs e)
+        {
+            _loaded = true;
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _contentScrollViewer.ChangeView(
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                    _contentScrollViewerVerticalOffsetLastKnownPosition,
+                    zoomFactor: null,
+                    disableAnimation: true);
+            }
+        }
+
+        private void TextEditorCore_LostFocus(object sender, RoutedEventArgs e)
+        {
+            GetScrollViewerPosition(out _contentScrollViewerHorizontalOffsetLastKnownPosition, out _contentScrollViewerVerticalOffsetLastKnownPosition);
         }
 
         // Unhook events and clear state
@@ -132,8 +169,9 @@
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
             SelectionChanged -= OnSelectionChanged;
-
             PointerWheelChanged -= OnPointerWheelChanged;
+            LostFocus -= TextEditorCore_LostFocus;
+            Loaded -= TextEditorCore_Loaded;
 
             if (_contentScrollViewer != null)
             {
@@ -203,13 +241,13 @@
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
-            _contentScrollViewer.BringIntoViewOnFocusChange = false;
+            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.ChangeView(
-                _contentScrollViewerHorizontalOffset,
-                _contentScrollViewerVerticalOffset,
+                _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
-            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
 
         public void Undo()
@@ -242,8 +280,16 @@
         // Thread safe
         public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
         {
-            horizontalOffset = _contentScrollViewerHorizontalOffset;
-            verticalOffset = _contentScrollViewerVerticalOffset;
+            if (_loaded)
+            {
+                horizontalOffset = _contentScrollViewerHorizontalOffset;
+                verticalOffset = _contentScrollViewerVerticalOffset;   
+            }
+            else // If current TextEditorCore never loaded, we should use last known position
+            {
+                horizontalOffset = _contentScrollViewerHorizontalOffsetLastKnownPosition;
+                verticalOffset = _contentScrollViewerVerticalOffsetLastKnownPosition;
+            }
         }
 
         // Thread safe
@@ -261,11 +307,10 @@
             Document.Selection.EndPosition = selectionEndPosition;
         }
 
-        public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
+        public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset)
         {
-            _contentScrollViewerHorizontalOffset = horizontalOffset;
-            _contentScrollViewerVerticalOffset = verticalOffset;
-            _contentScrollViewer?.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
+            _contentScrollViewerHorizontalOffsetLastKnownPosition = horizontalOffset;
+            _contentScrollViewerVerticalOffsetLastKnownPosition = verticalOffset;
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way
@@ -625,6 +670,12 @@
             }
         }
 
+        public void Focus()
+        {
+            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            base.Focus(FocusState.Programmatic);
+        }
+
         private void DecreaseFontSize(double delta)
         {
             if (_fontZoomFactor > _minimumZoomFactor)
@@ -676,6 +727,16 @@
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
             _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _contentScrollViewer.ChangeView(
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                    _contentScrollViewerVerticalOffsetLastKnownPosition,
+                    zoomFactor: null,
+                    disableAnimation: true);
+            }
 
             ScrollViewerOffsetChanged?.Invoke(this, e);
         }

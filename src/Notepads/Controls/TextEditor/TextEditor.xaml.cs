@@ -499,7 +499,7 @@
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
-            TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+            TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
             TextEditorCore.ClearUndoQueue();
 
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
@@ -709,7 +709,7 @@
             }
             else if (Mode == TextEditorMode.Editing)
             {
-                TextEditorCore.Focus(FocusState.Programmatic);
+                TextEditorCore.Focus();
             }
         }
 
