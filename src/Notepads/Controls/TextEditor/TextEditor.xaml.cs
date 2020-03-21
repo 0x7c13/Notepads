@@ -580,7 +580,7 @@
             SplitPanelColumnDefinition.MinWidth = 0.0f;
             SplitPanel.Visibility = Visibility.Collapsed;
             GridSplitter.Visibility = Visibility.Collapsed;
-            TextEditorCore.Focus(FocusState.Programmatic);
+            TextEditorCore.ResetFocusAndScrollToPreviousPosition();
             _isContentPreviewPanelOpened = false;
         }
 
@@ -631,7 +631,7 @@
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
             SideBySideDiffViewer.StopRenderingAndClearCache();
-            TextEditorCore.Focus(FocusState.Programmatic);
+            TextEditorCore.ResetFocusAndScrollToPreviousPosition();
         }
 
         private void ShowHideSideBySideDiffViewer()
@@ -709,7 +709,7 @@
             }
             else if (Mode == TextEditorMode.Editing)
             {
-                TextEditorCore.Focus();
+                TextEditorCore.ResetFocusAndScrollToPreviousPosition();
             }
         }
 

@@ -671,7 +671,7 @@
             }
         }
 
-        public void Focus()
+        public void ResetFocusAndScrollToPreviousPosition()
         {
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
             base.Focus(FocusState.Programmatic);
