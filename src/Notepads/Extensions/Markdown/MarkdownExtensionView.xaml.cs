@@ -7,6 +7,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.Storage;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -18,6 +19,8 @@
         private bool _isExtensionEnabled;
 
         private string _parentPath;
+
+        private readonly char[] ignoredChars = { '?', '#', ' ' };
 
         public bool IsExtensionEnabled
         {
@@ -64,18 +67,40 @@
 
             try
             {
-                var imageUri = new Uri(e.Url);
-                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                try
                 {
-                    // SvgImageSource is not working properly when width and height are not set in uri
-                    // I am disabling Svg parsing here.
-                    // e.Image = await GetImageAsync(e.Url);
-                    e.Handled = true;
+                    var imageUri = new Uri(e.Url);
+                    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                    {
+                        // SvgImageSource is not working properly when width and height are not set in uri
+                        // I am disabling Svg parsing here.
+                        // e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    e.Image = await GetImageAsync(e.Url);
-                    e.Handled = true;
+                    var ignoreIndex = e.Url.IndexOfAny(ignoredChars);
+                    var imagePath = _parentPath + (ignoreIndex > -1
+                        ? e.Url.Remove(ignoreIndex).Replace('/', Path.DirectorySeparatorChar)
+                        : e.Url.Replace('/', Path.DirectorySeparatorChar));
+                    if (Path.GetExtension(imagePath)?.ToLowerInvariant() == ".svg")
+                    {
+                        // SvgImageSource is not working properly when width and height are not set in uri
+                        // I am disabling Svg parsing here.
+                        // e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        e.Image = await GetLocalImageAsync(imagePath);
+                        e.Handled = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -103,6 +128,27 @@
                 }
 
                 if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                {
+                    var image = new SvgImageSource();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+                else
+                {
+                    var image = new BitmapImage();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+            }
+        }
+
+        private async Task<ImageSource> GetLocalImageAsync(string imagePath)
+        {
+            var imageFile = await StorageFile.GetFileFromPathAsync(imagePath);
+
+            using (var ms = await imageFile.OpenReadAsync())
+            {
+                if (Path.GetExtension(imagePath)?.ToLowerInvariant() == ".svg")
                 {
                     var image = new SvgImageSource();
                     await image.SetSourceAsync(ms);
@@ -206,7 +252,7 @@
                 }
                 catch (Exception)
                 {
-                    var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(_parentPath + e.Link.Replace('/', Path.DirectorySeparatorChar));
+                    var file = await StorageFile.GetFileFromPathAsync(_parentPath + e.Link.Replace('/', Path.DirectorySeparatorChar));
                     await Windows.System.Launcher.LaunchFileAsync(file);
                 }
             }
