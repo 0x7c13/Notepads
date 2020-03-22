@@ -90,6 +90,11 @@
                 path = args.Substring(1, index - 1);
             }
 
+            if (dir.StartsWith("\\\\wsl$"))
+            {
+                path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+            }
+
             if (IsFullPath(path))
             {
                 return path;
