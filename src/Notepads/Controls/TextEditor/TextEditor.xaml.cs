@@ -197,7 +197,7 @@
             TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
             TextEditorCore.ScrollViewerOffsetChanged += LineHighlighter_OnScrolled;
-            base.SizeChanged += LineHighlighter_WindowSizeChanged;
+            TextEditorCore.SizeChanged += LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         }
@@ -235,7 +235,7 @@
             TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
             TextEditorCore.ScrollViewerOffsetChanged -= LineHighlighter_OnScrolled;
-            base.SizeChanged -= LineHighlighter_WindowSizeChanged;
+            TextEditorCore.SizeChanged -= LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
@@ -566,7 +566,7 @@
         private void OpenSplitView(IContentPreviewExtension extension)
         {
             SplitPanel.Content = extension;
-            SplitPanelColumnDefinition.Width = new GridLength(ActualWidth / 2.0f);
+            SplitPanelColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
             SplitPanelColumnDefinition.MinWidth = 100.0f;
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
@@ -577,6 +577,7 @@
         private void CloseSplitView()
         {
             SplitPanelColumnDefinition.Width = new GridLength(0);
+            EditorColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
             SplitPanelColumnDefinition.MinWidth = 0.0f;
             SplitPanel.Visibility = Visibility.Collapsed;
             GridSplitter.Visibility = Visibility.Collapsed;
@@ -1021,9 +1022,9 @@
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
-        private void LineHighlighter_WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        private void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap && EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)

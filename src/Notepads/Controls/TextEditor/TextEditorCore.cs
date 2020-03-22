@@ -909,14 +909,30 @@
             }
         }
 
+        private bool IsSelectionRectInView(Windows.Foundation.Rect rect, double horizontalOffset, double verticalOffset)
+        {
+            var isSelectionStartPositionInView = false;
+            var isSelectionEndPositionInView = false;
+
+            if (verticalOffset <= rect.Y && rect.Y <= verticalOffset + _contentScrollViewer.ViewportHeight &&
+                horizontalOffset <= rect.X && rect.X <= horizontalOffset + _contentScrollViewer.ViewportWidth)
+            {
+                isSelectionStartPositionInView = true;
+            }
+
+            if (verticalOffset <= rect.Y + rect.Height && rect.Y + rect.Height <= verticalOffset + _contentScrollViewer.ViewportHeight &&
+                horizontalOffset <= rect.X + rect.Width && rect.X + rect.Width <= horizontalOffset + _contentScrollViewer.ViewportWidth)
+            {
+                isSelectionEndPositionInView = true;
+            }
+
+            return isSelectionStartPositionInView && isSelectionEndPositionInView;
+        }
+
         private void AddIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
             GetLineColumnSelection(out var startLine, out var endLine, out var startColumn, out var endColumn, out _, out _);
-
-            var startLineInitialIndex = start - startColumn + 1;
-            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
-            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
 
             var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1
                 ? "\t"
@@ -929,6 +945,10 @@
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return;
             }
+
+            var startLineInitialIndex = start - startColumn + 1;
+            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
+            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
 
             var indentAmount = EditorSettingsService.EditorDefaultTabIndents == -1 ? 1 : EditorSettingsService.EditorDefaultTabIndents;
             start += indentAmount;
@@ -950,11 +970,30 @@
                     indentedStringBuilder.ToString())) return;
             }
 
-            Document.SetText(TextSetOptions.None,
-                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
-                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
+            Document.Selection.GetRect(Windows.UI.Text.PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
+            GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
+
+            var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
+
+            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+            _isLineCachePendingUpdate = false;
+
+            Document.SetText(TextSetOptions.None, newContent);
 
             Document.Selection.SetRange(start, end);
+
+            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // It is better to keep its original scroll position after changing the indent in this case
+            if (wasSelectionInView)
+            {
+                _contentScrollViewer.ChangeView(
+                    horizontalOffset,
+                    verticalOffset,
+                    zoomFactor: null,
+                    disableAnimation: true);   
+            }
         }
 
         private void RemoveIndentation()
@@ -1032,10 +1071,28 @@
                     indentedStringBuilder.ToString())) return;
             }
 
-            Document.SetText(TextSetOptions.None,
-                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
-                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
+            Document.Selection.GetRect(Windows.UI.Text.PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
+            GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
+
+            var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
+            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+            _isLineCachePendingUpdate = false;
+
+            Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
+
+            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // It is better to keep its original scroll position after changing the indent in this case
+            if (wasSelectionInView)
+            {
+                _contentScrollViewer.ChangeView(
+                    horizontalOffset,
+                    verticalOffset,
+                    zoomFactor: null,
+                    disableAnimation: true);   
+            }
         }
 
         private void ShowEasterEgg()

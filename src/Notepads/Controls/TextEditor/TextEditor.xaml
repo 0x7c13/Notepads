@@ -91,7 +91,7 @@
 
         <Grid Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="100"/>
+                <ColumnDefinition x:Name="EditorColumnDefinition" Width="*" MinWidth="100"/>
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
