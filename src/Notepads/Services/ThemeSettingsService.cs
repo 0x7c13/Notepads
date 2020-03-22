@@ -94,11 +94,25 @@
             }
         }
 
+        private static Color _customAccentColor;
+
+        public static Color CustomAccentColor
+        {
+            get => _customAccentColor;
+            set
+            {
+                _customAccentColor = value;
+                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex(), true);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeThemeMode();
 
             InitializeAppAccentColor();
+
+            InitializeCustomAccentColor();
 
             InitializeAppBackgroundPanelTintOpacity();
         }
@@ -125,6 +139,18 @@
                 {
                     _appAccentColor = GetColor(accentColorHexStr);
                 }
+            }
+        }
+
+        private static void InitializeCustomAccentColor()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
+            {
+                _customAccentColor = GetColor(customAccentColorHexStr);
+            }
+            else
+            {
+                _customAccentColor = _appAccentColor;
             }
         }
 

@@ -50,6 +50,14 @@
 
         private double _contentScrollViewerVerticalOffset = 0;
 
+        private double _contentScrollViewerHorizontalOffsetLastKnownPosition = 0;
+
+        private double _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
+
+        private bool _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+
+        private bool _loaded = false;
+
         private const string ContentElementName = "ContentElement";
 
         private readonly double _minimumZoomFactor = 10;
@@ -113,6 +121,8 @@
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
+            LostFocus += TextEditorCore_LostFocus;
+            Loaded += TextEditorCore_Loaded;
 
             EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
@@ -123,6 +133,34 @@
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+
+            Window.Current.CoreWindow.Activated += (sender, args) =>
+            {
+                if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
+                    args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
+                {
+                    _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+                }
+            };
+        }
+
+        private void TextEditorCore_Loaded(object sender, RoutedEventArgs e)
+        {
+            _loaded = true;
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _contentScrollViewer.ChangeView(
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                    _contentScrollViewerVerticalOffsetLastKnownPosition,
+                    zoomFactor: null,
+                    disableAnimation: true);
+            }
+        }
+
+        private void TextEditorCore_LostFocus(object sender, RoutedEventArgs e)
+        {
+            GetScrollViewerPosition(out _contentScrollViewerHorizontalOffsetLastKnownPosition, out _contentScrollViewerVerticalOffsetLastKnownPosition);
         }
 
         // Unhook events and clear state
@@ -132,8 +170,9 @@
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
             SelectionChanged -= OnSelectionChanged;
-
             PointerWheelChanged -= OnPointerWheelChanged;
+            LostFocus -= TextEditorCore_LostFocus;
+            Loaded -= TextEditorCore_Loaded;
 
             if (_contentScrollViewer != null)
             {
@@ -203,13 +242,13 @@
         {
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
-            _contentScrollViewer.BringIntoViewOnFocusChange = false;
+            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.ChangeView(
-                _contentScrollViewerHorizontalOffset,
-                _contentScrollViewerVerticalOffset,
+                _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
-            _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
         }
 
         public void Undo()
@@ -242,8 +281,16 @@
         // Thread safe
         public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
         {
-            horizontalOffset = _contentScrollViewerHorizontalOffset;
-            verticalOffset = _contentScrollViewerVerticalOffset;
+            if (_loaded)
+            {
+                horizontalOffset = _contentScrollViewerHorizontalOffset;
+                verticalOffset = _contentScrollViewerVerticalOffset;   
+            }
+            else // If current TextEditorCore never loaded, we should use last known position
+            {
+                horizontalOffset = _contentScrollViewerHorizontalOffsetLastKnownPosition;
+                verticalOffset = _contentScrollViewerVerticalOffsetLastKnownPosition;
+            }
         }
 
         // Thread safe
@@ -261,11 +308,10 @@
             Document.Selection.EndPosition = selectionEndPosition;
         }
 
-        public void SetScrollViewerPosition(double horizontalOffset, double verticalOffset)
+        public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset)
         {
-            _contentScrollViewerHorizontalOffset = horizontalOffset;
-            _contentScrollViewerVerticalOffset = verticalOffset;
-            _contentScrollViewer?.ChangeView(horizontalOffset, verticalOffset, zoomFactor: null, disableAnimation: true);
+            _contentScrollViewerHorizontalOffsetLastKnownPosition = horizontalOffset;
+            _contentScrollViewerVerticalOffsetLastKnownPosition = verticalOffset;
         }
 
         //TODO This method I wrote is pathetic, need to find a way to implement it in a better way
@@ -275,7 +321,8 @@
             out int startColumnIndex, 
             out int endColumnIndex, 
             out int selectedCount,
-            out int lineCount)
+            out int lineCount,
+            LineEnding lineEnding = LineEnding.Crlf)
         {
             if (_isLineCachePendingUpdate)
             {
@@ -308,15 +355,15 @@
 
                 if (line.Length + length >= end)
                 {
-                    if (i == startLineIndex - 1)
+                    if (i == startLineIndex - 1 || lineEnding != LineEnding.Crlf)
                         selectedCount = end - start;
                     else
-                        selectedCount = end - start + (i - startLineIndex);
+                        selectedCount = end - start + (i - startLineIndex) + 1;
                     endLineIndex = i + 1;
                     endColumnIndex = end - length + 1;
 
                     // Reposition end position to previous line's end position if last selected char is RichEditBoxDefaultLineEnding ('\r')
-                    if (endColumnIndex == 1 && endLineIndex > 1)
+                    if (endColumnIndex == 1 && end != start)
                     {
                         endLineIndex--;
                         endColumnIndex = _contentLinesCache[i - 1].Length + 1;
@@ -624,6 +671,12 @@
             }
         }
 
+        public void ResetFocusAndScrollToPreviousPosition()
+        {
+            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            base.Focus(FocusState.Programmatic);
+        }
+
         private void DecreaseFontSize(double delta)
         {
             if (_fontZoomFactor > _minimumZoomFactor)
@@ -675,6 +728,16 @@
         {
             _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
             _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
+
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _contentScrollViewer.ChangeView(
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                    _contentScrollViewerVerticalOffsetLastKnownPosition,
+                    zoomFactor: null,
+                    disableAnimation: true);
+            }
 
             ScrollViewerOffsetChanged?.Invoke(this, e);
         }
@@ -790,7 +853,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (startLineIndex < lineCount)
+                        if (startLineIndex < lineCount && end < _content.Length)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -846,14 +909,30 @@
             }
         }
 
+        private bool IsSelectionRectInView(Windows.Foundation.Rect rect, double horizontalOffset, double verticalOffset)
+        {
+            var isSelectionStartPositionInView = false;
+            var isSelectionEndPositionInView = false;
+
+            if (verticalOffset <= rect.Y && rect.Y <= verticalOffset + _contentScrollViewer.ViewportHeight &&
+                horizontalOffset <= rect.X && rect.X <= horizontalOffset + _contentScrollViewer.ViewportWidth)
+            {
+                isSelectionStartPositionInView = true;
+            }
+
+            if (verticalOffset <= rect.Y + rect.Height && rect.Y + rect.Height <= verticalOffset + _contentScrollViewer.ViewportHeight &&
+                horizontalOffset <= rect.X + rect.Width && rect.X + rect.Width <= horizontalOffset + _contentScrollViewer.ViewportWidth)
+            {
+                isSelectionEndPositionInView = true;
+            }
+
+            return isSelectionStartPositionInView && isSelectionEndPositionInView;
+        }
+
         private void AddIndentation()
         {
             GetTextSelectionPosition(out var start, out var end);
             GetLineColumnSelection(out var startLine, out var endLine, out var startColumn, out var endColumn, out _, out _);
-
-            var startLineInitialIndex = start - startColumn + 1;
-            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
-            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
 
             var tabStr = EditorSettingsService.EditorDefaultTabIndents == -1
                 ? "\t"
@@ -866,6 +945,10 @@
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return;
             }
+
+            var startLineInitialIndex = start - startColumn + 1;
+            var endLineFinalIndex = end - endColumn + _contentLinesCache[endLine - 1].Length + 1;
+            if (endLineFinalIndex > _content.Length) endLineFinalIndex = _content.Length;
 
             var indentAmount = EditorSettingsService.EditorDefaultTabIndents == -1 ? 1 : EditorSettingsService.EditorDefaultTabIndents;
             start += indentAmount;
@@ -887,11 +970,30 @@
                     indentedStringBuilder.ToString())) return;
             }
 
-            Document.SetText(TextSetOptions.None,
-                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
-                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
+            Document.Selection.GetRect(Windows.UI.Text.PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
+            GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
+
+            var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
+
+            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+            _isLineCachePendingUpdate = false;
+
+            Document.SetText(TextSetOptions.None, newContent);
 
             Document.Selection.SetRange(start, end);
+
+            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // It is better to keep its original scroll position after changing the indent in this case
+            if (wasSelectionInView)
+            {
+                _contentScrollViewer.ChangeView(
+                    horizontalOffset,
+                    verticalOffset,
+                    zoomFactor: null,
+                    disableAnimation: true);   
+            }
         }
 
         private void RemoveIndentation()
@@ -969,10 +1071,28 @@
                     indentedStringBuilder.ToString())) return;
             }
 
-            Document.SetText(TextSetOptions.None,
-                _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
-                .Insert(startLineInitialIndex, indentedStringBuilder.ToString()));
+            Document.Selection.GetRect(Windows.UI.Text.PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
+            GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+            var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
+
+            var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
+                .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
+            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+            _isLineCachePendingUpdate = false;
+
+            Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
+
+            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // It is better to keep its original scroll position after changing the indent in this case
+            if (wasSelectionInView)
+            {
+                _contentScrollViewer.ChangeView(
+                    horizontalOffset,
+                    verticalOffset,
+                    zoomFactor: null,
+                    disableAnimation: true);   
+            }
         }
 
         private void ShowEasterEgg()
