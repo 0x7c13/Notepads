@@ -20,6 +20,8 @@
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
+        private static readonly string wslRootPath = "\\\\wsl$\\";
+
         public static bool IsFullPath(string path)
         {
             return !String.IsNullOrWhiteSpace(path)
@@ -88,6 +90,17 @@
                 var index = path.IndexOf('\"', 1);
                 if (index == -1) return null;
                 path = args.Substring(1, index - 1);
+            }
+
+            if (dir.StartsWith(wslRootPath))
+            {
+                if (path.StartsWith('/'))
+                {
+                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', wslRootPath.Length) + 1);
+                    var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+                    if (IsFullPath(fullPath)) return fullPath;
+                }
+                path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
             }
 
             if (IsFullPath(path))
