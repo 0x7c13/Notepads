@@ -22,6 +22,8 @@
 
         private static readonly string wslRootPath = "\\\\wsl$\\";
 
+        public static string LastErrorFileOpenPath = string.Empty;
+
         public static bool IsFullPath(string path)
         {
             return !String.IsNullOrWhiteSpace(path)
@@ -200,8 +202,10 @@
             {
                 return await StorageFile.GetFileFromPathAsync(filePath);
             }
-            catch
+            catch (Exception ex)
             {
+                if (ex is FileNotFoundException) LastErrorFileOpenPath = filePath;
+
                 return null;
             }
         }
@@ -576,6 +580,22 @@
             {
                 return -1;
             }
+        }
+
+        public static async Task<StorageFile> CreateNewFile(string filePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    var pos = filePath.IndexOf(Path.DirectorySeparatorChar, 2);
+                    return await (await StorageFolder.GetFolderFromPathAsync(filePath.Substring(0, pos))).CreateFileAsync(filePath.Substring(pos + 1));
+                }
+            }
+            catch (Exception) { }
+
+            LastErrorFileOpenPath = string.Empty;
+            return null;
         }
     }
 }

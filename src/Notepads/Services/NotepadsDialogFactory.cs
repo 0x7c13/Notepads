@@ -91,5 +91,20 @@
             revertAllChangesConfirmationDialog.PrimaryButtonClick += (dialog, args) => { confirmedAction(); };
             return revertAllChangesConfirmationDialog;
         }
+
+        public static NotepadsDialog GetFileOpenCreateNewFileReminderDialog(string filePath, Action createAction, Action cancelAction)
+        {
+            NotepadsDialog createNewFileReminderDialog = new NotepadsDialog
+            {
+                Title = ResourceLoader.GetString("GetFileOpenCreateNewFileReminderDialog_Title"),
+                Content = string.Format(ResourceLoader.GetString("GetFileOpenCreateNewFileReminderDialog_Content"), filePath),
+                PrimaryButtonText = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_PrimaryButtonText"),
+                CloseButtonText = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_CloseButtonText"),
+                RequestedTheme = ThemeSettingsService.ThemeMode,
+            };
+            createNewFileReminderDialog.PrimaryButtonClick += (dialog, args) => { createAction(); };
+            createNewFileReminderDialog.CloseButtonClick += (dialog, args) => { cancelAction(); };
+            return createNewFileReminderDialog;
+        }
     }
 }

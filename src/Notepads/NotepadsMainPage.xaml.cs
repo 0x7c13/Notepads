@@ -446,6 +446,11 @@
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             Application.Current.EnteredBackground -= App_EnteredBackground;
             Application.Current.EnteredBackground += App_EnteredBackground;
+
+            if (!string.IsNullOrEmpty(FileSystemUtility.LastErrorFileOpenPath))
+            {
+                await ActivationService.CommandActivatedCreateNewFile(this, FileSystemUtility.LastErrorFileOpenPath);
+            }
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)

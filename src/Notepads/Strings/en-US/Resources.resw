@@ -573,4 +573,16 @@
     <value>Encoding cannot be determined</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
+  <data name="GetFileOpenCreateNewFileReminderDialog_Content" xml:space="preserve">
+    <value>Create file "{0}"?</value>
+    <comment>GetFileOpenCreateNewFileReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="GetFileOpenCreateNewFileReminderDialog_Title" xml:space="preserve">
+    <value>Can't find the path specified</value>
+    <comment>GetFileOpenCreateNewFileReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="GetFileOpenCreateNewFileReminderDialog_NotificationMsg_FileCreateError" xml:space="preserve">
+    <value>Failed to create "{0}"!</value>
+    <comment>GetFileOpenCreateNewFileReminderDialog: Notification message when file creation fails.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
 </root>
