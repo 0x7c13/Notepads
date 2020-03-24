@@ -22,7 +22,7 @@
 
         private static readonly string wslRootPath = "\\\\wsl$\\";
 
-        public static string LastErrorFileOpenPath = string.Empty;
+        private static string _lastErrorFileOpenPath = string.Empty;
 
         public static bool IsFullPath(string path)
         {
@@ -204,7 +204,7 @@
             }
             catch (Exception ex)
             {
-                if (ex is FileNotFoundException) LastErrorFileOpenPath = filePath;
+                if (ex is FileNotFoundException) _lastErrorFileOpenPath = filePath;
 
                 return null;
             }
@@ -513,6 +513,27 @@
             return await folder.CreateFileAsync(fileName, option);
         }
 
+        public static async Task<StorageFile> CreateFile(string filePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    var pos = filePath.IndexOf(Path.DirectorySeparatorChar, 2);
+                    return await CreateFile(await StorageFolder.GetFolderFromPathAsync(filePath.Substring(0, pos)), filePath.Substring(pos + 1));
+                }
+            }
+            catch (Exception) { }
+
+            _lastErrorFileOpenPath = string.Empty;
+            return null;
+        }
+
+        public static string GetLastErrorFileOpenPath()
+        {
+            return _lastErrorFileOpenPath;
+        }
+
         public static async Task<bool> FileExists(StorageFile file)
         {
             try
@@ -580,22 +601,6 @@
             {
                 return -1;
             }
-        }
-
-        public static async Task<StorageFile> CreateNewFile(string filePath)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(filePath))
-                {
-                    var pos = filePath.IndexOf(Path.DirectorySeparatorChar, 2);
-                    return await (await StorageFolder.GetFolderFromPathAsync(filePath.Substring(0, pos))).CreateFileAsync(filePath.Substring(pos + 1));
-                }
-            }
-            catch (Exception) { }
-
-            LastErrorFileOpenPath = string.Empty;
-            return null;
         }
     }
 }

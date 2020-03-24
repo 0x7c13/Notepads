@@ -582,7 +582,7 @@
     <comment>GetFileOpenCreateNewFileReminderDialog: "Title" display text.</comment>
   </data>
   <data name="GetFileOpenCreateNewFileReminderDialog_NotificationMsg_FileCreateError" xml:space="preserve">
-    <value>Failed to create "{0}"!</value>
+    <value>Failed to create "{0}"</value>
     <comment>GetFileOpenCreateNewFileReminderDialog: Notification message when file creation fails.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
 </root>

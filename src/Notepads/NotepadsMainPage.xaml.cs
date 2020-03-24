@@ -406,9 +406,9 @@
                 if (file != null && await OpenFile(file))
                 {
                     loadedCount++;
+                    _appLaunchCmdDir = null;
+                    _appLaunchCmdArgs = null;
                 }
-                _appLaunchCmdDir = null;
-                _appLaunchCmdArgs = null;
             }
             else if (_appLaunchUri != null)
             {
@@ -447,9 +447,11 @@
             Application.Current.EnteredBackground -= App_EnteredBackground;
             Application.Current.EnteredBackground += App_EnteredBackground;
 
-            if (!string.IsNullOrEmpty(FileSystemUtility.LastErrorFileOpenPath))
+            if (_appLaunchCmdDir != null)
             {
-                await ActivationService.CommandActivatedCreateNewFile(this, FileSystemUtility.LastErrorFileOpenPath);
+                await CreateAndOpenFile();
+                _appLaunchCmdDir = null;
+                _appLaunchCmdArgs = null;
             }
         }
 

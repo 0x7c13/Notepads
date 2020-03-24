@@ -92,7 +92,7 @@
             return revertAllChangesConfirmationDialog;
         }
 
-        public static NotepadsDialog GetFileOpenCreateNewFileReminderDialog(string filePath, Action createAction, Action cancelAction)
+        public static NotepadsDialog GetFileOpenCreateNewFileReminderDialog(string filePath, Action createAction)
         {
             NotepadsDialog createNewFileReminderDialog = new NotepadsDialog
             {
@@ -103,7 +103,6 @@
                 RequestedTheme = ThemeSettingsService.ThemeMode,
             };
             createNewFileReminderDialog.PrimaryButtonClick += (dialog, args) => { createAction(); };
-            createNewFileReminderDialog.CloseButtonClick += (dialog, args) => { cancelAction(); };
             return createNewFileReminderDialog;
         }
     }

@@ -8,8 +8,6 @@
 
     public static class ActivationService
     {
-        private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
-
         public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e)
         {
             if (e is ProtocolActivatedEventArgs protocolActivatedEventArgs)
@@ -96,33 +94,10 @@
                 {
                     await mainPage.OpenFile(file);
                 }
-                else if (!string.IsNullOrEmpty(FileSystemUtility.LastErrorFileOpenPath))
+                else
                 {
-                    await CommandActivatedCreateNewFile(mainPage, FileSystemUtility.LastErrorFileOpenPath);
+                    await mainPage.CreateAndOpenFile();
                 }
-            }
-        }
-
-        public static async Task CommandActivatedCreateNewFile(NotepadsMainPage mainPage, string filePath)
-        {
-            Windows.Storage.StorageFile file = null;
-            var createNewFileReminderDialog = NotepadsDialogFactory.GetFileOpenCreateNewFileReminderDialog(FileSystemUtility.LastErrorFileOpenPath, async () =>
-            {
-                file = await FileSystemUtility.CreateNewFile(filePath);
-            }, async () =>
-            {
-                file = await FileSystemUtility.CreateNewFile(string.Empty);
-            });
-
-            await DialogManager.OpenDialogAsync(createNewFileReminderDialog, awaitPreviousDialog: true);
-
-            if (file != null)
-            {
-                await mainPage.OpenFile(file);
-            }
-            else if(!string.IsNullOrEmpty(filePath))
-            {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GetFileOpenCreateNewFileReminderDialog_NotificationMsg_FileCreateError"), 1500);
             }
         }
     }
