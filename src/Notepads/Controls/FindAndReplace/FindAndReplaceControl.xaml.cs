@@ -141,7 +141,6 @@
         private void FindBar_LostFocus(object sender, RoutedEventArgs e)
         {
             FindBar.SelectionStart = FindBar.Text.Length;
-            
         }
 
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
