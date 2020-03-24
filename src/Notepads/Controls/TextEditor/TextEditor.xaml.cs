@@ -442,7 +442,7 @@
                     _searchCache.MatchWholeWord,
                     _searchCache.UseRegex,
                     FindAndReplaceMode.FindOnly,
-                    Direction.Down))),
+                    SearchDirection.Next))),
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
                     _searchCache.SearchText,
                     string.Empty,
@@ -450,7 +450,7 @@
                     _searchCache.MatchWholeWord,
                     _searchCache.UseRegex,
                     FindAndReplaceMode.FindOnly,
-                    Direction.Up))),
+                    SearchDirection.Previous))),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     if (_isContentPreviewPanelOpened)
@@ -915,7 +915,7 @@
             switch (findAndReplaceEventArgs.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = findAndReplaceEventArgs.Direction == Direction.Down
+                    found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
                         ? TextEditorCore.FindNextAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false)
                         : TextEditorCore.FindPrevAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false);
                     break;

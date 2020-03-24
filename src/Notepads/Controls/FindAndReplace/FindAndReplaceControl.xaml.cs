@@ -70,7 +70,7 @@
 
         public void Focus(FindAndReplaceMode mode)
         {
-            if(mode==FindAndReplaceMode.FindOnly)
+            if(mode == FindAndReplaceMode.FindOnly)
                 FindBar.Focus(FocusState.Programmatic);
             else
                 ReplaceBar.Focus(FocusState.Programmatic);
@@ -108,14 +108,14 @@
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, Direction.Down));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, SearchDirection.Next));
         }
 
         private void SearchBackwardButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, Direction.Up));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, SearchDirection.Previous));
         }
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
