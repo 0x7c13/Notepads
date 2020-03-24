@@ -53,6 +53,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
+* Ctrl+Num(1-9) to quickly switch to specified tab.
 * Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Alt+P to toggle preview split view for Markdown file.

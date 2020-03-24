@@ -138,15 +138,15 @@
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Нечем поделиться, потому что текст не выбран, а текущий документ пустой.</value>
+    <value>Поделиться нечем, потому что текст не выбран, а текущий документ пустой.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>After your changes</value>
+    <value>После ваших изменений</value>
     <comment>DiffViewer: Header's text for new text (After changes).</comment>
   </data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>Before your changes</value>
+    <value>До ваших изменений</value>
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
@@ -158,7 +158,7 @@
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ок</value>
+    <value>ОК</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ок</value>
+    <value>ОК</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
@@ -222,7 +222,7 @@
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>Новый</value>
+    <value>Новый документ</value>
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
@@ -254,23 +254,23 @@
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Отмена</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>All changes including text, line ending and encoding made to "{0}" will be reverted!</value>
+    <value>Все внесенные изменения, включая текст, разрыв страки и кодировку, сделанные в "{0}" будут отменены!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Yes</value>
+    <value>Да</value>
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Are you sure to revert all changes?</value>
+    <value>Вы действительно хотите отменить все изменения?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Отменить</value>
+    <value>Отмена</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
@@ -326,7 +326,7 @@
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>Toggle Preview</value>
+    <value>Предпросмотр</value>
     <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
@@ -350,7 +350,7 @@
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Перенос слова</value>
+    <value>Перенос по словам</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
@@ -358,23 +358,23 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Ln {0}, Col {1} ({2} {3})</value>
+    <value>Стр {0}, стлб {1} ({2} {3})</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Ln {0}, Col {1}</value>
+    <value>Стр {0}, стлб {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>Preview text changes</value>
+    <value>Просмотр изменений</value>
     <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Revert all changes</value>
+    <value>Отменить все изменения</value>
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>Modified</value>
+    <value>Изменен</value>
     <comment>TextEditor: ModificationIndicator display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
@@ -386,7 +386,7 @@
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Нажмите клавишу F11, чтобы выйти из полноэкранного</value>
+    <value>Нажмите клавишу F11, чтобы выйти из полноэкранного режима</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
@@ -394,7 +394,7 @@
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>Файл был изменен вне!</value>
+    <value>Файл был изменен другой программой!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
@@ -402,23 +402,23 @@
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>File reloaded</value>
+    <value>Файл перезагружен</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Compact Overlay</value>
+    <value>Поверх остальных окон</value>
     <comment>App: "Compact Overlay" display text</comment>
   </data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Full Screen</value>
+    <value>Полноэкранный режим</value>
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Exit Compact Overlay</value>
+    <value>Вернуться к полному представлению</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Exit Full Screen</value>
+    <value>Выйти из полноэкранного режима</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
@@ -430,11 +430,11 @@
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Move tab here</value>
+    <value>Переместить вкладку сюда</value>
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Open with Notepads</value>
+    <value>Открыть в Notepads</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
@@ -446,111 +446,111 @@
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Opens a new window</value>
+    <value>Открыть новое окно</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>New window</value>
+    <value>Новое окно</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>New Window</value>
+    <value>Новое окно</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Open Recent</value>
+    <value>Последние документы</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Перейти к строке</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Go To:</value>
+    <value>Перейти к:</value>
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Line number exceeds beyond the total number of lines!</value>
+    <value>Номер строки превышает общее количество строк!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>You can only type a number!</value>
+    <value>Вы можете вводить только числа!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Перейти к строке</value>
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Search in web</value>
+    <value>Поиск в интернете</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restore Default Zoom</value>
+    <value>Масштаб по умолчанию</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Zoom In</value>
+    <value>Увеличить</value>
     <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Zoom Out</value>
+    <value>Уменьшить</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Use Regular Expression</value>
+    <value>Использовать регулярные выражения</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Print All...</value>
+    <value>Печатать все...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Can only accept upto one decimal place</value>
+    <value>Можно принять с точностью только до одного знака после запятой</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Value out of range</value>
+    <value>Значение не входит в диапазон</value>
     <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Footer</value>
+    <value>Нижний колонтитул</value>
     <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Header</value>
+    <value>Верхний колонтитул</value>
     <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Horizontal Margin (in %)</value>
+    <value>Горизонтальный отступ (in %)</value>
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>In % of paper width</value>
+    <value>В % от ширины листа</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Error printing:</value>
+    <value>Ошибка печати:</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Failed to print</value>
+    <value>При печати произошла ошибка</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Printing is not supported on this device</value>
+    <value>Это устройство не поддерживает печать</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Vertical Margin (in %)</value>
+    <value>Вертикальный отступ (в %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Clear Recently Opened</value>
+    <value>Очистить список последних документов</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>Больше кодировок</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
@@ -562,15 +562,15 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>Некорректное регулярное выражение!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
+    <value>Автоматическое определение кодировки</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
+    <value>Не удается определить кодировку</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
 </root>
