@@ -395,7 +395,7 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
             if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex, out var error))
             {
@@ -408,9 +408,9 @@
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
-            regexError = null;
+            regexError = false;
             var found = false;
             var text = GetText();
 
@@ -430,9 +430,9 @@
                         found = true;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    regexError = ex.Message;
+                    regexError = true;
                     found = false;
                 }
             }
@@ -465,9 +465,9 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError, bool stopAtEof = true)
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtEof = true)
         {
-            regexError = null;
+            regexError = false;
 
             if (string.IsNullOrEmpty(searchText))
             {
@@ -486,70 +486,141 @@
 
                     var match = regex.Match(text, Document.Selection.EndPosition);
 
+                    if (!match.Success && !stopAtEof)
+                    {
+                        match = regex.Match(text, 0);
+                    }
+
                     if (match.Success)
                     {
-                        Document.Selection.StartPosition = match.Index;
-                        Document.Selection.EndPosition = match.Index + match.Length;
+                        var index = match.Index;
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + match.Length;
+                        return true;
                     }
                     else
-                    {
-                        if (!stopAtEof)
-                        {
-                            match = regex.Match(text, 0);
-
-                            if (match.Success)
-                            {
-                                Document.Selection.StartPosition = match.Index;
-                                Document.Selection.EndPosition = match.Index + match.Length;
-                            }
-                        }
-                    }
-
-                    if (!match.Success)
                     {
                         Document.Selection.StartPosition = Document.Selection.EndPosition;
                         return false;
                     }
-
-                    return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    regexError = ex.Message;
+                    regexError = true;
                     return false;
                 }
             }
-
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
-
-            if (index != -1)
-            {
-                Document.Selection.StartPosition = index;
-                Document.Selection.EndPosition = index + searchText.Length;
-            }
             else
             {
-                if (!stopAtEof)
-                {
-                    index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                    if (index != -1)
+                var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+
+                if (index != -1)
+                {
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + searchText.Length;
+                }
+                else
+                {
+                    if (!stopAtEof)
                     {
-                        Document.Selection.StartPosition = index;
-                        Document.Selection.EndPosition = index + searchText.Length;
+                        index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+
+                        if (index != -1)
+                        {
+                            Document.Selection.StartPosition = index;
+                            Document.Selection.EndPosition = index + searchText.Length;
+                        }
                     }
                 }
-            }
 
-            if (index == -1)
+                if (index == -1)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public bool FindPrevAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtBof = true)
+        {
+            regexError = false;
+
+            if (string.IsNullOrEmpty(searchText))
             {
-                Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return false;
             }
 
-            return true;
+            var text = GetText();
+
+            if (useRegex)
+            {
+                try
+                {
+                    Regex regex = new Regex(searchText, RegexOptions.RightToLeft | RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                    var match = regex.Match(text, Document.Selection.StartPosition);
+
+                    if (!match.Success && !stopAtBof)
+                    {
+                        match = regex.Match(text, text.Length);
+                    }
+
+                    if (match.Success)
+                    {
+                        var index = match.Index;
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + match.Length;
+                        return true;
+                    }
+                    else
+                    {
+                        Document.Selection.StartPosition = Document.Selection.EndPosition;
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    regexError = true;
+                    return false;
+                }
+            }
+            else
+            {
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+                var index = matchWholeWord ? LastIndexOfWholeWord(text, Document.Selection.StartPosition, searchText, comparison) : text.LastIndexOf(searchText, Document.Selection.StartPosition, comparison);
+
+                if (index != -1)
+                {
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + searchText.Length;
+                }
+                else
+                {
+                    if (!stopAtBof)
+                    {
+                        index = matchWholeWord ? LastIndexOfWholeWord(text, text.Length - 1, searchText, comparison) : text.LastIndexOf(searchText, text.Length - 1, comparison);
+
+                        if (index != -1)
+                        {
+                            Document.Selection.StartPosition = index;
+                            Document.Selection.EndPosition = index + searchText.Length;
+                        }
+                    }
+                }
+
+                if (index == -1)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -745,6 +816,28 @@
                     return pos;
 
                 pos++;
+            }
+            return -1;
+        }
+
+        private static int LastIndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        {
+            int pos = startIndex;
+
+            while (pos < 0 && (pos = target.LastIndexOf(value, pos, comparison)) != -1)
+            {
+                bool startBoundary = true;
+                if (pos > 0)
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
+
+                bool endBoundary = true;
+                if (pos + value.Length < target.Length)
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
+
+                if (startBoundary && endBoundary)
+                    return pos;
+
+                pos--;
             }
             return -1;
         }

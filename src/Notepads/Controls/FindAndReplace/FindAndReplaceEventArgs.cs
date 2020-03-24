@@ -9,9 +9,15 @@
         ReplaceAll
     }
 
+    public enum Direction
+    {
+        Up,
+        Down
+    }
+
     public class FindAndReplaceEventArgs : EventArgs
     {
-        public FindAndReplaceEventArgs(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, FindAndReplaceMode findAndReplaceMode)
+        public FindAndReplaceEventArgs(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, FindAndReplaceMode findAndReplaceMode, Direction direction = Direction.Down)
         {
             SearchText = searchText;
             MatchCase = matchCase;
@@ -19,6 +25,7 @@
             ReplaceText = replaceText;
             FindAndReplaceMode = findAndReplaceMode;
             UseRegex = useRegex;
+            Direction = direction;
         }
 
         public string SearchText { get; }
@@ -32,5 +39,7 @@
         public bool UseRegex { get; }
 
         public FindAndReplaceMode FindAndReplaceMode { get; }
+
+        public Direction Direction { get; }
     }
 }

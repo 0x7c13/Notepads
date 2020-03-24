@@ -30,7 +30,7 @@
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Focus();
+            Focus(FindAndReplaceMode.FindOnly);
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
@@ -48,11 +48,11 @@
         {
             if (showReplaceBar)
             {
-                return FindAndReplaceRootGrid.Height + ReplaceBarPlaceHolder.Height;
+                return FindBarPlaceHolder.Height + ReplaceBarPlaceHolder.Height;
             }
             else
             {
-                return FindAndReplaceRootGrid.Height;
+                return FindBarPlaceHolder.Height;
             }
         }
 
@@ -68,9 +68,12 @@
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
-        public void Focus()
+        public void Focus(FindAndReplaceMode mode)
         {
-            FindBar.Focus(FocusState.Programmatic);
+            if(mode==FindAndReplaceMode.FindOnly)
+                FindBar.Focus(FocusState.Programmatic);
+            else
+                ReplaceBar.Focus(FocusState.Programmatic);
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
@@ -85,32 +88,41 @@
 
         private void FindBar_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SearchButton.Visibility = !string.IsNullOrEmpty(FindBar.Text) ? Visibility.Visible : Visibility.Collapsed;
-
             if (!string.IsNullOrEmpty(FindBar.Text))
             {
+                SearchForwardButton.IsEnabled = true;
+                SearchBackwardButton.IsEnabled = true;
                 ReplaceButton.IsEnabled = true;
                 ReplaceAllButton.IsEnabled = true;
             }
             else
             {
+                SearchForwardButton.IsEnabled = false;
+                SearchBackwardButton.IsEnabled = false;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
             }
         }
 
-        private void SearchButton_OnClick(object sender, RoutedEventArgs e)
+        private void SearchForwardButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, Direction.Down));
+        }
+
+        private void SearchBackwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyout) return;
+
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, Direction.Up));
         }
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
-                SearchButton_OnClick(sender, e);
+                SearchForwardButton_OnClick(sender, e);
             }
 
             if (e.Key == VirtualKey.Tab)
@@ -122,13 +134,23 @@
 
         private void FindBar_GotFocus(object sender, RoutedEventArgs e)
         {
-            ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
             FindBar.SelectionStart = 0;
             FindBar.SelectionLength = FindBar.Text.Length;
         }
 
+        private void FindBar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            FindBar.SelectionStart = FindBar.Text.Length;
+            
+        }
+
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            {
+                ReplaceButton_OnClick(sender, e);
+            }
+
             if (e.Key == VirtualKey.Tab)
             {
                 e.Handled = true;
@@ -138,9 +160,13 @@
 
         private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
         {
-            FindBar.SelectionStart = FindBar.Text.Length;
             ReplaceBar.SelectionStart = 0;
             ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
+        }
+
+        private void ReplaceBar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_OnTextChanged(object sender, TextChangedEventArgs e)
