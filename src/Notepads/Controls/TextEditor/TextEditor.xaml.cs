@@ -831,6 +831,17 @@
 
         private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (e.Key == VirtualKey.F3)
+                {
+                    return;
+                }
+            }
+
             _keyboardCommandHandler.Handle(e);
         }
 

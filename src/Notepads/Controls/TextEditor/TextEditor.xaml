@@ -118,6 +118,7 @@
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                               Width="320"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
+                                                              OnFindReplaceControlKeyDown="TextEditorCore_OnKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
@@ -136,10 +137,11 @@
                                             BorderThickness="1"
                                             Closed="GoToPlaceholder_Closed">
                     <controls:InAppNotification.Content>
-                        <goTo:GoToControl x:Name="GoToControl" 
-                                                              Width="320"
-                                                              OnDismissKeyDown="GoToControl_OnDismissKeyDown"
-                                                              OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
+                        <goTo:GoToControl x:Name="GoToControl"
+                                          Width="320"
+                                          OnDismissKeyDown="GoToControl_OnDismissKeyDown"
+                                          OnGoToControlKeyDown="TextEditorCore_OnKeyDown"
+                                          OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
             </Grid>

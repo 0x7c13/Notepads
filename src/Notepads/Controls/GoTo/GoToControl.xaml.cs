@@ -4,6 +4,7 @@
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -14,6 +15,8 @@
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
 
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
+
+        public event EventHandler<KeyRoutedEventArgs> OnGoToControlKeyDown;
 
         private int _currentLine;
 
@@ -126,6 +129,19 @@
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
                 args.Cancel = true;
+            }
+        }
+
+        private void RootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+            if (!(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Escape) &&  
+                !e.Handled)
+            {
+                OnGoToControlKeyDown?.Invoke(sender, e);
             }
         }
     }

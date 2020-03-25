@@ -3,6 +3,7 @@
     using System;
     using Notepads.Services;
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -13,6 +14,8 @@
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
 
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
+
+        public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
 
         //When enter key is pressed focus is returned to control
         //This variable is used to remove flicker in text selection
@@ -83,6 +86,16 @@
         public void ShowReplaceBar(bool showReplaceBar)
         {
             ReplaceBarPlaceHolder.Visibility = showReplaceBar ? Visibility.Visible : Visibility.Collapsed;
+            if (showReplaceBar && !string.IsNullOrEmpty(FindBar.Text))
+            {
+                ReplaceButton.IsEnabled = true;
+                ReplaceAllButton.IsEnabled = true;
+            }
+            else
+            {
+                ReplaceButton.IsEnabled = false;
+                ReplaceAllButton.IsEnabled = false;
+            }
         }
 
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)
@@ -96,8 +109,11 @@
             {
                 SearchForwardButton.IsEnabled = true;
                 SearchBackwardButton.IsEnabled = true;
-                ReplaceButton.IsEnabled = true;
-                ReplaceAllButton.IsEnabled = true;
+                if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible)
+                {
+                    ReplaceButton.IsEnabled = true;
+                    ReplaceAllButton.IsEnabled = true;
+                }
             }
             else
             {
@@ -196,6 +212,23 @@
         {
             MatchWholeWordToggle.IsEnabled = !UseRegexToggle.IsChecked;
             UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
+        }
+
+        private void RootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+            if (!(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Escape) &&
+                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3) &&
+                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3) &&
+                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && (e.Key == VirtualKey.A || e.Key == VirtualKey.E || e.Key == VirtualKey.R || e.Key == VirtualKey.W)) &&
+                !(ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter) &&
+                !e.Handled)
+            {
+                OnFindReplaceControlKeyDown?.Invoke(sender, e);
+            }
         }
     }
 }
