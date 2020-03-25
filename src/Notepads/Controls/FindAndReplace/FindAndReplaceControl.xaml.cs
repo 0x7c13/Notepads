@@ -14,6 +14,10 @@
 
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
 
+        //When enter key is pressed focus is returned to control
+        //This variable is used to remove flicker in text selection
+        private bool _enterPressed = false;
+
         public FindAndReplaceControl()
         {
             InitializeComponent();
@@ -122,6 +126,7 @@
         {
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
+                _enterPressed = true;
                 SearchForwardButton_OnClick(sender, e);
             }
 
@@ -134,12 +139,14 @@
 
         private void FindBar_GotFocus(object sender, RoutedEventArgs e)
         {
+            _enterPressed = false;
             FindBar.SelectionStart = 0;
             FindBar.SelectionLength = FindBar.Text.Length;
         }
 
         private void FindBar_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (_enterPressed) return;
             FindBar.SelectionStart = FindBar.Text.Length;
         }
 
@@ -147,6 +154,7 @@
         {
             if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
+                _enterPressed = true;
                 ReplaceButton_OnClick(sender, e);
             }
 
@@ -159,12 +167,14 @@
 
         private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
         {
+            _enterPressed = false;
             ReplaceBar.SelectionStart = 0;
             ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (_enterPressed) return;
             ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
         }
 

@@ -443,7 +443,7 @@
                     _searchCache.UseRegex,
                     FindAndReplaceMode.FindOnly,
                     SearchDirection.Next))),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
                     _searchCache.SearchText,
                     string.Empty,
                     _searchCache.MatchCase,

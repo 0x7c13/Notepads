@@ -637,9 +637,19 @@
             }
             else
             {
+                var searchIndex = Document.Selection.StartPosition - 1;
+                if (!stopAtBof && searchIndex < 0)
+                {
+                    searchIndex = text.Length - 1;
+                }
+                else if (stopAtBof)
+                {
+                    return false;
+                }
+
                 StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                var index = matchWholeWord ? LastIndexOfWholeWord(text, Document.Selection.StartPosition, searchText, comparison) : text.LastIndexOf(searchText, Document.Selection.StartPosition, comparison);
+                var index = matchWholeWord ? LastIndexOfWholeWord(text, searchIndex, searchText, comparison) : text.LastIndexOf(searchText, searchIndex, comparison);
 
                 if (index != -1)
                 {
@@ -698,6 +708,13 @@
             {
                 Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding.ToString());
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
+                return;
+            }
+
+            // By default, RichEditBox toggles case when user hit "Shift + F3"
+            // This should be restricted
+            if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
+            {
                 return;
             }
 
@@ -887,7 +904,7 @@
         {
             int pos = startIndex;
 
-            while (pos < 0 && (pos = target.LastIndexOf(value, pos, comparison)) != -1)
+            while (pos >= 0 && (pos = target.LastIndexOf(value, pos, comparison)) != -1)
             {
                 bool startBoundary = true;
                 if (pos > 0)

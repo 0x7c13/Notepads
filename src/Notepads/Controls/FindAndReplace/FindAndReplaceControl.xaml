@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:querybox="using:Notepads.Controls.FindAndReplace"
     mc:Ignorable="d"
     d:DesignHeight="72"
     d:DesignWidth="250">
@@ -26,8 +27,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
-            <TextBox x:Name="FindBar"
+
+            <querybox:QueryBoxCore x:Name="FindBar"
                      x:Uid="FindAndReplace_FindBar"
                      Style="{StaticResource TransparentTextBoxStyle}"
                      Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
@@ -64,7 +65,7 @@
         </Grid>
 
         <Grid Grid.Row="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
-            <TextBox x:Name="ReplaceBar"
+            <querybox:QueryBoxCore x:Name="ReplaceBar"
                      x:Uid="FindAndReplace_ReplaceBar"
                      Style="{StaticResource TransparentTextBoxStyle}"
                      Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
@@ -100,7 +101,7 @@
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchBackwardButton_OnClick">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Control,Shift" Key="F3"/>
+                    <KeyboardAccelerator Modifiers="Shift" Key="F3"/>
                 </Button.KeyboardAccelerators>
             </Button>
 
