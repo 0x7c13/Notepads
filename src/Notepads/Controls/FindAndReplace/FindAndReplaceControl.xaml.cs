@@ -15,6 +15,8 @@
 
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
 
+        public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
+
         public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
 
         //When enter key is pressed focus is returned to control
@@ -85,14 +87,22 @@
 
         public void ShowReplaceBar(bool showReplaceBar)
         {
-            ReplaceBarPlaceHolder.Visibility = showReplaceBar ? Visibility.Visible : Visibility.Collapsed;
-            if (showReplaceBar && !string.IsNullOrEmpty(FindBar.Text))
+            if (showReplaceBar)
             {
-                ReplaceButton.IsEnabled = true;
-                ReplaceAllButton.IsEnabled = true;
+                ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011" };
+                ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    ReplaceButton.IsEnabled = true;
+                    ReplaceAllButton.IsEnabled = true;
+                }
             }
             else
             {
+                ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F" };
+                ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
             }
@@ -229,6 +239,11 @@
             {
                 OnFindReplaceControlKeyDown?.Invoke(sender, e);
             }
+        }
+
+        private void ToggleReplaceModeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            OnToggleReplaceModeButtonClicked?.Invoke(sender, ReplaceBarPlaceHolder.Visibility == Visibility.Collapsed ? true : false);
         }
     }
 }

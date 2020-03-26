@@ -866,6 +866,11 @@
             CopySelectedTextToWindowsClipboard(e);
         }
 
+        private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)
+        {
+            ShowFindAndReplaceControl(showReplaceBar);
+        }
+
         public void ShowFindAndReplaceControl(bool showReplaceBar)
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)

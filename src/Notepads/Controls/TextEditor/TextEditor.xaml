@@ -118,6 +118,7 @@
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                               Width="320"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
+                                                              OnToggleReplaceModeButtonClicked="FindAndReplaceControl_OnToggleReplaceModeButtonClicked"
                                                               OnFindReplaceControlKeyDown="TextEditorCore_OnKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </controls:InAppNotification.Content>
