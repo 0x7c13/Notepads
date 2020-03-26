@@ -1,6 +1,8 @@
 ﻿namespace Notepads.Controls.FindAndReplace
 {
     using System;
+    using System.Collections.Generic;
+    using Notepads.Commands;
     using Notepads.Services;
     using Windows.System;
     using Windows.UI.Core;
@@ -18,6 +20,18 @@
         public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
 
         public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
+
+        private readonly List<KeyboardShortcut<bool>> _nativeKeyboardShortcuts = new List<KeyboardShortcut<bool>>
+        {
+                new KeyboardShortcut<bool>(false, false, false, VirtualKey.F3, null),
+                new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
+                new KeyboardShortcut<bool>(false, false, false, VirtualKey.Escape, null),
+                new KeyboardShortcut<bool>(false, true, false, VirtualKey.A, null),
+                new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
+                new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
+                new KeyboardShortcut<bool>(false, true, false, VirtualKey.W, null),
+                new KeyboardShortcut<bool>(true, true, true, VirtualKey.Enter, null)
+        };
 
         //When enter key is pressed focus is returned to control
         //This variable is used to remove flicker in text selection
@@ -90,7 +104,7 @@
             if (showReplaceBar)
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 10 };
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 12 };
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -101,7 +115,7 @@
             else
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 10 };
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 12 };
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
@@ -224,18 +238,24 @@
             UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
         }
 
-        private void RootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void FindAndReplaceRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (!(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Escape) &&
-                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3) &&
-                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3) &&
-                !(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && (e.Key == VirtualKey.A || e.Key == VirtualKey.E || e.Key == VirtualKey.R || e.Key == VirtualKey.W)) &&
-                !(ctrl.HasFlag(CoreVirtualKeyStates.Down) && alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter) &&
-                !e.Handled)
+            var isNativeKeyboardShortcut = false;
+
+            foreach (var keyboardShortcut in _nativeKeyboardShortcuts)
+            {
+                if (keyboardShortcut.Hit(ctrlDown, altDown, shiftDown, e.Key))
+                {
+                    isNativeKeyboardShortcut = true;
+                    break;
+                }
+            }
+
+            if (!isNativeKeyboardShortcut && !e.Handled)
             {
                 OnFindReplaceControlKeyDown?.Invoke(sender, e);
             }

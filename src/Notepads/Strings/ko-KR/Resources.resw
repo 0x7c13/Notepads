@@ -573,4 +573,12 @@
     <value>인코딩을 결정할 수 없습니다.</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Find Previous (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Toggle Replace Mode</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
 </root>

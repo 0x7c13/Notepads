@@ -9,7 +9,7 @@
     d:DesignHeight="72"
     d:DesignWidth="250">
 
-    <Grid x:Name="RootGrid" KeyDown="RootGrid_KeyDown">
+    <Grid x:Name="FindAndReplaceRootGrid" KeyDown="FindAndReplaceRootGrid_KeyDown">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -27,15 +27,15 @@
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
                     Grid.Column="0"
                     IsTabStop="False"
-                    Width="30"
-                    FontSize="10"
+                    Width="25"
+                    Padding="0"
+                    FontSize="12"
                     Style="{StaticResource DismissButtonStyle}"
                     Content="&#xE00F;"
                     FontFamily="Segoe MDL2 Assets"
                     Click="ToggleReplaceModeButton_OnClick">
             </Button>
         </Grid>
-        
 
         <Grid Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
 
@@ -45,30 +45,30 @@
             </Grid.ColumnDefinitions>
 
             <querybox:QueryBoxCore x:Name="FindBar"
-                     x:Uid="FindAndReplace_FindBar"
-                     Style="{StaticResource TransparentTextBoxStyle}"
-                     Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     IsSpellCheckEnabled="False"
-                     TextAlignment="Left"
-                     BorderThickness="0"
-                     FontSize="15"
-                     TextChanged="FindBar_OnTextChanged"
-                     KeyDown="FindBar_OnKeyDown"
-                     GotFocus="FindBar_GotFocus"
-                     LostFocus="FindBar_LostFocus"/>
+                                   x:Uid="FindAndReplace_FindBar"
+                                   Style="{StaticResource TransparentTextBoxStyle}"
+                                   Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   IsSpellCheckEnabled="False"
+                                   TextAlignment="Left"
+                                   BorderThickness="0"
+                                   FontSize="15"
+                                   TextChanged="FindBar_OnTextChanged"
+                                   KeyDown="FindBar_OnKeyDown"
+                                   GotFocus="FindBar_GotFocus"
+                                   LostFocus="FindBar_LostFocus"/>
 
-            <Grid Grid.Column="1" Background="{ThemeResource CustomTextBoxBackground}">
+            <Grid Grid.Column="1" x:Name="OptionButtonGrid">
                 <Button x:Name="OptionButton"
-                    x:Uid="FindAndReplace_SearchOptionButton"
-                    IsTabStop="False"
-                    Width="36"
-                    Grid.Column="1" 
-                    FontSize="16"
-                    Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE712;" 
-                    FontFamily="Segoe MDL2 Assets">
+                        x:Uid="FindAndReplace_SearchOptionButton"
+                        IsTabStop="False"
+                        Width="36"
+                        Grid.Column="1" 
+                        FontSize="16"
+                        Style="{StaticResource DismissButtonStyle}"
+                        Content="&#xE712;" 
+                        FontFamily="Segoe MDL2 Assets">
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle">
@@ -94,19 +94,19 @@
 
         <Grid Grid.Row="1" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
             <querybox:QueryBoxCore x:Name="ReplaceBar"
-                     x:Uid="FindAndReplace_ReplaceBar"
-                     Style="{StaticResource TransparentTextBoxStyle}"
-                     Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     IsSpellCheckEnabled="False"
-                     TextAlignment="Left"
-                     BorderThickness="0"
-                     FontSize="15"
-                     TextChanged="ReplaceBar_OnTextChanged"
-                     KeyDown="ReplaceBar_OnKeyDown"
-                     GotFocus="ReplaceBar_GotFocus"
-                     LostFocus="ReplaceBar_LostFocus"/>
+                                   x:Uid="FindAndReplace_ReplaceBar"
+                                   Style="{StaticResource TransparentTextBoxStyle}"
+                                   Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   IsSpellCheckEnabled="False"
+                                   TextAlignment="Left"
+                                   BorderThickness="0"
+                                   FontSize="15"
+                                   TextChanged="ReplaceBar_OnTextChanged"
+                                   KeyDown="ReplaceBar_OnKeyDown"
+                                   GotFocus="ReplaceBar_GotFocus"
+                                   LostFocus="ReplaceBar_LostFocus"/>
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">

@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Controls.GoTo
 {
     using System;
+    using Notepads.Commands;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -23,6 +24,8 @@
         private int _maxLine;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        private readonly KeyboardShortcut<bool> _nativeKeyboardShortcut = new KeyboardShortcut<bool>(false, false, false, VirtualKey.Escape, null);
 
         public void SetLineData(int currentLine, int maxLine)
         {
@@ -132,14 +135,13 @@
             }
         }
 
-        private void RootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void GoToRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (!(!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Escape) &&  
-                !e.Handled)
+            if (!_nativeKeyboardShortcut.Hit(ctrlDown, altDown, shiftDown, e.Key) && !e.Handled)
             {
                 OnGoToControlKeyDown?.Invoke(sender, e);
             }
