@@ -24,14 +24,15 @@
 
         <Grid Grid.Row="0" Grid.Column="0" Padding="1, 1, 1, 1" Height="36" x:Name="ToggleReplaceModeButtonGrid">
             <Button x:Name="ToggleReplaceModeButton"
-                x:Uid="FindAndReplace_ToggleReplaceModeButton"
-                Grid.Column="0"
-                IsTabStop="False"
-                FontSize="16"
-                Style="{StaticResource DismissButtonStyle}"
-                Content="&#xE00F;"
-                FontFamily="Segoe MDL2 Assets"
-                Click="ToggleReplaceModeButton_OnClick">
+                    x:Uid="FindAndReplace_ToggleReplaceModeButton"
+                    Grid.Column="0"
+                    IsTabStop="False"
+                    Width="30"
+                    FontSize="10"
+                    Style="{StaticResource DismissButtonStyle}"
+                    Content="&#xE00F;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Click="ToggleReplaceModeButton_OnClick">
             </Button>
         </Grid>
         

@@ -90,7 +90,7 @@
             if (showReplaceBar)
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011" };
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 10 };
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -101,7 +101,7 @@
             else
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F" };
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 10 };
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
