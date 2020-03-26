@@ -18,11 +18,16 @@ namespace SetsView
     /// Item Container for a <see cref="SetsView"/>.
     /// </summary>
     [TemplatePart(Name = SetCloseButtonName, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
     public partial class SetsViewItem : ListViewItem
     {
         private const string SetCloseButtonName = "CloseButton";
 
+        private const string SetRightSideSeparatorName = "SetRightSideSeparator";
+
         private ButtonBase _setCloseButton;
+
+        private Border _setRightSideSeparator;
 
         private bool _isMiddleClick;
 
@@ -38,6 +43,23 @@ namespace SetsView
         /// Fired when the Set's close button is clicked.
         /// </summary>
         public event EventHandler<SetClosingEventArgs> Closing;
+
+
+        public void ShowRightSideSeparator()
+        {
+            if (_setRightSideSeparator != null)
+            {
+                _setRightSideSeparator.Visibility = Visibility.Visible;   
+            }
+        }
+
+        public void HideRightSideSeparator()
+        {
+            if (_setRightSideSeparator != null)
+            {
+                _setRightSideSeparator.Visibility = Visibility.Collapsed;
+            }
+        }
 
         /// <inheritdoc/>
         protected override void OnApplyTemplate()
@@ -55,6 +77,8 @@ namespace SetsView
             {
                 _setCloseButton.Click += SetCloseButton_Click;
             }
+
+            _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
         }
 
         /// <inheritdoc/>
