@@ -164,6 +164,7 @@ namespace SetsView
                 }
                 UpdateScrollViewerShadows();
                 UpdateScrollViewerNavigateButtons();
+                UpdateSetSeparators();
             }
         }
 

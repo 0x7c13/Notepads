@@ -159,8 +159,8 @@ namespace SetsView
             _setsScrollBackButton = _setsScroller.FindDescendantByName(SetsScrollBackButtonName) as ButtonBase;
             _setsScrollForwardButton = _setsScroller.FindDescendantByName(SetsScrollForwardButtonName) as ButtonBase;
             _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
-            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel; 
-            
+            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel;
+
             if (_setsScrollBackButton != null)
             {
                 _setsScrollBackButton.Click += ScrollSetBackButton_Click;
@@ -209,12 +209,28 @@ namespace SetsView
                 }
 
                 UpdateScrollViewerShadows();
+                UpdateSetSeparators();
             }
 
             // If our width can be effected by the selection, need to run algorithm.
             if (!double.IsNaN(SelectedSetWidth))
             {
                 SetsView_SizeChanged(sender, null);
+            }
+        }
+
+        private void UpdateSetSeparators()
+        {
+            for (int i = 0; i < this.Items?.Count; i++)
+            {
+                if (i != SelectedIndex && i != SelectedIndex - 1)
+                {
+                    (ContainerFromIndex(i) as SetsViewItem)?.ShowRightSideSeparator();
+                }
+                else
+                {
+                    (ContainerFromIndex(i) as SetsViewItem)?.HideRightSideSeparator();
+                }
             }
         }
 
@@ -236,10 +252,14 @@ namespace SetsView
             setItem.Closing -= SetsViewItem_Closing;
             setItem.Tapped -= SetsViewItem_Tapped;
             setItem.DoubleTapped -= SetsViewItem_DoubleTapped;
+            setItem.PointerEntered -= SetItem_PointerEntered;
+            setItem.PointerExited -= SetItem_PointerExited;
             setItem.Loaded += SetsViewItem_Loaded;
             setItem.Closing += SetsViewItem_Closing;
             setItem.Tapped += SetsViewItem_Tapped;
             setItem.DoubleTapped += SetsViewItem_DoubleTapped;
+            setItem.PointerEntered += SetItem_PointerEntered;
+            setItem.PointerExited += SetItem_PointerExited;
 
             if (setItem.Header == null)
             {
@@ -266,6 +286,47 @@ namespace SetsView
                     Mode = BindingMode.OneWay,
                 };
                 setItem.SetBinding(SetsViewItem.IsClosableProperty, iscloseablebinding);
+            }
+        }
+
+        private void SetItem_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is SetsViewItem set)
+            {
+                set.HideRightSideSeparator();
+                var index = IndexFromContainer(set);
+                if (index > 0)
+                {
+                    (ContainerFromIndex(index - 1) as SetsViewItem)?.HideRightSideSeparator();
+                }
+            }
+        }
+
+        private void SetItem_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is SetsViewItem set)
+            {
+                var index = IndexFromContainer(set);
+
+                if (SelectedIndex == index - 1)
+                {
+                    set.ShowRightSideSeparator();
+                }
+                else if (SelectedIndex == index + 1)
+                {
+                    if (index > 0)
+                    {
+                        (ContainerFromIndex(index - 1) as SetsViewItem)?.ShowRightSideSeparator();
+                    }
+                }
+                else if (SelectedIndex != index)
+                {
+                    set.ShowRightSideSeparator();
+                    if (index > 0)
+                    {
+                        (ContainerFromIndex(index - 1) as SetsViewItem)?.ShowRightSideSeparator();
+                    }
+                }
             }
         }
 
