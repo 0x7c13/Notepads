@@ -245,6 +245,21 @@
             var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
+            if (ctrlDown && !altDown)
+            {
+                if(!shiftDown && e.Key==VirtualKey.F)
+                {
+                    OnToggleReplaceModeButtonClicked?.Invoke(sender, false);
+                    return;
+                }
+
+                if ((shiftDown && e.Key == VirtualKey.F) || (!shiftDown && e.Key == VirtualKey.H))
+                {
+                    OnToggleReplaceModeButtonClicked?.Invoke(sender, true);
+                    return;
+                }
+            }
+
             var isNativeKeyboardShortcut = false;
 
             foreach (var keyboardShortcut in _nativeKeyboardShortcuts)
