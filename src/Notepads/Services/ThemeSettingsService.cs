@@ -16,15 +16,13 @@
 
     public static class ThemeSettingsService
     {
-        private static ThemeListener _themeListener;
-
-        private static UISettings _uiSettings;
-
         public static event EventHandler<ElementTheme> OnThemeChanged;
-
         public static event EventHandler<Color> OnAccentColorChanged;
 
         public static ElementTheme ThemeMode { get; set; }
+
+        private static ThemeListener _themeListener;
+        private static UISettings _uiSettings;
 
         private static bool _useWindowsTheme;
 
@@ -302,9 +300,10 @@
                         catch (Exception ex)
                         {
                             Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
-                                new Dictionary<string, string> {
-                                    {"Exception", ex.ToString()},
-                                    {"IsChangingOpacityOnly", changingOpacityOnly.ToString()}
+                                new Dictionary<string, string> 
+                                {
+                                    { "Exception", ex.ToString() },
+                                    { "IsChangingOpacityOnly", changingOpacityOnly.ToString() }
                                 });
                             return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
                         }

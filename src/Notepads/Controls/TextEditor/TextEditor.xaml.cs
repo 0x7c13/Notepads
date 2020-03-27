@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
-    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.GoTo;
@@ -58,37 +57,24 @@
 
     public sealed partial class TextEditor : UserControl, ITextEditor
     {
+        public new event RoutedEventHandler Loaded;
+        public new event RoutedEventHandler Unloaded;
+        public new event KeyEventHandler KeyDown;
+        public event EventHandler ModeChanged;
+        public event EventHandler ModificationStateChanged;
+        public event EventHandler FileModificationStateChanged;
+        public event EventHandler LineEndingChanged;
+        public event EventHandler EncodingChanged;
+        public event EventHandler TextChanging;
+        public event EventHandler ChangeReverted;
+        public event EventHandler SelectionChanged;
+        public event EventHandler FontZoomFactorChanged;
+        public event EventHandler FileSaved;
+        public event EventHandler FileReloaded;
+
         public Guid Id { get; set; }
 
         public INotepadsExtensionProvider ExtensionProvider;
-
-        public new event RoutedEventHandler Loaded;
-
-        public new event RoutedEventHandler Unloaded;
-
-        public new event KeyEventHandler KeyDown;
-
-        public event EventHandler ModeChanged;
-
-        public event EventHandler ModificationStateChanged;
-
-        public event EventHandler FileModificationStateChanged;
-
-        public event EventHandler LineEndingChanged;
-
-        public event EventHandler EncodingChanged;
-
-        public event EventHandler TextChanging;
-
-        public event EventHandler ChangeReverted;
-
-        public event EventHandler SelectionChanged;
-
-        public event EventHandler FontZoomFactorChanged;
-
-        public event EventHandler FileSaved;
-
-        public event EventHandler FileReloaded;
 
         public string FileNamePlaceholder { get; set; } = string.Empty;
 
