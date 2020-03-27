@@ -35,7 +35,7 @@
         //This variable is used to remove flicker in text selection
         private bool _enterPressed = false;
 
-        private bool _updateSearchString = true;
+        private bool _shouldUpdateSearchString = true;
 
         public FindAndReplaceControl()
         {
@@ -93,7 +93,7 @@
 
         public void Focus(string searchString, FindAndReplaceMode mode)
         {
-            if (_updateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
+            if (_shouldUpdateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
 
             if (mode == FindAndReplaceMode.FindOnly)
                 FindBar.Focus(FocusState.Programmatic);
@@ -184,14 +184,14 @@
         private void FindBar_GotFocus(object sender, RoutedEventArgs e)
         {
             _enterPressed = false;
-            _updateSearchString = false;
+            _shouldUpdateSearchString = false;
             FindBar.SelectionStart = 0;
             FindBar.SelectionLength = FindBar.Text.Length;
         }
 
         private void FindBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            _updateSearchString = true;
+            _shouldUpdateSearchString = true;
             if (_enterPressed) return;
             FindBar.SelectionStart = FindBar.Text.Length;
         }
@@ -214,14 +214,14 @@
         private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
         {
             _enterPressed = false;
-            _updateSearchString = false;
+            _shouldUpdateSearchString = false;
             ReplaceBar.SelectionStart = 0;
             ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            _updateSearchString = true;
+            _shouldUpdateSearchString = true;
             if (_enterPressed) return;
             ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
         }
@@ -271,7 +271,7 @@
 
         private void ToggleReplaceModeButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _updateSearchString = false;
+            _shouldUpdateSearchString = false;
             OnToggleReplaceModeButtonClicked?.Invoke(sender, ReplaceBarPlaceHolder.Visibility == Visibility.Collapsed ? true : false);
         }
     }
