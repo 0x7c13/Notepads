@@ -713,7 +713,7 @@
 
             // By default, RichEditBox toggles case when user hit "Shift + F3"
             // This should be restricted
-            if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
             {
                 return;
             }
