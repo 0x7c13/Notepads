@@ -876,6 +876,19 @@
                 _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
                     _contentScrollViewer.VerticalOffset, null, true);
             }
+
+            // Mouse middle button + Wheel -> horizontal scrolling
+            var pointer = e.Pointer;
+            if (pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                var point = e.GetCurrentPoint(this).Properties;
+                if (point.IsMiddleButtonPressed)
+                {
+                    var mouseWheelDelta = point.MouseWheelDelta;
+                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
+                        _contentScrollViewer.VerticalOffset, null, true);
+                }
+            }
         }
 
         private static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
