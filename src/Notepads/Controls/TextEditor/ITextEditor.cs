@@ -115,7 +115,7 @@
 
         bool NoChangesSinceLastSaved(bool compareTextOnly = false);
 
-        void ShowFindAndReplaceControl(bool showReplaceBar, bool passSearchString = true);
+        void ShowFindAndReplaceControl(bool showReplaceBar);
 
         void HideFindAndReplaceControl();
 

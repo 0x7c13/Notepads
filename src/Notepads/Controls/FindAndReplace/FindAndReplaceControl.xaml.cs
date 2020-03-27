@@ -35,6 +35,8 @@
         //This variable is used to remove flicker in text selection
         private bool _enterPressed = false;
 
+        private bool _updateSearchString = true;
+
         public FindAndReplaceControl()
         {
             InitializeComponent();
@@ -91,7 +93,7 @@
 
         public void Focus(string searchString, FindAndReplaceMode mode)
         {
-            if (!string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
+            if (_updateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
 
             if (mode == FindAndReplaceMode.FindOnly)
                 FindBar.Focus(FocusState.Programmatic);
@@ -182,12 +184,14 @@
         private void FindBar_GotFocus(object sender, RoutedEventArgs e)
         {
             _enterPressed = false;
+            _updateSearchString = false;
             FindBar.SelectionStart = 0;
             FindBar.SelectionLength = FindBar.Text.Length;
         }
 
         private void FindBar_LostFocus(object sender, RoutedEventArgs e)
         {
+            _updateSearchString = true;
             if (_enterPressed) return;
             FindBar.SelectionStart = FindBar.Text.Length;
         }
@@ -210,12 +214,14 @@
         private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
         {
             _enterPressed = false;
+            _updateSearchString = false;
             ReplaceBar.SelectionStart = 0;
             ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_LostFocus(object sender, RoutedEventArgs e)
         {
+            _updateSearchString = true;
             if (_enterPressed) return;
             ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
         }
@@ -246,21 +252,6 @@
             var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (ctrlDown && !altDown)
-            {
-                if(!shiftDown && e.Key==VirtualKey.F)
-                {
-                    OnToggleReplaceModeButtonClicked?.Invoke(sender, false);
-                    return;
-                }
-
-                if ((shiftDown && e.Key == VirtualKey.F) || (!shiftDown && e.Key == VirtualKey.H))
-                {
-                    OnToggleReplaceModeButtonClicked?.Invoke(sender, true);
-                    return;
-                }
-            }
-
             var isNativeKeyboardShortcut = false;
 
             foreach (var keyboardShortcut in _nativeKeyboardShortcuts)
@@ -280,6 +271,7 @@
 
         private void ToggleReplaceModeButton_OnClick(object sender, RoutedEventArgs e)
         {
+            _updateSearchString = false;
             OnToggleReplaceModeButtonClicked?.Invoke(sender, ReplaceBarPlaceHolder.Visibility == Visibility.Collapsed ? true : false);
         }
     }
