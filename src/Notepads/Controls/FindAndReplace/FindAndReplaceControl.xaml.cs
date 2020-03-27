@@ -162,5 +162,14 @@
             MatchWholeWordToggle.IsEnabled = !UseRegexToggle.IsChecked;
             UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
         }
+
+        public void DoSearch(string searchText)
+        {
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                FindBar.Text = searchText;
+                SearchButton_OnClick(null, null);
+            }
+        }
     }
 }

@@ -838,6 +838,8 @@
 
             if (findAndReplace == null) return;
 
+            findAndReplace.DoSearch(TextEditorCore.Document.Selection.Text);
+
             FindAndReplacePlaceholder.Height = findAndReplace.GetHeight(showReplaceBar);
             findAndReplace.ShowReplaceBar(showReplaceBar);
 
