@@ -37,19 +37,17 @@
             </Button>
         </Grid>
 
-        <Grid Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <RelativePanel Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
 
             <querybox:QueryBoxCore x:Name="FindBar"
                                    x:Uid="FindAndReplace_FindBar"
                                    Style="{StaticResource TransparentTextBoxStyle}"
                                    Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch"
+                                   Padding="10,3,32,6"
                                    IsSpellCheckEnabled="False"
                                    TextAlignment="Left"
                                    BorderThickness="0"
@@ -59,7 +57,7 @@
                                    GotFocus="FindBar_GotFocus"
                                    LostFocus="FindBar_LostFocus"/>
 
-            <Grid Grid.Column="1" x:Name="OptionButtonGrid">
+            <Grid RelativePanel.AlignRightWithPanel="True" x:Name="OptionButtonGrid" Background="Transparent">
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         IsTabStop="False"
@@ -90,7 +88,7 @@
                     </Button.Flyout>
                 </Button>
             </Grid>
-        </Grid>
+        </RelativePanel>
 
         <Grid Grid.Row="1" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
             <querybox:QueryBoxCore x:Name="ReplaceBar"
