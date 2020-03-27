@@ -154,24 +154,18 @@
                         try
                         {
                             encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
-                            Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() {
-                                {
-                                    "CodePage", encoding.CodePage.ToString()
-                                },
-                                {
-                                    "WebName", encoding.WebName
-                                }
+                            Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() 
+                            {
+                                { "CodePage", encoding.CodePage.ToString() },
+                                { "WebName", encoding.WebName }
                             });
                         }
                         catch (Exception ex)
                         {
-                            Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>() {
-                                {
-                                    "Exception", ex.ToString()
-                                },
-                                {
-                                    "Message", ex.Message
-                                }
+                            Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>() 
+                            {
+                                { "Exception", ex.ToString() },
+                                { "Message", ex.Message }
                             });
                         }
                     }
@@ -260,13 +254,10 @@
                     }
                     catch (Exception ex)
                     {
-                        Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>() {
-                            {
-                                "EncodingName", name
-                            },
-                            {
-                                "Exception", ex.ToString()
-                            }
+                        Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>() 
+                        {
+                            { "EncodingName", name },
+                            { "Exception", ex.ToString() }
                         });
                     }
                     return new UTF8Encoding(false);
@@ -290,13 +281,10 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>() {
-                    {
-                        "Message", ex.Message
-                    },
-                    {
-                        "Exception", ex.ToString()
-                    },
+                Analytics.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>() 
+                {
+                    { "Message", ex.Message },
+                    { "Exception", ex.ToString() },
                 });
             }
 
@@ -320,13 +308,10 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>() {
-                    {
-                        "Message", ex.Message
-                    },
-                    {
-                        "Exception", ex.ToString()
-                    },
+                Analytics.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>() 
+                {
+                    { "Message", ex.Message },
+                    { "Exception", ex.ToString() },
                 });
             }
 
@@ -353,19 +338,12 @@
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>() {
-                        {
-                            "Message", ex.Message
-                        },
-                        {
-                            "Exception", ex.ToString()
-                        },
-                        {
-                            "CodePage", encoding.Key.ToString()
-                        },
-                        {
-                            "EncodingName", encoding.Value
-                        }
+                    Analytics.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>() 
+                    {
+                        { "Message", ex.Message },
+                        { "Exception", ex.ToString() },
+                        { "CodePage", encoding.Key.ToString() },
+                        { "EncodingName", encoding.Value }
                     });
                 }
             }

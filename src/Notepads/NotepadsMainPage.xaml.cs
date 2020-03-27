@@ -390,8 +390,7 @@
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[SessionManager] Failed to LoadLastSessionAsync: {ex}");
-                    Analytics.TrackEvent("FailedToLoadLastSession", 
-                        new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> {{"Exception", ex.ToString()}});
                 }
             }
 

@@ -12,13 +12,10 @@
     public sealed partial class GoToControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
 
         private int _currentLine;
-
         private int _maxLine;
-
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public void SetLineData(int currentLine, int maxLine)

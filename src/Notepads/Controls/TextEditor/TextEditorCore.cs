@@ -23,13 +23,9 @@
     public class TextEditorCore : RichEditBox
     {
         public event EventHandler<TextWrapping> TextWrappingChanged;
-
         public event EventHandler<double> FontSizeChanged;
-
         public event EventHandler<double> FontZoomFactorChanged;
-
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
-
         public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
