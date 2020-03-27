@@ -944,7 +944,7 @@
             if (string.IsNullOrEmpty(searchString) && Document.Selection.StartPosition < _content.Length)
             {
                 var startIndex = Document.Selection.StartPosition;
-                var endIndex = Document.Selection.StartPosition;
+                var endIndex = startIndex;
 
                 for (; startIndex >= 0; startIndex--)
                 {
