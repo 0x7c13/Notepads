@@ -870,10 +870,10 @@
 
         private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)
         {
-            ShowFindAndReplaceControl(showReplaceBar);
+            ShowFindAndReplaceControl(showReplaceBar, false);
         }
 
-        public void ShowFindAndReplaceControl(bool showReplaceBar)
+        public void ShowFindAndReplaceControl(bool showReplaceBar, bool passSearchString = true)
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)
             {
@@ -881,7 +881,7 @@
             }
 
             GoToPlaceholder?.Dismiss();
-
+            
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
@@ -899,7 +899,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus(TextEditorCore.GetSearchString(), FindAndReplaceMode.FindOnly);
+            findAndReplace.Focus(passSearchString ? TextEditorCore.GetSearchString() : string.Empty, FindAndReplaceMode.FindOnly);
         }
 
         public void HideFindAndReplaceControl()
