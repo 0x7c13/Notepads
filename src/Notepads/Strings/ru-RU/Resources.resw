@@ -422,11 +422,11 @@
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>selected</value>
+    <value>выбрано</value>
     <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>selected</value>
+    <value>выбрано</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
