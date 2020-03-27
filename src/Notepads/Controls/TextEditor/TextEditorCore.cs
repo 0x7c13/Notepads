@@ -935,6 +935,35 @@
             return -1;
         }
 
+        public string GetSearchString()
+        {
+            var searchString = Document.Selection.Text.Trim();
+
+            if (searchString.Contains(RichEditBoxDefaultLineEnding.ToString())) return string.Empty;
+
+            if (string.IsNullOrEmpty(searchString) && Document.Selection.StartPosition < _content.Length)
+            {
+                var startIndex = Document.Selection.StartPosition;
+                var endIndex = Document.Selection.StartPosition;
+
+                for (; startIndex >= 0; startIndex--)
+                {
+                    if (!char.IsLetterOrDigit(_content[startIndex]))
+                        break;
+                }
+
+                for (; endIndex < _content.Length; endIndex++)
+                {
+                    if (!char.IsLetterOrDigit(_content[endIndex]))
+                        break;
+                }
+
+                if (startIndex != endIndex) return _content.Substring(startIndex + 1, endIndex - startIndex - 1);
+            }
+
+            return searchString;
+        }
+
         private void InsertDataTimeString()
         {
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);

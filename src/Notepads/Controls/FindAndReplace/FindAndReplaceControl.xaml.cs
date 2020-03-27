@@ -52,7 +52,7 @@
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Focus(FindAndReplaceMode.FindOnly);
+            Focus(string.Empty, FindAndReplaceMode.FindOnly);
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
@@ -90,8 +90,10 @@
                 Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
-        public void Focus(FindAndReplaceMode mode)
+        public void Focus(string searchString, FindAndReplaceMode mode)
         {
+            if (!string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
+
             if(mode == FindAndReplaceMode.FindOnly)
                 FindBar.Focus(FocusState.Programmatic);
             else

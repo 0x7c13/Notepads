@@ -75,8 +75,7 @@
 
         public void Focus()
         {
-            GoToBar.Text = "";
-            GoToBar.SelectedText = _currentLine.ToString();
+            GoToBar.Text = _currentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -105,9 +104,15 @@
             }
         }
 
+        private void GoToBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            GoToBar.SelectionStart = 0;
+            GoToBar.SelectionLength = GoToBar.Text.Length;
+        }
+
         private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            OnDismissKeyDown?.Invoke(sender, e);
+            GoToBar.SelectionStart = GoToBar.Text.Length;
         }
 
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)

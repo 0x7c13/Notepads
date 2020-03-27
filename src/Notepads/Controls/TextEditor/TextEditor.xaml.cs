@@ -899,7 +899,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus(FindAndReplaceMode.FindOnly);
+            findAndReplace.Focus(TextEditorCore.GetSearchString(), FindAndReplaceMode.FindOnly);
         }
 
         public void HideFindAndReplaceControl()
@@ -916,7 +916,7 @@
             // We should re-focus on FindAndReplaceControl to make the next search "flows"
             if (!(sender is Button))
             {
-                FindAndReplaceControl.Focus(e.FindAndReplaceMode);
+                FindAndReplaceControl.Focus(string.Empty, e.FindAndReplaceMode);
             }
         }
 
