@@ -134,14 +134,16 @@
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
-            Window.Current.CoreWindow.Activated += (sender, args) =>
+            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+        }
+
+        private void CoreWindow_Activated(CoreWindow sender, WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
+                args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
             {
-                if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
-                    args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
-                {
-                    _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
-                }
-            };
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            }
         }
 
         private void TextEditorCore_Loaded(object sender, RoutedEventArgs e)
@@ -185,6 +187,8 @@
             EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+
+            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
 
             _contentLinesCache = null;
         }
