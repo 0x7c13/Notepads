@@ -1,11 +1,9 @@
 ﻿namespace Notepads.Controls.GoTo
 {
     using System;
-    using Notepads.Commands;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
-    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -24,8 +22,6 @@
         private int _maxLine;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
-
-        private readonly KeyboardShortcut<bool> _nativeKeyboardShortcut = new KeyboardShortcut<bool>(false, false, false, VirtualKey.Escape, null);
 
         public void SetLineData(int currentLine, int maxLine)
         {
@@ -137,11 +133,7 @@
 
         private void GoToRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-
-            if (!_nativeKeyboardShortcut.Hit(ctrlDown, altDown, shiftDown, e.Key) && !e.Handled)
+            if (!e.Handled)
             {
                 OnGoToControlKeyDown?.Invoke(sender, e);
             }

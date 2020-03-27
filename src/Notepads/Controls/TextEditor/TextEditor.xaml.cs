@@ -461,10 +461,12 @@
                     else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
                     {
                         HideFindAndReplaceControl();
+                        TextEditorCore.Focus(FocusState.Programmatic);
                     }
                     else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
                     {
                         HideGoToControl();
+                        TextEditorCore.Focus(FocusState.Programmatic);
                     }
                 }),
             });

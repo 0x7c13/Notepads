@@ -57,9 +57,6 @@
                     Content="&#xE894;" 
                     FontFamily="Segoe MDL2 Assets" 
                     Click="DismissButton_OnClick" >
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Key="Escape"/>
-            </Button.KeyboardAccelerators>
         </Button>
     </Grid>
 </UserControl>

@@ -23,9 +23,8 @@
 
         private readonly List<KeyboardShortcut<bool>> _nativeKeyboardShortcuts = new List<KeyboardShortcut<bool>>
         {
-                new KeyboardShortcut<bool>(false, false, false, VirtualKey.F3, null),
+                new KeyboardShortcut<bool>(VirtualKey.F3, null),
                 new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
-                new KeyboardShortcut<bool>(false, false, false, VirtualKey.Escape, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.A, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
