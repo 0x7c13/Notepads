@@ -18,6 +18,7 @@
         private MenuFlyoutItem _undo;
         private MenuFlyoutItem _redo;
         private MenuFlyoutItem _selectAll;
+        private MenuFlyoutItem _rightToLeft;
         private MenuFlyoutItem _webSearch;
         private MenuFlyoutItem _wordWrap;
         private MenuFlyoutItem _previewToggle;
@@ -39,6 +40,7 @@
             Items.Add(Redo);
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
+            Items.Add(RightToLeft);
             Items.Add(WebSearch);
             Items.Add(WordWrap);
             Items.Add(PreviewToggle);
@@ -75,6 +77,9 @@
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
+            RightToLeft.Visibility = System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft 
+                ? Visibility.Visible 
+                : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
@@ -83,6 +88,7 @@
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
+            RightToLeft.Visibility = Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
@@ -202,6 +208,40 @@
                     };
                 }
                 return _selectAll;
+            }
+        }
+
+        public MenuFlyoutItem RightToLeft
+        {
+            get
+            {
+                if (_rightToLeft != null) return _rightToLeft;
+
+                _rightToLeft = new MenuFlyoutItem
+                {
+                    Text = "Right-to-Left Direction",//_resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E"
+                    }
+                };
+                _rightToLeft.KeyboardAccelerators.Add(new KeyboardAccelerator()
+                {
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.R,
+                    IsEnabled = false,
+                });
+                _rightToLeft.Icon.Visibility = _textEditorCore.FlowDirection == FlowDirection.LeftToRight ? Visibility.Collapsed : Visibility.Visible;
+                _rightToLeft.Click += (sender, args) =>
+                {
+                    _textEditorCore.FlowDirection = _textEditorCore.FlowDirection == FlowDirection.LeftToRight
+                        ? FlowDirection.RightToLeft
+                        : FlowDirection.LeftToRight;
+                    _textEditorCore.TextReadingOrder = TextReadingOrder.UseFlowDirection;
+                    _rightToLeft.Icon.Visibility = _textEditorCore.FlowDirection == FlowDirection.LeftToRight ? Visibility.Collapsed : Visibility.Visible;
+                };
+                return _rightToLeft;
             }
         }
 
