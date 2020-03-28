@@ -36,7 +36,7 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : UserControl, ITextEditor
+    public sealed partial class TextEditor : ITextEditor
     {
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;

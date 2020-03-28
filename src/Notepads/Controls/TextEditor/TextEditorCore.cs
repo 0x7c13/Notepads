@@ -113,7 +113,7 @@
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
-            SelectionChanged += OnSelectionChanged;
+            SelectionChanging += OnSelectionChanging;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
@@ -167,7 +167,7 @@
             CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
-            SelectionChanged -= OnSelectionChanged;
+            SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
             LostFocus -= TextEditorCore_LostFocus;
             Loaded -= TextEditorCore_Loaded;
@@ -740,10 +740,10 @@
             }
         }
 
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        private void OnSelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
         {
-            _textSelectionStartPosition = Document.Selection.StartPosition;
-            _textSelectionEndPosition = Document.Selection.EndPosition;
+            _textSelectionStartPosition = args.SelectionStart;
+            _textSelectionEndPosition = args.SelectionStart + args.SelectionLength;
         }
 
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -1012,11 +1012,7 @@
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
 
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
-
             Document.SetText(TextSetOptions.None, newContent);
-
             Document.Selection.SetRange(start, end);
 
             // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
@@ -1027,7 +1023,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
@@ -1112,8 +1108,6 @@
 
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
 
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
@@ -1126,7 +1120,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
