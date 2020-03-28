@@ -621,6 +621,28 @@
                 }
             }
 
+            // Ctrl+Shift+L/R shortcut to change text flow direction
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                !shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                e.Key == VirtualKey.R || e.Key == VirtualKey.L)
+            {
+                var start = Document.Selection.StartPosition;
+                var end = Document.Selection.EndPosition;
+                Document.Selection.SetRange(0, int.MaxValue);
+                if (e.Key == VirtualKey.L)
+                {
+                    FlowDirection = FlowDirection.LeftToRight;
+                }
+                else if (e.Key == VirtualKey.R)
+                {
+                    FlowDirection = FlowDirection.RightToLeft;
+                }
+                TextReadingOrder = TextReadingOrder.UseFlowDirection;
+                Document.Selection.SetRange(start, end);
+                return;
+            }
+
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
             // This should be converted to '\r' to match same behaviour as single "Enter"
             if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter)
