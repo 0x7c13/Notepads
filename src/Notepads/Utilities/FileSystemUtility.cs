@@ -334,13 +334,10 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() {
-                    {
-                        "Exception", ex.ToString()
-                    },
-                    {
-                        "Message", ex.Message
-                    }
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() 
+                {
+                    { "Exception", ex.ToString() },
+                    { "Message", ex.Message }
                 });
             }
 
@@ -476,10 +473,9 @@
                 {
                     // Track FileUpdateStatus here to better understand the failed scenarios
                     // File name, path and content are not included to respect/protect user privacy 
-                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() {
-                        {
-                            "FileUpdateStatus", nameof(status)
-                        }
+                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() 
+                    {
+                        { "FileUpdateStatus", nameof(status) }
                     });
                     throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }

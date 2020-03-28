@@ -11,7 +11,6 @@
     public sealed partial class FindAndReplaceControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
 
         public FindAndReplaceControl()

@@ -23,13 +23,9 @@
     public class TextEditorCore : RichEditBox
     {
         public event EventHandler<TextWrapping> TextWrappingChanged;
-
         public event EventHandler<double> FontSizeChanged;
-
         public event EventHandler<double> FontZoomFactorChanged;
-
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
-
         public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
@@ -134,14 +130,16 @@
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
-            Window.Current.CoreWindow.Activated += (sender, args) =>
+            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+        }
+
+        private void CoreWindow_Activated(CoreWindow sender, WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
+                args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
             {
-                if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
-                    args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
-                {
-                    _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
-                }
-            };
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            }
         }
 
         private void TextEditorCore_Loaded(object sender, RoutedEventArgs e)
@@ -185,6 +183,8 @@
             EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+
+            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
 
             _contentLinesCache = null;
         }
@@ -787,6 +787,19 @@
                 var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
                 _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
                     _contentScrollViewer.VerticalOffset, null, true);
+            }
+
+            // Mouse middle button + Wheel -> horizontal scrolling
+            var pointer = e.Pointer;
+            if (pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                var point = e.GetCurrentPoint(this).Properties;
+                if (point.IsMiddleButtonPressed)
+                {
+                    var mouseWheelDelta = point.MouseWheelDelta;
+                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
+                        _contentScrollViewer.VerticalOffset, null, true);
+                }
             }
         }
 

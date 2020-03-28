@@ -384,6 +384,14 @@
                        Opacity="0">
             </Rectangle>
 
+            <Border x:Name="SetRightSideSeparator"
+                    HorizontalAlignment="Right"
+                    Visibility="Collapsed"
+                    Width="1"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="1"
+                    Margin="0,6,0,6"/>
+
             <Grid Padding="{TemplateBinding Padding}">
                 <Grid x:Name="ContentPresenterGrid">
                     <Grid.RenderTransform>
