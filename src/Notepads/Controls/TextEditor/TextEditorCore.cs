@@ -923,6 +923,11 @@
         {
             try
             {
+                if (Document.Selection.Length == 0)
+                {
+                    return;
+                }
+
                 var selectedText = Document.Selection.Text.Trim();
 
                 // The maximum length of a URL in the address bar is 2048 characters
