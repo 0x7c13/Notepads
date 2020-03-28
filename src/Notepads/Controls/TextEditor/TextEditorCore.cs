@@ -621,7 +621,7 @@
                 }
             }
 
-            // Ctrl+Shift+L/R shortcut to change text flow direction
+            // Ctrl+L/R shortcut to change text flow direction
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
                 !shift.HasFlag(CoreVirtualKeyStates.Down) && 
                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
