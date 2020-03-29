@@ -105,7 +105,6 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
-* [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
 * [UTF-unknown](https://github.com/CharsetDetector/UTF-unknown)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
