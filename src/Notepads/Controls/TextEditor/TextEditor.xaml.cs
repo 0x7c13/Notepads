@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
-    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.GoTo;
@@ -37,41 +36,26 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : UserControl, ITextEditor
+    public sealed partial class TextEditor : ITextEditor
     {
+        public new event RoutedEventHandler Loaded;
+        public new event RoutedEventHandler Unloaded;
+        public new event KeyEventHandler KeyDown;
+        public event EventHandler ModeChanged;
+        public event EventHandler ModificationStateChanged;
+        public event EventHandler FileModificationStateChanged;
+        public event EventHandler LineEndingChanged;
+        public event EventHandler EncodingChanged;
+        public event EventHandler TextChanging;
+        public event EventHandler ChangeReverted;
+        public event EventHandler SelectionChanged;
+        public event EventHandler FontZoomFactorChanged;
+        public event EventHandler FileSaved;
+        public event EventHandler FileReloaded;
+
         public Guid Id { get; set; }
 
         public INotepadsExtensionProvider ExtensionProvider;
-
-        public new event RoutedEventHandler Loaded;
-
-        public new event RoutedEventHandler Unloaded;
-
-        public new event KeyEventHandler KeyDown;
-
-        public event EventHandler ModeChanged;
-
-        public event EventHandler ModificationStateChanged;
-
-        public event EventHandler FileModificationStateChanged;
-
-        public event EventHandler LineEndingChanged;
-
-        public event EventHandler EncodingChanged;
-
-        public event EventHandler TextChanging;
-
-        public event EventHandler ChangeReverted;
-
-        public event EventHandler SelectionChanged;
-
-        public event EventHandler FontZoomFactorChanged;
-
-        public event EventHandler FileSaved;
-
-        public event EventHandler FileReloaded;
-
-        private const char RichEditBoxDefaultLineEnding = '\r';
 
         public string FileNamePlaceholder { get; set; } = string.Empty;
 
@@ -196,7 +180,7 @@
             TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
             TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerOffsetChanged += LineHighlighter_OnScrolled;
+            TextEditorCore.ScrollViewerViewChanging += LineHighlighter_OnScrollViewerViewChanging;
             TextEditorCore.SizeChanged += LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
@@ -234,7 +218,7 @@
             TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
             TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerOffsetChanged -= LineHighlighter_OnScrolled;
+            TextEditorCore.ScrollViewerViewChanging -= LineHighlighter_OnScrollViewerViewChanging;
             TextEditorCore.SizeChanged -= LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
@@ -1014,7 +998,12 @@
 
         private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+            {
+                // TextWrapping changed event happens before layout updated, so we need to update here
+                TextEditorCore.UpdateLayout();
+                DrawLineHighlighter();
+            }
         }
 
         private void LineHighlighter_OnFontSizeChanged(object sender, double e)
@@ -1027,7 +1016,7 @@
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
-        private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
+        private void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }

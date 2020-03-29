@@ -60,51 +60,21 @@
 
             var diagnosticInfo = new Dictionary<string, string>()
             {
-                {
-                    "Message", e.Message
-                },
-                {
-                    "Exception", e.Exception.ToString()
-                },
-                {
-                    "Culture", SystemInformation.Culture.EnglishName
-                },
-                {
-                    "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0")
-                },
-                {
-                    "IsFirstRun", SystemInformation.IsFirstRun.ToString()
-                },
-                {
-                    "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString()
-                },
-                {
-                    "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}"
-                },
-                {
-                    "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-                },
-                {
-                    "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-                },
-                {
-                    "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-                },
-                {
-                    "CurrentLaunchCount", SystemInformation.LaunchCount.ToString()
-                },
-                {
-                    "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString()
-                },
-                {
-                    "AppUptime", SystemInformation.AppUptime.ToString()
-                },
-                {
-                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
-                },
-                {
-                    "OSVersion", SystemInformation.OperatingSystemVersion.ToString()
-                }
+                { "Message", e.Message },
+                { "Exception", e.Exception.ToString() },
+                { "Culture", SystemInformation.Culture.EnglishName },
+                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                { "IsFirstRun", SystemInformation.IsFirstRun.ToString() },
+                { "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString() },
+                { "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}" },
+                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "CurrentLaunchCount", SystemInformation.LaunchCount.ToString() },
+                { "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString() },
+                { "AppUptime", SystemInformation.AppUptime.ToString() },
+                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
             };
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
@@ -120,13 +90,10 @@
 
             LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
-            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
-                {
-                    "Message", e.Exception.Message
-                },
-                {
-                    "Exception", e.Exception.ToString()
-                }
+            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() 
+            {
+                { "Message", e.Exception.Message },
+                { "Exception", e.Exception.ToString() }
             });
 
             // suppress and handle it manually.
@@ -168,60 +135,24 @@
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
-                {
-                    "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString()
-                },
-                {
-                    "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
-                },
-                {
-                    "ThemeMode", ThemeSettingsService.ThemeMode.ToString()
-                },
-                {
-                    "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
-                },
-                {
-                    "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
-                },
-                {
-                    "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
-                },
-                {
-                    "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString()
-                },
-                {
-                    "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding)
-                },
-                {
-                    "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
-                },
-                {
-                    "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
-                },
-                {
-                    "EditorFontFamily", EditorSettingsService.EditorFontFamily
-                },
-                {
-                    "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
-                },
-                {
-                    "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString()
-                },
-                {
-                    "IsShadowWindow", (!IsFirstInstance).ToString()
-                },
-                {
-                    "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString()
-                },
-                {
-                    "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString()
-                },
-                {
-                    "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString()
-                },
-                {
-                    "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString()
-                }
+                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
+                { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
+                { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
+                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
+                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
+                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance).ToString() },
+                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
+                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
             LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
@@ -264,12 +195,8 @@
             LoggingService.LogException(exception);
             Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
-                {
-                    "Page", e.SourcePageType.FullName
-                },
-                {
-                    "Exception", e.Exception.Message
-                }
+                { "Page", e.SourcePageType.FullName },
+                { "Exception", e.Exception.Message }
             });
             throw exception;
         }
