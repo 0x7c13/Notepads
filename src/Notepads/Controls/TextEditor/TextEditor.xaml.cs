@@ -180,7 +180,7 @@
             TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
             TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerOffsetChanged += LineHighlighter_OnScrolled;
+            TextEditorCore.ScrollViewerViewChanging += LineHighlighter_OnScrollViewerViewChanging;
             TextEditorCore.SizeChanged += LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
@@ -218,7 +218,7 @@
             TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
             TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
             TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerOffsetChanged -= LineHighlighter_OnScrolled;
+            TextEditorCore.ScrollViewerViewChanging -= LineHighlighter_OnScrollViewerViewChanging;
             TextEditorCore.SizeChanged -= LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
@@ -998,7 +998,12 @@
 
         private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            if (EditorSettingsService.IsLineHighlighterEnabled)
+            {
+                // TextWrapping changed event happens before layout updated, so we need to update here
+                TextEditorCore.UpdateLayout();
+                DrawLineHighlighter();
+            }
         }
 
         private void LineHighlighter_OnFontSizeChanged(object sender, double e)
@@ -1011,7 +1016,7 @@
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
-        private void LineHighlighter_OnScrolled(object sender, ScrollViewerViewChangedEventArgs e)
+        private void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
             if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }

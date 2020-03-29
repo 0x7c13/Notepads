@@ -26,7 +26,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
-        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+        public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
@@ -174,6 +174,7 @@
 
             if (_contentScrollViewer != null)
             {
+                _contentScrollViewer.ViewChanging -= OnContentScrollViewerViewChanging;
                 _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
             }
 
@@ -243,12 +244,20 @@
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.ChangeView(
                 _contentScrollViewerHorizontalOffsetLastKnownPosition,
                 _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
+        }
+
+        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = e.FinalView.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = e.FinalView.VerticalOffset;
+            ScrollViewerViewChanging?.Invoke(sender, e);
         }
 
         public void Undo()
@@ -748,9 +757,6 @@
 
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
-            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
-
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
@@ -760,8 +766,6 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
-
-            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
