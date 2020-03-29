@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.1.7.0" />
+    Version="1.1.8.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

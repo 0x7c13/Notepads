@@ -26,7 +26,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
-        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+        public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
@@ -113,7 +113,7 @@
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
-            SelectionChanged += OnSelectionChanged;
+            SelectionChanging += OnSelectionChanging;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
@@ -167,13 +167,14 @@
             CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
-            SelectionChanged -= OnSelectionChanged;
+            SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
             LostFocus -= TextEditorCore_LostFocus;
             Loaded -= TextEditorCore_Loaded;
 
             if (_contentScrollViewer != null)
             {
+                _contentScrollViewer.ViewChanging -= OnContentScrollViewerViewChanging;
                 _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
             }
 
@@ -243,12 +244,20 @@
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.ChangeView(
                 _contentScrollViewerHorizontalOffsetLastKnownPosition,
                 _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
+        }
+
+        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = e.FinalView.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = e.FinalView.VerticalOffset;
+            ScrollViewerViewChanging?.Invoke(sender, e);
         }
 
         public void Undo()
@@ -696,10 +705,33 @@
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
                     e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
-                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187) ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.L))
                 {
                     return;
                 }
+            }
+
+            // Ctrl+L/R shortcut to change text flow direction
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                !shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
+            {
+                var start = Document.Selection.StartPosition;
+                var end = Document.Selection.EndPosition;
+                Document.Selection.SetRange(0, int.MaxValue);
+                if (e.Key == VirtualKey.L)
+                {
+                    FlowDirection = FlowDirection.LeftToRight;
+                }
+                else if (e.Key == VirtualKey.R)
+                {
+                    FlowDirection = FlowDirection.RightToLeft;
+                }
+                TextReadingOrder = TextReadingOrder.UseFlowDirection;
+                Document.Selection.SetRange(start, end);
+                return;
             }
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
@@ -806,17 +838,14 @@
             }
         }
 
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        private void OnSelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
         {
-            _textSelectionStartPosition = Document.Selection.StartPosition;
-            _textSelectionEndPosition = Document.Selection.EndPosition;
+            _textSelectionStartPosition = args.SelectionStart;
+            _textSelectionEndPosition = args.SelectionStart + args.SelectionLength;
         }
 
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
-            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
-
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
@@ -826,8 +855,6 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
-
-            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -1040,6 +1067,11 @@
         {
             try
             {
+                if (Document.Selection.Length == 0)
+                {
+                    return;
+                }
+
                 var selectedText = Document.Selection.Text.Trim();
 
                 // The maximum length of a URL in the address bar is 2048 characters
@@ -1129,11 +1161,7 @@
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
 
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
-
             Document.SetText(TextSetOptions.None, newContent);
-
             Document.Selection.SetRange(start, end);
 
             // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
@@ -1144,7 +1172,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
@@ -1229,8 +1257,6 @@
 
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
 
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
@@ -1243,7 +1269,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
