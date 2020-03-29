@@ -196,7 +196,6 @@
                         FontFamily="Segoe MDL2 Assets"
                         Click="ReplaceAllButton_OnClick">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Menu" Key="A"/>
                         <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter"/>
                     </Button.KeyboardAccelerators>
                 </Button>

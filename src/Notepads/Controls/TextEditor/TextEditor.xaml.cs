@@ -55,7 +55,6 @@
         public bool UseRegex { get; }
     }
 
-    public sealed partial class TextEditor : UserControl, ITextEditor
     public sealed partial class TextEditor : ITextEditor
     {
         public new event RoutedEventHandler Loaded;

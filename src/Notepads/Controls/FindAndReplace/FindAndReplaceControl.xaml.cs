@@ -24,7 +24,6 @@
         {
                 new KeyboardShortcut<bool>(VirtualKey.F3, null),
                 new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
-                new KeyboardShortcut<bool>(false, true, false, VirtualKey.A, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
                 new KeyboardShortcut<bool>(false, true, false, VirtualKey.W, null),
