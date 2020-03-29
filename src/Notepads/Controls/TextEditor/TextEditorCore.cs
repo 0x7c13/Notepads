@@ -624,7 +624,8 @@
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
                     e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
-                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187) ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.L))
                 {
                     return;
                 }
@@ -634,7 +635,7 @@
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
                 !shift.HasFlag(CoreVirtualKeyStates.Down) && 
                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
-                e.Key == VirtualKey.R || e.Key == VirtualKey.L)
+                (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
             {
                 var start = Document.Selection.StartPosition;
                 var end = Document.Selection.EndPosition;
