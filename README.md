@@ -105,7 +105,6 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
-* [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
 * [UTF-unknown](https://github.com/CharsetDetector/UTF-unknown)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
@@ -123,7 +122,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [tr-TR][Turkish]: [Mert Demir](https://github.com/validatedev)
     * [ja-JP][Japanese]: [Mamoru Satoh](https://github.com/pnp0a03)
     * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
-    * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx)
+    * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
