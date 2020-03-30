@@ -109,7 +109,6 @@
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
-            TextReadingOrder = TextReadingOrder.DetectFromContent;
 
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
@@ -429,8 +428,11 @@
                 var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
                 if (!dataPackageView.Contains(StandardDataFormats.Text)) return;
                 var text = await dataPackageView.GetTextAsync();
+                Document.BeginUndoGroup();
                 Document.Selection.SetText(TextSetOptions.None, text);
+                Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
+                Document.EndUndoGroup();
             }
             catch (Exception ex)
             {
