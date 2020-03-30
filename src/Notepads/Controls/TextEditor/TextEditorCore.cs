@@ -110,7 +110,7 @@
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
             TextReadingOrder = TextReadingOrder.DetectFromContent;
-            
+
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
@@ -690,6 +690,17 @@
             }
         }
 
+        public void SwitchTextFlowDirection(FlowDirection direction)
+        {
+            var startPositionBeforeFlowDirectionChange = Document.Selection.StartPosition;
+            var endPositionBeforeFlowDirectionChange = Document.Selection.EndPosition;
+            Document.Selection.SetRange(0, int.MaxValue);
+            FlowDirection = direction;
+            TextReadingOrder = TextReadingOrder.UseFlowDirection;
+            TextReadingOrder = TextReadingOrder.DetectFromContent;
+            Document.Selection.SetRange(startPositionBeforeFlowDirectionChange, endPositionBeforeFlowDirectionChange);
+        }
+
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
@@ -719,21 +730,20 @@
                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
                 (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
             {
-                var start = Document.Selection.StartPosition;
-                var end = Document.Selection.EndPosition;
-                Document.Selection.SetRange(0, int.MaxValue);
-                if (e.Key == VirtualKey.L)
+                if (string.IsNullOrEmpty(_content))
                 {
-                    FlowDirection = FlowDirection.LeftToRight;
+                    return;
                 }
-                else if (e.Key == VirtualKey.R)
+
+                switch (e.Key)
                 {
-                    FlowDirection = FlowDirection.RightToLeft;
+                    case VirtualKey.L:
+                        SwitchTextFlowDirection(FlowDirection.LeftToRight);
+                        return;
+                    case VirtualKey.R:
+                        SwitchTextFlowDirection(FlowDirection.RightToLeft);
+                        return;
                 }
-                TextReadingOrder = TextReadingOrder.UseFlowDirection;
-                TextReadingOrder = TextReadingOrder.DetectFromContent;
-                Document.Selection.SetRange(start, end);
-                return;
             }
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
@@ -753,7 +763,6 @@
             }
 
             _keyboardCommandHandler.Handle(e);
-
             if (!e.Handled)
             {
                 base.OnKeyDown(e);

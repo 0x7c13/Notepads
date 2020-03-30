@@ -71,15 +71,14 @@
 
             PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
             WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
+            RightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void PrepareForInsertionMode()
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
-            RightToLeft.Visibility = System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft 
-                ? Visibility.Visible 
-                : Visibility.Collapsed;
+            RightToLeft.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
@@ -219,27 +218,21 @@
 
                 _rightToLeft = new MenuFlyoutItem
                 {
-                    Text = "Right-to-Left Direction",//_resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftButtonDisplayText"),
+                    Text = "Right-to-Left Reading order",//_resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftButtonDisplayText"),
                     Icon = new FontIcon()
                     {
                         FontFamily = new FontFamily("Segoe MDL2 Assets"),
                         Glyph = "\uE73E"
                     }
                 };
-                _rightToLeft.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                {
-                    Modifiers = VirtualKeyModifiers.Control,
-                    Key = VirtualKey.R,
-                    IsEnabled = false,
-                });
-                _rightToLeft.Icon.Visibility = _textEditorCore.FlowDirection == FlowDirection.LeftToRight ? Visibility.Collapsed : Visibility.Visible;
+                _rightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
                 _rightToLeft.Click += (sender, args) =>
                 {
-                    _textEditorCore.FlowDirection = _textEditorCore.FlowDirection == FlowDirection.LeftToRight
+                    var flowDirection = (_textEditorCore.FlowDirection == FlowDirection.LeftToRight)
                         ? FlowDirection.RightToLeft
                         : FlowDirection.LeftToRight;
-                    _textEditorCore.TextReadingOrder = TextReadingOrder.UseFlowDirection;
-                    _rightToLeft.Icon.Visibility = _textEditorCore.FlowDirection == FlowDirection.LeftToRight ? Visibility.Collapsed : Visibility.Visible;
+                    _textEditorCore.SwitchTextFlowDirection(flowDirection);
+                    _rightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
                 };
                 return _rightToLeft;
             }
