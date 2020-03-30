@@ -57,7 +57,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionUtility] Failed to get session meta data: {ex.Message}");
-                Analytics.TrackEvent("FailedToGetSerializedSessionMetaDataAsync", new Dictionary<string, string>()
+                Analytics.TrackEvent("FailedToGetSerializedSessionMetaData", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },
                     { "Message", ex.Message }

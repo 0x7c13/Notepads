@@ -190,7 +190,7 @@
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Замінити все</value>
+    <value>Замінити все (Ctrl+Shift+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -198,10 +198,10 @@
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Замінити</value>
+    <value>Замінити (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
-  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Знайти далі (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
@@ -572,5 +572,13 @@
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
     <value>Кодування не може бути визначено</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Find Previous (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Toggle Replace Mode</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
 </root>

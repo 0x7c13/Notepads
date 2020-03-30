@@ -167,7 +167,7 @@
                         </StackPanel>
                     </RadioButton>
                     <StackPanel  Margin="28,5,0,10">
-                        <TextBox x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
+                        <TextBox Style="{StaticResource TransparentTextBoxStyle}" BorderThickness="0" x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
                         <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
                     </StackPanel>
                 </StackPanel>

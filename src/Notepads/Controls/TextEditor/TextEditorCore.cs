@@ -26,7 +26,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
-        public event EventHandler<ScrollViewerViewChangedEventArgs> ScrollViewerOffsetChanged;
+        public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
@@ -109,12 +109,12 @@
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
-            TextReadingOrder = TextReadingOrder.UseFlowDirection;
-
+            TextReadingOrder = TextReadingOrder.DetectFromContent;
+            
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
             TextChanging += OnTextChanging;
-            SelectionChanged += OnSelectionChanged;
+            SelectionChanging += OnSelectionChanging;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
@@ -168,13 +168,14 @@
             CopyingToClipboard -= TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste -= TextEditorCore_Paste;
             TextChanging -= OnTextChanging;
-            SelectionChanged -= OnSelectionChanged;
+            SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
             LostFocus -= TextEditorCore_LostFocus;
             Loaded -= TextEditorCore_Loaded;
 
             if (_contentScrollViewer != null)
             {
+                _contentScrollViewer.ViewChanging -= OnContentScrollViewerViewChanging;
                 _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
             }
 
@@ -244,12 +245,20 @@
             base.OnApplyTemplate();
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.ChangeView(
                 _contentScrollViewerHorizontalOffsetLastKnownPosition,
                 _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
+        }
+
+        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            _contentScrollViewerHorizontalOffset = e.FinalView.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = e.FinalView.VerticalOffset;
+            ScrollViewerViewChanging?.Invoke(sender, e);
         }
 
         public void Undo()
@@ -443,7 +452,7 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
+        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
             if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex, out var error))
             {
@@ -456,9 +465,9 @@
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError)
+        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
-            regexError = null;
+            regexError = false;
             var found = false;
             var text = GetText();
 
@@ -478,9 +487,9 @@
                         found = true;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    regexError = ex.Message;
+                    regexError = true;
                     found = false;
                 }
             }
@@ -513,9 +522,9 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out string regexError, bool stopAtEof = true)
+        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtEof = true)
         {
-            regexError = null;
+            regexError = false;
 
             if (string.IsNullOrEmpty(searchText))
             {
@@ -534,70 +543,151 @@
 
                     var match = regex.Match(text, Document.Selection.EndPosition);
 
+                    if (!match.Success && !stopAtEof)
+                    {
+                        match = regex.Match(text, 0);
+                    }
+
                     if (match.Success)
                     {
-                        Document.Selection.StartPosition = match.Index;
-                        Document.Selection.EndPosition = match.Index + match.Length;
+                        var index = match.Index;
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + match.Length;
+                        return true;
                     }
                     else
-                    {
-                        if (!stopAtEof)
-                        {
-                            match = regex.Match(text, 0);
-
-                            if (match.Success)
-                            {
-                                Document.Selection.StartPosition = match.Index;
-                                Document.Selection.EndPosition = match.Index + match.Length;
-                            }
-                        }
-                    }
-
-                    if (!match.Success)
                     {
                         Document.Selection.StartPosition = Document.Selection.EndPosition;
                         return false;
                     }
-
-                    return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    regexError = ex.Message;
+                    regexError = true;
                     return false;
                 }
             }
-
-            StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-            var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
-
-            if (index != -1)
-            {
-                Document.Selection.StartPosition = index;
-                Document.Selection.EndPosition = index + searchText.Length;
-            }
             else
             {
-                if (!stopAtEof)
-                {
-                    index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                    if (index != -1)
+                var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+
+                if (index != -1)
+                {
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + searchText.Length;
+                }
+                else
+                {
+                    if (!stopAtEof)
                     {
-                        Document.Selection.StartPosition = index;
-                        Document.Selection.EndPosition = index + searchText.Length;
+                        index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+
+                        if (index != -1)
+                        {
+                            Document.Selection.StartPosition = index;
+                            Document.Selection.EndPosition = index + searchText.Length;
+                        }
                     }
                 }
-            }
 
-            if (index == -1)
+                if (index == -1)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public bool FindPrevAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtBof = true)
+        {
+            regexError = false;
+
+            if (string.IsNullOrEmpty(searchText))
             {
-                Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return false;
             }
 
-            return true;
+            var text = GetText();
+
+            if (useRegex)
+            {
+                try
+                {
+                    Regex regex = new Regex(searchText, RegexOptions.RightToLeft | RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                    var match = regex.Match(text, Document.Selection.StartPosition);
+
+                    if (!match.Success && !stopAtBof)
+                    {
+                        match = regex.Match(text, text.Length);
+                    }
+
+                    if (match.Success)
+                    {
+                        var index = match.Index;
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + match.Length;
+                        return true;
+                    }
+                    else
+                    {
+                        Document.Selection.StartPosition = Document.Selection.EndPosition;
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    regexError = true;
+                    return false;
+                }
+            }
+            else
+            {
+                var searchIndex = Document.Selection.StartPosition - 1;
+                if (!stopAtBof && searchIndex < 0)
+                {
+                    searchIndex = text.Length - 1;
+                }
+                else if (stopAtBof)
+                {
+                    return false;
+                }
+
+                StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+                var index = matchWholeWord ? LastIndexOfWholeWord(text, searchIndex, searchText, comparison) : text.LastIndexOf(searchText, searchIndex, comparison);
+
+                if (index != -1)
+                {
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + searchText.Length;
+                }
+                else
+                {
+                    if (!stopAtBof)
+                    {
+                        index = matchWholeWord ? LastIndexOfWholeWord(text, text.Length - 1, searchText, comparison) : text.LastIndexOf(searchText, text.Length - 1, comparison);
+
+                        if (index != -1)
+                        {
+                            Document.Selection.StartPosition = index;
+                            Document.Selection.EndPosition = index + searchText.Length;
+                        }
+                    }
+                }
+
+                if (index == -1)
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -616,10 +706,34 @@
                     e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
                     e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
                     e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
-                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187))
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187) ||
+                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.L))
                 {
                     return;
                 }
+            }
+
+            // Ctrl+L/R shortcut to change text flow direction
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                !shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
+            {
+                var start = Document.Selection.StartPosition;
+                var end = Document.Selection.EndPosition;
+                Document.Selection.SetRange(0, int.MaxValue);
+                if (e.Key == VirtualKey.L)
+                {
+                    FlowDirection = FlowDirection.LeftToRight;
+                }
+                else if (e.Key == VirtualKey.R)
+                {
+                    FlowDirection = FlowDirection.RightToLeft;
+                }
+                TextReadingOrder = TextReadingOrder.UseFlowDirection;
+                TextReadingOrder = TextReadingOrder.DetectFromContent;
+                Document.Selection.SetRange(start, end);
+                return;
             }
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
@@ -628,6 +742,13 @@
             {
                 Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding.ToString());
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
+                return;
+            }
+
+            // By default, RichEditBox toggles case when user hit "Shift + F3"
+            // This should be restricted
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
+            {
                 return;
             }
 
@@ -719,17 +840,14 @@
             }
         }
 
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
+        private void OnSelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
         {
-            _textSelectionStartPosition = Document.Selection.StartPosition;
-            _textSelectionEndPosition = Document.Selection.EndPosition;
+            _textSelectionStartPosition = args.SelectionStart;
+            _textSelectionEndPosition = args.SelectionStart + args.SelectionLength;
         }
 
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _contentScrollViewerHorizontalOffset = _contentScrollViewer.HorizontalOffset;
-            _contentScrollViewerVerticalOffset = _contentScrollViewer.VerticalOffset;
-
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
@@ -739,8 +857,6 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
-
-            ScrollViewerOffsetChanged?.Invoke(this, e);
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -826,6 +942,57 @@
             return -1;
         }
 
+        private static int LastIndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        {
+            int pos = startIndex;
+
+            while (pos >= 0 && (pos = target.LastIndexOf(value, pos, comparison)) != -1)
+            {
+                bool startBoundary = true;
+                if (pos > 0)
+                    startBoundary = !char.IsLetterOrDigit(target[pos - 1]);
+
+                bool endBoundary = true;
+                if (pos + value.Length < target.Length)
+                    endBoundary = !char.IsLetterOrDigit(target[pos + value.Length]);
+
+                if (startBoundary && endBoundary)
+                    return pos;
+
+                pos--;
+            }
+            return -1;
+        }
+
+        public string GetSearchString()
+        {
+            var searchString = Document.Selection.Text.Trim();
+
+            if (searchString.Contains(RichEditBoxDefaultLineEnding.ToString())) return string.Empty;
+
+            if (string.IsNullOrEmpty(searchString) && Document.Selection.StartPosition < _content.Length)
+            {
+                var startIndex = Document.Selection.StartPosition;
+                var endIndex = startIndex;
+
+                for (; startIndex >= 0; startIndex--)
+                {
+                    if (!char.IsLetterOrDigit(_content[startIndex]))
+                        break;
+                }
+
+                for (; endIndex < _content.Length; endIndex++)
+                {
+                    if (!char.IsLetterOrDigit(_content[endIndex]))
+                        break;
+                }
+
+                if (startIndex != endIndex) return _content.Substring(startIndex + 1, endIndex - startIndex - 1);
+            }
+
+            return searchString;
+        }
+
         private void InsertDataTimeString()
         {
             var dateStr = DateTime.Now.ToString(CultureInfo.CurrentCulture);
@@ -902,6 +1069,11 @@
         {
             try
             {
+                if (Document.Selection.Length == 0)
+                {
+                    return;
+                }
+
                 var selectedText = Document.Selection.Text.Trim();
 
                 // The maximum length of a URL in the address bar is 2048 characters
@@ -991,11 +1163,7 @@
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
 
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
-
             Document.SetText(TextSetOptions.None, newContent);
-
             Document.Selection.SetRange(start, end);
 
             // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
@@ -1006,7 +1174,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
@@ -1091,8 +1259,6 @@
 
             var newContent = _content.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex)
                 .Insert(startLineInitialIndex, indentedStringBuilder.ToString());
-            _contentLinesCache = (newContent + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-            _isLineCachePendingUpdate = false;
 
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
@@ -1105,7 +1271,7 @@
                     horizontalOffset,
                     verticalOffset,
                     zoomFactor: null,
-                    disableAnimation: true);   
+                    disableAnimation: true);
             }
         }
 
