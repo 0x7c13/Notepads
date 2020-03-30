@@ -703,8 +703,8 @@
 
             FlowDirection = direction;
             TextReadingOrder = TextReadingOrder.UseFlowDirection;
-            TextReadingOrder = TextReadingOrder.DetectFromContent;
 
+            UpdateLayout();
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
         }
 
