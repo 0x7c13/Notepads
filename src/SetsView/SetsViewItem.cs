@@ -44,7 +44,6 @@ namespace SetsView
         /// </summary>
         public event EventHandler<SetClosingEventArgs> Closing;
 
-
         public void ShowRightSideSeparator()
         {
             if (_setRightSideSeparator != null)

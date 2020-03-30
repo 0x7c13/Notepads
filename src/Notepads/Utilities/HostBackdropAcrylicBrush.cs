@@ -57,7 +57,7 @@
             Color luminosityColor)
         {
             var adjustedTintOpacity = Math.Clamp(TintOpacity, 0, 1);
-            adjustedTintOpacity = 0.3f + 0.7f * adjustedTintOpacity;
+            adjustedTintOpacity = (0.7f * adjustedTintOpacity) + 0.3f;
 
             IGraphicsEffectSource backDropEffectSource = new CompositionEffectSourceParameter("Backdrop");
 
