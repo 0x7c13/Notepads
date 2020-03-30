@@ -18,13 +18,14 @@
         private MenuFlyoutItem _undo;
         private MenuFlyoutItem _redo;
         private MenuFlyoutItem _selectAll;
+        private MenuFlyoutItem _rightToLeftReadingOrder;
         private MenuFlyoutItem _webSearch;
         private MenuFlyoutItem _wordWrap;
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
-        private ITextEditor _textEditor;
-        private TextEditorCore _textEditorCore;
+        private readonly ITextEditor _textEditor;
+        private readonly TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -39,8 +40,9 @@
             Items.Add(Redo);
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
-            Items.Add(WebSearch);
+            Items.Add(RightToLeftReadingOrder);
             Items.Add(WordWrap);
+            Items.Add(WebSearch);
             Items.Add(PreviewToggle);
             Items.Add(Share);
 
@@ -69,12 +71,14 @@
 
             PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
             WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
+            RightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void PrepareForInsertionMode()
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
+            RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
@@ -83,6 +87,7 @@
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
+            RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
@@ -202,6 +207,34 @@
                     };
                 }
                 return _selectAll;
+            }
+        }
+
+        public MenuFlyoutItem RightToLeftReadingOrder
+        {
+            get
+            {
+                if (_rightToLeftReadingOrder != null) return _rightToLeftReadingOrder;
+
+                _rightToLeftReadingOrder = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E"
+                    }
+                };
+                _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+                _rightToLeftReadingOrder.Click += (sender, args) =>
+                {
+                    var flowDirection = (_textEditorCore.FlowDirection == FlowDirection.LeftToRight)
+                        ? FlowDirection.RightToLeft
+                        : FlowDirection.LeftToRight;
+                    _textEditorCore.SwitchTextFlowDirection(flowDirection);
+                    _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+                };
+                return _rightToLeftReadingOrder;
             }
         }
 

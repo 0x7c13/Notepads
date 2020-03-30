@@ -692,6 +692,22 @@
             }
         }
 
+        public void SwitchTextFlowDirection(FlowDirection direction)
+        {
+            if (string.IsNullOrEmpty(_content))
+            {
+                // If content is empty, switching text flow direction might not work
+                // Let's not do anything here
+                return;
+            }
+
+            FlowDirection = direction;
+            TextReadingOrder = TextReadingOrder.UseFlowDirection;
+
+            UpdateLayout();
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+        }
+
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
@@ -721,20 +737,15 @@
                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
                 (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
             {
-                var start = Document.Selection.StartPosition;
-                var end = Document.Selection.EndPosition;
-                Document.Selection.SetRange(0, int.MaxValue);
-                if (e.Key == VirtualKey.L)
+                switch (e.Key)
                 {
-                    FlowDirection = FlowDirection.LeftToRight;
+                    case VirtualKey.L:
+                        SwitchTextFlowDirection(FlowDirection.LeftToRight);
+                        return;
+                    case VirtualKey.R:
+                        SwitchTextFlowDirection(FlowDirection.RightToLeft);
+                        return;
                 }
-                else if (e.Key == VirtualKey.R)
-                {
-                    FlowDirection = FlowDirection.RightToLeft;
-                }
-                TextReadingOrder = TextReadingOrder.UseFlowDirection;
-                Document.Selection.SetRange(start, end);
-                return;
             }
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
@@ -754,7 +765,6 @@
             }
 
             _keyboardCommandHandler.Handle(e);
-
             if (!e.Handled)
             {
                 base.OnKeyDown(e);
