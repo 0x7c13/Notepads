@@ -6,7 +6,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    class QueryBoxCore : TextBox
+    public class QueryBoxCore : TextBox
     {
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {

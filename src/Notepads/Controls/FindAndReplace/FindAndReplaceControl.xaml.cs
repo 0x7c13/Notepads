@@ -15,9 +15,7 @@
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
-
         public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
-
         public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
 
         private readonly List<KeyboardShortcut<bool>> _nativeKeyboardShortcuts = new List<KeyboardShortcut<bool>>

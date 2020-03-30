@@ -109,6 +109,7 @@
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
             HandwritingView.BorderThickness = new Thickness(0);
+            TextReadingOrder = TextReadingOrder.DetectFromContent;
 
             CopyingToClipboard += TextEditorCore_CopySelectedTextToWindowsClipboard;
             Paste += TextEditorCore_Paste;
@@ -730,6 +731,7 @@
                     FlowDirection = FlowDirection.RightToLeft;
                 }
                 TextReadingOrder = TextReadingOrder.UseFlowDirection;
+                TextReadingOrder = TextReadingOrder.DetectFromContent;
                 Document.Selection.SetRange(start, end);
                 return;
             }
