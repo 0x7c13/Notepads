@@ -41,8 +41,8 @@
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
             Items.Add(RightToLeftReadingOrder);
-            Items.Add(WebSearch);
             Items.Add(WordWrap);
+            Items.Add(WebSearch);
             Items.Add(PreviewToggle);
             Items.Add(Share);
 
