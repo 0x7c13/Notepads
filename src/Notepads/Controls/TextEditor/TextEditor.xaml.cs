@@ -144,6 +144,8 @@
 
         private IContentPreviewExtension _contentPreviewExtension;
 
+        private SearchCache _searchCache = new SearchCache(string.Empty);
+
         public TextEditorMode Mode
         {
             get => _mode;
@@ -400,6 +402,22 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
+                    _searchCache.SearchText,
+                    string.Empty,
+                    _searchCache.MatchCase,
+                    _searchCache.MatchWholeWord,
+                    _searchCache.UseRegex,
+                    FindAndReplaceMode.FindOnly,
+                    SearchDirection.Next))),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
+                    _searchCache.SearchText,
+                    string.Empty,
+                    _searchCache.MatchCase,
+                    _searchCache.MatchWholeWord,
+                    _searchCache.UseRegex,
+                    FindAndReplaceMode.FindOnly,
+                    SearchDirection.Previous))),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     if (_isContentPreviewPanelOpened)
@@ -410,10 +428,12 @@
                     else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
                     {
                         HideFindAndReplaceControl();
+                        TextEditorCore.Focus(FocusState.Programmatic);
                     }
                     else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
                     {
                         HideGoToControl();
+                        TextEditorCore.Focus(FocusState.Programmatic);
                     }
                 }),
             });
@@ -780,6 +800,17 @@
 
         private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (e.Key == VirtualKey.F3)
+                {
+                    return;
+                }
+            }
+
             _keyboardCommandHandler.Handle(e);
         }
 
@@ -804,6 +835,11 @@
             CopySelectedTextToWindowsClipboard(e);
         }
 
+        private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)
+        {
+            ShowFindAndReplaceControl(showReplaceBar);
+        }
+
         public void ShowFindAndReplaceControl(bool showReplaceBar)
         {
             if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing)
@@ -812,7 +848,7 @@
             }
 
             GoToPlaceholder?.Dismiss();
-
+            
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
@@ -830,7 +866,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus();
+            findAndReplace.Focus(TextEditorCore.GetSearchString(), FindAndReplaceMode.FindOnly);
         }
 
         public void HideFindAndReplaceControl()
@@ -841,37 +877,50 @@
         private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
-            bool found = false;
-            string regexError = null;
+            InitiateFindReplace(e);
 
-            switch (e.FindAndReplaceMode)
+            // In case user hit "enter" key in search box instead of clicking on search button or hit F3
+            // We should re-focus on FindAndReplaceControl to make the next search "flows"
+            if (!(sender is Button))
+            {
+                FindAndReplaceControl.Focus(string.Empty, e.FindAndReplaceMode);
+            }
+        }
+
+        private void InitiateFindReplace(FindAndReplaceEventArgs findAndReplaceEventArgs)
+        {
+            if (string.IsNullOrEmpty(findAndReplaceEventArgs.SearchText)) return;
+
+            bool found = false;
+            bool regexError = false;
+
+            if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
+                _searchCache = new SearchCache(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex);
+
+            switch (findAndReplaceEventArgs.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError, false);
-                    // In case user hit "enter" key in search box instead of clicking on search button or hit F3
-                    // We should re-focus on FindAndReplaceControl to make the next search "flows"
-                    if (!(sender is Button))
-                    {
-                        FindAndReplaceControl.Focus();   
-                    }
+                    found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
+                        ? TextEditorCore.FindNextAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false)
+                        : TextEditorCore.FindPrevAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError);
+                    found = TextEditorCore.FindNextAndReplace(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.ReplaceText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord, e.UseRegex, out regexError);
+                    found = TextEditorCore.FindAndReplaceAll(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.ReplaceText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError);
                     break;
             }
 
             if (!found)
             {
-                if (e.UseRegex && !string.IsNullOrEmpty(regexError))
+                if (findAndReplaceEventArgs.UseRegex && regexError)
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_InvalidRegex"), 1500);
                 }
                 else
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);   
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
                 }
             }
         }
