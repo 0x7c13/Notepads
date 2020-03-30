@@ -165,7 +165,10 @@
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 _enterPressed = true;
                 SearchForwardButton_OnClick(sender, e);
@@ -195,7 +198,10 @@
 
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 _enterPressed = true;
                 ReplaceButton_OnClick(sender, e);
