@@ -131,6 +131,7 @@
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FindAndReplace\QueryBoxCore.cs" />
+    <Compile Include="Controls\FindAndReplace\SearchCache.cs" />
     <Compile Include="Controls\GoTo\GoToControl.xaml.cs">
       <DependentUpon>GoToControl.xaml</DependentUpon>
     </Compile>
