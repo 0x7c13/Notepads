@@ -454,9 +454,9 @@
             }
         }
 
-        public bool FindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
+        public bool TryFindNextAndReplace(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
-            if (FindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex, out var error))
+            if (TryFindNextAndSelect(searchText, matchCase, matchWholeWord, useRegex, stopAtEof: true, out var error))
             {
                 regexError = error;
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
@@ -467,7 +467,7 @@
             return false;
         }
 
-        public bool FindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
+        public bool TryFindAndReplaceAll(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError)
         {
             regexError = false;
             var found = false;
@@ -480,20 +480,8 @@
 
             if (useRegex)
             {
-                try
-                {
-                    Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-                    if(regex.IsMatch(text))
-                    {
-                        text = regex.Replace(text, replaceText);
-                        found = true;
-                    }
-                }
-                catch (Exception)
-                {
-                    regexError = true;
-                    found = false;
-                }
+                found = TryFindAndReplaceAllUsingRegex(text, searchText, replaceText, matchCase, out regexError, out var output);
+                if (found) text = output;
             }
             else
             {
@@ -524,7 +512,32 @@
             return found;
         }
 
-        public bool FindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtEof = true)
+        private static bool TryFindAndReplaceAllUsingRegex(string content, string searchText, string replaceText, bool matchCase,
+            out bool regexError, out string output)
+        {
+            regexError = false;
+            output = string.Empty;
+
+            try
+            {
+                Regex regex = new Regex(searchText,
+                    RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                if (regex.IsMatch(content))
+                {
+                    output = regex.Replace(content, replaceText);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                regexError = true;
+                return false;
+            }
+
+            return false;
+        }
+
+        public bool TryFindNextAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, bool stopAtEof, out bool regexError)
         {
             regexError = false;
 
@@ -539,41 +552,15 @@
 
             if (useRegex)
             {
-                try
-                {
-                    Regex regex = new Regex(searchText, RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-
-                    var match = regex.Match(text, Document.Selection.EndPosition);
-
-                    if (!match.Success && !stopAtEof)
-                    {
-                        match = regex.Match(text, 0);
-                    }
-
-                    if (match.Success)
-                    {
-                        var index = match.Index;
-                        Document.Selection.StartPosition = index;
-                        Document.Selection.EndPosition = index + match.Length;
-                        return true;
-                    }
-                    else
-                    {
-                        Document.Selection.StartPosition = Document.Selection.EndPosition;
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    regexError = true;
-                    return false;
-                }
+                return TryFindNextAndSelectUsingRegex(text, searchText, matchCase, stopAtEof, out regexError);
             }
             else
             {
                 StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                var index = matchWholeWord ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison) : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
+                var index = matchWholeWord 
+                    ? IndexOfWholeWord(text, Document.Selection.EndPosition, searchText, comparison)
+                    : text.IndexOf(searchText, Document.Selection.EndPosition, comparison);
 
                 if (index != -1)
                 {
@@ -584,7 +571,9 @@
                 {
                     if (!stopAtEof)
                     {
-                        index = matchWholeWord ? IndexOfWholeWord(text, 0, searchText, comparison) : text.IndexOf(searchText, 0, comparison);
+                        index = matchWholeWord 
+                            ? IndexOfWholeWord(text, 0, searchText, comparison) 
+                            : text.IndexOf(searchText, 0, comparison);
 
                         if (index != -1)
                         {
@@ -604,7 +593,42 @@
             }
         }
 
-        public bool FindPrevAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, out bool regexError, bool stopAtBof = true)
+        private bool TryFindNextAndSelectUsingRegex(string content, string searchText, bool matchCase, bool stopAtEof, out bool regexError)
+        {
+            try
+            {
+                regexError = false;
+                Regex regex = new Regex(searchText,
+                    RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                var match = regex.Match(content, Document.Selection.EndPosition);
+
+                if (!match.Success && !stopAtEof)
+                {
+                    match = regex.Match(content, 0);
+                }
+
+                if (match.Success)
+                {
+                    var index = match.Index;
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + match.Length;
+                    return true;
+                }
+                else
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                regexError = true;
+                return false;
+            }
+        }
+
+        public bool TryFindPreviousAndSelect(string searchText, bool matchCase, bool matchWholeWord, bool useRegex, bool stopAtBof, out bool regexError)
         {
             regexError = false;
 
@@ -617,35 +641,7 @@
 
             if (useRegex)
             {
-                try
-                {
-                    Regex regex = new Regex(searchText, RegexOptions.RightToLeft | RegexOptions.Compiled | (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-
-                    var match = regex.Match(text, Document.Selection.StartPosition);
-
-                    if (!match.Success && !stopAtBof)
-                    {
-                        match = regex.Match(text, text.Length);
-                    }
-
-                    if (match.Success)
-                    {
-                        var index = match.Index;
-                        Document.Selection.StartPosition = index;
-                        Document.Selection.EndPosition = index + match.Length;
-                        return true;
-                    }
-                    else
-                    {
-                        Document.Selection.StartPosition = Document.Selection.EndPosition;
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    regexError = true;
-                    return false;
-                }
+                return TryFindPreviousAndSelectUsingRegex(text, searchText, matchCase, out regexError, stopAtBof);
             }
             else
             {
@@ -661,7 +657,9 @@
 
                 StringComparison comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                var index = matchWholeWord ? LastIndexOfWholeWord(text, searchIndex, searchText, comparison) : text.LastIndexOf(searchText, searchIndex, comparison);
+                var index = matchWholeWord 
+                    ? LastIndexOfWholeWord(text, searchIndex, searchText, comparison) 
+                    : text.LastIndexOf(searchText, searchIndex, comparison);
 
                 if (index != -1)
                 {
@@ -670,15 +668,12 @@
                 }
                 else
                 {
-                    if (!stopAtBof)
-                    {
-                        index = matchWholeWord ? LastIndexOfWholeWord(text, text.Length - 1, searchText, comparison) : text.LastIndexOf(searchText, text.Length - 1, comparison);
+                    index = matchWholeWord ? LastIndexOfWholeWord(text, text.Length - 1, searchText, comparison) : text.LastIndexOf(searchText, text.Length - 1, comparison);
 
-                        if (index != -1)
-                        {
-                            Document.Selection.StartPosition = index;
-                            Document.Selection.EndPosition = index + searchText.Length;
-                        }
+                    if (index != -1)
+                    {
+                        Document.Selection.StartPosition = index;
+                        Document.Selection.EndPosition = index + searchText.Length;
                     }
                 }
 
@@ -689,6 +684,42 @@
                 }
 
                 return true;
+            }
+        }
+
+        private bool TryFindPreviousAndSelectUsingRegex(string content, string searchText, bool matchCase, out bool regexError, bool stopAtBof)
+        {
+            try
+            {
+                regexError = false;
+                Regex regex = new Regex(searchText,
+                    RegexOptions.RightToLeft | RegexOptions.Compiled |
+                    (matchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+
+                var match = regex.Match(content, Document.Selection.StartPosition);
+
+                if (!match.Success && !stopAtBof)
+                {
+                    match = regex.Match(content, content.Length);
+                }
+
+                if (match.Success)
+                {
+                    var index = match.Index;
+                    Document.Selection.StartPosition = index;
+                    Document.Selection.EndPosition = index + match.Length;
+                    return true;
+                }
+                else
+                {
+                    Document.Selection.StartPosition = Document.Selection.EndPosition;
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                regexError = true;
+                return false;
             }
         }
 

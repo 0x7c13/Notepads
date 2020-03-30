@@ -901,14 +901,38 @@
             {
                 case FindAndReplaceMode.FindOnly:
                     found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
-                        ? TextEditorCore.FindNextAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false)
-                        : TextEditorCore.FindPrevAndSelect(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError, false);
+                        ? TextEditorCore.TryFindNextAndSelect(
+                            findAndReplaceEventArgs.SearchText, 
+                            findAndReplaceEventArgs.MatchCase, 
+                            findAndReplaceEventArgs.MatchWholeWord, 
+                            findAndReplaceEventArgs.UseRegex, 
+                            stopAtEof: false,
+                            out regexError)
+                        : TextEditorCore.TryFindPreviousAndSelect(
+                            findAndReplaceEventArgs.SearchText, 
+                            findAndReplaceEventArgs.MatchCase, 
+                            findAndReplaceEventArgs.MatchWholeWord, 
+                            findAndReplaceEventArgs.UseRegex,
+                            stopAtBof: false,
+                            out regexError);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.FindNextAndReplace(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.ReplaceText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError);
+                    found = TextEditorCore.TryFindNextAndReplace(
+                        findAndReplaceEventArgs.SearchText, 
+                        findAndReplaceEventArgs.ReplaceText, 
+                        findAndReplaceEventArgs.MatchCase, 
+                        findAndReplaceEventArgs.MatchWholeWord, 
+                        findAndReplaceEventArgs.UseRegex, 
+                        out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = TextEditorCore.FindAndReplaceAll(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.ReplaceText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex, out regexError);
+                    found = TextEditorCore.TryFindAndReplaceAll(
+                        findAndReplaceEventArgs.SearchText, 
+                        findAndReplaceEventArgs.ReplaceText, 
+                        findAndReplaceEventArgs.MatchCase, 
+                        findAndReplaceEventArgs.MatchWholeWord, 
+                        findAndReplaceEventArgs.UseRegex, 
+                        out regexError);
                     break;
             }
 
