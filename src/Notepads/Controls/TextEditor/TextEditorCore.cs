@@ -692,6 +692,13 @@
 
         public void SwitchTextFlowDirection(FlowDirection direction)
         {
+            if (string.IsNullOrEmpty(_content))
+            {
+                // If content is empty, switching text flow direction might not work
+                // Let's not do anything here
+                return;
+            }
+
             var startPositionBeforeFlowDirectionChange = Document.Selection.StartPosition;
             var endPositionBeforeFlowDirectionChange = Document.Selection.EndPosition;
             Document.Selection.SetRange(0, int.MaxValue);
@@ -730,11 +737,6 @@
                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
                 (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
             {
-                if (string.IsNullOrEmpty(_content))
-                {
-                    return;
-                }
-
                 switch (e.Key)
                 {
                     case VirtualKey.L:

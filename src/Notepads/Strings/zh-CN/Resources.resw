@@ -574,11 +574,15 @@
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>查找上一个 (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>切换替换模式</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>从右到左阅读顺序</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
 </root>

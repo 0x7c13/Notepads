@@ -18,7 +18,7 @@
         private MenuFlyoutItem _undo;
         private MenuFlyoutItem _redo;
         private MenuFlyoutItem _selectAll;
-        private MenuFlyoutItem _rightToLeft;
+        private MenuFlyoutItem _rightToLeftReadingOrder;
         private MenuFlyoutItem _webSearch;
         private MenuFlyoutItem _wordWrap;
         private MenuFlyoutItem _previewToggle;
@@ -40,7 +40,7 @@
             Items.Add(Redo);
             Items.Add(SelectAll);
             Items.Add(new MenuFlyoutSeparator());
-            Items.Add(RightToLeft);
+            Items.Add(RightToLeftReadingOrder);
             Items.Add(WebSearch);
             Items.Add(WordWrap);
             Items.Add(PreviewToggle);
@@ -71,14 +71,14 @@
 
             PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
             WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
-            RightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+            _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void PrepareForInsertionMode()
         {
             Cut.Visibility = Visibility.Collapsed;
             Copy.Visibility = Visibility.Collapsed;
-            RightToLeft.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
+            _rightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
         }
@@ -87,7 +87,7 @@
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
-            RightToLeft.Visibility = Visibility.Collapsed;
+            _rightToLeftReadingOrder.Visibility = Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
@@ -210,31 +210,31 @@
             }
         }
 
-        public MenuFlyoutItem RightToLeft
+        public MenuFlyoutItem RightToLeftReadingOrder
         {
             get
             {
-                if (_rightToLeft != null) return _rightToLeft;
+                if (_rightToLeftReadingOrder != null) return _rightToLeftReadingOrder;
 
-                _rightToLeft = new MenuFlyoutItem
+                _rightToLeftReadingOrder = new MenuFlyoutItem
                 {
-                    Text = "Right-to-Left Reading order",//_resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftButtonDisplayText"),
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText"),
                     Icon = new FontIcon()
                     {
                         FontFamily = new FontFamily("Segoe MDL2 Assets"),
                         Glyph = "\uE73E"
                     }
                 };
-                _rightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
-                _rightToLeft.Click += (sender, args) =>
+                _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+                _rightToLeftReadingOrder.Click += (sender, args) =>
                 {
                     var flowDirection = (_textEditorCore.FlowDirection == FlowDirection.LeftToRight)
                         ? FlowDirection.RightToLeft
                         : FlowDirection.LeftToRight;
                     _textEditorCore.SwitchTextFlowDirection(flowDirection);
-                    _rightToLeft.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+                    _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
                 };
-                return _rightToLeft;
+                return _rightToLeftReadingOrder;
             }
         }
 
