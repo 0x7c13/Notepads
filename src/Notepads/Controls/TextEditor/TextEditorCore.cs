@@ -702,6 +702,8 @@
             FlowDirection = direction;
             TextReadingOrder = TextReadingOrder.UseFlowDirection;
             TextReadingOrder = TextReadingOrder.DetectFromContent;
+
+            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
