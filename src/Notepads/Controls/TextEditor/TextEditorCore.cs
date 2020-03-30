@@ -699,13 +699,9 @@
                 return;
             }
 
-            var startPositionBeforeFlowDirectionChange = Document.Selection.StartPosition;
-            var endPositionBeforeFlowDirectionChange = Document.Selection.EndPosition;
-            Document.Selection.SetRange(0, int.MaxValue);
             FlowDirection = direction;
             TextReadingOrder = TextReadingOrder.UseFlowDirection;
             TextReadingOrder = TextReadingOrder.DetectFromContent;
-            Document.Selection.SetRange(startPositionBeforeFlowDirectionChange, endPositionBeforeFlowDirectionChange);
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)

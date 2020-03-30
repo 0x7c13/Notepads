@@ -87,7 +87,7 @@
         {
             Cut.Visibility = Visibility.Visible;
             Copy.Visibility = Visibility.Visible;
-            _rightToLeftReadingOrder.Visibility = Visibility.Collapsed;
+            _rightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
         }
