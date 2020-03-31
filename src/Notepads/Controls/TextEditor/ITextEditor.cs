@@ -91,6 +91,9 @@
 
         void CloseSideBySideDiffViewer();
 
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
         void GetLineColumnSelection(
             out int startLineIndex, 
             out int endLineIndex, 

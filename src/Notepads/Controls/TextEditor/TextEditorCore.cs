@@ -323,7 +323,10 @@
             _contentScrollViewerVerticalOffsetLastKnownPosition = verticalOffset;
         }
 
-        //TODO This method I wrote is pathetic, need to find a way to implement it in a better way
+        // TODO This method I wrote is pathetic, need to find a way to implement it in a better way
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
         public void GetLineColumnSelection(
             out int startLineIndex, 
             out int endLineIndex, 
