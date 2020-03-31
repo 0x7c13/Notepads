@@ -781,16 +781,29 @@
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
             // This should be converted to '\r' to match same behaviour as single "Enter"
-            if (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.Enter)
+            if ((!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                 shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                 e.Key == VirtualKey.Enter) ||
+                (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                 !shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                 e.Key == VirtualKey.Enter))
             {
-                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding.ToString());
+                // Automatically indent on new lines based on current line's leading spaces/tabs
+                GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
+                var leadingSpacesAndTabs = GetLeadingSpacesAndTabs(_contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1));
+                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 return;
             }
 
             // By default, RichEditBox toggles case when user hit "Shift + F3"
             // This should be restricted
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
+                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                shift.HasFlag(CoreVirtualKeyStates.Down) && 
+                e.Key == VirtualKey.F3)
             {
                 return;
             }
@@ -800,6 +813,20 @@
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        private string  GetLeadingSpacesAndTabs(string str)
+        {
+            int i = 0;
+            for (; i < str.Length; i++)
+            {
+                var ch = str[i];
+                if (ch != ' ' && ch != '\t' && ch != '\r')
+                {
+                    break;
+                }
+            }
+            return str.Substring(0, i);
         }
 
         private async void TextEditorCore_Paste(object sender, TextControlPasteEventArgs args)
