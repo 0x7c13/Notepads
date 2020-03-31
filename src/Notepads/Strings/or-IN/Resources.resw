@@ -582,7 +582,7 @@
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>ଡାହାଣରୁ ବାମ ପଠନ କ୍ରମ</value>
+    <value>ଡାହାଣରୁ-ବାମ ପଠନ କ୍ରମ</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
 </root>
