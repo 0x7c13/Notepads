@@ -27,7 +27,7 @@
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
                     Grid.Column="0"
                     IsTabStop="False"
-                    Width="25"
+                    Width="20"
                     Padding="0"
                     FontSize="12"
                     Style="{StaticResource DismissButtonStyle}"
@@ -58,18 +58,23 @@
                                    LostFocus="FindBar_LostFocus"/>
 
             <Grid RelativePanel.AlignRightWithPanel="True" x:Name="OptionButtonGrid" Background="Transparent">
+                <Border x:Name="OptionButtonSelectionIndicator"
+                        BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                        VerticalAlignment="Bottom" 
+                        BorderThickness="1" 
+                        Margin="9"
+                        Visibility="Collapsed"/>
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         IsTabStop="False"
                         Width="36"
-                        Grid.Column="1" 
                         FontSize="16"
                         Style="{StaticResource DismissButtonStyle}"
                         Content="&#xE712;" 
                         FontFamily="Segoe MDL2 Assets">
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle">
+                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle" Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Modifiers="Menu" Key="C"/>
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>

@@ -247,6 +247,15 @@
         {
             MatchWholeWordToggle.IsEnabled = !UseRegexToggle.IsChecked;
             UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
+
+            if (MatchCaseToggle.IsChecked || MatchWholeWordToggle.IsChecked || UseRegexToggle.IsChecked)
+            {
+                OptionButtonSelectionIndicator.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                OptionButtonSelectionIndicator.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void FindAndReplaceRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
