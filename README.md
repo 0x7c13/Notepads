@@ -53,6 +53,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
+* Ctrl+Num(1-9) to quickly switch to specified tab.
 * Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Alt+P to toggle preview split view for Markdown file.
@@ -104,15 +105,14 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit)
 * [XAML Controls Gallery](https://github.com/microsoft/Xaml-Controls-Gallery)
 * [Windows UI Library](https://github.com/Microsoft/microsoft-ui-xaml)
-* [UICompositionAnimations](https://github.com/Sergio0694/UICompositionAnimations)
-* [UTF-unknown](https://github.com/CharsetDetector/UTF-unknown)
+* [UTF Unknown](https://github.com/CharsetDetector/UTF-unknown)
 * [DiffPlex](https://github.com/mmanela/diffplex)
 
 ## Special Thanks:
 
 * [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
 * Localization Contributors: 
     * [fr-FR][French]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
@@ -122,7 +122,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [tr-TR][Turkish]: [Mert Demir](https://github.com/validatedev)
     * [ja-JP][Japanese]: [Mamoru Satoh](https://github.com/pnp0a03)
     * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
-    * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx)
+    * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
     * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
     * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)

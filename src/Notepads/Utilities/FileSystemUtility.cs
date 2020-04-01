@@ -20,6 +20,8 @@
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
+        private static readonly string wslRootPath = "\\\\wsl$\\";
+
         public static bool IsFullPath(string path)
         {
             return !String.IsNullOrWhiteSpace(path)
@@ -88,6 +90,17 @@
                 var index = path.IndexOf('\"', 1);
                 if (index == -1) return null;
                 path = args.Substring(1, index - 1);
+            }
+
+            if (dir.StartsWith(wslRootPath))
+            {
+                if (path.StartsWith('/'))
+                {
+                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', wslRootPath.Length) + 1);
+                    var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+                    if (IsFullPath(fullPath)) return fullPath;
+                }
+                path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
             }
 
             if (IsFullPath(path))
@@ -310,20 +323,17 @@
                     encoding = AnalyzeAndGuessEncoding(result);
                     return true;
                 }
-                else
+                else if (stream.Length > 0) // We do not care about empty file
                 {
                     Analytics.TrackEvent("UnableToDetectEncoding");
                 }
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() {
-                    {
-                        "Exception", ex.ToString()
-                    },
-                    {
-                        "Message", ex.Message
-                    }
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() 
+                {
+                    { "Exception", ex.ToString() },
+                    { "Message", ex.Message }
                 });
             }
 
@@ -459,10 +469,9 @@
                 {
                     // Track FileUpdateStatus here to better understand the failed scenarios
                     // File name, path and content are not included to respect/protect user privacy 
-                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() {
-                        {
-                            "FileUpdateStatus", nameof(status)
-                        }
+                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() 
+                    {
+                        { "FileUpdateStatus", nameof(status) }
                     });
                     throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
                 }
