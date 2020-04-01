@@ -358,7 +358,7 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Linia {0}, Kolumna {1} (Zaznaczono {2} znak{3}ów)</value>
+    <value>Linia {0}, Kolumna {1} ({3} {2} znak(i/ów))</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
@@ -422,11 +422,11 @@
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>zaznaczono</value>
+    <value>Zaznaczono</value>
     <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>zaznaczono</value>
+    <value>Zaznaczono</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
@@ -574,15 +574,15 @@
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>Znajdź poprzedni (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>Zmień tryb zamieniania</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
+    <value>Czytanie od prawej do lewej</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
 </root>
