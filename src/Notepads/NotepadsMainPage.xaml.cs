@@ -503,8 +503,18 @@
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
-            Application.Current.EnteredBackground -= App_EnteredBackground;
-            Application.Current.EnteredBackground += App_EnteredBackground;
+
+            if (!App.IsGameBarWidget)
+            {
+                // An issue with the Game Bar extension model and Windows platform prevents the Notepads process from exiting cleanly
+                // when more than one CoreWindow has been created, and NotepadsMainPage is the last to close. The common case for this
+                // is to open Notepads in Game Bar, then open its settings, then close the settings and finally close Notepads.
+                // This puts the process in a bad state where it will no longer open in Game Bar and the Notepads process is orphaned. 
+                // To work around this do not use the EnteredBackground event when running as a widget.
+                // Microsoft is tracking this issue as VSO#25735260
+                Application.Current.EnteredBackground -= App_EnteredBackground;
+                Application.Current.EnteredBackground += App_EnteredBackground;
+            }
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
