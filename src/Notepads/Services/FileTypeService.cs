@@ -13,7 +13,7 @@
             ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss", ".vue", ".vuerc", ".cgi",
             ".gitignore", ".gitconfig", ".gitattributes",
             ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash", ".bash_history",
-            ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java", ".go", ".pl",
+            ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java", ".go", ".pl", ".sql",
             ".js", ".ts", ".lua",
             ".srt", ".ass", ".ssa",
             ".project", ".prj", ".npmrc", ".buildpath",

@@ -1,11 +1,10 @@
 ﻿namespace Notepads.Services
 {
     using System;
-    using System.Collections.Generic;
-    using Microsoft.AppCenter.Analytics;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Settings;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.Core;
     using Windows.UI;
     using Windows.UI.Core;
@@ -16,15 +15,13 @@
 
     public static class ThemeSettingsService
     {
-        private static ThemeListener _themeListener;
-
-        private static UISettings _uiSettings;
-
         public static event EventHandler<ElementTheme> OnThemeChanged;
-
         public static event EventHandler<Color> OnAccentColorChanged;
 
         public static ElementTheme ThemeMode { get; set; }
+
+        private static ThemeListener _themeListener;
+        private static UISettings _uiSettings;
 
         private static bool _useWindowsTheme;
 
@@ -74,7 +71,7 @@
                 _appBackgroundPanelTintOpacity = value;
                 if (AppBackground != null)
                 {
-                    AppBackground.Background = GetBackgroundBrush(ThemeMode, changingOpacityOnly: true);
+                    AppBackground.Background = GetBackgroundBrush(ThemeMode);
                     ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
                 }
             }
@@ -94,11 +91,25 @@
             }
         }
 
+        private static Color _customAccentColor;
+
+        public static Color CustomAccentColor
+        {
+            get => _customAccentColor;
+            set
+            {
+                _customAccentColor = value;
+                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex(), true);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeThemeMode();
 
             InitializeAppAccentColor();
+
+            InitializeCustomAccentColor();
 
             InitializeAppBackgroundPanelTintOpacity();
         }
@@ -125,6 +136,18 @@
                 {
                     _appAccentColor = GetColor(accentColorHexStr);
                 }
+            }
+        }
+
+        private static void InitializeCustomAccentColor()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
+            {
+                _customAccentColor = GetColor(customAccentColorHexStr);
+            }
+            else
+            {
+                _customAccentColor = _appAccentColor;
             }
         }
 
@@ -240,77 +263,34 @@
             }
         }
 
-        private static Brush GetBackgroundBrush(ElementTheme theme, bool changingOpacityOnly = false)
+        private static Brush GetBackgroundBrush(ElementTheme theme)
         {
             if (theme == ElementTheme.Dark)
             {
+                var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    if (AppBackgroundPanelTintOpacity > 0.99f)
-                    {
-                        return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var brush = new UICompositionAnimations.Brushes.AcrylicBrush()
-                            {
-                                Source = AcrylicBackgroundSource.HostBackdrop,
-                                BlurAmount = 8,
-                                Tint = Color.FromArgb(255, 50, 50, 50),
-                                TintMix = (float)AppBackgroundPanelTintOpacity,
-                                TextureUri = "/Assets/noise_low.png".ToAppxUri(),
-                            };
-
-                            return brush;
-
-                            //return PipelineBuilder.FromHostBackdropBrush()
-                            //    .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                            //    .Opacity((float)AppBackgroundPanelTintOpacity)
-                            //    .Blend(PipelineBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
-                            //    .Tint(Color.FromArgb(255, 50, 50, 50), (float)AppBackgroundPanelTintOpacity)
-                            //    .Blend(PipelineBuilder.FromTiles("/Assets/noise_low.png".ToAppxUri()), BlendEffectMode.Overlay, Placement.Background)
-                            //    .AsBrush();
-                        }
-                        catch (Exception ex)
-                        {
-                            Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
-                                new Dictionary<string, string> {
-                                    {"Exception", ex.ToString()},
-                                    {"IsChangingOpacityOnly", changingOpacityOnly.ToString()}
-                                });
-                            return new SolidColorBrush(Color.FromArgb(255, 50, 50, 50));
-                        }
-                    }
+                    return AppBackgroundPanelTintOpacity > 0.99f
+                        ? new SolidColorBrush(darkModeBaseColor)
+                        : BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity);
                 }
                 else
                 {
-                    return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
+                    return new SolidColorBrush(darkModeBaseColor);
                 }
             }
             else if (theme == ElementTheme.Light)
             {
+                var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    if (AppBackgroundPanelTintOpacity > 0.99f)
-                    {
-                        return new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
-                    }
-                    else
-                    {
-                        return new Windows.UI.Xaml.Media.AcrylicBrush
-                        {
-                            BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
-                            TintColor = Color.FromArgb(255, 230, 230, 230),
-                            FallbackColor = Color.FromArgb(255, 230, 230, 230),
-                            TintOpacity = AppBackgroundPanelTintOpacity
-                        };
-                    }
+                    return AppBackgroundPanelTintOpacity > 0.99f
+                        ? new SolidColorBrush(lightModeBaseColor)
+                        : BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity);
                 }
                 else
                 {
-                    return new SolidColorBrush(Color.FromArgb(255, 230, 230, 230));
+                    return new SolidColorBrush(lightModeBaseColor);
                 }
             }
 

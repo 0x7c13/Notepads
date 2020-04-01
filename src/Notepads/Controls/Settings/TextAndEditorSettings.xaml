@@ -119,6 +119,7 @@
                     Margin="0,35,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="DecodingPanel" Margin="0,10,0,0">
+                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AutoGuessRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AutoGuessDecodingRadioButton" Tag="Auto" GroupName="DecodingGroup"/>
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Utf8RadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8DecodingRadioButton" Tag="UTF-8" GroupName="DecodingGroup"/>
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AnsiRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AnsiDecodingRadioButton" Tag="ANSI" GroupName="DecodingGroup"/>
                 </StackPanel>
@@ -166,7 +167,7 @@
                         </StackPanel>
                     </RadioButton>
                     <StackPanel  Margin="28,5,0,10">
-                        <TextBox x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
+                        <TextBox Style="{StaticResource TransparentTextBoxStyle}" BorderThickness="0" x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
                         <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
                     </StackPanel>
                 </StackPanel>

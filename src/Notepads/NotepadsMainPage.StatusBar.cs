@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using Windows.UI.Xaml;
@@ -127,15 +128,15 @@
         private void UpdateLineColumnIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
-            textEditor.GetCurrentLineColumn(out var line, out var column, out var selectedCount);
+            textEditor.GetLineColumnSelection(out var startLineIndex, out _, out var startColumn, out _, out var selectedCount, out _);
 
             var wordSelected = selectedCount > 1
                 ? _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_PluralSelectedWord")
                 : _resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText_SingularSelectedWord");
 
             LineColumnIndicator.Text = selectedCount == 0
-                ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), line, column)
-                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), line, column,
+                ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), startLineIndex, startColumn)
+                : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), startLineIndex, startColumn,
                     selectedCount, wordSelected);
         }
 
@@ -360,7 +361,11 @@
                 FlowDirection = FlowDirection.RightToLeft,
                 Name = "SaveWithEncoding"
             };
-            
+
+            // Add auto guess Encoding option in ReopenWithEncoding menu
+            reopenWithEncoding.Items?.Add(CreateAutoGuessEncodingItem());
+            reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
+
             // Add suggested ANSI encodings
             var appAndSystemANSIEncodings = new HashSet<Encoding>();
 
@@ -427,6 +432,62 @@
 
             EncodingSelectionFlyout.Items?.Add(reopenWithEncoding);
             EncodingSelectionFlyout.Items?.Add(saveWithEncoding);
+        }
+
+        private MenuFlyoutItem CreateAutoGuessEncodingItem()
+        {
+            var autoGuessEncodingItem = new MenuFlyoutItem()
+            {
+                Text = _resourceLoader.GetString("TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding"),
+                FlowDirection = FlowDirection.LeftToRight,
+            };
+            autoGuessEncodingItem.Click += async (sender, args) =>
+            {
+                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+                var file = selectedTextEditor?.EditingFile;
+                if (file == null || selectedTextEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+                Encoding encoding = null;
+
+                try
+                {
+                    using (var inputStream = await file.OpenReadAsync())
+                    using (var stream = inputStream.AsStreamForRead())
+                    {
+                        if (FileSystemUtility.TryGuessEncoding(stream, out var detectedEncoding))
+                        {
+                            encoding = detectedEncoding;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    encoding = null;
+                }
+
+                if (encoding == null)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_EncodingCannotBeDetermined"), 2500);
+                    return;
+                }
+
+                try
+                {
+                    await selectedTextEditor.ReloadFromEditingFile(encoding);
+                    NotificationCenter.Instance.PostNotification(
+                        _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                }
+                catch (Exception ex)
+                {
+                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                    await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
+                    if (!fileOpenErrorDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
+                }
+            };
+            return autoGuessEncodingItem;
         }
 
         private void AddEncodingItem(Encoding encoding, MenuFlyoutSubItem reopenWithEncoding, MenuFlyoutSubItem saveWithEncoding)

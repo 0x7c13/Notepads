@@ -12,13 +12,12 @@
     public sealed partial class GoToControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
 
+        public event EventHandler<KeyRoutedEventArgs> OnGoToControlKeyDown;
+
         private int _currentLine;
-
         private int _maxLine;
-
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public void SetLineData(int currentLine, int maxLine)
@@ -73,8 +72,7 @@
 
         public void Focus()
         {
-            GoToBar.Text = "";
-            GoToBar.SelectedText = _currentLine.ToString();
+            GoToBar.Text = _currentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -103,9 +101,15 @@
             }
         }
 
+        private void GoToBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            GoToBar.SelectionStart = 0;
+            GoToBar.SelectionLength = GoToBar.Text.Length;
+        }
+
         private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            OnDismissKeyDown?.Invoke(sender, e);
+            GoToBar.SelectionStart = GoToBar.Text.Length;
         }
 
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)
@@ -126,6 +130,14 @@
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
                 args.Cancel = true;
+            }
+        }
+
+        private void GoToRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                OnGoToControlKeyDown?.Invoke(sender, e);
             }
         }
     }
