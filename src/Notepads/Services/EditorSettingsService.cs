@@ -9,23 +9,14 @@
     public static class EditorSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
-
         public static event EventHandler<int> OnFontSizeChanged;
-
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
-
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
-
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
-
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
-
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
-
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
-
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
-
         public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
 
         private static string _editorFontFamily;

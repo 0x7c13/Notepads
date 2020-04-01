@@ -13,6 +13,7 @@
         internal static string UseWindowsThemeBool = "UseWindowsThemeBool";
         internal static string AppBackgroundTintOpacityDouble = "AppBackgroundTintOpacityDouble";
         internal static string AppAccentColorHexStr = "AppAccentColorHexStr";
+        internal static string CustomAccentColorHexStr = "CustomAccentColorHexStr";
         internal static string UseWindowsAccentColorBool = "UseWindowsAccentColorBool";
 
         // Editor related

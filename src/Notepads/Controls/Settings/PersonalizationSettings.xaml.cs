@@ -91,6 +91,7 @@
         private void AccentColorPicker_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
             ThemeSettingsService.AppAccentColor = args.NewColor;
+            if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -102,7 +103,7 @@
         {
             AccentColorPicker.IsEnabled = !AccentColorToggle.IsOn;
             ThemeSettingsService.UseWindowsAccentColor = AccentColorToggle.IsOn;
-            AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
+            AccentColorPicker.Color = AccentColorToggle.IsOn ? ThemeSettingsService.AppAccentColor : ThemeSettingsService.CustomAccentColor;
         }
     }
 }

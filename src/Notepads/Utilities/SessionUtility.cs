@@ -8,6 +8,7 @@
     using Notepads.Core;
     using Notepads.Services;
     using Windows.Storage;
+    using Microsoft.AppCenter.Analytics;
 
     internal static class SessionUtility
     {
@@ -56,6 +57,11 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"[SessionUtility] Failed to get session meta data: {ex.Message}");
+                Analytics.TrackEvent("FailedToGetSerializedSessionMetaData", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() },
+                    { "Message", ex.Message }
+                });
             }
 
             return null;
