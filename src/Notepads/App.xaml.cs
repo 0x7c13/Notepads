@@ -7,7 +7,6 @@
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
-    using Microsoft.Gaming.XboxGameBar;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Controls.Settings;
     using Notepads.Services;
@@ -22,8 +21,6 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
-    using System.Runtime.InteropServices;
-    using Windows.UI.Core;
 
     sealed partial class App : Application
     {
