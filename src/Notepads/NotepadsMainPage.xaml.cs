@@ -71,7 +71,7 @@
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineEndingIndicator(editor.GetLineEnding()); };
+                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
                     _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) =>
                     {
@@ -389,8 +389,6 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number9, (args) => NotepadsCore.SwitchTo(8)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => NotepadsCore.GetSelectedTextEditor()?.TypeText(
-                    EditorSettingsService.EditorDefaultTabIndents == -1 ? "\t" : new string(' ', EditorSettingsService.EditorDefaultTabIndents)))
             });
         }
 
@@ -452,8 +450,7 @@
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[SessionManager] Failed to LoadLastSessionAsync: {ex}");
-                    Analytics.TrackEvent("FailedToLoadLastSession", 
-                        new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> {{"Exception", ex.ToString()}});
                 }
             }
 
@@ -506,8 +503,18 @@
 
             Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
-            Application.Current.EnteredBackground -= App_EnteredBackground;
-            Application.Current.EnteredBackground += App_EnteredBackground;
+
+            if (!App.IsGameBarWidget)
+            {
+                // An issue with the Game Bar extension model and Windows platform prevents the Notepads process from exiting cleanly
+                // when more than one CoreWindow has been created, and NotepadsMainPage is the last to close. The common case for this
+                // is to open Notepads in Game Bar, then open its settings, then close the settings and finally close Notepads.
+                // This puts the process in a bad state where it will no longer open in Game Bar and the Notepads process is orphaned. 
+                // To work around this do not use the EnteredBackground event when running as a widget.
+                // Microsoft is tracking this issue as VSO#25735260
+                Application.Current.EnteredBackground -= App_EnteredBackground;
+                Application.Current.EnteredBackground += App_EnteredBackground;
+            }
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)

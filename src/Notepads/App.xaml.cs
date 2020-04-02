@@ -96,13 +96,10 @@
 
             LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
-            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
-                {
-                    "Message", e.Exception.Message
-                },
-                {
-                    "Exception", e.Exception.ToString()
-                }
+            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() 
+            {
+                { "Message", e.Exception.Message },
+                { "Exception", e.Exception.ToString() }
             });
 
             // suppress and handle it manually.
@@ -148,7 +145,7 @@
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
-                {"ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
+                { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
                 { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
@@ -209,12 +206,8 @@
             LoggingService.LogException(exception);
             Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
-                {
-                    "Page", e.SourcePageType.FullName
-                },
-                {
-                    "Exception", e.Exception.Message
-                }
+                { "Page", e.SourcePageType.FullName },
+                { "Exception", e.Exception.Message }
             });
             throw exception;
         }

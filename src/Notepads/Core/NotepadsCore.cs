@@ -26,35 +26,23 @@
 
     public class NotepadsCore : INotepadsCore
     {
-        public SetsView Sets;
-
         public event EventHandler<ITextEditor> TextEditorLoaded;
-
         public event EventHandler<ITextEditor> TextEditorUnloaded;
-
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorSaved;
-
         public event EventHandler<ITextEditor> TextEditorClosing;
-
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
-
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
-
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
-
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-
         public event EventHandler<ITextEditor> TextEditorModeChanged;
-
         public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
-
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
+
+        public SetsView Sets;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
