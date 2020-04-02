@@ -59,8 +59,18 @@
                     return;
                 case XboxGameBarWidget widget:
                     _widget = widget;
+                    Window.Current.Closed += WidgetSettingsWindowClosed;
                     break;
             }
+        }
+
+        private void WidgetSettingsWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        {
+            // Unregister events
+            Window.Current.Closed -= WidgetSettingsWindowClosed;
+
+            // Cleanup game bar objects
+            _widget = null;
         }
 
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

@@ -138,9 +138,6 @@
                 });
             };
 
-            // Ensure we cleanup the widget object when our window is closed
-            Window.Current.Closed += WidgetMainWindowClosed;
-
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
@@ -431,6 +428,7 @@
                     //_widget.VisibleChanged += Widget_VisibleChanged;
                     //_widget.WindowStateChanged += Widget_WindowStateChanged;
                     //_widget.GameBarDisplayModeChanged += Widget_GameBarDisplayModeChanged;
+                    Window.Current.Closed += WidgetMainWindowClosed;
                     break;
             }
         }
@@ -532,8 +530,8 @@
         private void WidgetMainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
             // Unregister events
-            _widget.SettingsClicked -= Widget_SettingsClicked;
             Window.Current.Closed -= WidgetMainWindowClosed;
+            _widget.SettingsClicked -= Widget_SettingsClicked;
 
             // Cleanup game bar objects
             _widget = null;
