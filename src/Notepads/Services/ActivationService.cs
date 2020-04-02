@@ -49,9 +49,6 @@
             {
                 if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
                 {
-                    App.IsFirstInstance = true;
-                    App.IsGameBarWidget = true;
-
                     var xboxGameBarWidget = new XboxGameBarWidget(
                         xboxGameBarWidgetActivatedEventArgs,
                         Window.Current.CoreWindow,

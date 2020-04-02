@@ -19,7 +19,9 @@
             {
                 // No activated event args, so this is not an activation via the multi-instance ID
                 // Just create a new instance and let App OnActivated resolve the launch
-                OpenNewInstance(false);
+                App.IsGameBarWidget = true;
+                App.IsFirstInstance = true;
+                Windows.UI.Xaml.Application.Start(p => new App());
             }
 
             var instances = AppInstance.GetInstances();
@@ -44,7 +46,7 @@
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    OpenNewInstance(true);
+                    OpenNewInstance();
                 }
                 else
                 {
@@ -61,7 +63,7 @@
                     if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                     {
                         handled = true;
-                        OpenNewInstance(true);
+                        OpenNewInstance();
                     }
                 }
 
@@ -76,24 +78,12 @@
             }
         }
 
-        private static void OpenNewInstance(bool registerInstance)
+        private static void OpenNewInstance()
         {
-            if (registerInstance)
-            {
-                AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
-                App.IsFirstInstance = IsFirstInstance;
-            }
-            else
-            {
-                App.IsFirstInstance = true;
-            }
-
+            AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
+            App.IsFirstInstance = IsFirstInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
-
-            if (registerInstance)
-            {
-                IsFirstInstance = false;
-            }
+            IsFirstInstance = false;
         }
 
         private static void RedirectOrCreateNewInstance()
@@ -111,7 +101,7 @@
                 // open new instance if user prefers to
                 if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
                 {
-                    OpenNewInstance(true);
+                    OpenNewInstance();
                 }
                 else
                 {

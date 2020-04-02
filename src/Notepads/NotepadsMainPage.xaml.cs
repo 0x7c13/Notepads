@@ -29,7 +29,7 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Gaming.XboxGameBar;
     using Windows.Graphics.Printing;
-    
+
     public sealed partial class NotepadsMainPage : Page, INotificationDelegate
     {
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
@@ -132,11 +132,14 @@
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
             EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ()=>
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
                 });
             };
+
+            // Ensure we cleanup the widget object when our window is closed
+            Window.Current.Closed += WidgetMainWindowClosed;
 
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
@@ -519,6 +522,17 @@
             deferral.Complete();
         }
 
+        private void WidgetMainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        {
+            // Unregister events
+            _widget.SettingsClicked -= Widget_SettingsClicked;
+            Window.Current.Closed -= WidgetMainWindowClosed;
+
+            // Cleanup game bar objects
+            _widget = null;
+            _widgetControl = null;
+        }
+
         public void ExecuteProtocol(Uri uri)
         {
         }
@@ -538,7 +552,7 @@
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
-                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
+                Task.Run(() => ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString()));
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
