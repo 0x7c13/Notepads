@@ -5,6 +5,7 @@
     using Windows.UI;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Brushes;
 
     public static class BrushUtility
     {

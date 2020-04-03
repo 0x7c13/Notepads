@@ -1,4 +1,4 @@
-﻿namespace Notepads.Utilities
+﻿namespace Notepads.Brushes
 {
     using System;
     using System.Collections.Generic;
