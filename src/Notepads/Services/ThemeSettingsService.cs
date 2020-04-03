@@ -22,6 +22,7 @@
 
         private static ThemeListener _themeListener;
         private static UISettings _uiSettings;
+        private static Brush _currentAppBackgroundBrush;
 
         private static bool _useWindowsTheme;
 
@@ -270,9 +271,25 @@
                 var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    return AppBackgroundPanelTintOpacity > 0.99f
-                        ? new SolidColorBrush(darkModeBaseColor)
-                        : BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                    if (AppBackgroundPanelTintOpacity > 0.99f)
+                    {
+                        if (_currentAppBackgroundBrush is SolidColorBrush solidColorBrush)
+                        {
+                            solidColorBrush.Color = darkModeBaseColor;
+                            return _currentAppBackgroundBrush;
+                        }
+                        return _currentAppBackgroundBrush = new SolidColorBrush(darkModeBaseColor);
+                    }
+                    else
+                    {
+                        if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
+                        {
+                            hostBackdropAcrylicBrush.LuminosityColor = darkModeBaseColor;
+                            hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
+                            return _currentAppBackgroundBrush;
+                        }
+                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                    }
                 }
                 else
                 {
@@ -284,9 +301,25 @@
                 var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
                 {
-                    return AppBackgroundPanelTintOpacity > 0.99f
-                        ? new SolidColorBrush(lightModeBaseColor)
-                        : BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                    if (AppBackgroundPanelTintOpacity > 0.99f)
+                    {
+                        if (_currentAppBackgroundBrush is SolidColorBrush solidColorBrush)
+                        {
+                            solidColorBrush.Color = lightModeBaseColor;
+                            return _currentAppBackgroundBrush;
+                        }
+                        return _currentAppBackgroundBrush = new SolidColorBrush(lightModeBaseColor);
+                    }
+                    else
+                    {
+                        if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
+                        {
+                            hostBackdropAcrylicBrush.LuminosityColor = lightModeBaseColor;
+                            hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
+                            return _currentAppBackgroundBrush;
+                        }
+                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                    }
                 }
                 else
                 {
