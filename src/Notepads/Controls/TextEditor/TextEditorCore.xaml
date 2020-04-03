@@ -9,7 +9,7 @@
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="TextEditorForeground"
-                             Color="#E6E6E6"/>
+                             Color="#F0F0F0"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
             <SolidColorBrush x:Key="TextEditorForeground"
