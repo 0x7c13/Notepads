@@ -273,12 +273,7 @@
                 {
                     if (AppBackgroundPanelTintOpacity > 0.99f)
                     {
-                        if (_currentAppBackgroundBrush is SolidColorBrush solidColorBrush)
-                        {
-                            solidColorBrush.Color = darkModeBaseColor;
-                            return _currentAppBackgroundBrush;
-                        }
-                        return _currentAppBackgroundBrush = new SolidColorBrush(darkModeBaseColor);
+                        return new SolidColorBrush(darkModeBaseColor);
                     }
                     else
                     {
@@ -303,12 +298,7 @@
                 {
                     if (AppBackgroundPanelTintOpacity > 0.99f)
                     {
-                        if (_currentAppBackgroundBrush is SolidColorBrush solidColorBrush)
-                        {
-                            solidColorBrush.Color = lightModeBaseColor;
-                            return _currentAppBackgroundBrush;
-                        }
-                        return _currentAppBackgroundBrush = new SolidColorBrush(lightModeBaseColor);
+                        return new SolidColorBrush(lightModeBaseColor);
                     }
                     else
                     {

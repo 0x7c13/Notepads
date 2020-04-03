@@ -17,7 +17,7 @@
                     FallbackColor = color,
                     LuminosityColor = color,
                     TintOpacity = tintOpacity,
-                    TextureUri = ToAppxUri("/Assets/noise_low.png"),
+                    TextureUri = ToAppxUri("/Assets/noise_high.png"),
                 };
             }
             catch (Exception ex)
