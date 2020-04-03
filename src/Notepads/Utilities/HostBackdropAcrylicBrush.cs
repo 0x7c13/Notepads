@@ -17,7 +17,7 @@
             "TintOpacity",
             typeof(float),
             typeof(HostBackdropAcrylicBrush),
-            new PropertyMetadata(0.0, OnTintOpacityChanged)
+            new PropertyMetadata(0.0f, OnTintOpacityChanged)
         );
 
         public float TintOpacity
@@ -51,7 +51,7 @@
             "LuminosityColor",
             typeof(Color),
             typeof(HostBackdropAcrylicBrush),
-            new PropertyMetadata(0.0, OnLuminosityColorChanged)
+            new PropertyMetadata(Colors.Transparent, OnLuminosityColorChanged)
         );
 
         public Color LuminosityColor
