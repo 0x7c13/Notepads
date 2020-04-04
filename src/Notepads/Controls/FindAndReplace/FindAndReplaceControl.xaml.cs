@@ -48,6 +48,11 @@
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
+        public SearchContext GetSearchContext()
+        {
+            return new SearchContext(FindBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked);
+        }
+
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus(string.Empty, FindAndReplaceMode.FindOnly);
@@ -153,14 +158,14 @@
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, SearchDirection.Next));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), null, FindAndReplaceMode.FindOnly, SearchDirection.Next));
         }
 
         private void SearchBackwardButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly, SearchDirection.Previous));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), null, FindAndReplaceMode.FindOnly, SearchDirection.Previous));
         }
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
@@ -235,12 +240,12 @@
 
         private void ReplaceButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.Replace));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.Replace));
         }
 
         private void ReplaceAllButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.ReplaceAll));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.ReplaceAll));
         }
 
         private void OptionButtonFlyoutItem_OnClick(object sender, RoutedEventArgs e)

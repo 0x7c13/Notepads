@@ -1,8 +1,12 @@
 ﻿namespace Notepads.Controls.FindAndReplace
 {
-    public class SearchCache
+    public class SearchContext
     {
-        public SearchCache(string searchText, bool matchCase = false, bool matchWholeWord = false, bool useRegex = false)
+        public SearchContext(
+            string searchText,
+            bool matchCase = false,
+            bool matchWholeWord = false,
+            bool useRegex = false)
         {
             SearchText = searchText;
             MatchCase = matchCase;

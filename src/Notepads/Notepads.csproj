@@ -130,8 +130,8 @@
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\FindAndReplace\QueryBoxCore.cs" />
-    <Compile Include="Controls\FindAndReplace\SearchCache.cs" />
+    <Compile Include="Controls\FindAndReplace\FindAndReplaceTextBox.cs" />
+    <Compile Include="Controls\FindAndReplace\SearchContext.cs" />
     <Compile Include="Controls\GoTo\GoToControl.xaml.cs">
       <DependentUpon>GoToControl.xaml</DependentUpon>
     </Compile>
@@ -167,6 +167,12 @@
     </Compile>
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.DateTime.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.DuplicateText.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.FindAndReplace.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.FontSize.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.Indentation.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.WebSearch.cs" />
     <Compile Include="Controls\TextEditor\TextEditorStateMetaData.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\ISessionManager.cs" />
@@ -220,6 +226,7 @@
     <Compile Include="Utilities\SearchEngineUtility.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
+    <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>

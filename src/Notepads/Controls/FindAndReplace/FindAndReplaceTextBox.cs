@@ -6,7 +6,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public class QueryBoxCore : TextBox
+    public class FindAndReplaceTextBox : TextBox
     {
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -16,7 +16,10 @@
 
             // By default, TextBox toggles case when user hit "Shift + F3"
             // This should be restricted
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down) && shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F3)
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                shift.HasFlag(CoreVirtualKeyStates.Down)
+                && e.Key == VirtualKey.F3)
             {
                 return;
             }
