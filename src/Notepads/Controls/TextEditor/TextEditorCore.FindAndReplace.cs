@@ -153,7 +153,7 @@
                 return true;
             }
         }
-        
+
         public bool TryFindNextAndReplace(SearchContext searchContext, string replaceText, out bool regexError)
         {
             if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))

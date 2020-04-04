@@ -166,7 +166,7 @@
             var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedTextEditor == null) return;
 
-            switch ((string) item.Tag)
+            switch ((string)item.Tag)
             {
                 case "PreviewTextChanges":
                     NotepadsCore.GetSelectedTextEditor().OpenSideBySideDiffViewer();
@@ -216,10 +216,10 @@
             var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedTextEditor == null) return;
 
-            switch ((string)button.Name)
+            switch (button.Name)
             {
                 case "ZoomIn":
-                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0 
+                    selectedTextEditor.SetFontZoomFactor(FontZoomSlider.Value % 10 > 0
                         ? Math.Ceiling(FontZoomSlider.Value / 10) * 10
                         : FontZoomSlider.Value + 10);
                     break;
@@ -252,7 +252,7 @@
         {
             if (!(sender is MenuFlyoutItem item)) return;
 
-            var lineEnding = LineEndingUtility.GetLineEndingByName((string) item.Tag);
+            var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
             var textEditor = NotepadsCore.GetSelectedTextEditor();
             if (textEditor != null)
             {
@@ -387,7 +387,7 @@
                 reopenWithEncoding.Items?.Add(new MenuFlyoutSeparator());
                 saveWithEncoding.Items?.Add(new MenuFlyoutSeparator());
             }
-            
+
             // Add Unicode encodings
             var unicodeEncodings = new List<Encoding>
             {
@@ -512,7 +512,7 @@
                     {
                         await selectedTextEditor.ReloadFromEditingFile(encoding);
                         NotificationCenter.Instance.PostNotification(
-                            _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);   
+                            _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                     }
                     catch (Exception ex)
                     {

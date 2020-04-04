@@ -238,9 +238,9 @@
             }
 
             // Ctrl+L/R shortcut to change text flow direction
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
-                !shift.HasFlag(CoreVirtualKeyStates.Down) && 
-                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                 (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
             {
                 switch (e.Key)
@@ -256,13 +256,13 @@
 
             // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
             // This should be converted to '\r' to match same behaviour as single "Enter"
-            if ((!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
-                 shift.HasFlag(CoreVirtualKeyStates.Down) && 
-                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+            if ((!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                 shift.HasFlag(CoreVirtualKeyStates.Down) &&
+                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                  e.Key == VirtualKey.Enter) ||
-                (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
-                 !shift.HasFlag(CoreVirtualKeyStates.Down) && 
-                 !alt.HasFlag(CoreVirtualKeyStates.Down) && 
+                (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                 !shift.HasFlag(CoreVirtualKeyStates.Down) &&
+                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
                  e.Key == VirtualKey.Enter))
             {
                 // Automatically indent on new lines based on current line's leading spaces/tabs
@@ -275,9 +275,9 @@
 
             // By default, RichEditBox toggles case when user hit "Shift + F3"
             // This should be restricted
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && 
-                !alt.HasFlag(CoreVirtualKeyStates.Down) && 
-                shift.HasFlag(CoreVirtualKeyStates.Down) && 
+            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
+                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
+                shift.HasFlag(CoreVirtualKeyStates.Down) &&
                 e.Key == VirtualKey.F3)
             {
                 return;
@@ -434,7 +434,7 @@
             if (_loaded)
             {
                 horizontalOffset = _contentScrollViewerHorizontalOffset;
-                verticalOffset = _contentScrollViewerVerticalOffset;   
+                verticalOffset = _contentScrollViewerVerticalOffset;
             }
             else // If current TextEditorCore never loaded, we should use last known position
             {
@@ -470,10 +470,10 @@
         /// Returns 1-based indexing values
         /// </summary>
         public void GetLineColumnSelection(
-            out int startLineIndex, 
-            out int endLineIndex, 
-            out int startColumnIndex, 
-            out int endColumnIndex, 
+            out int startLineIndex,
+            out int endLineIndex,
+            out int startColumnIndex,
+            out int endColumnIndex,
             out int selectedCount,
             out int lineCount,
             LineEnding lineEnding = LineEnding.Crlf)

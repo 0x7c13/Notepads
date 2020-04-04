@@ -51,7 +51,7 @@
             StopRenderingAndClearCache();
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-            
+
             DismissButton.Click -= DismissButton_OnClick;
             LayoutRoot.KeyDown -= OnKeyDown;
             KeyDown -= OnKeyDown;

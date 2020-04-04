@@ -23,12 +23,12 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
-                    new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+                Analytics.TrackEvent("FailedToCreateAcrylicBrush",
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 return new SolidColorBrush(color);
             }
-        }    
-        
+        }
+
         private static Uri ToAppxUri(string path)
         {
             string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";

@@ -48,7 +48,7 @@ namespace SetsView
         {
             if (_setRightSideSeparator != null)
             {
-                _setRightSideSeparator.Visibility = Visibility.Visible;   
+                _setRightSideSeparator.Visibility = Visibility.Visible;
             }
         }
 

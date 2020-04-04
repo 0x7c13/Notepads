@@ -402,9 +402,9 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F3, (args) => 
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) => 
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
@@ -852,7 +852,7 @@
             }
 
             GoToPlaceholder?.Dismiss();
-            
+
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
@@ -985,7 +985,7 @@
             var found = false;
 
             if (int.TryParse(e.SearchLine, out var line))
-            { 
+            {
                 found = TextEditorCore.GoTo(line);
             }
 

@@ -64,7 +64,7 @@
             {
                 LoggingService.LogError($"[TextEditorCore] Failed to duplicate text: {ex}");
                 Analytics.TrackEvent("TextEditorCore_FailedToDuplicateText",
-                    new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
         }
     }

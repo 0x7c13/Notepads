@@ -254,7 +254,7 @@
             var openRecentSubItem = new MenuFlyoutSubItem
             {
                 Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
-                Icon = new FontIcon {Glyph = "\xE81C"},
+                Icon = new FontIcon { Glyph = "\xE81C" },
                 Name = "MenuOpenRecentlyUsedFileButton",
             };
 
@@ -390,7 +390,7 @@
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[SessionManager] Failed to LoadLastSessionAsync: {ex}");
-                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 }
             }
 
@@ -533,7 +533,7 @@
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
-                    
+
                     foreach (var textEditor in NotepadsCore.GetAllTextEditors())
                     {
                         if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false))
@@ -655,7 +655,7 @@
                 {
                     if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
                     {
-                        NotepadsCore.DeleteTextEditor(textEditor);   
+                        NotepadsCore.DeleteTextEditor(textEditor);
                     }
                 });
 

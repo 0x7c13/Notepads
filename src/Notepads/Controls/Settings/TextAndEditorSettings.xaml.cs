@@ -356,7 +356,7 @@
         private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
         {
             if (CustomSearchUrlRadioButton.IsChecked != null &&
-                (IsValidUrl(CustomSearchUrl.Text) && (bool) CustomSearchUrlRadioButton.IsChecked))
+                (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
             {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
             }

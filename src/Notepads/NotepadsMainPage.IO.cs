@@ -68,7 +68,7 @@
                 var success = MRUService.TryAdd(file); // Remember recently used files
                 if (success && rebuildOpenRecentItems)
                 {
-                    await BuildOpenRecentButtonSubItems();   
+                    await BuildOpenRecentButtonSubItems();
                 }
                 return true;
             }
@@ -100,7 +100,7 @@
             }
             if (successCount > 0)
             {
-                await BuildOpenRecentButtonSubItems();   
+                await BuildOpenRecentButtonSubItems();
             }
             return successCount;
         }
@@ -157,13 +157,13 @@
         public async Task Print(ITextEditor textEditor)
         {
             if (textEditor == null) return;
-            await PrintAll(new[] {textEditor});
+            await PrintAll(new[] { textEditor });
         }
 
         public async Task PrintAll(ITextEditor[] textEditors)
         {
             if (textEditors == null || textEditors.Length == 0) return;
-            
+
             // Initialize print content
             PrintArgs.PreparePrintContent(textEditors);
 

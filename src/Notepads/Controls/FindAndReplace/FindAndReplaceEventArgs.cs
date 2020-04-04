@@ -18,9 +18,9 @@
     public class FindAndReplaceEventArgs : EventArgs
     {
         public FindAndReplaceEventArgs(
-            SearchContext searchContext, 
+            SearchContext searchContext,
             string replaceText,
-            FindAndReplaceMode findAndReplaceMode, 
+            FindAndReplaceMode findAndReplaceMode,
             SearchDirection searchDirection = SearchDirection.Next)
         {
             SearchContext = searchContext;

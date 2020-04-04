@@ -40,7 +40,7 @@
             {
                 if (brush.CompositionBrush is CompositionEffectBrush)
                 {
-                    TintOpacityToArithmeticCompositeEffectSourceAmount((float) e.NewValue,
+                    TintOpacityToArithmeticCompositeEffectSourceAmount((float)e.NewValue,
                         _acrylicTintOpacityMinThreshold,
                         out var source1Amount,
                         out var source2Amount);
@@ -81,7 +81,7 @@
                         animation.InsertKeyFrame(0.0f, currentColor);
                         animation.InsertKeyFrame(1.0f, (Color)e.NewValue, easing);
                         animation.Duration = TimeSpan.FromMilliseconds(167);
-                        brush.CompositionBrush.StartAnimation("LuminosityColor.Color", animation);   
+                        brush.CompositionBrush.StartAnimation("LuminosityColor.Color", animation);
                     }
                     else
                     {
@@ -90,7 +90,7 @@
                 }
                 else if (brush.CompositionBrush is CompositionColorBrush colorBrush)
                 {
-                    colorBrush.Color = (Color) e.NewValue;
+                    colorBrush.Color = (Color)e.NewValue;
                 }
             }
         }
@@ -116,8 +116,8 @@
                 {
                     // Fallback to color brush if unable to create HostBackdropAcrylicBrush
                     CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
-                    Analytics.TrackEvent("FailedToBuildAcrylicBrush", 
-                        new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+                    Analytics.TrackEvent("FailedToBuildAcrylicBrush",
+                        new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 }
             }
             _semaphoreSlim.Release();
@@ -190,8 +190,8 @@
             CompositionEffectFactory effectFactory = Window.Current.Compositor.CreateEffectFactory(finalEffect,
                 new[]
                 {
-                    "LuminosityColor.Color", 
-                    "LuminosityBlender.Source1Amount", 
+                    "LuminosityColor.Color",
+                    "LuminosityBlender.Source1Amount",
                     "LuminosityBlender.Source2Amount"
                 });
 
@@ -245,7 +245,7 @@
                     double pixels = display.RawPixelsPerViewPixel;
                     if (pixels > 1)
                     {
-                        brush.Scale = new Vector2((float)(1/pixels));
+                        brush.Scale = new Vector2((float)(1 / pixels));
                         brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
                     }
                     return brush;
@@ -253,8 +253,8 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToLoadImageBrush", 
-                    new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+                Analytics.TrackEvent("FailedToLoadImageBrush",
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 return null;
             }
         }

@@ -18,8 +18,8 @@ namespace SetsView
         /// </summary>
         public object Header
         {
-            get { return (object)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace SetsView
         /// </summary>
         public IconElement Icon
         {
-            get { return (IconElement)GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
+            get => (IconElement)GetValue(IconProperty);
+            set => SetValue(IconProperty, value);
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace SetsView
         /// </summary>
         public DataTemplate HeaderTemplate
         {
-            get { return (DataTemplate)GetValue(HeaderTemplateProperty); }
-            set { SetValue(HeaderTemplateProperty, value); }
+            get => (DataTemplate)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
         }
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace SetsView
         /// </summary>
         public bool IsClosable
         {
-            get { return (bool)GetValue(IsClosableProperty); }
-            set { SetValue(IsClosableProperty, value); }
+            get => (bool)GetValue(IsClosableProperty);
+            set => SetValue(IsClosableProperty, value);
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace SetsView
         /// </summary>
         public Brush SelectionIndicatorForeground
         {
-            get { return (Brush)GetValue(SelectionIndicatorForegroundProperty); }
-            set { SetValue(SelectionIndicatorForegroundProperty, value); }
+            get => (Brush)GetValue(SelectionIndicatorForegroundProperty);
+            set => SetValue(SelectionIndicatorForegroundProperty, value);
         }
 
         /// <summary>

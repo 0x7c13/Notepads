@@ -6,7 +6,7 @@
     using Notepads.Controls.Dialog;
     using Windows.UI.Xaml.Controls;
     using Microsoft.AppCenter.Analytics;
-    
+
     public static class DialogManager
     {
         public static NotepadsDialog ActiveDialog;
@@ -31,7 +31,7 @@
                 {
                     pendingDialogTitle = pendingTitle;
                 }
-                Analytics.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>() 
+                Analytics.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
