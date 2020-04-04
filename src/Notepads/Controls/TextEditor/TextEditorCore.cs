@@ -312,18 +312,26 @@
                 }
             }
 
-            // Enabling scrolling during text selection
             if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down))
+                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
+                e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
             {
-                if (Document.Selection.Type == SelectionType.Normal ||
-                    Document.Selection.Type == SelectionType.InlineShape ||
-                    Document.Selection.Type == SelectionType.Shape)
+                var point = e.GetCurrentPoint(this).Properties;
+                if (point.IsLeftButtonPressed) // Enabling scrolling during text selection
                 {
-                    var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset,
-                            _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
+                    if (Document.Selection.Type == SelectionType.Normal ||
+                        Document.Selection.Type == SelectionType.InlineShape ||
+                        Document.Selection.Type == SelectionType.Shape)
+                    {
+                        var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                        _contentScrollViewer.ChangeView(null, _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
+                    }
+                }
+                else if (point.IsMiddleButtonPressed) // Mouse middle button + Wheel -> horizontal scrolling
+                {
+                    var mouseWheelDelta = point.MouseWheelDelta;
+                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
                 }
             }
 
@@ -333,21 +341,7 @@
                 shift.HasFlag(CoreVirtualKeyStates.Down))
             {
                 var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
-                    _contentScrollViewer.VerticalOffset, null, true);
-            }
-
-            // Mouse middle button + Wheel -> horizontal scrolling
-            var pointer = e.Pointer;
-            if (pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                var point = e.GetCurrentPoint(this).Properties;
-                if (point.IsMiddleButtonPressed)
-                {
-                    var mouseWheelDelta = point.MouseWheelDelta;
-                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta),
-                        _contentScrollViewer.VerticalOffset, null, true);
-                }
+                _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
             }
         }
 
