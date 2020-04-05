@@ -199,6 +199,7 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
+            item.PrepareForClosing();
             Sets.Items?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)

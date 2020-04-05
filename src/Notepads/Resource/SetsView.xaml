@@ -384,7 +384,7 @@
                        Opacity="0">
             </Rectangle>
 
-            <Border x:Name="SetRightSideSeparator"
+            <Border x:Name="RightSideSeparator"
                     HorizontalAlignment="Right"
                     Visibility="Collapsed"
                     Width="1"

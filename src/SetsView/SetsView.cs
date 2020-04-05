@@ -379,6 +379,7 @@ namespace SetsView
 
             if (!args.Cancel)
             {
+                e.Set.PrepareForClosing();
                 if (ItemsSource != null)
                 {
                     _removeItemsSourceMethod?.Invoke(ItemsSource, new object[] { item });
