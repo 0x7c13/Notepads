@@ -34,19 +34,15 @@
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
 
         private string _appLaunchCmdDir;
-
         private string _appLaunchCmdArgs;
-
         private Uri _appLaunchUri;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private bool _loaded = false;
-
         private bool _appShouldExitAfterLastEditorClosed = false;
 
         private const int TitleBarReservedAreaDefaultWidth = 180;
-
         private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore _notepadsCore;
