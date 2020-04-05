@@ -267,71 +267,114 @@
 
             if (sender == FileModificationStateIndicator)
             {
-                if (selectedEditor.FileModificationState == FileModificationState.Modified)
-                {
-                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-                {
-                    NotificationCenter.Instance.PostNotification(
-                        _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
-                }
+                FileModificationStateIndicatorClicked(selectedEditor);
             }
             else if (sender == PathIndicator && !string.IsNullOrEmpty(PathIndicator.Text))
             {
-                NotepadsCore.FocusOnSelectedTextEditor();
-
-                if (selectedEditor.FileModificationState == FileModificationState.Untouched)
-                {
-                    if (selectedEditor.EditingFile != null)
-                    {
-                        FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                    }
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.Modified)
-                {
-                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
-                }
-                else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-                {
-                    NotificationCenter.Instance.PostNotification(
-                        _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
-                }
+                PathIndicatorClicked(selectedEditor);
             }
             else if (sender == ModificationIndicator)
             {
-                PreviewTextChangesFlyoutItem.IsEnabled =
-                    !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) &&
-                    selectedEditor.Mode != TextEditorMode.DiffPreview;
-                ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
+                ModificationIndicatorClicked(selectedEditor);
             }
             else if (sender == LineColumnIndicator)
             {
-                selectedEditor.ShowGoToControl();
+                LineColumnIndicatorClicked(selectedEditor);
             }
             else if (sender == FontZoomIndicator)
             {
-                FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
-                FontZoomIndicatorFlyout.Opened += (sflyout, eflyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
+                FontZoomIndicatorClicked(selectedEditor);
             }
             else if (sender == LineEndingIndicator)
             {
-                LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
+                LineEndingIndicatorClicked(selectedEditor);
             }
             else if (sender == EncodingIndicator)
             {
-                var reopenWithEncoding = EncodingSelectionFlyout?.Items?.FirstOrDefault(i => i.Name.Equals("ReopenWithEncoding"));
-                if (reopenWithEncoding != null)
-                {
-                    reopenWithEncoding.IsEnabled = selectedEditor.EditingFile != null && selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
-                }
-                EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
+                EncodingIndicatorClicked(selectedEditor);
             }
             else if (sender == ShadowWindowIndicator)
             {
-                NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
+                ShadowWindowIndicatorClicked();
             }
+        }
+
+        private void FileModificationStateIndicatorClicked(ITextEditor selectedEditor)
+        {
+            if (selectedEditor.FileModificationState == FileModificationState.Modified)
+            {
+                FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+            }
+            else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                NotificationCenter.Instance.PostNotification(
+                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+            }
+        }
+
+        private void PathIndicatorClicked(ITextEditor selectedEditor)
+        {
+            NotepadsCore.FocusOnSelectedTextEditor();
+
+            if (selectedEditor.FileModificationState == FileModificationState.Untouched)
+            {
+                if (selectedEditor.EditingFile != null)
+                {
+                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                }
+            }
+            else if (selectedEditor.FileModificationState == FileModificationState.Modified)
+            {
+                FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+            }
+            else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                NotificationCenter.Instance.PostNotification(
+                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+            }
+        }
+
+        private void ModificationIndicatorClicked(ITextEditor selectedEditor)
+        {
+            PreviewTextChangesFlyoutItem.IsEnabled =
+                !selectedEditor.NoChangesSinceLastSaved(compareTextOnly: true) &&
+                selectedEditor.Mode != TextEditorMode.DiffPreview;
+            ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
+        }
+
+        private static void LineColumnIndicatorClicked(ITextEditor selectedEditor)
+        {
+            selectedEditor.ShowGoToControl();
+        }
+
+        private void FontZoomIndicatorClicked(ITextEditor _)
+        {
+            FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
+            FontZoomIndicatorFlyout.Opened += (sflyout, eflyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
+        }
+
+        private void LineEndingIndicatorClicked(ITextEditor _)
+        {
+            LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
+        }
+
+        private void EncodingIndicatorClicked(ITextEditor selectedEditor)
+        {
+            var reopenWithEncoding = EncodingSelectionFlyout?.Items?.FirstOrDefault(i => i.Name.Equals("ReopenWithEncoding"));
+            if (reopenWithEncoding != null)
+            {
+                reopenWithEncoding.IsEnabled = selectedEditor.EditingFile != null &&
+                                               selectedEditor.FileModificationState !=
+                                               FileModificationState.RenamedMovedOrDeleted;
+            }
+
+            EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
+        }
+
+        private void ShadowWindowIndicatorClicked()
+        {
+            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"),
+                4000);
         }
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
