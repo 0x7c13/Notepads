@@ -20,12 +20,12 @@
 
         private readonly List<KeyboardShortcut<bool>> _nativeKeyboardShortcuts = new List<KeyboardShortcut<bool>>
         {
-                new KeyboardShortcut<bool>(VirtualKey.F3, null),
-                new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
-                new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
-                new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
-                new KeyboardShortcut<bool>(false, true, false, VirtualKey.W, null),
-                new KeyboardShortcut<bool>(true, true, false, VirtualKey.Enter, null)
+            new KeyboardShortcut<bool>(VirtualKey.F3, null),
+            new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
+            new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
+            new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
+            new KeyboardShortcut<bool>(false, true, false, VirtualKey.W, null),
+            new KeyboardShortcut<bool>(true, true, false, VirtualKey.Enter, null)
         };
 
         //When enter key is pressed focus is returned to control

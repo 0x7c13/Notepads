@@ -17,11 +17,13 @@
             Commands = commands;
         }
 
-        public void Handle(KeyRoutedEventArgs args)
+        public KeyboardCommandHandlerResult Handle(KeyRoutedEventArgs args)
         {
             var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var shouldHandle = false;
+            var shouldSwallow = false;
 
             foreach (var keyboardCommand in Commands)
             {
@@ -32,15 +34,27 @@
                         keyboardCommand.Execute(args);
                     }
 
-                    args.Handled = true;
+                    if (keyboardCommand.ShouldSwallowAfterExecution())
+                    {
+                        shouldSwallow = true;
+                    }
+
+                    if (keyboardCommand.ShouldHandleAfterExecution())
+                    {
+                        shouldHandle = true;
+                    }
+
                     _lastCommand = keyboardCommand;
+                    break;
                 }
             }
 
-            if (!args.Handled)
+            if (!shouldHandle)
             {
                 _lastCommand = null;
             }
+
+            return new KeyboardCommandHandlerResult(shouldHandle, shouldSwallow);
         }
     }
 }

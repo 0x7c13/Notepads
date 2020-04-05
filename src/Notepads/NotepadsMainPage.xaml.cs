@@ -681,7 +681,11 @@
             if (!(sender is ITextEditor textEditor)) return;
             // ignoring key events coming from inactive text editors
             if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private async void OnStorageItemsDropped(object sender, IReadOnlyList<IStorageItem> storageItems)

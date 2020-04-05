@@ -125,6 +125,7 @@
   <ItemGroup>
     <Compile Include="Commands\IKeyboardCommand.cs" />
     <Compile Include="Commands\IKeyboardCommandHandler.cs" />
+    <Compile Include="Commands\KeyboardCommandHandlerResult.cs" />
     <Compile Include="Commands\KeyboardShortcut.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">

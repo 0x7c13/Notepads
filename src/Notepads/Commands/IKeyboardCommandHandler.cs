@@ -2,6 +2,6 @@
 {
     public interface IKeyboardCommandHandler<in T>
     {
-        void Handle(T args);
+        KeyboardCommandHandlerResult Handle(T args);
     }
 }

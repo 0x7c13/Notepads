@@ -86,9 +86,13 @@
             });
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs args)
+        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(args);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         public void Focus()

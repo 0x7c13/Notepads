@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Commands
 {
     using System;
+    using System.Collections.Generic;
     using Windows.System;
 
     public class KeyboardShortcut<T> : IKeyboardCommand<T>
@@ -10,23 +11,53 @@
         private readonly bool _ctrl;
         private readonly bool _alt;
         private readonly bool _shift;
-        private readonly VirtualKey _key;
+        private readonly IList<VirtualKey> _keys;
         private readonly Action<T> _action;
+        private readonly bool _shouldHandle;
+        private readonly bool _shouldSwallow;
         private readonly int _requiredHits;
         private int _hits;
         private DateTime _lastHitTimestamp;
 
-        public KeyboardShortcut(VirtualKey key, Action<T> action) : this(false, false, false, key, action)
+        public KeyboardShortcut(
+            VirtualKey key,
+            Action<T> action,
+            bool shouldHandle = true,
+            bool shouldSwallow = true) :
+            this(false, false, false, key, action, shouldHandle, shouldSwallow)
         {
         }
 
-        public KeyboardShortcut(bool ctrlDown, bool altDown, bool shiftDown, VirtualKey key, Action<T> action, int requiredHits = 1)
+        public KeyboardShortcut(
+            bool ctrlDown,
+            bool altDown,
+            bool shiftDown,
+            VirtualKey key,
+            Action<T> action,
+            bool shouldHandle = true,
+            bool shouldSwallow = true,
+            int requiredHits = 1) :
+            this(ctrlDown, altDown, shiftDown, new List<VirtualKey>() { key }, action, shouldHandle, shouldSwallow)
+        {
+        }
+
+        public KeyboardShortcut(
+            bool ctrlDown,
+            bool altDown,
+            bool shiftDown,
+            IList<VirtualKey> keys,
+            Action<T> action,
+            bool shouldHandle,
+            bool shouldSwallow,
+            int requiredHits = 1)
         {
             _ctrl = ctrlDown;
             _alt = altDown;
             _shift = shiftDown;
-            _key = key;
+            _keys = keys;
             _action = action;
+            _shouldHandle = shouldHandle;
+            _shouldSwallow = shouldSwallow;
             _requiredHits = requiredHits;
             _hits = 0;
             _lastHitTimestamp = DateTime.MinValue;
@@ -34,7 +65,7 @@
 
         public bool Hit(bool ctrlDown, bool altDown, bool shiftDown, VirtualKey key)
         {
-            return _ctrl == ctrlDown && _alt == altDown && _shift == shiftDown && _key == key;
+            return _ctrl == ctrlDown && _alt == altDown && _shift == shiftDown && _keys.Contains(key);
         }
 
         public bool ShouldExecute(IKeyboardCommand<T> lastCommand)
@@ -59,6 +90,16 @@
             }
 
             return false;
+        }
+
+        public bool ShouldHandleAfterExecution()
+        {
+            return _shouldHandle;
+        }
+
+        public bool ShouldSwallowAfterExecution()
+        {
+            return _shouldSwallow;
         }
 
         public void Execute(T args)

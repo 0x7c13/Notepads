@@ -789,7 +789,11 @@
 
         private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private void TextEditorCore_OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -815,7 +819,11 @@
                 }
             }
 
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)

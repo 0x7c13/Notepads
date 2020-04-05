@@ -166,6 +166,15 @@
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
+            var swallowedKeys = new List<VirtualKey>()
+            {
+                VirtualKey.B, VirtualKey.I, VirtualKey.U, VirtualKey.Tab,
+                VirtualKey.Number1, VirtualKey.Number2, VirtualKey.Number3,
+                VirtualKey.Number4, VirtualKey.Number5, VirtualKey.Number6,
+                VirtualKey.Number7, VirtualKey.Number8, VirtualKey.Number9,
+                VirtualKey.F3,
+            };
+
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
@@ -182,7 +191,20 @@
                 new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
                 new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10)
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
+                // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
+                // This should be converted to '\r' to match same behaviour as single "Enter"
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
+                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
+                // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
+                // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, (VirtualKey)187, null, shouldHandle: false, shouldSwallow: true), // (VirtualKey)187: =
+                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.L, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, null, shouldHandle: false, shouldSwallow: true),
             });
         }
 
@@ -216,75 +238,14 @@
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+            var result = _keyboardCommandHandler.Handle(e);
 
-            // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
-            // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            if (result.ShouldHandle)
             {
-                if (e.Key == VirtualKey.B || e.Key == VirtualKey.I || e.Key == VirtualKey.U ||
-                    e.Key == VirtualKey.Number1 || e.Key == VirtualKey.Number2 ||
-                    e.Key == VirtualKey.Number3 || e.Key == VirtualKey.Number4 ||
-                    e.Key == VirtualKey.Number5 || e.Key == VirtualKey.Number6 ||
-                    e.Key == VirtualKey.Number7 || e.Key == VirtualKey.Number8 ||
-                    e.Key == VirtualKey.Number9 || e.Key == VirtualKey.Tab ||
-                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == (VirtualKey)187) ||
-                    (shift.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.L))
-                {
-                    return;
-                }
+                e.Handled = true;
             }
 
-            // Ctrl+L/R shortcut to change text flow direction
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                (e.Key == VirtualKey.R || e.Key == VirtualKey.L))
-            {
-                switch (e.Key)
-                {
-                    case VirtualKey.L:
-                        SwitchTextFlowDirection(FlowDirection.LeftToRight);
-                        return;
-                    case VirtualKey.R:
-                        SwitchTextFlowDirection(FlowDirection.RightToLeft);
-                        return;
-                }
-            }
-
-            // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
-            // This should be converted to '\r' to match same behaviour as single "Enter"
-            if ((!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                 shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                 e.Key == VirtualKey.Enter) ||
-                (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                 !shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                 !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                 e.Key == VirtualKey.Enter))
-            {
-                // Automatically indent on new lines based on current line's leading spaces/tabs
-                GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
-                var leadingSpacesAndTabs = StringUtility.GetLeadingSpacesAndTabs(_contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1));
-                Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
-                Document.Selection.StartPosition = Document.Selection.EndPosition;
-                return;
-            }
-
-            // By default, RichEditBox toggles case when user hit "Shift + F3"
-            // This should be restricted
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                e.Key == VirtualKey.F3)
-            {
-                return;
-            }
-
-            _keyboardCommandHandler.Handle(e);
-            if (!e.Handled)
+            if (!result.ShouldSwallow)
             {
                 base.OnKeyDown(e);
             }
@@ -634,6 +595,15 @@
             var format = Document.GetDefaultParagraphFormat();
             format.SetLineSpacing(LineSpacingRule.Exactly, (float)fontSize);
             Document.SetDefaultParagraphFormat(format);
+        }
+
+        private void EnterWithAutoIndentation()
+        {
+            // Automatically indent on new lines based on current line's leading spaces/tabs
+            GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
+            var leadingSpacesAndTabs = StringUtility.GetLeadingSpacesAndTabs(_contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1));
+            Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
         private string TrimRichEditBoxText(string text)
