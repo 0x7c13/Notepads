@@ -144,10 +144,8 @@
                     encodingName = "UTF-32 LE";
                     break;
                 default:
-                    {
-                        encodingName = GetEncodingNameFallback(encoding);
-                        break;
-                    }
+                    encodingName = GetEncodingNameFallback(encoding);
+                    break;
             }
 
             return encodingName;
@@ -210,10 +208,8 @@
             switch (name)
             {
                 case "ANSI":
-                    {
-                        if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding)) return systemDefaultANSIEncoding;
-                        else return TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding) ? currentCultureANSIEncoding : new UTF8Encoding(false);
-                    }
+                    if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding)) return systemDefaultANSIEncoding;
+                    else return TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding) ? currentCultureANSIEncoding : new UTF8Encoding(false);
                 case "UTF-7":
                     return new UTF7Encoding();
                 case "UTF-8":
@@ -237,9 +233,7 @@
                 case "UTF-32 LE":
                     return new UTF32Encoding(false, false);
                 default:
-                    {
-                        return GetEncodingByNameFallback(name);
-                    }
+                    return GetEncodingByNameFallback(name);
             }
         }
 

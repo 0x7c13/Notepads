@@ -384,7 +384,7 @@
                     FileModificationState.Untouched;
             }
 
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 FileModificationState = newState.Value;
             });
