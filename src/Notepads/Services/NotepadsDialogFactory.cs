@@ -72,10 +72,10 @@
 
         private static Style GetButtonStyle(Color backgroundColor)
         {
-            var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
-            redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
-            redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
-            return redButtonStyle;
+            var buttonStyle = new Windows.UI.Xaml.Style(typeof(Button));
+            buttonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
+            buttonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
+            return buttonStyle;
         }
 
         public static NotepadsDialog GetRevertAllChangesConfirmationDialog(string fileNameOrPath, Action confirmedAction)
