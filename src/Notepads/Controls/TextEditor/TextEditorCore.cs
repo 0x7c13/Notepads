@@ -216,9 +216,9 @@
             {
                 new MouseCommand<PointerRoutedEventArgs>(true, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
                 new MouseCommand<PointerRoutedEventArgs>(false, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
-                new MouseCommand<PointerRoutedEventArgs>(false, false, false, false, true, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, true, false, ChangeHorizontalScrollingBasedOnMouseInput),
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, false, false, false, ChangeZoomingBasedOnMouseInput),
-                new MouseCommand<PointerRoutedEventArgs>(false, false, false, true, false, false, OnPointerLeftButtonDown),
+                new MouseCommand<PointerRoutedEventArgs>(true, false, false, OnPointerLeftButtonDown),
             }, this);
         }
 

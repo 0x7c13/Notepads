@@ -423,7 +423,7 @@
                         HideGoToControl();
                         TextEditorCore.Focus(FocusState.Programmatic);
                     }
-                }),
+                }, shouldHandle: false, shouldSwallow: true),
             });
         }
 
