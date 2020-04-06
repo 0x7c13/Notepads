@@ -30,7 +30,8 @@
         private string[] _contentLinesCache;
         private string _content = string.Empty;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<PointerRoutedEventArgs> _mouseCommandHandler;
 
         private int _textSelectionStartPosition = 0;
         private int _textSelectionEndPosition = 0;
@@ -117,6 +118,7 @@
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+            _mouseCommandHandler = GetMouseCommandHandler();
 
             Window.Current.CoreWindow.Activated += OnCoreWindowActivated;
         }
@@ -177,35 +179,47 @@
 
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(0.1)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(0.1)), // (VirtualKey)187: =
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(0.1)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(0.1)), // (VirtualKey)189: -
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, (args) => Undo()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, (args) => Redo()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, (args) => TextWrapping = TextWrapping == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, (args) => IncreaseFontSize(0.1)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, (args) => IncreaseFontSize(0.1)), // (VirtualKey)187: =
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, (args) => DecreaseFontSize(0.1)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, (args) => DecreaseFontSize(0.1)), // (VirtualKey)189: -
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
                 // By default, RichEditBox insert '\v' when user hit "Shift + Enter"
                 // This should be converted to '\r' to match same behaviour as single "Enter"
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Enter, (args) => EnterWithAutoIndentation()),
                 // Disable RichEditBox default shortcuts (Bold, Underline, Italic)
                 // https://docs.microsoft.com/en-us/windows/desktop/controls/about-rich-edit-controls
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, (VirtualKey)187, null, shouldHandle: false, shouldSwallow: true), // (VirtualKey)187: =
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.L, null, shouldHandle: false, shouldSwallow: true),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, swallowedKeys, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, (VirtualKey)187, null, shouldHandle: false, shouldSwallow: true), // (VirtualKey)187: =
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.L, null, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, null, shouldHandle: false, shouldSwallow: true),
             });
+        }
+
+        private ICommandHandler<PointerRoutedEventArgs> GetMouseCommandHandler()
+        {
+            return new MouseCommandHandler(new List<IMouseCommand<PointerRoutedEventArgs>>()
+            {
+                new MouseCommand<PointerRoutedEventArgs>(true, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, false, false, false, true, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(true, false, false, false, false, false, ChangeZoomingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, false, false, true, false, false, OnPointerLeftButtonDown),
+            }, this);
         }
 
         private void OnCoreWindowActivated(CoreWindow sender, WindowActivatedEventArgs args)
@@ -253,56 +267,10 @@
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
-            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-            // Ctrl + Wheel -> zooming
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down))
+            var result = _mouseCommandHandler.Handle(e);
+            if (result.ShouldHandle)
             {
-                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                if (mouseWheelDelta > 0)
-                {
-                    IncreaseFontSize(0.1);
-                }
-                else if (mouseWheelDelta < 0)
-                {
-                    DecreaseFontSize(0.1);
-                }
-            }
-
-            if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                !shift.HasFlag(CoreVirtualKeyStates.Down) &&
-                e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                var point = e.GetCurrentPoint(this).Properties;
-                if (point.IsLeftButtonPressed) // Enabling scrolling during text selection
-                {
-                    if (Document.Selection.Type == SelectionType.Normal ||
-                        Document.Selection.Type == SelectionType.InlineShape ||
-                        Document.Selection.Type == SelectionType.Shape)
-                    {
-                        var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                        _contentScrollViewer.ChangeView(null, _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
-                    }
-                }
-                else if (point.IsMiddleButtonPressed) // Mouse middle button + Wheel -> horizontal scrolling
-                {
-                    var mouseWheelDelta = point.MouseWheelDelta;
-                    _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
-                }
-            }
-
-            // Ctrl + Shift + Wheel -> horizontal scrolling
-            if (ctrl.HasFlag(CoreVirtualKeyStates.Down) &&
-                !alt.HasFlag(CoreVirtualKeyStates.Down) &&
-                shift.HasFlag(CoreVirtualKeyStates.Down))
-            {
-                var mouseWheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
+                e.Handled = true;
             }
         }
 
@@ -604,6 +572,38 @@
             var leadingSpacesAndTabs = StringUtility.GetLeadingSpacesAndTabs(_contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1));
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
+        private void OnPointerLeftButtonDown(PointerRoutedEventArgs args)
+        {
+            if (Document.Selection.Type == SelectionType.Normal ||
+                Document.Selection.Type == SelectionType.InlineShape ||
+                Document.Selection.Type == SelectionType.Shape)
+            {
+                var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
+                _contentScrollViewer.ChangeView(null, _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
+            }
+        }
+
+        // Ctrl + Wheel -> zooming
+        private void ChangeZoomingBasedOnMouseInput(PointerRoutedEventArgs args)
+        {
+            var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
+            if (mouseWheelDelta > 0)
+            {
+                IncreaseFontSize(0.1);
+            }
+            else if (mouseWheelDelta < 0)
+            {
+                DecreaseFontSize(0.1);
+            }
+        }
+
+        // Ctrl + Shift + Wheel -> horizontal scrolling
+        private void ChangeHorizontalScrollingBasedOnMouseInput(PointerRoutedEventArgs args)
+        {
+            var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
+            _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
         }
 
         private string TrimRichEditBoxText(string text)

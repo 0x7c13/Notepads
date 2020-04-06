@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Windows.System;
 
-    public class KeyboardShortcut<T> : IKeyboardCommand<T>
+    public class KeyboardCommand<T> : IKeyboardCommand<T>
     {
         private static readonly TimeSpan ConsecutiveHitsInterval = TimeSpan.FromMilliseconds(500);
 
@@ -19,7 +19,7 @@
         private int _hits;
         private DateTime _lastHitTimestamp;
 
-        public KeyboardShortcut(
+        public KeyboardCommand(
             VirtualKey key,
             Action<T> action,
             bool shouldHandle = true,
@@ -28,7 +28,7 @@
         {
         }
 
-        public KeyboardShortcut(
+        public KeyboardCommand(
             bool ctrlDown,
             bool altDown,
             bool shiftDown,
@@ -41,7 +41,7 @@
         {
         }
 
-        public KeyboardShortcut(
+        public KeyboardCommand(
             bool ctrlDown,
             bool altDown,
             bool shiftDown,

@@ -1,12 +1,13 @@
 ﻿namespace Notepads.Commands
 {
-    public class KeyboardCommandHandlerResult
+    public class CommandHandlerResult
     {
-        public KeyboardCommandHandlerResult(bool shouldHandle, bool shouldSwallow)
+        public CommandHandlerResult(bool shouldHandle, bool shouldSwallow)
         {
             ShouldHandle = shouldHandle;
             ShouldSwallow = shouldSwallow;
         }
+
         /// <summary>
         /// "ShouldHandle == true" means the keyboard command event should be handled after execution
         /// Meaning you should set KeyRoutedEventArgs.Handled to true after execution

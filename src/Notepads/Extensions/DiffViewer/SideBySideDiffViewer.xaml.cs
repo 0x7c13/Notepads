@@ -20,7 +20,7 @@
 
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -75,11 +75,11 @@
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),

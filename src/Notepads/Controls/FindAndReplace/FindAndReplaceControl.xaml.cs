@@ -18,14 +18,14 @@
         public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
         public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
 
-        private readonly List<KeyboardShortcut<bool>> _nativeKeyboardShortcuts = new List<KeyboardShortcut<bool>>
+        private readonly List<KeyboardCommand<bool>> _nativeKeyboardCommands = new List<KeyboardCommand<bool>>
         {
-            new KeyboardShortcut<bool>(VirtualKey.F3, null),
-            new KeyboardShortcut<bool>(false, false, true, VirtualKey.F3, null),
-            new KeyboardShortcut<bool>(false, true, false, VirtualKey.E, null),
-            new KeyboardShortcut<bool>(false, true, false, VirtualKey.R, null),
-            new KeyboardShortcut<bool>(false, true, false, VirtualKey.W, null),
-            new KeyboardShortcut<bool>(true, true, false, VirtualKey.Enter, null)
+            new KeyboardCommand<bool>(VirtualKey.F3, null),
+            new KeyboardCommand<bool>(false, false, true, VirtualKey.F3, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.E, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.R, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.W, null),
+            new KeyboardCommand<bool>(true, true, false, VirtualKey.Enter, null)
         };
 
         //When enter key is pressed focus is returned to control
@@ -269,18 +269,18 @@
             var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            var isNativeKeyboardShortcut = false;
+            var isNativeKeyboardCommand = false;
 
-            foreach (var keyboardShortcut in _nativeKeyboardShortcuts)
+            foreach (var KeyboardCommand in _nativeKeyboardCommands)
             {
-                if (keyboardShortcut.Hit(ctrlDown, altDown, shiftDown, e.Key))
+                if (KeyboardCommand.Hit(ctrlDown, altDown, shiftDown, e.Key))
                 {
-                    isNativeKeyboardShortcut = true;
+                    isNativeKeyboardCommand = true;
                     break;
                 }
             }
 
-            if (!isNativeKeyboardShortcut && !e.Handled)
+            if (!isNativeKeyboardCommand && !e.Handled)
             {
                 OnFindReplaceControlKeyDown?.Invoke(sender, e);
             }
