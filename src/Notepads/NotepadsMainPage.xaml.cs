@@ -652,10 +652,7 @@
 
         private void UpdateApplicationTitle(ITextEditor activeTextEditor)
         {
-            if (!App.IsGameBarWidget)
-            {
-                ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;   
-            }
+            ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
         }
 
         #endregion
