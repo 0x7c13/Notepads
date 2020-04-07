@@ -571,6 +571,11 @@
             }
         }
 
+        private void UpdateApplicationTitle(ITextEditor activeTextEditor)
+        {
+            ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
+        }
+
         #endregion
 
         #region InAppNotification
@@ -593,6 +598,7 @@
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
                 SetupStatusBar(textEditor);
+                UpdateApplicationTitle(textEditor);
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
