@@ -5,6 +5,7 @@
     using Windows.UI;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Brushes;
 
     public static class BrushUtility
     {
@@ -17,17 +18,17 @@
                     FallbackColor = color,
                     LuminosityColor = color,
                     TintOpacity = tintOpacity,
-                    TextureUri = ToAppxUri("/Assets/noise_low.png"),
+                    TextureUri = ToAppxUri("/Assets/noise_high.png"),
                 };
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
-                    new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+                Analytics.TrackEvent("FailedToCreateAcrylicBrush",
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 return new SolidColorBrush(color);
             }
-        }    
-        
+        }
+
         private static Uri ToAppxUri(string path)
         {
             string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";

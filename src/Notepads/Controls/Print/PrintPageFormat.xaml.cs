@@ -45,7 +45,7 @@
                 FooterTextBlock.FontSize = textEditorFontSize;
             }
 
-            var run = new Run {Text = textEditorText};
+            var run = new Run { Text = textEditorText };
             TextEditorContent.Inlines.Add(run);
         }
     }

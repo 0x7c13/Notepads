@@ -119,7 +119,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
     * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
     * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
-    * [tr-TR][Turkish]: [Mert Demir](https://github.com/validatedev)
+    * [tr-TR][Turkish]: [Mert Can Demir](https://github.com/validatedev)
     * [ja-JP][Japanese]: [Mamoru Satoh](https://github.com/pnp0a03)
     * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
     * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)

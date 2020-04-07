@@ -20,7 +20,7 @@
 
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -51,7 +51,7 @@
             StopRenderingAndClearCache();
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-            
+
             DismissButton.Click -= DismissButton_OnClick;
             LayoutRoot.KeyDown -= OnKeyDown;
             KeyDown -= OnKeyDown;
@@ -78,20 +78,24 @@
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
             });
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs args)
+        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(args);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         public void Focus()

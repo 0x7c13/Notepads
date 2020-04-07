@@ -93,7 +93,7 @@
 
             LoggingService.LogError($"OnUnobservedException: {e.Exception}");
 
-            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() 
+            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>()
             {
                 { "Message", e.Exception.Message },
                 { "Exception", e.Exception.ToString() }

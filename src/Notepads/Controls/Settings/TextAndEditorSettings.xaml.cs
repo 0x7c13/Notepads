@@ -75,7 +75,21 @@
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
-            // Line Ending
+            InitializeLineEndingSettings();
+
+            InitializeEncodingSettings();
+
+            InitializeDecodingSettings();
+
+            InitializeTabIndentationSettings();
+
+            InitializeSearchEngineSettings();
+
+            Loaded += TextAndEditorSettings_Loaded;
+        }
+
+        private void InitializeLineEndingSettings()
+        {
             switch (EditorSettingsService.EditorDefaultLineEnding)
             {
                 case LineEnding.Crlf:
@@ -88,8 +102,10 @@
                     LfRadioButton.IsChecked = true;
                     break;
             }
+        }
 
-            // Encoding
+        private void InitializeEncodingSettings()
+        {
             if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
             {
                 if (Equals(EditorSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
@@ -109,8 +125,10 @@
             {
                 Utf16BeBomEncodingRadioButton.IsChecked = true;
             }
+        }
 
-            // Decoding
+        private void InitializeDecodingSettings()
+        {
             if (EditorSettingsService.EditorDefaultDecoding == null)
             {
                 AutoGuessDecodingRadioButton.IsChecked = true;
@@ -123,8 +141,10 @@
             {
                 AnsiDecodingRadioButton.IsChecked = true;
             }
+        }
 
-            // Tab indentation
+        private void InitializeTabIndentationSettings()
+        {
             if (EditorSettingsService.EditorDefaultTabIndents == -1)
             {
                 TabDefaultRadioButton.IsChecked = true;
@@ -141,8 +161,10 @@
             {
                 TabEightSpacesRadioButton.IsChecked = true;
             }
+        }
 
-            // Search Engine
+        private void InitializeSearchEngineSettings()
+        {
             switch (EditorSettingsService.EditorDefaultSearchEngine)
             {
                 case SearchEngine.Bing:
@@ -162,12 +184,11 @@
                     CustomSearchUrl.IsEnabled = true;
                     break;
             }
+
             if (!string.IsNullOrEmpty(EditorSettingsService.EditorCustomMadeSearchUrl))
             {
                 CustomSearchUrl.Text = EditorSettingsService.EditorCustomMadeSearchUrl;
             }
-
-            Loaded += TextAndEditorSettings_Loaded;
         }
 
         private void TextAndEditorSettings_Loaded(object sender, RoutedEventArgs e)
@@ -356,7 +377,7 @@
         private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
         {
             if (CustomSearchUrlRadioButton.IsChecked != null &&
-                (IsValidUrl(CustomSearchUrl.Text) && (bool) CustomSearchUrlRadioButton.IsChecked))
+                (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
             {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
             }

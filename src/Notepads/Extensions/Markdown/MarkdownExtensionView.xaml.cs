@@ -96,7 +96,7 @@
             {
                 using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
                 {
-                    writer.WriteBytes((byte[])feed.ToArray());
+                    writer.WriteBytes(feed.ToArray());
                     writer.StoreAsync().GetResults();
                 }
 

@@ -200,6 +200,7 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
+            item.PrepareForClosing();
             Sets.Items?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
@@ -211,7 +212,7 @@
 
             textEditor.Loaded -= TextEditor_Loaded;
             textEditor.Unloaded -= TextEditor_Unloaded;
-            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.KeyDown -= TextEditorKeyDown;
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
             textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;

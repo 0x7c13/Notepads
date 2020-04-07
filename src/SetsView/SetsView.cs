@@ -101,7 +101,10 @@ namespace SetsView
         public event EventHandler<SetSelectedEventArgs> SetDoubleTapped;
 
         /// <inheritdoc/>
-        protected override DependencyObject GetContainerForItemOverride() => new SetsViewItem();
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new SetsViewItem();
+        }
 
         /// <inheritdoc/>
         protected override bool IsItemItsOwnContainerOverride(object item)
@@ -376,6 +379,7 @@ namespace SetsView
 
             if (!args.Cancel)
             {
+                e.Set.PrepareForClosing();
                 if (ItemsSource != null)
                 {
                     _removeItemsSourceMethod?.Invoke(ItemsSource, new object[] { item });

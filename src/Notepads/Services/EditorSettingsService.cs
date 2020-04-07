@@ -414,7 +414,7 @@
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
             {
-                if(Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
+                if (Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
                     _editorDefaultSearchEngine = (SearchEngine)searchEngine;
                 else
                     _editorDefaultSearchEngine = SearchEngine.Bing;

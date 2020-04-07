@@ -7,27 +7,35 @@ namespace SetsView
     using System;
     using Windows.Devices.Input;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Input;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
 
     /// <summary>
     /// Item Container for a <see cref="SetsView"/>.
     /// </summary>
     [TemplatePart(Name = SetCloseButtonName, Type = typeof(ButtonBase))]
     [TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
+    [TemplatePart(Name = SetSelectionIndicatorName, Type = typeof(Rectangle))]
     public partial class SetsViewItem : ListViewItem
     {
         private const string SetCloseButtonName = "CloseButton";
 
-        private const string SetRightSideSeparatorName = "SetRightSideSeparator";
+        private const string SetRightSideSeparatorName = "RightSideSeparator";
+
+        private const string SetSelectionIndicatorName = "SelectionIndicator";
 
         private ButtonBase _setCloseButton;
 
         private Border _setRightSideSeparator;
+
+        private Rectangle _setSelectionIndicator;
 
         private bool _isMiddleClick;
 
@@ -48,7 +56,7 @@ namespace SetsView
         {
             if (_setRightSideSeparator != null)
             {
-                _setRightSideSeparator.Visibility = Visibility.Visible;   
+                _setRightSideSeparator.Visibility = Visibility.Visible;
             }
         }
 
@@ -78,6 +86,7 @@ namespace SetsView
             }
 
             _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
+            _setSelectionIndicator = GetTemplateChild(SetSelectionIndicatorName) as Rectangle;
         }
 
         /// <inheritdoc/>
@@ -126,6 +135,11 @@ namespace SetsView
             }
 
             _isMiddleClick = false;
+        }
+
+        public void PrepareForClosing()
+        {
+            _setSelectionIndicator.Fill = new SolidColorBrush(Colors.Transparent);
         }
 
         public void Close()
