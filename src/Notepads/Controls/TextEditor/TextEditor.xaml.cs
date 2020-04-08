@@ -264,9 +264,10 @@
             if (Mode == TextEditorMode.DiffPreview)
             {
                 SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
-                Task.Factory.StartNew(
-                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => SideBySideDiffViewer.Focus()));
+                Task.Factory.StartNew(async () =>
+                {
+                    await ThreadUtility.CallOnMainViewUIThreadAsync(() => { SideBySideDiffViewer.Focus(); });
+                });
             }
         }
 
@@ -1052,7 +1053,7 @@
 
         private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 if (enabled)
                 {
@@ -1068,7 +1069,7 @@
 
         private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1076,7 +1077,7 @@
 
         private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
 				if (EditorSettingsService.IsLineHighlighterEnabled)
 	            {
@@ -1089,7 +1090,7 @@
 
         private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1097,7 +1098,7 @@
 
         private async void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1105,7 +1106,7 @@
 
         private async void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });

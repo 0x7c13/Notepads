@@ -6,9 +6,7 @@
     using Notepads.Brushes;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using Windows.ApplicationModel.Core;
     using Windows.UI;
-    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -153,15 +151,15 @@
             }
         }
 
-        private static void UiSettings_ColorValuesChanged(UISettings sender, object args)
+        private static async void UiSettings_ColorValuesChanged(UISettings sender, object args)
         {
-            _ = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-              {
-                  if (UseWindowsAccentColor)
-                  {
-                      AppAccentColor = sender.GetColorValue(UIColorType.Accent);
-                  }
-              });
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                if (UseWindowsAccentColor)
+                {
+                    AppAccentColor = sender.GetColorValue(UIColorType.Accent);
+                }
+            });
         }
 
         private static void InitializeAppBackgroundPanelTintOpacity()
@@ -204,15 +202,15 @@
             }
         }
 
-        private static void ThemeListener_ThemeChanged(ThemeListener sender)
+        private static async void ThemeListener_ThemeChanged(ThemeListener sender)
         {
-            _ = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-              {
-                  if (UseWindowsTheme)
-                  {
-                      SetTheme(sender.CurrentTheme);
-                  }
-              });
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                if (UseWindowsTheme)
+                {
+                    SetTheme(sender.CurrentTheme);
+                }
+            });
         }
 
         public static void SetTheme(ApplicationTheme theme)
