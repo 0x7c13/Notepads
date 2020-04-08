@@ -632,6 +632,6 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
-      <rescap:Capability Name="confirmAppClose"/>
+    <rescap:Capability Name="confirmAppClose"/>
   </Capabilities>
 </Package>

@@ -13,12 +13,10 @@
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
-    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -53,7 +51,6 @@
         public event EventHandler FontZoomFactorChanged;
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
-        public event EventHandler<Color> AccentColorChanged;
 
         public Guid Id { get; set; }
 
@@ -175,7 +172,6 @@
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
             ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             base.Loaded += TextEditor_Loaded;
             base.Unloaded += TextEditor_Unloaded;
@@ -212,7 +208,6 @@
             }
 
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
             Unloaded?.Invoke(this, new RoutedEventArgs());
 
@@ -273,14 +268,6 @@
                     () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                         () => SideBySideDiffViewer.Focus()));
             }
-        }
-
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
-        {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                AccentColorChanged?.Invoke(this, color);
-            });
         }
 
         public string GetText()

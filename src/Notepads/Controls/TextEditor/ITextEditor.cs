@@ -6,7 +6,6 @@
     using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
-    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -28,7 +27,6 @@
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
-        event EventHandler<Color> AccentColorChanged;
 
         Guid Id { get; set; }
 

@@ -75,6 +75,21 @@
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
             _extensionProvider = extensionProvider;
+
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color e)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                    item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                }
+            });
         }
 
         public void OpenNewTextEditor(string fileNamePlaceholder)
@@ -122,8 +137,6 @@
                     Sets.ScrollToLastSet();
                 }
             }
-
-            textEditor.AccentColorChanged += TextEditor_AccentColorChanged;
         }
 
         public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
@@ -528,16 +541,6 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
-        }
-
-        private void TextEditor_AccentColorChanged(object sender, Color e)
-        {
-            if (Sets.Items == null) return;
-            foreach (SetsViewItem item in Sets.Items)
-            {
-                item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            }
         }
 
         #region DragAndDrop

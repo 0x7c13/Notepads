@@ -35,6 +35,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -409,18 +410,6 @@
     <Content Include="Assets\yml.targetsize-16.png" />
     <Content Include="Assets\yml.targetsize-32.png" />
     <Content Include="Assets\yml.targetsize-48.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-16.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-20.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-24.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-256.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-32.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.light.targetsize-44.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-16.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-20.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-24.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-256.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-32.png" />
-    <Content Include="GameBar\Notepads\Icons\icon.targetsize-44.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -468,6 +457,18 @@
     <Content Include="Assets\vue.targetsize-32.png" />
     <Content Include="Assets\vue.targetsize-48.png" />
     <Content Include="Assets\vue.targetsize-512.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-16.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-20.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-24.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-256.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-32.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-44.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-16.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-20.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-24.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

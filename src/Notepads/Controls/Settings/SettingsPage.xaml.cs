@@ -2,51 +2,55 @@
 {
     using Microsoft.Gaming.XboxGameBar;
     using Notepads.Services;
+    using Notepads.Utilities;
     using System;
     using System.Linq;
-    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
 
     public sealed partial class SettingsPage : Page
     {
-        private XboxGameBarWidget _widget; // maintain throughout the lifetime of the settings widget
+        private XboxGameBarWidget _widget; // maintain throughout the lifetime of the settings game bar widget
 
         public SettingsPage()
         {
             InitializeComponent();
             Loaded += SettingsPage_Loaded;
+            Unloaded += SettingsPage_Unloaded;
+        }
 
+        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
             if (App.IsGameBarWidget)
             {
                 ThemeSettingsService.OnRequestThemeUpdate += ThemeSettingsService_OnRequestThemeUpdate;
                 ThemeSettingsService.OnRequestAccentColorUpdate += ThemeSettingsService_OnRequestAccentColorUpdate;
-
                 ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
+            }
+            ((NavigationViewItem)SettingsNavigationView.MenuItems.First()).IsSelected = true;
+        }
+
+        private void SettingsPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (App.IsGameBarWidget)
+            {
+                ThemeSettingsService.OnRequestThemeUpdate -= ThemeSettingsService_OnRequestThemeUpdate;
+                ThemeSettingsService.OnRequestAccentColorUpdate -= ThemeSettingsService_OnRequestAccentColorUpdate;
             }
         }
 
         private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                ThemeSettingsService.SetRequestedAccentColor();
-            });
+            await ThreadUtility.CallOnMainViewUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
         }
 
         private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             });
-        }
-
-        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            ((NavigationViewItem)SettingsNavigationView.MenuItems.First()).IsSelected = true;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -66,9 +70,8 @@
 
         private void WidgetSettingsWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
-            // Unregister events
+            // Un-registering events
             Window.Current.Closed -= WidgetSettingsWindowClosed;
-
             // Cleanup game bar objects
             _widget = null;
         }

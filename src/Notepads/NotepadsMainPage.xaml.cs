@@ -48,7 +48,7 @@
 
         private INotepadsCore _notepadsCore;
 
-        private XboxGameBarWidget _widget;  // maintain throughout the lifetime of the notepads widget
+        private XboxGameBarWidget _widget;  // maintain throughout the lifetime of the notepads game bar widget
         private XboxGameBarWidgetControl _widgetControl;
 
         private INotepadsCore NotepadsCore
@@ -128,7 +128,7 @@
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
             EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
                 {
                     if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
                 });
@@ -137,7 +137,7 @@
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                await ThreadUtility.CallOnMainViewUIThreadAsync(async () =>
                 {
                     if (isSessionBackupAndRestoreEnabled)
                     {
@@ -180,15 +180,12 @@
 
         private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                ThemeSettingsService.SetRequestedAccentColor();
-            });
+            await ThreadUtility.CallOnMainViewUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
         }
 
         private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
             });
@@ -196,7 +193,7 @@
 
         private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 RootGrid.Background = backgroundBrush;
             });
@@ -526,7 +523,7 @@
 
         private void WidgetMainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
-            // Unregister events
+            // Un-registering events
             Window.Current.Closed -= WidgetMainWindowClosed;
             _widget.SettingsClicked -= Widget_SettingsClicked;
 

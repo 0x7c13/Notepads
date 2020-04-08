@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -67,7 +68,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
             {
                 LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
                 RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;

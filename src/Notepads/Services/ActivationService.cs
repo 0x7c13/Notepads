@@ -41,31 +41,6 @@
             }
         }
 
-        public static void GameBarActivated(Frame rootFrame, XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
-        {
-            LoggingService.LogInfo($"[XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
-
-            if (xboxGameBarWidgetActivatedEventArgs != null)
-            {
-                if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
-                {
-                    var xboxGameBarWidget = new XboxGameBarWidget(
-                        xboxGameBarWidgetActivatedEventArgs,
-                        Window.Current.CoreWindow,
-                        rootFrame);
-
-                    if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "Notepads")
-                    {
-                        rootFrame.Navigate(typeof(NotepadsMainPage), xboxGameBarWidget);
-                    }
-                    else if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "NotepadsSettings")
-                    {
-                        rootFrame.Navigate(typeof(SettingsPage), xboxGameBarWidget);
-                    }
-                }
-            }
-        }
-
         private static void ProtocolActivated(Frame rootFrame, ProtocolActivatedEventArgs protocolActivatedEventArgs)
         {
             LoggingService.LogInfo($"[ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
@@ -124,6 +99,28 @@
                 if (file != null)
                 {
                     await mainPage.OpenFile(file);
+                }
+            }
+        }
+
+        public static void GameBarActivated(Frame rootFrame, XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
+        {
+            LoggingService.LogInfo($"[XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
+
+            if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
+            {
+                var xboxGameBarWidget = new XboxGameBarWidget(
+                    xboxGameBarWidgetActivatedEventArgs,
+                    Window.Current.CoreWindow,
+                    rootFrame);
+
+                if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "Notepads")
+                {
+                    rootFrame.Navigate(typeof(NotepadsMainPage), xboxGameBarWidget);
+                }
+                else if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "NotepadsSettings")
+                {
+                    rootFrame.Navigate(typeof(SettingsPage), xboxGameBarWidget);
                 }
             }
         }

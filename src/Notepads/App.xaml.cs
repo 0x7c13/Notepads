@@ -8,14 +8,12 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Microsoft.Toolkit.Uwp.Helpers;
-    using Notepads.Controls.Settings;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
-    using Windows.System.UserProfile;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -128,6 +126,7 @@
         private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
         {
             bool rootFrameCreated = false;
+
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 rootFrame = CreateRootFrame(e);
@@ -153,7 +152,8 @@
                 { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
                 { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
                 { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance).ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
                 { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
                 { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
                 { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },

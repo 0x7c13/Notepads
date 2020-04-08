@@ -34,15 +34,15 @@
             BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
-            Loaded += PersonalizationSettings_Loaded;
-            Unloaded += PersonalizationSettings_Unloaded;
-
             if (App.IsGameBarWidget)
             {
                 // Game Bar widgets do not support transparency, disable this setting
-                BackgroundTintTitle.Visibility = Visibility.Collapsed;
-                BackgroundTintTitleControls.Visibility = Visibility.Collapsed;
+                BackgroundTintOpacityTitle.Visibility = Visibility.Collapsed;
+                BackgroundTintOpacityControls.Visibility = Visibility.Collapsed;
             }
+
+            Loaded += PersonalizationSettings_Loaded;
+            Unloaded += PersonalizationSettings_Unloaded;
         }
 
         private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)

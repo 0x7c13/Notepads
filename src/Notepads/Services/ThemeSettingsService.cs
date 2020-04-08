@@ -16,13 +16,12 @@
 
     public static class ThemeSettingsService
     {
-        public static event EventHandler<ElementTheme> OnThemeChanged;
         public static event EventHandler OnRequestThemeUpdate;
-
-        public static event EventHandler<Brush> OnBackgroundChanged;
-
-        public static event EventHandler<Color> OnAccentColorChanged;
         public static event EventHandler OnRequestAccentColorUpdate;
+
+        public static event EventHandler<ElementTheme> OnThemeChanged;
+        public static event EventHandler<Brush> OnBackgroundChanged;
+        public static event EventHandler<Color> OnAccentColorChanged;
 
         public static ElementTheme ThemeMode { get; set; }
 
@@ -214,7 +213,6 @@
                       SetTheme(sender.CurrentTheme);
                   }
               });
-
         }
 
         public static void SetTheme(ApplicationTheme theme)
@@ -249,7 +247,8 @@
             }
 
             // Set ContentDialog background dimming color
-            ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color = ThemeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
+            ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color = 
+                ThemeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
 
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);

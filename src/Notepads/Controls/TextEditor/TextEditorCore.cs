@@ -166,48 +166,6 @@
             _contentLinesCache = null;
         }
 
-        private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
-        {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
-            {
-                FontFamily = new FontFamily(fontFamily);
-                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
-            });
-        }
-
-        private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
-        {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
-            {
-                FontSize = fontSize;
-            });
-        }
-
-        private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
-        {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
-            {
-                TextWrapping = textWrapping;
-            });
-        }
-
-        private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
-        {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
-            {
-                IsSpellCheckEnabled = isSpellCheckEnabled;
-            });
-        }
-
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
-        {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
-            {
-                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            });
-        }
-
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
             var swallowedKeys = new List<VirtualKey>()
@@ -262,6 +220,48 @@
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, false, false, false, ChangeZoomingBasedOnMouseInput),
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, OnPointerLeftButtonDown),
             }, this);
+        }
+
+        private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                FontFamily = new FontFamily(fontFamily);
+                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+            });
+        }
+
+        private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                FontSize = fontSize;
+            });
+        }
+
+        private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                TextWrapping = textWrapping;
+            });
+        }
+
+        private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                IsSpellCheckEnabled = isSpellCheckEnabled;
+            });
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        {
+            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            {
+                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private void OnCoreWindowActivated(CoreWindow sender, WindowActivatedEventArgs args)
