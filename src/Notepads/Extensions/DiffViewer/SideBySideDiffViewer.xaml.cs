@@ -68,7 +68,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
                 RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;

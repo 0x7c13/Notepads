@@ -15,8 +15,8 @@
 
         public static async Task CallOnUIThreadAsync(CoreDispatcher dispatcher, DispatchedHandler handler) =>
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, handler);
-    
-        public static async Task CallOnMainViewUIThreadAsync(DispatchedHandler handler) => 
-            await CallOnUIThreadAsync(CoreApplication.MainView.CoreWindow.Dispatcher, handler);
+
+        //public static async Task CallOnMainViewUIThreadAsync(DispatchedHandler handler) => 
+        //    await CallOnUIThreadAsync(CoreApplication.MainView.CoreWindow.Dispatcher, handler);
     }
 }

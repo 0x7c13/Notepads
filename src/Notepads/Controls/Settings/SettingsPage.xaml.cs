@@ -3,8 +3,8 @@
     using Microsoft.Gaming.XboxGameBar;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System;
     using System.Linq;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
@@ -18,15 +18,20 @@
             InitializeComponent();
             Loaded += SettingsPage_Loaded;
             Unloaded += SettingsPage_Unloaded;
+
+            if (App.IsGameBarWidget)
+            {
+                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);   
+            }
         }
 
         private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             if (App.IsGameBarWidget)
             {
-                ThemeSettingsService.OnRequestThemeUpdate += ThemeSettingsService_OnRequestThemeUpdate;
-                ThemeSettingsService.OnRequestAccentColorUpdate += ThemeSettingsService_OnRequestAccentColorUpdate;
-                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
+                ThemeSettingsService.Dispatcher = Dispatcher;
+                ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+                ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
             }
             ((NavigationViewItem)SettingsNavigationView.MenuItems.First()).IsSelected = true;
         }
@@ -35,19 +40,20 @@
         {
             if (App.IsGameBarWidget)
             {
-                ThemeSettingsService.OnRequestThemeUpdate -= ThemeSettingsService_OnRequestThemeUpdate;
-                ThemeSettingsService.OnRequestAccentColorUpdate -= ThemeSettingsService_OnRequestAccentColorUpdate;
+                ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+                ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+                ThemeSettingsService.Dispatcher = null;
             }
         }
 
-        private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
         }
 
-        private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme elementTheme)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             });

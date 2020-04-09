@@ -1,6 +1,8 @@
 ﻿namespace Notepads.Controls.Settings
 {
     using Notepads.Services;
+    using Notepads.Utilities;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -45,9 +47,15 @@
             Unloaded += PersonalizationSettings_Unloaded;
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            BackgroundTintOpacitySlider.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.Foreground = new SolidColorBrush(color);
+                AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
+                AccentColorPicker.Color = color;
+                AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
+            });
         }
 
         private void PersonalizationSettings_Loaded(object sender, RoutedEventArgs e)
@@ -97,8 +105,11 @@
 
         private void AccentColorPicker_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            ThemeSettingsService.AppAccentColor = args.NewColor;
-            if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+            if (AccentColorPicker.IsEnabled)
+            {
+                ThemeSettingsService.AppAccentColor = args.NewColor;
+                if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+            }
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)

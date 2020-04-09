@@ -18,6 +18,7 @@
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -52,6 +53,8 @@
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
+        private readonly CoreDispatcher _dispatcher;
+
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
@@ -61,7 +64,8 @@
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
-            INotepadsExtensionProvider extensionProvider)
+            INotepadsExtensionProvider extensionProvider,
+            CoreDispatcher dispatcher)
         {
             Sets = sets;
             Sets.SelectionChanged += SetsView_OnSelectionChanged;
@@ -74,14 +78,15 @@
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
+            _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
             {
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)

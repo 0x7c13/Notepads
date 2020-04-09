@@ -5,6 +5,7 @@
     using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -53,9 +54,9 @@
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(SetSelectionHighlightColor);
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, SetSelectionHighlightColor);
         }
 
         public double GetHeight()

@@ -18,6 +18,7 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -57,7 +58,7 @@
             {
                 if (_notepadsCore == null)
                 {
-                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider());
+                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
                     _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
@@ -116,10 +117,11 @@
             NotificationCenter.Instance.SetNotificationDelegate(this);
 
             // Setup theme
-            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
-            ThemeSettingsService.OnRequestThemeUpdate += ThemeSettingsService_OnRequestThemeUpdate;
-            ThemeSettingsService.OnRequestAccentColorUpdate += ThemeSettingsService_OnRequestAccentColorUpdate;
+            ThemeSettingsService.Dispatcher = Dispatcher;
             ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
+            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             // Setup custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
@@ -128,7 +130,7 @@
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
             EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
                 {
                     if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
                 });
@@ -137,7 +139,7 @@
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
-                await ThreadUtility.CallOnMainViewUIThreadAsync(async () =>
+                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, async () =>
                 {
                     if (isSessionBackupAndRestoreEnabled)
                     {
@@ -185,14 +187,14 @@
             }
         }
 
-        private async void ThemeSettingsService_OnRequestAccentColorUpdate(object sender, EventArgs e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
         }
 
-        private async void ThemeSettingsService_OnRequestThemeUpdate(object sender, EventArgs e)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
             });
@@ -200,7 +202,7 @@
 
         private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 RootGrid.Background = backgroundBrush;
             });

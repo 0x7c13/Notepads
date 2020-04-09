@@ -7,6 +7,7 @@
     using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -14,12 +15,11 @@
 
     public static class ThemeSettingsService
     {
-        public static event EventHandler OnRequestThemeUpdate;
-        public static event EventHandler OnRequestAccentColorUpdate;
-
         public static event EventHandler<ElementTheme> OnThemeChanged;
         public static event EventHandler<Brush> OnBackgroundChanged;
         public static event EventHandler<Color> OnAccentColorChanged;
+
+        public static CoreDispatcher Dispatcher;
 
         public static ElementTheme ThemeMode { get; set; }
 
@@ -40,7 +40,7 @@
                     if (value)
                     {
                         ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
-                        OnRequestThemeUpdate?.Invoke(null, null);
+                        OnThemeChanged?.Invoke(null, ThemeMode);
                     }
                     ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
                 }
@@ -57,7 +57,7 @@
                 _useWindowsAccentColor = value;
                 if (value)
                 {
-                    AppAccentColor = new UISettings().GetColorValue(UIColorType.Accent);
+                    AppAccentColor = _uiSettings.GetColorValue(UIColorType.Accent);
                 }
                 ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
             }
@@ -85,9 +85,8 @@
             set
             {
                 _appAccentColor = value;
-                OnRequestAccentColorUpdate?.Invoke(null, EventArgs.Empty);
+                OnAccentColorChanged?.Invoke(null, _appAccentColor);
                 ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex(), true);
-                OnAccentColorChanged?.Invoke(null, value);
             }
         }
 
@@ -128,7 +127,7 @@
             _uiSettings = new UISettings();
             _uiSettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
 
-            _appAccentColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            _appAccentColor = _uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
 
             if (!UseWindowsAccentColor)
             {
@@ -153,7 +152,8 @@
 
         private static async void UiSettings_ColorValuesChanged(UISettings sender, object args)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            if (Dispatcher == null) return;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 if (UseWindowsAccentColor)
                 {
@@ -204,7 +204,8 @@
 
         private static async void ThemeListener_ThemeChanged(ThemeListener sender)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            if (Dispatcher == null) return;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 if (UseWindowsTheme)
                 {
@@ -221,7 +222,7 @@
         public static void SetTheme(ElementTheme theme)
         {
             ThemeMode = theme;
-            OnRequestThemeUpdate?.Invoke(null, EventArgs.Empty);
+            OnThemeChanged?.Invoke(null, theme);
             ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
         }
 
@@ -250,8 +251,6 @@
 
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
-
-            OnThemeChanged?.Invoke(null, ThemeMode);
         }
 
         public static void SetRequestedAccentColor()

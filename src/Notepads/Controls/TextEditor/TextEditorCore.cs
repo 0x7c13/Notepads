@@ -8,6 +8,7 @@
     using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -224,7 +225,7 @@
 
         private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 FontFamily = new FontFamily(fontFamily);
                 SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
@@ -233,7 +234,7 @@
 
         private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 FontSize = fontSize;
             });
@@ -241,7 +242,7 @@
 
         private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 TextWrapping = textWrapping;
             });
@@ -249,15 +250,15 @@
 
         private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 IsSpellCheckEnabled = isSpellCheckEnabled;
             });
         }
 
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnMainViewUIThreadAsync(() =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
                 SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;

@@ -598,7 +598,7 @@
                 <Window>
                   <Size>
                     <Height>500</Height>
-                    <Width>400</Width>
+                    <Width>395</Width>
                   </Size>
                   <ResizeSupported>
                     <Horizontal>false</Horizontal>
