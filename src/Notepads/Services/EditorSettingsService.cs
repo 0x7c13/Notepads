@@ -275,6 +275,10 @@
             {
                 _isSessionSnapshotEnabled = false;
             }
+            else if (App.IsGameBarWidget)
+            {
+                _isSessionSnapshotEnabled = true;
+            }
             else
             {
                 if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
