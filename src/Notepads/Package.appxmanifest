@@ -562,7 +562,7 @@
             Id="Notepads"
             DisplayName="Notepads"
             Description="Notepads widget for Game Bar"
-            PublicFolder="GameBar\Notepads">
+            PublicFolder="Assets\GameBar">
             <uap3:Properties>
               <GameBarWidget Type="Standard">
                 <HomeMenuVisible>true</HomeMenuVisible>
@@ -592,13 +592,13 @@
             Id="NotepadsSettings"
             DisplayName="Notepads Settings"
             Description="Notepads widget for Game Bar settings"
-            PublicFolder="GameBar\Notepads">
+            PublicFolder="Assets\GameBar">
             <uap3:Properties>
               <GameBarWidget Type="Settings">
                 <Window>
                   <Size>
-                    <Height>400</Height>
-                    <Width>300</Width>
+                    <Height>500</Height>
+                    <Width>400</Width>
                   </Size>
                   <ResizeSupported>
                     <Horizontal>false</Horizontal>

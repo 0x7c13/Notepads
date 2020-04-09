@@ -157,8 +157,15 @@
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
 
-            Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
-            Window.Current.SizeChanged += WindowSizeChanged;
+            if (App.IsGameBarWidget)
+            {
+                TitleBarReservedArea.Width = .0f;
+            }
+            else
+            {
+                Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
+                Window.Current.SizeChanged += WindowSizeChanged;
+            }
 
             InitControls();
 
@@ -170,7 +177,7 @@
             {
                 MenuPrintButton.Visibility = Visibility.Collapsed;
                 MenuPrintAllButton.Visibility = Visibility.Collapsed;
-                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
+                MenuPrintSeparator.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -280,10 +287,13 @@
             if (App.IsGameBarWidget)
             {
                 MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
-                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
+                MenuPrintSeparator.Visibility = Visibility.Collapsed;
+                MenuSettingsSeparator.Visibility = Visibility.Collapsed;
 
                 MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
                 MenuFullScreenButton.Visibility = Visibility.Collapsed;
+                MenuPrintButton.Visibility = Visibility.Collapsed;
+                MenuPrintAllButton.Visibility = Visibility.Collapsed;
                 MenuSettingsButton.Visibility = Visibility.Collapsed;
             }
         }
