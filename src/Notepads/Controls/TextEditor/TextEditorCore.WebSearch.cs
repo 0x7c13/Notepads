@@ -11,8 +11,6 @@
         {
             try
             {
-                if (App.IsGameBarWidget) return;
-
                 if (Document.Selection.Length == 0)
                 {
                     return;

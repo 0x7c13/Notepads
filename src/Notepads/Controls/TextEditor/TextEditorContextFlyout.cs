@@ -76,7 +76,6 @@
             if (App.IsGameBarWidget)
             {
                 Share.Visibility = Visibility.Collapsed;
-                WebSearch.Visibility = Visibility.Collapsed;
             }
         }
 

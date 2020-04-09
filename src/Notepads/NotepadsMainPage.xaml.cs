@@ -505,7 +505,6 @@
 
             await BuildOpenRecentButtonSubItems();
 
-
             if (!App.IsGameBarWidget)
             {
                 // An issue with the Game Bar extension model and Windows platform prevents the Notepads process from exiting cleanly
