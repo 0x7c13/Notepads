@@ -259,7 +259,7 @@
             TextEditorCore.Dispose();
         }
 
-        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {

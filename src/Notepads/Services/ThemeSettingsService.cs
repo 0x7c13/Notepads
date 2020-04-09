@@ -2,12 +2,10 @@
 {
     using System;
     using Microsoft.Toolkit.Uwp.Helpers;
-    using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Brushes;
     using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.UI;
-    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -15,15 +13,12 @@
 
     public static class ThemeSettingsService
     {
-        public static event EventHandler<ElementTheme> OnThemeChanged;
+        public static event EventHandler OnThemeChanged;
         public static event EventHandler<Brush> OnBackgroundChanged;
         public static event EventHandler<Color> OnAccentColorChanged;
 
-        public static CoreDispatcher Dispatcher;
-
         public static ElementTheme ThemeMode { get; set; }
 
-        private static ThemeListener _themeListener;
         private static UISettings _uiSettings;
         private static Brush _currentAppBackgroundBrush;
 
@@ -40,7 +35,7 @@
                     if (value)
                     {
                         ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
-                        OnThemeChanged?.Invoke(null, ThemeMode);
+                        OnThemeChanged?.Invoke(null, EventArgs.Empty);
                     }
                     ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
                 }
@@ -149,16 +144,17 @@
             }
         }
 
-        private static async void UiSettings_ColorValuesChanged(UISettings sender, object args)
+        private static void UiSettings_ColorValuesChanged(UISettings sender, object args)
         {
-            if (Dispatcher == null) return;
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            if (UseWindowsAccentColor)
             {
-                if (UseWindowsAccentColor)
-                {
-                    AppAccentColor = sender.GetColorValue(UIColorType.Accent);
-                }
-            });
+                AppAccentColor = sender.GetColorValue(UIColorType.Accent);
+            }
+
+            if (UseWindowsTheme)
+            {
+                OnThemeChanged?.Invoke(null, EventArgs.Empty);
+            }
         }
 
         private static void InitializeAppBackgroundPanelTintOpacity()
@@ -184,9 +180,6 @@
                 _useWindowsTheme = true;
             }
 
-            _themeListener = new ThemeListener();
-            _themeListener.ThemeChanged += ThemeListener_ThemeChanged;
-
             ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
 
             if (!UseWindowsTheme)
@@ -201,32 +194,20 @@
             }
         }
 
-        private static async void ThemeListener_ThemeChanged(ThemeListener sender)
-        {
-            if (Dispatcher == null) return;
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (UseWindowsTheme)
-                {
-                    SetTheme(sender.CurrentTheme);
-                }
-            });
-        }
-
-        public static void SetTheme(ApplicationTheme theme)
-        {
-            SetTheme(ApplicationThemeToElementTheme(theme));
-        }
-
         public static void SetTheme(ElementTheme theme)
         {
             ThemeMode = theme;
-            OnThemeChanged?.Invoke(null, theme);
+            OnThemeChanged?.Invoke(null, EventArgs.Empty);
             ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
         }
 
-        public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)
+        public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar, ApplicationTheme requestedTheme)
         {
+            if (UseWindowsTheme)
+            {
+                ThemeMode = ApplicationThemeToElementTheme(requestedTheme);
+            }
+
             // Set requested theme for app background
             if (backgroundPanel != null)
             {
@@ -257,7 +238,7 @@
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
         }
 
-        private static ElementTheme ApplicationThemeToElementTheme(ApplicationTheme theme)
+        public static ElementTheme ApplicationThemeToElementTheme(ApplicationTheme theme)
         {
             switch (theme)
             {

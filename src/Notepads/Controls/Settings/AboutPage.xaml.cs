@@ -31,11 +31,13 @@
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
         }
 
-        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                SetAppIconBasedOnTheme(theme);
+                SetAppIconBasedOnTheme(ThemeSettingsService.UseWindowsTheme
+                    ? ThemeSettingsService.ApplicationThemeToElementTheme(Application.Current.RequestedTheme)
+                    : ThemeSettingsService.ThemeMode);
             });
         }
 
