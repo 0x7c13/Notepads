@@ -60,7 +60,7 @@
 
         private void EnterExitFullScreenMode()
         {
-            if(App.IsGameBarWidget) return;
+            if (App.IsGameBarWidget) return;
 
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {

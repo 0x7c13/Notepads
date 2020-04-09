@@ -259,16 +259,19 @@
             TextEditorCore.Dispose();
         }
 
-        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            if (Mode == TextEditorMode.DiffPreview)
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
-                Task.Factory.StartNew(async () =>
+                if (Mode == TextEditorMode.DiffPreview)
                 {
-                    await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
-                });
-            }
+                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
+                    });
+                }
+            });
         }
 
         public string GetText()
@@ -1079,12 +1082,12 @@
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-				if (EditorSettingsService.IsLineHighlighterEnabled)
-	            {
-	                // TextWrapping changed event happens before layout updated, so we need to update here
-	                TextEditorCore.UpdateLayout();
-	                DrawLineHighlighter();
-	            }
+                if (EditorSettingsService.IsLineHighlighterEnabled)
+                {
+                    // TextWrapping changed event happens before layout updated, so we need to update here
+                    TextEditorCore.UpdateLayout();
+                    DrawLineHighlighter();
+                }
             });
         }
 

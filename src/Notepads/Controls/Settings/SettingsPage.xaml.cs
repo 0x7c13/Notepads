@@ -21,7 +21,7 @@
 
             if (App.IsGameBarWidget)
             {
-                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);   
+                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             }
         }
 

@@ -519,7 +519,7 @@
                 Application.Current.EnteredBackground += App_EnteredBackground;
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
-                Window.Current.CoreWindow.Activated += CoreWindow_Activated;                
+                Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
             else
             {
