@@ -71,7 +71,6 @@
             set
             {
                 _appBackgroundPanelTintOpacity = value;
-
                 OnBackgroundChanged?.Invoke(null, GetBackgroundBrush(ThemeMode));
                 ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
             }

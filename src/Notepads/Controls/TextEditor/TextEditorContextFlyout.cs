@@ -72,6 +72,12 @@
             PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
             WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
             RightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
+
+            if (App.IsGameBarWidget)
+            {
+                Share.Visibility = Visibility.Collapsed;
+                WebSearch.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void PrepareForInsertionMode()
