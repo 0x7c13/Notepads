@@ -102,9 +102,11 @@
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
+        private const string XBoxGameBarSessionFilePrefix = "XBoxGameBar-";
+
         private ISessionManager _sessionManager;
 
-        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
+        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore, App.IsGameBarWidget ? XBoxGameBarSessionFilePrefix : null));
 
         private readonly string _defaultNewFileName;
 

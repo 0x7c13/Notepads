@@ -75,7 +75,9 @@
                 { "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString() },
                 { "AppUptime", SystemInformation.AppUptime.ToString() },
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
