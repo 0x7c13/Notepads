@@ -27,7 +27,7 @@
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
                     x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,15,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
@@ -39,7 +39,7 @@
                 <TextBlock
                     x:Name="SessionSnapshotSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,35,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="SessionSnapshotSettingsControls" Margin="0,10,0,0">
@@ -52,7 +52,7 @@
                 <TextBlock
                     x:Name="LaunchPreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,35,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="LaunchPreferenceSettingsControls" Margin="0,10,0,0">
