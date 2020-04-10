@@ -220,6 +220,7 @@
           <uap:FileTypeAssociation Name="rc">
             <uap:SupportedFileTypes>
               <uap:FileType>.bashrc</uap:FileType>
+              <uap:FileType>.vimrc</uap:FileType>
               <uap:FileType>.rc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Runcom File</uap:DisplayName>
