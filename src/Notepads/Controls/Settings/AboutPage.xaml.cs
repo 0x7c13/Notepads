@@ -2,6 +2,7 @@
 {
     using System;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -30,9 +31,14 @@
             ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
         }
 
-        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
         {
-            SetAppIconBasedOnTheme(theme);
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                SetAppIconBasedOnTheme(ThemeSettingsService.UseWindowsTheme
+                    ? ThemeSettingsService.ApplicationThemeToElementTheme(Application.Current.RequestedTheme)
+                    : ThemeSettingsService.ThemeMode);
+            });
         }
 
         private void SetAppIconBasedOnTheme(ElementTheme theme)

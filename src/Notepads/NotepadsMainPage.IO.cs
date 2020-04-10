@@ -156,12 +156,14 @@
 
         public async Task Print(ITextEditor textEditor)
         {
+            if (App.IsGameBarWidget) return;
             if (textEditor == null) return;
             await PrintAll(new[] { textEditor });
         }
 
         public async Task PrintAll(ITextEditor[] textEditors)
         {
+            if (App.IsGameBarWidget) return;
             if (textEditors == null || textEditors.Length == 0) return;
 
             // Initialize print content

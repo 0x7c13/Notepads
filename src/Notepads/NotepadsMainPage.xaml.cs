@@ -18,6 +18,7 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -53,7 +54,7 @@
             {
                 if (_notepadsCore == null)
                 {
-                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider());
+                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
                     _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
@@ -97,9 +98,11 @@
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
+        private const string XBoxGameBarSessionFilePrefix = "XBoxGameBar-";
+
         private ISessionManager _sessionManager;
 
-        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore));
+        private ISessionManager SessionManager => _sessionManager ?? (_sessionManager = SessionUtility.GetSessionManager(NotepadsCore, App.IsGameBarWidget ? XBoxGameBarSessionFilePrefix : null));
 
         private readonly string _defaultNewFileName;
 
@@ -112,41 +115,56 @@
             NotificationCenter.Instance.SetNotificationDelegate(this);
 
             // Setup theme
-            ThemeSettingsService.AppBackground = RootGrid;
-            ThemeSettingsService.SetRequestedTheme();
+            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
+            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             // Setup custom Title Bar
             Window.Current.SetTitleBar(AppTitleBar);
 
             // Setup status bar
             ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += (sender, visibility) =>
+            EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
             {
-                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+                {
+                    if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
+                });
             };
 
             // Session backup and restore toggle
             EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
             {
-                if (isSessionBackupAndRestoreEnabled)
+                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, async () =>
                 {
-                    SessionManager.IsBackupEnabled = true;
-                    SessionManager.StartSessionBackup(startImmediately: true);
-                }
-                else
-                {
-                    SessionManager.IsBackupEnabled = false;
-                    SessionManager.StopSessionBackup();
-                    await SessionManager.ClearSessionDataAsync();
-                }
+                    if (isSessionBackupAndRestoreEnabled)
+                    {
+                        SessionManager.IsBackupEnabled = true;
+                        SessionManager.StartSessionBackup(startImmediately: true);
+                    }
+                    else
+                    {
+                        SessionManager.IsBackupEnabled = false;
+                        SessionManager.StopSessionBackup();
+                        await SessionManager.ClearSessionDataAsync();
+                    }
+                });
             };
 
             // Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
 
-            Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
-            Window.Current.SizeChanged += WindowSizeChanged;
+            if (App.IsGameBarWidget)
+            {
+                TitleBarReservedArea.Width = .0f;
+            }
+            else
+            {
+                Window.Current.SizeChanged += WindowSizeChanged;
+                Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
+            }
 
             InitControls();
 
@@ -158,12 +176,33 @@
             {
                 MenuPrintButton.Visibility = Visibility.Collapsed;
                 MenuPrintAllButton.Visibility = Visibility.Collapsed;
-                PrintSettingsSeparator.Visibility = Visibility.Collapsed;
+                MenuPrintSeparator.Visibility = Visibility.Collapsed;
             }
             else
             {
                 PrintArgs.RegisterForPrinting(this);
             }
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
+        }
+
+        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
+            });
+        }
+
+        private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                RootGrid.Background = backgroundBrush;
+            });
         }
 
         private void InitControls()
@@ -242,6 +281,19 @@
             {
                 MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
                 MenuSettingsButton.IsEnabled = false;
+            }
+
+            if (App.IsGameBarWidget)
+            {
+                MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
+                MenuPrintSeparator.Visibility = Visibility.Collapsed;
+                MenuSettingsSeparator.Visibility = Visibility.Collapsed;
+
+                MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
+                MenuFullScreenButton.Visibility = Visibility.Collapsed;
+                MenuPrintButton.Visibility = Visibility.Collapsed;
+                MenuPrintAllButton.Visibility = Visibility.Collapsed;
+                MenuSettingsButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -438,10 +490,20 @@
 
             await BuildOpenRecentButtonSubItems();
 
-            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
-            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
-            Application.Current.EnteredBackground -= App_EnteredBackground;
-            Application.Current.EnteredBackground += App_EnteredBackground;
+            if (!App.IsGameBarWidget)
+            {
+                // An issue with the Game Bar extension model and Windows platform prevents the Notepads process from exiting cleanly
+                // when more than one CoreWindow has been created, and NotepadsMainPage is the last to close. The common case for this
+                // is to open Notepads in Game Bar, then open its settings, then close the settings and finally close Notepads.
+                // This puts the process in a bad state where it will no longer open in Game Bar and the Notepads process is orphaned. 
+                // To work around this do not use the EnteredBackground event when running as a widget.
+                // Microsoft is tracking this issue as VSO#25735260
+                Application.Current.EnteredBackground -= App_EnteredBackground;
+                Application.Current.EnteredBackground += App_EnteredBackground;
+
+                Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
+                Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            }
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -475,7 +537,7 @@
                      args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
             {
                 LoggingService.LogInfo("CoreWindow Activated.", consoleOnly: true);
-                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
+                Task.Run(() => ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString()));
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
@@ -573,7 +635,10 @@
 
         private void UpdateApplicationTitle(ITextEditor activeTextEditor)
         {
-            ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
+            if (!App.IsGameBarWidget)
+            {
+                ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
+            }
         }
 
         #endregion

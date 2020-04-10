@@ -8,6 +8,7 @@
     using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -220,6 +221,48 @@
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, false, false, false, ChangeZoomingBasedOnMouseInput),
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, OnPointerLeftButtonDown),
             }, this);
+        }
+
+        private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                FontFamily = new FontFamily(fontFamily);
+                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
+            });
+        }
+
+        private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                FontSize = fontSize;
+            });
+        }
+
+        private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                TextWrapping = textWrapping;
+            });
+        }
+
+        private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                IsSpellCheckEnabled = isSpellCheckEnabled;
+            });
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private void OnCoreWindowActivated(CoreWindow sender, WindowActivatedEventArgs args)
@@ -635,33 +678,6 @@
             }
 
             return isSelectionStartPositionInView && isSelectionEndPositionInView;
-        }
-
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
-        {
-            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-        }
-
-        private void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
-        {
-            FontFamily = new FontFamily(fontFamily);
-            SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
-        }
-
-        private void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
-        {
-            FontSize = fontSize;
-        }
-
-        private void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
-        {
-            TextWrapping = textWrapping;
-        }
-
-        private void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
-        {
-            IsSpellCheckEnabled = isSpellCheckEnabled;
         }
 
         private void ShowEasterEgg()

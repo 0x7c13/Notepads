@@ -135,7 +135,7 @@
                                                 <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
                                         <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE740;" />
@@ -152,7 +152,7 @@
                                                 <KeyboardAccelerator Key="F12" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator x:Name="MenuPrintSeparator"/>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>
@@ -166,7 +166,7 @@
                                                 <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name="PrintSettingsSeparator" />
+                                        <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">

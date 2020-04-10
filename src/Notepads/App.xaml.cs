@@ -26,7 +26,8 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsFirstInstance;
+        public static bool IsFirstInstance = false;
+        public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
 
@@ -74,7 +75,9 @@
                 { "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString() },
                 { "AppUptime", SystemInformation.AppUptime.ToString() },
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
@@ -124,14 +127,17 @@
 
         private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
         {
+            bool rootFrameCreated = false;
+
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 rootFrame = CreateRootFrame(e);
                 Window.Current.Content = rootFrame;
-            }
+                rootFrameCreated = true;
 
-            ThemeSettingsService.Initialize();
-            EditorSettingsService.Initialize();
+                ThemeSettingsService.Initialize();
+                EditorSettingsService.Initialize();
+            }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
@@ -148,7 +154,8 @@
                 { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
                 { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
                 { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance).ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
                 { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
                 { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
                 { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
@@ -167,8 +174,11 @@
                 throw new Exception("AppFailedToActivate", ex);
             }
 
-            Window.Current.Activate();
-            ExtendAcrylicIntoTitleBar();
+            if (rootFrameCreated)
+            {
+                Window.Current.Activate();
+                ExtendAcrylicIntoTitleBar();
+            }
         }
 
         private Frame CreateRootFrame(IActivatedEventArgs e)
@@ -217,10 +227,13 @@
 
         private void ExtendAcrylicIntoTitleBar()
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            if (!IsGameBarWidget)
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
         }
 
         //private static void UpdateAppVersion()

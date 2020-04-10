@@ -29,12 +29,17 @@
         private bool _loaded;
         private Timer _timer;
 
+        private readonly string _backupFolderName;
+        private readonly string _sessionMetaDataFileName;
+
         /// <summary>
         /// Do not call this constructor directly. Use <see cref="SessionUtility.GetSessionManager(INotepadsCore)" instead./>
         /// </summary>
-        public SessionManager(INotepadsCore notepadsCore)
+        public SessionManager(INotepadsCore notepadsCore, string backupFolderName, string sessionMetaDataFileName)
         {
             _notepadsCore = notepadsCore;
+            _backupFolderName = backupFolderName;
+            _sessionMetaDataFileName = sessionMetaDataFileName;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             _sessionDataCache = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
             _loaded = false;
@@ -57,7 +62,7 @@
                 return 0; // Already loaded
             }
 
-            var data = await SessionUtility.GetSerializedSessionMetaDataAsync();
+            var data = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
 
             if (data == null)
             {
@@ -183,7 +188,7 @@
                 if (_lastSessionJsonStr == null || !string.Equals(_lastSessionJsonStr, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
                     // write
-                    await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
+                    await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr, _sessionMetaDataFileName);
                     _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
                 }
@@ -269,7 +274,8 @@
                     // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
                     var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-LastSaved",
-                        CreationCollisionOption.ReplaceExisting);
+                        CreationCollisionOption.ReplaceExisting,
+                        _backupFolderName);
 
                     if (!await BackupTextAsync(textEditor.LastSavedSnapshot.Content,
                         textEditor.LastSavedSnapshot.Encoding,
@@ -288,7 +294,8 @@
                     // Persist pending changes relative to the last save
                     var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-Pending",
-                        CreationCollisionOption.ReplaceExisting);
+                        CreationCollisionOption.ReplaceExisting,
+                        _backupFolderName);
 
                     if (!await BackupTextAsync(textEditor.GetText(),
                         textEditor.LastSavedSnapshot.Encoding,
@@ -348,7 +355,7 @@
             _lastSessionJsonStr = null;
             try
             {
-                await SessionUtility.DeleteSerializedSessionMetaDataAsync();
+                await SessionUtility.DeleteSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
                 LoggingService.LogInfo($"[SessionManager] Successfully deleted session meta data.");
             }
             catch (Exception ex)
@@ -460,7 +467,7 @@
                 .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync())
+            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
             {
                 if (!backupPaths.Contains(backupFile.Path))
                 {

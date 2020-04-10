@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -65,10 +66,13 @@
             Focus();
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
