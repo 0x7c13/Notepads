@@ -47,12 +47,12 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
+            await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
         }
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, () =>
             {
                 ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null, Application.Current.RequestedTheme);
             });

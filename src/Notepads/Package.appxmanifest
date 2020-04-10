@@ -597,12 +597,12 @@
               <GameBarWidget Type="Settings">
                 <Window>
                   <Size>
-                    <Height>500</Height>
+                    <Height>600</Height>
                     <Width>395</Width>
                   </Size>
                   <ResizeSupported>
                     <Horizontal>false</Horizontal>
-                    <Vertical>false</Vertical>
+                    <Vertical>true</Vertical>
                   </ResizeSupported>
                 </Window>
               </GameBarWidget>
