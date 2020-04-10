@@ -47,7 +47,8 @@
             _shouldSwallow = shouldSwallow;
         }
 
-        public bool Hit(bool ctrlDown,
+        public bool Hit(
+            bool ctrlDown,
             bool altDown,
             bool shiftDown,
             bool leftButtonDown,

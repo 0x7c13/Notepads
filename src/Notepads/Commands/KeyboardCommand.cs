@@ -54,7 +54,7 @@
             _ctrl = ctrlDown;
             _alt = altDown;
             _shift = shiftDown;
-            _keys = keys;
+            _keys = keys ?? new List<VirtualKey>();
             _action = action;
             _shouldHandle = shouldHandle;
             _shouldSwallow = shouldSwallow;
