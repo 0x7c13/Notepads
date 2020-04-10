@@ -1,6 +1,5 @@
 ﻿namespace Notepads.Controls.Settings
 {
-    using Microsoft.Gaming.XboxGameBar;
     using Notepads.Services;
     using Notepads.Utilities;
     using System;
@@ -12,8 +11,6 @@
 
     public sealed partial class SettingsPage : Page
     {
-        private XboxGameBarWidget _widget; // maintain throughout the lifetime of the settings game bar widget
-
         public SettingsPage()
         {
             InitializeComponent();
@@ -66,19 +63,7 @@
             {
                 case null:
                     return;
-                case XboxGameBarWidget widget:
-                    _widget = widget;
-                    Window.Current.Closed += WidgetSettingsWindowClosed;
-                    break;
             }
-        }
-
-        private void WidgetSettingsWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
-        {
-            // Un-registering events
-            Window.Current.Closed -= WidgetSettingsWindowClosed;
-            // Cleanup game bar objects
-            _widget = null;
         }
 
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
