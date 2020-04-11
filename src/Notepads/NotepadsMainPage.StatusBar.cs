@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -16,6 +17,12 @@
 
     public sealed partial class NotepadsMainPage
     {
+        private void InitializeStatusBar()
+        {
+            ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
+            EditorSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
+        }
+
         private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
@@ -51,6 +58,14 @@
             }
         }
 
+        private async void OnStatusBarVisibilityChanged(object sender, bool visible)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visible);
+            });
+        }
+
         private void UpdateFileModificationStateIndicator(ITextEditor textEditor)
         {
             if (StatusBar == null) return;
@@ -62,15 +77,13 @@
             else if (textEditor.FileModificationState == FileModificationState.Modified)
             {
                 FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
-                ToolTipService.SetToolTip(FileModificationStateIndicator,
-                    _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
                 FileModificationStateIndicator.Visibility = Visibility.Visible;
             }
             else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
                 FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
-                ToolTipService.SetToolTip(FileModificationStateIndicator,
-                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+                ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
                 FileModificationStateIndicator.Visibility = Visibility.Visible;
             }
         }
@@ -86,13 +99,11 @@
             }
             else if (textEditor.FileModificationState == FileModificationState.Modified)
             {
-                ToolTipService.SetToolTip(PathIndicator,
-                    _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
             }
             else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                ToolTipService.SetToolTip(PathIndicator,
-                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
             }
         }
 
@@ -154,8 +165,7 @@
             ShadowWindowIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
             if (ShadowWindowIndicator.Visibility == Visibility.Visible)
             {
-                ToolTipService.SetToolTip(ShadowWindowIndicator,
-                    _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
+                ToolTipService.SetToolTip(ShadowWindowIndicator, _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
             }
         }
 
@@ -174,11 +184,12 @@
                 case "RevertAllChanges":
                     var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
                     var revertAllChangesConfirmationDialog = NotepadsDialogFactory.GetRevertAllChangesConfirmationDialog(
-                        fileName, () =>
-                        {
-                            selectedTextEditor.CloseSideBySideDiffViewer();
-                            NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
-                        });
+                        fileName,
+                        confirmedAction: () =>
+                         {
+                             selectedTextEditor.CloseSideBySideDiffViewer();
+                             NotepadsCore.GetSelectedTextEditor().RevertAllChanges();
+                         });
                     await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
                     break;
             }
@@ -194,8 +205,7 @@
                 try
                 {
                     await selectedEditor.ReloadFromEditingFile();
-                    NotificationCenter.Instance.PostNotification(
-                        _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
@@ -307,8 +317,7 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
             }
         }
 
@@ -329,8 +338,7 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
             }
         }
 
@@ -373,8 +381,7 @@
 
         private void ShadowWindowIndicatorClicked()
         {
-            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"),
-                4000);
+            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
         }
 
         private void StatusBarFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -517,8 +524,7 @@
                 try
                 {
                     await selectedTextEditor.ReloadFromEditingFile(encoding);
-                    NotificationCenter.Instance.PostNotification(
-                        _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
@@ -538,14 +544,13 @@
             const int EncodingMenuFlyoutItemHeight = 30;
             const int EncodingMenuFlyoutItemFontSize = 14;
 
-            var reopenWithEncodingItem =
-                new MenuFlyoutItem()
-                {
-                    Text = EncodingUtility.GetEncodingName(encoding),
-                    FlowDirection = FlowDirection.LeftToRight,
-                    Height = EncodingMenuFlyoutItemHeight,
-                    FontSize = EncodingMenuFlyoutItemFontSize
-                };
+            var reopenWithEncodingItem = new MenuFlyoutItem()
+            {
+                Text = EncodingUtility.GetEncodingName(encoding),
+                FlowDirection = FlowDirection.LeftToRight,
+                Height = EncodingMenuFlyoutItemHeight,
+                FontSize = EncodingMenuFlyoutItemFontSize
+            };
             reopenWithEncodingItem.Click += async (sender, args) =>
             {
                 var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
@@ -554,8 +559,7 @@
                     try
                     {
                         await selectedTextEditor.ReloadFromEditingFile(encoding);
-                        NotificationCenter.Instance.PostNotification(
-                            _resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                     }
                     catch (Exception ex)
                     {
@@ -570,14 +574,13 @@
             };
             reopenWithEncoding.Items?.Add(reopenWithEncodingItem);
 
-            var saveWithEncodingItem =
-                new MenuFlyoutItem()
-                {
-                    Text = EncodingUtility.GetEncodingName(encoding),
-                    FlowDirection = FlowDirection.LeftToRight,
-                    Height = EncodingMenuFlyoutItemHeight,
-                    FontSize = EncodingMenuFlyoutItemFontSize
-                };
+            var saveWithEncodingItem = new MenuFlyoutItem()
+            {
+                Text = EncodingUtility.GetEncodingName(encoding),
+                FlowDirection = FlowDirection.LeftToRight,
+                Height = EncodingMenuFlyoutItemHeight,
+                FontSize = EncodingMenuFlyoutItemFontSize
+            };
             saveWithEncodingItem.Click += (sender, args) =>
             {
                 NotepadsCore.GetSelectedTextEditor()?.TryChangeEncoding(encoding);

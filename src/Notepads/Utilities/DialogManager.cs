@@ -43,7 +43,7 @@
             return null;
         }
 
-        static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
+        private static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();
@@ -63,9 +63,15 @@
             }
 
             ActiveDialog = dialog;
-            var result = await ActiveDialog.ShowAsync();
-            nextAwaiter.SetResult(true);
-            return result;
+
+            try
+            {
+                return await ActiveDialog.ShowAsync();
+            }
+            finally
+            {
+                nextAwaiter.SetResult(true);
+            }
         }
     }
 }
