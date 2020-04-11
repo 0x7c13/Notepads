@@ -24,7 +24,7 @@
 
 ## What is Notepads and why do I care?
 
-I have been waiting long enough for a modern Windows 10 notepad app to come so I decide to create one myself. Don’t get me wrong, Notepad++, VS Code, and Sublime are great text editors. I have used them and I will continue to use them in the future. However, they are either too heavy or less interactive. I had a desire to replace a win32 notepad.exe with a software that was lightweight and looked impressive to get things done as quickly as possible (for example, as a turnaround text editor to quickly modify config files or write some notes). Most importantly, it had to be blazingly fast and appeal to everyone. 
+I have been waiting long enough for a modern Windows 10 notepad app to come before I decided to create one myself. Don’t get me wrong, Notepad++, VS Code, and Sublime are great text editors. I have used them all and I will continue to use them in the future. However, they are either too heavy or looks less appealing. There are times that I just wanted to use Windows notepad for things like writing notes or editing config files. So I decided to create a win32 notepad replacement here and try to give it a modern look and feel. Most importantly, it has to be blazingly fast and appeal to everyone.
 
 So here comes the “Notepads” 🎉 (s stands for Sets).
 
@@ -139,4 +139,3 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 
 * [Original Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Notepads Discord Server](https://discord.gg/VqetCub)
-* [Notepads: Better Notepad! - YouTube Video made by Vasanth Developer](https://www.youtube.com/watch?v=7GXDrehNWb8)
