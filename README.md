@@ -54,7 +54,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+N/T to create new tab.
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+Num(1-9) to quickly switch to specified tab.
-* Ctrl+"+"/"-" to zoom font size. Ctrl+"0" to reset font size to default.
+* Ctrl+"+"/"-" for zooming. Ctrl+"0" to reset zooming to default.
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
@@ -68,7 +68,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Downloads:
 
-Please head over to the [Github Releases](https://github.com/JasonStein/Notepads/releases) section to download the latest release. You can also get the latest version of Notepads in the [Microsoft Store](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+Notepads is avaialbe in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
 ## Roadmap:
 
