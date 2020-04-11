@@ -18,20 +18,17 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
-    using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
-    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Gaming.XboxGameBar;
     using Windows.Graphics.Printing;
 
-    public sealed partial class NotepadsMainPage : Page, INotificationDelegate
+    public sealed partial class NotepadsMainPage : Page
     {
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
 
@@ -62,45 +59,23 @@
                     _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
                     _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
                     _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
-                    _notepadsCore.TextEditorKeyDown += OnTextEditor_KeyDown;
+                    _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+                    _notepadsCore.TextEditorSaved += OnTextEditorSaved;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
                     _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
                     _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) =>
-                    {
-                        if (NotepadsCore.GetSelectedTextEditor() == editor)
-                        {
-                            if (editor.FileModificationState == FileModificationState.Modified)
-                            {
-                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"), 3500);
-                            }
-                            else if (editor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-                            {
-                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
-                            }
-                            UpdateFileModificationStateIndicator(editor);
-                            UpdatePathIndicator(editor);
-                        }
-                    };
-                    _notepadsCore.TextEditorSaved += (sender, editor) =>
-                    {
-                        if (NotepadsCore.GetSelectedTextEditor() == editor)
-                        {
-                            SetupStatusBar(editor);
-                        }
-                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
-                    };
+                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
                 }
 
                 return _notepadsCore;
             }
         }
 
-        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private const string XBoxGameBarSessionFilePrefix = "XBoxGameBar-";
 
@@ -116,47 +91,26 @@
 
             _defaultNewFileName = _resourceLoader.GetString("TextEditor_DefaultNewFileName");
 
-            NotificationCenter.Instance.SetNotificationDelegate(this);
-
-            // Setup theme
-            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
-            ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
-            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
-
-            // Setup custom Title Bar
+            // Set custom title bar dragging area
             Window.Current.SetTitleBar(AppTitleBar);
 
-            // Setup status bar
-            ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += async (sender, visibility) =>
-            {
-                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-                {
-                    if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visibility);
-                });
-            };
+            InitializeNotificationCenter();
+            InitializeThemeSettings();
+            InitializeStatusBar();
+            InitializeControls();
+            InitializeMainMenu();
+            InitializeKeyboardShortcuts();
 
             // Session backup and restore toggle
-            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += async (sender, isSessionBackupAndRestoreEnabled) =>
-            {
-                await ThreadUtility.CallOnUIThreadAsync(Dispatcher, async () =>
-                {
-                    if (isSessionBackupAndRestoreEnabled)
-                    {
-                        SessionManager.IsBackupEnabled = true;
-                        SessionManager.StartSessionBackup(startImmediately: true);
-                    }
-                    else
-                    {
-                        SessionManager.IsBackupEnabled = false;
-                        SessionManager.StopSessionBackup();
-                        await SessionManager.ClearSessionDataAsync();
-                    }
-                });
-            };
+            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += OnSessionBackupAndRestoreOptionChanged;
 
-            // Sharing
+            // Register for printing
+            if (PrintManager.IsSupported())
+            {
+                PrintArgs.RegisterForPrinting(this);
+            }
+
+            // Register for content Sharing
             Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView().DataRequested += MainPage_DataRequested;
             Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += MainPage_CloseRequested;
 
@@ -169,205 +123,19 @@
                 Window.Current.SizeChanged += WindowSizeChanged;
                 Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
             }
-
-            InitControls();
-
-            // Init shortcuts
-            _keyboardCommandHandler = GetKeyboardCommandHandler();
-
-            //Register for printing
-            if (!PrintManager.IsSupported())
-            {
-                MenuPrintButton.Visibility = Visibility.Collapsed;
-                MenuPrintAllButton.Visibility = Visibility.Collapsed;
-                MenuPrintSeparator.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                PrintArgs.RegisterForPrinting(this);
-            }
         }
 
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
-        }
-
-        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
-            });
-        }
-
-        private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                RootGrid.Background = backgroundBrush;
-            });
-        }
-
-        private void InitControls()
+        private void InitializeControls()
         {
             ToolTipService.SetToolTip(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
             RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo()); };
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(_defaultNewFileName); };
-            MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
-            MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
-            MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstance();
-            MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
-            MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
-            MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-            MenuSaveAllButton.Click += async (sender, args) =>
-            {
-                var success = false;
-                foreach (var textEditor in NotepadsCore.GetAllTextEditors())
-                {
-                    if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
-                }
-                if (success)
-                {
-                    await BuildOpenRecentButtonSubItems();
-                }
-            };
-            MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
-            MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
-            MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
-            MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
-            MenuPrintButton.Click += async (sender, args) => await Print(NotepadsCore.GetSelectedTextEditor());
-            MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
-            MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
-
-            MainMenuButtonFlyout.Opening += (sender, o) =>
-            {
-                var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
-                if (selectedTextEditor == null)
-                {
-                    MenuSaveButton.IsEnabled = false;
-                    MenuSaveAsButton.IsEnabled = false;
-                    MenuFindButton.IsEnabled = false;
-                    MenuReplaceButton.IsEnabled = false;
-                    MenuPrintButton.IsEnabled = false;
-                    MenuPrintAllButton.IsEnabled = false;
-                }
-                else if (selectedTextEditor.IsEditorEnabled() == false)
-                {
-                    MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
-                    MenuSaveAsButton.IsEnabled = true;
-                    MenuFindButton.IsEnabled = false;
-                    MenuReplaceButton.IsEnabled = false;
-                }
-                else
-                {
-                    MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
-                    MenuSaveAsButton.IsEnabled = true;
-                    MenuFindButton.IsEnabled = true;
-                    MenuReplaceButton.IsEnabled = true;
-
-                    if (PrintManager.IsSupported())
-                    {
-                        MenuPrintButton.IsEnabled = !string.IsNullOrEmpty(selectedTextEditor.GetText());
-                        MenuPrintAllButton.IsEnabled = NotepadsCore.HaveNonemptyTextEditor();
-                    }
-                }
-
-                MenuFullScreenButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().IsFullScreenMode ?
-                    "App_ExitFullScreenMode_Text" : "App_EnterFullScreenMode_Text");
-                MenuCompactOverlayButton.Text = _resourceLoader.GetString(ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay ?
-                    "App_ExitCompactOverlayMode_Text" : "App_EnterCompactOverlayMode_Text");
-                MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
-            };
-
-            if (!App.IsFirstInstance)
-            {
-                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-                MenuSettingsButton.IsEnabled = false;
-            }
-
-            if (App.IsGameBarWidget)
-            {
-                MenuFullScreenSeparator.Visibility = Visibility.Collapsed;
-                MenuPrintSeparator.Visibility = Visibility.Collapsed;
-                MenuSettingsSeparator.Visibility = Visibility.Collapsed;
-
-                MenuCompactOverlayButton.Visibility = Visibility.Collapsed;
-                MenuFullScreenButton.Visibility = Visibility.Collapsed;
-                MenuPrintButton.Visibility = Visibility.Collapsed;
-                MenuPrintAllButton.Visibility = Visibility.Collapsed;
-                MenuSettingsButton.Visibility = Visibility.Collapsed;
-            }
         }
 
-        private async Task BuildOpenRecentButtonSubItems()
+        private void InitializeKeyboardShortcuts()
         {
-            var openRecentSubItem = new MenuFlyoutSubItem
-            {
-                Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
-                Icon = new FontIcon { Glyph = "\xE81C" },
-                Name = "MenuOpenRecentlyUsedFileButton",
-            };
-
-            var MRUFileList = new HashSet<string>();
-
-            foreach (var item in await MRUService.Get(top: 10))
-            {
-                if (item is StorageFile file)
-                {
-                    if (MRUFileList.Contains(file.Path))
-                    {
-                        // MRU might contains files with same path (User opens a recently used file after renaming it)
-                        // So we need to do the decouple here
-                        continue;
-                    }
-                    var newItem = new MenuFlyoutItem()
-                    {
-                        Text = file.Path
-                    };
-                    ToolTipService.SetToolTip(newItem, file.Path);
-                    newItem.Click += async (sender, args) => { await OpenFile(file); };
-                    openRecentSubItem.Items?.Add(newItem);
-                    MRUFileList.Add(file.Path);
-                }
-            }
-
-            var oldOpenRecentSubItem = MainMenuButtonFlyout.Items?.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
-            if (oldOpenRecentSubItem != null)
-            {
-                MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
-            }
-
-            openRecentSubItem.IsEnabled = false;
-            if (openRecentSubItem.Items?.Count > 0)
-            {
-                openRecentSubItem.Items?.Add(new MenuFlyoutSeparator());
-
-                var clearRecentlyOpenedSubItem =
-                    new MenuFlyoutItem()
-                    {
-                        Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
-                    };
-                clearRecentlyOpenedSubItem.Click += async (sender, args) =>
-                {
-                    MRUService.ClearAll();
-                    await BuildOpenRecentButtonSubItems();
-                };
-                openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
-                openRecentSubItem.IsEnabled = true;
-            }
-
-            if (MainMenuButtonFlyout.Items != null)
-            {
-                var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
-                MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
-            }
-        }
-
-        private KeyboardCommandHandler GetKeyboardCommandHandler()
-        {
-            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
+            _keyboardCommandHandler = new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>()
             {
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.W, (args) => NotepadsCore.CloseTextEditor(NotepadsCore.GetSelectedTextEditor())),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Tab, (args) => NotepadsCore.SwitchTo(true)),
@@ -541,17 +309,6 @@
             deferral.Complete();
         }
 
-        private void WidgetMainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
-        {
-            // Un-registering events
-            Window.Current.Closed -= WidgetMainWindowClosed;
-            _widget.SettingsClicked -= Widget_SettingsClicked;
-
-            // Cleanup game bar objects
-            _widget = null;
-            _widgetControl = null;
-        }
-
         public void ExecuteProtocol(Uri uri)
         {
         }
@@ -580,7 +337,7 @@
             }
         }
 
-        void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
+        private void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
             LoggingService.LogInfo($"Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
@@ -659,12 +416,36 @@
                     deferral.Complete();
                 });
 
-            await DialogManager.OpenDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+            var result = await DialogManager.OpenDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
+
+            if (result == null)
+            {
+                e.Handled = true;
+                deferral.Complete();
+            }
 
             if (e.Handled && !appCloseSaveReminderDialog.IsAborted)
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
+        }
+
+        private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, async () =>
+            {
+                if (isSessionBackupAndRestoreEnabled)
+                {
+                    SessionManager.IsBackupEnabled = true;
+                    SessionManager.StartSessionBackup(startImmediately: true);
+                }
+                else
+                {
+                    SessionManager.IsBackupEnabled = false;
+                    SessionManager.StopSessionBackup();
+                    await SessionManager.ClearSessionDataAsync();
+                }
+            });
         }
 
         private void UpdateApplicationTitle(ITextEditor activeTextEditor)
@@ -707,6 +488,17 @@
             }
         }
 
+        private void WidgetMainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        {
+            // Un-registering events
+            Window.Current.Closed -= WidgetMainWindowClosed;
+            _widget.SettingsClicked -= Widget_SettingsClicked;
+
+            // Cleanup game bar objects
+            _widget = null;
+            _widgetControl = null;
+        }
+
         #endregion
 
         #region InAppNotification
@@ -740,6 +532,29 @@
             {
                 NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
             }
+        }
+
+        private void OnTextEditorFileModificationStateChanged(ITextEditor textEditor)
+        {
+            if (textEditor.FileModificationState == FileModificationState.Modified)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"), 3500);
+            }
+            else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
+            }
+            UpdateFileModificationStateIndicator(textEditor);
+            UpdatePathIndicator(textEditor);
+        }
+
+        private void OnTextEditorSaved(object sender, ITextEditor textEditor)
+        {
+            if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+            {
+                SetupStatusBar(textEditor);
+            }
+            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
         }
 
         private async void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
@@ -779,19 +594,21 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file, async () =>
-                {
-                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
+                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file,
+                    saveAction: async () =>
                     {
-                        NotepadsCore.DeleteTextEditor(textEditor);
-                    }
-                }, () =>
-                {
-                    if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                        if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
+                        {
+                            NotepadsCore.DeleteTextEditor(textEditor);
+                        }
+                    },
+                    skipSavingAction: () =>
                     {
-                        NotepadsCore.DeleteTextEditor(textEditor);
-                    }
-                });
+                        if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
+                        {
+                            NotepadsCore.DeleteTextEditor(textEditor);
+                        }
+                    });
 
                 setCloseSaveReminderDialog.Opened += (s, a) =>
                 {
@@ -810,7 +627,7 @@
             }
         }
 
-        private void OnTextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void OnTextEditorKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (!(sender is ITextEditor textEditor)) return;
             // ignoring key events coming from inactive text editors

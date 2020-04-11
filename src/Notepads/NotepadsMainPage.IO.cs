@@ -154,6 +154,23 @@
             }
         }
 
+        private async Task<bool> SaveAll(ITextEditor[] textEditors)
+        {
+            var success = false;
+
+            foreach (var textEditor in textEditors)
+            {
+                if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
+            }
+
+            if (success)
+            {
+                await BuildOpenRecentButtonSubItems();
+            }
+
+            return success;
+        }
+
         public async Task Print(ITextEditor textEditor)
         {
             if (App.IsGameBarWidget) return;
