@@ -491,7 +491,7 @@
         private void Widget_MainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
             // Un-registering events
-            Window.Current.Closed -= WidgetMainWindowClosed;
+            Window.Current.Closed -= Widget_MainWindowClosed;
             _widget.SettingsClicked -= Widget_SettingsClicked;
 
             // Cleanup game bar objects
