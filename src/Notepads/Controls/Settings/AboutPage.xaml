@@ -104,10 +104,16 @@
                         <Hyperlink NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery">XAML Controls Gallery</Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/WilliamABradley/ColorCode-Universal">ColorCode Universal</Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/CharsetDetector/UTF-unknown">UTF Unknown</Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/mmanela/diffplex">DiffPlex</Hyperlink>
+                    </Paragraph>
+                    <Paragraph Margin="0,10,0,10">
+                        <Hyperlink NavigateUri="https://github.com/microsoft/Win2D">Win2D</Hyperlink>
                     </Paragraph>
                 </RichTextBlock>
 

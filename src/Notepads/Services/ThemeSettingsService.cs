@@ -3,6 +3,7 @@
     using System;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Brushes;
+    using Notepads.Controls.Helpers;
     using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.UI;
@@ -13,13 +14,14 @@
 
     public static class ThemeSettingsService
     {
-        public static event EventHandler OnThemeChanged;
+        public static event EventHandler<ElementTheme> OnThemeChanged;
         public static event EventHandler<Brush> OnBackgroundChanged;
         public static event EventHandler<Color> OnAccentColorChanged;
 
         public static ElementTheme ThemeMode { get; set; }
 
         private static UISettings _uiSettings;
+        private static ThemeListener _themeListener;
         private static Brush _currentAppBackgroundBrush;
 
         private static bool _useWindowsTheme;
@@ -34,8 +36,8 @@
                     _useWindowsTheme = value;
                     if (value)
                     {
-                        ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
-                        OnThemeChanged?.Invoke(null, EventArgs.Empty);
+                        ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
+                        OnThemeChanged?.Invoke(null, ThemeMode);
                     }
                     ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
                 }
@@ -150,11 +152,6 @@
             {
                 AppAccentColor = sender.GetColorValue(UIColorType.Accent);
             }
-
-            if (UseWindowsTheme)
-            {
-                OnThemeChanged?.Invoke(null, EventArgs.Empty);
-            }
         }
 
         private static void InitializeAppBackgroundPanelTintOpacity()
@@ -180,7 +177,10 @@
                 _useWindowsTheme = true;
             }
 
-            ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
+            _themeListener = new ThemeListener();	
+            _themeListener.ThemeChanged += ThemeListener_ThemeChanged;
+
+            ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
 
             if (!UseWindowsTheme)
             {
@@ -194,20 +194,23 @@
             }
         }
 
+        private static void ThemeListener_ThemeChanged(ThemeListener sender)	
+        {
+            if (UseWindowsTheme)	
+            {	
+                SetTheme(sender.CurrentTheme.ToElementTheme());	
+            }
+        }
+
         public static void SetTheme(ElementTheme theme)
         {
             ThemeMode = theme;
-            OnThemeChanged?.Invoke(null, EventArgs.Empty);
+            OnThemeChanged?.Invoke(null, theme);
             ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
         }
 
-        public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar, ApplicationTheme requestedTheme)
+        public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)
         {
-            if (UseWindowsTheme)
-            {
-                ThemeMode = ApplicationThemeToElementTheme(requestedTheme);
-            }
-
             // Set requested theme for app background
             if (backgroundPanel != null)
             {
@@ -238,7 +241,7 @@
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
         }
 
-        public static ElementTheme ApplicationThemeToElementTheme(ApplicationTheme theme)
+        public static ElementTheme ToElementTheme(this ApplicationTheme theme)
         {
             switch (theme)
             {
@@ -270,7 +273,7 @@
                             hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
                             return _currentAppBackgroundBrush;
                         }
-                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity).Result;
                     }
                 }
                 else
@@ -295,7 +298,7 @@
                             hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
                             return _currentAppBackgroundBrush;
                         }
-                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity);
+                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity).Result;
                     }
                 }
                 else

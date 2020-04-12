@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Notepads"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
+    xmlns:controls="using:Notepads.Controls">
 
     <Style x:Key="InAppNotificationNoDismissButton" TargetType="controls:InAppNotification">
         <Setter Property="Template">
@@ -17,14 +16,14 @@
                                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
                                             <EasingDoubleKeyFrame KeyTime="0" Value="0" />
                                             <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
-                                                      Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                                  Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                             <EasingDoubleKeyFrame KeyTime="0" Value="-50" />
                                             <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
-                                                      Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                                                  Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}"/>
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"

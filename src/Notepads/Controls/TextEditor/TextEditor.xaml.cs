@@ -259,13 +259,13 @@
             TextEditorCore.Dispose();
         }
 
-        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 if (Mode == TextEditorMode.DiffPreview)
                 {
-                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), theme);
                     Task.Factory.StartNew(async () =>
                     {
                         await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
@@ -613,7 +613,7 @@
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
-            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), ThemeSettingsService.ThemeMode);
             SideBySideDiffViewer.Focus();
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
@@ -952,7 +952,7 @@
             }
         }
 
-        private void FindAndReplacePlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
         {
             FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
         }
@@ -1012,7 +1012,7 @@
             }
         }
 
-        private void GoToPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void GoToPlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
         {
             GoToPlaceholder.Visibility = Visibility.Collapsed;
         }
