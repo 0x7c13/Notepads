@@ -43,16 +43,6 @@
             MarkdownTextBlock.ImageResolving += MarkdownTextBlock_ImageResolving;
 
             ThemeSettingsService.OnThemeChanged += OnThemeChanged;
-            ThemeSettingsService.OnAccentColorChanged += OnAccentColorChanged;
-        }
-
-        private async void OnAccentColorChanged(object sender, Windows.UI.Color color)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                MarkdownTextBlock.Header1Foreground = new SolidColorBrush(color);
-                MarkdownTextBlock.LinkForeground = new SolidColorBrush(color);
-            });
         }
 
         private async void OnThemeChanged(object sender, ElementTheme theme)
@@ -77,7 +67,6 @@
             _editorCore.FontSizeChanged -= OnFontSizeChanged;
 
             ThemeSettingsService.OnThemeChanged -= OnThemeChanged;
-            ThemeSettingsService.OnAccentColorChanged -= OnAccentColorChanged;
         }
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
