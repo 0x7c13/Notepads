@@ -20,7 +20,7 @@
         public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
         public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
 
-        private readonly List<KeyboardCommand<bool>> _nativeKeyboardCommands = new List<KeyboardCommand<bool>>
+        private readonly IList<KeyboardCommand<bool>> _nativeKeyboardCommands = new List<KeyboardCommand<bool>>
         {
             new KeyboardCommand<bool>(VirtualKey.F3, null),
             new KeyboardCommand<bool>(false, false, true, VirtualKey.F3, null),

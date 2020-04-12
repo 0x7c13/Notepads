@@ -117,11 +117,11 @@
             RightBox.Blocks.Clear();
         }
 
-        public void RenderDiff(string left, string right)
+        public void RenderDiff(string left, string right, ElementTheme theme)
         {
             StopRenderingAndClearCache();
 
-            var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
+            var foregroundBrush = (theme == ElementTheme.Dark)
                 ? new SolidColorBrush(Colors.White)
                 : new SolidColorBrush(Colors.Black);
 

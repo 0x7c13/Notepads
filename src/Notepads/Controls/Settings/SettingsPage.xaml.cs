@@ -3,7 +3,6 @@
     using Microsoft.Gaming.XboxGameBar;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System;
     using System.Linq;
     using Windows.UI;
     using Windows.UI.Xaml;
@@ -22,7 +21,7 @@
 
             if (App.IsGameBarWidget)
             {
-                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null, Application.Current.RequestedTheme);
+                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             }
         }
 
@@ -50,11 +49,11 @@
             await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
         }
 
-        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
             await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, () =>
             {
-                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null, Application.Current.RequestedTheme);
+                ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             });
         }
 
