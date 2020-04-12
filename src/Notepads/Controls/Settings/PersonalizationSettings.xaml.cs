@@ -40,14 +40,16 @@
             BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
-            BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
-                                                    PowerManager.EnergySaverStatus != EnergySaverStatus.On;
-
             if (App.IsGameBarWidget)
             {
                 // Game Bar widgets do not support transparency, disable this setting
                 BackgroundTintOpacityTitle.Visibility = Visibility.Collapsed;
                 BackgroundTintOpacityControls.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                        PowerManager.EnergySaverStatus != EnergySaverStatus.On;
             }
 
             Loaded += PersonalizationSettings_Loaded;
@@ -73,10 +75,28 @@
             BackgroundTintOpacitySlider.ValueChanged += BackgroundTintOpacitySlider_OnValueChanged;
             AccentColorToggle.Toggled += WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
-
-            UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
-            PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+            if (!App.IsGameBarWidget)
+            {
+                UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
+                PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;   
+            }
+        }
+
+        private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeModeDefaultButton.Checked -= ThemeRadioButton_OnChecked;
+            ThemeModeLightButton.Checked -= ThemeRadioButton_OnChecked;
+            ThemeModeDarkButton.Checked -= ThemeRadioButton_OnChecked;
+            BackgroundTintOpacitySlider.ValueChanged -= BackgroundTintOpacitySlider_OnValueChanged;
+            AccentColorToggle.Toggled -= WindowsAccentColorToggle_OnToggled;
+            AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
+            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            if (!App.IsGameBarWidget)
+            {
+                UISettings.AdvancedEffectsEnabledChanged -= UISettings_AdvancedEffectsEnabledChanged;
+                PowerManager.EnergySaverStatusChanged -= PowerManager_EnergySaverStatusChanged;
+            }
         }
 
         private async void PowerManager_EnergySaverStatusChanged(object sender, object e)
@@ -95,20 +115,6 @@
                 BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
             });
-        }
-
-        private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ThemeModeDefaultButton.Checked -= ThemeRadioButton_OnChecked;
-            ThemeModeLightButton.Checked -= ThemeRadioButton_OnChecked;
-            ThemeModeDarkButton.Checked -= ThemeRadioButton_OnChecked;
-            BackgroundTintOpacitySlider.ValueChanged -= BackgroundTintOpacitySlider_OnValueChanged;
-            AccentColorToggle.Toggled -= WindowsAccentColorToggle_OnToggled;
-            AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
-
-            UISettings.AdvancedEffectsEnabledChanged -= UISettings_AdvancedEffectsEnabledChanged;
-            PowerManager.EnergySaverStatusChanged -= PowerManager_EnergySaverStatusChanged;
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void ThemeRadioButton_OnChecked(object sender, RoutedEventArgs e)
