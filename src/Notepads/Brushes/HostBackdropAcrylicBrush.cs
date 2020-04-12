@@ -99,7 +99,7 @@
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
 
-        private static readonly float _acrylicTintOpacityMinThreshold = 0.3f;
+        private static readonly float _acrylicTintOpacityMinThreshold = 0.35f;
 
         private static readonly Dictionary<Uri, CanvasBitmap> CanvasBitmapCache = new Dictionary<Uri, CanvasBitmap>();
 

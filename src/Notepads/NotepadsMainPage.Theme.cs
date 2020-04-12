@@ -1,6 +1,5 @@
 ﻿namespace Notepads
 {
-    using System;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -12,7 +11,7 @@
     {
         private void InitializeThemeSettings()
         {
-            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
+            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
             ThemeSettingsService.OnBackgroundChanged += ThemeSettingsService_OnBackgroundChanged;
             ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
@@ -23,11 +22,11 @@
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
         }
 
-        private async void ThemeSettingsService_OnThemeChanged(object sender, EventArgs args)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Application.Current.RequestedTheme);
+                ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
             });
         }
 

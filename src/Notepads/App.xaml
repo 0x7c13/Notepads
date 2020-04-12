@@ -19,7 +19,7 @@
             </ResourceDictionary.ThemeDictionaries>-->
 
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="SetsView/SetsView.xaml" />
+                <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>

@@ -12,7 +12,7 @@
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using SetsView;
+    using Notepads.Controls;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
