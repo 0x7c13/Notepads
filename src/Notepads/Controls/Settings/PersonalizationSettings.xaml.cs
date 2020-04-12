@@ -2,7 +2,9 @@
 {
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.System.Power;
     using Windows.UI;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -10,6 +12,8 @@
 
     public sealed partial class PersonalizationSettings : Page
     {
+        private readonly UISettings UISettings = new UISettings();
+
         public PersonalizationSettings()
         {
             InitializeComponent();
@@ -35,6 +39,9 @@
             AccentColorPicker.IsEnabled = !ThemeSettingsService.UseWindowsAccentColor;
             BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
+
+            BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                    PowerManager.EnergySaverStatus != EnergySaverStatus.On;
 
             if (App.IsGameBarWidget)
             {
@@ -67,7 +74,27 @@
             AccentColorToggle.Toggled += WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
 
+            UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
+            PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void PowerManager_EnergySaverStatusChanged(object sender, object e)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.IsEnabled =  UISettings.AdvancedEffectsEnabled &&
+                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            });
+        }
+
+        private async void UISettings_AdvancedEffectsEnabledChanged(UISettings sender, object args)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                        PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            });
         }
 
         private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
@@ -79,6 +106,8 @@
             AccentColorToggle.Toggled -= WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
 
+            UISettings.AdvancedEffectsEnabledChanged -= UISettings_AdvancedEffectsEnabledChanged;
+            PowerManager.EnergySaverStatusChanged -= PowerManager_EnergySaverStatusChanged;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 

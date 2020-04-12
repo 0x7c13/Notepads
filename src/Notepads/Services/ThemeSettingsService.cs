@@ -20,8 +20,8 @@
 
         public static ElementTheme ThemeMode { get; set; }
 
-        private static UISettings _uiSettings;
-        private static ThemeListener _themeListener;
+        private static readonly UISettings UISettings = new UISettings();
+        private static readonly ThemeListener ThemeListener = new ThemeListener();
         private static Brush _currentAppBackgroundBrush;
 
         private static bool _useWindowsTheme;
@@ -54,7 +54,7 @@
                 _useWindowsAccentColor = value;
                 if (value)
                 {
-                    AppAccentColor = _uiSettings.GetColorValue(UIColorType.Accent);
+                    AppAccentColor = UISettings.GetColorValue(UIColorType.Accent);
                 }
                 ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
             }
@@ -68,7 +68,7 @@
             set
             {
                 _appBackgroundPanelTintOpacity = value;
-                OnBackgroundChanged?.Invoke(null, GetBackgroundBrush(ThemeMode));
+                OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
                 ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
             }
         }
@@ -120,10 +120,9 @@
                 _useWindowsAccentColor = true;
             }
 
-            _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
+            UISettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
 
-            _appAccentColor = _uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            _appAccentColor = UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
 
             if (!UseWindowsAccentColor)
             {
@@ -177,8 +176,7 @@
                 _useWindowsTheme = true;
             }
 
-            _themeListener = new ThemeListener();
-            _themeListener.ThemeChanged += ThemeListener_ThemeChanged;
+            ThemeListener.ThemeChanged += ThemeListener_ThemeChanged;
 
             ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
 
@@ -214,7 +212,7 @@
             // Set requested theme for app background
             if (backgroundPanel != null)
             {
-                ApplyAcrylicBrush(ThemeMode, backgroundPanel);
+                backgroundPanel.Background = GetAppBackgroundBrush(ThemeMode);
             }
 
             if (currentContent is FrameworkElement frameworkElement)
@@ -254,65 +252,28 @@
             }
         }
 
-        private static Brush GetBackgroundBrush(ElementTheme theme)
+        private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
-            if (theme == ElementTheme.Dark)
-            {
-                var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
-                if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
-                {
-                    if (AppBackgroundPanelTintOpacity > 0.99f)
-                    {
-                        return new SolidColorBrush(darkModeBaseColor);
-                    }
-                    else
-                    {
-                        if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
-                        {
-                            hostBackdropAcrylicBrush.LuminosityColor = darkModeBaseColor;
-                            hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
-                            return _currentAppBackgroundBrush;
-                        }
-                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity).Result;
-                    }
-                }
-                else
-                {
-                    return new SolidColorBrush(darkModeBaseColor);
-                }
-            }
-            else if (theme == ElementTheme.Light)
-            {
-                var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
-                if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
-                {
-                    if (AppBackgroundPanelTintOpacity > 0.99f)
-                    {
-                        return new SolidColorBrush(lightModeBaseColor);
-                    }
-                    else
-                    {
-                        if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
-                        {
-                            hostBackdropAcrylicBrush.LuminosityColor = lightModeBaseColor;
-                            hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
-                            return _currentAppBackgroundBrush;
-                        }
-                        return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity).Result;
-                    }
-                }
-                else
-                {
-                    return new SolidColorBrush(lightModeBaseColor);
-                }
-            }
+            var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
+            var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
-            return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
-        }
+            var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
 
-        public static void ApplyAcrylicBrush(ElementTheme theme, Panel panel)
-        {
-            panel.Background = GetBackgroundBrush(theme);
+            if (AppBackgroundPanelTintOpacity > 0.99f ||
+                !Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+            {
+                return new SolidColorBrush(baseColor);
+            }
+            else
+            {
+                if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
+                {
+                    hostBackdropAcrylicBrush.LuminosityColor = baseColor;
+                    hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
+                    return _currentAppBackgroundBrush;
+                }
+                return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(baseColor, (float)AppBackgroundPanelTintOpacity).Result;
+            }
         }
 
         public static void ApplyThemeForTitleBarButtons(ApplicationViewTitleBar titleBar, ElementTheme theme)

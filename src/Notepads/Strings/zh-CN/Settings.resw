@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>亚克力背景透明度设置。</value>
+    <value>亚克力背景透明度设置。请注意，当系统处于节能模式中或者Windows设置中禁用了透明效果，您将无法更改此设置并且亚克力效果会被禁用。</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
