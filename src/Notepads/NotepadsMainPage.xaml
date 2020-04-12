@@ -27,7 +27,7 @@
                    Grid.Row="0"
                    AllowDrop="True" 
                    IsPaneOpen="False"
-                   OpenPaneLength="380"
+                   OpenPaneLength="385"
                    DisplayMode="Overlay"
                    PaneBackground="Transparent"
                    PanePlacement="Right"

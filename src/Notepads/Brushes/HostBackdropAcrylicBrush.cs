@@ -10,14 +10,18 @@
     using Windows.Graphics.Display;
     using Windows.Graphics.Effects;
     using Windows.Graphics.Imaging;
+    using Windows.System;
+    using Windows.System.Power;
     using Windows.UI;
     using Windows.UI.Composition;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Graphics.Canvas;
     using Microsoft.Graphics.Canvas.Effects;
     using Microsoft.Graphics.Canvas.UI.Composition;
+    using Notepads.Controls.Helpers;
 
     public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase
     {
@@ -99,29 +103,78 @@
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
 
+        private static readonly UISettings UISettings = new UISettings();
+
         private static readonly float _acrylicTintOpacityMinThreshold = 0.35f;
+
+        private readonly DispatcherQueue _dispatcherQueue;
 
         private static readonly Dictionary<Uri, CanvasBitmap> CanvasBitmapCache = new Dictionary<Uri, CanvasBitmap>();
 
+        public HostBackdropAcrylicBrush()
+        {
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        }
+
         protected override async void OnConnected()
         {
-            await _semaphoreSlim.WaitAsync();
             if (CompositionBrush == null)
             {
-                try
-                {
-                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();
-                }
-                catch (Exception ex)
-                {
-                    // Fallback to color brush if unable to create HostBackdropAcrylicBrush
-                    CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
-                    Analytics.TrackEvent("FailedToBuildAcrylicBrush",
-                        new Dictionary<string, string> { { "Exception", ex.ToString() } });
-                }
+                await BuildInternalAsync();
             }
-            _semaphoreSlim.Release();
             base.OnConnected();
+        }
+
+        private async Task BuildInternalAsync()
+        {
+            await _semaphoreSlim.WaitAsync();
+            try
+            {
+                
+                if (PowerManager.EnergySaverStatus == EnergySaverStatus.On || !UISettings.AdvancedEffectsEnabled)
+                {
+                    CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
+                }
+                else
+                {
+                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();   
+                }
+
+                // Register energy saver event
+                PowerManager.EnergySaverStatusChanged -= OnEnergySaverStatusChanged;
+                PowerManager.EnergySaverStatusChanged += OnEnergySaverStatusChanged;
+
+                // Register system level transparency effects settings change event
+                UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
+                UISettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
+            }
+            catch (Exception ex)
+            {
+                // Fallback to color brush if unable to create HostBackdropAcrylicBrush
+                CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
+                Analytics.TrackEvent("FailedToBuildAcrylicBrush",
+                    new Dictionary<string, string> {{"Exception", ex.ToString()}});
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
+        }
+
+        private async void OnEnergySaverStatusChanged(object sender, object e)
+        {
+            await _dispatcherQueue.ExecuteOnUIThreadAsync(async () =>
+            {
+                await BuildInternalAsync();
+            });
+        }
+
+        private async void OnAdvancedEffectsEnabledChanged(UISettings sender, object args)
+        {
+            await _dispatcherQueue.ExecuteOnUIThreadAsync(async () =>
+            {
+                await BuildInternalAsync();
+            });
         }
 
         protected override async void OnDisconnected()
@@ -129,6 +182,9 @@
             await _semaphoreSlim.WaitAsync();
             if (CompositionBrush != null)
             {
+                PowerManager.EnergySaverStatusChanged -= OnEnergySaverStatusChanged;
+                UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
+
                 CompositionBrush.Dispose();
                 CompositionBrush = null;
             }
