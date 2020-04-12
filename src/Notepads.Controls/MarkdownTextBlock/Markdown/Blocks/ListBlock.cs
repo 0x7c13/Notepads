@@ -343,8 +343,10 @@ namespace Notepads.Controls.Markdown
                         else
                         {
                             // Don't allow blocks.
-                            var paragraph = new ParagraphBlock();
-                            paragraph.Inlines = Common.ParseInlineChildren(blockText, 0, blockText.Length);
+                            var paragraph = new ParagraphBlock
+                            {
+                                Inlines = Common.ParseInlineChildren(blockText, 0, blockText.Length)
+                            };
                             newBlockList.Add(paragraph);
                         }
                     }

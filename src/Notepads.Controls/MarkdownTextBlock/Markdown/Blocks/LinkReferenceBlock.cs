@@ -154,7 +154,7 @@ namespace Notepads.Controls.Markdown
             }
 
             // We found something!
-            var result = new LinkReferenceBlock {Id = id, Url = url, Tooltip = tooltip};
+            var result = new LinkReferenceBlock { Id = id, Url = url, Tooltip = tooltip };
             return result;
         }
 

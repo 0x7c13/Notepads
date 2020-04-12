@@ -70,8 +70,10 @@ namespace Notepads.Controls.Markdown
             }
 
             // We found something!
-            var result = new SubscriptTextInline();
-            result.Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd);
+            var result = new SubscriptTextInline
+            {
+                Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd)
+            };
             return new InlineParseResult(result, start, innerEnd + 6);
         }
 

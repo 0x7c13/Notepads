@@ -25,7 +25,7 @@ namespace Notepads.Controls.Markdown
         /// <summary>
         /// Super Hack to retain inertia and passing the Scroll data onto the Parent ScrollViewer.
         /// </summary>
-        private static MethodInfo pointerWheelChanged = typeof(ScrollViewer).GetMethod("OnPointerWheelChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo pointerWheelChanged = typeof(ScrollViewer).GetMethod("OnPointerWheelChanged", BindingFlags.NonPublic | BindingFlags.Instance);
 
         /// <summary>
         /// Gets or sets the Root Framework Element.

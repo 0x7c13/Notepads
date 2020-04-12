@@ -106,8 +106,10 @@ namespace Notepads.Controls.Markdown
                 return null;
             }
 
-            var result = new YamlHeaderBlock();
-            result.Children = new Dictionary<string, string>();
+            var result = new YamlHeaderBlock
+            {
+                Children = new Dictionary<string, string>()
+            };
             foreach (var item in elements)
             {
                 string[] splits = item.Split(new string[] { ": " }, StringSplitOptions.None);

@@ -32,7 +32,7 @@ namespace Notepads.Controls.Markdown
         /// <returns> A parsed paragraph. </returns>
         internal static ParagraphBlock Parse(string markdown)
         {
-            return new ParagraphBlock {Inlines = Common.ParseInlineChildren(markdown, 0, markdown.Length)};
+            return new ParagraphBlock { Inlines = Common.ParseInlineChildren(markdown, 0, markdown.Length) };
         }
 
         /// <summary>

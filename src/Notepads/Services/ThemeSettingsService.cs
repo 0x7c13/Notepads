@@ -177,7 +177,7 @@
                 _useWindowsTheme = true;
             }
 
-            _themeListener = new ThemeListener();	
+            _themeListener = new ThemeListener();
             _themeListener.ThemeChanged += ThemeListener_ThemeChanged;
 
             ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
@@ -194,11 +194,11 @@
             }
         }
 
-        private static void ThemeListener_ThemeChanged(ThemeListener sender)	
+        private static void ThemeListener_ThemeChanged(ThemeListener sender)
         {
-            if (UseWindowsTheme)	
-            {	
-                SetTheme(sender.CurrentTheme.ToElementTheme());	
+            if (UseWindowsTheme)
+            {
+                SetTheme(sender.CurrentTheme.ToElementTheme());
             }
         }
 

@@ -88,8 +88,10 @@ namespace Notepads.Controls.Markdown
 
                 // We found something!
                 end = innerEnd + 6;
-                var result = new SuperscriptTextInline();
-                result.Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd);
+                var result = new SuperscriptTextInline
+                {
+                    Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd)
+                };
                 return new InlineParseResult(result, start, end);
             }
             else

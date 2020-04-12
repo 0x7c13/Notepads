@@ -30,10 +30,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         public int HeaderLevel
         {
-            get
-            {
-                return _headerLevel;
-            }
+            get => _headerLevel;
 
             set
             {
@@ -142,11 +139,13 @@ namespace Notepads.Controls.Markdown
                 pos++;
             }
 
-            var result = new HeaderBlock();
-            result.HeaderLevel = underlineChar == '=' ? 1 : 2;
+            var result = new HeaderBlock
+            {
+                HeaderLevel = underlineChar == '=' ? 1 : 2,
 
-            // Parse the inline content.
-            result.Inlines = Common.ParseInlineChildren(markdown, firstLineStart, firstLineEnd);
+                // Parse the inline content.
+                Inlines = Common.ParseInlineChildren(markdown, firstLineStart, firstLineEnd)
+            };
             return result;
         }
 
