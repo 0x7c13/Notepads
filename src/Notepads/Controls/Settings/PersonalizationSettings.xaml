@@ -66,16 +66,18 @@
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,40">
                     <ToggleSwitch x:Uid="/Settings/PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" Margin="0,0,0,8"/>
-                    <ColorPicker
-                        x:Name="AccentColorPicker"
-                        ColorSpectrumShape="Ring"
-                        IsColorSliderVisible="True"
-                        IsColorChannelTextInputVisible="True"
-                        IsHexInputVisible="True"
-                        IsAlphaEnabled="False"
-                        IsAlphaSliderVisible="True"
-                        IsAlphaTextInputVisible="True">
-                    </ColorPicker>
+                    <Viewbox MaxWidth="300" Stretch="Fill">
+                        <ColorPicker
+                            x:Name="AccentColorPicker"
+                            ColorSpectrumShape="Ring"
+                            IsColorSliderVisible="True"
+                            IsColorChannelTextInputVisible="True"
+                            IsHexInputVisible="True"
+                            IsAlphaEnabled="False"
+                            IsAlphaSliderVisible="True"
+                            IsAlphaTextInputVisible="True">
+                        </ColorPicker>
+                    </Viewbox>
                 </StackPanel>
 
             </StackPanel>
