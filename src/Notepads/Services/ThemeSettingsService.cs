@@ -260,7 +260,8 @@
             var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
 
             if (AppBackgroundPanelTintOpacity > 0.99f ||
-                !Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+                !Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush") ||
+                App.IsGameBarWidget)
             {
                 return new SolidColorBrush(baseColor);
             }
