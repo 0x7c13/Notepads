@@ -31,12 +31,12 @@
                         <TextBlock
                             Margin="0,5,0,0"
                             FontWeight="Normal"
-                            FontSize="30"
+                            FontSize="28"
                             Text="Notepads" />
                         <TextBlock
                             Margin="2,5,0,5"
                             FontWeight="Normal"
-                            FontSize="18"
+                            FontSize="20"
                             Text="{x:Bind AppVersion, Mode=OneTime}" />
                     </StackPanel>
                 </StackPanel>
