@@ -154,16 +154,16 @@ namespace Notepads.Controls.Markdown
                         return false;
                     }
                 }
-                else if (inline is IInlineLeaf leaf && !ParseHelpers.IsMarkdownBlankOrWhiteSpace(leaf.Text))
+                else if (inline is IInlineLeaf leaf)
                 {
-                    if (superscriptLevel != 1)
+                    if (superscriptLevel != 1 && !ParseHelpers.IsMarkdownBlankOrWhiteSpace(leaf.Text))
                     {
                         return false;
                     }
-                }
-                else if (inline is TextRunInline textRun && ParseHelpers.IsMarkdownBlankOrWhiteSpace(textRun.Text))
-                {
-                    return false;
+                    else if (string.IsNullOrWhiteSpace(leaf.Text))
+                    {
+                        return false;
+                    }
                 }
             }
 
