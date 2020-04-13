@@ -134,8 +134,8 @@
 
             if (rootFrameCreated)
             {
-                Window.Current.Activate();
                 ExtendViewIntoTitleBar();
+                Window.Current.Activate();
             }
         }
 
