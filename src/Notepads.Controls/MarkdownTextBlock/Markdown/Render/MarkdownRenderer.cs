@@ -146,20 +146,24 @@ namespace Notepads.Controls.Markdown
                         return false;
                     }
                 }
-                else if (inline is IInlineContainer)
+                else if (inline is IInlineContainer inlineContainer)
                 {
                     // Remove any superscripts.
-                    if (AllTextIsSuperscript((IInlineContainer)inline, superscriptLevel) == false)
+                    if (AllTextIsSuperscript(inlineContainer, superscriptLevel) == false)
                     {
                         return false;
                     }
                 }
-                else if (inline is IInlineLeaf && !ParseHelpers.IsMarkdownBlankOrWhiteSpace(((IInlineLeaf)inline).Text))
+                else if (inline is IInlineLeaf leaf && !ParseHelpers.IsMarkdownBlankOrWhiteSpace(leaf.Text))
                 {
                     if (superscriptLevel != 1)
                     {
                         return false;
                     }
+                }
+                else if (inline is TextRunInline textRun && ParseHelpers.IsMarkdownBlankOrWhiteSpace(textRun.Text))
+                {
+                    return false;
                 }
             }
 
