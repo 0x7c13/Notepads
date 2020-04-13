@@ -612,7 +612,7 @@
         {
             // Automatically indent on new lines based on current line's leading spaces/tabs
             GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
-            var leadingSpacesAndTabs = StringUtility.GetLeadingSpacesAndTabs(_contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1));
+            var leadingSpacesAndTabs = _contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
