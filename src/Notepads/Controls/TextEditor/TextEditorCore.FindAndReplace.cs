@@ -162,7 +162,7 @@
 
                 if (searchContext.UseRegex)
                 {
-                    replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                    replaceText = ApplyTabAndLineEndingFix(replaceText);
                 }
 
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
@@ -302,12 +302,12 @@
             try
             {
                 Regex regex = new Regex(searchContext.SearchText, RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-                
+
                 if (regex.IsMatch(content))
                 {
                     if (searchContext.UseRegex)
                     {
-                        replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                        replaceText = ApplyTabAndLineEndingFix(replaceText);
                     }
 
                     output = regex.Replace(content, replaceText);

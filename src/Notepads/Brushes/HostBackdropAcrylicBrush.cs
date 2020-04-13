@@ -136,7 +136,7 @@
                 }
                 else
                 {
-                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();   
+                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();
                 }
 
                 // Register energy saver event
@@ -152,7 +152,7 @@
                 // Fallback to color brush if unable to create HostBackdropAcrylicBrush
                 CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
                 Analytics.TrackEvent("FailedToBuildAcrylicBrush",
-                    new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
             finally
             {

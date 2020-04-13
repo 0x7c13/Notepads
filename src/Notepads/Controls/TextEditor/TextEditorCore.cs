@@ -93,8 +93,8 @@
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
-            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
@@ -260,8 +260,8 @@
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                SelectionHighlightColor = new SolidColorBrush(color);
+                SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
             });
         }
 

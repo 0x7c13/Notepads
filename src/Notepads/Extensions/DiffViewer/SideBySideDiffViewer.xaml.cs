@@ -34,8 +34,8 @@
             _diffRenderer = new RichTextBlockDiffRenderer();
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
-            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            LeftBox.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            RightBox.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
@@ -70,8 +70,8 @@
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                LeftBox.SelectionHighlightColor = new SolidColorBrush(color);
+                RightBox.SelectionHighlightColor = new SolidColorBrush(color);
             });
         }
 
