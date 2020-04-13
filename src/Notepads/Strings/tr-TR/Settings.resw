@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Eğer dosya kodlayıcısı tanınmazsa alternatiif çözücü kullanılacak.</value>
+    <value>Eğer dosya kodlayıcısı tanınmazsa alternatif çözücü kullanılacak.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
