@@ -130,7 +130,6 @@
             await _semaphoreSlim.WaitAsync();
             try
             {
-                
                 if (PowerManager.EnergySaverStatus == EnergySaverStatus.On || !UISettings.AdvancedEffectsEnabled)
                 {
                     CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);

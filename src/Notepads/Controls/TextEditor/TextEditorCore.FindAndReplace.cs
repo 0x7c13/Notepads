@@ -59,7 +59,7 @@
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 var index = searchContext.MatchWholeWord
-                    ? StringUtility.IndexOfWholeWord(text, Document.Selection.EndPosition, searchContext.SearchText, comparison)
+                    ? text.IndexOfWholeWord(searchContext.SearchText, Document.Selection.EndPosition, comparison)
                     : text.IndexOf(searchContext.SearchText, Document.Selection.EndPosition, comparison);
 
                 if (index != -1)
@@ -72,7 +72,7 @@
                     if (!stopAtEof)
                     {
                         index = searchContext.MatchWholeWord
-                            ? StringUtility.IndexOfWholeWord(text, 0, searchContext.SearchText, comparison)
+                            ? text.IndexOfWholeWord(searchContext.SearchText, 0, comparison)
                             : text.IndexOf(searchContext.SearchText, 0, comparison);
 
                         if (index != -1)
@@ -123,7 +123,7 @@
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 var index = searchContext.MatchWholeWord
-                    ? StringUtility.LastIndexOfWholeWord(text, searchIndex, searchContext.SearchText, comparison)
+                    ? text.LastIndexOfWholeWord(searchContext.SearchText, searchIndex, comparison)
                     : text.LastIndexOf(searchContext.SearchText, searchIndex, comparison);
 
                 if (index != -1)
@@ -134,7 +134,7 @@
                 else
                 {
                     index = searchContext.MatchWholeWord
-                        ? StringUtility.LastIndexOfWholeWord(text, text.Length - 1, searchContext.SearchText, comparison)
+                        ? text.LastIndexOfWholeWord(searchContext.SearchText, text.Length - 1, comparison)
                         : text.LastIndexOf(searchContext.SearchText, text.Length - 1, comparison);
 
                     if (index != -1)
@@ -159,6 +159,12 @@
             if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))
             {
                 regexError = error;
+
+                if (searchContext.UseRegex)
+                {
+                    replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                }
+
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
                 return true;
             }
@@ -192,7 +198,7 @@
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 pos = searchContext.MatchWholeWord
-                    ? StringUtility.IndexOfWholeWord(text, pos, searchContext.SearchText, comparison)
+                    ? text.IndexOfWholeWord(searchContext.SearchText, pos, comparison)
                     : text.IndexOf(searchContext.SearchText, pos, comparison);
 
                 while (pos != -1)
@@ -201,7 +207,7 @@
                     text = text.Remove(pos, searchTextLength).Insert(pos, replaceText);
                     pos += replaceTextLength;
                     pos = searchContext.MatchWholeWord
-                        ? StringUtility.IndexOfWholeWord(text, pos, searchContext.SearchText, comparison)
+                        ? text.IndexOfWholeWord(searchContext.SearchText, pos, comparison)
                         : text.IndexOf(searchContext.SearchText, pos, comparison);
                 }
             }
@@ -295,10 +301,15 @@
 
             try
             {
-                Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                
                 if (regex.IsMatch(content))
                 {
+                    if (searchContext.UseRegex)
+                    {
+                        replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                    }
+
                     output = regex.Replace(content, replaceText);
                     return true;
                 }
@@ -310,6 +321,11 @@
             }
 
             return false;
+        }
+
+        private static string ApplyTabAndLineEndingFix(string text)
+        {
+            return text.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
         }
     }
 }

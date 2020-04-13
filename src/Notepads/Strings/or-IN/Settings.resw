@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>ଆକ୍ରିଲିକ୍ ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ୍ ସ୍ୱଚ୍ଛତା</value>
+    <value>ଆକ୍ରିଲିକ୍ ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ୍ ସ୍ୱଚ୍ଛତା| ଦୟାକରି ଧ୍ୟାନ ଦିଅନ୍ତୁ ଯେ ବ୍ୟାଟେରୀ ସେଭର୍ ମୋଡ୍ ଅନ୍ ଥିବାବେଳେ କିମ୍ବା ଯଦି ଆପଣ ୱିଣ୍ଡୋଜ୍ ସେଟିଂସମୂହରେ ସ୍ୱଚ୍ଛତା ପ୍ରଭାବ ବନ୍ଦ କରନ୍ତି, ଆକ୍ରିଲିକ୍ ପ୍ରଭାବ ଅକ୍ଷମ ହେବ|</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">

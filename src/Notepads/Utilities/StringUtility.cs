@@ -4,7 +4,7 @@
 
     public static class StringUtility
     {
-        public static string GetLeadingSpacesAndTabs(string str)
+        public static string LeadingSpacesAndTabs(this string str)
         {
             int i = 0;
             for (; i < str.Length; i++)
@@ -18,7 +18,7 @@
             return str.Substring(0, i);
         }
 
-        public static int IndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        public static int IndexOfWholeWord(this string target, string value, int startIndex, StringComparison comparison)
         {
             int pos = startIndex;
 
@@ -40,7 +40,7 @@
             return -1;
         }
 
-        public static int LastIndexOfWholeWord(string target, int startIndex, string value, StringComparison comparison)
+        public static int LastIndexOfWholeWord(this string target, string value, int startIndex, StringComparison comparison)
         {
             int pos = startIndex;
 
