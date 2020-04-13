@@ -159,6 +159,12 @@
             if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))
             {
                 regexError = error;
+
+                if (searchContext.UseRegex)
+                {
+                    replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                }
+
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
                 return true;
             }
@@ -295,10 +301,15 @@
 
             try
             {
-                Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                
                 if (regex.IsMatch(content))
                 {
+                    if (searchContext.UseRegex)
+                    {
+                        replaceText = ApplyTabAndLineEndingFix(replaceText);   
+                    }
+
                     output = regex.Replace(content, replaceText);
                     return true;
                 }
@@ -310,6 +321,11 @@
             }
 
             return false;
+        }
+
+        private static string ApplyTabAndLineEndingFix(string text)
+        {
+            return text.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
         }
     }
 }
