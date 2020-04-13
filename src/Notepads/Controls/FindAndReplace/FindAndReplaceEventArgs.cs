@@ -17,26 +17,21 @@
 
     public class FindAndReplaceEventArgs : EventArgs
     {
-        public FindAndReplaceEventArgs(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegex, FindAndReplaceMode findAndReplaceMode, SearchDirection searchDirection = SearchDirection.Next)
+        public FindAndReplaceEventArgs(
+            SearchContext searchContext,
+            string replaceText,
+            FindAndReplaceMode findAndReplaceMode,
+            SearchDirection searchDirection = SearchDirection.Next)
         {
-            SearchText = searchText;
-            MatchCase = matchCase;
-            MatchWholeWord = matchWholeWord;
+            SearchContext = searchContext;
             ReplaceText = replaceText;
             FindAndReplaceMode = findAndReplaceMode;
-            UseRegex = useRegex;
             SearchDirection = searchDirection;
         }
 
-        public string SearchText { get; }
+        public SearchContext SearchContext { get; }
 
         public string ReplaceText { get; }
-
-        public bool MatchCase { get; }
-
-        public bool MatchWholeWord { get; }
-
-        public bool UseRegex { get; }
 
         public FindAndReplaceMode FindAndReplaceMode { get; }
 

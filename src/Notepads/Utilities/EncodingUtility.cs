@@ -61,7 +61,7 @@
             { 1258,    "Vietnamese (windows-1258)" },
             { 850,     "Western European DOS (ibm850)" }
         };
-        
+
         // Previously used Encoding names by Notepads
         // Containing misspelled Encoding names as well as old names
         // This list will eventually be removed in future version
@@ -106,7 +106,7 @@
 
         public static string GetEncodingName(Encoding encoding)
         {
-            string encodingName = "Unknown";
+            string encodingName;
 
             switch (encoding)
             {
@@ -144,32 +144,39 @@
                     encodingName = "UTF-32 LE";
                     break;
                 default:
-                {
-                    if (ANSIEncodings.ContainsKey(encoding.CodePage))
-                    {
-                        encodingName = ANSIEncodings[encoding.CodePage];
-                    }
-                    else
-                    {
-                        try
-                        {
-                            encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
-                            Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>() 
-                            {
-                                { "CodePage", encoding.CodePage.ToString() },
-                                { "WebName", encoding.WebName }
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>() 
-                            {
-                                { "Exception", ex.ToString() },
-                                { "Message", ex.Message }
-                            });
-                        }
-                    }
+                    encodingName = GetEncodingNameFallback(encoding);
                     break;
+            }
+
+            return encodingName;
+        }
+
+        private static string GetEncodingNameFallback(Encoding encoding)
+        {
+            string encodingName = "Unknown";
+
+            if (ANSIEncodings.ContainsKey(encoding.CodePage))
+            {
+                encodingName = ANSIEncodings[encoding.CodePage];
+            }
+            else
+            {
+                try
+                {
+                    encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
+                    Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>()
+                    {
+                        {"CodePage", encoding.CodePage.ToString()},
+                        {"WebName", encoding.WebName}
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>()
+                    {
+                        {"Exception", ex.ToString()},
+                        {"Message", ex.Message}
+                    });
                 }
             }
 
@@ -201,10 +208,8 @@
             switch (name)
             {
                 case "ANSI":
-                {
-                    if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding)) return systemDefaultANSIEncoding; 
+                    if (TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding)) return systemDefaultANSIEncoding;
                     else return TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding) ? currentCultureANSIEncoding : new UTF8Encoding(false);
-                }
                 case "UTF-7":
                     return new UTF7Encoding();
                 case "UTF-8":
@@ -228,41 +233,45 @@
                 case "UTF-32 LE":
                     return new UTF32Encoding(false, false);
                 default:
+                    return GetEncodingByNameFallback(name);
+            }
+        }
+
+        private static Encoding GetEncodingByNameFallback(string name)
+        {
+            foreach (var ansiEncoding in ANSIEncodings)
+            {
+                if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    foreach (var ansiEncoding in ANSIEncodings)
-                    {
-                        if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            return Encoding.GetEncoding(ansiEncoding.Key);
-                        }
-                    }
-
-                    // Hot-fix for legacy/deprecated names used in previous version of Notepads
-                    foreach (var ansiEncoding in DeprecatedANSIEncodings)
-                    {
-                        if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            Analytics.TrackEvent("GetEncodingByName_FoundDeprecatedEncodingName");
-                            return Encoding.GetEncoding(ansiEncoding.Key);
-                        }
-                    }
-
-                    try
-                    {
-                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        return Encoding.GetEncoding(name);
-                    }
-                    catch (Exception ex)
-                    {
-                        Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>() 
-                        {
-                            { "EncodingName", name },
-                            { "Exception", ex.ToString() }
-                        });
-                    }
-                    return new UTF8Encoding(false);
+                    return Encoding.GetEncoding(ansiEncoding.Key);
                 }
             }
+
+            // Hot-fix for legacy/deprecated names used in previous version of Notepads
+            foreach (var ansiEncoding in DeprecatedANSIEncodings)
+            {
+                if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Analytics.TrackEvent("GetEncodingByName_FoundDeprecatedEncodingName");
+                    return Encoding.GetEncoding(ansiEncoding.Key);
+                }
+            }
+
+            try
+            {
+                Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                return Encoding.GetEncoding(name);
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>()
+                {
+                    {"EncodingName", name},
+                    {"Exception", ex.ToString()}
+                });
+            }
+
+            return new UTF8Encoding(false);
         }
 
         public static bool TryGetSystemDefaultANSIEncoding(out Encoding encoding)
@@ -281,7 +290,7 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>() 
+                Analytics.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
@@ -308,7 +317,7 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>() 
+                Analytics.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
@@ -338,7 +347,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>() 
+                    Analytics.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>()
                     {
                         { "Message", ex.Message },
                         { "Exception", ex.ToString() },

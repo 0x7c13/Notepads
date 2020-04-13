@@ -12,12 +12,13 @@
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using SetsView;
+    using Notepads.Controls;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -52,6 +53,8 @@
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
+        private readonly CoreDispatcher _dispatcher;
+
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
@@ -61,7 +64,8 @@
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
-            INotepadsExtensionProvider extensionProvider)
+            INotepadsExtensionProvider extensionProvider,
+            CoreDispatcher dispatcher)
         {
             Sets = sets;
             Sets.SelectionChanged += SetsView_OnSelectionChanged;
@@ -74,8 +78,23 @@
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
+            _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
-            ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
+
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                    item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                }
+            });
         }
 
         public void OpenNewTextEditor(string fileNamePlaceholder)
@@ -199,6 +218,7 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
+            item.PrepareForClosing();
             Sets.Items?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
@@ -210,7 +230,7 @@
 
             textEditor.Loaded -= TextEditor_Loaded;
             textEditor.Unloaded -= TextEditor_Unloaded;
-            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.KeyDown -= TextEditorKeyDown;
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
             textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
@@ -526,16 +546,6 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
-        }
-
-        private void OnAppAccentColorChanged(object sender, Color color)
-        {
-            if (Sets.Items == null) return;
-            foreach (SetsViewItem item in Sets.Items)
-            {
-                item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            }
         }
 
         #region DragAndDrop
