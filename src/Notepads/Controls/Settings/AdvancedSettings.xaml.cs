@@ -25,6 +25,15 @@
 
             AlwaysOpenNewWindowToggleSwitch.IsOn = EditorSettingsService.AlwaysOpenNewWindow;
 
+            if (App.IsGameBarWidget)
+            {
+                // these settings don't make sense for Game Bar, there can be only one
+                SessionSnapshotSettingsTitle.Visibility = Visibility.Collapsed;
+                SessionSnapshotSettingsControls.Visibility = Visibility.Collapsed;
+                LaunchPreferenceSettingsTitle.Visibility = Visibility.Collapsed;
+                LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
+            }
+
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
         }

@@ -2,14 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Windows.UI;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Brushes;
 
     public static class BrushUtility
     {
-        public static Brush GetHostBackdropAcrylicBrush(Color color, float tintOpacity)
+        private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1);
+
+        public static async Task<Brush> GetHostBackdropAcrylicBrush(Color color, float tintOpacity)
         {
+            await SemaphoreSlim.WaitAsync();
             try
             {
                 return new HostBackdropAcrylicBrush()
@@ -17,18 +23,25 @@
                     FallbackColor = color,
                     LuminosityColor = color,
                     TintOpacity = tintOpacity,
-                    TextureUri = ToAppxUri("/Assets/noise_low.png"),
+                    TextureUri = "/Assets/noise_high.png".ToAppxUri(),
                 };
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToCreateAcrylicBrush", 
-                    new Dictionary<string, string> {{ "Exception", ex.ToString() }});
+                Analytics.TrackEvent("FailedToCreateAcrylicBrush", new Dictionary<string, string>
+                {
+                    { "Exception", ex.ToString() },
+                    { "Message", ex.Message },
+                });
                 return new SolidColorBrush(color);
             }
-        }    
-        
-        private static Uri ToAppxUri(string path)
+            finally
+            {
+                SemaphoreSlim.Release();
+            }
+        }
+
+        private static Uri ToAppxUri(this string path)
         {
             string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";
             return new Uri($"{prefix}{path}");

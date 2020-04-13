@@ -3,7 +3,7 @@
     using System;
     using System.IO;
     using System.Threading.Tasks;
-    using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Notepads.Controls;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
@@ -37,9 +37,20 @@
         public MarkdownExtensionView()
         {
             InitializeComponent();
+
             MarkdownTextBlock.LinkClicked += MarkdownTextBlock_OnLinkClicked;
             MarkdownTextBlock.ImageClicked += MarkdownTextBlock_OnLinkClicked;
             MarkdownTextBlock.ImageResolving += MarkdownTextBlock_ImageResolving;
+
+            ThemeSettingsService.OnThemeChanged += OnThemeChanged;
+        }
+
+        private async void OnThemeChanged(object sender, ElementTheme theme)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                MarkdownTextBlock.RequestedTheme = theme;
+            });
         }
 
         public void Dispose()
@@ -54,6 +65,8 @@
             _editorCore.TextChanged -= OnTextChanged;
             _editorCore.TextWrappingChanged -= OnTextWrappingChanged;
             _editorCore.FontSizeChanged -= OnFontSizeChanged;
+
+            ThemeSettingsService.OnThemeChanged -= OnThemeChanged;
         }
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
@@ -96,7 +109,7 @@
             {
                 using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
                 {
-                    writer.WriteBytes((byte[])feed.ToArray());
+                    writer.WriteBytes(feed.ToArray());
                     writer.StoreAsync().GetResults();
                 }
 

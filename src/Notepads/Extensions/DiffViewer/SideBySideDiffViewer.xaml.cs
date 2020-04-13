@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Notepads.Commands;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -20,7 +21,7 @@
 
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -51,7 +52,7 @@
             StopRenderingAndClearCache();
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-            
+
             DismissButton.Click -= DismissButton_OnClick;
             LayoutRoot.KeyDown -= OnKeyDown;
             KeyDown -= OnKeyDown;
@@ -65,30 +66,37 @@
             Focus();
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                LeftBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                RightBox.SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            });
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
                 {
                     DismissButton_OnClick(this, new RoutedEventArgs());
                 }),
             });
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs args)
+        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(args);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         public void Focus()
@@ -109,11 +117,11 @@
             RightBox.Blocks.Clear();
         }
 
-        public void RenderDiff(string left, string right)
+        public void RenderDiff(string left, string right, ElementTheme theme)
         {
             StopRenderingAndClearCache();
 
-            var foregroundBrush = (ThemeSettingsService.ThemeMode == ElementTheme.Dark)
+            var foregroundBrush = (theme == ElementTheme.Dark)
                 ? new SolidColorBrush(Colors.White)
                 : new SolidColorBrush(Colors.Black);
 

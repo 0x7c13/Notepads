@@ -26,7 +26,8 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsFirstInstance;
+        public static bool IsFirstInstance = false;
+        public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
 
@@ -52,54 +53,6 @@
             Suspending += OnSuspending;
         }
 
-        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            // Occurs when an exception is not handled on the UI thread.
-
-            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
-
-            var diagnosticInfo = new Dictionary<string, string>()
-            {
-                { "Message", e.Message },
-                { "Exception", e.Exception.ToString() },
-                { "Culture", SystemInformation.Culture.EnglishName },
-                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                { "IsFirstRun", SystemInformation.IsFirstRun.ToString() },
-                { "IsFirstRunAfterUpdate", SystemInformation.IsAppUpdated.ToString() },
-                { "FirstVersionInstalled", $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}" },
-                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                { "LastLaunchTimeUTC", SystemInformation.LastLaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                { "LaunchTimeUTC", SystemInformation.LaunchTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                { "CurrentLaunchCount", SystemInformation.LaunchCount.ToString() },
-                { "TotalLaunchCount", SystemInformation.TotalLaunchCount.ToString() },
-                { "AppUptime", SystemInformation.AppUptime.ToString() },
-                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
-            };
-
-            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
-            Crashes.TrackError(e.Exception, diagnosticInfo);
-
-            e.Handled = true; // !e.Message.Contains("0x80040154", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            // Occurs when an exception is not handled on a background thread.
-            // ie. A task is fired and forgotten Task.Run(() => {...})
-
-            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
-
-            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() 
-            {
-                { "Message", e.Exception.Message },
-                { "Exception", e.Exception.ToString() }
-            });
-
-            // suppress and handle it manually.
-            e.SetObserved();
-        }
-
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -122,20 +75,24 @@
             base.OnActivated(args);
         }
 
-        private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
+        private async Task ActivateAsync(IActivatedEventArgs e)
         {
+            bool rootFrameCreated = false;
+
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 rootFrame = CreateRootFrame(e);
                 Window.Current.Content = rootFrame;
-            }
+                rootFrameCreated = true;
 
-            ThemeSettingsService.Initialize();
-            EditorSettingsService.Initialize();
+                ThemeSettingsService.Initialize();
+                EditorSettingsService.Initialize();
+            }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
@@ -148,7 +105,8 @@
                 { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
                 { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
                 { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance).ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
                 { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
                 { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
                 { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
@@ -164,11 +122,21 @@
             }
             catch (Exception ex)
             {
-                throw new Exception("AppFailedToActivate", ex);
+                var diagnosticInfo = new Dictionary<string, string>()
+                {
+                    { "Message", ex?.Message },
+                    { "Exception", ex?.ToString() },
+                };
+                Analytics.TrackEvent("AppFailedToActivate", diagnosticInfo);
+                Crashes.TrackError(ex, diagnosticInfo);
+                throw;
             }
 
-            Window.Current.Activate();
-            ExtendAcrylicIntoTitleBar();
+            if (rootFrameCreated)
+            {
+                ExtendViewIntoTitleBar();
+                Window.Current.Activate();
+            }
         }
 
         private Frame CreateRootFrame(IActivatedEventArgs e)
@@ -215,12 +183,68 @@
             deferral.Complete();
         }
 
-        private void ExtendAcrylicIntoTitleBar()
+        // Occurs when an exception is not handled on the UI thread.
+        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "Culture", SystemInformation.Culture.EnglishName },
+                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, Message: {e.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}", "UnhandledException");
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
+            e.Handled = true;
+        }
+
+        // Occurs when an exception is not handled on a background thread.
+        // ie. A task is fired and forgotten Task.Run(() => {...})
+        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Exception?.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "InnerException", e.Exception?.InnerException?.ToString() },
+                { "InnerExceptionMessage", e.Exception?.InnerException?.Message }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, Message: {e.Exception?.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "UnobservedException");
+
+            Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
+            e.SetObserved();
+        }
+
+        private void ExtendViewIntoTitleBar()
+        {
+            if (!IsGameBarWidget)
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
         }
 
         //private static void UpdateAppVersion()

@@ -68,7 +68,7 @@
                 var success = MRUService.TryAdd(file); // Remember recently used files
                 if (success && rebuildOpenRecentItems)
                 {
-                    await BuildOpenRecentButtonSubItems();   
+                    await BuildOpenRecentButtonSubItems();
                 }
                 return true;
             }
@@ -100,7 +100,7 @@
             }
             if (successCount > 0)
             {
-                await BuildOpenRecentButtonSubItems();   
+                await BuildOpenRecentButtonSubItems();
             }
             return successCount;
         }
@@ -154,16 +154,35 @@
             }
         }
 
+        private async Task<bool> SaveAll(ITextEditor[] textEditors)
+        {
+            var success = false;
+
+            foreach (var textEditor in textEditors)
+            {
+                if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
+            }
+
+            if (success)
+            {
+                await BuildOpenRecentButtonSubItems();
+            }
+
+            return success;
+        }
+
         public async Task Print(ITextEditor textEditor)
         {
+            if (App.IsGameBarWidget) return;
             if (textEditor == null) return;
-            await PrintAll(new[] {textEditor});
+            await PrintAll(new[] { textEditor });
         }
 
         public async Task PrintAll(ITextEditor[] textEditors)
         {
+            if (App.IsGameBarWidget) return;
             if (textEditors == null || textEditors.Length == 0) return;
-            
+
             // Initialize print content
             PrintArgs.PreparePrintContent(textEditors);
 

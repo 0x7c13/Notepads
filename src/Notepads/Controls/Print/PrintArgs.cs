@@ -168,7 +168,7 @@
                 RichTextBlockOverflow lastRTBOOnPage;
 
                 // Get the PrintTaskOptions
-                PrintTaskOptions printingOptions = ((PrintTaskOptions)e.PrintTaskOptions);
+                PrintTaskOptions printingOptions = e.PrintTaskOptions;
 
                 // Get the page description to determine how big the page is
                 PrintPageDescription pageDescription = printingOptions.GetPageDescription(0);
@@ -187,7 +187,7 @@
                         lastRTBOOnPage = AddOnePrintPreviewPage(lastRTBOOnPage, pageDescription, count);
                     }
 
-                    count += 1; 
+                    count += 1;
                 } while (count < _firstPage.Count);
 
                 PrintDocument printDoc = (PrintDocument)sender;

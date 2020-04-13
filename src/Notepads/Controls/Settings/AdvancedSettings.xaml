@@ -27,7 +27,7 @@
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
                     x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,15,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
@@ -37,11 +37,12 @@
                                   Margin="0,0,0,0"/>
                 </StackPanel>
                 <TextBlock
+                    x:Name="SessionSnapshotSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,35,0,0"
                     FontWeight="Normal"/>
-                <StackPanel Margin="0,10,0,0">
+                <StackPanel x:Name="SessionSnapshotSettingsControls" Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="EnableSessionSnapshotToggleSwitch" 
@@ -49,11 +50,12 @@
                     <TextBlock x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 </StackPanel>
                 <TextBlock
+                    x:Name="LaunchPreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,35,0,0"
                     FontWeight="Normal"/>
-                <StackPanel Margin="0,10,0,0">
+                <StackPanel x:Name="LaunchPreferenceSettingsControls" Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="AlwaysOpenNewWindowToggleSwitch" 

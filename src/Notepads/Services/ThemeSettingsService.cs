@@ -2,12 +2,11 @@
 {
     using System;
     using Microsoft.Toolkit.Uwp.Helpers;
-    using Microsoft.Toolkit.Uwp.UI.Helpers;
+    using Notepads.Brushes;
+    using Notepads.Controls.Helpers;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using Windows.ApplicationModel.Core;
     using Windows.UI;
-    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -16,12 +15,14 @@
     public static class ThemeSettingsService
     {
         public static event EventHandler<ElementTheme> OnThemeChanged;
+        public static event EventHandler<Brush> OnBackgroundChanged;
         public static event EventHandler<Color> OnAccentColorChanged;
 
         public static ElementTheme ThemeMode { get; set; }
 
-        private static ThemeListener _themeListener;
-        private static UISettings _uiSettings;
+        private static readonly UISettings UISettings = new UISettings();
+        private static readonly ThemeListener ThemeListener = new ThemeListener();
+        private static Brush _currentAppBackgroundBrush;
 
         private static bool _useWindowsTheme;
 
@@ -35,8 +36,8 @@
                     _useWindowsTheme = value;
                     if (value)
                     {
-                        ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
-                        SetRequestedTheme();
+                        ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
+                        OnThemeChanged?.Invoke(null, ThemeMode);
                     }
                     ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
                 }
@@ -53,13 +54,11 @@
                 _useWindowsAccentColor = value;
                 if (value)
                 {
-                    AppAccentColor = new UISettings().GetColorValue(UIColorType.Accent);
+                    AppAccentColor = UISettings.GetColorValue(UIColorType.Accent);
                 }
                 ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
             }
         }
-
-        public static Panel AppBackground { get; set; }
 
         private static double _appBackgroundPanelTintOpacity;
 
@@ -69,11 +68,8 @@
             set
             {
                 _appBackgroundPanelTintOpacity = value;
-                if (AppBackground != null)
-                {
-                    AppBackground.Background = GetBackgroundBrush(ThemeMode);
-                    ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
-                }
+                OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
+                ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
             }
         }
 
@@ -85,9 +81,8 @@
             set
             {
                 _appAccentColor = value;
-                UpdateSystemAccentColorAndBrushes(value);
+                OnAccentColorChanged?.Invoke(null, _appAccentColor);
                 ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex(), true);
-                OnAccentColorChanged?.Invoke(null, value);
             }
         }
 
@@ -125,10 +120,9 @@
                 _useWindowsAccentColor = true;
             }
 
-            _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
+            UISettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
 
-            _appAccentColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            _appAccentColor = UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
 
             if (!UseWindowsAccentColor)
             {
@@ -153,13 +147,10 @@
 
         private static void UiSettings_ColorValuesChanged(UISettings sender, object args)
         {
-            _ = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-              {
-                  if (UseWindowsAccentColor)
-                  {
-                      AppAccentColor = sender.GetColorValue(UIColorType.Accent);
-                  }
-              });
+            if (UseWindowsAccentColor)
+            {
+                AppAccentColor = sender.GetColorValue(UIColorType.Accent);
+            }
         }
 
         private static void InitializeAppBackgroundPanelTintOpacity()
@@ -185,10 +176,9 @@
                 _useWindowsTheme = true;
             }
 
-            _themeListener = new ThemeListener();
-            _themeListener.ThemeChanged += ThemeListener_ThemeChanged;
+            ThemeListener.ThemeChanged += ThemeListener_ThemeChanged;
 
-            ThemeMode = ApplicationThemeToElementTheme(Application.Current.RequestedTheme);
+            ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
 
             if (!UseWindowsTheme)
             {
@@ -204,53 +194,52 @@
 
         private static void ThemeListener_ThemeChanged(ThemeListener sender)
         {
-            _ = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-              {
-                  if (UseWindowsTheme)
-                  {
-                      SetTheme(sender.CurrentTheme);
-                  }
-              });
-        }
-
-        public static void SetTheme(ApplicationTheme theme)
-        {
-            SetTheme(ApplicationThemeToElementTheme(theme));
+            if (UseWindowsTheme)
+            {
+                SetTheme(sender.CurrentTheme.ToElementTheme());
+            }
         }
 
         public static void SetTheme(ElementTheme theme)
         {
             ThemeMode = theme;
-            SetRequestedTheme();
+            OnThemeChanged?.Invoke(null, theme);
             ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
         }
 
-        public static void SetRequestedTheme()
+        public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)
         {
             // Set requested theme for app background
-            if (AppBackground != null)
+            if (backgroundPanel != null)
             {
-                ApplyAcrylicBrush(ThemeMode, AppBackground);
+                backgroundPanel.Background = GetAppBackgroundBrush(ThemeMode);
             }
 
-            if (Window.Current.Content is FrameworkElement frameworkElement)
+            if (currentContent is FrameworkElement frameworkElement)
             {
                 frameworkElement.RequestedTheme = ThemeMode;
             }
 
             // Set requested theme for app title bar
-            ApplyThemeForTitleBarButtons(ThemeMode);
+            if (titleBar != null)
+            {
+                ApplyThemeForTitleBarButtons(titleBar, ThemeMode);
+            }
 
             // Set ContentDialog background dimming color
-            ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color = ThemeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
+            ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color =
+                ThemeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
 
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
-
-            OnThemeChanged?.Invoke(null, ThemeMode);
         }
 
-        private static ElementTheme ApplicationThemeToElementTheme(ApplicationTheme theme)
+        public static void SetRequestedAccentColor()
+        {
+            UpdateSystemAccentColorAndBrushes(AppAccentColor);
+        }
+
+        public static ElementTheme ToElementTheme(this ApplicationTheme theme)
         {
             switch (theme)
             {
@@ -263,49 +252,33 @@
             }
         }
 
-        private static Brush GetBackgroundBrush(ElementTheme theme)
+        private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
-            if (theme == ElementTheme.Dark)
-            {
-                var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
-                if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
-                {
-                    return AppBackgroundPanelTintOpacity > 0.99f
-                        ? new SolidColorBrush(darkModeBaseColor)
-                        : BrushUtility.GetHostBackdropAcrylicBrush(darkModeBaseColor, (float)AppBackgroundPanelTintOpacity);
-                }
-                else
-                {
-                    return new SolidColorBrush(darkModeBaseColor);
-                }
-            }
-            else if (theme == ElementTheme.Light)
-            {
-                var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
-                if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
-                {
-                    return AppBackgroundPanelTintOpacity > 0.99f
-                        ? new SolidColorBrush(lightModeBaseColor)
-                        : BrushUtility.GetHostBackdropAcrylicBrush(lightModeBaseColor, (float)AppBackgroundPanelTintOpacity);
-                }
-                else
-                {
-                    return new SolidColorBrush(lightModeBaseColor);
-                }
-            }
+            var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
+            var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
-            return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
+            var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
+
+            if (AppBackgroundPanelTintOpacity > 0.99f ||
+                !Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush") ||
+                App.IsGameBarWidget)
+            {
+                return new SolidColorBrush(baseColor);
+            }
+            else
+            {
+                if (_currentAppBackgroundBrush is HostBackdropAcrylicBrush hostBackdropAcrylicBrush)
+                {
+                    hostBackdropAcrylicBrush.LuminosityColor = baseColor;
+                    hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
+                    return _currentAppBackgroundBrush;
+                }
+                return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(baseColor, (float)AppBackgroundPanelTintOpacity).Result;
+            }
         }
 
-        public static void ApplyAcrylicBrush(ElementTheme theme, Panel panel)
+        public static void ApplyThemeForTitleBarButtons(ApplicationViewTitleBar titleBar, ElementTheme theme)
         {
-            panel.Background = GetBackgroundBrush(theme);
-        }
-
-        public static void ApplyThemeForTitleBarButtons(ElementTheme theme)
-        {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-
             if (theme == ElementTheme.Dark)
             {
                 // Set active window colors
