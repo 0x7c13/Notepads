@@ -186,11 +186,11 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Arkaplan bulanıklık opaklığı.</value>
+    <value>Arkaplan bulanıklık opaklığı. Eğer batarya tasarrufu moduna geçilirse veya Ayarlar'dan saydamlık ayarı kapatılırsa bulanıklık efekti devre dışı bırakılır.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Arka Plan Tonu Opaklığı</value>
+    <value>Arkaplan Bulanıklık Opaklığı</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
