@@ -28,7 +28,7 @@
 
     <Grid Background="{ThemeResource SettingsPanelBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -37,8 +37,9 @@
               BorderThickness="0,0,0,1"
               BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
             <TextBlock x:Name="TitleTextBlock"
-                       FontSize="28"
-                       VerticalAlignment="Center"/>
+                       Padding="0,0,0,10"
+                       FontSize="24"
+                       VerticalAlignment="Bottom"/>
         </Grid>
         <Grid Row="1">
             <Frame x:Name="ContentFrame"/>

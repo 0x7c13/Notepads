@@ -1,6 +1,10 @@
 ﻿namespace Notepads.Controls.Settings
 {
     using Notepads.Services;
+    using Notepads.Utilities;
+    using Windows.System.Power;
+    using Windows.UI;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -8,6 +12,8 @@
 
     public sealed partial class PersonalizationSettings : Page
     {
+        private readonly UISettings UISettings = new UISettings();
+
         public PersonalizationSettings()
         {
             InitializeComponent();
@@ -34,13 +40,31 @@
             BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
             AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
+            if (App.IsGameBarWidget)
+            {
+                // Game Bar widgets do not support transparency, disable this setting
+                BackgroundTintOpacityTitle.Visibility = Visibility.Collapsed;
+                BackgroundTintOpacityControls.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                        PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            }
+
             Loaded += PersonalizationSettings_Loaded;
             Unloaded += PersonalizationSettings_Unloaded;
         }
 
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color color)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            BackgroundTintOpacitySlider.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.Foreground = new SolidColorBrush(color);
+                AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
+                AccentColorPicker.Color = color;
+                AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
+            });
         }
 
         private void PersonalizationSettings_Loaded(object sender, RoutedEventArgs e)
@@ -51,8 +75,12 @@
             BackgroundTintOpacitySlider.ValueChanged += BackgroundTintOpacitySlider_OnValueChanged;
             AccentColorToggle.Toggled += WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged += AccentColorPicker_OnColorChanged;
-
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+            if (!App.IsGameBarWidget)
+            {
+                UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
+                PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;   
+            }
         }
 
         private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
@@ -63,8 +91,30 @@
             BackgroundTintOpacitySlider.ValueChanged -= BackgroundTintOpacitySlider_OnValueChanged;
             AccentColorToggle.Toggled -= WindowsAccentColorToggle_OnToggled;
             AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
-
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            if (!App.IsGameBarWidget)
+            {
+                UISettings.AdvancedEffectsEnabledChanged -= UISettings_AdvancedEffectsEnabledChanged;
+                PowerManager.EnergySaverStatusChanged -= PowerManager_EnergySaverStatusChanged;
+            }
+        }
+
+        private async void PowerManager_EnergySaverStatusChanged(object sender, object e)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.IsEnabled =  UISettings.AdvancedEffectsEnabled &&
+                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            });
+        }
+
+        private async void UISettings_AdvancedEffectsEnabledChanged(UISettings sender, object args)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                        PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            });
         }
 
         private void ThemeRadioButton_OnChecked(object sender, RoutedEventArgs e)
@@ -90,8 +140,11 @@
 
         private void AccentColorPicker_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            ThemeSettingsService.AppAccentColor = args.NewColor;
-            if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+            if (AccentColorPicker.IsEnabled)
+            {
+                ThemeSettingsService.AppAccentColor = args.NewColor;
+                if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+            }
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)

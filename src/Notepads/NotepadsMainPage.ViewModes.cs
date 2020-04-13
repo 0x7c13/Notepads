@@ -34,6 +34,8 @@
 
         private async void EnterExitCompactOverlayMode()
         {
+            if (App.IsGameBarWidget) return;
+
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
             {
                 var modeSwitched = await ApplicationView.GetForCurrentView()
@@ -58,6 +60,8 @@
 
         private void EnterExitFullScreenMode()
         {
+            if (App.IsGameBarWidget) return;
+
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
                 LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);

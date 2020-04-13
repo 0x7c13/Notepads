@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:querybox="using:Notepads.Controls.FindAndReplace"
+    xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     mc:Ignorable="d"
     d:DesignHeight="72"
     d:DesignWidth="250">
@@ -39,23 +39,23 @@
 
         <RelativePanel Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
 
-            <querybox:QueryBoxCore x:Name="FindBar"
-                                   x:Uid="FindAndReplace_FindBar"
-                                   Style="{StaticResource TransparentTextBoxStyle}"
-                                   Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                                   RelativePanel.AlignLeftWithPanel="True"
-                                   RelativePanel.AlignRightWithPanel="True"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"
-                                   Padding="10,3,32,6"
-                                   IsSpellCheckEnabled="False"
-                                   TextAlignment="Left"
-                                   BorderThickness="0"
-                                   FontSize="15"
-                                   TextChanged="FindBar_OnTextChanged"
-                                   KeyDown="FindBar_OnKeyDown"
-                                   GotFocus="FindBar_GotFocus"
-                                   LostFocus="FindBar_LostFocus"/>
+            <findAndReplace:FindAndReplaceTextBox x:Name="FindBar"
+                                                  x:Uid="FindAndReplace_FindBar"
+                                                  Style="{StaticResource TransparentTextBoxStyle}"
+                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                                  RelativePanel.AlignLeftWithPanel="True"
+                                                  RelativePanel.AlignRightWithPanel="True"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  Padding="10,3,32,6"
+                                                  IsSpellCheckEnabled="False"
+                                                  TextAlignment="Left"
+                                                  BorderThickness="0"
+                                                  FontSize="15"
+                                                  TextChanged="FindBar_OnTextChanged"
+                                                  KeyDown="FindBar_OnKeyDown"
+                                                  GotFocus="FindBar_GotFocus"
+                                                  LostFocus="FindBar_LostFocus"/>
 
             <Grid RelativePanel.AlignRightWithPanel="True" x:Name="OptionButtonGrid" Background="Transparent">
                 <Border x:Name="OptionButtonSelectionIndicator"
@@ -96,20 +96,20 @@
         </RelativePanel>
 
         <Grid Grid.Row="1" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
-            <querybox:QueryBoxCore x:Name="ReplaceBar"
-                                   x:Uid="FindAndReplace_ReplaceBar"
-                                   Style="{StaticResource TransparentTextBoxStyle}"
-                                   Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"
-                                   IsSpellCheckEnabled="False"
-                                   TextAlignment="Left"
-                                   BorderThickness="0"
-                                   FontSize="15"
-                                   TextChanged="ReplaceBar_OnTextChanged"
-                                   KeyDown="ReplaceBar_OnKeyDown"
-                                   GotFocus="ReplaceBar_GotFocus"
-                                   LostFocus="ReplaceBar_LostFocus"/>
+            <findAndReplace:FindAndReplaceTextBox x:Name="ReplaceBar"
+                                                  x:Uid="FindAndReplace_ReplaceBar"
+                                                  Style="{StaticResource TransparentTextBoxStyle}"
+                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  IsSpellCheckEnabled="False"
+                                                  TextAlignment="Left"
+                                                  BorderThickness="0"
+                                                  FontSize="15"
+                                                  TextChanged="ReplaceBar_OnTextChanged"
+                                                  KeyDown="ReplaceBar_OnKeyDown"
+                                                  GotFocus="ReplaceBar_GotFocus"
+                                                  LostFocus="ReplaceBar_LostFocus"/>
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">

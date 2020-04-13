@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.1.9.0" />
+    Version="1.2.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -66,7 +66,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>Text Document</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\txt.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\txt.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap5:Extension
@@ -86,7 +86,7 @@
               <uap:FileType>.conf</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Configuration Settings</uap:DisplayName>
-            <uap:Logo>Assets\cfg.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\cfg.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -96,7 +96,7 @@
               <uap:FileType>.ini</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Initialization File</uap:DisplayName>
-            <uap:Logo>Assets\ini.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\ini.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -107,7 +107,7 @@
               <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Markdown File</uap:DisplayName>
-            <uap:Logo>Assets\md.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\md.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -117,7 +117,7 @@
               <uap:FileType ContentType="text/plain">.log</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Log File</uap:DisplayName>
-            <uap:Logo>Assets\log.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\log.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -127,7 +127,7 @@
               <uap:FileType ContentType="text/plain">.bib</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>BibTeX File</uap:DisplayName>
-            <uap:Logo>Assets\bib.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\bib.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -137,7 +137,7 @@
               <uap:FileType>.json</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JSON File</uap:DisplayName>
-            <uap:Logo>Assets\json.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\json.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -148,7 +148,7 @@
               <uap:FileType>.yaml</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>YML File</uap:DisplayName>
-            <uap:Logo>Assets\yml.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\yml.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -158,7 +158,7 @@
               <uap:FileType>.xml</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>XML File</uap:DisplayName>
-            <uap:Logo>Assets\xml.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\xml.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -169,7 +169,7 @@
               <uap:FileType>.htm</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>HTML File</uap:DisplayName>
-            <uap:Logo>Assets\html.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\html.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -180,7 +180,7 @@
               <uap:FileType>.aspx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ASP File</uap:DisplayName>
-            <uap:Logo>Assets\asp.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\asp.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -191,7 +191,7 @@
               <uap:FileType>.jspx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JSP File</uap:DisplayName>
-            <uap:Logo>Assets\jsp.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\jsp.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -202,7 +202,7 @@
               <uap:FileType>.scss</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>CSS File</uap:DisplayName>
-            <uap:Logo>Assets\css.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\css.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -212,7 +212,7 @@
               <uap:FileType>.sh</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Shell Script File</uap:DisplayName>
-            <uap:Logo>Assets\sh.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\sh.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -220,10 +220,11 @@
           <uap:FileTypeAssociation Name="rc">
             <uap:SupportedFileTypes>
               <uap:FileType>.bashrc</uap:FileType>
+              <uap:FileType>.vimrc</uap:FileType>
               <uap:FileType>.rc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Runcom File</uap:DisplayName>
-            <uap:Logo>Assets\rc.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\rc.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -233,7 +234,7 @@
               <uap:FileType>.bash</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Bash Script File</uap:DisplayName>
-            <uap:Logo>Assets\bash.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\bash.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -243,7 +244,7 @@
               <uap:FileType>.js</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Javascript File</uap:DisplayName>
-            <uap:Logo>Assets\js.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\js.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -254,7 +255,7 @@
               <uap:FileType>.lua</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Scripting Language File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -265,7 +266,7 @@
               <uap:FileType>.m</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>C File</uap:DisplayName>
-            <uap:Logo>Assets\c.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\c.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -277,7 +278,7 @@
               <uap:FileType>.cpp</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>C++ File</uap:DisplayName>
-            <uap:Logo>Assets\cpp.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\cpp.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -288,7 +289,7 @@
               <uap:FileType>.hpp</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Header File</uap:DisplayName>
-            <uap:Logo>Assets\h.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\h.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -298,7 +299,7 @@
               <uap:FileType>.cmake</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Cmake File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -308,7 +309,7 @@
               <uap:FileType>.cs</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>C# File</uap:DisplayName>
-            <uap:Logo>Assets\cs.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\cs.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -318,7 +319,7 @@
               <uap:FileType>.php</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>PHP File</uap:DisplayName>
-            <uap:Logo>Assets\php.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\php.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -328,7 +329,7 @@
               <uap:FileType>.py</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Python File</uap:DisplayName>
-            <uap:Logo>Assets\py.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\py.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -339,7 +340,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>Ruby File</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\rb.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\rb.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -348,7 +349,7 @@
               <uap:FileType>.java</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>JAVA File</uap:DisplayName>
-            <uap:Logo>Assets\java.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\java.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -358,7 +359,7 @@
               <uap:FileType>.vb</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Visual Basic File</uap:DisplayName>
-            <uap:Logo>Assets\vb.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\vb.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -368,7 +369,7 @@
               <uap:FileType>.go</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Go File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -378,7 +379,7 @@
               <uap:FileType>.srt</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Subtitle file</uap:DisplayName>
-            <uap:Logo>Assets\srt.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\srt.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -388,7 +389,7 @@
               <uap:FileType>.ass</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Aegisub Advanced Subtitle file</uap:DisplayName>
-            <uap:Logo>Assets\ass.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\ass.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -398,7 +399,7 @@
               <uap:FileType>.ssa</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Sub Station Alpha Subtitle File</uap:DisplayName>
-            <uap:Logo>Assets\ssa.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\ssa.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -408,7 +409,7 @@
               <uap:FileType>.vue</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Vue File</uap:DisplayName>
-            <uap:Logo>Assets\vue.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\vue.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -418,7 +419,7 @@
               <uap:FileType>.vuerc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Vue Config File</uap:DisplayName>
-            <uap:Logo>Assets\vue.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\vue.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -428,7 +429,7 @@
               <uap:FileType>.gitconfig</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Git Config File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -438,7 +439,7 @@
               <uap:FileType>.gitignore</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Git Ignore File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -448,7 +449,7 @@
               <uap:FileType>.gitattributes</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Git Attributes File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -458,7 +459,7 @@
               <uap:FileType>.project</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Project File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -468,7 +469,7 @@
               <uap:FileType>.prj</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Project File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -478,7 +479,7 @@
               <uap:FileType>.npmrc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>NPM Config File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -488,7 +489,7 @@
               <uap:FileType>.bash_history</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Bash History File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -498,7 +499,7 @@
               <uap:FileType>.cgi</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>CGI File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -508,7 +509,7 @@
               <uap:FileType>.pl</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Perl File</uap:DisplayName>
-            <uap:Logo>Assets\perl.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\perl.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -518,7 +519,7 @@
               <uap:FileType>.buildpath</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Build Path File</uap:DisplayName>
-            <uap:Logo>Assets\file.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
@@ -528,7 +529,7 @@
               <uap:FileType>.sql</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>SQL File</uap:DisplayName>
-            <uap:Logo>Assets\sql.png</uap:Logo>
+            <uap:Logo>Assets\FileIcons\sql.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

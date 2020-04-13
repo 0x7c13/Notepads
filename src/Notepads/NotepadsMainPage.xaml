@@ -4,8 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sets="using:SetsView"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:Notepads.Controls"
     xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
@@ -28,7 +27,7 @@
                    Grid.Row="0"
                    AllowDrop="True" 
                    IsPaneOpen="False"
-                   OpenPaneLength="395"
+                   OpenPaneLength="385"
                    DisplayMode="Overlay"
                    PaneBackground="Transparent"
                    PanePlacement="Right"
@@ -36,18 +35,18 @@
 
             <SplitView.Content>
                 <Grid>
-                    <sets:SetsView x:Name="Sets"
-                                   TabIndex="0"
-                                   SetsWidthBehavior="Equal"
-                                   CanCloseSets="True"
-                                   IsCloseButtonOverlay="False"
-                                   CanDragItems="True"
-                                   CanReorderItems="True"
-                                   AllowDrop="True"
-                                   Template="{StaticResource SetsViewTemplate}"
-                                   Background="Transparent" 
-                                   Grid.ColumnSpan="2"
-                                   Loaded="Sets_Loaded">
+                    <controls:SetsView x:Name="Sets"
+                                       TabIndex="0"
+                                       SetsWidthBehavior="Equal"
+                                       CanCloseSets="True"
+                                       IsCloseButtonOverlay="False"
+                                       CanDragItems="True"
+                                       CanReorderItems="True"
+                                       AllowDrop="True"
+                                       Template="{StaticResource SetsViewTemplate}"
+                                       Background="Transparent"
+                                       Grid.ColumnSpan="2"
+                                       Loaded="Sets_Loaded">
 
                         <!--<sets:SetsView.KeyboardAccelerators>
                             <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_N_OnInvoked"/>
@@ -56,7 +55,7 @@
                             <KeyboardAccelerator Key="Tab" Modifiers="Control,Shift" Invoked="KeyboardAccelerator_Ctrl_Shift_Tab_OnInvoked"/>
                         </sets:SetsView.KeyboardAccelerators>-->
 
-                        <sets:SetsView.Resources>
+                        <controls:SetsView.Resources>
                             <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
@@ -66,9 +65,9 @@
                                     Storyboard.TargetProperty="Opacity"
                                     From="0.0" To="1.0" Duration="0:0:1"/>
                             </Storyboard>
-                        </sets:SetsView.Resources>
+                        </controls:SetsView.Resources>
 
-                        <sets:SetsView.SetsStartHeader>
+                        <controls:SetsView.SetsStartHeader>
                             <Button x:Name="MainMenuButton"
                                 IsTabStop="False"
                                 Width="42"
@@ -135,7 +134,7 @@
                                                 <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
                                         <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE740;" />
@@ -152,7 +151,7 @@
                                                 <KeyboardAccelerator Key="F12" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator x:Name="MenuPrintSeparator"/>
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="P" Modifiers="Control"/>
@@ -166,7 +165,7 @@
                                                 <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name="PrintSettingsSeparator" />
+                                        <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
                                         <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
@@ -177,9 +176,9 @@
                                     </MenuFlyout>
                                 </FlyoutBase.AttachedFlyout>
                             </Button>
-                        </sets:SetsView.SetsStartHeader>
+                        </controls:SetsView.SetsStartHeader>
 
-                        <sets:SetsView.SetsActionHeader>
+                        <controls:SetsView.SetsActionHeader>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -220,17 +219,17 @@
                                 </Button>
                             </Grid>
 
-                        </sets:SetsView.SetsActionHeader>
+                        </controls:SetsView.SetsActionHeader>
 
-                        <sets:SetsView.SetsPaddingHeader>
+                        <controls:SetsView.SetsPaddingHeader>
                             <Grid x:Name="AppTitleBar" Background="Transparent" Height="32"/>
-                        </sets:SetsView.SetsPaddingHeader>
+                        </controls:SetsView.SetsPaddingHeader>
 
-                        <sets:SetsView.SetsEndHeader>
+                        <controls:SetsView.SetsEndHeader>
                             <Grid x:Name="TitleBarReservedArea" Background="Transparent" HorizontalAlignment="Center" Width="180" Height="32"/>
-                        </sets:SetsView.SetsEndHeader>
+                        </controls:SetsView.SetsEndHeader>
 
-                    </sets:SetsView>
+                    </controls:SetsView>
 
                     <controls:InAppNotification x:Name="StatusNotification"
                                                 x:Load="false"

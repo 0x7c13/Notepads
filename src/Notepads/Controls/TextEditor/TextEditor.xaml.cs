@@ -13,7 +13,6 @@
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
@@ -71,6 +70,8 @@
 
         public string EditingFilePath { get; private set; }
 
+        private StorageFile _editingFile;
+
         public StorageFile EditingFile
         {
             get => _editingFile;
@@ -91,6 +92,8 @@
                 _editingFile = value;
             }
         }
+
+        private bool _isModified;
 
         public bool IsModified
         {
@@ -120,13 +123,9 @@
 
         private bool _loaded;
 
-        private bool _isModified;
-
         private FileModificationState _fileModificationState;
 
         private bool _isContentPreviewPanelOpened;
-
-        private StorageFile _editingFile;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -140,11 +139,11 @@
 
         private TextEditorMode _mode = TextEditorMode.Editing;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private IContentPreviewExtension _contentPreviewExtension;
 
-        private SearchCache _searchCache = new SearchCache(string.Empty);
+        private SearchContext _lastSearchContext = new SearchContext(string.Empty);
 
         public TextEditorMode Mode
         {
@@ -260,15 +259,19 @@
             TextEditorCore.Dispose();
         }
 
-        private void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            if (Mode == TextEditorMode.DiffPreview)
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
-                Task.Factory.StartNew(
-                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => SideBySideDiffViewer.Focus()));
-            }
+                if (Mode == TextEditorMode.DiffPreview)
+                {
+                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), theme);
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
+                    });
+                }
+            });
         }
 
         public string GetText()
@@ -384,7 +387,7 @@
                     FileModificationState.Untouched;
             }
 
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
                 FileModificationState = newState.Value;
             });
@@ -396,29 +399,17 @@
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
-                    _searchCache.SearchText,
-                    string.Empty,
-                    _searchCache.MatchCase,
-                    _searchCache.MatchWholeWord,
-                    _searchCache.UseRegex,
-                    FindAndReplaceMode.FindOnly,
-                    SearchDirection.Next))),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) => InitiateFindReplace(new FindAndReplaceEventArgs (
-                    _searchCache.SearchText,
-                    string.Empty,
-                    _searchCache.MatchCase,
-                    _searchCache.MatchWholeWord,
-                    _searchCache.UseRegex,
-                    FindAndReplaceMode.FindOnly,
-                    SearchDirection.Previous))),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
                 {
                     if (_isContentPreviewPanelOpened)
                     {
@@ -435,7 +426,7 @@
                         HideGoToControl();
                         TextEditorCore.Focus(FocusState.Programmatic);
                     }
-                }),
+                }, shouldHandle: false, shouldSwallow: true),
             });
         }
 
@@ -622,7 +613,7 @@
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
-            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), ThemeSettingsService.ThemeMode);
             SideBySideDiffViewer.Focus();
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
@@ -654,9 +645,22 @@
         /// <summary>
         /// Returns 1-based indexing values
         /// </summary>
-        public void GetLineColumnSelection(out int startLine, out int endLine, out int startColumn, out int endColumn, out int selected, out int lineCount)
+        public void GetLineColumnSelection(
+            out int startLine,
+            out int endLine,
+            out int startColumn,
+            out int endColumn,
+            out int selected,
+            out int lineCount)
         {
-            TextEditorCore.GetLineColumnSelection(out startLine, out endLine, out startColumn, out endColumn, out selected, out lineCount, GetLineEnding());
+            TextEditorCore.GetLineColumnSelection(
+                out startLine,
+                out endLine,
+                out startColumn,
+                out endColumn,
+                out selected,
+                out lineCount,
+                GetLineEnding());
         }
 
         public double GetFontZoomFactor()
@@ -788,7 +792,11 @@
 
         private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private void TextEditorCore_OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -814,7 +822,11 @@
                 }
             }
 
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
@@ -851,7 +863,7 @@
             }
 
             GoToPlaceholder?.Dismiss();
-            
+
             if (FindAndReplacePlaceholder == null)
             {
                 FindName("FindAndReplacePlaceholder"); // Lazy loading
@@ -880,7 +892,7 @@
         private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
-            InitiateFindReplace(e);
+            InitiateFindAndReplace(e);
 
             // In case user hit "enter" key in search box instead of clicking on search button or hit F3
             // We should re-focus on FindAndReplaceControl to make the next search "flows"
@@ -890,58 +902,46 @@
             }
         }
 
-        private void InitiateFindReplace(FindAndReplaceEventArgs findAndReplaceEventArgs)
+        private void InitiateFindAndReplace(FindAndReplaceEventArgs findAndReplaceEventArgs)
         {
-            if (string.IsNullOrEmpty(findAndReplaceEventArgs.SearchText)) return;
+            if (string.IsNullOrEmpty(findAndReplaceEventArgs.SearchContext.SearchText)) return;
 
             bool found = false;
             bool regexError = false;
 
             if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
-                _searchCache = new SearchCache(findAndReplaceEventArgs.SearchText, findAndReplaceEventArgs.MatchCase, findAndReplaceEventArgs.MatchWholeWord, findAndReplaceEventArgs.UseRegex);
+                _lastSearchContext = findAndReplaceEventArgs.SearchContext;
 
             switch (findAndReplaceEventArgs.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
                     found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
                         ? TextEditorCore.TryFindNextAndSelect(
-                            findAndReplaceEventArgs.SearchText, 
-                            findAndReplaceEventArgs.MatchCase, 
-                            findAndReplaceEventArgs.MatchWholeWord, 
-                            findAndReplaceEventArgs.UseRegex, 
+                            findAndReplaceEventArgs.SearchContext,
                             stopAtEof: false,
                             out regexError)
                         : TextEditorCore.TryFindPreviousAndSelect(
-                            findAndReplaceEventArgs.SearchText, 
-                            findAndReplaceEventArgs.MatchCase, 
-                            findAndReplaceEventArgs.MatchWholeWord, 
-                            findAndReplaceEventArgs.UseRegex,
+                            findAndReplaceEventArgs.SearchContext,
                             stopAtBof: false,
                             out regexError);
                     break;
                 case FindAndReplaceMode.Replace:
                     found = TextEditorCore.TryFindNextAndReplace(
-                        findAndReplaceEventArgs.SearchText, 
-                        findAndReplaceEventArgs.ReplaceText, 
-                        findAndReplaceEventArgs.MatchCase, 
-                        findAndReplaceEventArgs.MatchWholeWord, 
-                        findAndReplaceEventArgs.UseRegex, 
+                        findAndReplaceEventArgs.SearchContext,
+                        findAndReplaceEventArgs.ReplaceText,
                         out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
                     found = TextEditorCore.TryFindAndReplaceAll(
-                        findAndReplaceEventArgs.SearchText, 
-                        findAndReplaceEventArgs.ReplaceText, 
-                        findAndReplaceEventArgs.MatchCase, 
-                        findAndReplaceEventArgs.MatchWholeWord, 
-                        findAndReplaceEventArgs.UseRegex, 
+                        findAndReplaceEventArgs.SearchContext,
+                        findAndReplaceEventArgs.ReplaceText,
                         out regexError);
                     break;
             }
 
             if (!found)
             {
-                if (findAndReplaceEventArgs.UseRegex && regexError)
+                if (findAndReplaceEventArgs.SearchContext.UseRegex && regexError)
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_InvalidRegex"), 1500);
                 }
@@ -952,7 +952,7 @@
             }
         }
 
-        private void FindAndReplacePlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
         {
             FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
         }
@@ -996,7 +996,7 @@
             var found = false;
 
             if (int.TryParse(e.SearchLine, out var line))
-            { 
+            {
                 found = TextEditorCore.GoTo(line);
             }
 
@@ -1012,7 +1012,7 @@
             }
         }
 
-        private void GoToPlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void GoToPlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
         {
             GoToPlaceholder.Visibility = Visibility.Collapsed;
         }
@@ -1054,47 +1054,65 @@
             }
         }
 
-        private void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
+        private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
         {
-            if (enabled)
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                LineHighlighter.Visibility = Visibility.Visible;
-                DrawLineHighlighter();
-            }
-            else
+                if (enabled)
+                {
+                    LineHighlighter.Visibility = Visibility.Visible;
+                    DrawLineHighlighter();
+                }
+                else
+                {
+                    LineHighlighter.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
+        private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                LineHighlighter.Visibility = Visibility.Collapsed;
-            }
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
+        private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-        }
-
-        private void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
-        {
-            if (EditorSettingsService.IsLineHighlighterEnabled)
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                // TextWrapping changed event happens before layout updated, so we need to update here
-                TextEditorCore.UpdateLayout();
-                DrawLineHighlighter();
-            }
+                if (EditorSettingsService.IsLineHighlighterEnabled)
+                {
+                    // TextWrapping changed event happens before layout updated, so we need to update here
+                    TextEditorCore.UpdateLayout();
+                    DrawLineHighlighter();
+                }
+            });
         }
 
-        private void LineHighlighter_OnFontSizeChanged(object sender, double e)
+        private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private async void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
 
-        private void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        private async void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
+            });
         }
     }
 }

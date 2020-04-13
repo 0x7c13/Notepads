@@ -70,14 +70,6 @@
             };
         }
 
-        private static Style GetButtonStyle(Color backgroundColor)
-        {
-            var redButtonStyle = new Windows.UI.Xaml.Style(typeof(Button));
-            redButtonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
-            redButtonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
-            return redButtonStyle;
-        }
-
         public static NotepadsDialog GetRevertAllChangesConfirmationDialog(string fileNameOrPath, Action confirmedAction)
         {
             NotepadsDialog revertAllChangesConfirmationDialog = new NotepadsDialog
@@ -90,6 +82,14 @@
             };
             revertAllChangesConfirmationDialog.PrimaryButtonClick += (dialog, args) => { confirmedAction(); };
             return revertAllChangesConfirmationDialog;
+        }
+
+        private static Style GetButtonStyle(Color backgroundColor)
+        {
+            var buttonStyle = new Windows.UI.Xaml.Style(typeof(Button));
+            buttonStyle.Setters.Add(new Setter(Control.BackgroundProperty, backgroundColor));
+            buttonStyle.Setters.Add(new Setter(Control.ForegroundProperty, Colors.White));
+            return buttonStyle;
         }
     }
 }

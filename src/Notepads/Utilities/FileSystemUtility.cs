@@ -250,7 +250,7 @@
                 {
                     text = PeekAndRead();
                 }
-                catch (DecoderFallbackException) 
+                catch (DecoderFallbackException)
                 {
                     stream.Position = 0; // Reset stream position
                     encoding = GetFallBackEncoding();
@@ -298,13 +298,13 @@
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
-                        reader = success ? 
-                            new StreamReader(stream, autoEncoding) : 
+                        reader = success ?
+                            new StreamReader(stream, autoEncoding) :
                             new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
                     }
                     else
                     {
-                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);   
+                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);
                     }
                 }
             }
@@ -330,7 +330,7 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() 
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },
                     { "Message", ex.Message }
@@ -366,12 +366,12 @@
                     {
                         foundBetterMatch = true;
                     }
-                    else if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding) 
+                    else if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding)
                              && EncodingUtility.Equals(systemDefaultEncoding, detail.Encoding))
                     {
                         foundBetterMatch = true;
                     }
-                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding) 
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding)
                              && EncodingUtility.Equals(currentCultureEncoding, detail.Encoding))
                     {
                         foundBetterMatch = true;
@@ -469,7 +469,7 @@
                 {
                     // Track FileUpdateStatus here to better understand the failed scenarios
                     // File name, path and content are not included to respect/protect user privacy 
-                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() 
+                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
                     {
                         { "FileUpdateStatus", nameof(status) }
                     });
@@ -552,7 +552,7 @@
             catch (Exception ex)
             {
                 LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList", 
+                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
                     new Dictionary<string, string>()
                     {
                         { "ItemCount", GetFutureAccessListItemCount().ToString() },

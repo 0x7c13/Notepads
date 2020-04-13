@@ -1,6 +1,5 @@
 ﻿namespace Notepads.Services
 {
-    using System;
     using System.Collections.Generic;
 
     public static class FileTypeService
@@ -12,7 +11,7 @@
             ".json", ".yml", ".yaml", ".xml", ".xaml",
             ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss", ".vue", ".vuerc", ".cgi",
             ".gitignore", ".gitconfig", ".gitattributes",
-            ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash", ".bash_history",
+            ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash", ".bash_history", ".vimrc",
             ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java", ".go", ".pl", ".sql",
             ".js", ".ts", ".lua",
             ".srt", ".ass", ".ssa",
