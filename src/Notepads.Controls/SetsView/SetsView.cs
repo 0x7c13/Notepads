@@ -248,7 +248,7 @@ namespace Notepads.Controls
         {
             base.PrepareContainerForItemOverride(element, item);
 
-            var setItem = element as SetsViewItem;
+            if (!(element is SetsViewItem setItem)) return;
 
             setItem.Loaded -= SetsViewItem_Loaded;
             setItem.Closing -= SetsViewItem_Closing;
@@ -279,7 +279,8 @@ namespace Notepads.Controls
                 setItem.SetBinding(SetsViewItem.HeaderTemplateProperty, headertemplatebinding);
             }
 
-            if (setItem.IsClosable != true && setItem.ReadLocalValue(SetsViewItem.IsClosableProperty) == DependencyProperty.UnsetValue)
+            if (setItem.IsClosable != true && setItem.ReadLocalValue(SetsViewItem.IsClosableProperty) ==
+                DependencyProperty.UnsetValue)
             {
                 var iscloseablebinding = new Binding()
                 {

@@ -53,8 +53,7 @@ namespace Notepads.Controls.Markdown
 
         private Run InternalRenderTextRun(TextRunInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -79,8 +78,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderBoldRun(BoldTextInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -111,8 +109,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderMarkdownLink(MarkdownLinkInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -183,8 +180,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderHyperlink(HyperlinkInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -227,8 +223,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override async void RenderImage(ImageInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -347,8 +342,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderItalicRun(ItalicTextInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -379,8 +373,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderStrikethroughRun(StrikethroughTextInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -532,8 +525,7 @@ namespace Notepads.Controls.Markdown
         /// <param name="context"> Persistent state. </param>
         protected override void RenderCodeRun(CodeInline element, IRenderContext context)
         {
-            var localContext = context as InlineRenderContext;
-            if (localContext == null)
+            if (!(context is InlineRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }

@@ -19,7 +19,7 @@
     using Windows.Storage;
     using Windows.Storage.AccessCache;
 
-    internal class SessionManager : ISessionManager
+    internal class SessionManager : ISessionManager, IDisposable
     {
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
@@ -526,6 +526,18 @@
             {
                 _sessionDataCache.TryRemove(textEditor.Id, out _);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_notepadsCore != null)
+            {
+                _notepadsCore.TextEditorLoaded -= BindEditorContentStateChangeEvent;
+                _notepadsCore.TextEditorUnloaded -= UnbindEditorContentStateChangeEvent;
+            }
+
+            _semaphoreSlim?.Dispose();
+            _timer?.Dispose();
         }
     }
 }

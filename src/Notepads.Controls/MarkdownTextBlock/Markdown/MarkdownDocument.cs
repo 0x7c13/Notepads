@@ -261,7 +261,7 @@ namespace Notepads.Controls.Markdown
                             // We're going to have to remove the header text from the pending
                             // paragraph by prematurely ending the current paragraph.
                             // We already made sure that there is a paragraph in progress.
-                            paragraphText.Length = paragraphText.Length - (previousEndOfLine - previousStartOfLine);
+                            paragraphText.Length -= (previousEndOfLine - previousStartOfLine);
                         }
                     }
 

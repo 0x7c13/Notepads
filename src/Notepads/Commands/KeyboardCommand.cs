@@ -37,7 +37,7 @@
             bool shouldHandle = true,
             bool shouldSwallow = true,
             int requiredHits = 1) :
-            this(ctrlDown, altDown, shiftDown, new List<VirtualKey>() { key }, action, shouldHandle, shouldSwallow)
+            this(ctrlDown, altDown, shiftDown, new List<VirtualKey>() { key }, action, shouldHandle, shouldSwallow, requiredHits)
         {
         }
 

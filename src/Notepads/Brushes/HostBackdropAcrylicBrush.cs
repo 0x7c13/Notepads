@@ -23,7 +23,7 @@
     using Microsoft.Graphics.Canvas.UI.Composition;
     using Notepads.Controls.Helpers;
 
-    public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase
+    public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase, IDisposable
     {
         public static readonly DependencyProperty TintOpacityProperty = DependencyProperty.Register(
             "TintOpacity",
@@ -322,6 +322,15 @@
             adjustedTintOpacity = ((1 - minThreshold) * adjustedTintOpacity) + minThreshold;
             source1Amount = 1 - adjustedTintOpacity;
             source2Amount = adjustedTintOpacity;
+        }
+
+        public void Dispose()
+        {
+            PowerManager.EnergySaverStatusChanged -= OnEnergySaverStatusChanged;
+            UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
+
+            _semaphoreSlim?.Dispose();
+            CanvasBitmapCache.Clear();
         }
     }
 }

@@ -35,7 +35,7 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : ITextEditor
+    public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;
@@ -256,6 +256,7 @@
                 UnloadObject(GridSplitter);
             }
 
+            _fileStatusSemaphoreSlim.Dispose();
             TextEditorCore.Dispose();
         }
 
@@ -345,7 +346,7 @@
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        await CheckAndUpdateFileStatus();
+                        await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -368,11 +369,17 @@
             }
         }
 
-        private async Task CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus(CancellationToken cancellationToken)
         {
             if (EditingFile == null) return;
 
-            await _fileStatusSemaphoreSlim.WaitAsync();
+            await _fileStatusSemaphoreSlim.WaitAsync(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
 
             FileModificationState? newState = null;
 
@@ -385,6 +392,12 @@
                 newState = await FileSystemUtility.GetDateModified(EditingFile) != LastSavedSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
             }
 
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>

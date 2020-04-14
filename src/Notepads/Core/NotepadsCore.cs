@@ -382,13 +382,6 @@
             Sets.ScrollTo(offset);
         }
 
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
-        }
-
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
             var textEditorSetsViewItem = new SetsViewItem

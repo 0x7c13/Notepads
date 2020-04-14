@@ -5,6 +5,7 @@
 
 namespace Notepads.Controls.Markdown
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -48,7 +49,7 @@ namespace Notepads.Controls.Markdown
             }
 
             string startSequence = markdown.Substring(start);
-            if (!startSequence.StartsWith("<!--"))
+            if (!startSequence.StartsWith("<!--", StringComparison.Ordinal))
             {
                 return null;
             }
