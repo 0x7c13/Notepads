@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Прозорість "акрилового" фону.</value>
+    <value>Прозорість "акрилового" фону. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">

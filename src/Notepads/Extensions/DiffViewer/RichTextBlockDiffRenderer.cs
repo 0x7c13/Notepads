@@ -39,17 +39,17 @@
 
             var diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
             var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
-            var leftContext = GetDiffData(zippedDiffs, line => line.Old, piece => piece.Old);
-            var rightContext = GetDiffData(zippedDiffs, line => line.New, piece => piece.New);
+            var leftContext = RenderDiff(zippedDiffs, line => line.Old, piece => piece.Old);
+            var rightContext = RenderDiff(zippedDiffs, line => line.New, piece => piece.New);
 
             inDiff = false;
             return new Tuple<RichTextBlockDiffContext, RichTextBlockDiffContext>(leftContext, rightContext);
         }
 
-        private RichTextBlockDiffContext GetDiffData(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
+        private RichTextBlockDiffContext RenderDiff(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
         {
             var context = new RichTextBlockDiffContext();
-            int pointer = 0;
+            int index = 0;
             foreach (var line in lines)
             {
                 var lineLength = Math.Max(line.Old.Text?.Length ?? 0, line.New.Text?.Length ?? 0);
@@ -59,26 +59,26 @@
                 switch (oldNewLine.Type)
                 {
                     case ChangeType.Unchanged:
-                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref pointer, null);
+                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref index, null);
                         break;
                     case ChangeType.Imaginary:
-                        AppendParagraph(context, new string(BreakingSpace, lineLength), ref pointer, Colors.Gray, Colors.LightCyan);
+                        AppendParagraph(context, new string(BreakingSpace, lineLength), ref index, Colors.Gray, Colors.LightCyan);
                         break;
                     case ChangeType.Inserted:
-                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref pointer, Colors.LightGreen);
+                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref index, Colors.LightGreen);
                         break;
                     case ChangeType.Deleted:
-                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref pointer, Colors.OrangeRed);
+                        AppendParagraph(context, oldNewLine.Text ?? string.Empty, ref index, Colors.OrangeRed);
                         break;
                     case ChangeType.Modified:
-                        context.Blocks.Add(ConstructModifiedParagraph(pieceSelector, lineSubPieces, context, ref pointer));
+                        context.Blocks.Add(ConstructModifiedParagraph(pieceSelector, lineSubPieces, context, ref index));
                         break;
                 }
             }
             return context;
         }
 
-        private Paragraph ConstructModifiedParagraph(Func<OldNew<DiffPiece>, DiffPiece> pieceSelector, IEnumerable<OldNew<DiffPiece>> lineSubPieces, RichTextBlockDiffContext context, ref int pointer)
+        private Paragraph ConstructModifiedParagraph(Func<OldNew<DiffPiece>, DiffPiece> pieceSelector, IEnumerable<OldNew<DiffPiece>> lineSubPieces, RichTextBlockDiffContext context, ref int index)
         {
             var paragraph = new Paragraph()
             {
@@ -93,37 +93,37 @@
                 var oldNewPiece = pieceSelector(subPiece);
                 switch (oldNewPiece.Type)
                 {
-                    case ChangeType.Unchanged: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.Yellow)); break;
-                    case ChangeType.Imaginary: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer)); break;
-                    case ChangeType.Inserted: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.LightGreen)); break;
-                    case ChangeType.Deleted: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.OrangeRed)); break;
-                    case ChangeType.Modified: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref pointer, Colors.Yellow)); break;
+                    case ChangeType.Unchanged: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref index, Colors.Yellow)); break;
+                    case ChangeType.Imaginary: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref index)); break;
+                    case ChangeType.Inserted: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref index, Colors.LightGreen)); break;
+                    case ChangeType.Deleted: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref index, Colors.OrangeRed)); break;
+                    case ChangeType.Modified: paragraph.Inlines.Add(NewRun(context, oldNewPiece.Text ?? string.Empty, ref index, Colors.Yellow)); break;
                 }
-                paragraph.Inlines.Add(NewRun(context, new string(BreakingSpace, subPiece.Length - (oldNewPiece.Text ?? string.Empty).Length), ref pointer, Colors.Gray, Colors.LightCyan));
+                paragraph.Inlines.Add(NewRun(context, new string(BreakingSpace, subPiece.Length - (oldNewPiece.Text ?? string.Empty).Length), ref index, Colors.Gray, Colors.LightCyan));
             }
 
             return paragraph;
         }
 
-        private Inline NewRun(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
+        private Inline NewRun(RichTextBlockDiffContext richTextBlockData, string text, ref int index, Color? background = null, Color? foreground = null)
         {
             var run = new Run
             {
                 Text = text,
                 Foreground = foreground.HasValue
-                    ? BrushFactory.GetSolidColorBrush(foreground.Value)
-                    : _defaultForeground
+                            ? BrushFactory.GetSolidColorBrush(foreground.Value)
+                            : _defaultForeground
             };
 
             if (background != null)
             {
-                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = pointer, Length = text.Length }, background.Value);
+                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = index, Length = text.Length }, background.Value);
             }
-            pointer += text.Length;
+            index += text.Length;
             return run;
         }
 
-        private Paragraph AppendParagraph(RichTextBlockDiffContext richTextBlockData, string text, ref int pointer, Color? background = null, Color? foreground = null)
+        private void AppendParagraph(RichTextBlockDiffContext richTextBlockData, string text, ref int index, Color? background = null, Color? foreground = null)
         {
             var paragraph = new Paragraph
             {
@@ -141,10 +141,9 @@
 
             if (background != null)
             {
-                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = pointer, Length = text.Length }, background.Value);
+                richTextBlockData.AddTextHighlighter(new TextRange() { StartIndex = index, Length = text.Length }, background.Value);
             }
-            pointer += text.Length;
-            return paragraph;
+            index += text.Length;
         }
 
         private class OldNew<T>

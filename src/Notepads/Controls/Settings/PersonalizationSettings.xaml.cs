@@ -79,7 +79,7 @@
             if (!App.IsGameBarWidget)
             {
                 UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
-                PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;   
+                PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
             }
         }
 
@@ -103,8 +103,8 @@
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                BackgroundTintOpacitySlider.IsEnabled =  UISettings.AdvancedEffectsEnabled &&
-                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+                BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
+                                                        PowerManager.EnergySaverStatus != EnergySaverStatus.On;
             });
         }
 

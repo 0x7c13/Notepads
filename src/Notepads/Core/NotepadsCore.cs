@@ -91,8 +91,8 @@
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
                 {
-                    item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                    item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                    item.Icon.Foreground = new SolidColorBrush(color);
+                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
         }
@@ -395,11 +395,10 @@
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Icon = new SymbolIcon(Symbol.Save)
                 {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 }
             };
 
