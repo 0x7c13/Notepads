@@ -355,10 +355,10 @@ namespace Notepads.Controls.Markdown
                         continue;
                     }
 
-                    // Okay, we have an entity, but is it one we recognise?
+                    // Okay, we have an entity, but is it one we recognize?
                     string entityName = markdown.Substring(sequenceStartIndex + 1, semicolonIndex - (sequenceStartIndex + 1));
 
-                    // Unrecognised entity.
+                    // Unrecognized entity.
                     if (_entities.ContainsKey(entityName) == false)
                     {
                         continue;
@@ -382,7 +382,15 @@ namespace Notepads.Controls.Markdown
                 return new TextRunInline { Text = result.ToString() };
             }
 
-            return new TextRunInline { Text = markdown.Substring(start, end - start) };
+            var length = end - start;
+
+            // HACK: in case end < start happens
+            if (length <= 0)
+            {
+                return new TextRunInline { Text = string.Empty };
+            }
+
+            return new TextRunInline { Text = markdown.Substring(start, length) };
         }
 
         /// <summary>

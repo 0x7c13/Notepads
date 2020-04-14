@@ -70,7 +70,7 @@ namespace Notepads.Controls.Markdown
             while (pos < end)
             {
                 int nextUnderLineIndex = Common.FindNextSingleNewLine(markdown, pos, end, out startOfNextLine);
-                bool haveSeparator = markdown.Substring(pos, nextUnderLineIndex - pos).Contains(": ");
+                bool haveSeparator = markdown.Substring(pos, nextUnderLineIndex - pos).Contains(": ", StringComparison.Ordinal);
                 if (haveSeparator)
                 {
                     elements.Add(markdown.Substring(pos, nextUnderLineIndex - pos));
@@ -157,8 +157,7 @@ namespace Notepads.Controls.Markdown
                     result += item.Key + ": " + item.Value + "\n";
                 }
 
-                result.TrimEnd('\n');
-                return result;
+                return result.TrimEnd('\n');
             }
         }
     }

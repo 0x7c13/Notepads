@@ -75,8 +75,7 @@ namespace Notepads.Controls
                     markdown.Parse(Text);
 
                     // Now try to display it
-                    var renderer = Activator.CreateInstance(renderertype, markdown, this, this, this) as MarkdownRenderer;
-                    if (renderer == null)
+                    if (!(Activator.CreateInstance(renderertype, markdown, this, this, this) is MarkdownRenderer renderer))
                     {
                         throw new Exception("Markdown Renderer was not of the correct type.");
                     }
@@ -254,7 +253,7 @@ namespace Notepads.Controls
             {
                 if (!string.IsNullOrEmpty(UriPrefix))
                 {
-                    url = string.Format("{0}{1}", UriPrefix, url);
+                    url = $"{UriPrefix}{url}";
                 }
             }
 

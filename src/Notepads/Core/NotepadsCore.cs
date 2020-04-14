@@ -91,8 +91,8 @@
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
                 {
-                    item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                    item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                    item.Icon.Foreground = new SolidColorBrush(color);
+                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
         }
@@ -292,13 +292,25 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
         }
 
@@ -382,24 +394,16 @@
             Sets.ScrollTo(offset);
         }
 
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
-        }
-
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Icon = new SymbolIcon(Symbol.Save)
                 {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 }
             };
 

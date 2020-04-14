@@ -23,7 +23,7 @@
     using Microsoft.Graphics.Canvas.UI.Composition;
     using Notepads.Controls.Helpers;
 
-    public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase
+    public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase, IDisposable
     {
         public static readonly DependencyProperty TintOpacityProperty = DependencyProperty.Register(
             "TintOpacity",
@@ -105,7 +105,7 @@
 
         private static readonly UISettings UISettings = new UISettings();
 
-        private static readonly float _acrylicTintOpacityMinThreshold = 0.35f;
+        private const float _acrylicTintOpacityMinThreshold = 0.35f;
 
         private readonly DispatcherQueue _dispatcherQueue;
 
@@ -136,7 +136,7 @@
                 }
                 else
                 {
-                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();   
+                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();
                 }
 
                 // Register energy saver event
@@ -152,7 +152,7 @@
                 // Fallback to color brush if unable to create HostBackdropAcrylicBrush
                 CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
                 Analytics.TrackEvent("FailedToBuildAcrylicBrush",
-                    new Dictionary<string, string> {{"Exception", ex.ToString()}});
+                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
             finally
             {
@@ -263,7 +263,7 @@
             return brush;
         }
 
-        private async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)
+        private static async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)
         {
             try
             {
@@ -322,6 +322,15 @@
             adjustedTintOpacity = ((1 - minThreshold) * adjustedTintOpacity) + minThreshold;
             source1Amount = 1 - adjustedTintOpacity;
             source2Amount = adjustedTintOpacity;
+        }
+
+        public void Dispose()
+        {
+            PowerManager.EnergySaverStatusChanged -= OnEnergySaverStatusChanged;
+            UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
+
+            _semaphoreSlim?.Dispose();
+            CanvasBitmapCache.Clear();
         }
     }
 }

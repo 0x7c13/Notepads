@@ -19,7 +19,7 @@
     using Windows.Storage;
     using Windows.Storage.AccessCache;
 
-    internal class SessionManager : ISessionManager
+    internal class SessionManager : ISessionManager, IDisposable
     {
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
@@ -445,7 +445,7 @@
             return textEditor;
         }
 
-        private async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
+        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
         {
             try
             {
@@ -515,7 +515,7 @@
             }
         }
 
-        private string ToToken(Guid textEditorId)
+        private static string ToToken(Guid textEditorId)
         {
             return textEditorId.ToString("N");
         }
@@ -526,6 +526,18 @@
             {
                 _sessionDataCache.TryRemove(textEditor.Id, out _);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_notepadsCore != null)
+            {
+                _notepadsCore.TextEditorLoaded -= BindEditorContentStateChangeEvent;
+                _notepadsCore.TextEditorUnloaded -= UnbindEditorContentStateChangeEvent;
+            }
+
+            _semaphoreSlim?.Dispose();
+            _timer?.Dispose();
         }
     }
 }

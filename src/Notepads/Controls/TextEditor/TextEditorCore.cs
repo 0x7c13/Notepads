@@ -93,8 +93,8 @@
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
-            SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
@@ -260,8 +260,8 @@
         {
             await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
             {
-                SelectionHighlightColor = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                SelectionHighlightColorWhenNotFocused = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                SelectionHighlightColor = new SolidColorBrush(color);
+                SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
             });
         }
 
@@ -476,9 +476,14 @@
                 if (line.Length + length >= end)
                 {
                     if (i == startLineIndex - 1 || lineEnding != LineEnding.Crlf)
+                    {
                         selectedCount = end - start;
+                    }
                     else
+                    {
                         selectedCount = end - start + (i - startLineIndex) + 1;
+                    }
+
                     endLineIndex = i + 1;
                     endColumnIndex = end - length + 1;
 
@@ -649,7 +654,7 @@
             _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
         }
 
-        private string TrimRichEditBoxText(string text)
+        private static string TrimRichEditBoxText(string text)
         {
             // Trim end \r
             if (!string.IsNullOrEmpty(text) && text[text.Length - 1] == RichEditBoxDefaultLineEnding)
@@ -680,7 +685,7 @@
             return isSelectionStartPositionInView && isSelectionEndPositionInView;
         }
 
-        private void ShowEasterEgg()
+        private static void ShowEasterEgg()
         {
             //_contentScrollViewer.Background = new ImageBrush
             //{

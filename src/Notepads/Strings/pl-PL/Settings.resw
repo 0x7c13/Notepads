@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Poziom akrylowego rozmycia tła.</value>
+    <value>Poziom akrylowego rozmycia tła. Należy pamiętać, że rozmycie tła jest niedostępne, gdy jest włączone oszczędzanie baterii lub opcja przeżroczystości jest wyłączona w Ustawieniach systemu Windows.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">

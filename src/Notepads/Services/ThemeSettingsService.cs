@@ -39,7 +39,7 @@
                         ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
                         OnThemeChanged?.Invoke(null, ThemeMode);
                     }
-                    ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme, true);
+                    ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme);
                 }
             }
         }
@@ -56,7 +56,7 @@
                 {
                     AppAccentColor = UISettings.GetColorValue(UIColorType.Accent);
                 }
-                ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor, true);
+                ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor);
             }
         }
 
@@ -69,7 +69,7 @@
             {
                 _appBackgroundPanelTintOpacity = value;
                 OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
-                ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value);
             }
         }
 
@@ -82,7 +82,7 @@
             {
                 _appAccentColor = value;
                 OnAccentColorChanged?.Invoke(null, _appAccentColor);
-                ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex(), true);
+                ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex());
             }
         }
 
@@ -94,7 +94,7 @@
             set
             {
                 _customAccentColor = value;
-                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex(), true);
+                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex());
             }
         }
 
@@ -204,7 +204,7 @@
         {
             ThemeMode = theme;
             OnThemeChanged?.Invoke(null, theme);
-            ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString(), true);
+            ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString());
         }
 
         public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)

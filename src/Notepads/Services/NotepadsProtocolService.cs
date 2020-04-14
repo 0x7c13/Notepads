@@ -73,7 +73,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[NotepadsProtocolService] Failed to execute protocol: {operation.ToString()}, Exception: {ex}");
+                LoggingService.LogError($"[NotepadsProtocolService] Failed to execute protocol: {operation}, Exception: {ex}");
                 Analytics.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
                 {
                     { "Protocol", operation.ToString() },

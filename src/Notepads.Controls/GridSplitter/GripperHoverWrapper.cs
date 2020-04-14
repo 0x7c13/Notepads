@@ -120,8 +120,7 @@ namespace Notepads.Controls
 
         internal void SplitterManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
-            var splitter = sender as GridSplitter;
-            if (splitter == null)
+            if (!(sender is GridSplitter splitter))
             {
                 return;
             }
@@ -132,8 +131,7 @@ namespace Notepads.Controls
 
         internal void SplitterManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            var splitter = sender as GridSplitter;
-            if (splitter == null)
+            if (!(sender is GridSplitter splitter))
             {
                 return;
             }

@@ -4,6 +4,7 @@
     using Microsoft.Gaming.XboxGameBar;
     using Notepads.Controls.Settings;
     using Notepads.Utilities;
+    using Notepads.Views;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;

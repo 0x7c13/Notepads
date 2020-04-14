@@ -202,7 +202,7 @@ namespace Notepads.Controls.Markdown
                 var result = new MarkdownLinkInline
                 {
                     Inlines = Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true),
-                    Url = url.Replace(" ", "%20"),
+                    Url = url.Replace(" ", "%20", StringComparison.Ordinal),
                     Tooltip = tooltip
                 };
                 return new InlineParseResult(result, start, end);
@@ -222,7 +222,7 @@ namespace Notepads.Controls.Markdown
                     Inlines = Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true),
                     ReferenceId = markdown.Substring(linkOpen + 1, linkClose - (linkOpen + 1))
                 };
-                if (result.ReferenceId == string.Empty)
+                if (string.IsNullOrEmpty(result.ReferenceId))
                 {
                     result.ReferenceId = markdown.Substring(linkTextOpen, linkTextClose - linkTextOpen);
                 }

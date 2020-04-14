@@ -39,14 +39,16 @@
         public FindAndReplaceControl()
         {
             InitializeComponent();
-            SetSelectionHighlightColor();
+
+            SetSelectionHighlightColor(ThemeSettingsService.AppAccentColor);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             Loaded += FindAndReplaceControl_Loaded;
-            Unloaded += FindAndReplaceControl_Unloaded;
         }
 
         public void Dispose()
         {
+            Loaded -= FindAndReplaceControl_Loaded;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
@@ -58,17 +60,14 @@
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus(string.Empty, FindAndReplaceMode.FindOnly);
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
-        }
-
-        private void FindAndReplaceControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, SetSelectionHighlightColor);
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                SetSelectionHighlightColor(color);
+            });
         }
 
         public double GetHeight(bool showReplaceBar)
@@ -83,16 +82,12 @@
             }
         }
 
-        private void SetSelectionHighlightColor()
+        private void SetSelectionHighlightColor(Color color)
         {
-            FindBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            FindBar.SelectionHighlightColor = new SolidColorBrush(color);
+            FindBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
+            ReplaceBar.SelectionHighlightColor = new SolidColorBrush(color);
+            ReplaceBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
         }
 
         public void Focus(string searchString, FindAndReplaceMode mode)
@@ -100,9 +95,13 @@
             if (_shouldUpdateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
 
             if (mode == FindAndReplaceMode.FindOnly)
+            {
                 FindBar.Focus(FocusState.Programmatic);
+            }
             else
+            {
                 ReplaceBar.Focus(FocusState.Programmatic);
+            }
 
             FindBar_OnTextChanged(null, null);
         }
