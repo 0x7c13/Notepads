@@ -46,6 +46,24 @@
             return false;
         }
 
+        public static async Task<bool> ClearJumpList()
+        {
+            if (!JumpList.IsSupported()) return false;
+
+            try
+            {
+                JumpList jumpList = await JumpList.LoadCurrentAsync();
+                jumpList.Items.Clear();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"JumpListService_FailedToClearJumpList: {ex.Message}");
+            }
+
+            return false;
+        }
+
         private static JumpListItem GetNewWindowItem()
         {
             string packageId = Package.Current.Id.Name;
