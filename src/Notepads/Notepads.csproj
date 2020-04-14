@@ -124,23 +124,23 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\AboutPage.xaml.cs">
+    <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\AdvancedSettings.xaml.cs">
-      <DependentUpon>AdvancedSettings.xaml</DependentUpon>
+    <Compile Include="Views\AdvancedSettingsPage.xaml.cs">
+      <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\SettingsPage.xaml.cs">
+    <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\SettingsPanel.xaml.cs">
+    <Compile Include="Views\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\PersonalizationSettings.xaml.cs">
-      <DependentUpon>PersonalizationSettings.xaml</DependentUpon>
+    <Compile Include="Views\PersonalizationSettingsPage.xaml.cs">
+      <DependentUpon>PersonalizationSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
-      <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
+    <Compile Include="Views\TextAndEditorSettingsPage.xaml.cs">
+      <DependentUpon>TextAndEditorSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextEditor\ITextEditor.cs" />
     <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
@@ -163,23 +163,23 @@
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
     <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
-    <Compile Include="Extensions\DiffViewer\BrushFactory.cs" />
-    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffContext.cs" />
-    <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
+    <Compile Include="Controls\DiffViewer\BrushFactory.cs" />
+    <Compile Include="Controls\DiffViewer\RichTextBlockDiffContext.cs" />
+    <Compile Include="Controls\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\DiffViewer\ISideBySideDiffViewer.cs" />
+    <Compile Include="Controls\DiffViewer\ISideBySideDiffViewer.cs" />
     <Compile Include="Extensions\IContentExtension.cs" />
-    <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
-    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
-    <Compile Include="NotepadsMainPage.MainMenu.cs" />
-    <Compile Include="NotepadsMainPage.Notification.cs" />
-    <Compile Include="NotepadsMainPage.Theme.cs" />
+    <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
+    <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Views\NotepadsMainPage.MainMenu.cs" />
+    <Compile Include="Views\NotepadsMainPage.Notification.cs" />
+    <Compile Include="Views\NotepadsMainPage.Theme.cs" />
     <Compile Include="Services\FileTypeService.cs" />
     <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="NotepadsMainPage.IO.cs" />
-    <Compile Include="NotepadsMainPage.StatusBar.cs" />
-    <Compile Include="NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Views\NotepadsMainPage.IO.cs" />
+    <Compile Include="Views\NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="Views\NotepadsMainPage.ViewModes.cs" />
     <Compile Include="Services\MRUService.cs" />
     <Compile Include="Utilities\BrushUtility.cs" />
     <Compile Include="Utilities\Downloader.cs" />
@@ -190,7 +190,7 @@
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
-    <Compile Include="Extensions\Markdown\MarkdownExtensionView.xaml.cs">
+    <Compile Include="Controls\Markdown\MarkdownExtensionView.xaml.cs">
       <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
@@ -217,7 +217,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NotepadsMainPage.xaml.cs">
+    <Compile Include="Views\NotepadsMainPage.xaml.cs">
       <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -492,27 +492,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\AboutPage.xaml">
+    <Page Include="Views\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\AdvancedSettings.xaml">
+    <Page Include="Views\AdvancedSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\SettingsPage.xaml">
+    <Page Include="Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\SettingsPanel.xaml">
+    <Page Include="Views\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\PersonalizationSettings.xaml">
+    <Page Include="Views\PersonalizationSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Settings\TextAndEditorSettings.xaml">
+    <Page Include="Views\TextAndEditorSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -524,15 +524,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml">
+    <Page Include="Controls\DiffViewer\SideBySideDiffViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\Markdown\MarkdownExtensionView.xaml">
+    <Page Include="Controls\Markdown\MarkdownExtensionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NotepadsMainPage.xaml">
+    <Page Include="Views\NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

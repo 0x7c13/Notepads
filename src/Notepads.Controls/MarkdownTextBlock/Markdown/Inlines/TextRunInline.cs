@@ -387,10 +387,10 @@ namespace Notepads.Controls.Markdown
             // HACK: in case end < start happens
             if (length <= 0)
             {
-                return new TextRunInline { Text = string.Empty };   
+                return new TextRunInline { Text = string.Empty };
             }
 
-            return new TextRunInline { Text = markdown.Substring(start, length) };   
+            return new TextRunInline { Text = markdown.Substring(start, length) };
         }
 
         /// <summary>

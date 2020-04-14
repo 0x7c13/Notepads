@@ -1,0 +1,620 @@
+﻿<Page
+    x:Class="Notepads.Views.NotepadsMainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Notepads.Controls"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid x:Name="RootGrid" Background="Transparent">
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <SplitView x:Name="RootSplitView"
+                   Grid.Row="0"
+                   AllowDrop="True" 
+                   IsPaneOpen="False"
+                   OpenPaneLength="385"
+                   DisplayMode="Overlay"
+                   PaneBackground="Transparent"
+                   PanePlacement="Right"
+                   Style="{StaticResource CustomSplitViewStyle}">
+
+            <SplitView.Content>
+                <Grid>
+                    <controls:SetsView x:Name="Sets"
+                                       TabIndex="0"
+                                       SetsWidthBehavior="Equal"
+                                       CanCloseSets="True"
+                                       IsCloseButtonOverlay="False"
+                                       CanDragItems="True"
+                                       CanReorderItems="True"
+                                       AllowDrop="True"
+                                       Template="{StaticResource SetsViewTemplate}"
+                                       Background="Transparent"
+                                       Grid.ColumnSpan="2"
+                                       Loaded="Sets_Loaded">
+
+                        <!--<sets:SetsView.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_N_OnInvoked"/>
+                            <KeyboardAccelerator Key="O" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_O_OnInvoked"/>
+                            <KeyboardAccelerator Key="Tab" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_Tab_OnInvoked"/>
+                            <KeyboardAccelerator Key="Tab" Modifiers="Control,Shift" Invoked="KeyboardAccelerator_Ctrl_Shift_Tab_OnInvoked"/>
+                        </sets:SetsView.KeyboardAccelerators>-->
+
+                        <controls:SetsView.Resources>
+                            <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
+                            <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
+                            <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
+                            <Storyboard x:Name="NewSetButtonOpacityAnimation">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="NewSetButton"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0" Duration="0:0:1"/>
+                            </Storyboard>
+                        </controls:SetsView.Resources>
+
+                        <controls:SetsView.SetsStartHeader>
+                            <Button x:Name="MainMenuButton"
+                                IsTabStop="False"
+                                Width="42"
+                                Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                Margin="0,0,-1,0"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Style="{ThemeResource ButtonRevealStyle}"
+                                Padding="0">
+                                <Viewbox MaxWidth="16" MaxHeight="16">
+                                    <SymbolIcon Symbol="GlobalNavigationButton"/>
+                                </Viewbox>
+                                <FlyoutBase.AttachedFlyout>
+                                    <MenuFlyout x:Name="MainMenuButtonFlyout" 
+                                                Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New_Window" x:Name="MenuCreateNewWindowButton" AccessKey="N">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="N" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE792;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xEA35;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8AB;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
+                                        <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE740;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F11" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="CompactOverlay" x:Name="MenuCompactOverlayButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8A7;" />
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F12" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="MenuPrintSeparator"/>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="P" Modifiers="Control"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_PrintAll" x:Name="MenuPrintAllButton">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xF56D;"/>
+                                            </MenuFlyoutItem.Icon>
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
+                                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                                            <Style TargetType="MenuFlyoutPresenter">
+                                                <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="MaxWidth" Value="1200" />
+                                            </Style>
+                                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                                    </MenuFlyout>
+                                </FlyoutBase.AttachedFlyout>
+                            </Button>
+                        </controls:SetsView.SetsStartHeader>
+
+                        <controls:SetsView.SetsActionHeader>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="NewSetButton"
+                                        Grid.Column="0"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="-1,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Style="{ThemeResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="16"
+                                            MaxHeight="16">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                Glyph="&#xE710;" />
+                                        </Viewbox>
+                                </Button>
+                                <Button x:Name="ExitCompactOverlayButton"
+                                        Grid.Column="1"
+                                        IsTabStop="False"
+                                        Width="48"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="0,0,0,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Click="ExitCompactOverlayButton_OnClick"
+                                        Visibility="Collapsed"
+                                        Style="{ThemeResource ButtonRevealStyle}">
+                                        <Viewbox MaxWidth="19"
+                                             MaxHeight="19">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                  Glyph="&#xE944;" />
+                                        </Viewbox>
+                                </Button>
+                            </Grid>
+
+                        </controls:SetsView.SetsActionHeader>
+
+                        <controls:SetsView.SetsPaddingHeader>
+                            <Grid x:Name="AppTitleBar" Background="Transparent" Height="32"/>
+                        </controls:SetsView.SetsPaddingHeader>
+
+                        <controls:SetsView.SetsEndHeader>
+                            <Grid x:Name="TitleBarReservedArea" Background="Transparent" HorizontalAlignment="Center" Width="180" Height="32"/>
+                        </controls:SetsView.SetsEndHeader>
+
+                    </controls:SetsView>
+
+                    <controls:InAppNotification x:Name="StatusNotification"
+                                                x:Load="false"
+                                                Style="{StaticResource InAppNotificationNoDismissButton}"
+                                                Content=""
+                                                ShowDismissButton="False"
+                                                AnimationDuration="0:0:0.080"
+                                                VerticalOffset="-20"
+                                                HorizontalOffset="0"
+                                                FontWeight="Light"
+                                                BorderThickness="1">
+                    </controls:InAppNotification>
+                </Grid>
+            </SplitView.Content>
+            <SplitView.Pane>
+                <Frame x:Name="SettingsFrame"/>
+            </SplitView.Pane>
+        </SplitView>
+
+        <Grid Grid.Row="1" x:Name="StatusBar" Height="25" x:Load="false">
+            <Grid.Resources>
+                <Style TargetType="TextBlock" x:Key="StatusBarTextBlockStyle">
+                    <Setter Property="Height" Value="25"/>
+                    <Setter Property="Padding" Value="8,4,8,4"/>
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                    <Setter Property="FontSize" Value="11"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Setter Property="Opacity" Value="1.0"/>
+                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="4"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Column="0">
+                <Grid x:Name="FileModificationStateIndicator"
+                      Padding="8,5,6,5"
+                      IsTapEnabled="True" 
+                      extensions:Mouse.Cursor="Hand"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                            <Core:ChangePropertyAction PropertyName="Background">
+                                <Core:ChangePropertyAction.Value>
+                                    <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+
+                        <Core:EventTriggerBehavior EventName="PointerExited">
+                            <Core:ChangePropertyAction PropertyName="Background">
+                                <Core:ChangePropertyAction.Value>
+                                    <SolidColorBrush Color="Transparent"/>
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                    <Viewbox>
+                        <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
+                    </Viewbox>
+                    <Grid.ContextFlyout>
+                        <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem" 
+                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
+                                            Tag="ReloadFileFromDisk" 
+                                            Click="ReloadFileFromDisk">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE72C;"/>
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </Grid.ContextFlyout>
+                </Grid>
+            </Grid>
+            <Grid Column="1"
+                  extensions:Mouse.Cursor="Hand">
+                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           Padding ="4,4,8,4"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                            <Core:ChangePropertyAction PropertyName="Opacity">
+                                <Core:ChangePropertyAction.Value>
+                                    0.7
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+
+                        <Core:EventTriggerBehavior EventName="PointerExited">
+                            <Core:ChangePropertyAction PropertyName="Opacity">
+                                <Core:ChangePropertyAction.Value>
+                                    1.0
+                                </Core:ChangePropertyAction.Value>
+                            </Core:ChangePropertyAction>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+
+                </TextBlock>
+            </Grid>
+            <Grid Column="2"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                
+                <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           Foreground="{StaticResource SystemControlForegroundAccentBrush}"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped"
+                           >
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 
+                                            x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" 
+                                            Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE89A;"/>
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="D" Modifiers="Menu" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" 
+                                            Tag="RevertAllChanges" 
+                                            Click="ModificationFlyoutSelection_OnClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7A7;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="3" x:Name="LineColumnIndicatorButton"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                </TextBlock>
+            </Grid>
+            <Grid Column="4"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+
+                <TextBlock x:Name="FontZoomIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                    <TextBlock.ContextFlyout>
+                        <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="-10,0,-10,0">
+                                    <AppBarButton x:Name="ZoomOut" 
+                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
+                                                  LabelPosition="Collapsed"
+                                                  VerticalAlignment="Center" Width="40"
+                                                  KeyboardAcceleratorTextOverride="Ctrl+Minus" 
+                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets"/>
+                                        </AppBarButton.Icon>
+                                        <AppBarButton.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="Subtract" Modifiers="Control" IsEnabled="False"/>
+                                        </AppBarButton.KeyboardAccelerators>
+                                    </AppBarButton>
+                                    <Slider x:Name="FontZoomSlider" 
+                                            Style="{StaticResource CustomSliderStyle}"
+                                            Minimum="10" Maximum="500" Value="100"
+                                            VerticalAlignment="Center" Width="150"
+                                            Margin="5"
+                                            ValueChanged="FontZoomSlider_ValueChanged"/>
+                                    <AppBarButton x:Name="ZoomIn"
+                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
+                                                  LabelPosition="Collapsed" 
+                                                  VerticalAlignment="Center" Width="40"
+                                                  KeyboardAcceleratorTextOverride="Ctrl+Plus" 
+                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets"/>
+                                        </AppBarButton.Icon>
+                                        <AppBarButton.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="Add" Modifiers="Control" IsEnabled="False"/>
+                                        </AppBarButton.KeyboardAccelerators>
+                                    </AppBarButton>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5,-5,0,0">
+                                    <TextBlock x:Name="MinZoom" Text="10%" Margin="30,0,0,0" FontSize="10"/>
+                                    <TextBlock x:Name="MaxZoom" Text="500%" Margin="108,0,0,0" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-15,0,0">
+                                    <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" VerticalAlignment="Center" FontSize="15"/>
+                                    <TextBlock Text="%" VerticalAlignment="Center" FontSize="15"/>
+                                </StackPanel>
+                                <AppBarButton x:Name="RestoreDefaultZoom"
+                                              x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
+                                              Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="-10,5,-10,-5"
+                                              Icon="Undo" 
+                                              Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                            </StackPanel>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                        </Flyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="5"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                
+                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem Text="Windows (CRLF)" Tag="CRLF" Click="LineEndingSelection_OnClick"/>
+                            <MenuFlyoutItem Text="Macintosh (CR)" Tag="CR" Click="LineEndingSelection_OnClick"/>
+                            <MenuFlyoutItem Text="Unix (LF)" Tag="LF" Click="LineEndingSelection_OnClick"/>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="6"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                
+                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
+                           IsTapEnabled="True"
+                           Tapped="StatusBarComponent_OnTapped">
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
+            </Grid>
+            <Grid Column="7"
+                  extensions:Mouse.Cursor="Hand">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:ChangePropertyAction PropertyName="Background">
+                            <Core:ChangePropertyAction.Value>
+                                <SolidColorBrush Color="Transparent"/>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                
+                <Grid x:Name="ShadowWindowIndicator"
+                      Visibility="Collapsed"
+                      Padding="6,6,6,6"
+                      IsTapEnabled="True"
+                      Tapped="StatusBarComponent_OnTapped">
+                    <Viewbox>
+                        <FontIcon Glyph="&#xE737;" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                    </Viewbox>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Canvas Grid.Row="2" x:Name="PrintCanvas" Opacity="0"/>
+    </Grid>
+</Page>

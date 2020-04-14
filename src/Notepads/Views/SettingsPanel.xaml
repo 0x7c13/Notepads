@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="Notepads.Views.SettingsPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush"
+                                     Color="WhiteSmoke"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush"
+                                     Color="#222222"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush"
+                                     Color="{StaticResource SystemColorHighlightColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource SettingsPanelBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Row="0" 
+              Margin="18,0,18,0"
+              BorderThickness="0,0,0,1"
+              BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+            <TextBlock x:Name="TitleTextBlock"
+                       Padding="0,0,0,10"
+                       FontSize="24"
+                       VerticalAlignment="Bottom"/>
+        </Grid>
+        <Grid Row="1">
+            <Frame x:Name="ContentFrame"/>
+        </Grid>
+    </Grid>
+</Page>
