@@ -19,7 +19,7 @@ namespace Notepads.Controls.Markdown
     public partial class MarkdownRenderer
     {
         /// <summary>
-        /// Renders emoji element.
+        /// Renders Emoji element.
         /// </summary>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
@@ -100,7 +100,7 @@ namespace Notepads.Controls.Markdown
             // Render the children into the bold inline.
             RenderInlineChildren(element.Inlines, childContext);
 
-            // Add it to the current inlines
+            // Add it to the current inline collection
             localContext.InlineCollection.Add(boldSpan);
         }
 
@@ -209,8 +209,15 @@ namespace Notepads.Controls.Markdown
 
             link.Inlines.Add(linkText);
 
-            // Add it to the current inlines
-            localContext.InlineCollection.Add(link);
+            try
+            {
+                //Add it to the current inline collection
+                localContext.InlineCollection.Add(link);
+            }
+            catch // Invalid hyperlink
+            {
+                link.Inlines.Clear();
+            }
         }
 
         /// <summary>
@@ -366,7 +373,7 @@ namespace Notepads.Controls.Markdown
         }
 
         /// <summary>
-        /// Renders a strikethrough element.
+        /// Renders a strike-through element.
         /// </summary>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
@@ -570,8 +577,27 @@ namespace Notepads.Controls.Markdown
                 Child = border,
             };
 
-            // Add it to the current inlines
-            localContext.InlineCollection.Add(inlineUIContainer);
+            try
+            {
+                // Add it to the current inline collection
+                localContext.InlineCollection.Add(inlineUIContainer);
+            }
+            catch // Fallback
+            {
+                Run run = new Run
+                {
+                    Text = text.Text,
+                    FontFamily = InlineCodeFontFamily ?? FontFamily,
+                    Foreground = InlineCodeForeground ?? Foreground
+                };
+
+                // Additional formatting
+                if (localContext.WithinItalics) run.FontStyle = FontStyle.Italic;
+                if (localContext.WithinBold) run.FontWeight = FontWeights.Bold;
+
+                // Add the fallback block
+                localContext.InlineCollection.Add(run);
+            }
         }
     }
 }

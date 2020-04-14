@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Notepads.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
-    xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
+    xmlns:diffViewer="using:Notepads.Controls.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     xmlns:goTo="using:Notepads.Controls.GoTo"
     mc:Ignorable="d"

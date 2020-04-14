@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Notepads.Utilities;
+    using Notepads.Views;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml.Controls;
 
