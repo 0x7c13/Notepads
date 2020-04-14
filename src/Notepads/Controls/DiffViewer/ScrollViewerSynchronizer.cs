@@ -11,82 +11,111 @@
     public class ScrollViewerSynchronizer
     {
         private readonly List<ScrollViewer> _scrollViewers;
-        private readonly Dictionary<ScrollBar, ScrollViewer> _verticalScrollerViewers = new Dictionary<ScrollBar, ScrollViewer>();
-        private readonly Dictionary<ScrollBar, ScrollViewer> _horizontalScrollerViewers = new Dictionary<ScrollBar, ScrollViewer>();
-        private double _verticalScrollOffset;
-        private double _horizontalScrollOffset;
+        private readonly Dictionary<ScrollBar, ScrollViewer> _horizontalScrollBars = new Dictionary<ScrollBar, ScrollViewer>();
+        private readonly Dictionary<ScrollBar, ScrollViewer> _verticalScrollBars = new Dictionary<ScrollBar, ScrollViewer>();
+        private double _verticalScrollOffset = .0f;
+        private double _horizontalScrollOffset = .0f;
 
         public ScrollViewerSynchronizer(List<ScrollViewer> scrollViewers)
         {
             _scrollViewers = scrollViewers;
-            scrollViewers.ForEach(x => x.Loaded += Scroller_Loaded);
+            scrollViewers.ForEach(scrollViewer => scrollViewer.Loaded += ScrollViewerLoaded);
+            scrollViewers.ForEach(scrollViewer => scrollViewer.Unloaded += ScrollViewerUnloaded);
         }
 
-        private void Scroller_Loaded(object sender, RoutedEventArgs e)
+        private void ScrollViewerLoaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = (ScrollViewer)sender;
+            if (!(sender is ScrollViewer scrollViewer)) return;
 
             scrollViewer.ChangeView(_horizontalScrollOffset, _verticalScrollOffset, null, true);
 
-            scrollViewer.Opacity = 1;
-            if (_verticalScrollerViewers.Count > 0)
-            {
-                scrollViewer.ChangeView(null, _verticalScrollOffset, null, true);
-            }
             scrollViewer.ApplyTemplate();
 
             var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
             var horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
             var verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
 
-            if (!_horizontalScrollerViewers.Keys.Contains(horizontalScrollBar))
-            {
-                _horizontalScrollerViewers.Add(horizontalScrollBar, scrollViewer);
-            }
-
-            if (!_verticalScrollerViewers.Keys.Contains(verticalScrollBar))
-            {
-                _verticalScrollerViewers.Add(verticalScrollBar, scrollViewer);
-            }
-
             if (horizontalScrollBar != null)
             {
+                if (!_horizontalScrollBars.Keys.Contains(horizontalScrollBar))
+                {
+                    _horizontalScrollBars.Add(horizontalScrollBar, scrollViewer);
+                }
+
                 horizontalScrollBar.Scroll += HorizontalScrollBar_Scroll;
                 horizontalScrollBar.ValueChanged += HorizontalScrollBar_ValueChanged;
             }
 
             if (verticalScrollBar != null)
             {
+                if (!_verticalScrollBars.Keys.Contains(verticalScrollBar))
+                {
+                    _verticalScrollBars.Add(verticalScrollBar, scrollViewer);
+                }
+
                 verticalScrollBar.Scroll += VerticalScrollBar_Scroll;
                 verticalScrollBar.ValueChanged += VerticalScrollBar_ValueChanged;
             }
         }
 
+        private void ScrollViewerUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is ScrollViewer scrollViewer)) return;
+
+            scrollViewer.ApplyTemplate();
+
+            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
+            var horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
+            var verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
+
+            if (horizontalScrollBar != null)
+            {
+                horizontalScrollBar.Scroll -= HorizontalScrollBar_Scroll;
+                horizontalScrollBar.ValueChanged -= HorizontalScrollBar_ValueChanged;
+
+                if (_horizontalScrollBars.Keys.Contains(horizontalScrollBar))
+                {
+                    _horizontalScrollBars.Remove(horizontalScrollBar);
+                }
+            }
+
+            if (verticalScrollBar != null)
+            {
+                verticalScrollBar.Scroll -= VerticalScrollBar_Scroll;
+                verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
+
+                if (_verticalScrollBars.Keys.Contains(verticalScrollBar))
+                {
+                    _verticalScrollBars.Remove(verticalScrollBar);
+                }
+            }
+        }
+
         private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
+            if (!(sender is ScrollBar changedScrollBar)) return;
+            var changedScrollViewer = _verticalScrollBars[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void VerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _verticalScrollerViewers[changedScrollBar];
+            if (!(sender is ScrollBar changedScrollBar)) return;
+            var changedScrollViewer = _verticalScrollBars[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
+            if (!(sender is ScrollBar changedScrollBar)) return;
+            var changedScrollViewer = _horizontalScrollBars[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
         private void HorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = _horizontalScrollerViewers[changedScrollBar];
+            if (!(sender is ScrollBar changedScrollBar)) return;
+            var changedScrollViewer = _horizontalScrollBars[changedScrollBar];
             Scroll(changedScrollViewer);
         }
 
@@ -107,6 +136,32 @@
                     scrollViewer.ChangeView(changedScrollViewer.HorizontalOffset, null, null, true);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            var horizontalScrollBars = new List<ScrollBar>(_horizontalScrollBars.Keys);
+            horizontalScrollBars.ForEach(horizontalScrollBar =>
+            {
+                horizontalScrollBar.Scroll -= HorizontalScrollBar_Scroll;
+                horizontalScrollBar.ValueChanged -= HorizontalScrollBar_ValueChanged;
+            });
+            horizontalScrollBars.Clear();
+
+            var verticalScrollBars = new List<ScrollBar>(_verticalScrollBars.Keys);
+            verticalScrollBars.ForEach(verticalScrollBar =>
+            {
+                verticalScrollBar.Scroll -= VerticalScrollBar_Scroll;
+                verticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
+            });
+            verticalScrollBars.Clear();
+
+            _horizontalScrollBars.Clear();
+            _verticalScrollBars.Clear();
+
+            _scrollViewers?.ForEach(scrollViewer => scrollViewer.Loaded -= ScrollViewerLoaded);
+            _scrollViewers?.ForEach(scrollViewer => scrollViewer.Unloaded -= ScrollViewerUnloaded);
+            _scrollViewers?.Clear();
         }
     }
 }

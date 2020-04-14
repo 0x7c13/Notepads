@@ -445,7 +445,7 @@
             return textEditor;
         }
 
-        private async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
+        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
         {
             try
             {
@@ -515,7 +515,7 @@
             }
         }
 
-        private string ToToken(Guid textEditorId)
+        private static string ToToken(Guid textEditorId)
         {
             return textEditorId.ToString("N");
         }

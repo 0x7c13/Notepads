@@ -85,7 +85,8 @@ namespace Notepads.Controls
             UnregisterPropertyChangedCallback(BorderThicknessProperty, _borderThicknessPropertyToken);
             UnregisterPropertyChangedCallback(CharacterSpacingProperty, _characterSpacingPropertyToken);
             UnregisterPropertyChangedCallback(FontFamilyProperty, _fontFamilyPropertyToken);
-            UnregisterPropertyChangedCallback(FontStretchProperty, _fontStylePropertyToken);
+            UnregisterPropertyChangedCallback(FontStretchProperty, _fontStretchPropertyToken);
+            UnregisterPropertyChangedCallback(FontStyleProperty, _fontStylePropertyToken);
             UnregisterPropertyChangedCallback(FontWeightProperty, _fontWeightPropertyToken);
             UnregisterPropertyChangedCallback(ForegroundProperty, _foregroundPropertyToken);
             UnregisterPropertyChangedCallback(PaddingProperty, _paddingPropertyToken);

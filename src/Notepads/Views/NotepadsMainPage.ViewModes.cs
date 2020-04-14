@@ -32,7 +32,7 @@
             }
         }
 
-        private async void EnterExitCompactOverlayMode()
+        private static async void EnterExitCompactOverlayMode()
         {
             if (App.IsGameBarWidget) return;
 

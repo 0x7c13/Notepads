@@ -389,7 +389,7 @@
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private bool IsValidUrl(string url)
+        private static bool IsValidUrl(string url)
         {
             try
             {

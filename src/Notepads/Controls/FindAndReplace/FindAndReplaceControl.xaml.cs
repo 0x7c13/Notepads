@@ -95,9 +95,13 @@
             if (_shouldUpdateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
 
             if (mode == FindAndReplaceMode.FindOnly)
+            {
                 FindBar.Focus(FocusState.Programmatic);
+            }
             else
+            {
                 ReplaceBar.Focus(FocusState.Programmatic);
+            }
 
             FindBar_OnTextChanged(null, null);
         }

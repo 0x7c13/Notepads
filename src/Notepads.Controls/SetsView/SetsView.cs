@@ -223,7 +223,7 @@ namespace Notepads.Controls
 
         private void UpdateSetSeparators()
         {
-            for (int i = 0; i < this.Items?.Count; i++)
+            for (int i = 0; i < Items?.Count; i++)
             {
                 if (i != SelectedIndex && i != SelectedIndex - 1)
                 {

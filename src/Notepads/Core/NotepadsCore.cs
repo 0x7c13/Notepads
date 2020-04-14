@@ -292,13 +292,25 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
         }
 

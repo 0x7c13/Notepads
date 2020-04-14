@@ -105,7 +105,7 @@
 
         private static readonly UISettings UISettings = new UISettings();
 
-        private static readonly float _acrylicTintOpacityMinThreshold = 0.35f;
+        private const float _acrylicTintOpacityMinThreshold = 0.35f;
 
         private readonly DispatcherQueue _dispatcherQueue;
 
@@ -263,7 +263,7 @@
             return brush;
         }
 
-        private async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)
+        private static async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)
         {
             try
             {

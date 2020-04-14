@@ -159,7 +159,7 @@
             });
         }
 
-        private async Task OpenNewAppInstance()
+        private static async Task OpenNewAppInstance()
         {
             if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance))
             {
@@ -287,6 +287,7 @@
 
         public void ExecuteProtocol(Uri uri)
         {
+            LoggingService.LogInfo($"Executing protocol: {uri}", consoleOnly: true);
         }
 
         private void CoreWindow_Activated(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.WindowActivatedEventArgs args)
@@ -424,7 +425,7 @@
             });
         }
 
-        private void UpdateApplicationTitle(ITextEditor activeTextEditor)
+        private static void UpdateApplicationTitle(ITextEditor activeTextEditor)
         {
             if (!App.IsGameBarWidget)
             {

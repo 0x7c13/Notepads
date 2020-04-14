@@ -31,7 +31,7 @@ namespace Notepads.Controls
         /// </summary>
         public DropShadowPanel()
         {
-            this.DefaultStyleKey = typeof(DropShadowPanel);
+            DefaultStyleKey = typeof(DropShadowPanel);
 
             Compositor compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
 

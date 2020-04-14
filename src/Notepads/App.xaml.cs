@@ -236,7 +236,7 @@
             e.SetObserved();
         }
 
-        private void ExtendViewIntoTitleBar()
+        private static void ExtendViewIntoTitleBar()
         {
             if (!IsGameBarWidget)
             {

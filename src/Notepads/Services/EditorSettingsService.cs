@@ -28,7 +28,7 @@
             {
                 _editorFontFamily = value;
                 OnFontFamilyChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value);
             }
         }
 
@@ -41,7 +41,7 @@
             {
                 _editorFontSize = value;
                 OnFontSizeChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value);
             }
         }
 
@@ -54,7 +54,7 @@
             {
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString());
             }
         }
 
@@ -67,7 +67,7 @@
             {
                 _isLineHighlighterEnabled = value;
                 OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
         }
 
@@ -80,7 +80,7 @@
             {
                 _editorDefaultLineEnding = value;
                 OnDefaultLineEndingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString());
             }
         }
 
@@ -96,11 +96,11 @@
                 if (value is UTF8Encoding)
                 {
                     ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
-                        Equals(value, new UTF8Encoding(true)), true);
+                        Equals(value, new UTF8Encoding(true)));
                 }
 
                 OnDefaultEncodingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage);
             }
         }
 
@@ -137,7 +137,7 @@
             {
                 _editorDefaultDecoding = value;
                 var codePage = value?.CodePage ?? -1;
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage);
             }
         }
 
@@ -150,7 +150,7 @@
             {
                 _editorDefaultTabIndents = value;
                 OnDefaultTabIndentsChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value);
             }
         }
 
@@ -162,7 +162,7 @@
             set
             {
                 _editorDefaultSearchEngine = value;
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString());
             }
         }
 
@@ -174,7 +174,7 @@
             set
             {
                 _editorCustomMadeSearchUrl = value;
-                ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value);
             }
         }
 
@@ -187,7 +187,7 @@
             {
                 _showStatusBar = value;
                 OnStatusBarVisibilityChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value);
             }
         }
 
@@ -200,7 +200,7 @@
             {
                 _isSessionSnapshotEnabled = value;
                 OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value);
             }
         }
 
@@ -213,7 +213,7 @@
             {
                 _isHighlightMisspelledWordsEnabled = value;
                 OnHighlightMisspelledWordsChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value);
             }
         }
 
@@ -225,7 +225,7 @@
             set
             {
                 _alwaysOpenNewWindow = value;
-                ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value);
             }
         }
 
@@ -419,9 +419,14 @@
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
             {
                 if (Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
+                {
                     _editorDefaultSearchEngine = (SearchEngine)searchEngine;
+                }
                 else
+                {
                     _editorDefaultSearchEngine = SearchEngine.Bing;
+                }
+
                 _editorCustomMadeSearchUrl = customMadesearchUrl;
             }
             else

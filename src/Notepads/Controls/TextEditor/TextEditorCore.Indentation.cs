@@ -139,9 +139,13 @@
                 if (i == startLine - 1)
                 {
                     if (startLine == endLine)
+                    {
                         start -= _contentLinesCache[i].Length - indentedStringBuilder.Length;
+                    }
                     else
+                    {
                         start -= _contentLinesCache[i].Length - indentedStringBuilder.Length + 1;
+                    }
 
                     if (start < startLineInitialIndex)
                     {

@@ -24,7 +24,7 @@ namespace Notepads.Controls
         private readonly DispatcherTimer _closingAnimationTimer = new DispatcherTimer();
         private readonly DispatcherTimer _dismissTimer = new DispatcherTimer();
         private Button _dismissButton;
-        private VisualStateGroup _visualStateGroup;
+        //private VisualStateGroup _visualStateGroup;
         private readonly List<NotificationOptions> _stackedNotificationOptions = new List<NotificationOptions>();
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Notepads.Controls
             }
 
             _dismissButton = (Button)GetTemplateChild(DismissButtonPart);
-            _visualStateGroup = (VisualStateGroup)GetTemplateChild(GroupContent);
+            //_visualStateGroup = (VisualStateGroup)GetTemplateChild(GroupContent);
 
             if (_dismissButton != null)
             {

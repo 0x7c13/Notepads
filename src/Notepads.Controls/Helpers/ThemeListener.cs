@@ -28,7 +28,7 @@ namespace Notepads.Controls.Helpers
         /// <summary>
         /// Gets the Name of the Current Theme.
         /// </summary>
-        public string CurrentThemeName => this.CurrentTheme.ToString();
+        public string CurrentThemeName => CurrentTheme.ToString();
 
         /// <summary>
         /// Gets or sets the Current Theme.

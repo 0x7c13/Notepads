@@ -198,7 +198,7 @@
             }
         }
 
-        private bool HaveNonemptyTextEditor(ITextEditor[] textEditors)
+        private static bool HaveNonemptyTextEditor(ITextEditor[] textEditors)
         {
             foreach (ITextEditor textEditor in textEditors)
             {

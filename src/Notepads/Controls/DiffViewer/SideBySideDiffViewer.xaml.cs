@@ -59,6 +59,8 @@
             LeftBox.KeyDown -= OnKeyDown;
             RightBox.KeyDown -= OnKeyDown;
             Loaded -= SideBySideDiffViewer_Loaded;
+
+            _scrollSynchronizer.Dispose();
         }
 
         private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)

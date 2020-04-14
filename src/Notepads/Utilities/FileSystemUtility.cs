@@ -36,12 +36,19 @@
             if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
             {
                 if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                {
                     finalPath = Path.Combine(Path.GetPathRoot(basePath), path.TrimStart(Path.DirectorySeparatorChar));
+                }
                 else
+                {
                     finalPath = Path.Combine(basePath, path);
+                }
             }
             else
+            {
                 finalPath = path;
+            }
+
             // Resolves any internal "..\" to get the true full path.
             return Path.GetFullPath(finalPath);
         }

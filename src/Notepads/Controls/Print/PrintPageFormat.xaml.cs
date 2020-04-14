@@ -11,7 +11,7 @@
 
         public PrintPageFormat(string textEditorText, FontFamily textEditorFontFamily, double textEditorFontSize, string headerText, string footerText)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             TextContent.FontFamily = textEditorFontFamily;
             TextContent.FontSize = textEditorFontSize;
