@@ -2,7 +2,6 @@
 {
     using System.Threading.Tasks;
     using Microsoft.Gaming.XboxGameBar;
-    using Notepads.Controls.Settings;
     using Notepads.Utilities;
     using Notepads.Views;
     using Windows.ApplicationModel.Activation;
