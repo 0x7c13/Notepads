@@ -373,7 +373,4 @@
     <value>Автоматично познаване кодиране (препоръчително)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
 </root>
