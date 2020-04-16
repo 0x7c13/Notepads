@@ -109,7 +109,7 @@
 
         public static void GameBarActivated(Frame rootFrame, XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
         {
-            LoggingService.LogInfo($"[XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
 
             if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
             {
