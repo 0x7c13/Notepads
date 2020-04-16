@@ -87,7 +87,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 await ClearSessionDataAsync();
                 return 0;
@@ -105,7 +105,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[SessionManager] Failed to recover TextEditor: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to recover TextEditor: {ex.Message}");
                     Analytics.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() { { "Exception", ex.Message } });
                     continue;
                 }
@@ -122,6 +122,8 @@
 
             _loaded = true;
 
+            LoggingService.LogInfo($"[{nameof(SessionManager)}] {_sessionDataCache.Count} tab(s) restored from last session.");
+
             return _sessionDataCache.Count;
         }
 
@@ -129,7 +131,7 @@
         {
             if (!IsBackupEnabled)
             {
-                LoggingService.LogInfo("[SessionManager] Session backup is disabled.");
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Session backup is disabled.");
                 return;
             }
 
@@ -171,7 +173,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[SessionManager] Failed to build TextEditor session data: {ex}");
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to build TextEditor session data: {ex}");
                     Analytics.TrackEvent("SessionManager_FailedToBuildTextEditorSessionData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
@@ -195,7 +197,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to save session metadata: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save session metadata: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 actionAfterSaving?.Invoke();
                 _semaphoreSlim.Release();
@@ -220,7 +222,7 @@
 
             if (sessionDataSaved)
             {
-                LoggingService.LogInfo($"[SessionManager] Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
             }
 
             actionAfterSaving?.Invoke();
@@ -318,6 +320,8 @@
         {
             if (_timer == null)
             {
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Session backup process started (StartImmediately = {startImmediately}).");
+
                 Timer timer = new Timer(async (obj) => await SaveSessionAsync());
 
                 if (Interlocked.CompareExchange(ref _timer, timer, null) == null)
@@ -356,11 +360,11 @@
             try
             {
                 await SessionUtility.DeleteSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
-                LoggingService.LogInfo($"[SessionManager] Successfully deleted session meta data.");
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Successfully deleted session meta data.");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to delete session meta data: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete session meta data: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
             }
         }
@@ -454,7 +458,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to save backup file: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save backup file: {ex.Message}");
                 return false;
             }
         }
@@ -477,7 +481,7 @@
                     }
                     catch (Exception ex)
                     {
-                        LoggingService.LogError($"[SessionManager] Failed to delete orphaned backup file: {ex.Message}");
+                        LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned backup file: {ex.Message}");
                     }
                 }
             }
@@ -509,7 +513,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[SessionManager] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
                     Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }

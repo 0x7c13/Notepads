@@ -53,6 +53,7 @@
         {
             try
             {
+                if (file == null) return false;
                 var openedEditor = NotepadsCore.GetTextEditor(file);
                 if (openedEditor != null)
                 {

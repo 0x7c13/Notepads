@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
@@ -13,6 +14,10 @@
 
         static void Main(string[] args)
         {
+#if DEBUG
+            Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
+#endif
+
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
             if (activatedArgs == null)
@@ -42,7 +47,7 @@
             }
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
-                LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {

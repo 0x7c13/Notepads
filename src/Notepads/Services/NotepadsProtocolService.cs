@@ -42,7 +42,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[NotepadsProtocolService] Failed to parse protocol: {uri}, exception: {ex}");
+                LoggingService.LogError($"[{nameof(NotepadsProtocolService)}] Failed to parse protocol: {uri}, exception: {ex}");
                 Analytics.TrackEvent("NotepadsProtocolService_FailedToParseProtocol", new Dictionary<string, string>()
                 {
                     { "Protocol", uri.ToString() },
@@ -73,7 +73,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[NotepadsProtocolService] Failed to execute protocol: {operation}, Exception: {ex}");
+                LoggingService.LogError($"[{nameof(NotepadsProtocolService)}] Failed to execute protocol: {operation}, Exception: {ex}");
                 Analytics.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
                 {
                     { "Protocol", operation.ToString() },
