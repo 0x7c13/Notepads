@@ -552,7 +552,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to paste plain text to Windows clipboard: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to paste plain text to Windows clipboard: {ex.Message}");
             }
         }
 

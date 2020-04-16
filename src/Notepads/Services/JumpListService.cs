@@ -40,7 +40,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"JumpListService_FailedToSetupJumpList: {ex.Message}");
+                LoggingService.LogError($"[{nameof(JumpListService)}] FailedToSetupJumpList: {ex.Message}");
             }
 
             return false;
@@ -58,7 +58,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"JumpListService_FailedToClearJumpList: {ex.Message}");
+                LoggingService.LogError($"[{nameof(JumpListService)}] FailedToClearJumpList: {ex.Message}");
             }
 
             return false;

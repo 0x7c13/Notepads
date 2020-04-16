@@ -43,8 +43,7 @@
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
 
-            //await LoggingService.InitializeAsync();
-            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
@@ -113,7 +112,7 @@
                 { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
-            LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
+            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
             Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
             try
@@ -159,7 +158,7 @@
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            var exception = new Exception($"Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
+            var exception = new Exception($"[{nameof(App)}] Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
             LoggingService.LogException(exception);
             Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
@@ -186,7 +185,7 @@
         // Occurs when an exception is not handled on the UI thread.
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
+            LoggingService.LogError($"[{nameof(App)}] OnUnhandledException: {e.Exception}");
 
             var diagnosticInfo = new Dictionary<string, string>()
             {
@@ -202,7 +201,11 @@
             };
 
             var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, Message: {e.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}", "UnhandledException");
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "UnhandledException");
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
             Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
@@ -215,7 +218,7 @@
         // ie. A task is fired and forgotten Task.Run(() => {...})
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
+            LoggingService.LogError($"[{nameof(App)}] OnUnobservedException: {e.Exception}");
 
             var diagnosticInfo = new Dictionary<string, string>()
             {
@@ -226,7 +229,10 @@
             };
 
             var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, Message: {e.Exception?.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Exception?.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
                 "UnobservedException");
 
             Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);

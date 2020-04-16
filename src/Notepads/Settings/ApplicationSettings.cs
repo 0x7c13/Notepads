@@ -34,7 +34,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to remove key [{key}] from application settings: {ex.Message}");
+                LoggingService.LogError($"[{nameof(ApplicationSettingsStore)}] Failed to remove key [{key}] from application settings: {ex.Message}");
             }
 
             return false;
