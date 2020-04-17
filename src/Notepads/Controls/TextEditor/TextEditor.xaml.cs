@@ -345,7 +345,7 @@
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
-                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
                         await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
@@ -357,7 +357,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
@@ -422,24 +422,7 @@
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
-                {
-                    if (_isContentPreviewPanelOpened)
-                    {
-                        _contentPreviewExtension.IsExtensionEnabled = false;
-                        CloseSplitView();
-                    }
-                    else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideFindAndReplaceControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                    else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideGoToControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                }, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
             });
         }
 
@@ -755,7 +738,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -780,6 +763,25 @@
                 return false;
             }
             return true;
+        }
+
+        private void OnEscapeKeyDown()
+        {
+            if (_isContentPreviewPanelOpened)
+            {
+                _contentPreviewExtension.IsExtensionEnabled = false;
+                CloseSplitView();
+            }
+            else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+            {
+                HideFindAndReplaceControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+            else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
         }
 
         private void LoadSplitView()

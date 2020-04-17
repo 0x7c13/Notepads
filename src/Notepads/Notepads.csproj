@@ -195,8 +195,8 @@
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Services\NotepadsDialogFactory.cs" />
-    <Compile Include="Services\FilePickerFactory.cs" />
+    <Compile Include="Controls\Dialog\NotepadsDialogFactory.cs" />
+    <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
     <Compile Include="Utilities\FileSystemUtility.cs" />

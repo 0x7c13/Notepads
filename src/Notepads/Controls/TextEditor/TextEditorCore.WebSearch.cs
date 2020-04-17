@@ -36,7 +36,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to open search link: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to open search link: {ex.Message}");
             }
         }
     }

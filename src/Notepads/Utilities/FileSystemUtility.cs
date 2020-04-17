@@ -63,7 +63,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to parse command line: {args} with Exception: {ex}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to parse command line: {args} with Exception: {ex}");
             }
 
             if (string.IsNullOrEmpty(path))
@@ -71,7 +71,7 @@
                 return null;
             }
 
-            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
+            LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
         }
@@ -497,7 +497,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to delete file: {filePath}, Exception: {ex.Message}");
             }
         }
 
@@ -525,7 +525,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
             }
         }
@@ -541,7 +541,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get file from future access list: {ex.Message}");
             }
             return null;
         }
@@ -558,7 +558,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
                 Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
                     new Dictionary<string, string>()
                     {

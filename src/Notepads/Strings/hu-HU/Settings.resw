@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Akril háttér homályosság.</value>
+    <value>Akril háttér homályosság. Az Akril effekt ki lesz kapcsolva ha az energiatakarékos mód be van kapcsolva vagy kikapcsoltad az átlátszósági effekteket a Windows beállításaiban.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">

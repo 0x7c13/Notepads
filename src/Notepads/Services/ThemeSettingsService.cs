@@ -353,7 +353,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"Failed to apply color change for Brush: [{brush}]: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(ThemeSettingsService)}] Failed to apply color change for Brush: [{brush}]: {ex.Message}");
                 }
             }
 

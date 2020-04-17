@@ -655,7 +655,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+                LoggingService.LogError($"[{nameof(NotepadsCore)}] Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 

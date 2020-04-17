@@ -186,7 +186,7 @@
                         }
                         catch (Exception ex)
                         {
-                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
                         }
                     };
                 }

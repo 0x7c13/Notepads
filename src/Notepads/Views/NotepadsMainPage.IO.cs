@@ -5,6 +5,8 @@
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Storage;
+    using Notepads.Controls.Dialog;
+    using Notepads.Controls.FilePicker;
     using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
@@ -53,6 +55,7 @@
         {
             try
             {
+                if (file == null) return false;
                 var openedEditor = NotepadsCore.GetTextEditor(file);
                 if (openedEditor != null)
                 {
