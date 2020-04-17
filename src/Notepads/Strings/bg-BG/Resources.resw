@@ -258,8 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Всички промени, включително текст, край на реда и кодиране, направени на "{0}",
- ще бъдат възстановени!</value>
+    <value>Всички промени, включително текст, край на реда и кодиране, направени на "{0}", ще бъдат възстановени!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
@@ -439,8 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Това е прозорец за сянка на Notepads.
-Снимката и настройките на сесията са деактивирани.</value>
+    <value>Това е прозорец за сянка на Notepads. Снимката и настройките на сесията са деактивирани.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">

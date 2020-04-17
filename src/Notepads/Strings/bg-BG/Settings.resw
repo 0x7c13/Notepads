@@ -130,8 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Безплатен и с отворен код текстов редактор, проектиран и изпълнен от Jackie (Jiaqi)
- Liu</value>
+    <value>Безплатен и с отворен код текстов редактор, проектиран и изпълнен от Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
@@ -255,8 +254,7 @@
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Настройки за поведение на клавиша на раздела, важат само за нови раздели, 
-вмъкнати от потребителя.</value>
+    <value>Настройки за поведение на клавиша на раздела, важат само за нови раздели, вмъкнати от потребителя.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
@@ -324,8 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>След като бъде активиран, Notepads винаги ще отварят файл в нов прозорец, 
-вместо да създават нов раздел.</value>
+    <value>След като бъде активиран, Notepads винаги ще отварят файл в нов прозорец, вместо да създават нов раздел.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
@@ -361,8 +358,7 @@
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Настройките за търсачката по подразбиране се избират, когато се извърши 
-търсене в мрежата.</value>
+    <value>Настройките за търсачката по подразбиране се избират, когато се извърши търсене в мрежата.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
