@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Notepads.Commands;
+    using Notepads.Controls.Dialog;
     using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
     using Notepads.Core;

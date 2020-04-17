@@ -1,7 +1,8 @@
-﻿namespace Notepads.Services
+﻿namespace Notepads.Controls.FilePicker
 {
     using System.Collections.Generic;
     using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
