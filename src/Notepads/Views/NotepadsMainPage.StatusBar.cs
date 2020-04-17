@@ -11,6 +11,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
+    using Notepads.Controls.Dialog;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
