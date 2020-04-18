@@ -23,8 +23,8 @@
         private string _filePath;
         private string _containingFolderPath;
 
-        private INotepadsCore _notepadsCore;
-        private ITextEditor _textEditor;
+        private readonly INotepadsCore _notepadsCore;
+        private readonly ITextEditor _textEditor;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -53,9 +53,6 @@
         {
             Opening -= TabContextFlyout_Opening;
             Closed -= TabContextFlyout_Closed;
-
-            _notepadsCore = null;
-            _textEditor = null;
         }
 
         private void TabContextFlyout_Opening(object sender, object e)
@@ -184,12 +181,12 @@
                             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                             dataPackage.SetText(_filePath);
                             Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                            Clipboard.Flush();
+                            Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
                         catch (Exception ex)
                         {
-                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
                         }
                     };
                 }

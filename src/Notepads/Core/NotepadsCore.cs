@@ -12,46 +12,38 @@
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using SetsView;
+    using Notepads.Controls;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
+    using Microsoft.AppCenter.Analytics;
 
     public class NotepadsCore : INotepadsCore
     {
-        public SetsView Sets;
-
         public event EventHandler<ITextEditor> TextEditorLoaded;
-
         public event EventHandler<ITextEditor> TextEditorUnloaded;
-
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorSaved;
-
         public event EventHandler<ITextEditor> TextEditorClosing;
-
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
-
+        public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
-
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-
         public event EventHandler<ITextEditor> TextEditorModeChanged;
-
         public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
-
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
+
+        public SetsView Sets;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
@@ -60,6 +52,8 @@
         private ITextEditor[] _allTextEditors;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        private readonly CoreDispatcher _dispatcher;
 
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
@@ -70,7 +64,8 @@
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
-            INotepadsExtensionProvider extensionProvider)
+            INotepadsExtensionProvider extensionProvider,
+            CoreDispatcher dispatcher)
         {
             Sets = sets;
             Sets.SelectionChanged += SetsView_OnSelectionChanged;
@@ -83,8 +78,23 @@
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
+            _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
-            ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
+
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    item.Icon.Foreground = new SolidColorBrush(color);
+                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
+                }
+            });
         }
 
         public void OpenNewTextEditor(string fileNamePlaceholder)
@@ -159,9 +169,10 @@
         public async Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false)
         {
-            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit);
+            var textFile = await FileSystemUtility.ReadFile(file, ignoreFileSizeLimit, encoding);
             return CreateTextEditor(id, textFile, file, file.Name);
         }
 
@@ -183,6 +194,7 @@
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged += TextEditor_OnModeChanged;
@@ -206,20 +218,21 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
+            item.PrepareForClosing();
             Sets.Items?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
             {
                 tabContextFlyout.Dispose();
-                item.ContextFlyout = null;
             }
 
             TextEditorUnloaded?.Invoke(this, textEditor);
 
             textEditor.Loaded -= TextEditor_Loaded;
             textEditor.Unloaded -= TextEditor_Unloaded;
-            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.KeyDown -= TextEditorKeyDown;
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged -= TextEditor_OnModeChanged;
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
@@ -252,14 +265,21 @@
             return false;
         }
 
+        public bool HaveNonemptyTextEditor()
+        {
+            if (Sets.Items == null || Sets.Items.Count <= 1) return false;
+            foreach (SetsViewItem setsItem in Sets.Items)
+            {
+                if (!(setsItem.Content is ITextEditor textEditor)) continue;
+                if (string.IsNullOrEmpty(textEditor.GetText())) continue;
+                return true;
+            }
+            return false;
+        }
+
         public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding)
         {
             textEditor.TryChangeLineEnding(lineEnding);
-        }
-
-        public void ChangeEncoding(ITextEditor textEditor, Encoding encoding)
-        {
-            textEditor.TryChangeEncoding(encoding);
         }
 
         public void SwitchTo(bool next)
@@ -272,14 +292,32 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
+        }
+
+        public void SwitchTo(int index)
+        {
+            if (Sets.Items == null || index < 0 || index >= Sets.Items.Count) return;
+            Sets.SelectedIndex = index;
         }
 
         public void SwitchTo(ITextEditor textEditor)
@@ -356,24 +394,16 @@
             Sets.ScrollTo(offset);
         }
 
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
-        }
-
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Icon = new SymbolIcon(Symbol.Save)
                 {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 }
             };
 
@@ -478,6 +508,12 @@
             TextEditorSelectionChanged?.Invoke(this, textEditor);
         }
 
+        private void TextEditor_OnFontZoomFactorChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorFontZoomFactorChanged?.Invoke(this, textEditor);
+        }
+
         private void TextEditor_OnEditorModificationStateChanged(object sender, EventArgs e)
         {
             if (!(sender is ITextEditor textEditor)) return;
@@ -514,16 +550,6 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
-        }
-
-        private void OnAppAccentColorChanged(object sender, Color color)
-        {
-            if (Sets.Items == null) return;
-            foreach (SetsViewItem item in Sets.Items)
-            {
-                item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            }
         }
 
         #region DragAndDrop
@@ -629,7 +655,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+                LoggingService.LogError($"[{nameof(NotepadsCore)}] Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 
@@ -715,11 +741,11 @@
                 var index = -1;
 
                 // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items.Count; i++)
+                for (int i = 0; i < sets.Items?.Count; i++)
                 {
                     var item = sets.ContainerFromIndex(i) as SetsViewItem;
 
-                    if (args.GetPosition(item).X - item.ActualWidth < 0)
+                    if (args.GetPosition(item).X - item?.ActualWidth < 0)
                     {
                         index = i;
                         break;
@@ -748,6 +774,7 @@
                 }
 
                 deferral.Complete();
+                Analytics.TrackEvent("OnSetDropped");
             }
             catch (Exception ex)
             {
@@ -771,7 +798,7 @@
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
-            if (Sets.Items.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)

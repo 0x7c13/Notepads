@@ -24,7 +24,7 @@
         private static Task _backgroundTask;
         private static bool _initialized;
 
-        public static async Task InitializeAsync()
+        public static async Task InitializeFileSystemLoggingAsync()
         {
             if (_initialized)
             {
@@ -32,9 +32,14 @@
             }
 
             CoreApplication.Suspending += async (sender, args) => { await TryFlushMessageQueueAsync(); };
-            CoreApplication.Resuming += async (sender, args) => { await InitializeBackgroundTaskAsync(); };
+            CoreApplication.Resuming += async (sender, args) => { await InitializeLogFileWriterBackgroundTaskAsync(); };
 
-            await InitializeBackgroundTaskAsync();
+            await InitializeLogFileWriterBackgroundTaskAsync();
+        }
+
+        public static StorageFile GetLogFile()
+        {
+            return _logFile;
         }
 
         public static void LogInfo(string message, bool consoleOnly = false)
@@ -66,7 +71,7 @@
         {
             string formattedMessage = string.Format(MessageFormat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), level, message);
 
-            // Print out to debug
+            // Print to console
             Debug.WriteLine(formattedMessage);
 
             if (!_initialized)
@@ -81,24 +86,25 @@
             }
         }
 
-        private static async Task InitializeBackgroundTaskAsync()
+        private static async Task<bool> InitializeLogFileWriterBackgroundTaskAsync()
         {
             await SemaphoreSlim.WaitAsync();
 
             if (_backgroundTask != null && !_backgroundTask.IsCompleted)
             {
                 SemaphoreSlim.Release();
-                return;
-            }
-
-            if (_logFile == null)
-            {
-                StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolder("Logs");
-                _logFile = await FileSystemUtility.CreateFile(logsFolder, DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log");
+                return false;
             }
 
             try
             {
+                if (_logFile == null)
+                {
+                    StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolder("Logs");
+                    _logFile = await FileSystemUtility.CreateFile(logsFolder,
+                        DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log");
+                }
+
                 _backgroundTask = Task.Run(
                     async () =>
                     {
@@ -107,7 +113,7 @@
                             Thread.Sleep(LoggingInterval);
 
                             // We will try to write all pending messages in our next attempt, if the current attempt failed
-                            // However, if the size of _messages has become abnormally big, we know something is wrong and should abort at this point
+                            // However, if the size of messages has become abnormally big, we know something is wrong and should abort at this point
                             if (!await TryFlushMessageQueueAsync() && Messages.Count > 1000)
                             {
                                 break;
@@ -117,13 +123,18 @@
 
                 _initialized = true;
                 LogInfo($"Log file location: {_logFile.Path}", true);
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                SemaphoreSlim.Release();
             }
 
-            SemaphoreSlim.Release();
+            return false;
         }
 
         private static async Task<bool> TryFlushMessageQueueAsync()
@@ -135,25 +146,32 @@
 
             await SemaphoreSlim.WaitAsync();
 
-            while (MessageQueue.TryDequeue(out string message))
-            {
-                Messages.Add(message);
-            }
-
-            bool success = true;
-
             try
             {
+                if (MessageQueue.Count == 0)
+                {
+                    return true;
+                }
+
+                while (MessageQueue.TryDequeue(out string message))
+                {
+                    Messages.Add(message);
+                }
+
                 await FileIO.AppendLinesAsync(_logFile, Messages);
                 Messages.Clear();
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                success = false;
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                SemaphoreSlim.Release();
             }
 
-            SemaphoreSlim.Release();
-            return success;
+            return false;
         }
     }
 }

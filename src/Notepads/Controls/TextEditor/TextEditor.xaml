@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:Notepads.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
-    xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
+    xmlns:diffViewer="using:Notepads.Controls.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     xmlns:goTo="using:Notepads.Controls.GoTo"
     mc:Ignorable="d"
@@ -22,6 +22,8 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.5"
                                      Color="LightGray"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="#CACACA"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
@@ -30,12 +32,16 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.3"
                                      Color="Black"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="#363636"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
+                                     Color="{ThemeResource SystemColorGrayTextColor}"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -85,10 +91,11 @@
 
         <Grid Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="100"/>
+                <ColumnDefinition x:Name="EditorColumnDefinition" Width="*" MinWidth="100"/>
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
+                <Border x:Name="LineHighlighter" BorderBrush="{ThemeResource LineHighlightBorderBrush}" VerticalAlignment="Top" Visibility="Collapsed"/>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                        Style="{StaticResource TextEditorCore}" 
                                        Grid.Column="0"
@@ -109,8 +116,10 @@
                                             Closed="FindAndReplacePlaceholder_Closed">
                     <controls:InAppNotification.Content>
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
-                                                              Width="320"
+                                                              Width="340"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
+                                                              OnToggleReplaceModeButtonClicked="FindAndReplaceControl_OnToggleReplaceModeButtonClicked"
+                                                              OnFindReplaceControlKeyDown="TextEditorCore_OnKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
@@ -118,21 +127,22 @@
                                             x:Load="false"
                                             Padding="0"
                                             Margin="0"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
                                             Style="{StaticResource FindAndReplacePlaceholder}"
                                             ShowDismissButton="True"
                                             AnimationDuration="0:0:0.050"
                                             VerticalOffset="0"
-                                            HorizontalOffset="0"
+                                            HorizontalOffset="-22"
                                             FontWeight="Light"
                                             BorderThickness="1"
                                             Closed="GoToPlaceholder_Closed">
                     <controls:InAppNotification.Content>
-                        <goTo:GoToControl x:Name="GoToControl" 
-                                                              Width="320"
-                                                              OnDismissKeyDown="GoToControl_OnDismissKeyDown"
-                                                              OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
+                        <goTo:GoToControl x:Name="GoToControl"
+                                          Width="260"
+                                          OnDismissKeyDown="GoToControl_OnDismissKeyDown"
+                                          OnGoToControlKeyDown="TextEditorCore_OnKeyDown"
+                                          OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
                     </controls:InAppNotification.Content>
                 </controls:InAppNotification>
             </Grid>

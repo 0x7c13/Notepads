@@ -14,34 +14,24 @@
     public interface INotepadsCore
     {
         event EventHandler<ITextEditor> TextEditorLoaded;
-
         event EventHandler<ITextEditor> TextEditorUnloaded;
-
         event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
-
         event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
-
         event EventHandler<ITextEditor> TextEditorSaved;
-
         event EventHandler<ITextEditor> TextEditorClosing;
-
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
-
+        event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
         event EventHandler<ITextEditor> TextEditorEncodingChanged;
-
         event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-
         event EventHandler<ITextEditor> TextEditorModeChanged;
-
         event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
-
         event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
-
         event KeyEventHandler TextEditorKeyDown;
 
         Task<ITextEditor> CreateTextEditor(
             Guid id,
             StorageFile file,
+            Encoding encoding = null,
             bool ignoreFileSizeLimit = false);
 
         ITextEditor CreateTextEditor(
@@ -67,11 +57,13 @@
 
         bool HaveUnsavedTextEditor();
 
+        bool HaveNonemptyTextEditor();
+
         void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
-        void ChangeEncoding(ITextEditor textEditor, Encoding encoding);
-
         void SwitchTo(bool next);
+
+        void SwitchTo(int index);
 
         void SwitchTo(ITextEditor textEditor);
 

@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Notepads.Utilities;
+    using Notepads.Views;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml.Controls;
 
@@ -36,7 +37,7 @@
 
         private static void ProtocolActivated(Frame rootFrame, ProtocolActivatedEventArgs protocolActivatedEventArgs)
         {
-            LoggingService.LogInfo($"[ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
 
             if (rootFrame.Content == null)
             {
@@ -50,6 +51,8 @@
 
         private static void LaunchActivated(Frame rootFrame, LaunchActivatedEventArgs launchActivatedEventArgs)
         {
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [LaunchActivated] Kind: {launchActivatedEventArgs.Kind}");
+
             if (launchActivatedEventArgs.PrelaunchActivated == false)
             {
                 // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
@@ -64,6 +67,8 @@
 
         private static async Task FileActivated(Frame rootFrame, FileActivatedEventArgs fileActivatedEventArgs)
         {
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [FileActivated]");
+
             if (rootFrame.Content == null)
             {
                 rootFrame.Navigate(typeof(NotepadsMainPage), fileActivatedEventArgs);
@@ -76,7 +81,7 @@
 
         private static async Task CommandActivated(Frame rootFrame, CommandLineActivatedEventArgs commandLineActivatedEventArgs)
         {
-            LoggingService.LogInfo($"[CommandActivated] CurrentDirectoryPath: {commandLineActivatedEventArgs.Operation.CurrentDirectoryPath} " +
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [CommandActivated] CurrentDirectoryPath: {commandLineActivatedEventArgs.Operation.CurrentDirectoryPath} " +
                                    $"Arguments: {commandLineActivatedEventArgs.Operation.Arguments}");
 
             if (rootFrame.Content == null)

@@ -2,7 +2,10 @@
 {
     using System;
     using Notepads.Services;
+    using Notepads.Utilities;
+    using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -11,38 +14,47 @@
     public sealed partial class GoToControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
+
+        public event EventHandler<KeyRoutedEventArgs> OnGoToControlKeyDown;
+
+        private int _currentLine;
+        private int _maxLine;
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        public void SetLineData(int currentLine, int maxLine)
+        {
+            _currentLine = currentLine;
+            _maxLine = maxLine;
+        }
 
         public GoToControl()
         {
             InitializeComponent();
 
-            SetSelectionHighlightColor();
+            SetSelectionHighlightColor(ThemeSettingsService.AppAccentColor);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             Loaded += GoToControl_Loaded;
-            Unloaded += GoToControl_Unloaded;
         }
 
         public void Dispose()
         {
+            Loaded -= GoToControl_Loaded;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void GoToControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus();
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
-        private void GoToControl_Unloaded(object sender, RoutedEventArgs e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-        }
-
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
-        {
-            SetSelectionHighlightColor();
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                SetSelectionHighlightColor(color);
+            });
         }
 
         public double GetHeight()
@@ -50,16 +62,15 @@
             return GoToRootGrid.Height;
         }
 
-        private void SetSelectionHighlightColor()
+        private void SetSelectionHighlightColor(Color color)
         {
-            GoToBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            GoToBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            GoToBar.SelectionHighlightColor = new SolidColorBrush(color);
+            GoToBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
         }
 
         public void Focus()
         {
+            GoToBar.Text = _currentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -88,9 +99,44 @@
             }
         }
 
+        private void GoToBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            GoToBar.SelectionStart = 0;
+            GoToBar.SelectionLength = GoToBar.Text.Length;
+        }
+
         private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
         {
+            GoToBar.SelectionStart = GoToBar.Text.Length;
+        }
+
+        private void DismissButton_OnClick(object sender, RoutedEventArgs e)
+        {
             OnDismissKeyDown?.Invoke(sender, e);
+        }
+
+        private void GoToBar_BeforeTextChanging(TextBox sender, TextBoxBeforeTextChangingEventArgs args)
+        {
+            if (string.IsNullOrEmpty(args.NewText)) return;
+
+            if (!int.TryParse(args.NewText, out var line) || args.NewText.Contains(" "))
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_InvalidInput"), 1500);
+                args.Cancel = true;
+            }
+            else if (line > _maxLine || line <= 0)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
+                args.Cancel = true;
+            }
+        }
+
+        private void GoToRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                OnGoToControlKeyDown?.Invoke(sender, e);
+            }
         }
     }
 }
