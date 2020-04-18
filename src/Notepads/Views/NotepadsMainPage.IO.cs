@@ -11,6 +11,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Microsoft.Gaming.XboxGameBar;
 
     public sealed partial class NotepadsMainPage
     {
@@ -125,7 +126,33 @@
                     !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
                 {
                     NotepadsCore.SwitchTo(textEditor);
-                    file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync();
+
+                    // Create a lambda for the UI work and re-use if not running as a Game Bar widget
+                    // If you are doing async work on the UI thread inside this lambda, it must be awaited before the lambda returns to ensure Game Bar is
+                    // in the right state for the entirety of the foreground operation.
+                    // We recommend using the Dispatcher RunTaskAsync task extension to make this easier
+                    // Look at Extensions/DispatcherTaskExtensions.cs
+                    // For more information you can read this blog post: https://devblogs.microsoft.com/oldnewthing/20190327-00/?p=102364
+                    // For another approach more akin to how C++/WinRT handles awaitable thread switching, read this blog post: https://devblogs.microsoft.com/oldnewthing/20190328-00/?p=102368
+                    ForegroundWorkHandler filePickerWork = (() =>
+                    {
+                        return Task.Run(async () =>
+                        {
+                            file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
+                                await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync());
+                            return true;
+                        }).AsAsyncOperation<bool>();
+                    });
+
+                    if (App.IsGameBarWidget && _widget != null)
+                    {
+                        await new XboxGameBarForegroundWorker(_widget, filePickerWork).ExecuteAsync();
+                    }
+                    else
+                    {
+                        await filePickerWork.Invoke();
+                    }
+
                     NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
                     {

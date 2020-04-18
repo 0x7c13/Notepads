@@ -471,7 +471,7 @@
         {
             if (sender.Visible)
             {
-                LoggingService.LogInfo($"Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
+                LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
@@ -480,7 +480,7 @@
             }
             else
             {
-                LoggingService.LogInfo($"Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
+                LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
                 if (EditorSettingsService.IsSessionSnapshotEnabled)
                 {
