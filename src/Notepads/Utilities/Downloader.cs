@@ -1,11 +1,10 @@
 ﻿namespace Notepads.Utilities
 {
-    using System;
     using System.IO;
     using System.Net;
     using System.Threading.Tasks;
 
-    public class Downloader
+    public static class Downloader
     {
         public static async Task<MemoryStream> GetDataFeed(string feedUrl)
         {

@@ -1,0 +1,64 @@
+﻿<UserControl
+    x:Class="Notepads.Controls.GoTo.GoToControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="250" Height="36">
+
+    <Grid Padding="1, 1, 1, 1" Height="36" x:Name="GoToRootGrid" KeyDown="GoToRootGrid_KeyDown">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" x:Uid="GoTo_GoToBarLabel" Margin="5,0,8,3" FontSize="15" VerticalAlignment="Center" TextAlignment="Center"/>
+
+        <Grid Grid.Column="1">
+            <TextBox x:Name="GoToBar"
+                     x:Uid="GoTo_GoToBar"
+                     Style="{StaticResource TransparentTextBoxStyle}"
+                     Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     IsSpellCheckEnabled="False"
+                     TextAlignment="Left"
+                     BorderThickness="0"
+                     FontSize="15"
+                     BeforeTextChanging="GoToBar_BeforeTextChanging"
+                     TextChanged="GoToBar_OnTextChanged"
+                     KeyDown="GoToBar_OnKeyDown"
+                     GotFocus="GoToBar_GotFocus"
+                     LostFocus="GoToBar_LostFocus"/>
+        </Grid>
+
+        <Button x:Name="SearchButton"
+                x:Uid="GoTo_SearchButton"
+                Width="36"
+                Grid.Column="2" 
+                Visibility="Collapsed"
+                IsTabStop="False"
+                FontSize="16"
+                Style="{StaticResource DismissButtonStyle}"
+                Content="&#xEBE7;" 
+                FontFamily="Segoe MDL2 Assets"
+                Click="SearchButton_OnClick">
+        </Button>
+
+        <Button x:Name="DismissButton"
+                x:Uid="FindAndReplace_DismissButton"
+                IsTabStop="False"
+                Width="36"
+                Grid.Column="3" 
+                FontSize="16"
+                Style="{StaticResource DismissButtonStyle}"
+                Content="&#xE894;" 
+                FontFamily="Segoe MDL2 Assets" 
+                Click="DismissButton_OnClick" >
+        </Button>
+    </Grid>
+</UserControl>

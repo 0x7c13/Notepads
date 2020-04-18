@@ -8,6 +8,10 @@
 
         bool ShouldExecute(IKeyboardCommand<T> lastCommand);
 
+        bool ShouldHandleAfterExecution();
+
+        bool ShouldSwallowAfterExecution();
+
         void Execute(T args);
     }
 }

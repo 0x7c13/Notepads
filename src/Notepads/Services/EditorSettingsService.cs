@@ -9,20 +9,15 @@
     public static class EditorSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
-
         public static event EventHandler<int> OnFontSizeChanged;
-
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
-
+        public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
-
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
-
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
-
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
-
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
+        public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
 
         private static string _editorFontFamily;
 
@@ -33,7 +28,7 @@
             {
                 _editorFontFamily = value;
                 OnFontFamilyChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value);
             }
         }
 
@@ -46,7 +41,7 @@
             {
                 _editorFontSize = value;
                 OnFontSizeChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value);
             }
         }
 
@@ -59,7 +54,20 @@
             {
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString());
+            }
+        }
+
+        private static bool _isLineHighlighterEnabled;
+
+        public static bool IsLineHighlighterEnabled
+        {
+            get => _isLineHighlighterEnabled;
+            set
+            {
+                _isLineHighlighterEnabled = value;
+                OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
         }
 
@@ -72,7 +80,7 @@
             {
                 _editorDefaultLineEnding = value;
                 OnDefaultLineEndingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString(), true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString());
             }
         }
 
@@ -88,11 +96,11 @@
                 if (value is UTF8Encoding)
                 {
                     ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
-                        Equals(value, new UTF8Encoding(true)), true);
+                        Equals(value, new UTF8Encoding(true)));
                 }
 
                 OnDefaultEncodingChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage);
             }
         }
 
@@ -102,18 +110,34 @@
         {
             get
             {
+                if (_editorDefaultDecoding == null)
+                {
+                    return null;
+                }
                 // If it is not UTF-8 meaning user is using ANSI decoding,
                 // We should always try get latest system ANSI code page.
-                if (!(_editorDefaultDecoding is UTF8Encoding))
+                else if (!(_editorDefaultDecoding is UTF8Encoding))
                 {
-                    _editorDefaultDecoding = EncodingUtility.GetSystemCurrentANSIEncoding() ?? new UTF8Encoding(false);
+                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultANSIEncoding))
+                    {
+                        _editorDefaultDecoding = systemDefaultANSIEncoding;
+                    }
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureANSIEncoding))
+                    {
+                        _editorDefaultDecoding = currentCultureANSIEncoding;
+                    }
+                    else
+                    {
+                        _editorDefaultDecoding = new UTF8Encoding(false); // Fall back to UTF-8 (no BOM)
+                    }
                 }
                 return _editorDefaultDecoding;
             }
             set
             {
                 _editorDefaultDecoding = value;
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, value.CodePage, true);
+                var codePage = value?.CodePage ?? -1;
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage);
             }
         }
 
@@ -126,7 +150,31 @@
             {
                 _editorDefaultTabIndents = value;
                 OnDefaultTabIndentsChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value);
+            }
+        }
+
+        private static SearchEngine _editorDefaultSearchEngine;
+
+        public static SearchEngine EditorDefaultSearchEngine
+        {
+            get => _editorDefaultSearchEngine;
+            set
+            {
+                _editorDefaultSearchEngine = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString());
+            }
+        }
+
+        private static string _editorCustomMadeSearchUrl;
+
+        public static string EditorCustomMadeSearchUrl
+        {
+            get => _editorCustomMadeSearchUrl;
+            set
+            {
+                _editorCustomMadeSearchUrl = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value);
             }
         }
 
@@ -139,7 +187,7 @@
             {
                 _showStatusBar = value;
                 OnStatusBarVisibilityChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value);
             }
         }
 
@@ -152,7 +200,32 @@
             {
                 _isSessionSnapshotEnabled = value;
                 OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value, true);
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value);
+            }
+        }
+
+        public static bool _isHighlightMisspelledWordsEnabled;
+
+        public static bool IsHighlightMisspelledWordsEnabled
+        {
+            get => _isHighlightMisspelledWordsEnabled;
+            set
+            {
+                _isHighlightMisspelledWordsEnabled = value;
+                OnHighlightMisspelledWordsChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value);
+            }
+        }
+
+        public static bool _alwaysOpenNewWindow;
+
+        public static bool AlwaysOpenNewWindow
+        {
+            get => _alwaysOpenNewWindow;
+            set
+            {
+                _alwaysOpenNewWindow = value;
+                ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value);
             }
         }
 
@@ -162,6 +235,10 @@
 
             InitializeTextWrappingSettings();
 
+            InitializeSpellingSettings();
+
+            InitializeLineHighlighterSettings();
+
             InitializeLineEndingSettings();
 
             InitializeEncodingSettings();
@@ -170,9 +247,13 @@
 
             InitializeTabIndentsSettings();
 
+            InitializeSearchEngineSettings();
+
             InitializeStatusBarSettings();
 
             InitializeSessionSnapshotSettings();
+
+            InitializeAppOpeningPreferencesSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -193,6 +274,10 @@
             if (!App.IsFirstInstance)
             {
                 _isSessionSnapshotEnabled = false;
+            }
+            else if (App.IsGameBarWidget)
+            {
+                _isSessionSnapshotEnabled = true;
             }
             else
             {
@@ -233,6 +318,30 @@
             }
         }
 
+        private static void InitializeSpellingSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorHighlightMisspelledWordsBool) is bool highlightMisspelledWords)
+            {
+                _isHighlightMisspelledWordsEnabled = highlightMisspelledWords;
+            }
+            else
+            {
+                _isHighlightMisspelledWordsEnabled = false;
+            }
+        }
+
+        private static void InitializeLineHighlighterSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
+            {
+                _isLineHighlighterEnabled = isLineHighlighterEnabled;
+            }
+            else
+            {
+                _isLineHighlighterEnabled = true;
+            }
+        }
+
         private static void InitializeEncodingSettings()
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -263,27 +372,33 @@
 
         private static void InitializeDecodingSettings()
         {
-            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
             {
                 try
                 {
-                    _editorDefaultDecoding = Encoding.GetEncoding(decodingCodePage);
-                    if (_editorDefaultDecoding is UTF8Encoding)
+                    if (decodingCodePage == -1)
                     {
-                        _editorDefaultDecoding = new UTF8Encoding(false);
+                        _editorDefaultDecoding = null; // Meaning we should guess encoding during runtime
+                    }
+                    else
+                    {
+                        Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        _editorDefaultDecoding = Encoding.GetEncoding(decodingCodePage);
+                        if (_editorDefaultDecoding is UTF8Encoding)
+                        {
+                            _editorDefaultDecoding = new UTF8Encoding(false);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[EditorSettingsService] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
-                    _editorDefaultDecoding = new UTF8Encoding(false);
+                    LoggingService.LogError($"[{nameof(EditorSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
+                    _editorDefaultDecoding = null;
                 }
             }
             else
             {
-                _editorDefaultDecoding = new UTF8Encoding(false);
+                _editorDefaultDecoding = null; // Default to null
             }
         }
 
@@ -296,6 +411,28 @@
             else
             {
                 _editorDefaultTabIndents = -1;
+            }
+        }
+
+        private static void InitializeSearchEngineSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
+            {
+                if (Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
+                {
+                    _editorDefaultSearchEngine = (SearchEngine)searchEngine;
+                }
+                else
+                {
+                    _editorDefaultSearchEngine = SearchEngine.Bing;
+                }
+
+                _editorCustomMadeSearchUrl = customMadesearchUrl;
+            }
+            else
+            {
+                _editorDefaultSearchEngine = SearchEngine.Bing;
+                _editorCustomMadeSearchUrl = string.Empty;
             }
         }
 
@@ -317,6 +454,18 @@
             else
             {
                 _editorFontSize = 14;
+            }
+        }
+
+        private static void InitializeAppOpeningPreferencesSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
+            {
+                _alwaysOpenNewWindow = alwaysOpenNewWindow;
+            }
+            else
+            {
+                _alwaysOpenNewWindow = false;
             }
         }
     }

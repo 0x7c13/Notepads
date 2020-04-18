@@ -36,7 +36,7 @@
                 return FileType.TextFile;
             }
 
-            if (ext == "md")
+            if (ext == "md" || ext == "markdown")
             {
                 return FileType.MarkdownFile;
             }
