@@ -124,7 +124,7 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\DispatcherTaskExtensions.cs" />
+    <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -211,7 +211,7 @@
     <Compile Include="Utilities\SearchEngineUtility.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
-    <Compile Include="Utilities\StringUtility.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>

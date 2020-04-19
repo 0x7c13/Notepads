@@ -434,7 +434,7 @@
 
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, async () =>
+            await Dispatcher.CallOnUIThreadAsync(async () =>
             {
                 if (isSessionBackupAndRestoreEnabled)
                 {

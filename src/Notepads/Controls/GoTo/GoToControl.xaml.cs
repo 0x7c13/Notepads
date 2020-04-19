@@ -1,8 +1,8 @@
 ﻿namespace Notepads.Controls.GoTo
 {
     using System;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI;
@@ -51,7 +51,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 SetSelectionHighlightColor(color);
             });

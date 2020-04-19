@@ -1,8 +1,8 @@
 ﻿namespace Notepads.Views
 {
     using Microsoft.Gaming.XboxGameBar;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using System.Linq;
     using Windows.UI;
     using Windows.UI.Xaml;
@@ -46,12 +46,12 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
+            await (Window.Current?.Dispatcher ?? Dispatcher).CallOnUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
         }
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Window.Current?.Dispatcher ?? Dispatcher, () =>
+            await (Window.Current?.Dispatcher ?? Dispatcher).CallOnUIThreadAsync(() =>
             {
                 ThemeSettingsService.SetRequestedTheme(null, Window.Current.Content, null);
             });
