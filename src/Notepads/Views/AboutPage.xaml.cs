@@ -1,8 +1,8 @@
 ﻿namespace Notepads.Views
 {
     using System;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -33,7 +33,7 @@
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 SetAppIconBasedOnTheme(theme);
             });

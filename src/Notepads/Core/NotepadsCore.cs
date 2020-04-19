@@ -86,7 +86,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            await _dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)

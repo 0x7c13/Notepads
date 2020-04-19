@@ -1,8 +1,8 @@
-﻿namespace Notepads.Utilities
+﻿namespace Notepads.Extensions
 {
     using System;
 
-    public static class StringUtility
+    public static class StringExtensions
     {
         public static string LeadingSpacesAndTabs(this string str)
         {
@@ -60,6 +60,12 @@
                 pos--;
             }
             return -1;
+        }
+
+        public static Uri ToAppxUri(this string path)
+        {
+            string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";
+            return new Uri($"{prefix}{path}");
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Notepads.Views
 {
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.System.Power;
     using Windows.UI;
     using Windows.UI.ViewManagement;
@@ -58,7 +58,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 BackgroundTintOpacitySlider.Foreground = new SolidColorBrush(color);
                 AccentColorPicker.ColorChanged -= AccentColorPicker_OnColorChanged;
@@ -101,7 +101,7 @@
 
         private async void PowerManager_EnergySaverStatusChanged(object sender, object e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
@@ -110,7 +110,7 @@
 
         private async void UISettings_AdvancedEffectsEnabledChanged(UISettings sender, object args)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
                                                         PowerManager.EnergySaverStatus != EnergySaverStatus.On;
