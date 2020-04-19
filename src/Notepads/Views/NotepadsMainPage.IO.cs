@@ -9,6 +9,7 @@
     using Notepads.Controls.FilePicker;
     using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using Microsoft.Gaming.XboxGameBar;
