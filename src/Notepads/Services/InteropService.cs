@@ -12,7 +12,6 @@
     {
         public static EventHandler<bool> HideSettingsPane;
         public static bool EnableSettingsLogging = true;
-        public static bool ISAppExited = false;
 
         public static AppServiceConnection InteropServiceConnection = null;
 
@@ -90,11 +89,6 @@
                 message.Add(_valueLabel, value.ToString());
             }
             await InteropServiceConnection.SendMessageAsync(message);
-        }
-
-        public static void CloseConnectionOnExit()
-        {
-            InteropServiceConnection.Dispose();
         }
     }
 }

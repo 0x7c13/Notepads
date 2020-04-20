@@ -269,7 +269,9 @@
                 // To work around this do not use the EnteredBackground event when running as a widget.
                 // Microsoft is tracking this issue as VSO#25735260
                 Application.Current.EnteredBackground -= App_EnteredBackground;
+                Application.Current.LeavingBackground -= App_LeavingBackground;
                 Application.Current.EnteredBackground += App_EnteredBackground;
+                Application.Current.LeavingBackground += App_LeavingBackground;
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
@@ -289,10 +291,15 @@
                 await SessionManager.SaveSessionAsync();
             }
 
-            if (InteropService.ISAppExited)
-                InteropService.CloseConnectionOnExit();
-
+            InteropService.InteropServiceConnection.Dispose();
             deferral.Complete();
+        }
+
+        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            ThemeSettingsService.UpdateAllSettings();
+            EditorSettingsService.UpdateAllSettings();
+            InteropService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)
@@ -356,14 +363,12 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
-                InteropService.ISAppExited = true;
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
-                InteropService.ISAppExited = true;
                 deferral.Complete();
                 return;
             }
@@ -393,12 +398,10 @@
                         await BuildOpenRecentButtonSubItems();
                     }
 
-                    InteropService.ISAppExited = true;
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
-                    InteropService.ISAppExited = true;
                     deferral.Complete();
                 },
                 cancelAction: () =>

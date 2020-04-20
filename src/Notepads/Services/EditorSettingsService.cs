@@ -468,5 +468,19 @@
                 _alwaysOpenNewWindow = false;
             }
         }
+
+        public static void UpdateAllSettings()
+        {
+            Initialize();
+            OnStatusBarVisibilityChanged?.Invoke(null, _showStatusBar);
+            OnFontFamilyChanged?.Invoke(null, _editorFontFamily);
+            OnFontSizeChanged?.Invoke(null, _editorFontSize);
+            OnDefaultTextWrappingChanged?.Invoke(null, _editorDefaultTextWrapping);
+            OnDefaultLineHighlighterViewStateChanged?.Invoke(null, _isLineHighlighterEnabled);
+            OnHighlightMisspelledWordsChanged?.Invoke(null, _isHighlightMisspelledWordsEnabled);
+            OnDefaultLineEndingChanged?.Invoke(null, _editorDefaultLineEnding);
+            OnDefaultEncodingChanged?.Invoke(null, _editorDefaultEncoding);
+            OnDefaultTabIndentsChanged?.Invoke(null, _editorDefaultTabIndents);
+        }
     }
 }

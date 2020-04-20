@@ -355,5 +355,13 @@
             byte b = (byte)(Convert.ToUInt32(hex.Substring(6, 2), 16));
             return Windows.UI.Color.FromArgb(a, r, g, b);
         }
+
+        public static void UpdateAllSettings()
+        {
+            Initialize();
+            OnThemeChanged?.Invoke(null, _themeMode);
+            OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
+            OnAccentColorChanged?.Invoke(null, _appAccentColor);
+        }
     }
 }
