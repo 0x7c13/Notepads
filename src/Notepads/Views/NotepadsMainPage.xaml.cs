@@ -449,7 +449,7 @@
 
         private async void HideSettingsPane_OnSettingsChanged(object sender, bool hideArgs)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
             {
                 RootSplitView.IsPaneOpen = !hideArgs;
             });

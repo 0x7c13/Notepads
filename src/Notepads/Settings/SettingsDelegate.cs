@@ -99,7 +99,6 @@ namespace Notepads.Settings
             EditorSettingsService.AlwaysOpenNewWindow = (bool)value;
         }
 
-
         public static Settings UseWindowsAccentColor = SetUseWindowsAccentColor;
         public static Settings AppBackgroundPanelTintOpacity = SetAppBackgroundPanelTintOpacity;
         public static Settings AppAccentColor = SetAppAccentColor;
@@ -113,7 +112,7 @@ namespace Notepads.Settings
 
         private static async void SetAppBackgroundPanelTintOpacity(object value)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 ThemeSettingsService.AppBackgroundPanelTintOpacity = (double)value;
             });
