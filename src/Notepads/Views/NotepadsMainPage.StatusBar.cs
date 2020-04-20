@@ -13,6 +13,7 @@
     using Windows.UI.Xaml.Input;
     using Notepads.Controls.Dialog;
     using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
 
@@ -61,7 +62,7 @@
 
         private async void OnStatusBarVisibilityChanged(object sender, bool visible)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visible);
             });

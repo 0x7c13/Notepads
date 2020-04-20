@@ -4,7 +4,7 @@
     using System.Text.RegularExpressions;
     using Windows.UI.Text;
     using Notepads.Controls.FindAndReplace;
-    using Notepads.Utilities;
+    using Notepads.Extensions;
 
     public partial class TextEditorCore
     {

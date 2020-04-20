@@ -149,12 +149,14 @@
             <controls:DropShadowPanel    
                 Canvas.ZIndex="50"
                 Grid.Column="1"
-                ShadowOpacity="0.4"
+                ShadowOpacity="0.3"
                 BlurRadius="12"
-                Margin="-1,0"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Left">
-                <Grid Width="1"/>
+                <Grid Width="2"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="-12,0,12,12960"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"

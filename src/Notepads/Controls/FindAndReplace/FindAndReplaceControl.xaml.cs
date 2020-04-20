@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using Notepads.Commands;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
@@ -64,7 +64,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 SetSelectionHighlightColor(color);
             });
