@@ -245,7 +245,21 @@
                 </Grid>
             </SplitView.Content>
             <SplitView.Pane>
-                <Frame x:Name="SettingsFrame"/>
+                <Border x:Name="RootBorder" Padding="12,0,0,0">
+                    <Grid>
+                        <controls:DropShadowPanel BlurRadius="12"
+                                                  Color="Black"
+                                                  Opacity="0.3"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch">
+                            <Rectangle Fill="White" />
+                        </controls:DropShadowPanel>
+
+                        <Grid x:Name="PaneContentGrid" Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
+                            <Frame x:Name="SettingsFrame"/>
+                        </Grid>
+                    </Grid>
+                </Border>
             </SplitView.Pane>
         </SplitView>
 
