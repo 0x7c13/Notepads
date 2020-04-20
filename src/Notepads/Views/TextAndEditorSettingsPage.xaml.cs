@@ -10,6 +10,7 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Settings;
 
     public sealed partial class TextAndEditorSettingsPage : Page
     {
@@ -250,8 +251,11 @@
                     CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
                     CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
                     EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
                     break;
             }
+            
+            InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
         }
 
         private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -273,6 +277,8 @@
                     EditorSettingsService.EditorDefaultTabIndents = 8;
                     break;
             }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultTabIndentsInt, EditorSettingsService.EditorDefaultTabIndents);
         }
 
         private void EncodingRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -294,6 +300,8 @@
                     EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
                     break;
             }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultEncodingCodePageInt, EditorSettingsService.EditorDefaultEncoding);
         }
 
         private void DecodingRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -323,6 +331,8 @@
                     }
                     break;
             }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultDecodingCodePageInt, EditorSettingsService.EditorDefaultDecoding);
         }
 
         private void LineEndingRadioButton_OnChecked(object sender, RoutedEventArgs e)
@@ -341,31 +351,38 @@
                     EditorSettingsService.EditorDefaultLineEnding = LineEnding.Lf;
                     break;
             }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultLineEndingStr, EditorSettingsService.EditorDefaultLineEnding);
         }
 
         private void FontFamilyPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             EditorSettingsService.EditorFontFamily = (string)e.AddedItems.First();
+            InteropService.SyncSettings(SettingsKey.EditorFontFamilyStr, EditorSettingsService.EditorFontFamily);
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             EditorSettingsService.EditorFontSize = (int)e.AddedItems.First();
+            InteropService.SyncSettings(SettingsKey.EditorFontSizeInt, EditorSettingsService.EditorFontSize);
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
+            InteropService.SyncSettings(SettingsKey.EditorDefaultTextWrappingStr, EditorSettingsService.EditorDefaultTextWrapping);
         }
 
         private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorHighlightMisspelledWordsBool, EditorSettingsService.IsHighlightMisspelledWordsEnabled);
         }
 
         private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorDefaultLineHighlighterViewStateBool, EditorSettingsService.IsLineHighlighterEnabled);
         }
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
@@ -380,10 +397,13 @@
                 (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
             {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+                InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
+                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
             }
             else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
             {
                 EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
             }
 
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;

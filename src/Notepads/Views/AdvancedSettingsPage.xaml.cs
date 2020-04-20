@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Views
 {
     using Notepads.Services;
+    using Notepads.Settings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -60,11 +61,13 @@
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorShowStatusBarBool, EditorSettingsService.ShowStatusBar);
         }
 
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             EditorSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
+            InteropService.SyncSettings(SettingsKey.AlwaysOpenNewWindowBool, EditorSettingsService.AlwaysOpenNewWindow);
         }
     }
 }

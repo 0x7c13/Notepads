@@ -26,6 +26,7 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
+    using Windows.ApplicationModel;
 
     public sealed partial class NotepadsMainPage : Page
     {
@@ -273,6 +274,10 @@
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
+
+            InteropService.Initialize();
+            InteropService.HideSettingsPane += HideSettingsPane_OnSettingsChanged;
+            SettingsDelegate.Dispatcher = Dispatcher;
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -283,6 +288,9 @@
             {
                 await SessionManager.SaveSessionAsync();
             }
+
+            if (InteropService.ISAppExited)
+                InteropService.CloseConnectionOnExit();
 
             deferral.Complete();
         }
@@ -348,12 +356,14 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                InteropService.ISAppExited = true;
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
+                InteropService.ISAppExited = true;
                 deferral.Complete();
                 return;
             }
@@ -383,10 +393,12 @@
                         await BuildOpenRecentButtonSubItems();
                     }
 
+                    InteropService.ISAppExited = true;
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
+                    InteropService.ISAppExited = true;
                     deferral.Complete();
                 },
                 cancelAction: () =>
@@ -433,6 +445,14 @@
             {
                 ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
             }
+        }
+
+        private async void HideSettingsPane_OnSettingsChanged(object sender, bool hideArgs)
+        {
+            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            {
+                RootSplitView.IsPaneOpen = !hideArgs;
+            });
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Views
 {
     using Notepads.Services;
+    using Notepads.Settings;
     using Notepads.Utilities;
     using Windows.System.Power;
     using Windows.UI;
@@ -18,21 +19,17 @@
         {
             InitializeComponent();
 
-            if (ThemeSettingsService.UseWindowsTheme)
+            switch (ThemeSettingsService.ThemeMode)
             {
-                ThemeModeDefaultButton.IsChecked = true;
-            }
-            else
-            {
-                switch (ThemeSettingsService.ThemeMode)
-                {
-                    case ElementTheme.Light:
-                        ThemeModeLightButton.IsChecked = true;
-                        break;
-                    case ElementTheme.Dark:
-                        ThemeModeDarkButton.IsChecked = true;
-                        break;
-                }
+                case ElementTheme.Default:
+                    ThemeModeDefaultButton.IsChecked = true;
+                    break;
+                case ElementTheme.Light:
+                    ThemeModeLightButton.IsChecked = true;
+                    break;
+                case ElementTheme.Dark:
+                    ThemeModeDarkButton.IsChecked = true;
+                    break;
             }
 
             AccentColorToggle.IsOn = ThemeSettingsService.UseWindowsAccentColor;
@@ -124,17 +121,16 @@
                 switch (radioButton.Tag)
                 {
                     case "Light":
-                        ThemeSettingsService.UseWindowsTheme = false;
-                        ThemeSettingsService.SetTheme(ElementTheme.Light);
+                        ThemeSettingsService.ThemeMode = ElementTheme.Light;
                         break;
                     case "Dark":
-                        ThemeSettingsService.UseWindowsTheme = false;
-                        ThemeSettingsService.SetTheme(ElementTheme.Dark);
+                        ThemeSettingsService.ThemeMode = ElementTheme.Dark;
                         break;
                     case "Default":
-                        ThemeSettingsService.UseWindowsTheme = true;
+                        ThemeSettingsService.ThemeMode = ElementTheme.Default;
                         break;
                 }
+                InteropService.SyncSettings(SettingsKey.RequestedThemeStr, ThemeSettingsService.ThemeMode);
             }
         }
 
@@ -143,13 +139,19 @@
             if (AccentColorPicker.IsEnabled)
             {
                 ThemeSettingsService.AppAccentColor = args.NewColor;
-                if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+                if (!AccentColorToggle.IsOn)
+                {
+                    ThemeSettingsService.CustomAccentColor = args.NewColor;
+                    InteropService.SyncSettings(SettingsKey.CustomAccentColorHexStr, ThemeSettingsService.CustomAccentColor);
+                }
+                InteropService.SyncSettings(SettingsKey.AppAccentColorHexStr, ThemeSettingsService.AppAccentColor);
             }
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             ThemeSettingsService.AppBackgroundPanelTintOpacity = e.NewValue / 100;
+            InteropService.SyncSettings(SettingsKey.AppBackgroundTintOpacityDouble, ThemeSettingsService.AppBackgroundPanelTintOpacity);
         }
 
         private void WindowsAccentColorToggle_OnToggled(object sender, RoutedEventArgs e)
@@ -157,6 +159,7 @@
             AccentColorPicker.IsEnabled = !AccentColorToggle.IsOn;
             ThemeSettingsService.UseWindowsAccentColor = AccentColorToggle.IsOn;
             AccentColorPicker.Color = AccentColorToggle.IsOn ? ThemeSettingsService.AppAccentColor : ThemeSettingsService.CustomAccentColor;
+            InteropService.SyncSettings(SettingsKey.UseWindowsAccentColorBool, ThemeSettingsService.UseWindowsAccentColor);
         }
     }
 }

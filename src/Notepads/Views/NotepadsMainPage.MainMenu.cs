@@ -34,8 +34,7 @@
 
             if (!App.IsFirstInstance)
             {
-                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-                MenuSettingsButton.IsEnabled = false;
+                MainMenuButton.Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
             }
 
             if (App.IsGameBarWidget)
