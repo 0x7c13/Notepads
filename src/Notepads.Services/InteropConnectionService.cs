@@ -5,7 +5,6 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
-    using Windows.Foundation.Collections;
 
     public sealed class InteropConnectionService : IBackgroundTask
     {
