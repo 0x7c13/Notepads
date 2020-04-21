@@ -68,7 +68,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Downloads:
 
-Notepads is avaialbe in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+Notepads is available in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
 ## Roadmap:
 
