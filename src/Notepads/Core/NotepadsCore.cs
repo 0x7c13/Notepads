@@ -661,12 +661,10 @@
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView))
+            if (!(sender is SetsView sets))
             {
                 return;
             }
-
-            var sets = sender as SetsView;
 
             // Handle non Notepads drop event
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
