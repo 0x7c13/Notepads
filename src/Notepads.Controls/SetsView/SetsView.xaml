@@ -225,7 +225,7 @@
                 Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
                 Grid.Column="0">
-                <Grid Height="1" Margin="0,0,-2,-1"/>
+                <Grid Height="1" Margin="0,0,0,-1"/>
                 <controls:DropShadowPanel.Clip>
                     <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
                 </controls:DropShadowPanel.Clip>
