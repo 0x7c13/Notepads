@@ -6,11 +6,19 @@
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
 
+    public enum CommandArgs
+    {
+        SyncSettings,
+        SyncRecentList
+    }
+
     public sealed class InteropConnectionService : IBackgroundTask
     {
         private BackgroundTaskDeferral backgroundTaskDeferral;
         private AppServiceConnection appServiceConnection;
         private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
+
+        private static readonly string _commandLabel = "Command";
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -36,11 +44,26 @@
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            foreach(var serviceConnection in appServiceConnections)
+            var messagedeferral = args.GetDeferral();
+            var message = args.Request.Message;
+            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var result)) return;
+            var command = (CommandArgs)result;
+            switch (command)
             {
-                if (serviceConnection != appServiceConnection) 
-                    await serviceConnection.SendMessageAsync(args.Request.Message);
+                case CommandArgs.SyncSettings:
+                    foreach (var serviceConnection in appServiceConnections)
+                    {
+                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
+                    }
+                    break;
+                case CommandArgs.SyncRecentList:
+                    foreach (var serviceConnection in appServiceConnections)
+                    {
+                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
+                    }
+                    break;
             }
+            messagedeferral.Complete();
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)

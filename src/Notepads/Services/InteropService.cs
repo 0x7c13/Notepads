@@ -11,10 +11,12 @@
     public static class InteropService
     {
         public static EventHandler<bool> HideSettingsPane;
+        public static EventHandler<bool> UpdateRecentList;
         public static bool EnableSettingsLogging = true;
 
         public static AppServiceConnection InteropServiceConnection = null;
 
+        private static readonly string _commandLabel = "Command";
         private static readonly string _appIdLabel = "Instance";
         private static readonly string _settingsKeyLabel = "Settings";
         private static readonly string _valueLabel = "Value";
@@ -59,14 +61,24 @@
         private static void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var message = args.Request.Message;
-            if (message.ContainsKey(_appIdLabel) && message[_appIdLabel] is Guid appID && appID != App.Id)
+            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var result)) return;
+            var command = (CommandArgs)result;
+            switch(command)
             {
-                EnableSettingsLogging = false;
-                HideSettingsPane?.Invoke(null, true);
-                var settingsKey = message[_settingsKeyLabel] as string;
-                var value = message[_valueLabel] as object;
-                SettingsManager[settingsKey](value);
-                EnableSettingsLogging = true;
+                case CommandArgs.SyncSettings:
+                    if (message.ContainsKey(_appIdLabel) && message[_appIdLabel] is Guid appID && appID != App.Id)
+                    {
+                        EnableSettingsLogging = false;
+                        HideSettingsPane?.Invoke(null, true);
+                        var settingsKey = message[_settingsKeyLabel] as string;
+                        var value = message[_valueLabel] as object;
+                        SettingsManager[settingsKey](value);
+                        EnableSettingsLogging = true;
+                    }
+                    break;
+                case CommandArgs.SyncRecentList:
+                    UpdateRecentList?.Invoke(null, false);
+                    break;
             }
         }
 
@@ -77,7 +89,10 @@
 
         public static async void SyncSettings(string settingsKey, object value)
         {
+            if (InteropServiceConnection == null) return;
+
             var message = new ValueSet();
+            message.Add(_commandLabel, CommandArgs.SyncSettings.ToString());
             message.Add(_appIdLabel, App.Id);
             message.Add(_settingsKeyLabel, settingsKey);
             try
@@ -88,6 +103,15 @@
             {
                 message.Add(_valueLabel, value.ToString());
             }
+            await InteropServiceConnection.SendMessageAsync(message);
+        }
+
+        public static async void SyncRecentList()
+        {
+            if (InteropServiceConnection == null) return;
+
+            var message = new ValueSet();
+            message.Add(_commandLabel, CommandArgs.SyncRecentList.ToString());
             await InteropServiceConnection.SendMessageAsync(message);
         }
     }

@@ -280,6 +280,10 @@
 
             InteropService.Initialize();
             InteropService.HideSettingsPane += HideSettingsPane_OnSettingsChanged;
+            InteropService.UpdateRecentList += async (_, updateForOtherInstaneArgs) => await Dispatcher.CallOnUIThreadAsync(async () =>
+            {
+                await BuildOpenRecentButtonSubItems(updateForOtherInstaneArgs);
+            });
             SettingsDelegate.Dispatcher = Dispatcher;
         }
 
@@ -296,10 +300,11 @@
             deferral.Complete();
         }
 
-        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
         {
             ThemeSettingsService.UpdateAllSettings();
             EditorSettingsService.UpdateAllSettings();
+            await BuildOpenRecentButtonSubItems(false);
             InteropService.Initialize();
         }
 
