@@ -22,13 +22,7 @@
 
             try
             {
-                var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in FileTypeService.AllSupportedFileExtensions)
-                {
-                    fileOpenPicker.FileTypeFilter.Add(type);
-                }
-
-                files = await fileOpenPicker.PickMultipleFilesAsync();
+                files = await OpenFilesUsingFileOpenPicker();
             }
             catch (Exception ex)
             {
@@ -51,6 +45,41 @@
             {
                 await OpenFile(file);
             }
+        }
+
+        private async Task<IReadOnlyList<StorageFile>> OpenFilesUsingFileOpenPicker()
+        {
+            IReadOnlyList<StorageFile> files = null;
+
+            ForegroundWorkHandler foregroundWork = (() =>
+            {
+                return Task.Run(async () =>
+                {
+                    files = await Dispatcher.RunTaskAsync(async () =>
+                    {
+                        var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
+                        foreach (var type in FileTypeService.AllSupportedFileExtensions)
+                        {
+                            fileOpenPicker.FileTypeFilter.Add(type);
+                        }
+                        return await fileOpenPicker.PickMultipleFilesAsync();
+                    });
+
+                    return true;
+                }).AsAsyncOperation<bool>();
+            });
+
+            if (_widget != null)
+            {
+                var foregroundWorker = new XboxGameBarForegroundWorker(_widget, foregroundWork);
+                await foregroundWorker.ExecuteAsync();
+            }
+            else
+            {
+                await foregroundWork.Invoke();
+            }
+            
+            return files;
         }
 
         public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
@@ -128,31 +157,7 @@
                 {
                     NotepadsCore.SwitchTo(textEditor);
 
-                    // Create a lambda for the UI work and re-use if not running as a Game Bar widget
-                    // If you are doing async work on the UI thread inside this lambda, it must be awaited before the lambda returns to ensure Game Bar is
-                    // in the right state for the entirety of the foreground operation.
-                    // We recommend using the Dispatcher RunTaskAsync task extension to make this easier
-                    // Look at Extensions/DispatcherTaskExtensions.cs
-                    // For more information you can read this blog post: https://devblogs.microsoft.com/oldnewthing/20190327-00/?p=102364
-                    // For another approach more akin to how C++/WinRT handles awaitable thread switching, read this blog post: https://devblogs.microsoft.com/oldnewthing/20190328-00/?p=102368
-                    ForegroundWorkHandler filePickerWork = (() =>
-                    {
-                        return Task.Run(async () =>
-                        {
-                            file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
-                                await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync());
-                            return true;
-                        }).AsAsyncOperation<bool>();
-                    });
-
-                    if (App.IsGameBarWidget && _widget != null)
-                    {
-                        await new XboxGameBarForegroundWorker(_widget, filePickerWork).ExecuteAsync();
-                    }
-                    else
-                    {
-                        await filePickerWork.Invoke();
-                    }
+                    file = await SaveFileUsingFileSavePicker(textEditor, saveAs);
 
                     NotepadsCore.FocusOnTextEditor(textEditor);
                     if (file == null)
@@ -183,6 +188,39 @@
                 }
                 return false;
             }
+        }
+
+        private async Task<StorageFile> SaveFileUsingFileSavePicker(ITextEditor textEditor, bool saveAs)
+        {
+            StorageFile file = null;
+
+            // Create a lambda for the UI work and re-use if not running as a Game Bar widget
+            // If you are doing async work on the UI thread inside this lambda, it must be awaited before the lambda returns to ensure Game Bar is
+            // in the right state for the entirety of the foreground operation.
+            // We recommend using the Dispatcher RunTaskAsync task extension to make this easier
+            // Look at Extensions/DispatcherTaskExtensions.cs
+            // For more information you can read this blog post: https://devblogs.microsoft.com/oldnewthing/20190327-00/?p=102364
+            // For another approach more akin to how C++/WinRT handles awaitable thread switching, read this blog post: https://devblogs.microsoft.com/oldnewthing/20190328-00/?p=102368
+            ForegroundWorkHandler filePickerWork = (() =>
+            {
+                return Task.Run(async () =>
+                {
+                    file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
+                        await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync());
+                    return true;
+                }).AsAsyncOperation<bool>();
+            });
+
+            if (App.IsGameBarWidget && _widget != null)
+            {
+                await new XboxGameBarForegroundWorker(_widget, filePickerWork).ExecuteAsync();
+            }
+            else
+            {
+                await filePickerWork.Invoke();
+            }
+
+            return file;
         }
 
         private async Task<bool> SaveAll(ITextEditor[] textEditors)
