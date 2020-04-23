@@ -86,7 +86,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            await _dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
@@ -661,12 +661,10 @@
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView))
+            if (!(sender is SetsView sets))
             {
                 return;
             }
-
-            var sets = sender as SetsView;
 
             // Handle non Notepads drop event
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||

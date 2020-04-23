@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Notepads.Commands;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
@@ -225,7 +226,7 @@
 
         private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FontFamily = new FontFamily(fontFamily);
                 SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
@@ -234,7 +235,7 @@
 
         private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FontSize = fontSize;
             });
@@ -242,7 +243,7 @@
 
         private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 TextWrapping = textWrapping;
             });
@@ -250,7 +251,7 @@
 
         private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 IsSpellCheckEnabled = isSpellCheckEnabled;
             });
@@ -258,7 +259,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 SelectionHighlightColor = new SolidColorBrush(color);
                 SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);

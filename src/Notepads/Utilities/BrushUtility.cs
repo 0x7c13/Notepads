@@ -8,6 +8,7 @@
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Brushes;
+    using Notepads.Extensions;
 
     public static class BrushUtility
     {
@@ -39,12 +40,6 @@
             {
                 SemaphoreSlim.Release();
             }
-        }
-
-        private static Uri ToAppxUri(this string path)
-        {
-            string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";
-            return new Uri($"{prefix}{path}");
         }
     }
 }

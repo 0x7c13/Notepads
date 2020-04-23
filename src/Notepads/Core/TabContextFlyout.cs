@@ -66,6 +66,11 @@
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+
+            if (App.IsGameBarWidget)
+            {
+                OpenContainingFolder.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TabContextFlyout_Closed(object sender, object e)
