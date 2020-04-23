@@ -91,11 +91,11 @@
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
-                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
                 { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
                 { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
                 { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
