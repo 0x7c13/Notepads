@@ -161,7 +161,7 @@
             }
             else
             {
-                _appBackgroundPanelTintOpacity = 0.7;
+                _appBackgroundPanelTintOpacity = 0.75;
             }
         }
 

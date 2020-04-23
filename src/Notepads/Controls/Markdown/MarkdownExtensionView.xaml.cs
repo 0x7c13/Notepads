@@ -48,7 +48,7 @@
 
         private async void OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 MarkdownTextBlock.RequestedTheme = theme;
             });

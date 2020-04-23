@@ -461,8 +461,8 @@
             using (var writer = new StreamWriter(stream, encoding))
             {
                 stream.Position = 0;
-                writer.Write(text);
-                writer.Flush();
+                await writer.WriteAsync(text);
+                await writer.FlushAsync();
                 // Truncate
                 stream.SetLength(stream.Position);
             }
