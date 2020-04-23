@@ -502,7 +502,7 @@
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Imprimir Tudo...</value>
+    <value>Print Tudo...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
