@@ -533,6 +533,16 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="nfo">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.nfo</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NFO File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

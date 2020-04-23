@@ -74,9 +74,9 @@ namespace Notepads.Controls.Helpers
             }
         }
 
-        private void Accessible_HighContrastChanged(AccessibilitySettings sender, object args)
+        private async void Accessible_HighContrastChanged(AccessibilitySettings sender, object args)
         {
-            UpdateProperties();
+            await DispatcherQueue.ExecuteOnUIThreadAsync(UpdateProperties, DispatcherQueuePriority.Normal);
         }
 
         // Note: This can get called multiple times during HighContrast switch, do we care?
