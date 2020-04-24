@@ -76,15 +76,17 @@
             <ScrollViewer Name="LeftScroller"
                               Grid.Row="1"
                               IsTabStop="False"
-                              Padding="6, 0, 8, 6"
-                              HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Auto">
-                    <Grid>
-                        <RichTextBlock FontFamily="Consolas" Name="LeftBox"></RichTextBlock>
-                    </Grid>
-                </ScrollViewer>
-            </Grid>
-            <Grid Column="1" Background="{ThemeResource RightBoxBackgroundThemeBrush}">
+                              HorizontalScrollBarVisibility="Hidden"
+                              VerticalScrollBarVisibility="Hidden">
+                <Border Name="LeftTextBlockBorder" Background="Transparent">
+                    <RichTextBlock Name="LeftTextBlock"
+                                   FontFamily="Consolas"
+                                   Padding="6, 0, 8, 6"/>
+                </Border>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Column="1" Background="{ThemeResource RightBoxBackgroundThemeBrush}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
@@ -103,12 +105,13 @@
             <ScrollViewer Name="RightScroller"
                           Grid.Row="1"
                           IsTabStop="False"
-                          Padding="6, 0, 8, 6"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto">
-                <Grid>
-                    <RichTextBlock FontFamily="Consolas" Name="RightBox"></RichTextBlock>
-                </Grid>
+                <Border Name="RightTextBlockBorder" Background="Transparent">
+                    <RichTextBlock Name="RightTextBlock"
+                                   FontFamily="Consolas"
+                                   Padding="6, 0, 8, 6"/>
+                </Border>
             </ScrollViewer>
         </Grid>
     </Grid>

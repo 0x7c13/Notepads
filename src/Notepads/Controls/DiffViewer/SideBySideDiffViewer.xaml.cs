@@ -12,39 +12,65 @@
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
     public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer
     {
+        public event EventHandler OnCloseEvent;
+
         private readonly RichTextBlockDiffRenderer _diffRenderer;
 
-        private readonly ScrollViewerSynchronizer _scrollSynchronizer;
-
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<PointerRoutedEventArgs> _mouseCommandHandler;
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        public event EventHandler OnCloseEvent;
+        private readonly ScrollBar _rightScrollViewerHorizontalScrollBar;
+        private readonly ScrollBar _rightScrollViewerVerticalScrollBar;
 
         public SideBySideDiffViewer()
         {
             InitializeComponent();
-            _scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> { LeftScroller, RightScroller });
+
             _diffRenderer = new RichTextBlockDiffRenderer();
             _keyboardCommandHandler = GetKeyboardCommandHandler();
+            _mouseCommandHandler = GetMouseCommandHandler();
 
-            LeftBox.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-            RightBox.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            RightScroller.ApplyTemplate();
+
+            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(RightScroller, 0);
+            _rightScrollViewerHorizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
+            _rightScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
+
+            _rightScrollViewerHorizontalScrollBar.ValueChanged += HorizontalScrollBar_ValueChanged;
+            _rightScrollViewerVerticalScrollBar.ValueChanged += VerticalScrollBar_ValueChanged;
+
+            LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            RightTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+
+            LeftTextBlockBorder.PointerWheelChanged += LeftTextBlockBorder_PointerWheelChanged;
+            RightTextBlockBorder.PointerWheelChanged += RightTextBlockBorder_PointerWheelChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             DismissButton.Click += DismissButton_OnClick;
             LayoutRoot.KeyDown += OnKeyDown;
             KeyDown += OnKeyDown;
-            LeftBox.KeyDown += OnKeyDown;
-            RightBox.KeyDown += OnKeyDown;
+            LeftTextBlock.KeyDown += OnKeyDown;
+            RightTextBlock.KeyDown += OnKeyDown;
             Loaded += SideBySideDiffViewer_Loaded;
+        }
+
+        private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.X);
+        }
+
+        private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.Y);
         }
 
         public void Dispose()
@@ -56,11 +82,15 @@
             DismissButton.Click -= DismissButton_OnClick;
             LayoutRoot.KeyDown -= OnKeyDown;
             KeyDown -= OnKeyDown;
-            LeftBox.KeyDown -= OnKeyDown;
-            RightBox.KeyDown -= OnKeyDown;
+            LeftTextBlock.KeyDown -= OnKeyDown;
+            RightTextBlock.KeyDown -= OnKeyDown;
             Loaded -= SideBySideDiffViewer_Loaded;
 
-            _scrollSynchronizer.Dispose();
+            LeftTextBlockBorder.PointerWheelChanged -= LeftTextBlockBorder_PointerWheelChanged;
+            RightTextBlockBorder.PointerWheelChanged -= RightTextBlockBorder_PointerWheelChanged;
+
+            _rightScrollViewerHorizontalScrollBar.ValueChanged -= HorizontalScrollBar_ValueChanged;
+            _rightScrollViewerVerticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
         }
 
         private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
@@ -72,8 +102,8 @@
         {
             await Dispatcher.CallOnUIThreadAsync(() =>
             {
-                LeftBox.SelectionHighlightColor = new SolidColorBrush(color);
-                RightBox.SelectionHighlightColor = new SolidColorBrush(color);
+                LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(color);
+                RightTextBlock.SelectionHighlightColor = new SolidColorBrush(color);
             });
         }
 
@@ -92,18 +122,42 @@
             });
         }
 
-        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private ICommandHandler<PointerRoutedEventArgs> GetMouseCommandHandler()
         {
-            var result = _keyboardCommandHandler.Handle(e);
+            return new MouseCommandHandler(new List<IMouseCommand<PointerRoutedEventArgs>>()
+            {
+                new MouseCommand<PointerRoutedEventArgs>(false, false, false, ChangeVerticalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(true, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, false, true, false, false, false, ChangeHorizontalScrollingBasedOnMouseInput),
+                new MouseCommand<PointerRoutedEventArgs>(false, true, false, ChangeHorizontalScrollingBasedOnMouseInput)
+            }, this);
+        }
+
+        private void ChangeVerticalScrollingBasedOnMouseInput(PointerRoutedEventArgs args)
+        {
+            var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
+            RightScroller.ChangeView(null, RightScroller.VerticalOffset + (-1 * mouseWheelDelta), null, false);
+        }
+
+        // Ctrl + Shift + Wheel -> horizontal scrolling
+        private void ChangeHorizontalScrollingBasedOnMouseInput(PointerRoutedEventArgs args)
+        {
+            var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
+            RightScroller.ChangeView(RightScroller.HorizontalOffset + (-1 * mouseWheelDelta), null, null, false);
+        }
+
+        private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs args)
+        {
+            var result = _keyboardCommandHandler.Handle(args);
             if (result.ShouldHandle)
             {
-                e.Handled = true;
+                args.Handled = true;
             }
         }
 
         public void Focus()
         {
-            RightBox.Focus(FocusState.Programmatic);
+            RightTextBlock.Focus(FocusState.Programmatic);
         }
 
         public void StopRenderingAndClearCache()
@@ -113,10 +167,10 @@
                 _cancellationTokenSource.Cancel();
             }
 
-            LeftBox.TextHighlighters.Clear();
-            LeftBox.Blocks.Clear();
-            RightBox.TextHighlighters.Clear();
-            RightBox.Blocks.Clear();
+            LeftTextBlock.TextHighlighters.Clear();
+            LeftTextBlock.Blocks.Clear();
+            RightTextBlock.TextHighlighters.Clear();
+            RightTextBlock.Blocks.Clear();
         }
 
         public void RenderDiff(string left, string right, ElementTheme theme)
@@ -158,7 +212,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
-                                LeftBox.Blocks.Add(leftContext.Blocks[x]);
+                                LeftTextBlock.Blocks.Add(leftContext.Blocks[x]);
                             }
                         });
                     }
@@ -174,7 +228,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
-                                RightBox.Blocks.Add(rightContext.Blocks[x]);
+                                RightTextBlock.Blocks.Add(rightContext.Blocks[x]);
                             }
                         });
                     }
@@ -213,7 +267,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
-                                LeftBox.TextHighlighters.Add(leftHighlighters[x]);
+                                LeftTextBlock.TextHighlighters.Add(leftHighlighters[x]);
                             }
                         });
                     }
@@ -229,7 +283,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
-                                RightBox.TextHighlighters.Add(rightHighlighters[x]);
+                                RightTextBlock.TextHighlighters.Add(rightHighlighters[x]);
                             }
                         });
                     }
@@ -303,6 +357,22 @@
         {
             StopRenderingAndClearCache();
             OnCloseEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void LeftTextBlockBorder_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            _mouseCommandHandler.Handle(e);
+
+            // Always handle it so that left ScrollViewer won't pick up the event
+            e.Handled = true;
+        }
+
+        private void RightTextBlockBorder_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            _mouseCommandHandler.Handle(e);
+
+            // Always handle it so that right ScrollViewer won't pick up the event
+            e.Handled = true;
         }
     }
 }
