@@ -12,7 +12,6 @@ namespace Notepads.Controls
     using System.Threading.Tasks;
     using ColorCode;
     using Windows.UI.Core;
-    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
@@ -311,13 +310,13 @@ namespace Notepads.Controls
                         }
                         else
                         {
-                            var theme = themeListener.CurrentTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                            if (RequestedTheme != ElementTheme.Default)
-                            {
-                                theme = RequestedTheme;
-                            }
+                            //var theme = themeListener.CurrentTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                            //if (RequestedTheme != ElementTheme.Default)
+                            //{
+                            //    theme = RequestedTheme;
+                            //}
 
-                            formatter = new RichTextBlockFormatter(theme);
+                            formatter = new RichTextBlockFormatter(RequestedTheme);
                         }
 
                         formatter.FormatInlines(text, language, inlineCollection);
