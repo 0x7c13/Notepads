@@ -24,6 +24,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Core.SessionDataModels;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -798,13 +799,37 @@
         {
             if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
-                // Only allow untitled empty document to be dragged outside for now
-                if (!textEditor.IsModified && textEditor.EditingFile == null)
-                {
-                    DeleteTextEditor(textEditor);
-                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
-                }
+                DeleteTextEditor(textEditor);
+                var message = new ValueSet();
+                message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
+                message.Add("LastSavedText", textEditor.IsModified && textEditor.EditingFile != null ? textEditor.LastSavedSnapshot.Content : null);
+                message.Add("PendingText", textEditor.IsModified ? textEditor.GetText() : null);
+                await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message);
             }
+        }
+
+        private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
+        {
+            TextEditorSessionDataV1 textEditorData = new TextEditorSessionDataV1
+            {
+                Id = textEditor.Id,
+            };
+
+            if (textEditor.EditingFile != null)
+            {
+                // Add the opened file to FutureAccessList so we can access it next launch
+                var futureAccessToken = textEditor.Id.ToString("N");
+                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                textEditorData.EditingFileFutureAccessToken = futureAccessToken;
+                textEditorData.EditingFileName = textEditor.EditingFileName;
+                textEditorData.EditingFilePath = textEditor.EditingFilePath;
+            }
+
+            textEditorData.PendingBackupFilePath = null;
+            textEditorData.LastSavedBackupFilePath = null;
+            textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+
+            return textEditorData;
         }
 
         #endregion

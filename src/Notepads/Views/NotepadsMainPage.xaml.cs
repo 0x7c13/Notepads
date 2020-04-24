@@ -26,6 +26,9 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
+    using Windows.Foundation.Collections;
+    using Notepads.Core.SessionDataModels;
+    using Newtonsoft.Json;
 
     public sealed partial class NotepadsMainPage : Page
     {
@@ -34,6 +37,7 @@
         private string _appLaunchCmdDir;
         private string _appLaunchCmdArgs;
         private Uri _appLaunchUri;
+        private ValueSet _appLaunchEditorData;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -190,6 +194,7 @@
                     break;
                 case ProtocolActivatedEventArgs protocol:
                     _appLaunchUri = protocol.Uri;
+                    _appLaunchEditorData = protocol.Data;
                     break;
             }
         }
@@ -231,9 +236,21 @@
             else if (_appLaunchUri != null)
             {
                 var operation = NotepadsProtocolService.GetOperationProtocol(_appLaunchUri, out var context);
-                if (operation == NotepadsOperationProtocol.OpenNewInstance || operation == NotepadsOperationProtocol.Unrecognized)
+                if (operation == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    // Do nothing
+                    try
+                    {
+                        var textEditor = await RecoverTextEditorAsync(JsonConvert.DeserializeObject<TextEditorSessionDataV1>((string)_appLaunchEditorData["EditorData"]),
+                            (string)_appLaunchEditorData["LastSavedText"],
+                            (string)_appLaunchEditorData["PendingText"]);
+                        NotepadsCore.OpenTextEditor(textEditor);
+                        loadedCount++;
+                    }
+                    catch (Exception)
+                    {
+                        // Do nothing
+                    }
+                    _appLaunchEditorData = null;
                 }
                 _appLaunchUri = null;
             }

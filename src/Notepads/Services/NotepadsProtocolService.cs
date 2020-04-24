@@ -4,6 +4,9 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
+    using Windows.ApplicationModel;
+    using Windows.Foundation.Collections;
+    using Windows.System;
 
     public enum NotepadsOperationProtocol
     {
@@ -53,7 +56,7 @@
             return NotepadsOperationProtocol.Unrecognized;
         }
 
-        public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation)
+        public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation, ValueSet message = null)
         {
             try
             {
@@ -64,7 +67,9 @@
                 else if (operation == NotepadsOperationProtocol.OpenNewInstance)
                 {
                     var uriToLaunch = $"notepads://{NewInstanceProtocolStr}";
-                    return await Windows.System.Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()));
+                    var launcherOptions = new LauncherOptions();
+                    launcherOptions.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+                    return await Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()), launcherOptions, message);
                 }
                 else
                 {
