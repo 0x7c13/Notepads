@@ -50,6 +50,8 @@
             LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             RightTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
 
+            LeftTextBlockBorder.KeyDown += LeftTextBlockBorder_KeyDown;
+            RightTextBlockBorder.KeyDown += RightTextBlockBorder_KeyDown;
             LeftTextBlockBorder.PointerWheelChanged += LeftTextBlockBorder_PointerWheelChanged;
             RightTextBlockBorder.PointerWheelChanged += RightTextBlockBorder_PointerWheelChanged;
 
@@ -61,16 +63,6 @@
             LeftTextBlock.KeyDown += OnKeyDown;
             RightTextBlock.KeyDown += OnKeyDown;
             Loaded += SideBySideDiffViewer_Loaded;
-        }
-
-        private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
-        {
-            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.X);
-        }
-
-        private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
-        {
-            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.Y);
         }
 
         public void Dispose()
@@ -86,11 +78,54 @@
             RightTextBlock.KeyDown -= OnKeyDown;
             Loaded -= SideBySideDiffViewer_Loaded;
 
+            LeftTextBlockBorder.KeyDown -= LeftTextBlockBorder_KeyDown;
+            RightTextBlockBorder.KeyDown -= RightTextBlockBorder_KeyDown;
             LeftTextBlockBorder.PointerWheelChanged -= LeftTextBlockBorder_PointerWheelChanged;
             RightTextBlockBorder.PointerWheelChanged -= RightTextBlockBorder_PointerWheelChanged;
 
             _rightScrollViewerHorizontalScrollBar.ValueChanged -= HorizontalScrollBar_ValueChanged;
             _rightScrollViewerVerticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
+        }
+
+        private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.X);
+        }
+
+        private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.Y);
+        }
+
+        private void ScrollUsingArrowKeys(KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case VirtualKey.Down:
+                    RightScroller.ChangeView(null, RightScroller.VerticalOffset + 127, null, false);
+                    break;
+                case VirtualKey.Up:
+                    RightScroller.ChangeView(null, RightScroller.VerticalOffset - 127, null, false);
+                    break;
+                case VirtualKey.Left:
+                    RightScroller.ChangeView(RightScroller.HorizontalOffset - 90, null, null, false);
+                    break;
+                case VirtualKey.Right:
+                    RightScroller.ChangeView(RightScroller.HorizontalOffset + 90, null, null, false);
+                    break;
+            }
+        }
+
+        private void LeftTextBlockBorder_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            ScrollUsingArrowKeys(e);
+            e.Handled = true;
+        }
+
+        private void RightTextBlockBorder_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            ScrollUsingArrowKeys(e);
+            e.Handled = true;
         }
 
         private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
