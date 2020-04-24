@@ -630,7 +630,7 @@
                 Document.Selection.Type == SelectionType.Shape)
             {
                 var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
-                _contentScrollViewer.ChangeView(null, _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, true);
+                _contentScrollViewer.ChangeView(null, _contentScrollViewer.VerticalOffset + (-1 * mouseWheelDelta), null, false);
             }
         }
 
@@ -652,7 +652,7 @@
         private void ChangeHorizontalScrollingBasedOnMouseInput(PointerRoutedEventArgs args)
         {
             var mouseWheelDelta = args.GetCurrentPoint(this).Properties.MouseWheelDelta;
-            _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, true);
+            _contentScrollViewer.ChangeView(_contentScrollViewer.HorizontalOffset + (-1 * mouseWheelDelta), null, null, false);
         }
 
         private static string TrimRichEditBoxText(string text)

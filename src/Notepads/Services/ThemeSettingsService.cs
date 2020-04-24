@@ -36,8 +36,12 @@
                     _useWindowsTheme = value;
                     if (value)
                     {
-                        ThemeMode = Application.Current.RequestedTheme.ToElementTheme();
-                        OnThemeChanged?.Invoke(null, ThemeMode);
+                        var currentWindowsTheme = Application.Current.RequestedTheme.ToElementTheme();
+                        if (ThemeMode != currentWindowsTheme)
+                        {
+                            ThemeMode = currentWindowsTheme;
+                            OnThemeChanged?.Invoke(null, ThemeMode);
+                        }
                     }
                     ApplicationSettingsStore.Write(SettingsKey.UseWindowsThemeBool, _useWindowsTheme);
                 }
@@ -202,9 +206,12 @@
 
         public static void SetTheme(ElementTheme theme)
         {
-            ThemeMode = theme;
-            OnThemeChanged?.Invoke(null, theme);
-            ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString());
+            if (ThemeMode != theme)
+            {
+                ThemeMode = theme;
+                ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, ThemeMode.ToString());
+                OnThemeChanged?.Invoke(null, theme);
+            }
         }
 
         public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)
