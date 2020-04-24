@@ -802,8 +802,8 @@
                 DeleteTextEditor(textEditor);
                 var message = new ValueSet();
                 message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
-                message.Add("LastSavedText", textEditor.IsModified && textEditor.EditingFile != null ? textEditor.LastSavedSnapshot.Content : null);
-                message.Add("PendingText", textEditor.IsModified ? textEditor.GetText() : null);
+                message.Add("LastSavedText", (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.Modified) && textEditor.EditingFile != null ? textEditor.LastSavedSnapshot.Content : null);
+                message.Add("PendingText", (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) ? textEditor.GetText() : null);
                 await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message);
             }
         }
