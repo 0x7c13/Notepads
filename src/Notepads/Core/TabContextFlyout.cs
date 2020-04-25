@@ -208,7 +208,14 @@
                     _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
                     _openContainingFolder.Click += async (sender, args) =>
                     {
-                        await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        try
+                        {
+                            await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
+                        }
                     };
                 }
                 return _openContainingFolder;
