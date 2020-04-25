@@ -35,6 +35,7 @@
             _scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> { LeftScroller, RightScroller });
 
             _diffRenderer = new RichTextBlockDiffRenderer();
+
             _keyboardCommandHandler = GetKeyboardCommandHandler();
             _mouseCommandHandler = GetMouseCommandHandler();
 
@@ -293,7 +294,7 @@
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             //            {
             //                Thread.Sleep(20);
-            //                LeftBox.Blocks.Add(leftContext.Blocks[j]);
+            //                LeftTextBlock.Blocks.Add(leftContext.Blocks[j]);
             //            });
             //        }
             //        if (i < rightCount)
@@ -302,7 +303,7 @@
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             //            {
             //                Thread.Sleep(20);
-            //                RightBox.Blocks.Add(rightContext.Blocks[j]);
+            //                RightTextBlock.Blocks.Add(rightContext.Blocks[j]);
             //            });
             //        }
             //    }
@@ -321,13 +322,13 @@
             //        {
             //            var j = i;
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => LeftBox.TextHighlighters.Add(leftHighlighters[j]));
+            //                () => LeftTextBlock.TextHighlighters.Add(leftHighlighters[j]));
             //        }
             //        if (i < rightCount)
             //        {
             //            var j = i;
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => RightBox.TextHighlighters.Add(rightHighlighters[j]));
+            //                () => RightTextBlock.TextHighlighters.Add(rightHighlighters[j]));
             //        }
             //    }
             //});
