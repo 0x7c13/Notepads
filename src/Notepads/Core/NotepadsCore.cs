@@ -802,10 +802,14 @@
             {
                 if (textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
                 {
-                    DeleteTextEditor(textEditor);
+                    var index = Sets.SelectedIndex;
                     var message = new ValueSet();
                     message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
-                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message);
+                    DeleteTextEditor(textEditor);
+                    if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message))
+                    {
+                        OpenTextEditor(textEditor, index);
+                    }
                 }
                 else
                 {
