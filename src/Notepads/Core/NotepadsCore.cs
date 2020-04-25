@@ -799,12 +799,19 @@
         {
             if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
-                DeleteTextEditor(textEditor);
-                var message = new ValueSet();
-                message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
-                message.Add("LastSavedText", (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.Modified) && textEditor.EditingFile != null ? textEditor.LastSavedSnapshot.Content : null);
-                message.Add("PendingText", (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) ? textEditor.GetText() : null);
-                await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message);
+                if (textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
+                {
+                    DeleteTextEditor(textEditor);
+                    var message = new ValueSet();
+                    message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
+                    message.Add("LastSavedText", (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.Modified) && textEditor.EditingFile != null ? textEditor.LastSavedSnapshot.Content : null);
+                    message.Add("PendingText", textEditor.IsModified ? textEditor.GetText() : null);
+                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message);
+                }
+                else
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
+                }
             }
         }
 
