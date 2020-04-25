@@ -240,10 +240,11 @@
                 {
                     try
                     {
-                        var textEditor = await RecoverTextEditorAsync(JsonConvert.DeserializeObject<TextEditorSessionDataV1>((string)_appLaunchEditorData["EditorData"]),
-                            (string)_appLaunchEditorData["LastSavedText"],
-                            (string)_appLaunchEditorData["PendingText"]);
+                        var textEditorData = JsonConvert.DeserializeObject<TextEditorSessionDataV1>((string)_appLaunchEditorData["EditorData"]);
+                        var textEditor = await SessionManager.RecoverTextEditorAsync(textEditorData);
                         NotepadsCore.OpenTextEditor(textEditor);
+                        await FileSystemUtility.DeleteFile(textEditorData.LastSavedBackupFilePath);
+                        await FileSystemUtility.DeleteFile(textEditorData.PendingBackupFilePath);
                         loadedCount++;
                     }
                     catch (Exception)

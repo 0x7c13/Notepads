@@ -387,7 +387,7 @@
             textEditor.FileReloaded -= RemoveTextEditorSessionData;
         }
 
-        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
+        public async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
         {
             StorageFile editingFile = null;
 
@@ -449,7 +449,7 @@
             return textEditor;
         }
 
-        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
+        public static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
         {
             try
             {

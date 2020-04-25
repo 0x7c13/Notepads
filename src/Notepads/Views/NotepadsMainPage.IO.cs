@@ -212,46 +212,5 @@
             }
             return false;
         }
-
-        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData, string lastSavedText, string pendingText)
-        {
-            StorageFile editingFile = null;
-
-            if (editorSessionData.EditingFileFutureAccessToken != null)
-            {
-                editingFile = await FileSystemUtility.GetFileFromFutureAccessList(editorSessionData.EditingFileFutureAccessToken);
-            }
-
-            ITextEditor textEditor;
-
-            if (editingFile == null && lastSavedText == null && pendingText == null)
-            {
-                textEditor = null;
-            }
-            else if (editingFile != null && lastSavedText == null && pendingText == null) // File without pending changes
-            {
-                var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
-                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
-                textEditor.ResetEditorState(editorSessionData.StateMetaData);
-            }
-            else // File with pending changes
-            {
-                var textFile = new TextFile(lastSavedText != null ? lastSavedText : string.Empty,
-                    EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding),
-                    LineEndingUtility.GetLineEndingByName(editorSessionData.StateMetaData.LastSavedLineEnding),
-                    editorSessionData.StateMetaData.DateModifiedFileTime);
-
-                textEditor = _notepadsCore.CreateTextEditor(
-                    editorSessionData.Id,
-                    textFile,
-                    editingFile,
-                    editorSessionData.StateMetaData.FileNamePlaceholder,
-                    editorSessionData.StateMetaData.IsModified);
-
-                textEditor.ResetEditorState(editorSessionData.StateMetaData, pendingText);
-            }
-
-            return textEditor;
-        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿namespace Notepads.Core
 {
+    using Notepads.Controls.TextEditor;
+    using Notepads.Core.SessionDataModels;
     using System;
     using System.Threading.Tasks;
 
@@ -16,5 +18,7 @@
         void StopSessionBackup();
 
         Task ClearSessionDataAsync();
+
+        Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData);
     }
 }
