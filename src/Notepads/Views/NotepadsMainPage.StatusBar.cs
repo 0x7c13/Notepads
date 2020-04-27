@@ -366,6 +366,11 @@
             PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
 
+            if (App.IsGameBarWidget)
+            {
+                PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Visibility = Visibility.Collapsed;
+            }
+
             if (selectedEditor.FileModificationState == FileModificationState.Untouched)
             {
                 if (selectedEditor.EditingFile != null)
