@@ -322,7 +322,6 @@
     <Content Include="Assets\FileIcons\md.targetsize-48.png" />
     <Content Include="Assets\noise_high.png" />
     <Content Include="Assets\noise_low.png" />
-    <Content Include="Assets\notepads.png" />
     <Content Include="Assets\no_noise.png" />
     <Content Include="Assets\FileIcons\php.targetsize-512.png" />
     <Content Include="Assets\FileIcons\php.png" />

@@ -7,7 +7,7 @@
         public static IList<string> AllSupportedFileExtensions { get; } = new List<string>()
         {
             ".txt", ".md", ".markdown", ".csv",
-            ".cfg", ".config", ".cnf", ".conf", ".ini", ".log", ".nfo",
+            ".cfg", ".config", ".cnf", ".conf", ".ini", ".log", ".nfo", ".ahk",
             ".json", ".yml", ".yaml", ".xml", ".xaml",
             ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss", ".vue", ".vuerc", ".cgi",
             ".gitignore", ".gitconfig", ".gitattributes",

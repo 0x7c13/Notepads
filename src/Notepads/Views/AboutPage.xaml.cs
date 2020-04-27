@@ -10,6 +10,8 @@
 
     public sealed partial class AboutPage : Page
     {
+        public string AppName => App.ApplicationName;
+
         public string AppVersion => $"v{GetAppVersion()}";
 
         public AboutPage()
