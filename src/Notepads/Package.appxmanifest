@@ -553,6 +553,26 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
+              <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="zshrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.zshrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Z shell Config File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="zsh_history">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.zsh_history</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Z shell History File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
