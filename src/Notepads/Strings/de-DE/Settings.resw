@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Opazität der Acryl-Hintergrundfarbe. Der Acryleffekt wird deaktiviert wird, wenn der Batteriesparmodus eingeschaltet ist oder wenn die Transparenzeffekte in den Windows-Einstellungen ausschaltet sind.</value>
+    <value>Opazität der Acryl-Hintergrundfarbe. Der Acryleffekt wird deaktiviert, wenn der Batteriesparmodus eingeschaltet ist oder wenn die Transparenzeffekte in den Windows-Einstellungen ausschaltet sind.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
