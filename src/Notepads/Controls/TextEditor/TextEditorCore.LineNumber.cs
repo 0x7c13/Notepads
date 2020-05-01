@@ -69,7 +69,7 @@
 
             foreach (var line in lines)
             {
-                if (offset >= startRange.StartPosition && offset <= endRange.EndPosition)
+                if (offset + line.Length + 1 >= startRange.StartPosition && offset <= endRange.EndPosition)
                 {
                     Document.GetRange(offset, offset + line.Length)
                         .GetRect(PointOptions.ClientCoordinates, out var rect, out _);
