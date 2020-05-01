@@ -109,7 +109,9 @@
                 }
             }
 
+            // Replace all forward slash with platform supported directory separator 
             path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+
             if (IsFullPath(path))
             {
                 return path;
