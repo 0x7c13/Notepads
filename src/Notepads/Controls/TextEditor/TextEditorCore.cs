@@ -415,7 +415,7 @@
             }
             else
             {
-                RenderLineNumbers();   
+                RenderLineNumbers();
             }
         }
 

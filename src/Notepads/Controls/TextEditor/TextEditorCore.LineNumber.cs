@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using Windows.Foundation;
-    using Windows.UI;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using Notepads.Extensions;
     using Notepads.Utilities;
 
     public partial class TextEditorCore
@@ -41,7 +41,7 @@
         private void RenderLineNumbers()
         {
             if (_contentScrollViewer == null) return;
-            
+
             var startRange = Document.GetRangeFromPoint(
                 new Point(_contentScrollViewer.HorizontalOffset, _contentScrollViewer.VerticalOffset),
                 PointOptions.ClientCoordinates);
@@ -57,7 +57,7 @@
 
             RenderLineNumbersInternal(lineRects);
 
-            _lineNumberGrid.Width = FontUtility.GetTextSize(FontFamily, FontSize, 
+            _lineNumberGrid.Width = FontUtility.GetTextSize(FontFamily, FontSize,
                                         (lines.Length).ToString()).Width + Padding.Right;
         }
 
@@ -97,11 +97,16 @@
                     lineRect.Value.Top + Padding.Top + 2, Padding.Right, 0);
                 var height = 1.35 * FontSize + Padding.Top + 2;
 
+                var foreground = (ActualTheme == ElementTheme.Dark)
+                    ? new SolidColorBrush("#99EEEEEE".ToColor())
+                    : new SolidColorBrush("#99000000".ToColor());
+
                 if (_renderedLineNumberBlocks.ContainsKey(lineRect.Key))
                 {
                     _renderedLineNumberBlocks[lineRect.Key].Margin = margin;
                     _renderedLineNumberBlocks[lineRect.Key].Height = height;
                     _renderedLineNumberBlocks[lineRect.Key].Visibility = Visibility.Visible;
+                    _renderedLineNumberBlocks[lineRect.Key].Foreground = foreground;
                 }
                 else
                 {
@@ -114,9 +119,9 @@
                         HorizontalAlignment = HorizontalAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Bottom,
                         HorizontalTextAlignment = TextAlignment.Right,
-                        Foreground = new SolidColorBrush((Color) Application.Current.Resources["SystemBaseMediumColor"])
+                        Foreground = foreground
                     };
-                    
+
                     _lineNumberCanvas.Children.Add(lineNumberBlock);
                     _renderedLineNumberBlocks.Add(lineRect.Key, lineNumberBlock);
                 }
@@ -124,7 +129,7 @@
 
             // Only show line number blocks within range
             // Hide all others to avoid rendering collision from happening
-            foreach (var numberBlock in 
+            foreach (var numberBlock in
                 _renderedLineNumberBlocks.Where(x => !lineRects.ContainsKey(x.Key)))
             {
                 numberBlock.Value.Visibility = Visibility.Collapsed;

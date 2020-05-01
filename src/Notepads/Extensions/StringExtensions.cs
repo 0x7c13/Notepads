@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Extensions
 {
     using System;
+    using Windows.UI;
 
     public static class StringExtensions
     {
@@ -66,6 +67,16 @@
         {
             string prefix = $"ms-appx://{(path.StartsWith('/') ? string.Empty : "/")}";
             return new Uri($"{prefix}{path}");
+        }
+
+        public static Color ToColor(this string hexValue)
+        {
+            hexValue = hexValue.Replace("#", string.Empty);
+            byte a = (byte)(Convert.ToUInt32(hexValue.Substring(0, 2), 16));
+            byte r = (byte)(Convert.ToUInt32(hexValue.Substring(2, 2), 16));
+            byte g = (byte)(Convert.ToUInt32(hexValue.Substring(4, 2), 16));
+            byte b = (byte)(Convert.ToUInt32(hexValue.Substring(6, 2), 16));
+            return Windows.UI.Color.FromArgb(a, r, g, b);
         }
     }
 }
