@@ -547,7 +547,7 @@
                 var text = await dataPackageView.GetTextAsync();
                 Document.BeginUndoGroup();
                 Document.Selection.SetText(TextSetOptions.None, text);
-                Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
+                //Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 Document.EndUndoGroup();
             }
@@ -592,9 +592,10 @@
             try
             {
                 Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                Focus(FocusState.Programmatic);
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
