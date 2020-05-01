@@ -107,9 +107,9 @@
                     var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
                     if (IsFullPath(fullPath)) return fullPath;
                 }
-                path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
             }
 
+            path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
             if (IsFullPath(path))
             {
                 return path;
@@ -421,7 +421,7 @@
         {
             if (encoding is UTF8Encoding)
             {
-                // UTF8 with BOM - UTF-8-BOM 
+                // UTF8 with BOM - UTF-8-BOM
                 // UTF8 byte order mark is: 0xEF,0xBB,0xBF
                 if (bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
                 {
@@ -444,7 +444,7 @@
 
             try
             {
-                // Prevent updates to the remote version of the file until we 
+                // Prevent updates to the remote version of the file until we
                 // finish making changes and call CompleteUpdatesAsync.
                 CachedFileManager.DeferUpdates(file);
             }
@@ -469,13 +469,13 @@
 
             if (usedDeferUpdates)
             {
-                // Let Windows know that we're finished changing the file so the 
+                // Let Windows know that we're finished changing the file so the
                 // other app can update the remote version of the file.
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
                 if (status != FileUpdateStatus.Complete)
                 {
                     // Track FileUpdateStatus here to better understand the failed scenarios
-                    // File name, path and content are not included to respect/protect user privacy 
+                    // File name, path and content are not included to respect/protect user privacy
                     Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
                     {
                         { "FileUpdateStatus", nameof(status) }
