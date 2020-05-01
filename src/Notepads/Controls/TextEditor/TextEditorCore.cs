@@ -592,9 +592,10 @@
             try
             {
                 Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
+                Focus(FocusState.Programmatic);
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
