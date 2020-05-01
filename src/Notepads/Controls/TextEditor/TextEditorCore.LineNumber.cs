@@ -93,9 +93,8 @@
             // Render diff
             foreach (var lineRect in lineRects)
             {
-                var margin = new Thickness(Padding.Left,
-                    lineRect.Value.Top + Padding.Top + 2, Padding.Right, 0);
-                var height = 1.35 * FontSize + Padding.Top + 2;
+                var margin = new Thickness(Padding.Left, lineRect.Value.Top + Padding.Top + 2, Padding.Right, 0);
+                var height = (1.35 * FontSize) + Padding.Top + 2;
 
                 var foreground = (ActualTheme == ElementTheme.Dark)
                     ? new SolidColorBrush("#99EEEEEE".ToColor())
