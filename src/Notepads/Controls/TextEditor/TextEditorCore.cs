@@ -14,10 +14,13 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
+    [TemplatePart(Name = LineNumberCanvasName, Type = typeof(Canvas))]
+    [TemplatePart(Name = LineNumberGridName, Type = typeof(Grid))]
     public partial class TextEditorCore : RichEditBox
     {
         public event EventHandler<TextWrapping> TextWrappingChanged;
@@ -52,6 +55,12 @@
 
         private const string ContentElementName = "ContentElement";
         private ScrollViewer _contentScrollViewer;
+        private const string LineNumberCanvasName = "LineNumberCanvas";
+        private Canvas _lineNumberCanvas;
+        private const string LineNumberGridName = "LineNumberGrid";
+        private Grid _lineNumberGrid;
+        private const string ContentScrollViewerVerticalScrollBarName = "VerticalScrollBar";
+        private ScrollBar _contentScrollViewerVerticalScrollBar;
 
         private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
 
@@ -63,6 +72,7 @@
                 base.TextWrapping = value;
                 _textWrapping = value;
                 TextWrappingChanged?.Invoke(this, value);
+                RenderLineNumbers();
             }
         }
 
@@ -104,6 +114,7 @@
             CopyingToClipboard += OnCopyingToClipboard;
             Paste += OnPaste;
             TextChanging += OnTextChanging;
+            TextChanged += OnTextChanged;
             SelectionChanging += OnSelectionChanging;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
@@ -128,6 +139,10 @@
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            _lineNumberCanvas = GetTemplateChild(LineNumberCanvasName) as Canvas;
+            _lineNumberGrid = GetTemplateChild(LineNumberGridName) as Grid;
+
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
             _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
@@ -137,6 +152,21 @@
                 _contentScrollViewerVerticalOffsetLastKnownPosition,
                 zoomFactor: null,
                 disableAnimation: true);
+
+            _contentScrollViewer.SizeChanged += OnContentScrollViewerSizeChanged;
+
+            _contentScrollViewer.ApplyTemplate();
+            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(_contentScrollViewer, 0);
+            _contentScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerVerticalScrollBarName);
+            _contentScrollViewerVerticalScrollBar.ValueChanged += OnVerticalScrollBarValueChanged;
+
+            _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
+        }
+
+        private void OnVerticalScrollBarValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            // Make sure line number canvas is in sync with editor's ScrollViewer
+            _contentScrollViewer.StartExpressionAnimation(_lineNumberCanvas, Axis.Y);
         }
 
         // Unhook events and clear state
@@ -145,6 +175,7 @@
             CopyingToClipboard -= OnCopyingToClipboard;
             Paste -= OnPaste;
             TextChanging -= OnTextChanging;
+            TextChanged -= OnTextChanged;
             SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
             LostFocus -= OnLostFocus;
@@ -154,7 +185,21 @@
             {
                 _contentScrollViewer.ViewChanging -= OnContentScrollViewerViewChanging;
                 _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
+                _contentScrollViewer.SizeChanged -= OnContentScrollViewerSizeChanged;
             }
+
+            if (_contentScrollViewerVerticalScrollBar != null)
+            {
+                _contentScrollViewerVerticalScrollBar.ValueChanged -= OnVerticalScrollBarValueChanged;
+            }
+
+            if (_lineNumberGrid != null)
+            {
+                _lineNumberGrid.SizeChanged -= OnLineNumberGridSizeChanged;
+            }
+
+            _lineNumberCanvas?.Children.Clear();
+            _renderedLineNumberBlocks.Clear();
 
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
@@ -287,6 +332,8 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
+
+            ResetLineNumberCanvasClipping();
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
@@ -337,6 +384,10 @@
                 _isLineCachePendingUpdate = true;
             }
         }
+        private void OnTextChanged(object sender, RoutedEventArgs e)
+        {
+            RenderLineNumbers();
+        }
 
         private void OnSelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
         {
@@ -361,6 +412,10 @@
                     _contentScrollViewerVerticalOffsetLastKnownPosition,
                     zoomFactor: null,
                     disableAnimation: true);
+            }
+            else
+            {
+                RenderLineNumbers();   
             }
         }
 
