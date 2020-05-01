@@ -81,7 +81,7 @@
                     break;
                 }
 
-                offset += line.Length + 1;
+                offset += line.Length + 1; // 1 for line ending: '\r'
                 lineIndex++;
             }
 
@@ -90,7 +90,6 @@
 
         private void RenderLineNumbersInternal(Dictionary<int, Rect> lineRects)
         {
-            // Render diff
             foreach (var lineRect in lineRects)
             {
                 var margin = new Thickness(Padding.Left, lineRect.Value.Top + Padding.Top + 2, Padding.Right, 0);
@@ -100,6 +99,7 @@
                     ? new SolidColorBrush("#99EEEEEE".ToColor())
                     : new SolidColorBrush("#99000000".ToColor());
 
+                // Reposition already rendered line number blocks
                 if (_renderedLineNumberBlocks.ContainsKey(lineRect.Key))
                 {
                     _renderedLineNumberBlocks[lineRect.Key].Margin = margin;
@@ -107,7 +107,7 @@
                     _renderedLineNumberBlocks[lineRect.Key].Visibility = Visibility.Visible;
                     _renderedLineNumberBlocks[lineRect.Key].Foreground = foreground;
                 }
-                else
+                else // Render new line number block
                 {
                     var lineNumberBlock = new TextBlock()
                     {
@@ -126,7 +126,7 @@
                 }
             }
 
-            // Only show line number blocks within range
+            // Only show line number blocks within range (current ScrollViewer's viewport)
             // Hide all others to avoid rendering collision from happening
             foreach (var numberBlock in
                 _renderedLineNumberBlocks.Where(x => !lineRects.ContainsKey(x.Key)))
