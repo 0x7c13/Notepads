@@ -27,6 +27,8 @@
 
         private void ResetLineNumberCanvasClipping()
         {
+            if (!_loaded) return;
+
             RectangleGeometry rectangle = new RectangleGeometry
             {
                 Rect = new Rect(
@@ -40,7 +42,7 @@
 
         private void RenderLineNumbers()
         {
-            if (_contentScrollViewer == null) return;
+            if (!_loaded) return;
 
             var startRange = Document.GetRangeFromPoint(
                 new Point(_contentScrollViewer.HorizontalOffset, _contentScrollViewer.VerticalOffset),

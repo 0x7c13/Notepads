@@ -334,6 +334,7 @@
             }
 
             ResetLineNumberCanvasClipping();
+            RenderLineNumbers();
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
