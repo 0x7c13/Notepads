@@ -602,7 +602,7 @@
                 var text = await dataPackageView.GetTextAsync();
                 Document.BeginUndoGroup();
                 Document.Selection.SetText(TextSetOptions.None, text);
-                Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
+                //Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 Document.EndUndoGroup();
             }

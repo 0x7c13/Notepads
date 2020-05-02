@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Abhängigkeiten und Referenzen</value>
+    <value>Ovisnosti i reference</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</value>
+    <value>SOFTVER SE NUDI „TAKAV KAKAV JE”, BEZ JAMSTVA BILO KOJE VRSTE, EXPLICITNOG ILI IMPLICITNOG, UKLJUČUJUĆI, ALI NE OGRANIČAVAJUĆI SE NA JAMSTVO MOGUĆNOSTI PRODAJE, PRIMJENU ZA ODREĐENU SVRHU, KRŠENJA NEČIJIH PRAVA. NI U KOM SLUČAJU AUTORI ILI VLASNICI AUTORSKIH PRAVA NEĆE BITI ODGOVORNI ZA BILO KAKVA OŠTEĆENJA ILI NEDOSTATKE BILO KOJE VRSTE, DA LI ZBOG UGOVORA ILI NA NEKI DRUGI NAČIN, KOJA SU NASTALA IZ, KROZ ILI U VEZI SA SOFTVEROM ILI UPOTREBOM SOFTVERA.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Disclaimer</value>
+    <value>Izjava o odgovornosti</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Kostenloser Open-Source Texteditor entworfen und implementiert durch Jackie (Jiaqi) Liu</value>
+    <value>Besplatan uređivač teksta otvorenog koda izradio je i implementirao Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Autoren kontaktieren:</value>
+    <value>Kontaktiranje autora:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Für Fehlermeldungen oder Featureanfrage:</value>
+    <value>Za prijavu grešaka ili prijedloge za nove funkcije:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Quellcode verfügbar auf Github:</value>
+    <value>Izvorni kod je dostupan na Githubu:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Mehr Informationen auf unserer Website:</value>
+    <value>Daljnje informacije se nalaze na našoj web-stranici:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Datenschutzerklärung</value>
+    <value>Izjava o privatnosti</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>Über</value>
+    <value>Informacije</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
+    <value>Prikaži traku stanja</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
+    <value>Prikaži traku stanja</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Statusleisteneinstellungen</value>
+    <value>Postavke za traku stanja</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Erweitert</value>
+    <value>Napredno</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Akzentfarbe</value>
+    <value>Boja isticanja</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
+    <value>Koristi boju isticanja Windowsa</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
+    <value>Koristi boju isticanja Windowsa</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Opazität der Acryl-Hintergrundfarbe. Der Acryleffekt wird deaktiviert, wenn der Batteriesparmodus eingeschaltet ist oder wenn die Transparenzeffekte in den Windows-Einstellungen ausgeschaltet sind.</value>
+    <value>Akrilna neprozirnost boje pozadine. Akrilni efekt će se deaktivirati kad se uključi štednja baterije ili ako se isključi efekt prozirnosti u postavkama Windows sustava.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Opazität der Hintergrundfarbe</value>
+    <value>Neprozirnost boje pozadine</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Dunkel</value>
+    <value>Tamni</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Hell</value>
+    <value>Svjetli</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Design Modus</value>
+    <value>Modus teme</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Windows Modus verwenden</value>
+    <value>Koristi modus Windowsa</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Personalisierung</value>
+    <value>Prilagođavanje</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows Zeichensatz)</value>
+    <value>ANSI (kodna stranica za Windows)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Die Notfall-Dekodierung wird verwendet, wenn die Codierung einer Datei nicht erkannt wird.</value>
+    <value>Rezervno dekodiranje se koristi, ako se kodiranje datoteke ne može prepoznati.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Notfall-Dekodierung</value>
+    <value>Rezervno dekodiranje</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,143 +230,143 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
+    <value>Vrijedi samo za nove dokumente.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Codierung</value>
+    <value>Standardno kodiranje</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Standard Schriftart und Größe</value>
+    <value>Standardni font i veličina</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
+    <value>Vrijedi samo za nove dokumente.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Zeilenumbruch</value>
+    <value>Standardni kraj retka</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Standard (\t)</value>
+    <value>Standardno (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Tabulatortaste, gilt nur für neu eingefügte Tabs.</value>
+    <value>Postavke za tipku tabulatora vrijede samo za novo utipkane tabulatore.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Leerzeichen</value>
+    <value>8 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Leerzeichen</value>
+    <value>4 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tabulatortastenverhalten</value>
+    <value>Ponašanje tabulatora</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Leerzeichen</value>
+    <value>2 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Textumbruch</value>
+    <value>Prijelom teksta</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
+    <value>Prelomi riječi</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
+    <value>Prelomi riječi</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Text &amp; Editor</value>
+    <value>Tekst i uređivanje</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Änderungsprotokoll</value>
+    <value>Zapis promjena</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist. Sicherungen werden nur vom ersten oder vom Hauptfenster von Notepads erstellt.</value>
+    <value>Kad je aktivirano, Notepads će pamtiti trenutačnu sesiju za sljedeće pokretanje i redovito spremati sigurnosne kopije snimaka sesija, kako bi se spriječio slučajni gubitak podataka zbog nespremljenih promjena. Notepads te NEĆE podsjetiti da spremiš svoj rad kad se program zatvara, ako je ova funkcija aktivirana. Misli na to, da snimka sesije radi samo u prvom ili glavnom prozoru programa.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <value>Aktiviraj snimke sesije</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
+    <value>Aktiviraj snimke sesije</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Sitzungssicherungs-Einstellungen</value>
+    <value>Postavke za snimke sesije</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
+    <value>Istakni pravopisne greške</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
+    <value>Istakni pravopisne greške</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>Rechtschreibung</value>
+    <value>Pravopis</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Wenn aktiviert, öffnet Notepads Dateien immer in einem neuen Fenster anstelle eines neuen Reiters.</value>
+    <value>Kad je aktivirano, Notepads će uvijek otvoriti novi prozor umjesto nove kartice.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
+    <value>Uvijek otvori novi prozor</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
+    <value>Uvijek otvori novi prozor</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Startpräferenzen</value>
+    <value>Postavke za pokretanje</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Aktuelle Zeile hervorheben</value>
+    <value>Istakni trenutačni redak</value>
     <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Rahmen um aktuelle Zeile anzeigen</value>
+    <value>Uokviri trenutačni redak</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Rahmen um aktuelle Zeile anzeigen</value>
+    <value>Uokviri trenutačni redak</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Benutzerdefinierte Suchmaschine</value>
+    <value>Prilagođena tražilica</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*URL Format beachten: https://www.example.com/search?q={0}</value>
+    <value>*Upiši URL u formatu https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Standardsuchmaschine für die Websuche.</value>
+    <value>Postavke za standardnu tražilicu za web-pretragu.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Standardsuchmaschine</value>
+    <value>Standardna tražilica</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Codierung automatisch erkennen (empfohlen)</value>
+    <value>Automatski pogodi kodiranje (preporučeno)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
 </root>
