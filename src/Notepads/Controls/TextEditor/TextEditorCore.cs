@@ -200,6 +200,7 @@
 
             _lineNumberCanvas?.Children.Clear();
             _renderedLineNumberBlocks.Clear();
+            _lineNumberTextWidthCache.Clear();
 
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
