@@ -147,12 +147,6 @@
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
             _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
-            _contentScrollViewer.ChangeView(
-                _contentScrollViewerHorizontalOffsetLastKnownPosition,
-                _contentScrollViewerVerticalOffsetLastKnownPosition,
-                zoomFactor: null,
-                disableAnimation: true);
-
             _contentScrollViewer.SizeChanged += OnContentScrollViewerSizeChanged;
 
             _contentScrollViewer.ApplyTemplate();
