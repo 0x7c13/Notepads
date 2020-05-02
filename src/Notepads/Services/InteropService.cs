@@ -66,15 +66,12 @@
             switch(command)
             {
                 case CommandArgs.SyncSettings:
-                    if (message.ContainsKey(_appIdLabel) && message[_appIdLabel] is Guid appID && appID != App.Id)
-                    {
-                        EnableSettingsLogging = false;
-                        HideSettingsPane?.Invoke(null, true);
-                        var settingsKey = message[_settingsKeyLabel] as string;
-                        var value = message[_valueLabel] as object;
-                        SettingsManager[settingsKey](value);
-                        EnableSettingsLogging = true;
-                    }
+                    EnableSettingsLogging = false;
+                    HideSettingsPane?.Invoke(null, true);
+                    var settingsKey = message[_settingsKeyLabel] as string;
+                    var value = message[_valueLabel] as object;
+                    SettingsManager[settingsKey](value);
+                    EnableSettingsLogging = true;
                     break;
                 case CommandArgs.SyncRecentList:
                     UpdateRecentList?.Invoke(null, false);
@@ -93,7 +90,6 @@
 
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.SyncSettings.ToString());
-            message.Add(_appIdLabel, App.Id);
             message.Add(_settingsKeyLabel, settingsKey);
             try
             {
