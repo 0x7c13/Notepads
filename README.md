@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.gif">
+  <img width="128" align="center" src="src/Notepads/Assets/appicon_ws.gif">
 </p>
 <h1 align="center">
   Notepads
@@ -112,7 +112,9 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 
 ## Special Thanks:
 
-* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
+* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon (old) is greatly inspired by the new icon for Windows Terminal.
+* [Mahmoud Qurashy](https://github.com/mah-qurashy) - App icon and file icon(s) designer, creator of the new Notepads App Icon.
+
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
