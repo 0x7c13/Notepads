@@ -386,6 +386,7 @@
                 _isLineCachePendingUpdate = true;
             }
         }
+
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
             RenderLineNumbers();
@@ -502,12 +503,7 @@
             out int lineCount,
             LineEnding lineEnding = LineEnding.Crlf)
         {
-            if (_isLineCachePendingUpdate)
-            {
-                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-                _isLineCachePendingUpdate = false;
-            }
-
+            UpdateContentLinesCacheIfNeeded();
             GetTextSelectionPosition(out var start, out var end);
 
             startLineIndex = 1;
@@ -556,6 +552,15 @@
                 }
 
                 length += line.Length + 1;
+            }
+        }
+
+        private void UpdateContentLinesCacheIfNeeded()
+        {
+            if (_isLineCachePendingUpdate)
+            {
+                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _isLineCachePendingUpdate = false;
             }
         }
 

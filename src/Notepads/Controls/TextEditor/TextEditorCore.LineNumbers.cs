@@ -55,11 +55,12 @@
                     _contentScrollViewer.VerticalOffset + _contentScrollViewer.ViewportHeight),
                 PointOptions.ClientCoordinates);
 
-            var lines = _content.Split(RichEditBoxDefaultLineEnding);
+            UpdateContentLinesCacheIfNeeded();
 
-            Dictionary<int, Rect> lineRects = CalculateLineRects(lines, startRange, endRange);
+            Dictionary<int, Rect> lineRects = CalculateLineRects(_contentLinesCache, startRange, endRange);
 
-            var minLineNumberTextWidth = CalculateMinimumWidth(FontFamily, FontSize, lines.Length.ToString().Length);
+            var minLineNumberTextWidth = CalculateMinimumWidth(FontFamily, 
+                FontSize, (_contentLinesCache.Length - 1).ToString().Length);
 
             RenderLineNumbersInternal(lineRects, minLineNumberTextWidth);
 
@@ -94,11 +95,12 @@
         private Dictionary<int, Rect> CalculateLineRects(string[] lines, ITextRange startRange, ITextRange endRange)
         {
             var offset = 0;
-            var lineIndex = 1;
-            var lineRects = new Dictionary<int, Rect>();
+            var lineRects = new Dictionary<int, Rect>(); // 1 - based
 
-            foreach (var line in lines)
+            for (int i = 0; i < lines.Length - 1; i++)
             {
+                var line = lines[i];
+
                 // Use "offset + line.Length + 1" instead of just "offset" here is to capture the line right above the viewport
                 // Similarly,  "endRange.EndPosition + line.Length" is to ensure we capture the line right below the viewport
                 if (offset + line.Length + 1 >= startRange.StartPosition && offset <= endRange.EndPosition + line.Length)
@@ -106,7 +108,7 @@
                     Document.GetRange(offset, offset + line.Length)
                         .GetRect(PointOptions.ClientCoordinates, out var rect, out _);
 
-                    lineRects[lineIndex] = rect;
+                    lineRects[i + 1] = rect;
                 }
                 else if (offset > endRange.EndPosition)
                 {
@@ -114,7 +116,6 @@
                 }
 
                 offset += line.Length + 1; // 1 for line ending: '\r'
-                lineIndex++;
             }
 
             return lineRects;
