@@ -59,15 +59,12 @@
         private static void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var message = args.Request.Message;
-            if (message.ContainsKey(_appIdLabel) && message[_appIdLabel] is Guid appID && appID != App.Id)
-            {
-                EnableSettingsLogging = false;
-                HideSettingsPane?.Invoke(null, true);
-                var settingsKey = message[_settingsKeyLabel] as string;
-                var value = message[_valueLabel] as object;
-                SettingsManager[settingsKey](value);
-                EnableSettingsLogging = true;
-            }
+            EnableSettingsLogging = false;
+            HideSettingsPane?.Invoke(null, true);
+            var settingsKey = message[_settingsKeyLabel] as string;
+            var value = message[_valueLabel] as object;
+            SettingsManager[settingsKey](value);
+            EnableSettingsLogging = true;
         }
 
         private static void InteropServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
@@ -78,7 +75,6 @@
         public static async void SyncSettings(string settingsKey, object value)
         {
             var message = new ValueSet();
-            message.Add(_appIdLabel, App.Id);
             message.Add(_settingsKeyLabel, settingsKey);
             try
             {

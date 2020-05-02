@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
@@ -34,13 +35,12 @@
             }
         }
 
-        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            foreach(var serviceConnection in appServiceConnections)
+            Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
             {
-                if (serviceConnection != appServiceConnection) 
-                    await serviceConnection.SendMessageAsync(args.Request.Message);
-            }
+                if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
+            });
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
