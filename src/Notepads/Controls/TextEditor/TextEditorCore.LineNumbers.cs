@@ -71,7 +71,9 @@
 
             foreach (var line in lines)
             {
-                if (offset + line.Length + 1 >= startRange.StartPosition && offset <= endRange.EndPosition)
+                // Use "offset + line.Length + 1" instead of just "offset" here is to capture the line right above the viewport
+                // Similarly,  "endRange.EndPosition + line.Length" is to ensure we capture the line right below the viewport
+                if (offset + line.Length + 1 >= startRange.StartPosition && offset <= endRange.EndPosition + line.Length)
                 {
                     Document.GetRange(offset, offset + line.Length)
                         .GetRect(PointOptions.ClientCoordinates, out var rect, out _);
