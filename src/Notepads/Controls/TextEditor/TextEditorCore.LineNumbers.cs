@@ -1,4 +1,6 @@
-﻿namespace Notepads.Controls.TextEditor
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+
+namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
@@ -13,9 +15,50 @@
 
     public partial class TextEditorCore
     {
+        public bool _displayLineNumbers;
+
+        public bool DisplayLineNumbers
+        {
+            get => _displayLineNumbers;
+            set
+            {
+                if (_displayLineNumbers != value)
+                {
+                    _displayLineNumbers = value;
+
+                    if (value)
+                    {
+                        ShowLineNumbers();
+                    }
+                    else
+                    {
+                        HideLineNumbers();
+                    }
+                }
+            }
+        }
+
         private readonly Dictionary<int, TextBlock> _renderedLineNumberBlocks = new Dictionary<int, TextBlock>();
-        private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 4, 2);
+        private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 6, 2);
         private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
+        private readonly SolidColorBrush _lineNumberDarkModeForegroundBrush = new SolidColorBrush("#99EEEEEE".ToColor());
+        private readonly SolidColorBrush _lineNumberLightModeForegroundBrush = new SolidColorBrush("#99000000".ToColor());
+
+        private void ShowLineNumbers()
+        {
+            if (!_loaded) return;
+            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 1, 0);
+            ResetLineNumberCanvasClipping();
+            RenderLineNumbers();
+        }
+
+        private void HideLineNumbers()
+        {
+            if (!_loaded) return;
+            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0, 0);
+            _lineNumberGrid.Margin = new Thickness(0, 0, 0, 0);
+            _lineNumberGrid.Width = 0;
+        }
 
         private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -29,8 +72,9 @@
 
         private void ResetLineNumberCanvasClipping()
         {
-            if (!_loaded) return;
+            if (!_loaded || !DisplayLineNumbers) return;
 
+            _lineNumberGrid.Margin = new Thickness(0, 0, -1 * Padding.Left, 0);
             RectangleGeometry rectangle = new RectangleGeometry
             {
                 Rect = new Rect(
@@ -44,7 +88,7 @@
 
         private void RenderLineNumbers()
         {
-            if (!_loaded) return;
+            if (!_loaded || !DisplayLineNumbers) return;
 
             var startRange = Document.GetRangeFromPoint(
                 new Point(_contentScrollViewer.HorizontalOffset, _contentScrollViewer.VerticalOffset),
@@ -142,8 +186,8 @@
                 var height = (1.35 * FontSize) + Padding.Top + _lineNumberPadding.Top;
 
                 var foreground = (ActualTheme == ElementTheme.Dark)
-                    ? new SolidColorBrush("#99EEEEEE".ToColor())
-                    : new SolidColorBrush("#99000000".ToColor());
+                    ? _lineNumberDarkModeForegroundBrush
+                    : _lineNumberLightModeForegroundBrush;
 
                 // Reposition already rendered line number blocks
                 if (_renderedLineNumberBlocks.ContainsKey(lineRect.Key))

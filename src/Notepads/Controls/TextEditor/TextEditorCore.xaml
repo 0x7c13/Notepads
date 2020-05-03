@@ -81,7 +81,10 @@
                                 <ColumnDefinition x:Name="LineNumberColumnDefinition" Width="Auto"/>
                                 <ColumnDefinition x:Name="TextEditorColumnDefinition" Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid x:Name="LineNumberGrid" Grid.Column="0">
+                            <Grid x:Name="LineNumberGrid" 
+                                  Grid.Column="0"
+                                  BorderThickness="0,0,0,0"
+                                  BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}">
                                 <Canvas x:Name="LineNumberCanvas"/>
                             </Grid>
                             <Grid Grid.Column="1">

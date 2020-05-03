@@ -109,6 +109,7 @@
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
+            DisplayLineNumbers = true; // EditorSettingsService.DisplayLineNumbers;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
@@ -326,8 +327,10 @@
                     disableAnimation: true);
             }
 
-            ResetLineNumberCanvasClipping();
-            RenderLineNumbers();
+            if (DisplayLineNumbers)
+            {
+                ShowLineNumbers();
+            }
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
