@@ -109,7 +109,7 @@
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
-            DisplayLineNumbers = true; // EditorSettingsService.DisplayLineNumbers;
+            DisplayLineNumbers = EditorSettingsService.EditorDisplayLineNumbers;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;

@@ -10,7 +10,6 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
-    using Notepads.Extensions;
     using Notepads.Utilities;
 
     public partial class TextEditorCore
@@ -103,7 +102,7 @@ namespace Notepads.Controls.TextEditor
 
             Dictionary<int, Rect> lineRects = CalculateLineRects(document, startRange, endRange);
 
-            var minLineNumberTextRenderingWidth = CalculateMinimumRequisiteIntegerTextRenderingWidth(FontFamily, 
+            var minLineNumberTextRenderingWidth = CalculateMinimumRequisiteIntegerTextRenderingWidth(FontFamily,
                 FontSize, (document.Length - 1).ToString().Length);
 
             RenderLineNumbersInternal(lineRects, minLineNumberTextRenderingWidth);
@@ -123,7 +122,7 @@ namespace Notepads.Controls.TextEditor
         /// <param name="numberTextLength"></param>
         /// <returns></returns>
         private double CalculateMinimumRequisiteIntegerTextRenderingWidth(FontFamily fontFamily, double fontSize, int numberTextLength)
-        { 
+        {
             var cacheKey = $"{fontFamily.Source}-{(int)fontSize}-{numberTextLength}";
 
             if (_miniRequisiteIntegerTextRenderingWidthCache.ContainsKey(cacheKey))

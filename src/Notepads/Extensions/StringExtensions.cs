@@ -1,7 +1,6 @@
 ﻿namespace Notepads.Extensions
 {
     using System;
-    using Windows.UI;
 
     public static class StringExtensions
     {

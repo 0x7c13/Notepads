@@ -97,7 +97,7 @@
                 out var endColumn,
                 out _,
                 out _);
-            
+
             var document = GetText();
             var lines = GetDocumentLinesCache();
 

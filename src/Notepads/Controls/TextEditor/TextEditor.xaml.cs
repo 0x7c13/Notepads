@@ -161,7 +161,7 @@
         public bool DisplayLineNumbers
         {
             get => TextEditorCore.DisplayLineNumbers;
-            set { TextEditorCore.DisplayLineNumbers = value; }
+            set => TextEditorCore.DisplayLineNumbers = value;
         }
 
         public TextEditor()
