@@ -124,6 +124,7 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
@@ -742,6 +743,12 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\bg-BG\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Settings.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

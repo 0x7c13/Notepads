@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>ନିର୍ଭରଶୀଳତା ଏବଂ ସନ୍ଦର୍ଭ</value>
+    <value>Ovisnosti i reference</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>କୌଣସି ପ୍ରକାରର ୱାରେଣ୍ଟି ବିନା ସଫ୍ଟୱେୟାର “ଯେପରି” ପ୍ରଦାନ କରାଯାଇଛି, ୱାରେଣ୍ଟିର ବାଣିଜ୍ୟ ଯୋଗ୍ୟତା, ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ ଫିଟ୍ ଏବଂ ଉଲ୍ଲଂଘନ ସହିତ ସୀମିତ ନୁହେଁ | କୌଣସି ଘଟଣାରେ ଲେଖକ କିମ୍ବା କପିରାଇଟ୍ ହୋଲ୍ଡରମାନେ କୌଣସି ଦାବି, କ୍ଷତି କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଦାୟିତ୍ବ ପାଇଁ ଦାୟୀ ରହିବେ ନାହିଁ, ଯାହା କୌଣସି ଚୁକ୍ତିନାମା, ଟର୍ଟ କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଜ୍ଞାନ, ସଫ୍ଟୱେୟାରର ବ୍ୟବହାର କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଡିଲ୍ ସହିତ ସଂଯୋଗରେ |</value>
+    <value>SOFTVER SE NUDI „TAKAV KAKAV JE”, BEZ JAMSTVA BILO KOJE VRSTE, EXPLICITNOG ILI IMPLICITNOG, UKLJUČUJUĆI, ALI NE OGRANIČAVAJUĆI SE NA JAMSTVO MOGUĆNOSTI PRODAJE, PRIMJENU ZA ODREĐENU SVRHU, KRŠENJA NEČIJIH PRAVA. NI U KOM SLUČAJU AUTORI ILI VLASNICI AUTORSKIH PRAVA NEĆE BITI ODGOVORNI ZA BILO KAKVA OŠTEĆENJA ILI NEDOSTATKE BILO KOJE VRSTE, DA LI ZBOG UGOVORA ILI NA NEKI DRUGI NAČIN, KOJA SU NASTALA IZ, KROZ ILI U VEZI SA SOFTVEROM ILI UPOTREBOM SOFTVERA.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>ପ୍ରତ୍ୟାଖ୍ୟାନ</value>
+    <value>Izjava o odgovornosti</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>ମାଗଣା ଏବଂ ମୁକ୍ତ ଉତ୍ସ ପାଠ୍ୟ ସମ୍ପାଦକ ଜ୍ୟାକି (ଜିଆକି) ଲିୟୁ ଦ୍ୱାରା ପରିକଳ୍ପିତ ଏବଂ କାର୍ଯ୍ୟକାରୀ |</value>
+    <value>Besplatan uređivač teksta otvorenog koda izradio je i implementirao Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>ଲେଖକମାନଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରିବାକୁ:</value>
+    <value>Kontaktiranje autora:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>ରିପୋର୍ଟ ଏବଂ ବୈଶିଷ୍ଟ୍ୟ ଅନୁରୋଧ ପ୍ରଦାନ କରିବାକୁ:</value>
+    <value>Za prijavu grešaka ili prijedloge za nove funkcije:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Github ରେ ଉତ୍ସ କୋଡ୍ ଉପଲବ୍ଧ:</value>
+    <value>Izvorni kod je dostupan na Githubu:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>ଅଧିକ ସୂଚନା ପାଇଁ, ଦୟାକରି ଆମର ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ:</value>
+    <value>Daljnje informacije se nalaze na našoj web-stranici:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>ଗୋପନୀୟତା ବିବୃତ୍ତି</value>
+    <value>Izjava o privatnosti</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>ବିଷୟରେ</value>
+    <value>Informacije</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>ଷ୍ଟାଟସ୍ ବାର୍ ଦେଖାନ୍ତୁ</value>
+    <value>Prikaži traku stanja</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>ଷ୍ଟାଟସ୍ ବାର୍ ଦେଖାନ୍ତୁ</value>
+    <value>Prikaži traku stanja</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>ଷ୍ଟାଟସ୍ ବାର୍ ସେଟିଙ୍ଗ୍ସ</value>
+    <value>Postavke za traku stanja</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>ଅଭିନବ</value>
+    <value>Napredno</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ</value>
+    <value>Boja isticanja</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>ମୋର Windows ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <value>Koristi boju isticanja Windowsa</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>ମୋର Windows ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <value>Koristi boju isticanja Windowsa</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>ଆକ୍ରିଲିକ୍ ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ୍ ସ୍ୱଚ୍ଛତା| ଦୟାକରି ଧ୍ୟାନ ଦିଅନ୍ତୁ ଯେ ବ୍ୟାଟେରୀ ସେଭର୍ ମୋଡ୍ ଅନ୍ ଥିବାବେଳେ କିମ୍ବା ଯଦି ଆପଣ ୱିଣ୍ଡୋଜ୍ ସେଟିଂସମୂହରେ ସ୍ୱଚ୍ଛତା ପ୍ରଭାବ ବନ୍ଦ କରନ୍ତି, ଆକ୍ରିଲିକ୍ ପ୍ରଭାବ ଅକ୍ଷମ ହେବ|</value>
+    <value>Akrilna neprozirnost boje pozadine. Akrilni efekt će se deaktivirati kad se uključi štednja baterije ili ako se isključi efekt prozirnosti u postavkama Windows sustava.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>ପୃଷ୍ଠଭୂମି ଟିଣ୍ଟ ସ୍ୱଚ୍ଛତା</value>
+    <value>Neprozirnost boje pozadine</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>ଅନ୍ଧକାର</value>
+    <value>Tamni</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>ଆଲୋକ</value>
+    <value>Svjetli</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>ଥିମ୍ ମୋଡ୍</value>
+    <value>Modus teme</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>ମୋ Windows ମୋଡ୍ ବ୍ୟବହାର କରନ୍ତୁ</value>
+    <value>Koristi modus Windowsa</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>ବ୍ୟକ୍ତିଗତକରଣ</value>
+    <value>Postavke</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows କୋଡ୍ ପୃଷ୍ଠା)</value>
+    <value>ANSI (kodna stranica za Windows)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>ଯଦି ଫାଇଲର ଏନକୋଡିଂ ଚିହ୍ନଟ ହୋଇପାରିବ ନାହିଁ ତେବେ ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ ବ୍ୟବହାର ହେବ | </value>
+    <value>Rezervno dekodiranje se koristi, ako se kodiranje datoteke ne može prepoznati.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ</value>
+    <value>Rezervno dekodiranje</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,139 +230,139 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>Vrijedi samo za nove dokumente.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ ଏନକୋଡିଂ</value>
+    <value>Standardno kodiranje</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ ଫଣ୍ଟ ଏବଂ ଆକାର</value>
+    <value>Standardni font i veličina</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>Vrijedi samo za nove dokumente.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ ଲାଇନ ଶେଷ</value>
+    <value>Standardni kraj retka</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ (\t)</value>
+    <value>Standardno (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>ଟ୍ୟାବ୍ କି ଆଚରଣ ପାଇଁ ସେଟିଙ୍ଗ୍ସ କେବଳ ଉପଭୋକ୍ତା ଦ୍ୱାରା ସନ୍ନିବେଶିତ ନୂତନ ଟ୍ୟାବଗୁଡ଼ିକ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>Postavke za tipku tabulatora vrijede samo za novo utipkane tabulatore.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>୮ ଟି ସ୍ଥାନ</value>
+    <value>8 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>୪ ଟି ସ୍ଥାନ</value>
+    <value>4 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>ଟ୍ୟାବ୍ ଆଚରଣ</value>
+    <value>Ponašanje tabulatora</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>୨ ଟି ସ୍ଥାନ</value>
+    <value>2 razmaka</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>ଟେକ୍ଷ୍ଟ ରାପିଙ୍ଗ୍</value>
+    <value>Prijelom teksta</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>ରାପ୍ ୱର୍ଡ</value>
+    <value>Prelomi riječi</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>ରାପ୍ ୱର୍ଡ</value>
+    <value>Prelomi riječi</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>ପାଠ ଏବଂ ସମ୍ପାଦକ</value>
+    <value>Tekst i uređivanje</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>ଚେଜ୍ଞ୍ଜଲଗ୍</value>
+    <value>Zapis promjena</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ପରବର୍ତ୍ତୀ ଉନ୍ମୋଚନ ପାଇଁ ସାମ୍ପ୍ରତିକ ଅଧିବେଶନକୁ ମନେ ରଖିବ ଏବଂ ଅନାବଶ୍ୟକ ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ପାଇଁ ଆକସ୍ମିକ ତଥ୍ୟ ନଷ୍ଟକୁ ରୋକିବା ପାଇଁ ଏକ ପର୍ଯ୍ୟାୟ ଅଧିବେଶନ ସ୍ନାପସଟ୍ ବ୍ୟାକଅପ୍ କରିବ | ଯଦି ଏହି ବୈଶିଷ୍ଟ୍ୟ ସକ୍ଷମ ହୋଇଛି, Notepads ଆପଣଙ୍କୁ ଆପ୍ ବନ୍ଦରେ ଆପଣଙ୍କର କାର୍ଯ୍ୟ ସଞ୍ଚୟ କରିବାକୁ ମନେ ପକାଇବ ନାହିଁ | ଦୟାକରି ଏହା ମଧ୍ୟ ମନେରଖନ୍ତୁ ଯେ ଅଧିବେଶନ ସ୍ନାପସଟ୍ କେବଳ Notepads ପ୍ରଥମ କିମ୍ବା ମୁଖ୍ୟ ୱିଣ୍ଡୋରେ କାମ କରେ |</value>
+    <value>Kad je aktivirano, Notepads će pamtiti trenutačnu sesiju za sljedeće pokretanje i redovito spremati sigurnosne kopije snimaka sesija, kako bi se spriječio slučajni gubitak podataka zbog nespremljenih promjena. Notepads te NEĆE podsjetiti da spremiš svoj rad kad se program zatvara, ako je ova funkcija aktivirana. Misli na to, da snimka sesije radi samo u prvom ili glavnom prozoru programa.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସକ୍ଷମ କରନ୍ତୁ</value>
+    <value>Aktiviraj snimke sesije</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସକ୍ଷମ କରନ୍ତୁ</value>
+    <value>Aktiviraj snimke sesije</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>ଅଧିବେଶନ ସ୍ନାପସଟ୍ ସେଟିଙ୍ଗ୍ସ</value>
-    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
+    <value>Postavke za snimke sesije</value>
+    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>ଭୁଲ ବନାନ ଶବ୍ଦଗୁଡ଼ିକୁ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <value>Istakni pravopisne greške</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>ଭୁଲ ବନାନ ଶବ୍ଦଗୁଡ଼ିକୁ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <value>Istakni pravopisne greške</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>ବନାନ</value>
+    <value>Pravopis</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ସବୁବେଳେ ଏକ ନୂଆ ଟ୍ୟାବ୍ ତିଆରି କରିବା ପରିବର୍ତ୍ତେ ଏକ ନୂତନ ୱିଣ୍ଡୋରେ ଫାଇଲ୍ ଖୋଲିବ |</value>
+    <value>Kad je aktivirano, Notepads će uvijek otvoriti novi prozor umjesto nove kartice.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>ସର୍ବଦା ନୂତନ ୱିଣ୍ଡୋ ଖୋଲ</value>
+    <value>Uvijek otvori novi prozor</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>ସର୍ବଦା ନୂତନ ୱିଣ୍ଡୋ ଖୋଲ</value>
+    <value>Uvijek otvori novi prozor</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>ପସନ୍ଦଗୁଡିକ ଆରମ୍ଭ କରନ୍ତୁ</value>
+    <value>Postavke za pokretanje</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <value>Istakni trenutačni redak</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ହାଇଲାଇଟ୍ କରନ୍ତୁ</value>
+    <value>Istakni trenutačni redak</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>କଷ୍ଟମ୍ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍</value>
+    <value>Prilagođena tražilica</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*ଏହି ଫର୍ମାଟ୍ ର ଏକ URL ପ୍ରବେଶ କରନ୍ତୁ https://www.example.com/search?q= {0}</value>
+    <value>*Upiši URL u formatu https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>ଇଣ୍ଟରନେଟରେ ସନ୍ଧାନ କରିବା ସମୟରେ ଡିଫଲ୍ଟ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍ ପାଇଁ ମନୋନୀତ ସେଟିଂ</value>
+    <value>Postavke za standardnu tražilicu za web-pretragu.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>ଡିଫଲ୍ଟ ସର୍ଚ୍ଚ ଇଞ୍ଜିନ୍</value>
+    <value>Standardna tražilica</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>ସ୍ୱତଃ ଏନକୋଡିଂ ର ଅନୁମାନ (ପରାମର୍ଶିତ)</value>
+    <value>Automatski pogodi kodiranje (preporučeno)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
@@ -370,7 +370,7 @@
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ଚାରିପାଖରେ ପରିସର ଦେଖାନ୍ତୁ |</value>
+    <value>Uokviri trenutačni redak.</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
