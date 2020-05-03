@@ -22,8 +22,6 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.5"
                                      Color="LightGray"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="#CACACA"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
@@ -32,16 +30,12 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.3"
                                      Color="Black"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="#363636"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="{ThemeResource SystemColorGrayTextColor}"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
