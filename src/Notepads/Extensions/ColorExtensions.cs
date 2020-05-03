@@ -30,10 +30,10 @@
             //#FD92
             //#DAC
 
-            bool existAlpha = hex.Length == 8 || hex.Length == 4;
+            bool isAlphaChannelPresent = hex.Length == 8 || hex.Length == 4;
             bool isDoubleHex = hex.Length == 8 || hex.Length == 6;
 
-            if (!existAlpha && hex.Length != 6 && hex.Length != 3)
+            if (!isAlphaChannelPresent && hex.Length != 6 && hex.Length != 3)
             {
                 throw new ArgumentException($@"Input string {hexColorString} is invalid color.
 The supported formats are:
@@ -46,7 +46,7 @@ The supported formats are:
             int n = 0;
             byte a;
             int hexCount = isDoubleHex ? 2 : 1;
-            if (existAlpha)
+            if (isAlphaChannelPresent)
             {
                 n = hexCount;
                 a = (byte)ConvertHexToByte(hex, 0, hexCount);
