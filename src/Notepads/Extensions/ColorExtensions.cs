@@ -49,12 +49,12 @@ The supported formats are:
             if (existAlpha)
             {
                 n = hexCount;
-                a = (byte) ConvertHexToByte(hex, 0, hexCount);
+                a = (byte)ConvertHexToByte(hex, 0, hexCount);
                 if (!isDoubleHex)
                 {
                     //#FD92 = #FFDD9922
                     //Duplicate characters
-                    a = (byte) (a * 16 + a);
+                    a = (byte)((a * 16) + a);
                 }
             }
             else
@@ -62,16 +62,16 @@ The supported formats are:
                 a = 0xFF;
             }
 
-            var r = (byte) ConvertHexToByte(hex, n, hexCount);
-            var g = (byte) ConvertHexToByte(hex, n + hexCount, hexCount);
-            var b = (byte) ConvertHexToByte(hex, n + 2 * hexCount, hexCount);
+            var r = (byte)ConvertHexToByte(hex, n, hexCount);
+            var g = (byte)ConvertHexToByte(hex, n + hexCount, hexCount);
+            var b = (byte)ConvertHexToByte(hex, n + (2 * hexCount), hexCount);
             if (!isDoubleHex)
             {
                 //#FD92 = #FFDD9922
 
-                r = (byte) (r * 16 + r);
-                g = (byte) (g * 16 + g);
-                b = (byte) (b * 16 + b);
+                r = (byte)((r * 16) + r);
+                g = (byte)((g * 16) + g);
+                b = (byte)((b * 16) + b);
             }
 
             return Windows.UI.Color.FromArgb(a, r, g, b);
