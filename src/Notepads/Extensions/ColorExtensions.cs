@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="hexColorString"></param>
         /// <returns></returns>
-        public static Color ToColor(string hexColorString)
+        public static Color ConvertColorFromHexString(string hexColorString)
         {
             if (string.IsNullOrEmpty(hexColorString)) throw new ArgumentNullException(nameof(hexColorString));
 
