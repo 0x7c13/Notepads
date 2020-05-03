@@ -12,6 +12,7 @@
         public static event EventHandler<int> OnFontSizeChanged;
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
+        public static event EventHandler<bool> OnDefaultDisplayLineNumbersViewStateChanged;
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
@@ -229,6 +230,19 @@
             }
         }
 
+        public static bool _displayLineNumbers;
+
+        public static bool EditorDisplayLineNumbers
+        {
+            get => _displayLineNumbers;
+            set
+            {
+                _displayLineNumbers = value;
+                OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -237,7 +251,7 @@
 
             InitializeSpellingSettings();
 
-            InitializeLineHighlighterSettings();
+            InitializeDisplaySettings();
 
             InitializeLineEndingSettings();
 
@@ -330,7 +344,7 @@
             }
         }
 
-        private static void InitializeLineHighlighterSettings()
+        private static void InitializeDisplaySettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
             {
@@ -339,6 +353,15 @@
             else
             {
                 _isLineHighlighterEnabled = true;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDisplayLineNumbersBool) is bool displayLineNumbers)
+            {
+                _displayLineNumbers = displayLineNumbers;
+            }
+            else
+            {
+                _displayLineNumbers = true;
             }
         }
 

@@ -158,6 +158,12 @@
             }
         }
 
+        public bool DisplayLineNumbers
+        {
+            get => TextEditorCore.DisplayLineNumbers;
+            set => TextEditorCore.DisplayLineNumbers = value;
+        }
+
         public TextEditor()
         {
             InitializeComponent();
