@@ -31,8 +31,8 @@
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
-        private bool _isLineCachePendingUpdate = true;
-        private string[] _contentLinesCache;
+        private bool _isDocumentLinesCachePendingUpdate = true;
+        private string[] _documentLinesCache; // internal copy of the active document text in array format
         private string _document = string.Empty; // internal copy of the active document text
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
@@ -375,7 +375,7 @@
             {
                 Document.GetText(TextGetOptions.None, out var document);
                 _document = TrimRichEditBoxText(document);
-                _isLineCachePendingUpdate = true;
+                _isDocumentLinesCachePendingUpdate = true;
             }
         }
 
@@ -495,7 +495,7 @@
             out int lineCount,
             LineEnding lineEnding = LineEnding.Crlf)
         {
-            var lines = GetContentLinesCache();
+            var lines = GetDocumentLinesCache();
             GetTextSelectionPosition(out var start, out var end);
 
             startLineIndex = 1;
@@ -547,15 +547,15 @@
             }
         }
 
-        private string[] GetContentLinesCache()
+        private string[] GetDocumentLinesCache()
         {
-            if (_isLineCachePendingUpdate)
+            if (_isDocumentLinesCachePendingUpdate)
             {
-                _contentLinesCache = (GetText() + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-                _isLineCachePendingUpdate = false;
+                _documentLinesCache = (GetText() + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _isDocumentLinesCachePendingUpdate = false;
             }
 
-            return _contentLinesCache;
+            return _documentLinesCache;
         }
 
         /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
@@ -677,7 +677,7 @@
         {
             // Automatically indent on new lines based on current line's leading spaces/tabs
             GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
-            var lines = GetContentLinesCache();
+            var lines = GetDocumentLinesCache();
             var leadingSpacesAndTabs = lines[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
             Document.Selection.StartPosition = Document.Selection.EndPosition;

@@ -22,7 +22,7 @@
                 out _);
 
             var document = GetText();
-            var lines = GetContentLinesCache();
+            var lines = GetDocumentLinesCache();
 
             var tabStr = indent == -1 ? "\t" : new string(' ', indent);
 
@@ -99,7 +99,7 @@
                 out _);
             
             var document = GetText();
-            var lines = GetContentLinesCache();
+            var lines = GetDocumentLinesCache();
 
             var startLineInitialIndex = start - startColumn + 1;
             var endLineFinalIndex = end - endColumn + lines[endLine - 1].Length + 1;

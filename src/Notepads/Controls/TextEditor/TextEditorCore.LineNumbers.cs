@@ -55,7 +55,7 @@
                     _contentScrollViewer.VerticalOffset + _contentScrollViewer.ViewportHeight),
                 PointOptions.ClientCoordinates);
 
-            var document = GetContentLinesCache();
+            var document = GetDocumentLinesCache();
 
             Dictionary<int, Rect> lineRects = CalculateLineRects(document, startRange, endRange);
 

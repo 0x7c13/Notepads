@@ -25,7 +25,7 @@
                 if (end == start)
                 {
                     // Duplicate Line
-                    var lines = GetContentLinesCache();
+                    var lines = GetDocumentLinesCache();
                     var line = lines[startLineIndex - 1];
                     var column = Document.Selection.EndPosition + line.Length + 1;
 
