@@ -127,6 +127,7 @@
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
@@ -201,6 +202,7 @@
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
@@ -293,6 +295,14 @@
             await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 IsSpellCheckEnabled = isSpellCheckEnabled;
+            });
+        }
+
+        private async void EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged(object sender, bool displayLineNumbers)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                DisplayLineNumbers = displayLineNumbers;
             });
         }
 

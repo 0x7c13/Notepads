@@ -1,6 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-
-namespace Notepads.Controls.TextEditor
+﻿namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +9,7 @@ namespace Notepads.Controls.TextEditor
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
     using Notepads.Utilities;
+    using Microsoft.Toolkit.Uwp.Helpers;
 
     public partial class TextEditorCore
     {
@@ -54,6 +53,11 @@ namespace Notepads.Controls.TextEditor
         private void HideLineNumbers()
         {
             if (!_loaded) return;
+
+            _lineNumberCanvas?.Children.Clear();
+            _renderedLineNumberBlocks.Clear();
+            _miniRequisiteIntegerTextRenderingWidthCache.Clear();
+
             _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0, 0);
             _lineNumberGrid.Margin = new Thickness(0, 0, 0, 0);
             _lineNumberGrid.Width = 0;

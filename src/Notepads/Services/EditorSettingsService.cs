@@ -12,6 +12,7 @@
         public static event EventHandler<int> OnFontSizeChanged;
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
+        public static event EventHandler<bool> OnDefaultDisplayLineNumbersViewStateChanged;
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
@@ -237,6 +238,7 @@
             set
             {
                 _displayLineNumbers = value;
+                OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
             }
         }
