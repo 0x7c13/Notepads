@@ -32,7 +32,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
-            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.55</x:Double>
             <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
                                    Color="Gray"
                                    Opacity="0.3"
@@ -66,7 +66,7 @@
                             ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
             <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
                             ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
-            <x:Double x:Key="SetsEdgeShadowOpacity">0.4</x:Double>
+            <x:Double x:Key="SetsEdgeShadowOpacity">0.7</x:Double>
             <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
                                    Color="Transparent"
                                    FallbackColor="Transparent" />
@@ -106,7 +106,7 @@
     <Thickness x:Key="SetsViewItemHeaderMargin">0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderIconMargin">0,0,8,0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderCloseMargin">0,1,0,0</Thickness>
-    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,1,1,0</Thickness>
+    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,0,0,0</Thickness>
     <x:Double x:Key="SetsViewItemHeaderIconSize">16</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinWidth">48</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinHeight">40</x:Double>
@@ -126,8 +126,7 @@
                                       FalseValue="{StaticResource SetsViewItemHeaderCloseWidth}"
                                       TrueValue="NaN" />
 
-    <Style x:Key="TopEdgeShadowStyle" 
-           TargetType="controls:DropShadowPanel">
+    <Style x:Key="TopEdgeShadowStyle" TargetType="controls:DropShadowPanel">
         <Setter Property="BlurRadius" Value="10" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -135,8 +134,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 
-    <Style x:Key="BottomEdgeShadowStyle" 
-        TargetType="controls:DropShadowPanel">
+    <Style x:Key="BottomEdgeShadowStyle" TargetType="controls:DropShadowPanel">
         <Setter Property="BlurRadius" Value="10" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -144,8 +142,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 
-    <Style x:Key="SideEdgeShadowStyle" 
-        TargetType="controls:DropShadowPanel">
+    <Style x:Key="SideEdgeShadowStyle" TargetType="controls:DropShadowPanel">
         <Setter Property="BlurRadius" Value="8" />
         <Setter Property="ShadowOpacity" Value="{ThemeResource SetsEdgeShadowOpacity}" />
         <Setter Property="Visibility" Value="Collapsed" />
@@ -223,11 +220,15 @@
                               Content="{TemplateBinding Header}"
                               ContentTemplate="{TemplateBinding HeaderTemplate}" />
 
+            <!--  Shadow under Start Header  -->
             <controls:DropShadowPanel
                 Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
                 Grid.Column="0">
-                <Grid Height="1"/>
+                <Grid Height="1" Margin="0,0,0,-1"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="1"
@@ -238,6 +239,7 @@
             <ScrollViewer x:Name="ScrollViewer"
                           Grid.Row="1"
                           Grid.Column="1"
+                          BorderThickness="0"
                           AutomationProperties.AccessibilityView="Raw"
                           BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -256,11 +258,15 @@
                                 Padding="{TemplateBinding Padding}" />
             </ScrollViewer>
 
+            <!--  Shadow under Add Button  -->
             <controls:DropShadowPanel    
                 Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
                 Grid.Column="3">
-                <Grid Height="1"/>
+                <Grid Height="1" Margin="-1,0,0,-1"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="1"
@@ -269,11 +275,15 @@
                               Content="{TemplateBinding SetsActionHeader}"
                               ContentTemplate="{TemplateBinding SetsActionHeaderTemplate}" />
 
+            <!--  Shadow under Padding area (23040 = 3 x 8k resolution in width just in case) -->
             <controls:DropShadowPanel    
                 Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
                 Grid.Column="4">
-                <Grid Height="1"/>
+                <Grid Height="1" Margin="0,0,0,-1"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="0,-12,23040,12"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="1"
@@ -282,11 +292,15 @@
                               Content="{TemplateBinding SetsPaddingHeader}"
                               ContentTemplate="{TemplateBinding SetsPaddingHeaderTemplate}" />
 
+            <!--  Shadow under SetsEndHeader  -->
             <controls:DropShadowPanel
                 Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
                 Grid.Column="5">
-                <Grid Height="1"/>
+                <Grid Height="1" Margin="0,0,0,-1"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="1"
@@ -303,6 +317,7 @@
                               BorderBrush="{TemplateBinding BorderBrush}"
                               BorderThickness="{TemplateBinding BorderThickness}" />
 
+            <!--  Shadow above Footer  -->
             <controls:DropShadowPanel    
                 Style="{StaticResource TopEdgeShadowStyle}"
                 Canvas.ZIndex="50"
@@ -310,6 +325,9 @@
                 Grid.ColumnSpan="6" 
                 Grid.Column="0">
                 <Grid Height="1"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="0,0,23040,12"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
 
             <ContentPresenter Grid.Row="3"
@@ -951,10 +969,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
+                            <!--  Scroll to the left button bottom shadow  -->
                             <controls:DropShadowPanel
                                 Style="{StaticResource BottomEdgeShadowStyle}"
                                 Grid.Column="0">
-                                <Grid Height="1"/>
+                                <Grid Height="1" Margin="-1,0,0,-1"/>
+                                <controls:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="-1,-12,1024,12"></RectangleGeometry>
+                                </controls:DropShadowPanel.Clip>
                             </controls:DropShadowPanel>
 
                             <RepeatButton x:Name="SetsScrollBackButton"
@@ -970,32 +992,28 @@
                                 &#xE76B;
                             </RepeatButton>
 
+                            <!--  SetsItemsScrollViewer left side shadow  -->
                             <controls:DropShadowPanel 
                                 x:Name="SetsItemsScrollViewerLeftSideShadow"
                                 Style="{StaticResource SideEdgeShadowStyle}"
                                 Grid.Column="1" 
                                 HorizontalAlignment="Left">
-
+                                <Grid Width="1"/>
                                 <controls:DropShadowPanel.Clip>
                                     <RectangleGeometry Rect="-10,0,10,32"></RectangleGeometry>
                                 </controls:DropShadowPanel.Clip>
-
-                                <Grid Width="1"/>
-
                             </controls:DropShadowPanel>
 
+                            <!--  SetsItemsScrollViewer right side shadow  -->
                             <controls:DropShadowPanel 
                                 x:Name="SetsItemsScrollViewerRightSideShadow"
                                 Style="{StaticResource SideEdgeShadowStyle}"
                                 Grid.Column="1" 
                                 HorizontalAlignment="Right">
-
+                                <Grid Width="1"/>
                                 <controls:DropShadowPanel.Clip>
                                     <RectangleGeometry Rect="1,0,10,32"></RectangleGeometry>
                                 </controls:DropShadowPanel.Clip>
-
-                                <Grid Width="1"/>
-
                             </controls:DropShadowPanel>
 
                             <ScrollContentPresenter x:Name="ScrollContentPresenter"
@@ -1003,10 +1021,14 @@
                                                     TabFocusNavigation="Once"
                                                     Margin="{TemplateBinding Padding}"/>
 
+                            <!--  Scroll to the right button bottom shadow  -->
                             <controls:DropShadowPanel
                                 Style="{StaticResource BottomEdgeShadowStyle}"
                                 Grid.Column="2">
-                                <Grid Height="1"/>
+                                <Grid Height="1" Margin="0,0,0,-1"/>
+                                <controls:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                                </controls:DropShadowPanel.Clip>
                             </controls:DropShadowPanel>
 
                             <RepeatButton x:Name="SetsScrollForwardButton"

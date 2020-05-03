@@ -4,8 +4,8 @@
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Media;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
 
     public sealed partial class NotepadsMainPage
     {
@@ -19,12 +19,12 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, ThemeSettingsService.SetRequestedAccentColor);
+            await Dispatcher.CallOnUIThreadAsync(ThemeSettingsService.SetRequestedAccentColor);
         }
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
             });
@@ -32,7 +32,7 @@
 
         private async void ThemeSettingsService_OnBackgroundChanged(object sender, Brush backgroundBrush)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 RootGrid.Background = backgroundBrush;
             });

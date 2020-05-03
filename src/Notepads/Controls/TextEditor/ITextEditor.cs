@@ -52,6 +52,8 @@
 
         TextEditorMode Mode { get; }
 
+        bool DisplayLineNumbers { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,

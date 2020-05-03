@@ -13,7 +13,6 @@ namespace Notepads.Controls
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
-    using Notepads.Controls.Helpers;
     using Notepads.Controls.Markdown;
 
     /// <summary>
@@ -688,6 +687,6 @@ namespace Notepads.Controls
 
         private Type renderertype = typeof(MarkdownRenderer);
 
-        private ThemeListener themeListener;
+        //private ThemeListener themeListener;
     }
 }

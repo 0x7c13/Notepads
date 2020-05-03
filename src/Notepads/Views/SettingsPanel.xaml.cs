@@ -35,7 +35,7 @@
                     break;
             }
 
-            LoggingService.LogInfo($"Navigating to: {tag} Page", consoleOnly: true);
+            LoggingService.LogInfo($"[{nameof(SettingsPanel)}] Navigating to: {tag} Page", consoleOnly: true);
             TitleTextBlock.Text = title;
             ContentFrame.Navigate(pageType, null, new SuppressNavigationTransitionInfo());
         }

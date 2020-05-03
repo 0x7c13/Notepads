@@ -32,7 +32,7 @@
             }
         }
 
-        private async void EnterExitCompactOverlayMode()
+        private static async void EnterExitCompactOverlayMode()
         {
             if (App.IsGameBarWidget) return;
 
@@ -42,7 +42,7 @@
                     .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
                 if (!modeSwitched)
                 {
-                    LoggingService.LogError("Failed to enter CompactOverlay view mode.");
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter CompactOverlay view mode.");
                     Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
                 }
             }
@@ -52,7 +52,7 @@
                     .TryEnterViewModeAsync(ApplicationViewMode.Default);
                 if (!modeSwitched)
                 {
-                    LoggingService.LogError("Failed to enter Default view mode.");
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter Default view mode.");
                     Analytics.TrackEvent("FailedToEnterDefaultViewMode");
                 }
             }
@@ -64,20 +64,20 @@
 
             if (ApplicationView.GetForCurrentView().IsFullScreenMode)
             {
-                LoggingService.LogInfo("Existing full screen view mode.", consoleOnly: true);
+                LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Existing full screen view mode.", consoleOnly: true);
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
             else
             {
                 if (ApplicationView.GetForCurrentView().TryEnterFullScreenMode())
                 {
-                    LoggingService.LogInfo("Entered full screen view mode.", consoleOnly: true);
+                    LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Entered full screen view mode.", consoleOnly: true);
                     NotificationCenter.Instance.PostNotification(
                         _resourceLoader.GetString("TextEditor_NotificationMsg_ExitFullScreenHint"), 3000);
                 }
                 else
                 {
-                    LoggingService.LogError("Failed to enter full screen view mode.");
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter full screen view mode.");
                     Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
                 }
             }

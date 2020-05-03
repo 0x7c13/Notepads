@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.2.2.0" />
+    Version="1.2.7.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -42,7 +42,7 @@
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Notepads App"
-        BackgroundColor="transparent">
+        BackgroundColor="#404040">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Notepads">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
@@ -530,6 +530,46 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>SQL File</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\sql.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="nfo">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.nfo</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NFO File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ahk">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ahk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>AutoHotkey Script File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+              <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="zshrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.zshrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Z shell Config File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="zsh_history">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.zsh_history</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Z shell History File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

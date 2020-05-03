@@ -35,7 +35,7 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : ITextEditor
+    public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;
@@ -158,6 +158,12 @@
             }
         }
 
+        public bool DisplayLineNumbers
+        {
+            get => TextEditorCore.DisplayLineNumbers;
+            set => TextEditorCore.DisplayLineNumbers = value;
+        }
+
         public TextEditor()
         {
             InitializeComponent();
@@ -256,19 +262,20 @@
                 UnloadObject(GridSplitter);
             }
 
+            _fileStatusSemaphoreSlim.Dispose();
             TextEditorCore.Dispose();
         }
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Mode == TextEditorMode.DiffPreview)
                 {
                     SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), theme);
                     Task.Factory.StartNew(async () =>
                     {
-                        await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
+                        await Dispatcher.CallOnUIThreadAsync(() => { SideBySideDiffViewer.Focus(); });
                     });
                 }
             });
@@ -344,8 +351,8 @@
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
-                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        await CheckAndUpdateFileStatus();
+                        LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -356,7 +363,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
@@ -368,11 +375,17 @@
             }
         }
 
-        private async Task CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus(CancellationToken cancellationToken)
         {
             if (EditingFile == null) return;
 
-            await _fileStatusSemaphoreSlim.WaitAsync();
+            await _fileStatusSemaphoreSlim.WaitAsync(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
 
             FileModificationState? newState = null;
 
@@ -387,7 +400,13 @@
                     FileModificationState.Untouched;
             }
 
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
+
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FileModificationState = newState.Value;
             });
@@ -409,24 +428,7 @@
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
-                {
-                    if (_isContentPreviewPanelOpened)
-                    {
-                        _contentPreviewExtension.IsExtensionEnabled = false;
-                        CloseSplitView();
-                    }
-                    else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideFindAndReplaceControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                    else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideGoToControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                }, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
             });
         }
 
@@ -742,7 +744,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -767,6 +769,25 @@
                 return false;
             }
             return true;
+        }
+
+        private void OnEscapeKeyDown()
+        {
+            if (_isContentPreviewPanelOpened)
+            {
+                _contentPreviewExtension.IsExtensionEnabled = false;
+                CloseSplitView();
+            }
+            else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+            {
+                HideFindAndReplaceControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+            else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
         }
 
         private void LoadSplitView()
@@ -1028,7 +1049,7 @@
             TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
             LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
 
-            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
+            var lineHighlighterBorderThickness = 0.08 * LineHighlighter.Height;
 
             TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
             var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
@@ -1056,7 +1077,7 @@
 
         private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (enabled)
                 {
@@ -1072,7 +1093,7 @@
 
         private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1080,7 +1101,7 @@
 
         private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled)
                 {
@@ -1093,7 +1114,7 @@
 
         private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1101,7 +1122,7 @@
 
         private async void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });
@@ -1109,7 +1130,7 @@
 
         private async void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
             });

@@ -60,7 +60,7 @@ namespace Notepads.Controls.Markdown
             for (var i = 0; i < barSections.Length - 1; i++)
             {
                 var barSection = barSections[i];
-                if (!barSection.EndsWith("\\"))
+                if (!barSection.EndsWith("\\", StringComparison.Ordinal))
                 {
                     allBarsEscaped = false;
                     break;

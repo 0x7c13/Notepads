@@ -48,7 +48,7 @@
                                   Margin="0,0,0,0"/>
                 </StackPanel>
                 <TextBlock
-                    x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Title"
+                    x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,30,0,0"
                     FontWeight="Normal"/>
@@ -57,6 +57,12 @@
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="LineHighlighterToggle" 
                                   Margin="0,0,0,0"/>
+                    <TextBlock x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,15"/>
+                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="LineNumbersToggle" 
+                                  Margin="0,0,0,0"/>
+                    <TextBlock x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"

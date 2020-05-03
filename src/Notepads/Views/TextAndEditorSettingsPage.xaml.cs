@@ -6,61 +6,19 @@
     using System.Text;
     using Services;
     using Utilities;
-    using Windows.Globalization;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class TextAndEditorSettingsPage : Page
     {
-        /// <summary>
-        /// The collection of symbol fonts that need to be skipped from the available fonts, as they don't produce readable text
-        /// </summary>
-        private static readonly IReadOnlyCollection<string> SymbolFonts = new HashSet<string>(new[]
-        {
-            "Segoe MDL2 Assets",
-            "Webdings",
-            "Wingdings",
-            "HoloLens MDL2 Assets",
-            "Bookshelf Symbol 7",
-            "MT Extra",
-            "MS Outlook",
-            "MS Reference Specialty",
-            "Wingdings 2",
-            "Wingdings 3",
-            "Marlett"
-        });
-
         private IReadOnlyCollection<string> _availableFonts;
 
         /// <summary>
         /// Gets the collection of fonts that the user can choose from System Fonts
         /// </summary>
-        public IReadOnlyCollection<string> AvailableFonts
-        {
-            get
-            {
-                if (_availableFonts == null)
-                {
-                    try
-                    {
-                        var systemFonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
-                        _availableFonts = systemFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
-                    }
-                    catch (Exception ex)
-                    {
-                        Analytics.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
-                        {
-                            { "Exception", ex.ToString() }
-                        });
-                        _availableFonts = new List<string>();
-                    }
-                }
-                return _availableFonts;
-            }
-        }
+        public IReadOnlyCollection<string> AvailableFonts => _availableFonts ?? (_availableFonts = FontUtility.GetSystemFontFamilies());
 
-        public int[] FontSizes = new int[]
+        public int[] FontSizes =
         {
             8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
         };
@@ -72,6 +30,7 @@
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
             HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
             LineHighlighterToggle.IsOn = EditorSettingsService.IsLineHighlighterEnabled;
+            LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
 
@@ -196,6 +155,7 @@
             TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
             HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
             LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
+            LineNumbersToggle.Toggled += LineNumbersToggle_Toggled;
             FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
 
@@ -368,6 +328,11 @@
             EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
         }
 
+        private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.EditorDisplayLineNumbers = LineNumbersToggle.IsOn;
+        }
+
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
             EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
@@ -389,7 +354,7 @@
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private bool IsValidUrl(string url)
+        private static bool IsValidUrl(string url)
         {
             try
             {

@@ -86,7 +86,7 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            await _dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
@@ -292,13 +292,25 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
         }
 
@@ -380,13 +392,6 @@
         public void SetTabScrollViewerHorizontalOffset(double offset)
         {
             Sets.ScrollTo(offset);
-        }
-
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
         }
 
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
@@ -650,18 +655,16 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+                LoggingService.LogError($"[{nameof(NotepadsCore)}] Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView))
+            if (!(sender is SetsView sets))
             {
                 return;
             }
-
-            var sets = sender as SetsView;
 
             // Handle non Notepads drop event
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||

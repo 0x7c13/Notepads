@@ -20,7 +20,7 @@
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
-        private static readonly string wslRootPath = "\\\\wsl$\\";
+        private const string WslRootPath = "\\\\wsl$\\";
 
         public static bool IsFullPath(string path)
         {
@@ -36,12 +36,19 @@
             if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
             {
                 if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                {
                     finalPath = Path.Combine(Path.GetPathRoot(basePath), path.TrimStart(Path.DirectorySeparatorChar));
+                }
                 else
+                {
                     finalPath = Path.Combine(basePath, path);
+                }
             }
             else
+            {
                 finalPath = path;
+            }
+
             // Resolves any internal "..\" to get the true full path.
             return Path.GetFullPath(finalPath);
         }
@@ -56,7 +63,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to parse command line: {args} with Exception: {ex}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to parse command line: {args} with Exception: {ex}");
             }
 
             if (string.IsNullOrEmpty(path))
@@ -64,7 +71,7 @@
                 return null;
             }
 
-            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
+            LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
         }
@@ -92,16 +99,18 @@
                 path = args.Substring(1, index - 1);
             }
 
-            if (dir.StartsWith(wslRootPath))
+            if (dir.StartsWith(WslRootPath))
             {
                 if (path.StartsWith('/'))
                 {
-                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', wslRootPath.Length) + 1);
+                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', WslRootPath.Length) + 1);
                     var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
                     if (IsFullPath(fullPath)) return fullPath;
                 }
-                path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
             }
+
+            // Replace all forward slash with platform supported directory separator 
+            path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
 
             if (IsFullPath(path))
             {
@@ -414,7 +423,7 @@
         {
             if (encoding is UTF8Encoding)
             {
-                // UTF8 with BOM - UTF-8-BOM 
+                // UTF8 with BOM - UTF-8-BOM
                 // UTF8 byte order mark is: 0xEF,0xBB,0xBF
                 if (bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
                 {
@@ -437,7 +446,7 @@
 
             try
             {
-                // Prevent updates to the remote version of the file until we 
+                // Prevent updates to the remote version of the file until we
                 // finish making changes and call CompleteUpdatesAsync.
                 CachedFileManager.DeferUpdates(file);
             }
@@ -454,21 +463,21 @@
             using (var writer = new StreamWriter(stream, encoding))
             {
                 stream.Position = 0;
-                writer.Write(text);
-                writer.Flush();
+                await writer.WriteAsync(text);
+                await writer.FlushAsync();
                 // Truncate
                 stream.SetLength(stream.Position);
             }
 
             if (usedDeferUpdates)
             {
-                // Let Windows know that we're finished changing the file so the 
+                // Let Windows know that we're finished changing the file so the
                 // other app can update the remote version of the file.
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
                 if (status != FileUpdateStatus.Complete)
                 {
                     // Track FileUpdateStatus here to better understand the failed scenarios
-                    // File name, path and content are not included to respect/protect user privacy 
+                    // File name, path and content are not included to respect/protect user privacy
                     Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
                     {
                         { "FileUpdateStatus", nameof(status) }
@@ -490,7 +499,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to delete file: {filePath}, Exception: {ex.Message}");
             }
         }
 
@@ -518,7 +527,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
             }
         }
@@ -534,7 +543,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get file from future access list: {ex.Message}");
             }
             return null;
         }
@@ -551,7 +560,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
                 Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
                     new Dictionary<string, string>()
                     {

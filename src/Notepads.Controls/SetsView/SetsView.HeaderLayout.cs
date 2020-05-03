@@ -92,10 +92,10 @@ namespace Notepads.Controls
                             switch (SetsWidthBehavior)
                             {
                                 case SetsWidthMode.Equal:
-                                    width = ProvideEqualWidth(set, item, available);
+                                    width = ProvideEqualWidth(set, available);
                                     break;
                                 case SetsWidthMode.Compact:
-                                    width = ProvideCompactWidth(set, item, available);
+                                    width = ProvideCompactWidth(set);
                                     break;
                             }
 
@@ -168,7 +168,7 @@ namespace Notepads.Controls
             }
         }
 
-        private double ProvideEqualWidth(SetsViewItem set, object item, double availableWidth)
+        private double ProvideEqualWidth(SetsViewItem set, double availableWidth)
         {
             if (double.IsNaN(SelectedSetWidth))
             {
@@ -205,7 +205,7 @@ namespace Notepads.Controls
             }
         }
 
-        private double ProvideCompactWidth(SetsViewItem set, object item, double availableWidth)
+        private double ProvideCompactWidth(SetsViewItem set)
         {
             // If we're selected and have a value for that, then just return that.
             if (set.IsSelected && !double.IsNaN(SelectedSetWidth))

@@ -523,7 +523,7 @@ namespace Notepads.Controls.Markdown
             // Check the scheme is allowed.
             foreach (var scheme in MarkdownDocument.KnownSchemes)
             {
-                if (result.Scheme.Equals(scheme))
+                if (result.Scheme.Equals(scheme, StringComparison.Ordinal))
                 {
                     return true;
                 }

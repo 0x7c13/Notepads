@@ -48,7 +48,7 @@
 
         private async void OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 MarkdownTextBlock.RequestedTheme = theme;
             });
@@ -92,7 +92,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to resolve Markdown image [{e.Url}]: {ex.Message}");
+                LoggingService.LogError($"[{nameof(MarkdownExtensionView)}] Failed to resolve Markdown image [{e.Url}]: {ex.Message}");
                 e.Handled = false;
             }
 
@@ -214,7 +214,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to open Markdown Link: {ex.Message}");
+                LoggingService.LogError($"[{nameof(MarkdownExtensionView)}] Failed to open Markdown Link: {ex.Message}");
             }
         }
     }

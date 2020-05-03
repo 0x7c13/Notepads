@@ -166,7 +166,11 @@
                                             </MenuFlyoutItem.KeyboardAccelerators>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting"/>
+                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F1" IsEnabled="False"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
                                                 <Setter Property="BorderThickness" Value="0" />
@@ -245,7 +249,21 @@
                 </Grid>
             </SplitView.Content>
             <SplitView.Pane>
-                <Frame x:Name="SettingsFrame"/>
+                <Border x:Name="RootBorder" Padding="12,0,0,0">
+                    <Grid>
+                        <controls:DropShadowPanel BlurRadius="12"
+                                                  Color="Black"
+                                                  Opacity="0.3"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch">
+                            <Rectangle Fill="White" />
+                        </controls:DropShadowPanel>
+
+                        <Grid x:Name="PaneContentGrid" Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
+                            <Frame x:Name="SettingsFrame"/>
+                        </Grid>
+                    </Grid>
+                </Border>
             </SplitView.Pane>
         </SplitView>
 
@@ -343,7 +361,41 @@
                             </Core:ChangePropertyAction>
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
-
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout x:Name="PathIndicatorFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutReloadFileFromDiskFlyoutItem" 
+                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
+                                            Tag="ReloadFileFromDisk" 
+                                            Click="ReloadFileFromDisk">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE72C;"/>
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutCopyFullPathFlyoutItem"
+                                            Tag="CopyFullPath" 
+                                            Click="CopyFullPath">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8C8;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutOpenContainingFolderFlyoutItem" 
+                                            Tag="OpenContainingFolder" 
+                                            Click="OpenContainingFolder">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xED25;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
             <Grid Column="2"

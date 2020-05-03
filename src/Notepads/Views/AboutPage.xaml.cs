@@ -1,8 +1,8 @@
 ﻿namespace Notepads.Views
 {
     using System;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -10,6 +10,8 @@
 
     public sealed partial class AboutPage : Page
     {
+        public string AppName => App.ApplicationName;
+
         public string AppVersion => $"v{GetAppVersion()}";
 
         public AboutPage()
@@ -33,7 +35,7 @@
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 SetAppIconBasedOnTheme(theme);
             });
@@ -43,11 +45,11 @@
         {
             if (theme == ElementTheme.Dark || theme == ElementTheme.Default)
             {
-                AppIconImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/appicon_bs.png"));
+                AppIconImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/appicon_w.png"));
             }
             else
             {
-                AppIconImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/appicon_ws.png"));
+                AppIconImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/appicon_b.png"));
             }
         }
 

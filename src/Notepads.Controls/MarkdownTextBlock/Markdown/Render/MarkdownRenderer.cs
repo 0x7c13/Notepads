@@ -58,8 +58,7 @@ namespace Notepads.Controls.Markdown
         /// <returns>The rich text block</returns>
         protected RichTextBlock CreateOrReuseRichTextBlock(IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }

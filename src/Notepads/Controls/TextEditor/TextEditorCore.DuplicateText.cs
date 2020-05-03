@@ -25,7 +25,8 @@
                 if (end == start)
                 {
                     // Duplicate Line
-                    var line = _contentLinesCache[startLineIndex - 1];
+                    var lines = GetDocumentLinesCache();
+                    var line = lines[startLineIndex - 1];
                     var column = Document.Selection.EndPosition + line.Length + 1;
 
                     if (startColumnIndex == 1)
@@ -49,7 +50,7 @@
                     {
                         Document.Selection.EndOf(TextRangeUnit.Line, false);
 
-                        if (startLineIndex < lineCount && end < _content.Length)
+                        if (startLineIndex < lineCount && end < GetText().Length)
                             Document.Selection.StartPosition = Document.Selection.EndPosition - 1;
                     }
                     else
@@ -62,7 +63,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[TextEditorCore] Failed to duplicate text: {ex}");
+                LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to duplicate text: {ex}");
                 Analytics.TrackEvent("TextEditorCore_FailedToDuplicateText",
                     new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }

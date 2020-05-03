@@ -6,12 +6,16 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Windows.ApplicationModel.DataTransfer;
+    using Windows.System;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
+    using Notepads.Controls.Dialog;
     using Notepads.Controls.TextEditor;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
 
@@ -60,7 +64,7 @@
 
         private async void OnStatusBarVisibilityChanged(object sender, bool visible)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (ApplicationView.GetForCurrentView().ViewMode != ApplicationViewMode.CompactOverlay) ShowHideStatusBar(visible);
             });
@@ -219,6 +223,40 @@
             }
         }
 
+        private void CopyFullPath(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor?.EditingFile == null) return;
+
+            try
+            {
+                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                dataPackage.SetText(selectedEditor.EditingFile.Path);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to copy full path: {ex.Message}");
+            }
+        }
+
+        private async void OpenContainingFolder(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor?.EditingFile == null) return;
+
+            try
+            {
+                await Launcher.LaunchFolderPathAsync(Path.GetDirectoryName(selectedEditor?.EditingFile.Path));
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open containing folder: {ex.Message}");
+            }
+        }
+
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is AppBarButton button)) return;
@@ -325,16 +363,24 @@
         {
             NotepadsCore.FocusOnSelectedTextEditor();
 
+            PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
+            PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
+
+            if (App.IsGameBarWidget)
+            {
+                PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Visibility = Visibility.Collapsed;
+            }
+
             if (selectedEditor.FileModificationState == FileModificationState.Untouched)
             {
                 if (selectedEditor.EditingFile != null)
                 {
-                    FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                    PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
                 }
             }
             else if (selectedEditor.FileModificationState == FileModificationState.Modified)
             {
-                FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {

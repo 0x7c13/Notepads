@@ -59,13 +59,13 @@
                 if (await localFolder.FileExistsAsync(sessionMetaDataFileName))
                 {
                     var data = await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
-                    LoggingService.LogInfo($"[SessionUtility] Session metadata Loaded from {localFolder.Path}");
+                    LoggingService.LogInfo($"[{nameof(SessionUtility)}] Session metadata Loaded from {localFolder.Path}");
                     return data;
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionUtility] Failed to get session meta data: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionUtility)}] Failed to get session meta data: {ex.Message}");
                 Analytics.TrackEvent("FailedToGetSerializedSessionMetaData", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },

@@ -52,7 +52,7 @@ namespace Notepads.Controls.Helpers
 
             var taskCompletionSource = new TaskCompletionSource<object>();
 
-            bool ok = dispatcher.TryEnqueue(priority, () =>
+            _ = dispatcher?.TryEnqueue(priority, () =>
             {
                 try
                 {
@@ -103,7 +103,7 @@ namespace Notepads.Controls.Helpers
 
             var taskCompletionSource = new TaskCompletionSource<T>();
 
-            _ = dispatcher.TryEnqueue(priority, () =>
+            _ = dispatcher?.TryEnqueue(priority, () =>
             {
                 try
                 {
@@ -160,7 +160,7 @@ namespace Notepads.Controls.Helpers
 
             var taskCompletionSource = new TaskCompletionSource<object>();
 
-            _ = dispatcher.TryEnqueue(priority, async () =>
+            _ = dispatcher?.TryEnqueue(priority, async () =>
             {
                 try
                 {
@@ -223,7 +223,7 @@ namespace Notepads.Controls.Helpers
 
             var taskCompletionSource = new TaskCompletionSource<T>();
 
-            _ = dispatcher.TryEnqueue(priority, async () =>
+            _ = dispatcher?.TryEnqueue(priority, async () =>
             {
                 try
                 {

@@ -237,7 +237,7 @@ namespace Notepads.Controls
         /// <param name="value">Boolean value</param>
         public static void SetIgnoreColumn(ColumnDefinition obj, bool value)
         {
-            obj.SetValue(IgnoreColumnProperty, value);
+            obj?.SetValue(IgnoreColumnProperty, value);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Notepads.Controls
         /// <param name="value">Boolean value.</param>
         public static void SetConstrainColumn(ColumnDefinition obj, bool value)
         {
-            obj.SetValue(ConstrainColumnProperty, value);
+            obj?.SetValue(ConstrainColumnProperty, value);
         }
 
         /// <summary>
