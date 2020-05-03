@@ -35,12 +35,12 @@
 
             if (!isAlphaChannelPresent && hex.Length != 6 && hex.Length != 3)
             {
-                throw new ArgumentException($@"Input string {hexColorString} is invalid color.
-The supported formats are:
-- #FFDFD991 / FFDFD991
-- #DFD991 / DFD991
-- #FD92 / FD92
-- #DAC / DAC");
+                throw new ArgumentException($"Input string {hexColorString} is invalid color.\r\n" +
+                                            "The supported formats are:\r\n" +
+                                            "- #FFDFD991 / FFDFD991\r\n" +
+                                            "- #DFD991 / DFD991\r\n" +
+                                            "- #FD92 / FD92\r\n" +
+                                            "- #DAC / DAC");
             }
 
             int n = 0;
