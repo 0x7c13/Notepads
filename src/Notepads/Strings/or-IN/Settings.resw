@@ -374,15 +374,15 @@
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Display line numbers in the document.</value>
+    <value>ଡକ୍ୟୁମେଣ୍ଟ୍ ରେ ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ |</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
 </root>
