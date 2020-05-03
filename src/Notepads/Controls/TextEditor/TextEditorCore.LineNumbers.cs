@@ -37,15 +37,20 @@
         }
 
         private readonly Dictionary<int, TextBlock> _renderedLineNumberBlocks = new Dictionary<int, TextBlock>();
-        private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 6, 2);
+        private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 8, 2);
         private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
         private readonly SolidColorBrush _lineNumberDarkModeForegroundBrush = new SolidColorBrush("#99EEEEEE".ToColor());
         private readonly SolidColorBrush _lineNumberLightModeForegroundBrush = new SolidColorBrush("#99000000".ToColor());
 
+        public double GetLineNumbersPanelWidth()
+        {
+            return _loaded ? _lineNumberGrid.Width : .0f;
+        }
+
         private void ShowLineNumbers()
         {
             if (!_loaded) return;
-            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 1, 0);
+            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 2, 0);
             ResetLineNumberCanvasClipping();
             RenderLineNumbers();
         }

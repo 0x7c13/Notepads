@@ -1049,7 +1049,7 @@
             TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
             LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
 
-            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
+            var lineHighlighterBorderThickness = 0.08 * LineHighlighter.Height;
 
             TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
             var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
