@@ -33,7 +33,7 @@
 
         private bool _isLineCachePendingUpdate = true;
         private string[] _contentLinesCache;
-        private string _content = string.Empty;
+        private string _document = string.Empty; // internal copy of the active document text
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
         private readonly ICommandHandler<PointerRoutedEventArgs> _mouseCommandHandler;
@@ -194,7 +194,7 @@
 
             _lineNumberCanvas?.Children.Clear();
             _renderedLineNumberBlocks.Clear();
-            _lineNumberTextWidthCache.Clear();
+            _miniRequisiteIntegerTextRenderingWidthCache.Clear();
 
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
@@ -204,8 +204,6 @@
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
             Window.Current.CoreWindow.Activated -= OnCoreWindowActivated;
-
-            _contentLinesCache = null;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -375,8 +373,8 @@
         {
             if (args.IsContentChanging)
             {
-                Document.GetText(TextGetOptions.None, out _content);
-                _content = TrimRichEditBoxText(_content);
+                Document.GetText(TextGetOptions.None, out var document);
+                _document = TrimRichEditBoxText(document);
                 _isLineCachePendingUpdate = true;
             }
         }
@@ -442,7 +440,7 @@
         /// </summary>
         public string GetText()
         {
-            return _content;
+            return _document;
         }
 
         /// <summary>
@@ -497,7 +495,7 @@
             out int lineCount,
             LineEnding lineEnding = LineEnding.Crlf)
         {
-            UpdateContentLinesCacheIfNeeded();
+            var lines = GetContentLinesCache();
             GetTextSelectionPosition(out var start, out var end);
 
             startLineIndex = 1;
@@ -505,14 +503,14 @@
             endLineIndex = 1;
             endColumnIndex = 1;
             selectedCount = 0;
-            lineCount = _contentLinesCache.Length - 1;
+            lineCount = lines.Length - 1;
 
             var length = 0;
             bool startLocated = false;
 
             for (int i = 0; i < lineCount + 1; i++)
             {
-                var line = _contentLinesCache[i];
+                var line = lines[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -539,7 +537,7 @@
                     if (endColumnIndex == 1 && end != start)
                     {
                         endLineIndex--;
-                        endColumnIndex = _contentLinesCache[i - 1].Length + 1;
+                        endColumnIndex = lines[i - 1].Length + 1;
                     }
 
                     return;
@@ -549,30 +547,34 @@
             }
         }
 
-        private void UpdateContentLinesCacheIfNeeded()
+        private string[] GetContentLinesCache()
         {
             if (_isLineCachePendingUpdate)
             {
-                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _contentLinesCache = (GetText() + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
                 _isLineCachePendingUpdate = false;
             }
+
+            return _contentLinesCache;
         }
 
         /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
         {
             GetTextSelectionPosition(out var start, out var end);
 
-            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+            var document = GetText();
+
+            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
+                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
                 + 1;
             columnIndex = start
-                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
                 + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(_content)
-                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+            selectedCount = start != end && !string.IsNullOrEmpty(document)
+                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
                 : 0;
-            if (end > _content.Length) selectedCount -= 2;
+            if (end > document.Length) selectedCount -= 2;
         }*/
 
         public double GetFontZoomFactor()
@@ -629,7 +631,7 @@
 
         public void SwitchTextFlowDirection(FlowDirection direction)
         {
-            if (string.IsNullOrEmpty(_content))
+            if (string.IsNullOrEmpty(GetText()))
             {
                 // If content is empty, switching text flow direction might not work
                 // Let's not do anything here
@@ -675,7 +677,8 @@
         {
             // Automatically indent on new lines based on current line's leading spaces/tabs
             GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
-            var leadingSpacesAndTabs = _contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
+            var lines = GetContentLinesCache();
+            var leadingSpacesAndTabs = lines[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }

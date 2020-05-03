@@ -15,7 +15,7 @@
     {
         private readonly Dictionary<int, TextBlock> _renderedLineNumberBlocks = new Dictionary<int, TextBlock>();
         private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 4, 2);
-        private readonly Dictionary<string, double> _lineNumberTextWidthCache = new Dictionary<string, double>();
+        private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
 
         private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -55,41 +55,52 @@
                     _contentScrollViewer.VerticalOffset + _contentScrollViewer.ViewportHeight),
                 PointOptions.ClientCoordinates);
 
-            UpdateContentLinesCacheIfNeeded();
+            var document = GetContentLinesCache();
 
-            Dictionary<int, Rect> lineRects = CalculateLineRects(_contentLinesCache, startRange, endRange);
+            Dictionary<int, Rect> lineRects = CalculateLineRects(document, startRange, endRange);
 
-            var minLineNumberTextWidth = CalculateMinimumWidth(FontFamily, 
-                FontSize, (_contentLinesCache.Length - 1).ToString().Length);
+            var minLineNumberTextRenderingWidth = CalculateMinimumRequisiteIntegerTextRenderingWidth(FontFamily, 
+                FontSize, (document.Length - 1).ToString().Length);
 
-            RenderLineNumbersInternal(lineRects, minLineNumberTextWidth);
+            RenderLineNumbersInternal(lineRects, minLineNumberTextRenderingWidth);
 
-            _lineNumberGrid.Width = _lineNumberPadding.Left + minLineNumberTextWidth + _lineNumberPadding.Right;
+            _lineNumberGrid.Width = _lineNumberPadding.Left + minLineNumberTextRenderingWidth + _lineNumberPadding.Right;
         }
 
-        private double CalculateMinimumWidth(FontFamily fontFamily, double fontSize, int textLength)
-        {
-            var cacheKey = $"{fontFamily.Source}-{(int)fontSize}-{textLength}";
+        /// <summary>
+        /// Get minimum rendering width needed for displaying number text with certain length.
+        /// Take length of 3 as example, it is going to iterate thru all possible combinations like:
+        /// 111, 222, 333, 444 ... 999 to get minimum rendering length needed to display all of them (the largest width is the min here).
+        /// For mono font text, the width is always the same for same length but for non-mono font text, it depends.
+        /// Thus we need to calculate here to determine width needed for rendering integer number only text.
+        /// </summary>
+        /// <param name="fontFamily"></param>
+        /// <param name="fontSize"></param>
+        /// <param name="numberTextLength"></param>
+        /// <returns></returns>
+        private double CalculateMinimumRequisiteIntegerTextRenderingWidth(FontFamily fontFamily, double fontSize, int numberTextLength)
+        { 
+            var cacheKey = $"{fontFamily.Source}-{(int)fontSize}-{numberTextLength}";
 
-            if (_lineNumberTextWidthCache.ContainsKey(cacheKey))
+            if (_miniRequisiteIntegerTextRenderingWidthCache.ContainsKey(cacheKey))
             {
-                return _lineNumberTextWidthCache[cacheKey];
+                return _miniRequisiteIntegerTextRenderingWidthCache[cacheKey];
             }
 
-            double minWidth = 0;
+            double minRequisiteWidth = 0;
 
             for (int i = 0; i < 10; i++)
             {
-                var str = new string((char)('0' + i), textLength);
+                var str = new string((char)('0' + i), numberTextLength);
                 var width = FontUtility.GetTextSize(fontFamily, fontSize, str).Width;
-                if (width > minWidth)
+                if (width > minRequisiteWidth)
                 {
-                    minWidth = width;
+                    minRequisiteWidth = width;
                 }
             }
 
-            _lineNumberTextWidthCache[cacheKey] = minWidth;
-            return minWidth;
+            _miniRequisiteIntegerTextRenderingWidthCache[cacheKey] = minRequisiteWidth;
+            return minRequisiteWidth;
         }
 
         private Dictionary<int, Rect> CalculateLineRects(string[] lines, ITextRange startRange, ITextRange endRange)
@@ -120,7 +131,7 @@
             return lineRects;
         }
 
-        private void RenderLineNumbersInternal(Dictionary<int, Rect> lineRects, double minLineNumberTextWidth)
+        private void RenderLineNumbersInternal(Dictionary<int, Rect> lineRects, double minLineNumberTextRenderingWidth)
         {
             foreach (var lineRect in lineRects)
             {
@@ -139,7 +150,7 @@
                 {
                     _renderedLineNumberBlocks[lineRect.Key].Margin = margin;
                     _renderedLineNumberBlocks[lineRect.Key].Height = height;
-                    _renderedLineNumberBlocks[lineRect.Key].Width = minLineNumberTextWidth;
+                    _renderedLineNumberBlocks[lineRect.Key].Width = minLineNumberTextRenderingWidth;
                     _renderedLineNumberBlocks[lineRect.Key].Visibility = Visibility.Visible;
                     _renderedLineNumberBlocks[lineRect.Key].Foreground = foreground;
                 }
@@ -149,7 +160,7 @@
                     {
                         Text = lineRect.Key.ToString(),
                         Height = height,
-                        Width = minLineNumberTextWidth,
+                        Width = minLineNumberTextRenderingWidth,
                         Margin = margin,
                         TextAlignment = TextAlignment.Right,
                         HorizontalAlignment = HorizontalAlignment.Right,
