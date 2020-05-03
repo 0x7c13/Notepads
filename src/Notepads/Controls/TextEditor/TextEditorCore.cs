@@ -662,8 +662,8 @@
         {
             try
             {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
                 Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
-                Focus(FocusState.Programmatic);
                 return true;
             }
             catch
