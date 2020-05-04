@@ -180,6 +180,7 @@
         {
             var padding = FontSize / 2;
             var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2 );
+            var lineHeight = GetSingleLineHeight();
 
             foreach (var lineNumber in lineNumberTextRenderingPositions)
             {
@@ -187,9 +188,9 @@
                     lineNumber.Value.Top + lineNumberPadding.Top + Padding.Top,
                     lineNumberPadding.Right,
                     lineNumberPadding.Bottom);
-                var height = GetSingleLineHeight() + Padding.Top + lineNumberPadding.Top;
+                var height = lineHeight + Padding.Top + lineNumberPadding.Top;
 
-                _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0.08 * GetSingleLineHeight(), 0);
+                _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0.08 * lineHeight, 0);
 
                 var foreground = (ActualTheme == ElementTheme.Dark)
                     ? _lineNumberDarkModeForegroundBrush
