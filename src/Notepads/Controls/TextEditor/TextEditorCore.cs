@@ -146,6 +146,7 @@
             SelectionChanged += OnSelectionChanged;
             TextWrappingChanged += OnTextWrappingChanged;
             SizeChanged += OnSizeChanged;
+            FontSizeChanged += OnFontSizeChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
@@ -154,6 +155,11 @@
             _mouseCommandHandler = GetMouseCommandHandler();
 
             Window.Current.CoreWindow.Activated += OnCoreWindowActivated;
+        }
+
+        private void OnFontSizeChanged(object sender, double e)
+        {
+            UpdateLineHighlighterAndIndicator();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -272,6 +278,7 @@
             SelectionChanged -= OnSelectionChanged;
             TextWrappingChanged -= OnTextWrappingChanged;
             SizeChanged -= OnSizeChanged;
+            FontSizeChanged -= OnFontSizeChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
@@ -541,7 +548,8 @@
 
         public double GetSingleLineHeight()
         {
-            return 1.35 * FontSize;
+            Document.GetRange(0, 0).GetRect(PointOptions.ClientCoordinates, out var rect, out _);
+            return rect.Height;
         }
 
         /// <summary>
