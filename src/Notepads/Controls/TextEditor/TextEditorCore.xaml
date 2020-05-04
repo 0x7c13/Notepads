@@ -75,23 +75,43 @@
                             CornerRadius="{TemplateBinding CornerRadius}" 
                             MinHeight="{ThemeResource TextControlThemeMinHeight}" 
                             MinWidth="{ThemeResource TextControlThemeMinWidth}" 
-                            Grid.RowSpan="1" 
                             Grid.Row="1"/>
-                        <ScrollViewer 
-                            x:Name="ContentElement" 
-                            AutomationProperties.AccessibilityView="Raw" 
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
-                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" 
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" 
-                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" 
-                            IsTabStop="False" 
-                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" 
-                            Margin="{TemplateBinding BorderThickness}" 
-                            Padding="{TemplateBinding Padding}" 
-                            Grid.Row="1" 
-                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" 
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" 
-                            ZoomMode="Disabled"/>
+                        <Grid x:Name="RootGrid" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="LineNumberColumnDefinition" Width="Auto"/>
+                                <ColumnDefinition x:Name="TextEditorColumnDefinition" Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Canvas x:Name="LineHighlighterAndIndicatorCanvas" Grid.ColumnSpan="2">
+                                <Border x:Name="LineIndicator"
+                                        BorderBrush="{StaticResource SystemControlForegroundAccentBrush}"
+                                        Visibility="Collapsed"/>
+                                <Border x:Name="LineHighlighter"
+                                        BorderBrush="{ThemeResource SystemControlBackgroundListMediumRevealBorderBrush}"
+                                        Visibility="Collapsed"/>
+                            </Canvas>
+                            <Grid x:Name="LineNumberGrid" 
+                                  Grid.Column="0"
+                                  BorderThickness="0,0,0,0"
+                                  BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}">
+                                <Canvas x:Name="LineNumberCanvas"/>
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <ScrollViewer 
+                                x:Name="ContentElement" 
+                                AutomationProperties.AccessibilityView="Raw" 
+                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
+                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" 
+                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" 
+                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" 
+                                IsTabStop="False" 
+                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" 
+                                Margin="{TemplateBinding BorderThickness}" 
+                                Padding="{TemplateBinding Padding}" 
+                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" 
+                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" 
+                                ZoomMode="Disabled"/>
+                            </Grid>
+                        </Grid>
                         <TextBlock 
                             x:Name="PlaceholderTextContentPresenter" 
                             Foreground="{ThemeResource TextControlPlaceholderForeground}" 

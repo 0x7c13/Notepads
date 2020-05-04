@@ -106,7 +106,7 @@
     <Thickness x:Key="SetsViewItemHeaderMargin">0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderIconMargin">0,0,8,0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderCloseMargin">0,1,0,0</Thickness>
-    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,1,1,0</Thickness>
+    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,0,0,0</Thickness>
     <x:Double x:Key="SetsViewItemHeaderIconSize">16</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinWidth">48</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinHeight">40</x:Double>
@@ -239,6 +239,7 @@
             <ScrollViewer x:Name="ScrollViewer"
                           Grid.Row="1"
                           Grid.Column="1"
+                          BorderThickness="0"
                           AutomationProperties.AccessibilityView="Raw"
                           BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -399,7 +400,7 @@
                     HorizontalAlignment="Right"
                     Visibility="Collapsed"
                     Width="1"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
                     BorderThickness="1"
                     Margin="0,6,0,6"/>
 

@@ -26,13 +26,13 @@
             VerticalScrollMode="Auto">
             <StackPanel HorizontalAlignment="Left">
                 <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                    <Image x:Name="AppIconImage" Width="90" Source="/Assets/appicon_ws.png"/>
+                    <Image x:Name="AppIconImage" Width="90" Margin="-6,0,0,0" Source="/Assets/appicon_ws.png"/>
                     <StackPanel Margin="10,0,0,0">
                         <TextBlock
                             Margin="0,5,0,0"
                             FontWeight="Normal"
-                            FontSize="26"
-                            Text="Notepads" />
+                            FontSize="25"
+                            Text="{x:Bind AppName, Mode=OneTime}" />
                         <TextBlock
                             Margin="2,5,0,5"
                             FontWeight="Normal"

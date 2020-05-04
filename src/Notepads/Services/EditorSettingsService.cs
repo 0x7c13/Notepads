@@ -12,6 +12,7 @@
         public static event EventHandler<int> OnFontSizeChanged;
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
+        public static event EventHandler<bool> OnDefaultDisplayLineNumbersViewStateChanged;
         public static event EventHandler<LineEnding> OnDefaultLineEndingChanged;
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
@@ -58,14 +59,14 @@
             }
         }
 
-        private static bool _isLineHighlighterEnabled;
+        private static bool _editorDisplayLineHighlighter;
 
-        public static bool IsLineHighlighterEnabled
+        public static bool EditorDisplayLineHighlighter
         {
-            get => _isLineHighlighterEnabled;
+            get => _editorDisplayLineHighlighter;
             set
             {
-                _isLineHighlighterEnabled = value;
+                _editorDisplayLineHighlighter = value;
                 OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
@@ -229,6 +230,19 @@
             }
         }
 
+        public static bool _displayLineNumbers;
+
+        public static bool EditorDisplayLineNumbers
+        {
+            get => _displayLineNumbers;
+            set
+            {
+                _displayLineNumbers = value;
+                OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -237,7 +251,7 @@
 
             InitializeSpellingSettings();
 
-            InitializeLineHighlighterSettings();
+            InitializeDisplaySettings();
 
             InitializeLineEndingSettings();
 
@@ -330,15 +344,24 @@
             }
         }
 
-        private static void InitializeLineHighlighterSettings()
+        private static void InitializeDisplaySettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool displayLineHighlighter)
             {
-                _isLineHighlighterEnabled = isLineHighlighterEnabled;
+                _editorDisplayLineHighlighter = displayLineHighlighter;
             }
             else
             {
-                _isLineHighlighterEnabled = true;
+                _editorDisplayLineHighlighter = true;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDisplayLineNumbersBool) is bool displayLineNumbers)
+            {
+                _displayLineNumbers = displayLineNumbers;
+            }
+            else
+            {
+                _displayLineNumbers = true;
             }
         }
 
@@ -416,7 +439,7 @@
 
         private static void InitializeSearchEngineSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr && ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadesearchUrl)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr)
             {
                 if (Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
                 {
@@ -426,12 +449,18 @@
                 {
                     _editorDefaultSearchEngine = SearchEngine.Bing;
                 }
-
-                _editorCustomMadeSearchUrl = customMadesearchUrl;
             }
             else
             {
                 _editorDefaultSearchEngine = SearchEngine.Bing;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadeSearchUrl)
+            {
+                _editorCustomMadeSearchUrl = customMadeSearchUrl;
+            }
+            else
+            {
                 _editorCustomMadeSearchUrl = string.Empty;
             }
         }
