@@ -506,7 +506,9 @@
                                     <AppBarButton x:Name="ZoomOut" 
                                                   x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
                                                   LabelPosition="Collapsed"
-                                                  VerticalAlignment="Center" Width="40"
+                                                  VerticalAlignment="Center"
+                                                  BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
+                                                  Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Minus" 
                                                   Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                         <AppBarButton.Icon>
@@ -525,7 +527,9 @@
                                     <AppBarButton x:Name="ZoomIn"
                                                   x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
                                                   LabelPosition="Collapsed" 
-                                                  VerticalAlignment="Center" Width="40"
+                                                  VerticalAlignment="Center"
+                                                  BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
+                                                  Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Plus" 
                                                   Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                         <AppBarButton.Icon>
