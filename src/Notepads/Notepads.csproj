@@ -124,6 +124,7 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
