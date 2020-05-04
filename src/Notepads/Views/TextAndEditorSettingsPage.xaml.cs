@@ -29,7 +29,7 @@
 
             TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
             HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            LineHighlighterToggle.IsOn = EditorSettingsService.IsLineHighlighterEnabled;
+            LineHighlighterToggle.IsOn = EditorSettingsService.EditorDisplayLineHighlighter;
             LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
@@ -325,7 +325,7 @@
 
         private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsLineHighlighterEnabled = LineHighlighterToggle.IsOn;
+            EditorSettingsService.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
         }
 
         private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)

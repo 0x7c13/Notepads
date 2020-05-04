@@ -37,25 +37,22 @@
         }
 
         private readonly Dictionary<int, TextBlock> _renderedLineNumberBlocks = new Dictionary<int, TextBlock>();
-        private readonly Thickness _lineNumberPadding = new Thickness(6, 2, 8, 2);
         private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
         private readonly SolidColorBrush _lineNumberDarkModeForegroundBrush = new SolidColorBrush("#99EEEEEE".ToColor());
         private readonly SolidColorBrush _lineNumberLightModeForegroundBrush = new SolidColorBrush("#99000000".ToColor());
 
-        public double GetLineNumbersPanelWidth()
-        {
-            return _loaded ? _lineNumberGrid.Width : .0f;
-        }
-
-        private void ShowLineNumbers()
+        public void ShowLineNumbers()
         {
             if (!_loaded) return;
-            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 2, 0);
+
             ResetLineNumberCanvasClipping();
-            RenderLineNumbers();
+            UpdateLineNumbersRendering();
+
+            // Call UpdateLineHighlighterAndIndicator to adjust it's state
+            UpdateLineHighlighterAndIndicator();
         }
 
-        private void HideLineNumbers()
+        public void HideLineNumbers()
         {
             if (!_loaded) return;
 
@@ -65,12 +62,11 @@
 
             _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0, 0);
             _lineNumberGrid.Margin = new Thickness(0, 0, 0, 0);
-            _lineNumberGrid.Width = 0;
-        }
+            _lineNumberGrid.Width = .0f;
 
-        private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            RenderLineNumbers();
+            // Call UpdateLineHighlighterAndIndicator to adjust it's state
+            // Since when line highlighter is disabled, we still show the line indicator when line numbers are showing
+            UpdateLineHighlighterAndIndicator();
         }
 
         private void OnLineNumberGridSizeChanged(object sender, SizeChangedEventArgs e)
@@ -83,7 +79,7 @@
             if (!_loaded || !DisplayLineNumbers) return;
 
             _lineNumberGrid.Margin = new Thickness(0, 0, -1 * Padding.Left + 1, 0);
-            RectangleGeometry rectangle = new RectangleGeometry
+            _lineNumberGrid.Clip = new RectangleGeometry
             {
                 Rect = new Rect(
                     0,
@@ -91,10 +87,9 @@
                     _lineNumberGrid.ActualWidth,
                     Math.Clamp(_lineNumberGrid.ActualHeight - (Padding.Top + Padding.Bottom), .0f, Double.PositiveInfinity))
             };
-            _lineNumberGrid.Clip = rectangle;
         }
 
-        private void RenderLineNumbers()
+        private void UpdateLineNumbersRendering()
         {
             if (!_loaded || !DisplayLineNumbers) return;
 
@@ -115,8 +110,6 @@
                 FontSize, (document.Length - 1).ToString().Length);
 
             RenderLineNumbersInternal(lineNumberTextRenderingPositions, minLineNumberTextRenderingWidth);
-
-            _lineNumberGrid.Width = _lineNumberPadding.Left + minLineNumberTextRenderingWidth + _lineNumberPadding.Right;
         }
 
         /// <summary>
@@ -185,13 +178,18 @@
 
         private void RenderLineNumbersInternal(Dictionary<int, Rect> lineNumberTextRenderingPositions, double minLineNumberTextRenderingWidth)
         {
+            var padding = FontSize / 2;
+            var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2 );
+
             foreach (var lineNumber in lineNumberTextRenderingPositions)
             {
-                var margin = new Thickness(_lineNumberPadding.Left,
-                    lineNumber.Value.Top + _lineNumberPadding.Top + Padding.Top,
-                    _lineNumberPadding.Right,
-                    _lineNumberPadding.Bottom);
-                var height = (1.35 * FontSize) + Padding.Top + _lineNumberPadding.Top;
+                var margin = new Thickness(lineNumberPadding.Left,
+                    lineNumber.Value.Top + lineNumberPadding.Top + Padding.Top,
+                    lineNumberPadding.Right,
+                    lineNumberPadding.Bottom);
+                var height = GetSingleLineHeight() + Padding.Top + lineNumberPadding.Top;
+
+                _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0.08 * GetSingleLineHeight(), 0);
 
                 var foreground = (ActualTheme == ElementTheme.Dark)
                     ? _lineNumberDarkModeForegroundBrush
@@ -233,6 +231,8 @@
             {
                 numberBlock.Value.Visibility = Visibility.Collapsed;
             }
+
+            _lineNumberGrid.Width = lineNumberPadding.Left + minLineNumberTextRenderingWidth + lineNumberPadding.Right;
         }
     }
 }

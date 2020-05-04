@@ -59,14 +59,14 @@
             }
         }
 
-        private static bool _isLineHighlighterEnabled;
+        private static bool _editorDisplayLineHighlighter;
 
-        public static bool IsLineHighlighterEnabled
+        public static bool EditorDisplayLineHighlighter
         {
-            get => _isLineHighlighterEnabled;
+            get => _editorDisplayLineHighlighter;
             set
             {
-                _isLineHighlighterEnabled = value;
+                _editorDisplayLineHighlighter = value;
                 OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
@@ -346,13 +346,13 @@
 
         private static void InitializeDisplaySettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool displayLineHighlighter)
             {
-                _isLineHighlighterEnabled = isLineHighlighterEnabled;
+                _editorDisplayLineHighlighter = displayLineHighlighter;
             }
             else
             {
-                _isLineHighlighterEnabled = true;
+                _editorDisplayLineHighlighter = true;
             }
 
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDisplayLineNumbersBool) is bool displayLineNumbers)
