@@ -747,6 +747,72 @@
   <ItemGroup>
     <PRIResource Include="Strings\hr-HR\Settings.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\bg-BG\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-CH\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-DE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\es-ES\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fi-FI\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fr-FR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hi-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hu-HU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\it-IT\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ja-JP\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ka-GE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ko-KR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\or-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pt-BR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ru-RU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\tr-TR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\uk-UA\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-CN\Manifest.resw" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
