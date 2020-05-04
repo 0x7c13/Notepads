@@ -400,7 +400,7 @@
                     HorizontalAlignment="Right"
                     Visibility="Collapsed"
                     Width="1"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
                     BorderThickness="1"
                     Margin="0,6,0,6"/>
 

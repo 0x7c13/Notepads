@@ -82,7 +82,7 @@
         {
             if (!_loaded || !DisplayLineNumbers) return;
 
-            _lineNumberGrid.Margin = new Thickness(0, 0, -1 * Padding.Left, 0);
+            _lineNumberGrid.Margin = new Thickness(0, 0, -1 * Padding.Left + 1, 0);
             RectangleGeometry rectangle = new RectangleGeometry
             {
                 Rect = new Rect(
