@@ -118,199 +118,199 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AegisubAdvancedSubtitleFileDisplayName" xml:space="preserve">
-    <value>Aegisub Advanced Subtitle File</value>
+    <value>एजिसब उन्नत उपशीर्षक फ़ाइल</value>
     <comment>.ass</comment>
   </data>
   <data name="AspFileDisplayName" xml:space="preserve">
-    <value>ASP File</value>
+    <value>एएसपी फ़ाइल</value>
     <comment>.asp, .aspx</comment>
   </data>
   <data name="AutoHotkeyScriptFileDisplayName" xml:space="preserve">
-    <value>AutoHotkey Script File</value>
+    <value>ऑटोहॉटकी स्क्रिप्ट फ़ाइल</value>
     <comment>.ahk</comment>
   </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
-    <value>Bash History File</value>
+    <value>बास इतिहास फ़ाइल</value>
     <comment>.bash_history</comment>
   </data>
   <data name="BashScriptFileDisplayName" xml:space="preserve">
-    <value>Bash Script File</value>
+    <value>बास स्क्रिप्ट फ़ाइल</value>
     <comment>.bash</comment>
   </data>
   <data name="BibTeXFileDisplayName" xml:space="preserve">
-    <value>BibTeX File</value>
+    <value>बिब्टेक्स फ़ाइल</value>
     <comment>.bib</comment>
   </data>
   <data name="BuildPathFileDisplayName" xml:space="preserve">
-    <value>Build Path File</value>
+    <value>निर्माण मार्ग फ़ाइल</value>
     <comment>.buildpath</comment>
   </data>
   <data name="CFileDisplayName" xml:space="preserve">
-    <value>C File</value>
+    <value>सी फ़ाइल</value>
     <comment>.c, .m</comment>
   </data>
   <data name="CgiFileDisplayName" xml:space="preserve">
-    <value>CGI File</value>
+    <value>सीजीआई फ़ाइल</value>
     <comment>.cgi</comment>
   </data>
   <data name="CmakeFileDisplayName" xml:space="preserve">
-    <value>Cmake File</value>
+    <value>सीमेक फ़ाइल</value>
     <comment>.cmake</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
-    <value>Configuration Settings</value>
+    <value>कॉन्फ़िगरेशन सेटिंग्स</value>
     <comment>.cfg, .config, .cnf, .conf</comment>
   </data>
   <data name="CppFileDisplayName" xml:space="preserve">
-    <value>C++ File</value>
+    <value>सी++ फ़ाइल</value>
     <comment>.cpp, .cc, .mm</comment>
   </data>
   <data name="CSharpFileDisplayName" xml:space="preserve">
-    <value>C# File</value>
+    <value>सी# फ़ाइल</value>
     <comment>.cs</comment>
   </data>
   <data name="CssFileDisplayName" xml:space="preserve">
-    <value>CSS File</value>
+    <value>सीएसएस फ़ाइल</value>
     <comment>.css, .scss</comment>
   </data>
   <data name="GitAttributesFileDisplayName" xml:space="preserve">
-    <value>Git Attributes File</value>
+    <value>गिट विशेषताएं फ़ाइल</value>
     <comment>.gitattributes</comment>
   </data>
   <data name="GitConfigFileDisplayName" xml:space="preserve">
-    <value>Git Config File</value>
+    <value>गिट कॉन्फिग फाइल</value>
     <comment>.gitconfig</comment>
   </data>
   <data name="GitIgnoreFileDisplayName" xml:space="preserve">
-    <value>Git Ignore File</value>
+    <value>गिट अनदेखा फ़ाइल</value>
     <comment>.gitignore</comment>
   </data>
   <data name="GoFileDisplayName" xml:space="preserve">
-    <value>Go File</value>
+    <value>गो फ़ाइल</value>
     <comment>.go</comment>
   </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">
-    <value>Header File</value>
+    <value>शीर्ष लेख फ़ाइल</value>
     <comment>.h, .hpp</comment>
   </data>
   <data name="HtmlFileDisplayName" xml:space="preserve">
-    <value>HTML File</value>
+    <value>एचटीएमएल फ़ाइल</value>
     <comment>.html, .htm</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
-    <value>Initialization File</value>
+    <value>प्रारंभिक फ़ाइल</value>
     <comment>.ini</comment>
   </data>
   <data name="JavaFileDisplayName" xml:space="preserve">
-    <value>Java File</value>
+    <value>जावा फ़ाइल</value>
     <comment>.java</comment>
   </data>
   <data name="JavascriptFileDisplayName" xml:space="preserve">
-    <value>Javascript File</value>
+    <value>जावास्क्रिप्ट फ़ाइल</value>
     <comment>.js</comment>
   </data>
   <data name="JsonFileDisplayName" xml:space="preserve">
-    <value>JSON File</value>
+    <value>जेसन फ़ाइल</value>
     <comment>.json</comment>
   </data>
   <data name="JspFileDisplayName" xml:space="preserve">
-    <value>JSP File</value>
+    <value>जेएसपी फ़ाइल</value>
     <comment>.jsp, .jspx</comment>
   </data>
   <data name="LogFileDisplayName" xml:space="preserve">
-    <value>Log File</value>
+    <value>लॉग फ़ाइल</value>
     <comment>.log</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
-    <value>LUA File</value>
+    <value>लुआ फ़ाइल</value>
     <comment>.lua</comment>
   </data>
   <data name="MarkdownFileDisplayName" xml:space="preserve">
-    <value>Markdown File</value>
+    <value>मार्कदाउन फ़ाइल</value>
     <comment>.md, .markdown</comment>
   </data>
   <data name="NfoFileDisplayName" xml:space="preserve">
-    <value>NFO File</value>
+    <value>एनफो फ़ाइल</value>
     <comment>.nfo</comment>
   </data>
   <data name="NpmConfigFileDisplayName" xml:space="preserve">
-    <value>NPM Config File</value>
+    <value>एनपीएम कॉन्फिग फाइल</value>
     <comment>.npmrc</comment>
   </data>
   <data name="PerlFileDisplayName" xml:space="preserve">
-    <value>Perl File</value>
+    <value>पर्ल फ़ाइल</value>
     <comment>.pl</comment>
   </data>
   <data name="PhpFileDisplayName" xml:space="preserve">
-    <value>PHP File</value>
+    <value>पीएचपी फ़ाइल</value>
     <comment>.php</comment>
   </data>
   <data name="ProjectFileDisplayName" xml:space="preserve">
-    <value>Project File</value>
+    <value>प्रोजेक्ट फाइल</value>
     <comment>.project, .prj</comment>
   </data>
   <data name="PythonFileDisplayName" xml:space="preserve">
-    <value>Python File</value>
+    <value>पाइथन फ़ाइल</value>
     <comment>.py</comment>
   </data>
   <data name="RubyFileDisplayName" xml:space="preserve">
-    <value>Ruby File</value>
+    <value>रूबी फ़ाइल</value>
     <comment>.rb</comment>
   </data>
   <data name="RunCommandsFileDisplayName" xml:space="preserve">
-    <value>Run Commands File</value>
+    <value>चला कमांड फ़ाइल</value>
     <comment>.bashrc, .vimrc, .rc</comment>
   </data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve">
-    <value>Shell Script File</value>
+    <value>शेल स्क्रिप्ट फ़ाइल</value>
     <comment>.sh</comment>
   </data>
   <data name="SqlFileDisplayName" xml:space="preserve">
-    <value>SQL File</value>
+    <value>एसक्यूएल फ़ाइल</value>
     <comment>.sql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
-    <value>Sub Station Alpha Subtitle File</value>
+    <value>सब स्टेशन अल्फा उपशीर्षक फ़ाइल</value>
     <comment>.ssa</comment>
   </data>
   <data name="SubtitleFileDisplayName" xml:space="preserve">
-    <value>Subtitle File</value>
+    <value>उपशीर्षक फ़ाइल</value>
     <comment>.srt</comment>
   </data>
   <data name="TextFileDisplayName" xml:space="preserve">
-    <value>Text Document</value>
+    <value>लेख दस्तावेज़</value>
     <comment>.txt</comment>
   </data>
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
-    <value>TypeScript File</value>
+    <value>टाइपस्क्रिप्ट फ़ाइल</value>
     <comment>.ts</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
-    <value>Visual Basic File</value>
+    <value>विजुअल बेसिक फ़ाइल</value>
     <comment>.vb</comment>
   </data>
   <data name="VueConfigFileDisplayName" xml:space="preserve">
-    <value>Vue Config File</value>
+    <value>वीयू कॉन्फ़िग फ़ाइल</value>
     <comment>.vuerc</comment>
   </data>
   <data name="VueFileDisplayName" xml:space="preserve">
-    <value>Vue File</value>
+    <value>वीयू फ़ाइल</value>
     <comment>.vue</comment>
   </data>
   <data name="XmlFileDisplayName" xml:space="preserve">
-    <value>XML File</value>
+    <value>एक्सएमएल फ़ाइल</value>
     <comment>.xml</comment>
   </data>
   <data name="YamlFileDisplayName" xml:space="preserve">
-    <value>YAML File</value>
+    <value>यामल फ़ाइल</value>
     <comment>.yml, .yaml</comment>
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
-    <value>Z shell Config File</value>
+    <value>ज़ी शेल कॉन्फिग फाइल</value>
     <comment>zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
-    <value>Z shell History File</value>
+    <value>ज़ी शेल इतिहास फाइल</value>
     <comment>.zsh_history</comment>
   </data>
 </root>
