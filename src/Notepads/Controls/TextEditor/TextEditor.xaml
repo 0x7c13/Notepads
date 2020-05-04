@@ -89,14 +89,10 @@
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
-                <Border x:Name="LineHighlighter" 
-                        BorderBrush="{ThemeResource SystemControlBackgroundListMediumRevealBorderBrush}"
-                        VerticalAlignment="Top"
-                        Visibility="Collapsed"/>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
-                                       Style="{StaticResource TextEditorCore}" 
-                                       Grid.Column="0"
-                                       Padding="6 , 6, 10, 6"/>
+                                           Style="{StaticResource TextEditorCore}" 
+                                           Grid.Column="0"
+                                           Padding="6 , 6, 10, 6"/>
                 <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"
                                             Padding="0"
