@@ -108,7 +108,8 @@
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
                 { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
                 { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
-                { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
+                { "DisplayLineHighlighter", EditorSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", EditorSettingsService.EditorDisplayLineNumbers.ToString() },
                 { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
