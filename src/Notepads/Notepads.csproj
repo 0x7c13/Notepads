@@ -126,6 +126,7 @@
     </Compile>
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorScrollBarContextFlyout.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
@@ -617,7 +618,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\es-ES\Resources.resw" />

@@ -66,8 +66,12 @@
         private Canvas _lineNumberCanvas;
         private const string LineNumberGridName = "LineNumberGrid";
         private Grid _lineNumberGrid;
+        private const string ContentScrollViewerHorizontalScrollBarName = "HorizontalScrollBar";
+        private ScrollBar _contentScrollViewerHorizontalScrollBar;
+        private TextEditorScrollBarContextFlyout _contentScrollViewerHorizontalScrollBarFlyout;
         private const string ContentScrollViewerVerticalScrollBarName = "VerticalScrollBar";
         private ScrollBar _contentScrollViewerVerticalScrollBar;
+        private TextEditorScrollBarContextFlyout _contentScrollViewerVerticalScrollBarFlyout;
         private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
         private Canvas _lineHighlighterAndIndicatorCanvas;
         private const string LineHighlighterName = "LineHighlighter";
@@ -178,11 +182,27 @@
 
             _contentScrollViewer.ApplyTemplate();
             var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(_contentScrollViewer, 0);
+            _contentScrollViewerHorizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerHorizontalScrollBarName);
             _contentScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerVerticalScrollBarName);
+            _contentScrollViewerHorizontalScrollBar.ContextFlyout = _contentScrollViewerHorizontalScrollBarFlyout = new TextEditorScrollBarContextFlyout(this, ScrollBarOrientation.Horizontal);
+            _contentScrollViewerVerticalScrollBar.ContextFlyout = _contentScrollViewerVerticalScrollBarFlyout = new TextEditorScrollBarContextFlyout(this, ScrollBarOrientation.Vertical);
+            _contentScrollViewerHorizontalScrollBar.RightTapped += OnContentScrollViewerHorizontalScrollBar_RightTapped;
+            _contentScrollViewerVerticalScrollBar.RightTapped += OnContentScrollViewerVerticalScrollBar_RightTapped;
             _contentScrollViewerVerticalScrollBar.ValueChanged += OnVerticalScrollBarValueChanged;
 
             _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
+        }
+
+        private void OnContentScrollViewerVerticalScrollBar_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var verticalOffset = e.GetPosition(_contentScrollViewerVerticalScrollBar).Y * (_contentScrollViewer.ScrollableHeight / _contentScrollViewer.ViewportHeight);
+            _contentScrollViewerVerticalScrollBarFlyout.ClickLocation = e.GetPosition(_contentScrollViewerVerticalScrollBar).Y * (_contentScrollViewer.ScrollableHeight / _contentScrollViewer.ViewportHeight);
+        }
+
+        private void OnContentScrollViewerHorizontalScrollBar_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            _contentScrollViewerHorizontalScrollBarFlyout.ClickLocation = e.GetPosition(_contentScrollViewerHorizontalScrollBar).X * (_contentScrollViewer.ScrollableWidth / _contentScrollViewer.ViewportWidth);
         }
 
         private void ResetRootGridClipping()
@@ -772,6 +792,49 @@
         {
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
             base.Focus(FocusState.Programmatic);
+        }
+
+        public void SetScrollView(ScrollCommand command, ScrollBarOrientation scrollBarOrientation, double location = 0)
+        {
+            switch (command)
+            {
+                case ScrollCommand.ScrollTo:
+                    if (scrollBarOrientation == ScrollBarOrientation.Horizontal)
+                    {
+                        _contentScrollViewerHorizontalOffsetLastKnownPosition = location;
+                    }
+                    else
+                    {
+                        _contentScrollViewerVerticalOffsetLastKnownPosition = location;
+                    }
+                    break;
+                case ScrollCommand.Top:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
+                    break;
+                case ScrollCommand.Bottom:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.ScrollableHeight;
+                    break;
+                case ScrollCommand.PageUp:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.VerticalOffset - _contentScrollViewer.ViewportHeight;
+                    break;
+                case ScrollCommand.PageDown:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.VerticalOffset + _contentScrollViewer.ViewportHeight;
+                    break;
+                case ScrollCommand.LeftEdge:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = 0;
+                    break;
+                case ScrollCommand.RightEdge:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.ScrollableWidth;
+                    break;
+                case ScrollCommand.PageLeft:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.HorizontalOffset - _contentScrollViewer.ViewportWidth;
+                    break;
+                case ScrollCommand.PageRight:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.HorizontalOffset + _contentScrollViewer.ViewportWidth;
+                    break;
+            }
+
+            _contentScrollViewer.ChangeView(_contentScrollViewerHorizontalOffsetLastKnownPosition, _contentScrollViewerVerticalOffsetLastKnownPosition, null, true);
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)
