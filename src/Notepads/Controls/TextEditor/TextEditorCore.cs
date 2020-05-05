@@ -157,28 +157,6 @@
             Window.Current.CoreWindow.Activated += OnCoreWindowActivated;
         }
 
-        private void OnFontSizeChanged(object sender, double e)
-        {
-            UpdateLineHighlighterAndIndicator();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateLineHighlighterAndIndicator();
-        }
-
-        private void OnTextWrappingChanged(object sender, TextWrapping e)
-        {
-            UpdateLayout();
-            UpdateLineHighlighterAndIndicator();
-            UpdateLineNumbersRendering();
-        }
-
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            UpdateLineHighlighterAndIndicator();
-        }
-
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -205,20 +183,6 @@
 
             _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
-        }
-
-        private void OnVerticalScrollBarValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            // Make sure line number canvas is in sync with editor's ScrollViewer
-            _contentScrollViewer.StartExpressionAnimation(_lineNumberCanvas, Axis.Y);
-
-            // Make sure line highlighter and indicator canvas is in sync with editor's ScrollViewer
-            _contentScrollViewer.StartExpressionAnimation(_lineHighlighterAndIndicatorCanvas, Axis.Y);
-        }
-
-        private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ResetRootGridClipping();
         }
 
         private void ResetRootGridClipping()
@@ -408,7 +372,7 @@
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs _)
         {
             _loaded = true;
 
@@ -428,32 +392,32 @@
             if (DisplayLineNumbers) ShowLineNumbers();
         }
 
-        private void OnLostFocus(object sender, RoutedEventArgs e)
+        private void OnLostFocus(object sender, RoutedEventArgs _)
         {
             GetScrollViewerPosition(out _contentScrollViewerHorizontalOffsetLastKnownPosition, out _contentScrollViewerVerticalOffsetLastKnownPosition);
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        protected override void OnKeyDown(KeyRoutedEventArgs args)
         {
-            var result = _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(args);
 
             if (result.ShouldHandle)
             {
-                e.Handled = true;
+                args.Handled = true;
             }
 
             if (!result.ShouldSwallow)
             {
-                base.OnKeyDown(e);
+                base.OnKeyDown(args);
             }
         }
 
-        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
         {
-            var result = _mouseCommandHandler.Handle(e);
+            var result = _mouseCommandHandler.Handle(args);
             if (result.ShouldHandle)
             {
-                e.Handled = true;
+                args.Handled = true;
             }
         }
 
@@ -477,7 +441,7 @@
             }
         }
 
-        private void OnTextChanged(object sender, RoutedEventArgs e)
+        private void OnTextChanged(object sender, RoutedEventArgs _)
         {
             UpdateLineNumbersRendering();
         }
@@ -488,14 +452,14 @@
             _textSelectionEndPosition = args.SelectionStart + args.SelectionLength;
         }
 
-        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs args)
         {
-            _contentScrollViewerHorizontalOffset = e.FinalView.HorizontalOffset;
-            _contentScrollViewerVerticalOffset = e.FinalView.VerticalOffset;
-            ScrollViewerViewChanging?.Invoke(sender, e);
+            _contentScrollViewerHorizontalOffset = args.FinalView.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = args.FinalView.VerticalOffset;
+            ScrollViewerViewChanging?.Invoke(sender, args);
         }
 
-        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs _)
         {
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
@@ -512,9 +476,45 @@
             }
         }
 
-        private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs _)
         {
             UpdateLineNumbersRendering();
+        }
+
+        private void OnFontSizeChanged(object sender, double _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnTextWrappingChanged(object sender, TextWrapping _)
+        {
+            UpdateLayout();
+            UpdateLineHighlighterAndIndicator();
+            UpdateLineNumbersRendering();
+        }
+
+        private void OnSelectionChanged(object sender, RoutedEventArgs _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnVerticalScrollBarValueChanged(object sender, RangeBaseValueChangedEventArgs _)
+        {
+            // Make sure line number canvas is in sync with editor's ScrollViewer
+            _contentScrollViewer.StartExpressionAnimation(_lineNumberCanvas, Axis.Y);
+
+            // Make sure line highlighter and indicator canvas is in sync with editor's ScrollViewer
+            _contentScrollViewer.StartExpressionAnimation(_lineHighlighterAndIndicatorCanvas, Axis.Y);
+        }
+
+        private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs _)
+        {
+            ResetRootGridClipping();
         }
 
         public void Undo()

@@ -179,7 +179,7 @@
         private void RenderLineNumbersInternal(Dictionary<int, Rect> lineNumberTextRenderingPositions, double minLineNumberTextRenderingWidth)
         {
             var padding = FontSize / 2;
-            var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2 );
+            var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2);
             var lineHeight = GetSingleLineHeight();
 
             foreach (var lineNumber in lineNumberTextRenderingPositions)
