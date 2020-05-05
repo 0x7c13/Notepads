@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Windows.Foundation;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -36,7 +35,7 @@
             }
         }
 
-        private readonly Dictionary<int, TextBlock> _renderedLineNumberBlocks = new Dictionary<int, TextBlock>();
+        private readonly IList<TextBlock> _renderedLineNumberBlocks = new List<TextBlock>();
         private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
         private readonly SolidColorBrush _lineNumberDarkModeForegroundBrush = new SolidColorBrush("#99EEEEEE".ToColor());
         private readonly SolidColorBrush _lineNumberLightModeForegroundBrush = new SolidColorBrush("#99000000".ToColor());
@@ -182,28 +181,33 @@
             var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2);
             var lineHeight = GetSingleLineHeight();
 
+            var numOfReusableLineNumberBlocks = _renderedLineNumberBlocks.Count;
+
             foreach (var lineNumber in lineNumberTextRenderingPositions)
             {
                 var margin = new Thickness(lineNumberPadding.Left,
                     lineNumber.Value.Top + lineNumberPadding.Top + Padding.Top,
                     lineNumberPadding.Right,
                     lineNumberPadding.Bottom);
-                var height = lineHeight + Padding.Top + lineNumberPadding.Top;
 
-                _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0.08 * lineHeight, 0);
+                var height = lineHeight + Padding.Top + lineNumberPadding.Top;
 
                 var foreground = (ActualTheme == ElementTheme.Dark)
                     ? _lineNumberDarkModeForegroundBrush
                     : _lineNumberLightModeForegroundBrush;
 
-                // Reposition already rendered line number blocks
-                if (_renderedLineNumberBlocks.ContainsKey(lineNumber.Key))
+                // Re-use already rendered line number blocks
+                if (numOfReusableLineNumberBlocks > 0)
                 {
-                    _renderedLineNumberBlocks[lineNumber.Key].Margin = margin;
-                    _renderedLineNumberBlocks[lineNumber.Key].Height = height;
-                    _renderedLineNumberBlocks[lineNumber.Key].Width = minLineNumberTextRenderingWidth;
-                    _renderedLineNumberBlocks[lineNumber.Key].Visibility = Visibility.Visible;
-                    _renderedLineNumberBlocks[lineNumber.Key].Foreground = foreground;
+                    var index = numOfReusableLineNumberBlocks - 1;
+                    _renderedLineNumberBlocks[index].Text = lineNumber.Key.ToString();
+                    _renderedLineNumberBlocks[index].Margin = margin;
+                    _renderedLineNumberBlocks[index].Height = height;
+                    _renderedLineNumberBlocks[index].Width = minLineNumberTextRenderingWidth;
+                    _renderedLineNumberBlocks[index].Visibility = Visibility.Visible;
+                    _renderedLineNumberBlocks[index].Foreground = foreground;
+
+                    numOfReusableLineNumberBlocks--;
                 }
                 else // Render new line number block
                 {
@@ -221,18 +225,17 @@
                     };
 
                     _lineNumberCanvas.Children.Add(lineNumberBlock);
-                    _renderedLineNumberBlocks.Add(lineNumber.Key, lineNumberBlock);
+                    _renderedLineNumberBlocks.Add(lineNumberBlock);
                 }
             }
 
-            // Only show line number blocks within range (current ScrollViewer's viewport)
-            // Hide all others to avoid rendering collision from happening
-            foreach (var numberBlock in
-                _renderedLineNumberBlocks.Where(x => !lineNumberTextRenderingPositions.ContainsKey(x.Key)))
+            // Hide all un-used rendered line number block to avoid rendering collision from happening
+            for (int i = 0; i < numOfReusableLineNumberBlocks; i++)
             {
-                numberBlock.Value.Visibility = Visibility.Collapsed;
+                _renderedLineNumberBlocks[i].Visibility = Visibility.Collapsed;
             }
 
+            _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0.08 * lineHeight, 0);
             _lineNumberGrid.Width = lineNumberPadding.Left + minLineNumberTextRenderingWidth + lineNumberPadding.Right;
         }
     }
