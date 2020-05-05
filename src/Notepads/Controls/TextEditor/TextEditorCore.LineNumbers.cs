@@ -180,6 +180,10 @@
             var padding = FontSize / 2;
             var lineNumberPadding = new Thickness(padding, 2, padding + 2, 2);
             var lineHeight = GetSingleLineHeight();
+            var lineNumberTextBlockHeight = lineHeight + Padding.Top + lineNumberPadding.Top;
+            var lineNumberForeground = (ActualTheme == ElementTheme.Dark)
+                ? _lineNumberDarkModeForegroundBrush
+                : _lineNumberLightModeForegroundBrush;
 
             var numOfReusableLineNumberBlocks = _renderedLineNumberBlocks.Count;
 
@@ -190,38 +194,32 @@
                     lineNumberPadding.Right,
                     lineNumberPadding.Bottom);
 
-                var height = lineHeight + Padding.Top + lineNumberPadding.Top;
-
-                var foreground = (ActualTheme == ElementTheme.Dark)
-                    ? _lineNumberDarkModeForegroundBrush
-                    : _lineNumberLightModeForegroundBrush;
-
                 // Re-use already rendered line number blocks
                 if (numOfReusableLineNumberBlocks > 0)
                 {
                     var index = numOfReusableLineNumberBlocks - 1;
                     _renderedLineNumberBlocks[index].Text = lineNumber.Key.ToString();
                     _renderedLineNumberBlocks[index].Margin = margin;
-                    _renderedLineNumberBlocks[index].Height = height;
+                    _renderedLineNumberBlocks[index].Height = lineNumberTextBlockHeight;
                     _renderedLineNumberBlocks[index].Width = minLineNumberTextRenderingWidth;
                     _renderedLineNumberBlocks[index].Visibility = Visibility.Visible;
-                    _renderedLineNumberBlocks[index].Foreground = foreground;
+                    _renderedLineNumberBlocks[index].Foreground = lineNumberForeground;
 
                     numOfReusableLineNumberBlocks--;
                 }
-                else // Render new line number block
+                else // Render new line number block when there is nothing to re-use
                 {
                     var lineNumberBlock = new TextBlock()
                     {
                         Text = lineNumber.Key.ToString(),
-                        Height = height,
+                        Height = lineNumberTextBlockHeight,
                         Width = minLineNumberTextRenderingWidth,
                         Margin = margin,
                         TextAlignment = TextAlignment.Right,
                         HorizontalAlignment = HorizontalAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Bottom,
                         HorizontalTextAlignment = TextAlignment.Right,
-                        Foreground = foreground
+                        Foreground = lineNumberForeground
                     };
 
                     _lineNumberCanvas.Children.Add(lineNumberBlock);
