@@ -196,7 +196,6 @@
 
         private void OnContentScrollViewerVerticalScrollBar_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            var verticalOffset = e.GetPosition(_contentScrollViewerVerticalScrollBar).Y * (_contentScrollViewer.ScrollableHeight / _contentScrollViewer.ViewportHeight);
             _contentScrollViewerVerticalScrollBarFlyout.ClickLocation = e.GetPosition(_contentScrollViewerVerticalScrollBar).Y * (_contentScrollViewer.ScrollableHeight / _contentScrollViewer.ViewportHeight);
         }
 
@@ -810,9 +809,11 @@
                     break;
                 case ScrollCommand.Top:
                     _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
+                    Document.Selection.EndPosition = Document.Selection.StartPosition = 0;
                     break;
                 case ScrollCommand.Bottom:
                     _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.ScrollableHeight;
+                    Document.Selection.EndPosition = Document.Selection.StartPosition = _document.Length;
                     break;
                 case ScrollCommand.PageUp:
                     _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.VerticalOffset - _contentScrollViewer.ViewportHeight;
