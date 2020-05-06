@@ -7,22 +7,6 @@ namespace Notepads.Extensions
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Hosting;
 
-    /// <summary>
-    /// Indicates an axis in the 2D space
-    /// </summary>
-    public enum Axis
-    {
-        /// <summary>
-        /// The X axis (horizontal)
-        /// </summary>
-        X,
-
-        /// <summary>
-        /// The Y axis (vertical)
-        /// </summary>
-        Y
-    }
-
     public static class ScrollViewerExtensions
     {
         public static ExpressionAnimation StartExpressionAnimation(

@@ -3,12 +3,8 @@
     using Windows.ApplicationModel.Resources;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Notepads.Extensions;
 
-    public enum ScrollBarOrientation
-    {
-        Horizontal,
-        Vertical
-    }
     public enum ScrollCommand
     {
         ScrollTo,
@@ -34,30 +30,30 @@
         private MenuFlyoutItem _pageLeft;
         private MenuFlyoutItem _pageRight;
 
-        private readonly ScrollBarOrientation _scrollBarOrientation;
+        private readonly Axis _scrollBarAxis;
         private readonly TextEditorCore _textEditorCore;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public double ClickLocation;
 
-        public TextEditorScrollBarContextFlyout(TextEditorCore textEditorCore, ScrollBarOrientation scrollBarOrientation)
+        public TextEditorScrollBarContextFlyout(TextEditorCore textEditorCore, Axis scrollBarAxis)
         {
             _textEditorCore = textEditorCore;
-            _scrollBarOrientation = scrollBarOrientation;
+            _scrollBarAxis = scrollBarAxis;
 
             Items.Add(ScrollHere);
             Items.Add(new MenuFlyoutSeparator());
-            switch (scrollBarOrientation)
+            switch (scrollBarAxis)
             {
-                case ScrollBarOrientation.Horizontal:
+                case Axis.X:
                     Items.Add(LeftEdge);
                     Items.Add(RightEdge);
                     Items.Add(new MenuFlyoutSeparator());
                     Items.Add(PageLeft);
                     Items.Add(PageRight);
                     break;
-                case ScrollBarOrientation.Vertical:
+                case Axis.Y:
                     Items.Add(Top);
                     Items.Add(Bottom);
                     Items.Add(new MenuFlyoutSeparator());
@@ -86,7 +82,7 @@
                 if (_scrollHere == null)
                 {
                     _scrollHere = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_ScrollHereButtonDisplayText") };
-                    _scrollHere.Click += (sender, args) => { _textEditorCore.SetScrollView(ScrollCommand.ScrollTo, _scrollBarOrientation, ClickLocation); };
+                    _scrollHere.Click += (sender, args) => { _textEditorCore.ChangeView(ScrollCommand.ScrollTo, _scrollBarAxis, ClickLocation); };
                 }
                 return _scrollHere;
             }
@@ -99,7 +95,7 @@
                 if (_top == null)
                 {
                     _top = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_TopButtonDisplayText") };
-                    _top.Click += (sender, args) => { _textEditorCore.SetScrollView(ScrollCommand.Top, _scrollBarOrientation); };
+                    _top.Click += (sender, args) => { _textEditorCore.ChangeView(ScrollCommand.Top, _scrollBarAxis); };
                 }
                 return _top;
             }
@@ -112,7 +108,7 @@
                 if (_bottom == null)
                 {
                     _bottom = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_BottomButtonDisplayText") };
-                    _bottom.Click += (sender, args) => { _textEditorCore.SetScrollView(ScrollCommand.Bottom, _scrollBarOrientation); };
+                    _bottom.Click += (sender, args) => { _textEditorCore.ChangeView(ScrollCommand.Bottom, _scrollBarAxis); };
                 }
                 return _bottom;
             }
@@ -125,7 +121,7 @@
                 if (_pageUp == null)
                 {
                     _pageUp = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_PageUpButtonDisplayText") };
-                    _pageUp.Click += (sender, args) => { _textEditorCore.SetScrollView(ScrollCommand.PageUp, _scrollBarOrientation); };
+                    _pageUp.Click += (sender, args) => { _textEditorCore.ChangeView(ScrollCommand.PageUp, _scrollBarAxis); };
                 }
                 return _pageUp;
             }
@@ -138,7 +134,7 @@
                 if (_pageDown == null)
                 {
                     _pageDown = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_PageDownButtonDisplayText") };
-                    _pageDown.Click += (sender, args) => { _textEditorCore.SetScrollView(ScrollCommand.PageDown, _scrollBarOrientation); };
+                    _pageDown.Click += (sender, args) => { _textEditorCore.ChangeView(ScrollCommand.PageDown, _scrollBarAxis); };
                 }
                 return _pageDown;
             }
@@ -151,7 +147,7 @@
                 if (_leftEdge == null)
                 {
                     _leftEdge = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_LeftEdgeButtonDisplayText") };
-                    _leftEdge.Click += (sender, args) => { _textEditorCore.SetScrollView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.LeftEdge : ScrollCommand.RightEdge, _scrollBarOrientation); };
+                    _leftEdge.Click += (sender, args) => { _textEditorCore.ChangeView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.LeftEdge : ScrollCommand.RightEdge, _scrollBarAxis); };
                 }
                 return _leftEdge;
             }
@@ -164,7 +160,7 @@
                 if (_rightEdge == null)
                 {
                     _rightEdge = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_RightEdgeButtonDisplayText") };
-                    _rightEdge.Click += (sender, args) => { _textEditorCore.SetScrollView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.RightEdge : ScrollCommand.LeftEdge, _scrollBarOrientation); };
+                    _rightEdge.Click += (sender, args) => { _textEditorCore.ChangeView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.RightEdge : ScrollCommand.LeftEdge, _scrollBarAxis); };
                 }
                 return _rightEdge;
             }
@@ -177,7 +173,7 @@
                 if (_pageLeft == null)
                 {
                     _pageLeft = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_PageLeftButtonDisplayText") };
-                    _pageLeft.Click += (sender, args) => { _textEditorCore.SetScrollView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.PageLeft : ScrollCommand.PageRight, _scrollBarOrientation); };
+                    _pageLeft.Click += (sender, args) => { _textEditorCore.ChangeView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.PageLeft : ScrollCommand.PageRight, _scrollBarAxis); };
                 }
                 return _pageLeft;
             }
@@ -190,7 +186,7 @@
                 if (_pageRight == null)
                 {
                     _pageRight = new MenuFlyoutItem { Text = _resourceLoader.GetString("TextEditor_ScrollBarContextFlyout_PageRightButtonDisplayText") };
-                    _pageRight.Click += (sender, args) => { _textEditorCore.SetScrollView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.PageRight : ScrollCommand.PageLeft, _scrollBarOrientation); };
+                    _pageRight.Click += (sender, args) => { _textEditorCore.ChangeView(_textEditorCore.FlowDirection == FlowDirection.LeftToRight ? ScrollCommand.PageRight : ScrollCommand.PageLeft, _scrollBarAxis); };
                 }
                 return _pageRight;
             }
