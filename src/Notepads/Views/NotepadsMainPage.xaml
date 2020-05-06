@@ -192,7 +192,7 @@
                                 <Button x:Name="NewSetButton"
                                         Grid.Column="0"
                                         IsTabStop="False"
-                                        Width="48"
+                                        Width="42"
                                         Height="{StaticResource SetsViewItemHeaderMinHeight}"
                                         Margin="-1,0,0,0"
                                         BorderThickness="0"

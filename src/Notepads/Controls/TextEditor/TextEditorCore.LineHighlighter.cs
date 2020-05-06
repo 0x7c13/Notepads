@@ -48,7 +48,7 @@
                 _lineIndicator.Visibility = Visibility.Collapsed;
             }
             else // Show line indicator when line highlighter is disabled
-            {                
+            {
                 _lineIndicator.Height = lineHeight;
                 _lineIndicator.Margin = new Thickness(0, lineRect.Y + Padding.Top, 0, 0);
                 _lineIndicator.BorderThickness = thickness;
