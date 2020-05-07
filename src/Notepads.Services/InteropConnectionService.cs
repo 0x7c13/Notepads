@@ -2,15 +2,30 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
+    using Windows.Foundation.Collections;
+
+    public enum CommandArgs
+    {
+        SyncSettings,
+        SyncRecentList,
+        RegisterExtension,
+        CreateElevetedExtension,
+        ReplaceFile
+    }
 
     public sealed class InteropConnectionService : IBackgroundTask
     {
         private BackgroundTaskDeferral backgroundTaskDeferral;
         private AppServiceConnection appServiceConnection;
+        private static BackgroundTaskDeferral extensionBackgroundTaskDeferral;
+        private static AppServiceConnection extensionAppServiceConnection = null;
         private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
+
+        private static readonly string _commandLabel = "Command";
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -36,11 +51,54 @@
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            foreach(var serviceConnection in appServiceConnections)
+            // Get a deferral because we use an awaitable API below to respond to the message
+            // and we don't want this call to get canceled while we are waiting.
+            var messageDeferral = args.GetDeferral();
+
+            var message = args.Request.Message;
+            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var result)) return;
+            var command = (CommandArgs)result;
+
+            switch (command)
             {
-                if (serviceConnection != appServiceConnection) 
-                    await serviceConnection.SendMessageAsync(args.Request.Message);
+                case CommandArgs.SyncSettings:
+                    foreach (var serviceConnection in appServiceConnections)
+                    {
+                        if (serviceConnection != appServiceConnection)
+                            await serviceConnection.SendMessageAsync(args.Request.Message);
+                    }
+                    break;
+                case CommandArgs.SyncRecentList:
+                    foreach (var serviceConnection in appServiceConnections)
+                    {
+                        if (serviceConnection != appServiceConnection)
+                            await serviceConnection.SendMessageAsync(args.Request.Message);
+                    }
+                    break;
+                case CommandArgs.RegisterExtension:
+                    if(extensionAppServiceConnection==null)
+                    {
+                        extensionAppServiceConnection = appServiceConnection;
+                        extensionBackgroundTaskDeferral = this.backgroundTaskDeferral;
+                        appServiceConnections.Remove(appServiceConnection);
+                    }
+                    else
+                    {
+                        appServiceConnections.Remove(appServiceConnection);
+                        this.backgroundTaskDeferral.Complete();
+                    }
+                    break;
+                case CommandArgs.CreateElevetedExtension:
+                    await extensionAppServiceConnection.SendMessageAsync(message);
+                    break;
+                case CommandArgs.ReplaceFile:
+                    var response = await extensionAppServiceConnection.SendMessageAsync(message);
+                    message = response.Message;
+                    await args.Request.SendResponseAsync(message);
+                    break;
             }
+
+            messageDeferral.Complete();
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)

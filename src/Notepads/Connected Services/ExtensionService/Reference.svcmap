@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="15e85d4e-6d5e-4c11-8355-c623a91427b0" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.ObservableCollection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8000/Notepads.DesktopExtension/ExtensionService" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="ExtensionService.xsd" MetadataType="Schema" ID="0e1d43cb-e8c0-4aa2-9688-0561a776f583" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/ExtensionService?xsd=xsd0" />
+    <MetadataFile FileName="ExtensionService1.xsd" MetadataType="Schema" ID="1b5e78b6-6e17-43da-91c8-ab5b3b7213a4" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/ExtensionService?xsd=xsd1" />
+    <MetadataFile FileName="ExtensionService.disco" MetadataType="Disco" ID="f381aeef-3e93-424e-ab8f-aa3279588637" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/ExtensionService?disco" />
+    <MetadataFile FileName="ExtensionService.wsdl" MetadataType="Wsdl" ID="3e6a3965-9041-475f-abad-f3effe4804af" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/ExtensionService?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

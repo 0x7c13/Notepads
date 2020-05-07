@@ -21,6 +21,7 @@
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string WslRootPath = "\\\\wsl$\\";
+        private const string TempSaveFolderDefaultName = "TempSave";
 
         public static bool IsFullPath(string path)
         {
@@ -457,6 +458,13 @@
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+            StorageFile oldFile = null;
+            if (IsFileReadOnly(file) || !await FileIsWritable(file))
+            {
+                oldFile = file;
+                file = await SessionUtility.CreateNewFileInBackupFolderAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting, TempSaveFolderDefaultName);
+            }
+
             using (var stream = await file.OpenStreamForWriteAsync())
             using (var writer = new StreamWriter(stream, encoding))
             {
@@ -465,6 +473,11 @@
                 await writer.FlushAsync();
                 // Truncate
                 stream.SetLength(stream.Position);
+            }
+
+            if (oldFile != null)
+            {
+                await InteropService.ReplaceFile(file.Path, oldFile.Path, IsFileReadOnly(file) ? false : true);
             }
 
             if (usedDeferUpdates)

@@ -84,6 +84,21 @@
             return revertAllChangesConfirmationDialog;
         }
 
+        public static NotepadsDialog GetCreateElevatedExtensionDialog(Action confirmedAction, Action closeAction)
+        {
+            NotepadsDialog createElevatedExtensionDialog = new NotepadsDialog
+            {
+                Title = ResourceLoader.GetString("CreateElevatedExtensionDialog_Title"),
+                Content = ResourceLoader.GetString("CreateElevatedExtensionDialog_Content"),
+                PrimaryButtonText = ResourceLoader.GetString("RevertAllChangesConfirmationDialog_PrimaryButtonText"),
+                CloseButtonText = ResourceLoader.GetString("CreateElevatedExtensionDialog_CloseButtonText"),
+                RequestedTheme = ThemeSettingsService.ThemeMode,
+            };
+            createElevatedExtensionDialog.PrimaryButtonClick += (dialog, args) => { confirmedAction(); };
+            createElevatedExtensionDialog.CloseButtonClick += (dialog, args) => { closeAction(); };
+            return createElevatedExtensionDialog;
+        }
+
         private static Style GetButtonStyle(Color backgroundColor)
         {
             var buttonStyle = new Windows.UI.Xaml.Style(typeof(Button));

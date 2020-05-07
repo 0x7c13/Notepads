@@ -105,7 +105,7 @@
             MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
         }
 
-        private async Task BuildOpenRecentButtonSubItems()
+        private async Task BuildOpenRecentButtonSubItems(bool updateForOtherInstane = true)
         {
             var openRecentSubItem = new MenuFlyoutSubItem
             {
@@ -167,6 +167,8 @@
                 var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
                 MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
             }
+
+            if (updateForOtherInstane) InteropService.SyncRecentList();
         }
     }
 }

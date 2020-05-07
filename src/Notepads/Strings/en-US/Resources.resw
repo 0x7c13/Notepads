@@ -585,4 +585,16 @@
     <value>Right-to-Left Reading order</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
+  <data name="CreateElevatedExtensionDialog_CloseButtonText" xml:space="preserve">
+    <value>No</value>
+    <comment>CreateElevatedExtensionDialog: CloseButtonText.</comment>
+  </data>
+  <data name="CreateElevatedExtensionDialog_Content" xml:space="preserve">
+    <value>The file cannot be saved, it may be protected. Do you want to give Notepads Adminstrator permission?</value>
+    <comment>CreateElevatedExtensionDialog: "Content" display text.</comment>
+  </data>
+  <data name="CreateElevatedExtensionDialog_Title" xml:space="preserve">
+    <value>Save Failed</value>
+    <comment>CreateElevatedExtensionDialog: "Title" display text.</comment>
+  </data>
 </root>

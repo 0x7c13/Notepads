@@ -120,9 +120,7 @@
             StorageFile file = null;
             try
             {
-                if (textEditor.EditingFile == null || saveAs ||
-                    FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
-                    !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
+                if (textEditor.EditingFile == null || saveAs)
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync();
@@ -147,13 +145,45 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
-                await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
-                if (!fileSaveErrorDialog.IsAborted)
+                if(ex.Message.Equals("Failed to save due to no Adminstration access"))
                 {
-                    NotepadsCore.FocusOnSelectedTextEditor();
+                    bool result = false;
+
+                    var createElevatedExtensionDialog = NotepadsDialogFactory.GetCreateElevatedExtensionDialog(
+                        async () =>
+                        {
+                            await InteropService.CreateElevetedExtension();
+                        },
+                        async () =>
+                        {
+                            if (!saveAs) result = await Save(textEditor, true, ignoreUnmodifiedDocument, rebuildOpenRecentItems);
+                        });
+
+                    var dialogResult= await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
+
+                    if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
+                    {
+                        if (!saveAs) result = await Save(textEditor, true, ignoreUnmodifiedDocument, rebuildOpenRecentItems);
+                    }
+
+                    return result;
                 }
-                return false;
+                else if(ex.Message.Equals("Failed to save due to no Extension access"))
+                {
+                    bool result = false;
+                    if (!saveAs) result = await Save(textEditor, true, ignoreUnmodifiedDocument, rebuildOpenRecentItems);
+                    return result;
+                }
+                else
+                {
+                    var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                    await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
+                    if (!fileSaveErrorDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
+                    return false;
+                }
             }
         }
 

@@ -1,0 +1,560 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="mp uap uap3 uap5 desktop4 iot2 rescap">
+
+  <Identity
+    Name="Notepads"
+    Publisher="CN=jackil"
+    Version="1.2.4.0" />
+  
+  <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>Notepads App</DisplayName>
+    <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$"
+      desktop4:SupportsMultipleInstances="true"
+      iot2:SupportsMultipleInstances="true">
+      <uap:VisualElements
+        DisplayName="Notepads"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        Description="Notepads App"
+        BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Notepads">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" BackgroundColor="#2f2f2f"/>
+      </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="notepads">
+            <uap:Logo>Assets\appicon_w.png</uap:Logo>
+            <uap:DisplayName>Notepads URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="text">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.txt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Text Document</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\FileIcons\txt.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap5:Extension
+          Category="windows.appExecutionAlias"
+          Executable="Notepads.exe"
+          EntryPoint="Notepads.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="Notepads.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="Notepads.Services.InteropConnectionService">
+          <uap3:AppService Name="InteropServiceConnection"/>
+        </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads.DesktopExtension\Notepads.DesktopExtension.exe" />
+        <!--<uap3:Extension Category="windows.appExecutionAlias"
+                        Executable="Notepads.Extension\Notepads.Extension.exe"
+                        EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="Notepads.Extension.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>-->
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="config">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cfg</uap:FileType>
+              <uap:FileType>.config</uap:FileType>
+              <uap:FileType>.cnf</uap:FileType>
+              <uap:FileType>.conf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Configuration Settings</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\cfg.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="initialization">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ini</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Initialization File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\ini.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="markdown">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.md</uap:FileType>
+              <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Markdown File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\md.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="log">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.log</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Log File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\log.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bib">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.bib</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>BibTeX File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\bib.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="json">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.json</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>JSON File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\json.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="yml">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.yml</uap:FileType>
+              <uap:FileType>.yaml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>YML File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\yml.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="xml">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.xml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>XML File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\xml.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="html">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.html</uap:FileType>
+              <uap:FileType>.htm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>HTML File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\html.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="asp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.asp</uap:FileType>
+              <uap:FileType>.aspx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ASP File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\asp.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="jsp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.jsp</uap:FileType>
+              <uap:FileType>.jspx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>JSP File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\jsp.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="css">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.css</uap:FileType>
+              <uap:FileType>.scss</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>CSS File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\css.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sh">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.sh</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Shell Script File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\sh.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bashrc</uap:FileType>
+              <uap:FileType>.vimrc</uap:FileType>
+              <uap:FileType>.rc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Runcom File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\rc.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Bash Script File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\bash.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="javascript">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.js</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Javascript File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\js.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="scripting">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ts</uap:FileType>
+              <uap:FileType>.lua</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Scripting Language File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="c">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.c</uap:FileType>
+              <uap:FileType>.m</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>C File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\c.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cpp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cc</uap:FileType>
+              <uap:FileType>.mm</uap:FileType>
+              <uap:FileType>.cpp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>C++ File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\cpp.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="h">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.h</uap:FileType>
+              <uap:FileType>.hpp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Header File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\h.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cmake">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cmake</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Cmake File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="csharp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cs</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>C# File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\cs.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="php">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.php</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>PHP File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\php.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="python">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.py</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Python File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\py.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rb">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.rb</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Ruby File</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\FileIcons\rb.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="java">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.java</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>JAVA File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\java.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vb">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.vb</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Visual Basic File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\vb.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="go">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.go</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Go File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="srt">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.srt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Subtitle file</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\srt.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ass">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ass</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Aegisub Advanced Subtitle file</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\ass.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ssa">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ssa</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sub Station Alpha Subtitle File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\ssa.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vue">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.vue</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Vue File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\vue.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vuerc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.vuerc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Vue Config File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\vue.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitconfig">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitconfig</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Config File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitignore">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitignore</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Ignore File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gitattributes">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.gitattributes</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Git Attributes File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="project">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.project</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Project File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="prj">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.prj</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Project File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="npmrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.npmrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NPM Config File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_history">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_history</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Bash History File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cgi">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cgi</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>CGI File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pl">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.pl</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Perl File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\perl.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="buildpath">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.buildpath</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Build Path File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sql">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.sql</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SQL File</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\sql.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="confirmAppClose"/>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="allowElevation" />
+  </Capabilities>
+</Package>

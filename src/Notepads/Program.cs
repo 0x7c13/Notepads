@@ -35,6 +35,7 @@
             {
                 IsFirstInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
+                OpenExtension();
             }
 
             if (activatedArgs is FileActivatedEventArgs)
@@ -143,6 +144,12 @@
 
             // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
+        }
+
+        private static async void OpenExtension()
+        {
+
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
     }
 }

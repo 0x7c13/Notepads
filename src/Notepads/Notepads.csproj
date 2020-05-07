@@ -108,6 +108,11 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Connected Services\ExtensionService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -414,6 +419,13 @@
     <Content Include="Assets\FileIcons\yml.targetsize-16.png" />
     <Content Include="Assets\FileIcons\yml.targetsize-32.png" />
     <Content Include="Assets\FileIcons\yml.targetsize-48.png" />
+    <None Include="Connected Services\ExtensionService\ExtensionService.disco" />
+    <None Include="Connected Services\ExtensionService\configuration91.svcinfo" />
+    <None Include="Connected Services\ExtensionService\configuration.svcinfo" />
+    <None Include="Connected Services\ExtensionService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -473,6 +485,7 @@
     <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
+    <None Include="Connected Services\ExtensionService\ExtensionService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -752,6 +765,21 @@
     <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\ExtensionService\ExtensionService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ExtensionService\ExtensionService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\ExtensionService\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
