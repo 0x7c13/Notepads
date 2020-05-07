@@ -814,6 +814,15 @@
   <ItemGroup>
     <PRIResource Include="Strings\zh-CN\Manifest.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
