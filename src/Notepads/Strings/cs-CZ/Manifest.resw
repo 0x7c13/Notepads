@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AegisubAdvancedSubtitleFileDisplayName" xml:space="preserve">
+    <value>Soubor Aegisub Advanced Subtitle </value>
+    <comment>.ass</comment>
+  </data>
+  <data name="AspFileDisplayName" xml:space="preserve">
+    <value>Soubor ASP</value>
+    <comment>.asp, .aspx</comment>
+  </data>
+  <data name="AutoHotkeyScriptFileDisplayName" xml:space="preserve">
+    <value>Soubor AutoHotkey Script</value>
+    <comment>.ahk</comment>
+  </data>
+  <data name="BashHistoryFileDisplayName" xml:space="preserve">
+    <value>Soubor Bash History</value>
+    <comment>.bash_history</comment>
+  </data>
+  <data name="BashScriptFileDisplayName" xml:space="preserve">
+    <value>Soubor Bash Script</value>
+    <comment>.bash</comment>
+  </data>
+  <data name="BibTeXFileDisplayName" xml:space="preserve">
+    <value>Soubor BibTeX</value>
+    <comment>.bib</comment>
+  </data>
+  <data name="BuildPathFileDisplayName" xml:space="preserve">
+    <value>Soubor Build Path</value>
+    <comment>.buildpath</comment>
+  </data>
+  <data name="CFileDisplayName" xml:space="preserve">
+    <value>Soubor C</value>
+    <comment>.c, .m</comment>
+  </data>
+  <data name="CgiFileDisplayName" xml:space="preserve">
+    <value>Soubor CGI</value>
+    <comment>.cgi</comment>
+  </data>
+  <data name="CmakeFileDisplayName" xml:space="preserve">
+    <value>Soubor Cmake</value>
+    <comment>.cmake</comment>
+  </data>
+  <data name="ConfigFileDisplayName" xml:space="preserve">
+    <value>Nastavení konfigurace</value>
+    <comment>.cfg, .config, .cnf, .conf</comment>
+  </data>
+  <data name="CppFileDisplayName" xml:space="preserve">
+    <value>Soubor C++</value>
+    <comment>.cpp, .cc, .mm</comment>
+  </data>
+  <data name="CSharpFileDisplayName" xml:space="preserve">
+    <value>Soubor C#</value>
+    <comment>.cs</comment>
+  </data>
+  <data name="CssFileDisplayName" xml:space="preserve">
+    <value>Soubor CSS</value>
+    <comment>.css, .scss</comment>
+  </data>
+  <data name="GitAttributesFileDisplayName" xml:space="preserve">
+    <value>Soubor atributů Git</value>
+    <comment>.gitattributes</comment>
+  </data>
+  <data name="GitConfigFileDisplayName" xml:space="preserve">
+    <value>Konfigurační soubor Git</value>
+    <comment>.gitconfig</comment>
+  </data>
+  <data name="GitIgnoreFileDisplayName" xml:space="preserve">
+    <value>Soubor Git Ignore</value>
+    <comment>.gitignore</comment>
+  </data>
+  <data name="GoFileDisplayName" xml:space="preserve">
+    <value>Soubor Go</value>
+    <comment>.go</comment>
+  </data>
+  <data name="HeaderFileDisplayName" xml:space="preserve">
+    <value>Hlavičkový soubor</value>
+    <comment>.h, .hpp</comment>
+  </data>
+  <data name="HtmlFileDisplayName" xml:space="preserve">
+    <value>Soubor HTML</value>
+    <comment>.html, .htm</comment>
+  </data>
+  <data name="InitializationFileDisplayName" xml:space="preserve">
+    <value>Inicializační soubor</value>
+    <comment>.ini</comment>
+  </data>
+  <data name="JavaFileDisplayName" xml:space="preserve">
+    <value>Soubor Java</value>
+    <comment>.java</comment>
+  </data>
+  <data name="JavascriptFileDisplayName" xml:space="preserve">
+    <value>Soubor Javascript</value>
+    <comment>.js</comment>
+  </data>
+  <data name="JsonFileDisplayName" xml:space="preserve">
+    <value>Soubor JSON</value>
+    <comment>.json</comment>
+  </data>
+  <data name="JspFileDisplayName" xml:space="preserve">
+    <value>Soubor JSP</value>
+    <comment>.jsp, .jspx</comment>
+  </data>
+  <data name="LogFileDisplayName" xml:space="preserve">
+    <value>Logovací soubor</value>
+    <comment>.log</comment>
+  </data>
+  <data name="LuaFileDisplayName" xml:space="preserve">
+    <value>Soubor LUA</value>
+    <comment>.lua</comment>
+  </data>
+  <data name="MarkdownFileDisplayName" xml:space="preserve">
+    <value>Markdown soubor</value>
+    <comment>.md, .markdown</comment>
+  </data>
+  <data name="NfoFileDisplayName" xml:space="preserve">
+    <value>Soubor NFO</value>
+    <comment>.nfo</comment>
+  </data>
+  <data name="NpmConfigFileDisplayName" xml:space="preserve">
+    <value>Konfigurační soubor NPM</value>
+    <comment>.npmrc</comment>
+  </data>
+  <data name="PerlFileDisplayName" xml:space="preserve">
+    <value>Soubor Perl</value>
+    <comment>.pl</comment>
+  </data>
+  <data name="PhpFileDisplayName" xml:space="preserve">
+    <value>Soubor PHP</value>
+    <comment>.php</comment>
+  </data>
+  <data name="ProjectFileDisplayName" xml:space="preserve">
+    <value>Projectový soubor</value>
+    <comment>.project, .prj</comment>
+  </data>
+  <data name="PythonFileDisplayName" xml:space="preserve">
+    <value>Soubor Python</value>
+    <comment>.py</comment>
+  </data>
+  <data name="RubyFileDisplayName" xml:space="preserve">
+    <value>Soubor Ruby</value>
+    <comment>.rb</comment>
+  </data>
+  <data name="RunCommandsFileDisplayName" xml:space="preserve">
+    <value>Soubor spustitelných příkazů</value>
+    <comment>.bashrc, .vimrc, .rc</comment>
+  </data>
+  <data name="ShellScriptFileDisplayName" xml:space="preserve">
+    <value>Soubor skriptu Shell</value>
+    <comment>.sh</comment>
+  </data>
+  <data name="SqlFileDisplayName" xml:space="preserve">
+    <value>Soubor SQL</value>
+    <comment>.sql</comment>
+  </data>
+  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
+    <value>Soubor Sub Station Alpha Subtitle</value>
+    <comment>.ssa</comment>
+  </data>
+  <data name="SubtitleFileDisplayName" xml:space="preserve">
+    <value>Soubor titulků</value>
+    <comment>.srt</comment>
+  </data>
+  <data name="TextFileDisplayName" xml:space="preserve">
+    <value>Textový soubor</value>
+    <comment>.txt</comment>
+  </data>
+  <data name="TypeScriptFileDisplayName" xml:space="preserve">
+    <value>Soubor TypeScript</value>
+    <comment>.ts</comment>
+  </data>
+  <data name="VisualBasicFileDisplayName" xml:space="preserve">
+    <value>Soubor Visual Basic</value>
+    <comment>.vb</comment>
+  </data>
+  <data name="VueConfigFileDisplayName" xml:space="preserve">
+    <value>Konfigurační soubor Vue</value>
+    <comment>.vuerc</comment>
+  </data>
+  <data name="VueFileDisplayName" xml:space="preserve">
+    <value>Soubor Vue</value>
+    <comment>.vue</comment>
+  </data>
+  <data name="XmlFileDisplayName" xml:space="preserve">
+    <value>Soubor XML</value>
+    <comment>.xml</comment>
+  </data>
+  <data name="YamlFileDisplayName" xml:space="preserve">
+    <value>Soubor YAML</value>
+    <comment>.yml, .yaml</comment>
+  </data>
+  <data name="ZshellConfigFileDisplayName" xml:space="preserve">
+    <value>Konfigurační soubor Z shell</value>
+    <comment>zshrc</comment>
+  </data>
+  <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
+    <value>Soubor historie Z shell</value>
+    <comment>.zsh_history</comment>
+  </data>
+</root>
