@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
@@ -13,6 +14,21 @@
 
         static void Main(string[] args)
         {
+#if DEBUG
+            Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
+#endif
+
+            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
+
+            //if (activatedArgs == null)
+            //{
+            //    // No activated event args, so this is not an activation via the multi-instance ID
+            //    // Just create a new instance and let App OnActivated resolve the launch
+            //    App.IsGameBarWidget = true;
+            //    App.IsFirstInstance = true;
+            //    Windows.UI.Xaml.Application.Start(p => new App());
+            //}
+
             var instances = AppInstance.GetInstances();
 
             if (instances.Count == 0)
@@ -21,20 +37,18 @@
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
 
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
-
             if (activatedArgs is FileActivatedEventArgs)
             {
                 RedirectOrCreateNewInstance();
             }
-            else if (activatedArgs is CommandLineActivatedEventArgs cmdActivatedArgs)
+            else if (activatedArgs is CommandLineActivatedEventArgs)
             {
                 RedirectOrCreateNewInstance();
             }
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
-                LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out var context);
+                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
                     OpenNewInstance();
@@ -50,7 +64,7 @@
 
                 if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                 {
-                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out var context);
+                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
                     if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                     {
                         handled = true;
@@ -89,7 +103,15 @@
             }
             else
             {
-                instance.RedirectActivationTo();
+                // open new instance if user prefers to
+                if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
+                {
+                    OpenNewInstance();
+                }
+                else
+                {
+                    instance.RedirectActivationTo();
+                }
             }
         }
 

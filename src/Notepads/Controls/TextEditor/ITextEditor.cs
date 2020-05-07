@@ -6,15 +6,23 @@
     using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
     {
+        event RoutedEventHandler Loaded;
+        event RoutedEventHandler Unloaded;
+
+        event KeyEventHandler KeyDown;
         event EventHandler ModeChanged;
         event EventHandler ModificationStateChanged;
         event EventHandler FileModificationStateChanged;
         event EventHandler LineEndingChanged;
         event EventHandler EncodingChanged;
         event EventHandler SelectionChanged;
+        event EventHandler FontZoomFactorChanged;
         event EventHandler TextChanging;
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
@@ -44,6 +52,10 @@
 
         TextEditorMode Mode { get; }
 
+        bool DisplayLineNumbers { get; set; }
+
+        bool DisplayLineHighlighter { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,
@@ -63,9 +75,13 @@
 
         Task ReloadFromEditingFile();
 
+        Task ReloadFromEditingFile(Encoding encoding);
+
         LineEnding GetLineEnding();
 
         Encoding GetEncoding();
+
+        void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
 
         void RevertAllChanges();
 
@@ -79,7 +95,20 @@
 
         void CloseSideBySideDiffViewer();
 
-        void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
+        void GetLineColumnSelection(
+            out int startLineIndex,
+            out int endLineIndex,
+            out int startColumnIndex,
+            out int endColumnIndex,
+            out int selectedCount,
+            out int lineCount);
+
+        double GetFontZoomFactor();
+
+        void SetFontZoomFactor(double fontZoomFactor);
 
         bool IsEditorEnabled();
 
@@ -96,5 +125,11 @@
         void ShowFindAndReplaceControl(bool showReplaceBar);
 
         void HideFindAndReplaceControl();
+
+        void ShowGoToControl();
+
+        void HideGoToControl();
+
+        void Dispose();
     }
 }

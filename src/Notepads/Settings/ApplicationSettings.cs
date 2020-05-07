@@ -19,16 +19,10 @@
             return obj;
         }
 
-        public static void Write(string key, object obj, bool saveToRoaming = false)
+        public static void Write(string key, object obj)
         {
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = obj;
-
-            //if (saveToRoaming)
-            //{
-            //    ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
-            //    roamingSettings.Values[key] = obj;
-            //}
         }
 
         public static bool Remove(string key)
@@ -40,7 +34,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to remove key [{key}] from application settings: {ex.Message}");
+                LoggingService.LogError($"[{nameof(ApplicationSettingsStore)}] Failed to remove key [{key}] from application settings: {ex.Message}");
             }
 
             return false;

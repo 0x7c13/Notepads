@@ -49,6 +49,12 @@
             Closed += TabContextFlyout_Closed;
         }
 
+        public void Dispose()
+        {
+            Opening -= TabContextFlyout_Opening;
+            Closed -= TabContextFlyout_Closed;
+        }
+
         private void TabContextFlyout_Opening(object sender, object e)
         {
             if (_textEditor.EditingFile != null)
@@ -60,6 +66,11 @@
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+
+            if (App.IsGameBarWidget)
+            {
+                OpenContainingFolder.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TabContextFlyout_Closed(object sender, object e)
@@ -175,12 +186,12 @@
                             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                             dataPackage.SetText(_filePath);
                             Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                            Clipboard.Flush();
+                            Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
                         catch (Exception ex)
                         {
-                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
                         }
                     };
                 }
@@ -197,7 +208,14 @@
                     _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
                     _openContainingFolder.Click += async (sender, args) =>
                     {
-                        await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        try
+                        {
+                            await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
+                        }
                     };
                 }
                 return _openContainingFolder;

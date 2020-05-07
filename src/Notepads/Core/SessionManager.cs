@@ -19,24 +19,29 @@
     using Windows.Storage;
     using Windows.Storage.AccessCache;
 
-    internal class SessionManager : ISessionManager
+    internal class SessionManager : ISessionManager, IDisposable
     {
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
         private readonly SemaphoreSlim _semaphoreSlim;
-        private readonly ConcurrentDictionary<Guid, TextEditorSessionDataV1> _sessionData;
+        private readonly ConcurrentDictionary<Guid, TextEditorSessionDataV1> _sessionDataCache;
         private string _lastSessionJsonStr;
         private bool _loaded;
         private Timer _timer;
 
+        private readonly string _backupFolderName;
+        private readonly string _sessionMetaDataFileName;
+
         /// <summary>
         /// Do not call this constructor directly. Use <see cref="SessionUtility.GetSessionManager(INotepadsCore)" instead./>
         /// </summary>
-        public SessionManager(INotepadsCore notepadsCore)
+        public SessionManager(INotepadsCore notepadsCore, string backupFolderName, string sessionMetaDataFileName)
         {
             _notepadsCore = notepadsCore;
+            _backupFolderName = backupFolderName;
+            _sessionMetaDataFileName = sessionMetaDataFileName;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
-            _sessionData = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
+            _sessionDataCache = new ConcurrentDictionary<Guid, TextEditorSessionDataV1>();
             _loaded = false;
 
             foreach (var editor in _notepadsCore.GetAllTextEditors())
@@ -57,7 +62,7 @@
                 return 0; // Already loaded
             }
 
-            var data = await SessionUtility.GetSerializedSessionMetaDataAsync();
+            var data = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
 
             if (data == null)
             {
@@ -82,8 +87,8 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to load last session metadata: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 await ClearSessionDataAsync();
                 return 0;
             }
@@ -100,15 +105,15 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[SessionManager] Failed to recover TextEditor: {ex.Message}");
-                    Analytics.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to recover TextEditor: {ex.Message}");
+                    Analytics.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() { { "Exception", ex.Message } });
                     continue;
                 }
 
                 if (textEditor != null)
                 {
                     recoveredEditor.Add(textEditor);
-                    _sessionData.TryAdd(textEditor.Id, textEditorData);
+                    _sessionDataCache.TryAdd(textEditor.Id, textEditorData);
                 }
             }
 
@@ -117,14 +122,16 @@
 
             _loaded = true;
 
-            return _sessionData.Count;
+            LoggingService.LogInfo($"[{nameof(SessionManager)}] {_sessionDataCache.Count} tab(s) restored from last session.");
+
+            return _sessionDataCache.Count;
         }
 
         public async Task SaveSessionAsync(Action actionAfterSaving = null)
         {
             if (!IsBackupEnabled)
             {
-                LoggingService.LogInfo("[SessionManager] Session backup is disabled.");
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Session backup is disabled.");
                 return;
             }
 
@@ -151,27 +158,23 @@
 
             foreach (ITextEditor textEditor in textEditors)
             {
-                if (_sessionData.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorData))
+                try
                 {
-                    // We will not create new backup files for this text editor unless it has content changes
-                    // But we should update latest TextEditor state meta data
-                    textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
-                }
-                else // Text content has been changed or editor has not backed up yet
-                {
-                    textEditorData = await BuildTextEditorSessionData(textEditor);
-                    if (textEditorData == null)
+                    var textEditorSessionData = await GetTextEditorSessionData(textEditor);
+
+                    if (textEditorSessionData == null) continue;
+
+                    sessionData.TextEditors.Add(textEditorSessionData);
+
+                    if (textEditor == selectedTextEditor)
                     {
-                        continue;
+                        sessionData.SelectedTextEditor = textEditor.Id;
                     }
-                    _sessionData.TryAdd(textEditor.Id, textEditorData);
                 }
-
-                sessionData.TextEditors.Add(textEditorData);
-
-                if (textEditor == selectedTextEditor)
+                catch (Exception ex)
                 {
-                    sessionData.SelectedTextEditor = textEditor.Id;
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to build TextEditor session data: {ex}");
+                    Analytics.TrackEvent("SessionManager_FailedToBuildTextEditorSessionData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
 
@@ -187,15 +190,15 @@
                 if (_lastSessionJsonStr == null || !string.Equals(_lastSessionJsonStr, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
                     // write
-                    await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr);
+                    await SessionUtility.SaveSerializedSessionMetaDataAsync(sessionJsonStr, _sessionMetaDataFileName);
                     _lastSessionJsonStr = sessionJsonStr;
                     sessionDataSaved = true;
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to save session metadata: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save session metadata: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 actionAfterSaving?.Invoke();
                 _semaphoreSlim.Release();
                 return; // Failed to save the session - do not proceed to delete backup files
@@ -203,19 +206,50 @@
 
             if (sessionDataSaved)
             {
-                await DeleteOrphanedBackupFilesAsync(sessionData);
-                DeleteOrphanedTokensInFutureAccessList(sessionData);
+                try
+                {
+                    await DeleteOrphanedBackupFilesAsync(sessionData);
+                    DeleteOrphanedTokensInFutureAccessList(sessionData);
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles",
+                        new Dictionary<string, string>() { { "Exception", ex.Message } });
+                }
             }
 
             stopwatch.Stop();
 
             if (sessionDataSaved)
             {
-                LoggingService.LogInfo($"[SessionManager] Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Successfully saved the current session. Total time: {stopwatch.Elapsed.TotalMilliseconds} milliseconds.", consoleOnly: true);
             }
 
             actionAfterSaving?.Invoke();
             _semaphoreSlim.Release();
+        }
+
+        private async Task<TextEditorSessionDataV1> GetTextEditorSessionData(ITextEditor textEditor)
+        {
+            if (_sessionDataCache.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorSessionData))
+            {
+                // We will not create new backup files for this text editor unless it has content changes
+                // But we should update latest TextEditor state meta data
+                textEditorSessionData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+            }
+            else // Text content has been changed or editor has not backed up yet
+            {
+                textEditorSessionData = await BuildTextEditorSessionData(textEditor);
+
+                if (textEditorSessionData == null)
+                {
+                    return null;
+                }
+
+                _sessionDataCache.TryAdd(textEditor.Id, textEditorSessionData);
+            }
+
+            return textEditorSessionData;
         }
 
         private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
@@ -242,7 +276,8 @@
                     // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
                     var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-LastSaved",
-                        CreationCollisionOption.ReplaceExisting);
+                        CreationCollisionOption.ReplaceExisting,
+                        _backupFolderName);
 
                     if (!await BackupTextAsync(textEditor.LastSavedSnapshot.Content,
                         textEditor.LastSavedSnapshot.Encoding,
@@ -261,7 +296,8 @@
                     // Persist pending changes relative to the last save
                     var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-Pending",
-                        CreationCollisionOption.ReplaceExisting);
+                        CreationCollisionOption.ReplaceExisting,
+                        _backupFolderName);
 
                     if (!await BackupTextAsync(textEditor.GetText(),
                         textEditor.LastSavedSnapshot.Encoding,
@@ -284,6 +320,8 @@
         {
             if (_timer == null)
             {
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Session backup process started (StartImmediately = {startImmediately}).");
+
                 Timer timer = new Timer(async (obj) => await SaveSessionAsync());
 
                 if (Interlocked.CompareExchange(ref _timer, timer, null) == null)
@@ -321,13 +359,13 @@
             _lastSessionJsonStr = null;
             try
             {
-                await SessionUtility.DeleteSerializedSessionMetaDataAsync();
-                LoggingService.LogInfo($"[SessionManager] Successfully deleted session meta data.");
+                await SessionUtility.DeleteSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
+                LoggingService.LogInfo($"[{nameof(SessionManager)}] Successfully deleted session meta data.");
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to delete session meta data: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete session meta data: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
             }
         }
 
@@ -369,7 +407,8 @@
             }
             else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
             {
-                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, ignoreFileSizeLimit: true);
+                var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
+                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
                 textEditor.ResetEditorState(editorSessionData.StateMetaData);
             }
             else // File with pending changes
@@ -410,7 +449,7 @@
             return textEditor;
         }
 
-        private async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
+        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
         {
             try
             {
@@ -419,7 +458,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionManager] Failed to save backup file: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save backup file: {ex.Message}");
                 return false;
             }
         }
@@ -432,7 +471,7 @@
                 .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync())
+            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
             {
                 if (!backupPaths.Contains(backupFile.Path))
                 {
@@ -442,7 +481,7 @@
                     }
                     catch (Exception ex)
                     {
-                        LoggingService.LogError($"[SessionManager] Failed to delete orphaned backup file: {ex.Message}");
+                        LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned backup file: {ex.Message}");
                     }
                 }
             }
@@ -474,13 +513,13 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[SessionManager] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
-                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() {{ "Exception", ex.Message }});
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
         }
 
-        private string ToToken(Guid textEditorId)
+        private static string ToToken(Guid textEditorId)
         {
             return textEditorId.ToString("N");
         }
@@ -489,8 +528,20 @@
         {
             if (sender is ITextEditor textEditor)
             {
-                _sessionData.TryRemove(textEditor.Id, out _);
+                _sessionDataCache.TryRemove(textEditor.Id, out _);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_notepadsCore != null)
+            {
+                _notepadsCore.TextEditorLoaded -= BindEditorContentStateChangeEvent;
+                _notepadsCore.TextEditorUnloaded -= UnbindEditorContentStateChangeEvent;
+            }
+
+            _semaphoreSlim?.Dispose();
+            _timer?.Dispose();
         }
     }
 }

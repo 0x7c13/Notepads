@@ -8,11 +8,12 @@
     using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
+    using Notepads.Controls.GoTo;
     using Notepads.Extensions;
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.System;
@@ -34,31 +35,26 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : UserControl, ITextEditor
+    public sealed partial class TextEditor : ITextEditor, IDisposable
     {
+        public new event RoutedEventHandler Loaded;
+        public new event RoutedEventHandler Unloaded;
+        public new event KeyEventHandler KeyDown;
+        public event EventHandler ModeChanged;
+        public event EventHandler ModificationStateChanged;
+        public event EventHandler FileModificationStateChanged;
+        public event EventHandler LineEndingChanged;
+        public event EventHandler EncodingChanged;
+        public event EventHandler TextChanging;
+        public event EventHandler ChangeReverted;
+        public event EventHandler SelectionChanged;
+        public event EventHandler FontZoomFactorChanged;
+        public event EventHandler FileSaved;
+        public event EventHandler FileReloaded;
+
         public Guid Id { get; set; }
 
         public INotepadsExtensionProvider ExtensionProvider;
-
-        public event EventHandler ModeChanged;
-
-        public event EventHandler ModificationStateChanged;
-
-        public event EventHandler FileModificationStateChanged;
-
-        public event EventHandler LineEndingChanged;
-
-        public event EventHandler EncodingChanged;
-
-        public event EventHandler TextChanging;
-
-        public event EventHandler ChangeReverted;
-
-        public event EventHandler SelectionChanged;
-
-        public event EventHandler FileSaved;
-
-        public event EventHandler FileReloaded;
 
         public string FileNamePlaceholder { get; set; } = string.Empty;
 
@@ -73,6 +69,8 @@
         public string EditingFileName { get; private set; }
 
         public string EditingFilePath { get; private set; }
+
+        private StorageFile _editingFile;
 
         public StorageFile EditingFile
         {
@@ -94,6 +92,8 @@
                 _editingFile = value;
             }
         }
+
+        private bool _isModified;
 
         public bool IsModified
         {
@@ -123,13 +123,9 @@
 
         private bool _loaded;
 
-        private bool _isModified;
-
         private FileModificationState _fileModificationState;
 
         private bool _isContentPreviewPanelOpened;
-
-        private StorageFile _editingFile;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -143,9 +139,11 @@
 
         private TextEditorMode _mode = TextEditorMode.Editing;
 
-        private readonly IKeyboardCommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+        private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
 
         private IContentPreviewExtension _contentPreviewExtension;
+
+        private SearchContext _lastSearchContext = new SearchContext(string.Empty);
 
         public TextEditorMode Mode
         {
@@ -160,31 +158,119 @@
             }
         }
 
+        public bool DisplayLineNumbers
+        {
+            get => TextEditorCore.DisplayLineNumbers;
+            set => TextEditorCore.DisplayLineNumbers = value;
+        }
+
+        public bool DisplayLineHighlighter
+        {
+            get => TextEditorCore.DisplayLineHighlighter;
+            set => TextEditorCore.DisplayLineHighlighter = value;
+        }
+
         public TextEditor()
         {
             InitializeComponent();
 
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
-            TextEditorCore.SelectionChanged += (sender, args) => { SelectionChanged?.Invoke(this, EventArgs.Empty); };
+            TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
 
-            ThemeSettingsService.OnThemeChanged += (sender, theme) =>
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+
+            base.Loaded += TextEditor_Loaded;
+            base.Unloaded += TextEditor_Unloaded;
+            base.KeyDown += TextEditor_KeyDown;
+
+            TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
+        }
+
+        private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            KeyDown?.Invoke(this, e);
+        }
+
+        // Unhook events and clear state
+        public void Dispose()
+        {
+            StopCheckingFileStatus();
+
+            TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
+            TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
+            TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
+            TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+
+            if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
+            {
+                contextFlyout.Dispose();
+            }
+
+            ThemeSettingsService.OnThemeChanged -= ThemeSettingsService_OnThemeChanged;
+
+            Unloaded?.Invoke(this, new RoutedEventArgs());
+
+            base.Loaded -= TextEditor_Loaded;
+            base.Unloaded -= TextEditor_Unloaded;
+            base.KeyDown -= TextEditor_KeyDown;
+
+            TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
+
+            _contentPreviewExtension?.Dispose();
+
+            if (SplitPanel != null)
+            {
+                SplitPanel.KeyDown -= SplitPanel_OnKeyDown;
+                UnloadObject(SplitPanel);
+            }
+
+            if (SideBySideDiffViewer != null)
+            {
+                SideBySideDiffViewer.OnCloseEvent -= SideBySideDiffViewer_OnCloseEvent;
+                SideBySideDiffViewer.Dispose();
+                UnloadObject(SideBySideDiffViewer);
+            }
+
+            if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Content is FindAndReplaceControl findAndReplaceControl)
+            {
+                findAndReplaceControl.Dispose();
+                UnloadObject(FindAndReplacePlaceholder);
+            }
+
+            if (GoToPlaceholder != null && GoToPlaceholder.Content is GoToControl goToControl)
+            {
+                goToControl.Dispose();
+                UnloadObject(GoToPlaceholder);
+            }
+
+            if (GridSplitter != null)
+            {
+                UnloadObject(GridSplitter);
+            }
+
+            _fileStatusSemaphoreSlim.Dispose();
+            TextEditorCore.Dispose();
+        }
+
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Mode == TextEditorMode.DiffPreview)
                 {
-                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
-                    Task.Factory.StartNew(
-                        () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                            () => SideBySideDiffViewer.Focus()));
+                    SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), theme);
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await Dispatcher.CallOnUIThreadAsync(() => { SideBySideDiffViewer.Focus(); });
+                    });
                 }
-            };
-
-            Loaded += TextEditor_Loaded;
-            Unloaded += TextEditor_Unloaded;
+            });
         }
 
         public string GetText()
@@ -212,7 +298,7 @@
                            TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
                 ScrollViewerHorizontalOffset = horizontalOffset,
                 ScrollViewerVerticalOffset = verticalOffset,
-                FontZoomFactor = TextEditorCore.FontZoomFactor,
+                FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
                 IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
                 IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)
             };
@@ -232,11 +318,13 @@
 
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
+            Loaded?.Invoke(this, e);
             StartCheckingFileStatusPeriodically();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
         {
+            Unloaded?.Invoke(this, e);
             StopCheckingFileStatus();
         }
 
@@ -255,8 +343,8 @@
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
-                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        await CheckAndUpdateFileStatus();
+                        LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -267,26 +355,29 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
         public void StopCheckingFileStatus()
         {
-            if (_fileStatusCheckerCancellationTokenSource != null)
+            if (_fileStatusCheckerCancellationTokenSource?.IsCancellationRequested == false)
             {
-                if (!_fileStatusCheckerCancellationTokenSource.IsCancellationRequested)
-                {
-                    _fileStatusCheckerCancellationTokenSource.Cancel();
-                }
+                _fileStatusCheckerCancellationTokenSource.Cancel();
             }
         }
 
-        private async Task CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus(CancellationToken cancellationToken)
         {
             if (EditingFile == null) return;
 
-            await _fileStatusSemaphoreSlim.WaitAsync();
+            await _fileStatusSemaphoreSlim.WaitAsync(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
 
             FileModificationState? newState = null;
 
@@ -301,7 +392,13 @@
                     FileModificationState.Untouched;
             }
 
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
+
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FileModificationState = newState.Value;
             });
@@ -313,23 +410,17 @@
         {
             return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
             {
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-                new KeyboardShortcut<KeyRoutedEventArgs>(true, false, false, VirtualKey.P, (args) => ShowHideContentPreview()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
-                new KeyboardShortcut<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
-                {
-                    if (_isContentPreviewPanelOpened)
-                    {
-                        _contentPreviewExtension.IsExtensionEnabled = false;
-                        CloseSplitView();
-                    }
-                    else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideFindAndReplaceControl();
-                    }
-                }),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
             });
         }
 
@@ -358,13 +449,22 @@
 
         public async Task ReloadFromEditingFile()
         {
+            await ReloadFromEditingFile(null);
+        }
+
+        public async Task ReloadFromEditingFile(Encoding encoding)
+        {
             if (EditingFile != null)
             {
-                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false);
+                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
                 Init(textFile, EditingFile, clearUndoQueue: false);
+                LineEndingChanged?.Invoke(this, EventArgs.Empty);
+                EncodingChanged?.Invoke(this, EventArgs.Empty);
                 StartCheckingFileStatusPeriodically();
                 CloseSideBySideDiffViewer();
+                HideGoToControl();
                 FileReloaded?.Invoke(this, EventArgs.Empty);
+                Analytics.TrackEvent(encoding == null ? "OnFileReloaded" : "OnFileReopenedWithEncoding");
             }
         }
 
@@ -388,7 +488,8 @@
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
             TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
-            TextEditorCore.SetScrollViewerPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+            TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+            TextEditorCore.ClearUndoQueue();
         }
 
         public void RevertAllChanges()
@@ -452,7 +553,7 @@
         private void OpenSplitView(IContentPreviewExtension extension)
         {
             SplitPanel.Content = extension;
-            SplitPanelColumnDefinition.Width = new GridLength(ActualWidth / 2.0f);
+            SplitPanelColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
             SplitPanelColumnDefinition.MinWidth = 100.0f;
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
@@ -463,10 +564,11 @@
         private void CloseSplitView()
         {
             SplitPanelColumnDefinition.Width = new GridLength(0);
+            EditorColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
             SplitPanelColumnDefinition.MinWidth = 0.0f;
             SplitPanel.Visibility = Visibility.Collapsed;
             GridSplitter.Visibility = Visibility.Collapsed;
-            TextEditorCore.Focus(FocusState.Programmatic);
+            TextEditorCore.ResetFocusAndScrollToPreviousPosition();
             _isContentPreviewPanelOpened = false;
         }
 
@@ -503,7 +605,7 @@
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             SideBySideDiffViewer.Visibility = Visibility.Visible;
-            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText());
+            SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), ThemeSettingsService.ThemeMode);
             SideBySideDiffViewer.Focus();
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
@@ -517,7 +619,7 @@
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
             SideBySideDiffViewer.StopRenderingAndClearCache();
-            TextEditorCore.Focus(FocusState.Programmatic);
+            TextEditorCore.ResetFocusAndScrollToPreviousPosition();
         }
 
         private void ShowHideSideBySideDiffViewer()
@@ -532,12 +634,35 @@
             }
         }
 
-        public void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount)
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
+        public void GetLineColumnSelection(
+            out int startLine,
+            out int endLine,
+            out int startColumn,
+            out int endColumn,
+            out int selected,
+            out int lineCount)
         {
-            TextEditorCore.GetCurrentLineColumn(out int line, out int column, out int selected);
-            lineIndex = line;
-            columnIndex = column;
-            selectedCount = selected;
+            TextEditorCore.GetLineColumnSelection(
+                out startLine,
+                out endLine,
+                out startColumn,
+                out endColumn,
+                out selected,
+                out lineCount,
+                GetLineEnding());
+        }
+
+        public double GetFontZoomFactor()
+        {
+            return TextEditorCore.GetFontZoomFactor();
+        }
+
+        public void SetFontZoomFactor(double fontZoomFactor)
+        {
+            TextEditorCore.SetFontZoomFactor(fontZoomFactor);
         }
 
         public bool IsEditorEnabled()
@@ -588,7 +713,28 @@
             }
             else if (Mode == TextEditorMode.Editing)
             {
-                TextEditorCore.Focus(FocusState.Programmatic);
+                TextEditorCore.ResetFocusAndScrollToPreviousPosition();
+            }
+        }
+
+        public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+
+            try
+            {
+                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
+                dataPackage.SetText(text);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -615,6 +761,25 @@
             return true;
         }
 
+        private void OnEscapeKeyDown()
+        {
+            if (_isContentPreviewPanelOpened)
+            {
+                _contentPreviewExtension.IsExtensionEnabled = false;
+                CloseSplitView();
+            }
+            else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+            {
+                HideFindAndReplaceControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+            else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+        }
+
         private void LoadSplitView()
         {
             FindName("SplitPanel");
@@ -628,17 +793,51 @@
         {
             FindName("SideBySideDiffViewer");
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
-            SideBySideDiffViewer.OnCloseEvent += (sender, args) => CloseSideBySideDiffViewer();
+            SideBySideDiffViewer.OnCloseEvent += SideBySideDiffViewer_OnCloseEvent;
         }
 
-        private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        private void SideBySideDiffViewer_OnCloseEvent(object sender, EventArgs e)
         {
-            _keyboardCommandHandler.Handle(e);
+            CloseSideBySideDiffViewer();
         }
 
         private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TextEditorCore_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void TextEditorCore_OnFontZoomFactorChanged(object sender, double e)
+        {
+            FontZoomFactorChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void TextEditorCore_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu);
+
+            if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !alt.HasFlag(CoreVirtualKeyStates.Down))
+            {
+                if (e.Key == VirtualKey.F3)
+                {
+                    return;
+                }
+            }
+
+            var result = _keyboardCommandHandler.Handle(e);
+            if (result.ShouldHandle)
+            {
+                e.Handled = true;
+            }
         }
 
         private void TextEditorCore_OnTextChanging(RichEditBox textEditor, RichEditBoxTextChangingEventArgs args)
@@ -653,6 +852,18 @@
                 IsModified = !NoChangesSinceLastSaved(compareTextOnly: true);
             }
             TextChanging?.Invoke(this, EventArgs.Empty);
+
+            GoToPlaceholder?.Dismiss();
+        }
+
+        private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
+        {
+            CopySelectedTextToWindowsClipboard(e);
+        }
+
+        private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)
+        {
+            ShowFindAndReplaceControl(showReplaceBar);
         }
 
         public void ShowFindAndReplaceControl(bool showReplaceBar)
@@ -661,6 +872,8 @@
             {
                 return;
             }
+
+            GoToPlaceholder?.Dismiss();
 
             if (FindAndReplacePlaceholder == null)
             {
@@ -679,7 +892,7 @@
                 FindAndReplacePlaceholder.Show();
             }
 
-            findAndReplace.Focus(showReplaceBar ? FindAndReplaceMode.Replace : FindAndReplaceMode.FindOnly);
+            findAndReplace.Focus(TextEditorCore.GetSearchString(), FindAndReplaceMode.FindOnly);
         }
 
         public void HideFindAndReplaceControl()
@@ -690,36 +903,134 @@
         private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
-            bool found = false;
+            InitiateFindAndReplace(e);
 
-            switch (e.FindAndReplaceMode)
+            // In case user hit "enter" key in search box instead of clicking on search button or hit F3
+            // We should re-focus on FindAndReplaceControl to make the next search "flows"
+            if (!(sender is Button))
+            {
+                FindAndReplaceControl.Focus(string.Empty, e.FindAndReplaceMode);
+            }
+        }
+
+        private void InitiateFindAndReplace(FindAndReplaceEventArgs findAndReplaceEventArgs)
+        {
+            if (string.IsNullOrEmpty(findAndReplaceEventArgs.SearchContext.SearchText)) return;
+
+            bool found = false;
+            bool regexError = false;
+
+            if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
+                _lastSearchContext = findAndReplaceEventArgs.SearchContext;
+
+            switch (findAndReplaceEventArgs.FindAndReplaceMode)
             {
                 case FindAndReplaceMode.FindOnly:
-                    found = TextEditorCore.FindNextAndSelect(e.SearchText, e.MatchCase, e.MatchWholeWord, false);
-                    FindAndReplaceControl.Focus(FindAndReplaceMode.FindOnly);
+                    found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
+                        ? TextEditorCore.TryFindNextAndSelect(
+                            findAndReplaceEventArgs.SearchContext,
+                            stopAtEof: false,
+                            out regexError)
+                        : TextEditorCore.TryFindPreviousAndSelect(
+                            findAndReplaceEventArgs.SearchContext,
+                            stopAtBof: false,
+                            out regexError);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.FindNextAndReplace(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = TextEditorCore.TryFindNextAndReplace(
+                        findAndReplaceEventArgs.SearchContext,
+                        findAndReplaceEventArgs.ReplaceText,
+                        out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
-                    found = TextEditorCore.FindAndReplaceAll(e.SearchText, e.ReplaceText, e.MatchCase, e.MatchWholeWord);
+                    found = TextEditorCore.TryFindAndReplaceAll(
+                        findAndReplaceEventArgs.SearchContext,
+                        findAndReplaceEventArgs.ReplaceText,
+                        out regexError);
                     break;
             }
 
             if (!found)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+                if (findAndReplaceEventArgs.SearchContext.UseRegex && regexError)
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_InvalidRegex"), 1500);
+                }
+                else
+                {
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+                }
             }
         }
 
-        private void FindAndReplacePlaceholder_Closed(object sender, Microsoft.Toolkit.Uwp.UI.Controls.InAppNotificationClosedEventArgs e)
+        private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
         {
             FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
         }
 
         private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
         {
-            FindAndReplacePlaceholder.Dismiss();
+            FindAndReplacePlaceholder?.Dismiss();
+            TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        public void ShowGoToControl()
+        {
+            if (!TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing) return;
+
+            FindAndReplacePlaceholder?.Dismiss();
+
+            if (GoToPlaceholder == null)
+                FindName("GoToPlaceholder"); // Lazy loading
+
+            var goToControl = (GoToControl)GoToPlaceholder.Content;
+
+            if (goToControl == null) return;
+
+            GoToPlaceholder.Height = goToControl.GetHeight();
+
+            if (GoToPlaceholder.Visibility == Visibility.Collapsed)
+                GoToPlaceholder.Show();
+
+            GetLineColumnSelection(out var startLine, out _, out _, out _, out _, out var lineCount);
+            goToControl.SetLineData(startLine, lineCount);
+            goToControl.Focus();
+        }
+
+        public void HideGoToControl()
+        {
+            GoToPlaceholder?.Dismiss();
+        }
+
+        private void GoToControl_OnGoToButtonClicked(object sender, GoToEventArgs e)
+        {
+            var found = false;
+
+            if (int.TryParse(e.SearchLine, out var line))
+            {
+                found = TextEditorCore.GoTo(line);
+            }
+
+            if (!found)
+            {
+                GoToControl.Focus();
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FindAndReplace_NotificationMsg_NotFound"), 1500);
+            }
+            else
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void GoToPlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
+        {
+            GoToPlaceholder.Visibility = Visibility.Collapsed;
+        }
+
+        private void GoToControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
+        {
+            GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
         }
     }

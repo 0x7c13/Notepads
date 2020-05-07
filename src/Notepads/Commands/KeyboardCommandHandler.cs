@@ -6,7 +6,7 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
-    public class KeyboardCommandHandler : IKeyboardCommandHandler<KeyRoutedEventArgs>
+    public class KeyboardCommandHandler : ICommandHandler<KeyRoutedEventArgs>
     {
         public readonly ICollection<IKeyboardCommand<KeyRoutedEventArgs>> Commands;
 
@@ -17,30 +17,44 @@
             Commands = commands;
         }
 
-        public void Handle(KeyRoutedEventArgs args)
+        public CommandHandlerResult Handle(KeyRoutedEventArgs args)
         {
             var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            var shouldHandle = false;
+            var shouldSwallow = false;
 
-            foreach (var keyboardCommand in Commands)
+            foreach (var command in Commands)
             {
-                if (keyboardCommand.Hit(ctrlDown, altDown, shiftDown, args.Key))
+                if (command.Hit(ctrlDown, altDown, shiftDown, args.Key))
                 {
-                    if (keyboardCommand.ShouldExecute(_lastCommand))
+                    if (command.ShouldExecute(_lastCommand))
                     {
-                        keyboardCommand.Execute(args);
+                        command.Execute(args);
                     }
 
-                    args.Handled = true;
-                    _lastCommand = keyboardCommand;
+                    if (command.ShouldSwallowAfterExecution())
+                    {
+                        shouldSwallow = true;
+                    }
+
+                    if (command.ShouldHandleAfterExecution())
+                    {
+                        shouldHandle = true;
+                    }
+
+                    _lastCommand = command;
+                    break;
                 }
             }
 
-            if (!args.Handled)
+            if (!shouldHandle)
             {
                 _lastCommand = null;
             }
+
+            return new CommandHandlerResult(shouldHandle, shouldSwallow);
         }
     }
 }
