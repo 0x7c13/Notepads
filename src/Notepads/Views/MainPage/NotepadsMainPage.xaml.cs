@@ -1,4 +1,4 @@
-﻿namespace Notepads.Views
+﻿namespace Notepads.Views.MainPage
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
+    using Notepads.Views.Settings;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;

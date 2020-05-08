@@ -1,4 +1,4 @@
-﻿namespace Notepads.Views
+﻿namespace Notepads.Views.Settings
 {
     using System;
     using Notepads.Extensions;
