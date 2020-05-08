@@ -17,10 +17,12 @@
         private readonly SideBySideDiffBuilder differ;
         private readonly object mutex = new object();
         private bool inDiff;
+        private readonly BrushFactory _brushFactory;
 
         public RichTextBlockDiffRenderer()
         {
             differ = new SideBySideDiffBuilder(new Differ());
+            _brushFactory = new BrushFactory();
         }
 
         private const char BreakingSpace = '-';
@@ -48,7 +50,7 @@
 
         private RichTextBlockDiffContext RenderDiff(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
         {
-            var context = new RichTextBlockDiffContext();
+            var context = new RichTextBlockDiffContext(_brushFactory);
             int index = 0;
             foreach (var line in lines)
             {
@@ -111,7 +113,7 @@
             {
                 Text = text,
                 Foreground = foreground.HasValue
-                            ? BrushFactory.GetSolidColorBrush(foreground.Value)
+                            ? _brushFactory.GetOrCreateSolidColorBrush(foreground.Value)
                             : _defaultForeground
             };
 
@@ -129,7 +131,7 @@
             {
                 LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                 Foreground = foreground.HasValue
-                    ? BrushFactory.GetSolidColorBrush(foreground.Value)
+                    ? _brushFactory.GetOrCreateSolidColorBrush(foreground.Value)
                     : _defaultForeground,
             };
             paragraph.LineHeight = paragraph.FontSize + 6;
