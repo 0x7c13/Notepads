@@ -459,14 +459,21 @@
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            using (var stream = await file.OpenStreamForWriteAsync())
-            using (var writer = new StreamWriter(stream, encoding))
+            if (await FileIsWritable(file))
             {
-                stream.Position = 0;
-                await writer.WriteAsync(text);
-                await writer.FlushAsync();
-                // Truncate
-                stream.SetLength(stream.Position);
+                using (var stream = await file.OpenStreamForWriteAsync())
+                using (var writer = new StreamWriter(stream, encoding))
+                {
+                    stream.Position = 0;
+                    await writer.WriteAsync(text);
+                    await writer.FlushAsync();
+                    // Truncate
+                    stream.SetLength(stream.Position);
+                }
+            }
+            else
+            {
+                await PathIO.WriteTextAsync(file.Path, text);
             }
 
             if (usedDeferUpdates)

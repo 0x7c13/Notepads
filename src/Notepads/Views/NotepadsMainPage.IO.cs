@@ -56,10 +56,6 @@
             try
             {
                 if (file == null) return false;
-                
-                if (!await FileSystemUtility.FileIsWritable(file))
-                    file = await FileSystemUtility.GetFile(file.Path);
-
                 var openedEditor = NotepadsCore.GetTextEditor(file);
                 if (openedEditor != null)
                 {
@@ -124,9 +120,7 @@
             StorageFile file = null;
             try
             {
-                if (textEditor.EditingFile == null || saveAs ||
-                    FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
-                    !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
+                if (textEditor.EditingFile == null || saveAs)
                 {
                     NotepadsCore.SwitchTo(textEditor);
                     file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync();
