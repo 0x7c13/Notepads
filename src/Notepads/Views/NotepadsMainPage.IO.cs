@@ -56,6 +56,10 @@
             try
             {
                 if (file == null) return false;
+                
+                if (!await FileSystemUtility.FileIsWritable(file))
+                    file = await FileSystemUtility.GetFile(file.Path);
+
                 var openedEditor = NotepadsCore.GetTextEditor(file);
                 if (openedEditor != null)
                 {
