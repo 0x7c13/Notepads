@@ -6,22 +6,19 @@
     using System.Text;
     using Services;
     using Utilities;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public sealed partial class TextAndEditorSettingsPage : Page
     {
-        private IReadOnlyCollection<string> _availableFonts;
+        public IReadOnlyCollection<string> AvailableFonts => FontUtility.GetSystemFontFamilies();
 
-        /// <summary>
-        /// Gets the collection of fonts that the user can choose from System Fonts
-        /// </summary>
-        public IReadOnlyCollection<string> AvailableFonts => _availableFonts ?? (_availableFonts = FontUtility.GetSystemFontFamilies());
+        public int[] AvailableFontSizes = FontUtility.PredefinedFontSizes;
 
-        public int[] FontSizes =
-        {
-            8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
-        };
+        public string[] AvailableFontStyles = FontUtility.FontStyles;
+
+        public string[] AvailableFontWeights = FontUtility.PredefinedFontWeights.Keys.ToArray();
 
         public TextAndEditorSettingsPage()
         {
@@ -33,6 +30,10 @@
             LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
+            FontStylePicker.SelectedItem = EditorSettingsService.EditorFontStyle.ToString();
+            FontWeightPicker.SelectedItem = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
+                ? fontWeightName
+                : nameof(FontWeights.Normal);
 
             InitializeLineEndingSettings();
 
@@ -158,6 +159,8 @@
             LineNumbersToggle.Toggled += LineNumbersToggle_Toggled;
             FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
+            FontStylePicker.SelectionChanged += FontStylePicker_OnSelectionChanged;
+            FontWeightPicker.SelectionChanged += FontWeightPicker_OnSelectionChanged;
 
             CrlfRadioButton.Checked += LineEndingRadioButton_OnChecked;
             CrRadioButton.Checked += LineEndingRadioButton_OnChecked;
@@ -311,6 +314,19 @@
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             EditorSettingsService.EditorFontSize = (int)e.AddedItems.First();
+        }
+
+        private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EditorSettingsService.EditorFontStyle = (FontStyle)Enum.Parse(typeof(FontStyle), (string)e.AddedItems.First());
+        }
+
+        private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedValue = (string)e.AddedItems.First();
+            EditorSettingsService.EditorFontWeight = FontUtility.TryGetFontWeight(selectedValue, out var fontWeight)
+                ? new FontWeight() { Weight = fontWeight }
+                : FontWeights.Normal;
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
