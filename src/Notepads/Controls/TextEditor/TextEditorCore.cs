@@ -8,16 +8,24 @@
     using Notepads.Services;
     using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.Foundation;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
     [TemplatePart(Name = ContentElementName, Type = typeof(ScrollViewer))]
+    [TemplatePart(Name = RootGridName, Type = typeof(Grid))]
+    [TemplatePart(Name = LineNumberCanvasName, Type = typeof(Canvas))]
+    [TemplatePart(Name = LineNumberGridName, Type = typeof(Grid))]
+    [TemplatePart(Name = LineHighlighterAndIndicatorCanvasName, Type = typeof(Canvas))]
+    [TemplatePart(Name = LineHighlighterName, Type = typeof(Border))]
+    [TemplatePart(Name = LineIndicatorName, Type = typeof(Border))]
     public partial class TextEditorCore : RichEditBox
     {
         public event EventHandler<TextWrapping> TextWrappingChanged;
@@ -28,9 +36,9 @@
 
         private const char RichEditBoxDefaultLineEnding = '\r';
 
-        private bool _isLineCachePendingUpdate = true;
-        private string[] _contentLinesCache;
-        private string _content = string.Empty;
+        private bool _isDocumentLinesCachePendingUpdate = true;
+        private string[] _documentLinesCache; // internal copy of the active document text in array format
+        private string _document = string.Empty; // internal copy of the active document text
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
         private readonly ICommandHandler<PointerRoutedEventArgs> _mouseCommandHandler;
@@ -52,6 +60,20 @@
 
         private const string ContentElementName = "ContentElement";
         private ScrollViewer _contentScrollViewer;
+        private const string RootGridName = "RootGrid";
+        private Grid _rootGrid;
+        private const string LineNumberCanvasName = "LineNumberCanvas";
+        private Canvas _lineNumberCanvas;
+        private const string LineNumberGridName = "LineNumberGrid";
+        private Grid _lineNumberGrid;
+        private const string ContentScrollViewerVerticalScrollBarName = "VerticalScrollBar";
+        private ScrollBar _contentScrollViewerVerticalScrollBar;
+        private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
+        private Canvas _lineHighlighterAndIndicatorCanvas;
+        private const string LineHighlighterName = "LineHighlighter";
+        private Border _lineHighlighter;
+        private const string LineIndicatorName = "LineIndicator";
+        private Border _lineIndicator;
 
         private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
 
@@ -94,16 +116,21 @@
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
+            FontStyle = EditorSettingsService.EditorFontStyle;
+            FontWeight = EditorSettingsService.EditorFontWeight;
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
+            DisplayLineNumbers = EditorSettingsService.EditorDisplayLineNumbers;
+            DisplayLineHighlighter = EditorSettingsService.EditorDisplayLineHighlighter;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
             Paste += OnPaste;
             TextChanging += OnTextChanging;
+            TextChanged += OnTextChanged;
             SelectionChanging += OnSelectionChanging;
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
@@ -113,8 +140,17 @@
 
             EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
+            EditorSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
+
+            SelectionChanged += OnSelectionChanged;
+            TextWrappingChanged += OnTextWrappingChanged;
+            SizeChanged += OnSizeChanged;
+            FontSizeChanged += OnFontSizeChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
@@ -128,15 +164,29 @@
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            _rootGrid = GetTemplateChild(RootGridName) as Grid;
+
+            _lineNumberGrid = GetTemplateChild(LineNumberGridName) as Grid;
+            _lineNumberCanvas = GetTemplateChild(LineNumberCanvasName) as Canvas;
+
+            _lineHighlighterAndIndicatorCanvas = GetTemplateChild(LineHighlighterAndIndicatorCanvasName) as Canvas;
+            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Border;
+            _lineIndicator = GetTemplateChild(LineIndicatorName) as Border;
+
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
             _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
             _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
-            _contentScrollViewer.ChangeView(
-                _contentScrollViewerHorizontalOffsetLastKnownPosition,
-                _contentScrollViewerVerticalOffsetLastKnownPosition,
-                zoomFactor: null,
-                disableAnimation: true);
+            _contentScrollViewer.SizeChanged += OnContentScrollViewerSizeChanged;
+
+            _contentScrollViewer.ApplyTemplate();
+            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(_contentScrollViewer, 0);
+            _contentScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerVerticalScrollBarName);
+            _contentScrollViewerVerticalScrollBar.ValueChanged += OnVerticalScrollBarValueChanged;
+
+            _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
+            _rootGrid.SizeChanged += OnRootGridSizeChanged;
         }
 
         // Unhook events and clear state
@@ -145,6 +195,7 @@
             CopyingToClipboard -= OnCopyingToClipboard;
             Paste -= OnPaste;
             TextChanging -= OnTextChanging;
+            TextChanged -= OnTextChanged;
             SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
             LostFocus -= OnLostFocus;
@@ -154,18 +205,40 @@
             {
                 _contentScrollViewer.ViewChanging -= OnContentScrollViewerViewChanging;
                 _contentScrollViewer.ViewChanged -= OnContentScrollViewerViewChanged;
+                _contentScrollViewer.SizeChanged -= OnContentScrollViewerSizeChanged;
             }
+
+            if (_contentScrollViewerVerticalScrollBar != null)
+            {
+                _contentScrollViewerVerticalScrollBar.ValueChanged -= OnVerticalScrollBarValueChanged;
+            }
+
+            if (_lineNumberGrid != null)
+            {
+                _lineNumberGrid.SizeChanged -= OnLineNumberGridSizeChanged;
+            }
+
+            _lineNumberCanvas?.Children.Clear();
+            _renderedLineNumberBlocks.Clear();
+            _miniRequisiteIntegerTextRenderingWidthCache.Clear();
 
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
+            EditorSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
+            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
+
+            SelectionChanged -= OnSelectionChanged;
+            TextWrappingChanged -= OnTextWrappingChanged;
+            SizeChanged -= OnSizeChanged;
+            FontSizeChanged -= OnFontSizeChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
             Window.Current.CoreWindow.Activated -= OnCoreWindowActivated;
-
-            _contentLinesCache = null;
         }
 
         private KeyboardCommandHandler GetKeyboardCommandHandler()
@@ -241,6 +314,22 @@
             });
         }
 
+        private async void EditorSettingsService_OnFontStyleChanged(object sender, FontStyle fontStyle)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                FontStyle = fontStyle;
+            });
+        }
+
+        private async void EditorSettingsService_OnFontWeightChanged(object sender, FontWeight fontWeight)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                FontWeight = fontWeight;
+            });
+        }
+
         private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
         {
             await Dispatcher.CallOnUIThreadAsync(() =>
@@ -254,6 +343,22 @@
             await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 IsSpellCheckEnabled = isSpellCheckEnabled;
+            });
+        }
+
+        private async void EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged(object sender, bool displayLineNumbers)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                DisplayLineNumbers = displayLineNumbers;
+            });
+        }
+
+        private async void EditorSettingsService_OnDefaultLineHighlighterViewStateChanged(object sender, bool displayLineHighlighter)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                DisplayLineHighlighter = displayLineHighlighter;
             });
         }
 
@@ -275,9 +380,12 @@
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs _)
         {
             _loaded = true;
+
+            ResetRootGridClipping();
+
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
@@ -287,34 +395,37 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
+
+            UpdateLineHighlighterAndIndicator();
+            if (DisplayLineNumbers) ShowLineNumbers();
         }
 
-        private void OnLostFocus(object sender, RoutedEventArgs e)
+        private void OnLostFocus(object sender, RoutedEventArgs _)
         {
             GetScrollViewerPosition(out _contentScrollViewerHorizontalOffsetLastKnownPosition, out _contentScrollViewerVerticalOffsetLastKnownPosition);
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        protected override void OnKeyDown(KeyRoutedEventArgs args)
         {
-            var result = _keyboardCommandHandler.Handle(e);
+            var result = _keyboardCommandHandler.Handle(args);
 
             if (result.ShouldHandle)
             {
-                e.Handled = true;
+                args.Handled = true;
             }
 
             if (!result.ShouldSwallow)
             {
-                base.OnKeyDown(e);
+                base.OnKeyDown(args);
             }
         }
 
-        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
         {
-            var result = _mouseCommandHandler.Handle(e);
+            var result = _mouseCommandHandler.Handle(args);
             if (result.ShouldHandle)
             {
-                e.Handled = true;
+                args.Handled = true;
             }
         }
 
@@ -332,10 +443,15 @@
         {
             if (args.IsContentChanging)
             {
-                Document.GetText(TextGetOptions.None, out _content);
-                _content = TrimRichEditBoxText(_content);
-                _isLineCachePendingUpdate = true;
+                Document.GetText(TextGetOptions.None, out var document);
+                _document = TrimRichEditBoxText(document);
+                _isDocumentLinesCachePendingUpdate = true;
             }
+        }
+
+        private void OnTextChanged(object sender, RoutedEventArgs _)
+        {
+            UpdateLineNumbersRendering();
         }
 
         private void OnSelectionChanging(RichEditBox sender, RichEditBoxSelectionChangingEventArgs args)
@@ -344,14 +460,14 @@
             _textSelectionEndPosition = args.SelectionStart + args.SelectionLength;
         }
 
-        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        private void OnContentScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs args)
         {
-            _contentScrollViewerHorizontalOffset = e.FinalView.HorizontalOffset;
-            _contentScrollViewerVerticalOffset = e.FinalView.VerticalOffset;
-            ScrollViewerViewChanging?.Invoke(sender, e);
+            _contentScrollViewerHorizontalOffset = args.FinalView.HorizontalOffset;
+            _contentScrollViewerVerticalOffset = args.FinalView.VerticalOffset;
+            ScrollViewerViewChanging?.Invoke(sender, args);
         }
 
-        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs _)
         {
             if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
             {
@@ -362,6 +478,65 @@
                     zoomFactor: null,
                     disableAnimation: true);
             }
+            else
+            {
+                UpdateLineNumbersRendering();
+            }
+        }
+
+        private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs _)
+        {
+            UpdateLineNumbersRendering();
+        }
+
+        private void OnFontSizeChanged(object sender, double _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnTextWrappingChanged(object sender, TextWrapping _)
+        {
+            UpdateLayout();
+            UpdateLineHighlighterAndIndicator();
+            UpdateLineNumbersRendering();
+        }
+
+        private void OnSelectionChanged(object sender, RoutedEventArgs _)
+        {
+            UpdateLineHighlighterAndIndicator();
+        }
+
+        private void OnVerticalScrollBarValueChanged(object sender, RangeBaseValueChangedEventArgs _)
+        {
+            // Make sure line number canvas is in sync with editor's ScrollViewer
+            _contentScrollViewer.StartExpressionAnimation(_lineNumberCanvas, Axis.Y);
+
+            // Make sure line highlighter and indicator canvas is in sync with editor's ScrollViewer
+            _contentScrollViewer.StartExpressionAnimation(_lineHighlighterAndIndicatorCanvas, Axis.Y);
+        }
+
+        private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs _)
+        {
+            ResetRootGridClipping();
+        }
+
+        private void ResetRootGridClipping()
+        {
+            if (!_loaded) return;
+
+            _rootGrid.Clip = new RectangleGeometry
+            {
+                Rect = new Rect(
+                    0,
+                    0,
+                    _rootGrid.ActualWidth,
+                    Math.Clamp(_rootGrid.ActualHeight, .0f, Double.PositiveInfinity))
+            };
         }
 
         public void Undo()
@@ -390,7 +565,13 @@
         /// </summary>
         public string GetText()
         {
-            return _content;
+            return _document;
+        }
+
+        public double GetSingleLineHeight()
+        {
+            Document.GetRange(0, 0).GetRect(PointOptions.ClientCoordinates, out var rect, out _);
+            return rect.Height;
         }
 
         /// <summary>
@@ -445,12 +626,7 @@
             out int lineCount,
             LineEnding lineEnding = LineEnding.Crlf)
         {
-            if (_isLineCachePendingUpdate)
-            {
-                _contentLinesCache = (_content + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
-                _isLineCachePendingUpdate = false;
-            }
-
+            var lines = GetDocumentLinesCache();
             GetTextSelectionPosition(out var start, out var end);
 
             startLineIndex = 1;
@@ -458,14 +634,14 @@
             endLineIndex = 1;
             endColumnIndex = 1;
             selectedCount = 0;
-            lineCount = _contentLinesCache.Length - 1;
+            lineCount = lines.Length - 1;
 
             var length = 0;
             bool startLocated = false;
 
             for (int i = 0; i < lineCount + 1; i++)
             {
-                var line = _contentLinesCache[i];
+                var line = lines[i];
 
                 if (line.Length + length >= start && !startLocated)
                 {
@@ -492,7 +668,7 @@
                     if (endColumnIndex == 1 && end != start)
                     {
                         endLineIndex--;
-                        endColumnIndex = _contentLinesCache[i - 1].Length + 1;
+                        endColumnIndex = lines[i - 1].Length + 1;
                     }
 
                     return;
@@ -502,21 +678,34 @@
             }
         }
 
+        private string[] GetDocumentLinesCache()
+        {
+            if (_isDocumentLinesCachePendingUpdate)
+            {
+                _documentLinesCache = (GetText() + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _isDocumentLinesCachePendingUpdate = false;
+            }
+
+            return _documentLinesCache;
+        }
+
         /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
         {
             GetTextSelectionPosition(out var start, out var end);
 
-            lineIndex = (_content + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - _content.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+            var document = GetText();
+
+            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
+                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
                 + 1;
             columnIndex = start
-                - (RichEditBoxDefaultLineEnding + _content).LastIndexOf(RichEditBoxDefaultLineEnding, start)
+                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
                 + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(_content)
-                ? end - start + (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (_content + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
+            selectedCount = start != end && !string.IsNullOrEmpty(document)
+                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
+                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
                 : 0;
-            if (end > _content.Length) selectedCount -= 2;
+            if (end > document.Length) selectedCount -= 2;
         }*/
 
         public double GetFontZoomFactor()
@@ -547,7 +736,7 @@
                 var text = await dataPackageView.GetTextAsync();
                 Document.BeginUndoGroup();
                 Document.Selection.SetText(TextSetOptions.None, text);
-                Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
+                //Document.Selection.CharacterFormat.TextScript = TextScript.Ansi;
                 Document.Selection.StartPosition = Document.Selection.EndPosition;
                 Document.EndUndoGroup();
             }
@@ -573,7 +762,7 @@
 
         public void SwitchTextFlowDirection(FlowDirection direction)
         {
-            if (string.IsNullOrEmpty(_content))
+            if (string.IsNullOrEmpty(GetText()))
             {
                 // If content is empty, switching text flow direction might not work
                 // Let's not do anything here
@@ -591,10 +780,11 @@
         {
             try
             {
+                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
                 Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -618,7 +808,8 @@
         {
             // Automatically indent on new lines based on current line's leading spaces/tabs
             GetLineColumnSelection(out var startLineIndex, out _, out var startColumnIndex, out _, out _, out _);
-            var leadingSpacesAndTabs = _contentLinesCache[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
+            var lines = GetDocumentLinesCache();
+            var leadingSpacesAndTabs = lines[startLineIndex - 1].Substring(0, startColumnIndex - 1).LeadingSpacesAndTabs();
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding + leadingSpacesAndTabs);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }

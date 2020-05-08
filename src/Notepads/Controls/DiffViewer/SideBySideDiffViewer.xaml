@@ -76,12 +76,12 @@
             <ScrollViewer Name="LeftScroller"
                               Grid.Row="1"
                               IsTabStop="False"
+                              Padding="6, 0, 8, 6"
                               HorizontalScrollBarVisibility="Hidden"
                               VerticalScrollBarVisibility="Hidden">
                 <Border Name="LeftTextBlockBorder" Background="Transparent">
                     <RichTextBlock Name="LeftTextBlock"
-                                   FontFamily="Consolas"
-                                   Padding="6, 0, 8, 6"/>
+                                   FontFamily="Consolas"/>
                 </Border>
             </ScrollViewer>
         </Grid>
@@ -105,12 +105,12 @@
             <ScrollViewer Name="RightScroller"
                           Grid.Row="1"
                           IsTabStop="False"
+                          Padding="6, 0, 8, 6"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto">
                 <Border Name="RightTextBlockBorder" Background="Transparent">
                     <RichTextBlock Name="RightTextBlock"
-                                   FontFamily="Consolas"
-                                   Padding="6, 0, 8, 6"/>
+                                   FontFamily="Consolas"/>
                 </Border>
             </ScrollViewer>
         </Grid>

@@ -12,7 +12,6 @@
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
@@ -27,31 +26,22 @@
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        private readonly ScrollBar _rightScrollViewerHorizontalScrollBar;
-        private readonly ScrollBar _rightScrollViewerVerticalScrollBar;
+        private readonly ScrollViewerSynchronizer _scrollSynchronizer;
 
         public SideBySideDiffViewer()
         {
             InitializeComponent();
 
+            _scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> { LeftScroller, RightScroller });
+
             _diffRenderer = new RichTextBlockDiffRenderer();
+
             _keyboardCommandHandler = GetKeyboardCommandHandler();
             _mouseCommandHandler = GetMouseCommandHandler();
-
-            RightScroller.ApplyTemplate();
-
-            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(RightScroller, 0);
-            _rightScrollViewerHorizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
-            _rightScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
-
-            _rightScrollViewerHorizontalScrollBar.ValueChanged += HorizontalScrollBar_ValueChanged;
-            _rightScrollViewerVerticalScrollBar.ValueChanged += VerticalScrollBar_ValueChanged;
 
             LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             RightTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
 
-            LeftTextBlockBorder.KeyDown += LeftTextBlockBorder_KeyDown;
-            RightTextBlockBorder.KeyDown += RightTextBlockBorder_KeyDown;
             LeftTextBlockBorder.PointerWheelChanged += LeftTextBlockBorder_PointerWheelChanged;
             RightTextBlockBorder.PointerWheelChanged += RightTextBlockBorder_PointerWheelChanged;
 
@@ -78,54 +68,10 @@
             RightTextBlock.KeyDown -= OnKeyDown;
             Loaded -= SideBySideDiffViewer_Loaded;
 
-            LeftTextBlockBorder.KeyDown -= LeftTextBlockBorder_KeyDown;
-            RightTextBlockBorder.KeyDown -= RightTextBlockBorder_KeyDown;
             LeftTextBlockBorder.PointerWheelChanged -= LeftTextBlockBorder_PointerWheelChanged;
             RightTextBlockBorder.PointerWheelChanged -= RightTextBlockBorder_PointerWheelChanged;
 
-            _rightScrollViewerHorizontalScrollBar.ValueChanged -= HorizontalScrollBar_ValueChanged;
-            _rightScrollViewerVerticalScrollBar.ValueChanged -= VerticalScrollBar_ValueChanged;
-        }
-
-        private void HorizontalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
-        {
-            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.X);
-        }
-
-        private void VerticalScrollBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs args)
-        {
-            RightScroller.StartExpressionAnimation(LeftTextBlock, Axis.Y);
-        }
-
-        private void ScrollUsingArrowKeys(KeyRoutedEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case VirtualKey.Down:
-                    RightScroller.ChangeView(null, RightScroller.VerticalOffset + 127, null, false);
-                    break;
-                case VirtualKey.Up:
-                    RightScroller.ChangeView(null, RightScroller.VerticalOffset - 127, null, false);
-                    break;
-                case VirtualKey.Left:
-                    RightScroller.ChangeView(RightScroller.HorizontalOffset - 90, null, null, false);
-                    break;
-                case VirtualKey.Right:
-                    RightScroller.ChangeView(RightScroller.HorizontalOffset + 90, null, null, false);
-                    break;
-            }
-        }
-
-        private void LeftTextBlockBorder_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            ScrollUsingArrowKeys(e);
-            e.Handled = true;
-        }
-
-        private void RightTextBlockBorder_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            ScrollUsingArrowKeys(e);
-            e.Handled = true;
+            _scrollSynchronizer.Dispose();
         }
 
         private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
@@ -348,7 +294,7 @@
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             //            {
             //                Thread.Sleep(20);
-            //                LeftBox.Blocks.Add(leftContext.Blocks[j]);
+            //                LeftTextBlock.Blocks.Add(leftContext.Blocks[j]);
             //            });
             //        }
             //        if (i < rightCount)
@@ -357,7 +303,7 @@
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             //            {
             //                Thread.Sleep(20);
-            //                RightBox.Blocks.Add(rightContext.Blocks[j]);
+            //                RightTextBlock.Blocks.Add(rightContext.Blocks[j]);
             //            });
             //        }
             //    }
@@ -376,13 +322,13 @@
             //        {
             //            var j = i;
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => LeftBox.TextHighlighters.Add(leftHighlighters[j]));
+            //                () => LeftTextBlock.TextHighlighters.Add(leftHighlighters[j]));
             //        }
             //        if (i < rightCount)
             //        {
             //            var j = i;
             //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => RightBox.TextHighlighters.Add(rightHighlighters[j]));
+            //                () => RightTextBlock.TextHighlighters.Add(rightHighlighters[j]));
             //        }
             //    }
             //});

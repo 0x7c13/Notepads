@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="Notepads.Views.Settings.AdvancedSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+
+    <Grid>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <ScrollViewer
+            Grid.Row="0"
+            Padding="20,0,20,0"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock
+                    x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,15,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,0">
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="ShowStatusBarToggleSwitch" 
+                                  Margin="0,0,0,0"/>
+                </StackPanel>
+                <TextBlock
+                    x:Name="SessionSnapshotSettingsTitle"
+                    x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="SessionSnapshotSettingsControls" Margin="0,10,0,0">
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="EnableSessionSnapshotToggleSwitch" 
+                                  Margin="0,0,0,0"/>
+                    <TextBlock x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                </StackPanel>
+                <TextBlock
+                    x:Name="LaunchPreferenceSettingsTitle"
+                    x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="LaunchPreferenceSettingsControls" Margin="0,10,0,0">
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="AlwaysOpenNewWindowToggleSwitch" 
+                                  Margin="0,0,0,0"/>
+                    <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Page>
