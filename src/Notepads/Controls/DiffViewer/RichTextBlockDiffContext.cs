@@ -1,72 +1,82 @@
 ﻿namespace Notepads.Controls.DiffViewer
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Windows.UI;
     using Windows.UI.Xaml.Documents;
 
     public class RichTextBlockDiffContext
     {
-        private bool _hasPendingHightlighter;
+        private bool _hasPendingHighlighter;
         private int _lastStart;
         private int _lastEnd;
-        private Color _lastHightlightColor;
+        private Color _lastHighlightColor;
 
-        public RichTextBlockDiffContext()
+        private readonly BrushFactory _brushFactory;
+        private readonly Dictionary<Color, TextHighlighter> _textHighlighters = new Dictionary<Color, TextHighlighter>();
+
+        public RichTextBlockDiffContext(BrushFactory brushFactory)
         {
             Blocks = new List<Block>();
-            TextHighlighters = new List<TextHighlighter>();
+            _brushFactory = brushFactory;
         }
 
         public IList<Block> Blocks { get; set; }
 
-        private IList<TextHighlighter> TextHighlighters { get; set; }
-
-        public void QueuePendingHightlighter(TextRange textRange, Color backgroundColor)
+        public void QueuePendingHighlighter(TextRange textRange, Color backgroundColor)
         {
             _lastStart = textRange.StartIndex;
             _lastEnd = _lastStart + textRange.Length;
-            _lastHightlightColor = backgroundColor;
-            _hasPendingHightlighter = true;
+            _lastHighlightColor = backgroundColor;
+            _hasPendingHighlighter = true;
         }
 
         public void AddTextHighlighter(TextRange textRange, Color backgroundColor)
         {
-            if (!_hasPendingHightlighter)
+            if (!_hasPendingHighlighter)
             {
-                QueuePendingHightlighter(textRange, backgroundColor);
+                QueuePendingHighlighter(textRange, backgroundColor);
             }
             else
             {
-                if (_lastEnd == textRange.StartIndex && _lastHightlightColor == backgroundColor)
+                if (_lastEnd == textRange.StartIndex && _lastHighlightColor == backgroundColor)
                 {
                     _lastEnd += textRange.Length;
                 }
                 else
                 {
                     TextRange range = new TextRange() { StartIndex = _lastStart, Length = _lastEnd - _lastStart };
-                    TextHighlighters.Add(new TextHighlighter()
-                    {
-                        Background = BrushFactory.GetSolidColorBrush(_lastHightlightColor),
-                        Ranges = { range }
-                    });
-                    QueuePendingHightlighter(textRange, backgroundColor);
+                    AddOrUpdateTextHighlighterInternal(_lastHighlightColor, range);
+                    QueuePendingHighlighter(textRange, backgroundColor);
                 }
             }
         }
 
         public IList<TextHighlighter> GetTextHighlighters()
         {
-            if (_hasPendingHightlighter)
+            if (_hasPendingHighlighter)
             {
                 TextRange range = new TextRange() { StartIndex = _lastStart, Length = _lastEnd - _lastStart };
-                TextHighlighters.Add(new TextHighlighter()
-                {
-                    Background = BrushFactory.GetSolidColorBrush(_lastHightlightColor),
-                    Ranges = { range }
-                });
-                _hasPendingHightlighter = false;
+                AddOrUpdateTextHighlighterInternal(_lastHighlightColor, range);
+                _hasPendingHighlighter = false;
             }
-            return TextHighlighters;
+            return _textHighlighters.Values.ToList();
+        }
+
+        private void AddOrUpdateTextHighlighterInternal(Color backgroundColor, TextRange range)
+        {
+            if (_textHighlighters.ContainsKey(backgroundColor))
+            {
+                _textHighlighters[backgroundColor].Ranges.Add(range);
+            }
+            else
+            {
+                _textHighlighters[backgroundColor] = new TextHighlighter()
+                {
+                    Background = _brushFactory.GetOrCreateSolidColorBrush(backgroundColor),
+                    Ranges = { range }
+                };
+            }
         }
     }
 }
