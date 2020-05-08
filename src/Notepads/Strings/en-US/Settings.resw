@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Fallback decoding will be used if file's encoding cannot be recognized.</value>
+    <value>Fallback decoding will be used when a file's encoding cannot be recognized.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
