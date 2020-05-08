@@ -386,11 +386,11 @@
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Style</value>
+    <value>Estilo padrão da fonte</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Weight</value>
+    <value>Espessura padrão da fonte</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>
