@@ -15,9 +15,7 @@ namespace Notepads.DesktopExtension
         {
             try
             {
-                if (File.Exists(oldPath)) File.Delete(oldPath);
-                File.Move(newPath, oldPath);
-                if (File.Exists(newPath)) File.Delete(newPath);
+                File.Copy(newPath, oldPath, true);
             }
             catch (Exception)
             {

@@ -145,7 +145,7 @@
             }
             catch (Exception ex)
             {
-                if(ex.Message.Equals("Failed to save due to no Adminstration access"))
+                if(ex.Message.Equals(InteropService.AdminAccessErrorMessage))
                 {
                     bool result = false;
 
@@ -168,7 +168,7 @@
 
                     return result;
                 }
-                else if(ex.Message.Equals("Failed to save due to no Extension access"))
+                else if(ex.Message.Equals(InteropService.ExtensionAccessErrorMessage))
                 {
                     bool result = false;
                     if (!saveAs) result = await Save(textEditor, true, ignoreUnmodifiedDocument, rebuildOpenRecentItems);

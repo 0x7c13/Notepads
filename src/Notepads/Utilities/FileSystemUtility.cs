@@ -15,6 +15,8 @@
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
+    using Windows.Foundation.Metadata;
+    using Windows.ApplicationModel;
 
     public static class FileSystemUtility
     {
@@ -461,6 +463,10 @@
             StorageFile oldFile = null;
             if (IsFileReadOnly(file) || !await FileIsWritable(file))
             {
+                if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
+                {
+                    throw new Exception(InteropService.ExtensionAccessErrorMessage);
+                }
                 oldFile = file;
                 file = await SessionUtility.CreateNewFileInBackupFolderAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting, TempSaveFolderDefaultName);
             }
@@ -477,7 +483,7 @@
 
             if (oldFile != null)
             {
-                await InteropService.ReplaceFile(file.Path, oldFile.Path, IsFileReadOnly(file) ? false : true);
+                await InteropService.ReplaceFile(file, oldFile, IsFileReadOnly(oldFile) ? false : true);
             }
 
             if (usedDeferUpdates)

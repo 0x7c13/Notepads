@@ -26,6 +26,7 @@
         private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
 
         private static readonly string _commandLabel = "Command";
+        private static readonly string _failureLabel = "Failed";
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -93,7 +94,15 @@
                     break;
                 case CommandArgs.ReplaceFile:
                     var response = await extensionAppServiceConnection.SendMessageAsync(message);
-                    message = response.Message;
+                    if (response.Status != AppServiceResponseStatus.Success)
+                    {
+                        message.Clear();
+                        message.Add(_failureLabel, true);
+                    }
+                    else
+                    {
+                        message = response.Message;
+                    }
                     await args.Request.SendResponseAsync(message);
                     break;
             }

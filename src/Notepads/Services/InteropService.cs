@@ -2,12 +2,14 @@
 {
     using Notepads.ExtensionService;
     using Notepads.Settings;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
+    using Windows.Storage;
     using Windows.UI.Xaml;
 
     public static class InteropService
@@ -18,6 +20,9 @@
 
         public static AppServiceConnection InteropServiceConnection = null;
         private static ExtensionServiceClient adminExtensionServiceClient = new ExtensionServiceClient();
+
+        public const string ExtensionAccessErrorMessage = "Failed to save due to no Extension access";
+        public const string AdminAccessErrorMessage = "Failed to save due to no Adminstration access";
 
         private static readonly string _commandLabel = "Command";
         private static readonly string _appIdLabel = "Instance";
@@ -121,20 +126,19 @@
             await InteropServiceConnection.SendMessageAsync(message);
         }
 
-        public static async Task ReplaceFile(string newFilePath, string oldFilePath, bool isElevationRequired)
+        public static async Task ReplaceFile(StorageFile newFile, StorageFile oldFile, bool isElevationRequired)
         {
             if (InteropServiceConnection == null) return;
 
+            var newFilePath = newFile.Path;
+            var oldFilePath = oldFile.Path;
             bool failedFromDesktopExtension = false;
             bool failedFromAdminExtension = false;
             if (isElevationRequired)
             {
                 try
                 {
-                    if (!await adminExtensionServiceClient.ReplaceFileAsync(newFilePath, oldFilePath))
-                    {
-                        failedFromAdminExtension = true;
-                    }
+                    failedFromAdminExtension = !await adminExtensionServiceClient.ReplaceFileAsync(newFilePath, oldFilePath);
                 }
                 catch
                 {
@@ -149,21 +153,27 @@
                 message.Add(_oldFileLabel, oldFilePath);
 
                 var response = await InteropServiceConnection.SendMessageAsync(message);
-                var responseMessage = response.Message;
-                if (responseMessage.ContainsKey(_failureLabel) && (bool)responseMessage[_failureLabel])
+                if (response.Status != AppServiceResponseStatus.Success || 
+                    (response.Message.ContainsKey(_failureLabel) && (bool)response.Message[_failureLabel]))
                 {
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
                     failedFromDesktopExtension = true;
                 }
             }
 
+            if (await FileSystemUtility.FileExists(newFile))
+            {
+                await newFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
             if (failedFromDesktopExtension)
             {
-                throw new Exception("Failed to save due to no Extension access");
+                throw new Exception(ExtensionAccessErrorMessage);
             }
 
             if (failedFromAdminExtension)
             {
-                throw new Exception("Failed to save due to no Adminstration access");
+                throw new Exception(AdminAccessErrorMessage);
             }
         }
 

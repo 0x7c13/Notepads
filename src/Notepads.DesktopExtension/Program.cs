@@ -101,10 +101,10 @@ namespace Notepads.DesktopExtension
                 switch (command)
                 {
                     case CommandArgs.ReplaceFile:
-                        var status = false;
-                        status = ReplaceFile((string)message[_newFileLabel], (string)message[_oldFileLabel]);
+                        var failed = false;
+                        failed = ReplaceFile((string)message[_newFileLabel], (string)message[_oldFileLabel]);
                         message.Clear();
-                        message.Add(_failureLabel, true);
+                        if (failed) message.Add(_failureLabel, true);
                         await args.Request.SendResponseAsync(message);
                         break;
                     case CommandArgs.CreateElevetedExtension:
@@ -124,15 +124,13 @@ namespace Notepads.DesktopExtension
         {
             try
             {
-                if (File.Exists(oldPath)) File.Delete(oldPath);
-                File.Move(newPath, oldPath);
-                if (File.Exists(newPath)) File.Delete(newPath);
+                File.Copy(newPath, oldPath, true);
             }
             catch (Exception)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         private static void CreateElevetedExtension()

@@ -7,6 +7,7 @@
     using Notepads.Settings;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
+    using Windows.Foundation.Metadata;
 
     public static class Program
     {
@@ -148,8 +149,10 @@
 
         private static async void OpenExtension()
         {
-
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
+            {
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            }
         }
     }
 }
