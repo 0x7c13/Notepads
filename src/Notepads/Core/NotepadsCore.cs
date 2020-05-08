@@ -63,6 +63,7 @@
         private const string NotepadsTextEditorLastSavedContent = "NotepadsTextEditorLastSavedContent";
         private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
+        private const string NotepadsTextEditorEditingFile = "NotepadsTextEditorEditingFile";
         private const string NotepadsTextEditorTempFolderPath = "Temp";
 
         public NotepadsCore(SetsView sets,
@@ -643,9 +644,8 @@
                 // Add Editing File
                 if (editor.EditingFile != null)
                 {
-                    args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
                     args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFilePath);
-                    args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
+                    args.Data.Properties.Add(NotepadsTextEditorEditingFile, editor.EditingFile);
                 }
 
                 args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
@@ -703,18 +703,9 @@
                 }
 
                 StorageFile editingFile = null;
-
-                if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
+                if (metaData.HasEditingFile && args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFile, out object editingFileObj))
                 {
-                    var storageItems = await args.DataView.GetStorageItemsAsync();
-                    if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
-                    {
-                        editingFile = file;
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to read storage file from dropped set: Expecting only one storage file.");
-                    }
+                    editingFile = (StorageFile)editingFileObj;
                 }
 
                 string lastSavedText = null;
