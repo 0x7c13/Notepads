@@ -311,7 +311,6 @@
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>Soubor historie Z shell</value>
-
     <comment>.zsh_history</comment>
   </data>
 </root>
