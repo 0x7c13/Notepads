@@ -385,4 +385,12 @@
     <value>Pokaż numery linii</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Domyślny styl czcionki</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Domyślna grubość czcionki</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
 </root>

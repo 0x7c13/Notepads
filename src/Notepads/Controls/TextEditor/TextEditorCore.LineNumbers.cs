@@ -55,9 +55,10 @@
         {
             if (!_loaded) return;
 
-            _lineNumberCanvas?.Children.Clear();
-            _renderedLineNumberBlocks.Clear();
-            _miniRequisiteIntegerTextRenderingWidthCache.Clear();
+            foreach (var lineNumberBlock in _renderedLineNumberBlocks)
+            {
+                lineNumberBlock.Visibility = Visibility.Collapsed;
+            }
 
             _lineNumberGrid.BorderThickness = new Thickness(0, 0, 0, 0);
             _lineNumberGrid.Margin = new Thickness(0, 0, 0, 0);

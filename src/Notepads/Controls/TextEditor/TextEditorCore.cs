@@ -116,6 +116,8 @@
             TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
             FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
             FontSize = EditorSettingsService.EditorFontSize;
+            FontStyle = EditorSettingsService.EditorFontStyle;
+            FontWeight = EditorSettingsService.EditorFontWeight;
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
@@ -138,6 +140,8 @@
 
             EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
+            EditorSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
             EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
@@ -185,20 +189,6 @@
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
         }
 
-        private void ResetRootGridClipping()
-        {
-            if (!_loaded) return;
-
-            _rootGrid.Clip = new RectangleGeometry
-            {
-                Rect = new Rect(
-                    0,
-                    0,
-                    _rootGrid.ActualWidth,
-                    Math.Clamp(_rootGrid.ActualHeight, .0f, Double.PositiveInfinity))
-            };
-        }
-
         // Unhook events and clear state
         public void Dispose()
         {
@@ -234,6 +224,8 @@
 
             EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
             EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
+            EditorSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
+            EditorSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
             EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
             EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
             EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
@@ -319,6 +311,22 @@
             await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FontSize = fontSize;
+            });
+        }
+
+        private async void EditorSettingsService_OnFontStyleChanged(object sender, FontStyle fontStyle)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                FontStyle = fontStyle;
+            });
+        }
+
+        private async void EditorSettingsService_OnFontWeightChanged(object sender, FontWeight fontWeight)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                FontWeight = fontWeight;
             });
         }
 
@@ -515,6 +523,20 @@
         private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs _)
         {
             ResetRootGridClipping();
+        }
+
+        private void ResetRootGridClipping()
+        {
+            if (!_loaded) return;
+
+            _rootGrid.Clip = new RectangleGeometry
+            {
+                Rect = new Rect(
+                    0,
+                    0,
+                    _rootGrid.ActualWidth,
+                    Math.Clamp(_rootGrid.ActualHeight, .0f, Double.PositiveInfinity))
+            };
         }
 
         public void Undo()
