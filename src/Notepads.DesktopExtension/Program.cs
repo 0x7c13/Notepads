@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.ApplicationModel;
@@ -28,6 +29,10 @@ namespace Notepads.DesktopExtension
 {
     static class Program
     {
+        private static string DesktopExtensionMutexIdStr = "DesktopExtensionMutexIdStr";
+        private static string AdminExtensionMutexIdStr = "AdminExtensionMutexIdStr";
+        private static Mutex mutex;
+
         private static AppServiceConnection connection = null;
         private static readonly string _commandLabel = "Command";
         private static readonly string _newFileLabel = "From";
@@ -43,10 +48,12 @@ namespace Notepads.DesktopExtension
         {
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
+                CheckInstance(AdminExtensionMutexIdStr);
                 InitializeExtensionService();
             }
             else
             {
+                CheckInstance(DesktopExtensionMutexIdStr);
                 InitializeAppServiceConnection();
             }
 
@@ -80,6 +87,16 @@ namespace Notepads.DesktopExtension
         {
             selfHost = new ServiceHost(typeof(ExtensionService));
             selfHost.Open();
+        }
+
+        private static void CheckInstance(string key)
+        {
+            mutex = new Mutex(true, ReadOrInitializeMutexId(key), out var isFirstInstance);
+            if (!isFirstInstance)
+            {
+                mutex.ReleaseMutex();
+                Application.Exit();
+            }
         }
 
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
@@ -120,7 +137,7 @@ namespace Notepads.DesktopExtension
             messageDeferral.Complete();
         }
 
-        public static bool ReplaceFile(string newPath, string oldPath)
+        private static bool ReplaceFile(string newPath, string oldPath)
         {
             try
             {
@@ -145,6 +162,23 @@ namespace Notepads.DesktopExtension
             info.UseShellExecute = true;
             info.FileName = aliasPath;
             Process.Start(info);
+        }
+
+        private static string ReadOrInitializeMutexId(string key)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            if (!localSettings.Values.ContainsKey(key) || !(localSettings.Values[key] is string mutexId) || string.IsNullOrEmpty(mutexId))
+            {
+                mutexId = Guid.NewGuid().ToString();
+                WriteMutexId(key, mutexId);
+            }
+            return mutexId;
+        }
+
+        private static void WriteMutexId(string key, object obj)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[key] = obj;
         }
     }
 }
