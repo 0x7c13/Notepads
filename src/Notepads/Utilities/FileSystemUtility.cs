@@ -473,7 +473,7 @@
             }
             else
             {
-                await PathIO.WriteTextAsync(file.Path, text);
+                await PathIO.WriteBytesAsync(file.Path, encoding.GetBytes(text));
             }
 
             if (usedDeferUpdates)
