@@ -124,25 +124,26 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
-    <Compile Include="Views\AboutPage.xaml.cs">
+    <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdvancedSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\AdvancedSettingsPage.xaml.cs">
       <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPanel.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PersonalizationSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\PersonalizationSettingsPage.xaml.cs">
       <DependentUpon>PersonalizationSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TextAndEditorSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\TextAndEditorSettingsPage.xaml.cs">
       <DependentUpon>TextAndEditorSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextEditor\ITextEditor.cs" />
@@ -175,14 +176,14 @@
     <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
-    <Compile Include="Views\NotepadsMainPage.MainMenu.cs" />
-    <Compile Include="Views\NotepadsMainPage.Notification.cs" />
-    <Compile Include="Views\NotepadsMainPage.Theme.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Notification.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Theme.cs" />
     <Compile Include="Services\FileTypeService.cs" />
     <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="Views\NotepadsMainPage.IO.cs" />
-    <Compile Include="Views\NotepadsMainPage.StatusBar.cs" />
-    <Compile Include="Views\NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.IO.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.ViewModes.cs" />
     <Compile Include="Services\MRUService.cs" />
     <Compile Include="Utilities\BrushUtility.cs" />
     <Compile Include="Utilities\Downloader.cs" />
@@ -220,7 +221,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NotepadsMainPage.xaml.cs">
+    <Compile Include="Views\MainPage\NotepadsMainPage.xaml.cs">
       <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -494,27 +495,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AboutPage.xaml">
+    <Page Include="Views\Settings\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdvancedSettingsPage.xaml">
+    <Page Include="Views\Settings\AdvancedSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPanel.xaml">
+    <Page Include="Views\Settings\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PersonalizationSettingsPage.xaml">
+    <Page Include="Views\Settings\PersonalizationSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TextAndEditorSettingsPage.xaml">
+    <Page Include="Views\Settings\TextAndEditorSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -534,7 +535,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NotepadsMainPage.xaml">
+    <Page Include="Views\MainPage\NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -813,6 +814,16 @@
   <ItemGroup>
     <PRIResource Include="Strings\zh-CN\Manifest.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

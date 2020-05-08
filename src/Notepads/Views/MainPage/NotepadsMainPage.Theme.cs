@@ -1,4 +1,4 @@
-﻿namespace Notepads.Views
+﻿namespace Notepads.Views.MainPage
 {
     using Windows.UI;
     using Windows.UI.ViewManagement;

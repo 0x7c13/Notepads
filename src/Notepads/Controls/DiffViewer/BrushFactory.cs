@@ -4,11 +4,11 @@
     using Windows.UI;
     using Windows.UI.Xaml.Media;
 
-    public static class BrushFactory
+    public class BrushFactory
     {
-        public static Dictionary<Color, SolidColorBrush> Brushes = new Dictionary<Color, SolidColorBrush>();
+        public Dictionary<Color, SolidColorBrush> Brushes = new Dictionary<Color, SolidColorBrush>();
 
-        public static SolidColorBrush GetSolidColorBrush(Color color)
+        public SolidColorBrush GetOrCreateSolidColorBrush(Color color)
         {
             if (Brushes.ContainsKey(color))
             {

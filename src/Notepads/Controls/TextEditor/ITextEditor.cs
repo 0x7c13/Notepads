@@ -54,6 +54,8 @@
 
         bool DisplayLineNumbers { get; set; }
 
+        bool DisplayLineHighlighter { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,
