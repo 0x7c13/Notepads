@@ -106,7 +106,7 @@
     <Thickness x:Key="SetsViewItemHeaderMargin">0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderIconMargin">0,0,8,0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderCloseMargin">0,1,0,0</Thickness>
-    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,0,0,0</Thickness>
+    <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,1,0,0</Thickness>
     <x:Double x:Key="SetsViewItemHeaderIconSize">16</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinWidth">48</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinHeight">40</x:Double>
@@ -983,7 +983,8 @@
                                           Grid.Column="0"
                                           VerticalAlignment="Stretch"
                                           Background="Transparent"
-                                          BorderThickness="0"
+                                          BorderThickness="1"
+                                          BorderBrush ="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
                                           Delay="50"
                                           FontFamily="Segoe MDL2 Assets"
                                           Interval="100"
@@ -1035,7 +1036,8 @@
                                           Grid.Column="2"
                                           VerticalAlignment="Stretch"
                                           Background="Transparent"
-                                          BorderThickness="0"
+                                          BorderThickness="1"
+                                          BorderBrush ="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
                                           Delay="50"
                                           FontFamily="Segoe MDL2 Assets"
                                           Interval="100"

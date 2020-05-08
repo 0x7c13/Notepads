@@ -16,7 +16,12 @@
         private const string SessionMetaDataFileDefaultName = "NotepadsSessionData.json";
         private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
-        public static ISessionManager GetSessionManager(INotepadsCore notepadCore, string filePathPrefix = null)
+        public static ISessionManager GetSessionManager(INotepadsCore notepadCore)
+        {
+            return GetSessionManager(notepadCore, null);
+        }
+
+        public static ISessionManager GetSessionManager(INotepadsCore notepadCore, string filePathPrefix)
         {
             if (!SessionManagers.TryGetValue(notepadCore, out ISessionManager sessionManager))
             {
