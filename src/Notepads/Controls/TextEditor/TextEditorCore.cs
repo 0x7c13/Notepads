@@ -52,6 +52,7 @@
         private double _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
 
         private bool _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+        private bool _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = false;
 
         private bool _loaded = false;
 
@@ -66,8 +67,12 @@
         private Canvas _lineNumberCanvas;
         private const string LineNumberGridName = "LineNumberGrid";
         private Grid _lineNumberGrid;
+        private const string ContentScrollViewerHorizontalScrollBarName = "HorizontalScrollBar";
+        private ScrollBar _contentScrollViewerHorizontalScrollBar;
+        private TextEditorScrollBarContextFlyout _contentScrollViewerHorizontalScrollBarFlyout;
         private const string ContentScrollViewerVerticalScrollBarName = "VerticalScrollBar";
         private ScrollBar _contentScrollViewerVerticalScrollBar;
+        private TextEditorScrollBarContextFlyout _contentScrollViewerVerticalScrollBarFlyout;
         private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
         private Canvas _lineHighlighterAndIndicatorCanvas;
         private const string LineHighlighterName = "LineHighlighter";
@@ -133,6 +138,7 @@
 
             SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
             PointerWheelChanged += OnPointerWheelChanged;
+            GettingFocus += OnGettingFocus;
             LostFocus += OnLostFocus;
             Loaded += OnLoaded;
 
@@ -171,18 +177,33 @@
             _lineIndicator = GetTemplateChild(LineIndicatorName) as Border;
 
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
-            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = true;
             _contentScrollViewer.ViewChanging += OnContentScrollViewerViewChanging;
             _contentScrollViewer.ViewChanged += OnContentScrollViewerViewChanged;
             _contentScrollViewer.SizeChanged += OnContentScrollViewerSizeChanged;
 
             _contentScrollViewer.ApplyTemplate();
             var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(_contentScrollViewer, 0);
+            _contentScrollViewerHorizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerHorizontalScrollBarName);
             _contentScrollViewerVerticalScrollBar = (ScrollBar)scrollViewerRoot.FindName(ContentScrollViewerVerticalScrollBarName);
+            _contentScrollViewerHorizontalScrollBar.ContextFlyout = _contentScrollViewerHorizontalScrollBarFlyout = new TextEditorScrollBarContextFlyout(this, Axis.X);
+            _contentScrollViewerVerticalScrollBar.ContextFlyout = _contentScrollViewerVerticalScrollBarFlyout = new TextEditorScrollBarContextFlyout(this, Axis.Y);
+            _contentScrollViewerHorizontalScrollBar.RightTapped += OnContentScrollViewerHorizontalScrollBar_RightTapped;
+            _contentScrollViewerVerticalScrollBar.RightTapped += OnContentScrollViewerVerticalScrollBar_RightTapped;
             _contentScrollViewerVerticalScrollBar.ValueChanged += OnVerticalScrollBarValueChanged;
 
             _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
+        }
+
+        private void OnContentScrollViewerVerticalScrollBar_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            _contentScrollViewerVerticalScrollBarFlyout.ClickLocation = e.GetPosition(_contentScrollViewerVerticalScrollBar).Y * (_contentScrollViewer.ScrollableHeight / _contentScrollViewer.ViewportHeight);
+        }
+
+        private void OnContentScrollViewerHorizontalScrollBar_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            _contentScrollViewerHorizontalScrollBarFlyout.ClickLocation = e.GetPosition(_contentScrollViewerHorizontalScrollBar).X * (_contentScrollViewer.ScrollableWidth / _contentScrollViewer.ViewportWidth);
         }
 
         private void ResetRootGridClipping()
@@ -208,6 +229,7 @@
             TextChanged -= OnTextChanged;
             SelectionChanging -= OnSelectionChanging;
             PointerWheelChanged -= OnPointerWheelChanged;
+            GettingFocus -= OnGettingFocus;
             LostFocus -= OnLostFocus;
             Loaded -= OnLoaded;
 
@@ -368,7 +390,7 @@
             if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated ||
                 args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.PointerActivated)
             {
-                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+                _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = true;
             }
         }
 
@@ -378,9 +400,9 @@
 
             ResetRootGridClipping();
 
-            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            if (_shouldResetScrollViewerToLastKnownPositionAfterViewChanged)
             {
-                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = false;
                 _contentScrollViewer.ChangeView(
                     _contentScrollViewerHorizontalOffsetLastKnownPosition,
                     _contentScrollViewerVerticalOffsetLastKnownPosition,
@@ -390,6 +412,17 @@
 
             UpdateLineHighlighterAndIndicator();
             if (DisplayLineNumbers) ShowLineNumbers();
+        }
+
+        private void OnGettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = true;
+                _contentScrollViewer.ChangeView(
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition,
+                    _contentScrollViewerVerticalOffsetLastKnownPosition, null, true);
+            }
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs _)
@@ -461,19 +494,21 @@
 
         private void OnContentScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs _)
         {
-            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus)
+            if (_shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus && _shouldResetScrollViewerToLastKnownPositionAfterViewChanged)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+            }
+            else if (_shouldResetScrollViewerToLastKnownPositionAfterViewChanged)
+            {
+                _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = false;
                 _contentScrollViewer.ChangeView(
                     _contentScrollViewerHorizontalOffsetLastKnownPosition,
                     _contentScrollViewerVerticalOffsetLastKnownPosition,
                     zoomFactor: null,
                     disableAnimation: true);
             }
-            else
-            {
-                UpdateLineNumbersRendering();
-            }
+
+            UpdateLineNumbersRendering();
         }
 
         private void OnContentScrollViewerSizeChanged(object sender, SizeChangedEventArgs _)
@@ -758,7 +793,7 @@
         {
             try
             {
-                _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = false;
+                _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = false;
                 Document.Selection.SetIndex(TextRangeUnit.Paragraph, line, false);
                 return true;
             }
@@ -770,8 +805,51 @@
 
         public void ResetFocusAndScrollToPreviousPosition()
         {
-            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
+            _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = true;
             base.Focus(FocusState.Programmatic);
+        }
+
+        public void ChangeView(ScrollCommand command, Axis scrollBarAxis, double location = 0)
+        {
+            switch (command)
+            {
+                case ScrollCommand.ScrollTo:
+                    if (scrollBarAxis == Axis.X)
+                    {
+                        _contentScrollViewerHorizontalOffsetLastKnownPosition = location;
+                    }
+                    else
+                    {
+                        _contentScrollViewerVerticalOffsetLastKnownPosition = location;
+                    }
+                    break;
+                case ScrollCommand.Top:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = 0;
+                    break;
+                case ScrollCommand.Bottom:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.ScrollableHeight;
+                    break;
+                case ScrollCommand.PageUp:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.VerticalOffset - _contentScrollViewer.ViewportHeight;
+                    break;
+                case ScrollCommand.PageDown:
+                    _contentScrollViewerVerticalOffsetLastKnownPosition = _contentScrollViewer.VerticalOffset + _contentScrollViewer.ViewportHeight;
+                    break;
+                case ScrollCommand.LeftEdge:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = 0;
+                    break;
+                case ScrollCommand.RightEdge:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.ScrollableWidth;
+                    break;
+                case ScrollCommand.PageLeft:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.HorizontalOffset - _contentScrollViewer.ViewportWidth;
+                    break;
+                case ScrollCommand.PageRight:
+                    _contentScrollViewerHorizontalOffsetLastKnownPosition = _contentScrollViewer.HorizontalOffset + _contentScrollViewer.ViewportWidth;
+                    break;
+            }
+
+            _shouldResetScrollViewerToLastKnownPositionAfterRegainingFocus = true;
         }
 
         private void SetDefaultTabStopAndLineSpacing(FontFamily font, double fontSize)

@@ -585,4 +585,40 @@
     <value>Leserichtung rechts nach links</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
+  <data name="TextEditor_ScrollBarContextFlyout_BottomButtonDisplayText" xml:space="preserve">
+    <value>Bottom</value>
+    <comment>TextEditor: ScrollBar Flyout "Bottom" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_LeftEdgeButtonDisplayText" xml:space="preserve">
+    <value>Left Edge</value>
+    <comment>TextEditor: ScrollBar Flyout "Left Edge" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_PageDownButtonDisplayText" xml:space="preserve">
+    <value>Page Down</value>
+    <comment>TextEditor: ScrollBar Flyout "Page Down" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_PageLeftButtonDisplayText" xml:space="preserve">
+    <value>Page Left</value>
+    <comment>TextEditor: ScrollBar Flyout "Page Left" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_PageRightButtonDisplayText" xml:space="preserve">
+    <value>Page Right</value>
+    <comment>TextEditor: ScrollBar Flyout "Page Right" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_PageUpButtonDisplayText" xml:space="preserve">
+    <value>Page Up</value>
+    <comment>TextEditor: ScrollBar Flyout "Page Up" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_RightEdgeButtonDisplayText" xml:space="preserve">
+    <value>Right Edge</value>
+    <comment>TextEditor: ScrollBar Flyout "Right Edge" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_ScrollHereButtonDisplayText" xml:space="preserve">
+    <value>Scroll Here</value>
+    <comment>TextEditor: ScrollBar Flyout "Scroll Here" button display text.</comment>
+  </data>
+  <data name="TextEditor_ScrollBarContextFlyout_TopButtonDisplayText" xml:space="preserve">
+    <value>Top</value>
+    <comment>TextEditor: ScrollBar Flyout "Top" button display text.</comment>
+  </data>
 </root>
