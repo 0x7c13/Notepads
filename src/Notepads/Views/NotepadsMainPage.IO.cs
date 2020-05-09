@@ -11,6 +11,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using System.IO;
 
     public sealed partial class NotepadsMainPage
     {
@@ -128,7 +129,7 @@
                 }
             } catch (Exception)
             {
-                throw new UnauthorizedAccessException("Access denied");
+                throw new IOException();
             }
         }
 
@@ -160,7 +161,7 @@
                 await TrySave(textEditor, file, rebuildOpenRecentItems);
                 return true;
             }
-            catch(UnauthorizedAccessException ex)
+            catch(IOException)
             {
                 file = await OpenSaveAs(textEditor);
                 if (file == null)
