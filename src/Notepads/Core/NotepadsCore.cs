@@ -56,6 +56,7 @@
 
         private readonly CoreDispatcher _dispatcher;
 
+        public const string NotepadsShouldHandleFileDrop = "NotepadsShouldHandleFileDrop";
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
@@ -581,7 +582,8 @@
                 }
             }
 
-            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems))
+            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems) &&
+                !args.DataView.Properties.TryGetValue(NotepadsShouldHandleFileDrop, out object handleFileDrop))
             {
                 try
                 {
@@ -672,7 +674,8 @@
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
                 !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
             {
-                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems)) return;
+                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems) ||
+                    args.DataView.Properties.TryGetValue(NotepadsShouldHandleFileDrop, out object handleFileDrop)) return;
                 var fileDropDeferral = args.GetDeferral();
                 var storageItems = await args.DataView.GetStorageItemsAsync();
                 StorageItemsDropped?.Invoke(this, storageItems);

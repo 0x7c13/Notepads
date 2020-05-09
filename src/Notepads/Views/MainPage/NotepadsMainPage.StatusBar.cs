@@ -18,6 +18,7 @@
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.Storage;
 
     public sealed partial class NotepadsMainPage
     {
@@ -96,6 +97,7 @@
         {
             if (StatusBar == null) return;
             PathIndicator.Text = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
+            PathIndicator.CanDrag = textEditor.EditingFilePath != null && textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
 
             if (textEditor.FileModificationState == FileModificationState.Untouched)
             {
@@ -255,6 +257,14 @@
             {
                 LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open containing folder: {ex.Message}");
             }
+        }
+
+        private void PathIndicator_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
+            args.Data.Properties.Add(Notepads.Core.NotepadsCore.NotepadsShouldHandleFileDrop, false);
+            args.Data.SetStorageItems(new List<IStorageItem>() { _notepadsCore.GetSelectedTextEditor().EditingFile }, readOnly: false);
+            args.DragUI.SetContentFromDataPackage();
         }
 
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
