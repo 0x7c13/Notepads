@@ -1,4 +1,4 @@
-﻿namespace Notepads.Views
+﻿namespace Notepads.Views.MainPage
 {
     using System;
     using System.Collections.Generic;
@@ -109,7 +109,7 @@
             return successCount;
         }
 
-        private async Task<StorageFile> OpenSaveAs(ITextEditor textEditor)
+        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
             StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
@@ -117,19 +117,13 @@
             return file;
         }
 
-        private async Task TrySave(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
         {
-            try
+            await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+            var success = MRUService.TryAdd(file); // Remember recently used files
+            if (success && rebuildOpenRecentItems)
             {
-                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
-                var success = MRUService.TryAdd(file); // Remember recently used files
-                if (success && rebuildOpenRecentItems)
-                {
-                    await BuildOpenRecentButtonSubItems();
-                }
-            } catch (Exception)
-            {
-                throw new IOException();
+                await BuildOpenRecentButtonSubItems();
             }
         }
 
@@ -143,34 +137,32 @@
             }
 
             StorageFile file = null;
+
             try
             {
                 if (textEditor.EditingFile == null || saveAs)
                 {
-                    file = await OpenSaveAs(textEditor);
-                    if (file == null)
-                    {
-                        return false; // User cancelled
-                    }
+                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    if (file == null) return false; // User cancelled
                 }
                 else
                 {
                     file = textEditor.EditingFile;
                 }
 
-                await TrySave(textEditor, file, rebuildOpenRecentItems);
-                return true;
-            }
-            catch(IOException)
-            {
-                file = await OpenSaveAs(textEditor);
-                if (file == null)
+                try
                 {
-                    return false; // User cancelled
+                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+                    return true;
                 }
+                catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+                {
+                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    if (file == null) return false; // User cancelled
 
-                await TrySave(textEditor, file, rebuildOpenRecentItems);
-                return true;
+                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+                    return true;
+                }
             }
             catch (Exception ex)
             {

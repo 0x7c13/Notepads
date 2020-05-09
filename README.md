@@ -137,6 +137,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [pl-PL][Polish (Poland)]: [Daxxxis](https://github.com/Daxxxis)
     * [ka-GE][Georgian (Georgia)]: [guram mazanashvili](https://github.com/gmaza)
     * [hr-HR][Croatian (Croatia)]: [milotype](https://github.com/milotype)
+    * [zh-TW][Chinese (T)]: [Tony Yao](https://github.com/SeaBao)
 
 [![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 

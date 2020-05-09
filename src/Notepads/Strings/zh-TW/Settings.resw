@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Використані компоненти</value>
+    <value>依賴元件及參考資料</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>ДІЙСНЕ ПРОГРАМНЕ ЗАБЕЗПЕЧЕННЯ НАДАЄТЬСЯ «ЯК Є», БЕЗ ГАРАНТІЙ БУДЬ-ЯКОГО ВИДУ, ПРЯМИХ АБО НЕПРЯМИХ, ВКЛЮЧАЮЧИ, АЛЕ НЕ ОБМЕЖУЮЧИСЬ, ГАРАНТІЯМИ КОМЕРЦІЙНОЇ ВИГОДИ, ВІДПОВІДНОСТІ ЙОГО КОНКРЕТНОМУ ПРИЗНАЧЕННЮ Й ВІДСУТНОСТІ ПОРУШЕННЯ ПРАВ. У ЖОДНОМУ РАЗІ АВТОРИ АБО ВЛАСНИКИ АВТОРСЬКИХ ПРАВ НЕ ВІДПОВІДАЮТЬ ЗА БУДЬ-ЯКИМИ СУДОВИМИ ПОЗОВАМИ, ЩОДО ЗБИТКІВ АБО ІНШИХ ПРЕТЕНЗІЙ, ЧИ ДІЙ ДОГОВОРУ, ЦИВІЛЬНОГО ПРАВОПОРУШЕННЯ АБО ІНШИХ, ЩО ВИНИКАЮТЬ ПОЗА, АБО У ЗВ'ЯЗКУ З ПРОГРАМНИМ ЗАБЕЗПЕЧЕННЯМ АБО ВИКОРИСТАННЯМ ЧИ ІНШИМИ ДІЯМИ ПРОГРАМНОГО ЗАБЕЗПЕЧЕННЯ.</value>
+    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Відмова від відповідальності</value>
+    <value>免責聲明</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Безкоштовний редактор з відкритим кодом, спроєктований та розроблений Jackie (Jiaqi) Liu</value>
+    <value>一款由 Jackie (Jiaqi) Liu 所設計的免費開源文字編輯器</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Щоб зв'язатися з авторами:</value>
+    <value>作者聯繫方式：</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Для того, щоб повідомити про проблему, або запропонувати покращення:</value>
+    <value>如果您遇到問題或者有任何建議，請造訪：</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Код програми доступний на GitHub:</value>
+    <value>原始程式碼已在 Github 上開放：</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Для додаткової інформації відвідайте наш сайт:</value>
+    <value>若要取得更多資訊，請造訪我們的官方網站：</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Конфіденційність</value>
+    <value>隱私權聲明</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>Про програму</value>
+    <value>關於</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Не показувати рядок стану</value>
+    <value>顯示狀態列</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Показувати рядок стану</value>
+    <value>顯示狀態列</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Налаштування рядка стану</value>
+    <value>狀態列設定</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Додатково</value>
+    <value>進階設定</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Основний колір</value>
+    <value>輔色</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Використовувати основний колір Windows</value>
+    <value>使用我當前 Windows 所使用的輔色</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Використовувати мій основний колір</value>
+    <value>使用我當前 Windows 所使用的輔色</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Прозорість "акрилового" фону. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
+    <value>壓克力背景色調透明度。請留意壓克力效果會在省電模式啟用或者 Windows 設定中透明效果關閉的情況下停用。</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Прозорість фону</value>
+    <value>背景色調透明度</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Темна</value>
+    <value>深色</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Світла</value>
+    <value>淺色</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Тема</value>
+    <value>主題模式</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Використовувати тему Windows</value>
+    <value>使用 Windows 設定</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Персоналізація</value>
+    <value>個人化</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (кодова сторінка Windows)</value>
+    <value>ANSI (Windows 編碼頁)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Запасне кодування буде використане, якщо неможливо визначити кодування файлу.</value>
+    <value>當無法識別檔案的編碼時，此編碼將會被作為預設編碼使用。</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Запасне кодування</value>
+    <value>預設讀取編碼</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,167 +230,167 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Тільки для нових файлів.</value>
+    <value>僅會套用至新的文件。</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Стандартне кодування</value>
+    <value>預設寫入編碼</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Стандартний шрифт і розмір тексту</value>
+    <value>預設字型和大小</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Тільки для нових файлів.</value>
+    <value>僅會套用至新的文件。</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Стандартний кінець рядків</value>
+    <value>預設行尾</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Без змін (\t)</value>
+    <value>預設 (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Не впливає на раніше введений текст.</value>
+    <value>Tab 按鍵行為僅會在每當使用者插入新製表符（Tab）時啟用。</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 пробілів</value>
+    <value>8 個空格</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 пробіли</value>
+    <value>4 個空格</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Налаштування клавіши Tab</value>
+    <value>Tab 按鍵行為</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 пробіли</value>
+    <value>2 個空格</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Перенесення слів</value>
+    <value>文字換行</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Не переносити слова</value>
+    <value>自動換行</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Переносити слова</value>
+    <value>自動換行</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Текст і редактор</value>
+    <value>文字與編輯器</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Журнал змін</value>
+    <value>變更紀錄</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads запам'ятає список відкритих файлів до наступного запуску та робитиме періодичне резервне копіювання відкритих документів щоб уникнути втрати незбережених змін. Notepads НЕ пропонуватиме вам зберігати ваші файли коли ви закриваєте Notepads, якщо ця опція увімкнена. Зверніть увагу, ця функція працює тільки в першому/основному вікні Notepads.</value>
+    <value>一旦啟用後，Notepads 將會定時備份儲存當前的工作階段供下次啟動時使用，來避免意外損失尚未儲存的資料。每當關閉應用程式時，Notepads 將不會提醒您儲存文件。此外請注意工作階段快照僅會在 Notepads 第一個視窗或者主視窗中啟用。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Вимкнути збереження і відновлення відкритих документів</value>
+    <value>啟用工作階段快照</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Увімкнути збереження і відновлення відкритих документів</value>
+    <value>啟用工作階段快照</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Збереження і відновлення відкритих документів</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+    <value>工作階段快照設定</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Не підсвічувати невідомі слова</value>
+    <value>強調顯示拼寫錯誤的字詞</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Підсвічувати невідомі слова</value>
+    <value>強調顯示拼寫錯誤的字詞</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>Перевірка правильності слів</value>
+    <value>拼寫檢查</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Якщо увімкнено, Notepads завжди відкриватиме файл у новому вікні замість вкладки.</value>
+    <value>一旦啟用後，Notepads 將會在新的視窗中開啟檔案而不是建立新的索引標籤。</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Не відкривати у новому вікні</value>
+    <value>總是在新視窗中開啟檔案</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Завжди відкривати у новому вікні</value>
+    <value>總是在新視窗中開啟檔案</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Налаштування запуску</value>
+    <value>啟動偏好</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Підсвічувати вибраний рядок</value>
+    <value>強調顯示當前行</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Підсвічувати вибраний рядок</value>
+    <value>強調顯示當前行</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Інший</value>
+    <value>自訂搜尋引擎</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Введіть адресу у форматі https://www.example.com/search?q={0}</value>
+    <value>*URL 格式：https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Налаштування для пошуковика (шукати в Інтернеті).</value>
+    <value>當執行網路搜尋時，將會採用此搜尋引擎進行搜尋。</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Стандартний пошуковик</value>
+    <value>預設搜尋引擎</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Автоматично визначати кодування (рекомендовано)</value>
+    <value>自動猜測編碼（建議）</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Display</value>
+    <value>顯示</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Показувати рамку навколо вибраного рядка.</value>
+    <value>在當前行的四周顯示邊框。</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Display line numbers in the document.</value>
+    <value>在文件當中顯示行數。</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>顯示行數</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>顯示行數</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Style</value>
+    <value>預設字型樣式</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Weight</value>
+    <value>預設字型粗細</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>
