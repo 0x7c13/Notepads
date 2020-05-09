@@ -108,6 +108,30 @@
             return successCount;
         }
 
+        private async Task<StorageFile> OpenSaveAs(ITextEditor textEditor)
+        {
+            NotepadsCore.SwitchTo(textEditor);
+            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
+            NotepadsCore.FocusOnTextEditor(textEditor);
+            return file;
+        }
+
+        private async Task TrySave(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        {
+            try
+            {
+                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+                var success = MRUService.TryAdd(file); // Remember recently used files
+                if (success && rebuildOpenRecentItems)
+                {
+                    await BuildOpenRecentButtonSubItems();
+                }
+            } catch (Exception)
+            {
+                throw new UnauthorizedAccessException("Access denied");
+            }
+        }
+
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
@@ -122,9 +146,7 @@
             {
                 if (textEditor.EditingFile == null || saveAs)
                 {
-                    NotepadsCore.SwitchTo(textEditor);
-                    file = await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync();
-                    NotepadsCore.FocusOnTextEditor(textEditor);
+                    file = await OpenSaveAs(textEditor);
                     if (file == null)
                     {
                         return false; // User cancelled
@@ -135,12 +157,18 @@
                     file = textEditor.EditingFile;
                 }
 
-                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
-                var success = MRUService.TryAdd(file); // Remember recently used files
-                if (success && rebuildOpenRecentItems)
+                await TrySave(textEditor, file, rebuildOpenRecentItems);
+                return true;
+            }
+            catch(UnauthorizedAccessException ex)
+            {
+                file = await OpenSaveAs(textEditor);
+                if (file == null)
                 {
-                    await BuildOpenRecentButtonSubItems();
+                    return false; // User cancelled
                 }
+
+                await TrySave(textEditor, file, rebuildOpenRecentItems);
                 return true;
             }
             catch (Exception ex)

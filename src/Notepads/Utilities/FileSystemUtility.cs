@@ -459,7 +459,7 @@
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            if (await FileIsWritable(file))
+            try
             {
                 using (var stream = await file.OpenStreamForWriteAsync())
                 using (var writer = new StreamWriter(stream, encoding))
@@ -471,7 +471,7 @@
                     stream.SetLength(stream.Position);
                 }
             }
-            else
+            catch (Exception)
             {
                 await PathIO.WriteBytesAsync(file.Path, encoding.GetBytes(text));
             }
