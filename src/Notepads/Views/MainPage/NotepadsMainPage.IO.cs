@@ -150,12 +150,21 @@
                     file = textEditor.EditingFile;
                 }
 
+                bool promptSaveAs = false;
                 try
                 {
                     await SaveInternal(textEditor, file, rebuildOpenRecentItems);
-                    return true;
                 }
                 catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+                {
+                    promptSaveAs = true;
+                }
+                catch (FileNotFoundException) // Happens when the file not found or storage media is removed
+                {
+                    promptSaveAs = true;
+                }
+
+                if (promptSaveAs)
                 {
                     file = await OpenFileUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
@@ -163,6 +172,8 @@
                     await SaveInternal(textEditor, file, rebuildOpenRecentItems);
                     return true;
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
