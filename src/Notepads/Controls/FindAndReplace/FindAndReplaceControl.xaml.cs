@@ -1,8 +1,13 @@
 ﻿namespace Notepads.Controls.FindAndReplace
 {
     using System;
+    using System.Collections.Generic;
+    using Notepads.Commands;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Windows.System;
+    using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -11,71 +16,117 @@
     public sealed partial class FindAndReplaceControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
+        public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
+        public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
+
+        private readonly IList<KeyboardCommand<bool>> _nativeKeyboardCommands = new List<KeyboardCommand<bool>>
+        {
+            new KeyboardCommand<bool>(VirtualKey.F3, null),
+            new KeyboardCommand<bool>(false, false, true, VirtualKey.F3, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.E, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.R, null),
+            new KeyboardCommand<bool>(false, true, false, VirtualKey.W, null),
+            new KeyboardCommand<bool>(true, true, false, VirtualKey.Enter, null)
+        };
+
+        //When enter key is pressed focus is returned to control
+        //This variable is used to remove flicker in text selection
+        private bool _enterPressed = false;
+
+        private bool _shouldUpdateSearchString = true;
 
         public FindAndReplaceControl()
         {
             InitializeComponent();
-            SetSelectionHighlightColor();
+
+            SetSelectionHighlightColor(ThemeSettingsService.AppAccentColor);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             Loaded += FindAndReplaceControl_Loaded;
-            Unloaded += FindAndReplaceControl_Unloaded;
         }
 
         public void Dispose()
         {
+            Loaded -= FindAndReplaceControl_Loaded;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        public SearchContext GetSearchContext()
+        {
+            return new SearchContext(FindBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked);
         }
 
         private void FindAndReplaceControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Focus();
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+            Focus(string.Empty, FindAndReplaceMode.FindOnly);
         }
 
-        private void FindAndReplaceControl_Unloaded(object sender, RoutedEventArgs e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-        }
-
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
-        {
-            SetSelectionHighlightColor();
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                SetSelectionHighlightColor(color);
+            });
         }
 
         public double GetHeight(bool showReplaceBar)
         {
             if (showReplaceBar)
             {
-                return FindAndReplaceRootGrid.Height + ReplaceBarPlaceHolder.Height;
+                return FindBarPlaceHolder.Height + ReplaceBarPlaceHolder.Height;
             }
             else
             {
-                return FindAndReplaceRootGrid.Height;
+                return FindBarPlaceHolder.Height;
             }
         }
 
-        private void SetSelectionHighlightColor()
+        private void SetSelectionHighlightColor(Color color)
         {
-            FindBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            FindBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            FindBar.SelectionHighlightColor = new SolidColorBrush(color);
+            FindBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
+            ReplaceBar.SelectionHighlightColor = new SolidColorBrush(color);
+            ReplaceBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
         }
 
-        public void Focus()
+        public void Focus(string searchString, FindAndReplaceMode mode)
         {
-            FindBar.Focus(FocusState.Programmatic);
+            if (_shouldUpdateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
+
+            if (mode == FindAndReplaceMode.FindOnly)
+            {
+                FindBar.Focus(FocusState.Programmatic);
+            }
+            else
+            {
+                ReplaceBar.Focus(FocusState.Programmatic);
+            }
+
+            FindBar_OnTextChanged(null, null);
         }
 
         public void ShowReplaceBar(bool showReplaceBar)
         {
-            ReplaceBarPlaceHolder.Visibility = showReplaceBar ? Visibility.Visible : Visibility.Collapsed;
+            if (showReplaceBar)
+            {
+                ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 12 };
+                ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
+                if (!string.IsNullOrEmpty(FindBar.Text))
+                {
+                    ReplaceButton.IsEnabled = true;
+                    ReplaceAllButton.IsEnabled = true;
+                }
+            }
+            else
+            {
+                ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
+                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 12 };
+                ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
+                ReplaceButton.IsEnabled = false;
+                ReplaceAllButton.IsEnabled = false;
+            }
         }
 
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)
@@ -85,32 +136,48 @@
 
         private void FindBar_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SearchButton.Visibility = !string.IsNullOrEmpty(FindBar.Text) ? Visibility.Visible : Visibility.Collapsed;
-
             if (!string.IsNullOrEmpty(FindBar.Text))
             {
-                ReplaceButton.IsEnabled = true;
-                ReplaceAllButton.IsEnabled = true;
+                SearchForwardButton.IsEnabled = true;
+                SearchBackwardButton.IsEnabled = true;
+                if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible)
+                {
+                    ReplaceButton.IsEnabled = true;
+                    ReplaceAllButton.IsEnabled = true;
+                }
             }
             else
             {
+                SearchForwardButton.IsEnabled = false;
+                SearchBackwardButton.IsEnabled = false;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
             }
         }
 
-        private void SearchButton_OnClick(object sender, RoutedEventArgs e)
+        private void SearchForwardButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyout) return;
 
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, null, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.FindOnly));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), null, FindAndReplaceMode.FindOnly, SearchDirection.Next));
+        }
+
+        private void SearchBackwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyout) return;
+
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), null, FindAndReplaceMode.FindOnly, SearchDirection.Previous));
         }
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
-                SearchButton_OnClick(sender, e);
+                _enterPressed = true;
+                SearchForwardButton_OnClick(sender, e);
             }
 
             if (e.Key == VirtualKey.Tab)
@@ -122,13 +189,30 @@
 
         private void FindBar_GotFocus(object sender, RoutedEventArgs e)
         {
-            ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
+            _enterPressed = false;
+            _shouldUpdateSearchString = false;
             FindBar.SelectionStart = 0;
             FindBar.SelectionLength = FindBar.Text.Length;
         }
 
+        private void FindBar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _shouldUpdateSearchString = true;
+            if (_enterPressed) return;
+            FindBar.SelectionStart = FindBar.Text.Length;
+        }
+
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            {
+                _enterPressed = true;
+                ReplaceButton_OnClick(sender, e);
+            }
+
             if (e.Key == VirtualKey.Tab)
             {
                 e.Handled = true;
@@ -138,9 +222,17 @@
 
         private void ReplaceBar_GotFocus(object sender, RoutedEventArgs e)
         {
-            FindBar.SelectionStart = FindBar.Text.Length;
+            _enterPressed = false;
+            _shouldUpdateSearchString = false;
             ReplaceBar.SelectionStart = 0;
             ReplaceBar.SelectionLength = ReplaceBar.Text.Length;
+        }
+
+        private void ReplaceBar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _shouldUpdateSearchString = true;
+            if (_enterPressed) return;
+            ReplaceBar.SelectionStart = ReplaceBar.Text.Length;
         }
 
         private void ReplaceBar_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -149,18 +241,56 @@
 
         private void ReplaceButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.Replace));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.Replace));
         }
 
         private void ReplaceAllButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(FindBar.Text, ReplaceBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked, FindAndReplaceMode.ReplaceAll));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.ReplaceAll));
         }
 
         private void OptionButtonFlyoutItem_OnClick(object sender, RoutedEventArgs e)
         {
             MatchWholeWordToggle.IsEnabled = !UseRegexToggle.IsChecked;
             UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
+
+            if (MatchCaseToggle.IsChecked || MatchWholeWordToggle.IsChecked || UseRegexToggle.IsChecked)
+            {
+                OptionButtonSelectionIndicator.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                OptionButtonSelectionIndicator.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void FindAndReplaceRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+            var isNativeKeyboardCommand = false;
+
+            foreach (var KeyboardCommand in _nativeKeyboardCommands)
+            {
+                if (KeyboardCommand.Hit(ctrlDown, altDown, shiftDown, e.Key))
+                {
+                    isNativeKeyboardCommand = true;
+                    break;
+                }
+            }
+
+            if (!isNativeKeyboardCommand && !e.Handled)
+            {
+                OnFindReplaceControlKeyDown?.Invoke(sender, e);
+            }
+        }
+
+        private void ToggleReplaceModeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _shouldUpdateSearchString = false;
+            OnToggleReplaceModeButtonClicked?.Invoke(sender, ReplaceBarPlaceHolder.Visibility == Visibility.Collapsed ? true : false);
         }
     }
 }

@@ -27,5 +27,5 @@ You can contribute to Notepads project by:
 * Once opened, right click on the solution and click on "Restore NuGet Packages".
 * Now you should be able to build and run Notepads on your machine. If it fails, try close the solution and reopen it again.
 
-# Additional Info:
-This is my first UWP project and I learn as I go. As a result, the code base is not well organized, and it is not well written. Also, I am not using MVVM pattern at all, so deal with it for now. The philosophy here is to create a text editor that easy to use, lightweight and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.
+# TL;DR:
+This is my first UWP project and I learn as I go. As a result, the code base is not well organized, and it is not well written. The philosophy here is to create a text editor that is easy to use, lightweight and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.

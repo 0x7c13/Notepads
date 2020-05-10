@@ -12,12 +12,13 @@
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
-    using SetsView;
+    using Notepads.Controls;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -26,35 +27,23 @@
 
     public class NotepadsCore : INotepadsCore
     {
-        public SetsView Sets;
-
         public event EventHandler<ITextEditor> TextEditorLoaded;
-
         public event EventHandler<ITextEditor> TextEditorUnloaded;
-
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
-
         public event EventHandler<ITextEditor> TextEditorSaved;
-
         public event EventHandler<ITextEditor> TextEditorClosing;
-
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
-
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
-
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
-
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-
         public event EventHandler<ITextEditor> TextEditorModeChanged;
-
         public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
-
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
+
+        public SetsView Sets;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
@@ -63,6 +52,8 @@
         private ITextEditor[] _allTextEditors;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        private readonly CoreDispatcher _dispatcher;
 
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
@@ -73,7 +64,8 @@
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
         public NotepadsCore(SetsView sets,
-            INotepadsExtensionProvider extensionProvider)
+            INotepadsExtensionProvider extensionProvider,
+            CoreDispatcher dispatcher)
         {
             Sets = sets;
             Sets.SelectionChanged += SetsView_OnSelectionChanged;
@@ -86,8 +78,23 @@
             Sets.DragItemsStarting += Sets_DragItemsStarting;
             Sets.DragItemsCompleted += Sets_DragItemsCompleted;
 
+            _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
-            ThemeSettingsService.OnAccentColorChanged += OnAppAccentColorChanged;
+
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
+        {
+            await _dispatcher.CallOnUIThreadAsync(() =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    item.Icon.Foreground = new SolidColorBrush(color);
+                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
+                }
+            });
         }
 
         public void OpenNewTextEditor(string fileNamePlaceholder)
@@ -211,6 +218,7 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
+            item.PrepareForClosing();
             Sets.Items?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
@@ -222,7 +230,7 @@
 
             textEditor.Loaded -= TextEditor_Loaded;
             textEditor.Unloaded -= TextEditor_Unloaded;
-            textEditor.KeyDown -= TextEditorKeyDown; 
+            textEditor.KeyDown -= TextEditorKeyDown;
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
             textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
@@ -284,13 +292,25 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
         }
 
@@ -374,24 +394,16 @@
             Sets.ScrollTo(offset);
         }
 
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
-        }
-
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Icon = new SymbolIcon(Symbol.Save)
                 {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 }
             };
 
@@ -540,16 +552,6 @@
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
-        private void OnAppAccentColorChanged(object sender, Color color)
-        {
-            if (Sets.Items == null) return;
-            foreach (SetsViewItem item in Sets.Items)
-            {
-                item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            }
-        }
-
         #region DragAndDrop
 
         private async void Sets_DragOver(object sender, DragEventArgs args)
@@ -653,18 +655,16 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+                LoggingService.LogError($"[{nameof(NotepadsCore)}] Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView))
+            if (!(sender is SetsView sets))
             {
                 return;
             }
-
-            var sets = sender as SetsView;
 
             // Handle non Notepads drop event
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||

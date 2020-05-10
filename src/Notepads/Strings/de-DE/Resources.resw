@@ -126,15 +126,15 @@
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Speichern &amp; beenden</value>
+    <value>Speichern und beenden</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Verwerfen &amp; beenden</value>
+    <value>Verwerfen und beenden</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Möchten Sie die Änderungen speichern?</value>
+    <value>Änderungen speichern?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -150,11 +150,11 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads unterstützt zurzeit keine Dateien größer als 1MB.</value>
+    <value>Notepads unterstützt zurzeit keine Dateien größer als 1 MB.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Entschuldige, die Datei "{0}" konnte nicht geöffnet werden: {1}</value>
+    <value>Die Datei „{0}“ konnte leider nicht geöffnet werden: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -166,7 +166,7 @@
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Entschuldige, die Datei "{0}" konnte nicht gespeichert werden: {1}</value>
+    <value>Die Datei „{0}“ konnte leider nicht gespeichert werden: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -190,7 +190,7 @@
     <comment>FindAndReplace: Notification message when target not found .</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Alle ersetzen</value>
+    <value>Alle ersetzen (Ctrl+Alt+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -198,10 +198,10 @@
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ersetzen</value>
+    <value>Ersetzen (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
-  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Weitersuchen (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Alle Änderungen, inklusive Text, Zeilenumbrüche und Zeichenkodierung, an "{0}" werden rückgängig gemacht!</value>
+    <value>Alle Änderungen, inklusive Text, Zeilenumbrüche und Zeichenkodierung, an „{0}“ werden rückgängig gemacht!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
@@ -274,7 +274,7 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Datei "{0}" speichern?</value>
+    <value>Datei „{0}“ speichern?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -342,7 +342,7 @@
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Selektion teilen</value>
+    <value>Auswahl teilen</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
@@ -350,7 +350,7 @@
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Zeilenumbruch</value>
+    <value>Wörter umbrechen</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
@@ -438,20 +438,20 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Dies ist eine Schattenfenster von Notepads. Die Sitzungsicherung sowie die Einstellungen sind deaktiviert.</value>
+    <value>Dies ist eine Kopie von Notepads. Die Sitzungsicherung sowie die Einstellungen sind deaktiviert.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
     <value>Datei ist bereits offen!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Öffnet ein neues Fenster</value>
-    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
-  </data>
   <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
     <value>Neues Fenster</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Öffnet ein neues Fenster</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
     <value>Neues Fenster</value>
@@ -464,10 +464,6 @@
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
     <value>Zu Zeile springen</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
-  </data>
-  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Gehe zu:</value>
-    <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
     <value>Die Zeilennummer ist größer als die Anzahl der Zeilen!</value>
@@ -497,9 +493,9 @@
     <value>Herauszoomen</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Reguläre Ausdrücke verwenden</value>
-    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>Gehe zu:</value>
+    <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
     <value>Alle drucken...</value>
@@ -545,8 +541,12 @@
     <value>Vertikaler Abstand (in %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>Reguläre Ausdrücke verwenden</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Liste der zuletzt geöffneten Dateien leeren</value>
+    <value>Liste zuletzt geöffneter Dateien leeren</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
@@ -572,5 +572,73 @@
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
     <value>Codierung konnte nicht bestimmt werden</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Vorherige finden (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ersetzungsmodus umschalten</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>Leserichtung rechts nach links</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
+  </data>
+  <data name="FontStyle_Italic" xml:space="preserve">
+    <value>Italic</value>
+    <comment>FontStyle: "Italic"</comment>
+  </data>
+  <data name="FontStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontStyle: "Normal"</comment>
+  </data>
+  <data name="FontStyle_Oblique" xml:space="preserve">
+    <value>Oblique</value>
+    <comment>FontStyle: "Oblique"</comment>
+  </data>
+  <data name="FontWeight_Black" xml:space="preserve">
+    <value>Black</value>
+    <comment>FontWeight: "Black"</comment>
+  </data>
+  <data name="FontWeight_Bold" xml:space="preserve">
+    <value>Bold</value>
+    <comment>FontWeight: "Bold"</comment>
+  </data>
+  <data name="FontWeight_ExtraBlack" xml:space="preserve">
+    <value>ExtraBlack</value>
+    <comment>FontWeight: "ExtraBlack"</comment>
+  </data>
+  <data name="FontWeight_ExtraBold" xml:space="preserve">
+    <value>ExtraBold</value>
+    <comment>FontWeight: "ExtraBold"</comment>
+  </data>
+  <data name="FontWeight_ExtraLight" xml:space="preserve">
+    <value>ExtraLight</value>
+    <comment>FontWeight: "ExtraLight"</comment>
+  </data>
+  <data name="FontWeight_Light" xml:space="preserve">
+    <value>Light</value>
+    <comment>FontWeight: "Light"</comment>
+  </data>
+  <data name="FontWeight_Medium" xml:space="preserve">
+    <value>Medium</value>
+    <comment>FontWeight: "Medium"</comment>
+  </data>
+  <data name="FontWeight_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontWeight: "Normal"</comment>
+  </data>
+  <data name="FontWeight_SemiBold" xml:space="preserve">
+    <value>SemiBold</value>
+    <comment>FontWeight: "SemiBold"</comment>
+  </data>
+  <data name="FontWeight_SemiLight" xml:space="preserve">
+    <value>SemiLight</value>
+    <comment>FontWeight: "SemiLight"</comment>
+  </data>
+  <data name="FontWeight_Thin" xml:space="preserve">
+    <value>Thin</value>
+    <comment>FontWeight: "Thin"</comment>
   </data>
 </root>
