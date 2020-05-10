@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Storage;
@@ -139,6 +140,24 @@
             return successCount;
         }
 
+        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
+        {
+            NotepadsCore.SwitchTo(textEditor);
+            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
+            NotepadsCore.FocusOnTextEditor(textEditor);
+            return file;
+        }
+
+        private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        {
+            await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+            var success = MRUService.TryAdd(file); // Remember recently used files
+            if (success && rebuildOpenRecentItems)
+            {
+                await BuildOpenRecentButtonSubItems();
+            }
+        }
+
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
@@ -149,33 +168,42 @@
             }
 
             StorageFile file = null;
+
             try
             {
-                if (textEditor.EditingFile == null || saveAs ||
-                    FileSystemUtility.IsFileReadOnly(textEditor.EditingFile) ||
-                    !await FileSystemUtility.FileIsWritable(textEditor.EditingFile))
+                if (textEditor.EditingFile == null || saveAs)
                 {
-                    NotepadsCore.SwitchTo(textEditor);
-
-                    file = await SaveFileUsingFileSavePicker(textEditor, saveAs);
-
-                    NotepadsCore.FocusOnTextEditor(textEditor);
-                    if (file == null)
-                    {
-                        return false; // User cancelled
-                    }
+                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    if (file == null) return false; // User cancelled
                 }
                 else
                 {
                     file = textEditor.EditingFile;
                 }
 
-                await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
-                var success = MRUService.TryAdd(file); // Remember recently used files
-                if (success && rebuildOpenRecentItems)
+                bool promptSaveAs = false;
+                try
                 {
-                    await BuildOpenRecentButtonSubItems();
+                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
                 }
+                catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+                {
+                    promptSaveAs = true;
+                }
+                catch (FileNotFoundException) // Happens when the file not found or storage media is removed
+                {
+                    promptSaveAs = true;
+                }
+
+                if (promptSaveAs)
+                {
+                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    if (file == null) return false; // User cancelled
+
+                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+                    return true;
+                }
+
                 return true;
             }
             catch (Exception ex)

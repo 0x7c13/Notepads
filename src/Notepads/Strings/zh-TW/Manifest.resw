@@ -186,7 +186,7 @@
     <comment>.gitignore</comment>
   </data>
   <data name="GoFileDisplayName" xml:space="preserve">
-    <value>Go 檔</value>
+    <value>Go 檔案</value>
     <comment>.go</comment>
   </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">

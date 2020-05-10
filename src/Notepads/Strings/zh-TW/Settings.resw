@@ -385,4 +385,12 @@
     <value>顯示行數</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>預設字型樣式</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>預設字型粗細</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
 </root>
