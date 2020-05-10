@@ -222,7 +222,7 @@
     <comment>.log</comment>
   </data>
   <data name="LrcFileDisplayName" xml:space="preserve">
-    <value>Lyrics File</value>
+    <value>Arquivo Lyrics</value>
     <comment>.lrc</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
