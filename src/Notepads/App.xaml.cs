@@ -103,6 +103,8 @@
                 { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
                 { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
                 { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
+                { "EditorFontStyle", EditorSettingsService.EditorFontStyle.ToString() },
+                { "EditorFontWeight", EditorSettingsService.EditorFontWeight.Weight.ToString() },
                 { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
                 { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
