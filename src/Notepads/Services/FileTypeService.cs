@@ -4,6 +4,8 @@
 
     public static class FileTypeService
     {
+        public static IList<string> TextDocumentFileExtensions { get; } = new List<string>() { ".txt", ".md", ".markdown" };
+
         public static IList<string> AllSupportedFileExtensions { get; } = new List<string>()
         {
             ".txt", ".md", ".markdown", ".csv",
@@ -14,7 +16,7 @@
             ".ps1", ".bat", ".cmd", ".vbs", ".sh", ".bashrc", ".rc", ".bash", ".bash_history", ".vimrc", ".zshrc", ".zsh_history",
             ".c", ".cmake", ".h", ".hpp", ".cpp", ".cc", ".cs", ".m", ".mm", ".php", ".py", ".rb", ".vb", ".java", ".go", ".pl", ".sql",
             ".js", ".ts", ".lua",
-            ".srt", ".ass", ".ssa",
+            ".srt", ".ass", ".ssa", ".lrc",
             ".project", ".prj", ".npmrc", ".buildpath",
         };
     }

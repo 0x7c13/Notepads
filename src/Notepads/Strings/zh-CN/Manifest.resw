@@ -221,6 +221,10 @@
     <value>日志文件</value>
     <comment>.log</comment>
   </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>歌词文件</value>
+    <comment>.lrc</comment>
+  </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>LUA 文件</value>
     <comment>.lua</comment>

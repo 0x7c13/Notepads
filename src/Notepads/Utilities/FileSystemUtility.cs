@@ -439,7 +439,15 @@
             return encoding;
         }
 
-        // Will throw if not succeeded, exception should be caught and handled by caller
+        /// <summary>
+        /// Save text to a file with requested encoding
+        /// Exception will be thrown if not succeeded
+        /// Exception should be caught and handled by caller
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
@@ -459,30 +467,46 @@
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            using (var stream = await file.OpenStreamForWriteAsync())
-            using (var writer = new StreamWriter(stream, encoding))
+            try
             {
-                stream.Position = 0;
-                await writer.WriteAsync(text);
-                await writer.FlushAsync();
-                // Truncate
-                stream.SetLength(stream.Position);
-            }
-
-            if (usedDeferUpdates)
-            {
-                // Let Windows know that we're finished changing the file so the
-                // other app can update the remote version of the file.
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                if (status != FileUpdateStatus.Complete)
+                if (IsFileReadOnly(file) || !await FileIsWritable(file))
                 {
-                    // Track FileUpdateStatus here to better understand the failed scenarios
-                    // File name, path and content are not included to respect/protect user privacy
-                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
+                    // For file(s) dragged into Notepads, they are read-only
+                    // StorageFile API won't work but can be overwritten by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException exception
+                    var content = encoding.GetBytes(text);
+                    var result = encoding.GetPreamble().Concat(content).ToArray();
+                    await PathIO.WriteBytesAsync(file.Path, result);
+                }
+                else // Use StorageFile API to save 
+                {
+                    using (var stream = await file.OpenStreamForWriteAsync())
+                    using (var writer = new StreamWriter(stream, encoding))
                     {
-                        { "FileUpdateStatus", nameof(status) }
-                    });
-                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
+                        stream.Position = 0;
+                        await writer.WriteAsync(text);
+                        await writer.FlushAsync();
+                        // Truncate
+                        stream.SetLength(stream.Position);
+                    }
+                }
+            }
+            finally
+            {
+                if (usedDeferUpdates)
+                {
+                    // Let Windows know that we're finished changing the file so the
+                    // other app can update the remote version of the file.
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status != FileUpdateStatus.Complete)
+                    {
+                        // Track FileUpdateStatus here to better understand the failed scenarios
+                        // File name, path and content are not included to respect/protect user privacy
+                        Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
+                        {
+                            { "FileUpdateStatus", nameof(status) }
+                        });
+                    }
                 }
             }
         }

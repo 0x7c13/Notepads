@@ -221,6 +221,10 @@
     <value>लॉग फ़ाइल</value>
     <comment>.log</comment>
   </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>Lyrics File</value>
+    <comment>.lrc</comment>
+  </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>लुआ फ़ाइल</value>
     <comment>.lua</comment>
