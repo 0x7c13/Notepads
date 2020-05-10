@@ -186,11 +186,11 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Arkaplan bulanıklık opaklığı.</value>
+    <value>Arkaplan bulanıklık opaklığı. Eğer batarya tasarrufu moduna geçilirse veya Ayarlar'dan saydamlık ayarı kapatılırsa bulanıklık efekti devre dışı bırakılır.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Arka Plan Tonu Opaklığı</value>
+    <value>Arkaplan Bulanıklık Opaklığı</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Eğer dosya kodlayıcısı tanınmazsa alternatiif çözücü kullanılacak.</value>
+    <value>Eğer dosya kodlayıcısı tanınmazsa alternatif çözücü kullanılacak.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -337,36 +337,60 @@
     <value>Başlatma Tercihleri</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Highlight Current Line</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>Bulunan satırı vurgula</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show border around current line</value>
+    <value>Bulunan satırı vurgula</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Custom Search Engine</value>
+    <value>Özel Arama Motoru</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Enter a url of format https://www.example.com/search?q={0}</value>
+    <value>*https://www.example.com/search?q={0} formatında bir adres giriniz.</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Settings for default search engine choosen when a web search is done.</value>
+    <value>Bir web araması yapıldığında varsayılan arama motoru ayarları seçilir.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Default Search Engine</value>
+    <value>Varsayılan Arama Motoru</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Auto guess Encoding (Önerilen)</value>
+    <value>Otomatik Tahmin Kodlaması (Önerilen)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>Display</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
+    <value>Bulunan satırı çerçeve içine al.</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>Display line numbers in the document.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Style</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Weight</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>

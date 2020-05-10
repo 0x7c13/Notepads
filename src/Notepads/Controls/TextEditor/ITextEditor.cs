@@ -52,6 +52,10 @@
 
         TextEditorMode Mode { get; }
 
+        bool DisplayLineNumbers { get; set; }
+
+        bool DisplayLineHighlighter { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,
@@ -91,11 +95,14 @@
 
         void CloseSideBySideDiffViewer();
 
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
         void GetLineColumnSelection(
-            out int startLineIndex, 
-            out int endLineIndex, 
-            out int startColumnIndex, 
-            out int endColumnIndex, 
+            out int startLineIndex,
+            out int endLineIndex,
+            out int startColumnIndex,
+            out int endColumnIndex,
             out int selectedCount,
             out int lineCount);
 
@@ -120,7 +127,7 @@
         void HideFindAndReplaceControl();
 
         void ShowGoToControl();
-      
+
         void HideGoToControl();
 
         void Dispose();

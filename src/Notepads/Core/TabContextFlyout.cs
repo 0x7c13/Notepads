@@ -66,6 +66,11 @@
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+
+            if (App.IsGameBarWidget)
+            {
+                OpenContainingFolder.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TabContextFlyout_Closed(object sender, object e)
@@ -186,7 +191,7 @@
                         }
                         catch (Exception ex)
                         {
-                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
                         }
                     };
                 }
@@ -203,7 +208,14 @@
                     _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
                     _openContainingFolder.Click += async (sender, args) =>
                     {
-                        await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        try
+                        {
+                            await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
+                        }
                     };
                 }
                 return _openContainingFolder;

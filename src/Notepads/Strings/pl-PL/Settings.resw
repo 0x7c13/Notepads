@@ -158,15 +158,15 @@
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Pokazuj pasek stanu</value>
+    <value>Pokaż pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Pokazuj pasek stanu</value>
+    <value>Pokaż pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Ustawienia pasku stanu</value>
+    <value>Ustawienia paska stanu</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Poziom akrylowego rozmycia tła.</value>
+    <value>Poziom akrylowego rozmycia tła. Należy pamiętać, że rozmycie tła jest niedostępne, gdy jest włączone oszczędzanie baterii lub opcja przeżroczystości jest wyłączona w Ustawieniach systemu Windows.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -238,15 +238,15 @@
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Czcionka domyślna i jej rozmiar</value>
+    <value>Domyślny rozmiar i rodzaj czcionki</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Wybierz domyślne kończenie lini.</value>
+    <value>Wybierz domyślne kończenie linii.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Domyślne kończenie lini</value>
+    <value>Domyślne kończenie linii</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
@@ -298,11 +298,11 @@
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Włącz migawkę sesji</value>
+    <value>Migawka sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Włącz migawkę sesji</value>
+    <value>Migawka sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
@@ -310,11 +310,11 @@
     <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wyróżnij błędnie zapisane słowa</value>
+    <value>Wyróżniaj błędnie zapisane słowa</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wyróżnij błędnie zapisane słowa</value>
+    <value>Wyróżniaj błędnie zapisane słowa</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
@@ -337,16 +337,12 @@
     <value>Preferencje uruchomienia</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Title.Text" xml:space="preserve">
-    <value>Wyróżnienie lini</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Title display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wyróżnienie aktualnej lini</value>
+    <value>Wyróżniaj aktualną linię</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wyróżnienie aktualnej lini</value>
+    <value>Wyróżniaj aktualną linię</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
@@ -368,5 +364,33 @@
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
     <value>Automatyczne przewidywanie kodowania (Zalecane)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>Wyświetlanie</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
+    <value>Wyróżnij aktualnie edytowaną linię.</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>Pokazuj numery linii w dokumencie.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Pokaż numery linii</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Pokaż numery linii</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Domyślny styl czcionki</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Domyślna grubość czcionki</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>

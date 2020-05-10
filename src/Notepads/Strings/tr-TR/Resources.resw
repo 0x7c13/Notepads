@@ -190,7 +190,7 @@
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Tümünü Değiştir</value>
+    <value>Tümünü Değiştir (Ctrl+Alt+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -198,10 +198,10 @@
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Değiştir</value>
+    <value>Değiştir (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
-  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Sonrakini Bul (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
@@ -462,95 +462,95 @@
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Satıra Git</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Go To:</value>
+    <value>Git:</value>
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Line number exceeds beyond the total number of lines!</value>
+    <value>Satır sayısı toplam satır sayısından fazla!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>You can only type a number!</value>
+    <value>Sadece sayı yazabilirsiniz!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Satıra Git</value>
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Search in web</value>
+    <value>Web'de ara</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restore Default Zoom</value>
+    <value>Yakınlaştırma Ayarını Varsayılan Hale Getir</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Zoom In</value>
+    <value>Yakınlaştır</value>
     <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Zoom Out</value>
+    <value>Uzaklaştır</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Use Regular Expression</value>
+    <value>Düzenli İfade Kullan</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Print All...</value>
+    <value>Tümünü Yazdır...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Can only accept upto one decimal place</value>
+    <value>Yalnızca bir ondalık basamağa kadar kabul edilebilir</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Value out of range</value>
+    <value>Değer sınırın dışında</value>
     <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Footer</value>
+    <value>Alt Bilgi</value>
     <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Header</value>
+    <value>Üst Bilgi</value>
     <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Horizontal Margin (in %)</value>
+    <value>Yatay Kenar Boşluğu (yüzde olarak)</value>
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>In % of paper width</value>
+    <value>Kağıt genişliğinin yüzdesi olarak</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Error printing:</value>
+    <value>Yazdırma hatası:</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Failed to print</value>
+    <value>Yazdırılamadı</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Printing is not supported on this device</value>
+    <value>Bu cihazda yazdırma desteklenmiyor</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Vertical Margin (in %)</value>
+    <value>Dikey Kenar Boşluğu (yüzde olarak)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Clear Recently Opened</value>
+    <value>Son Açılanları Temizle</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>Daha Fazla Kodlama</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
@@ -562,15 +562,83 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>Geçersiz düzenli ifade!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
+    <value>Otomatik Tahmin Kodlaması</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
+    <value>Kodlama belirlenemiyor</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Öncekini Bul (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Değiştirme Modunu Değiştir</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>Sağdan sola okuma sırası</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
+  </data>
+  <data name="FontStyle_Italic" xml:space="preserve">
+    <value>Italic</value>
+    <comment>FontStyle: "Italic"</comment>
+  </data>
+  <data name="FontStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontStyle: "Normal"</comment>
+  </data>
+  <data name="FontStyle_Oblique" xml:space="preserve">
+    <value>Oblique</value>
+    <comment>FontStyle: "Oblique"</comment>
+  </data>
+  <data name="FontWeight_Black" xml:space="preserve">
+    <value>Black</value>
+    <comment>FontWeight: "Black"</comment>
+  </data>
+  <data name="FontWeight_Bold" xml:space="preserve">
+    <value>Bold</value>
+    <comment>FontWeight: "Bold"</comment>
+  </data>
+  <data name="FontWeight_ExtraBlack" xml:space="preserve">
+    <value>ExtraBlack</value>
+    <comment>FontWeight: "ExtraBlack"</comment>
+  </data>
+  <data name="FontWeight_ExtraBold" xml:space="preserve">
+    <value>ExtraBold</value>
+    <comment>FontWeight: "ExtraBold"</comment>
+  </data>
+  <data name="FontWeight_ExtraLight" xml:space="preserve">
+    <value>ExtraLight</value>
+    <comment>FontWeight: "ExtraLight"</comment>
+  </data>
+  <data name="FontWeight_Light" xml:space="preserve">
+    <value>Light</value>
+    <comment>FontWeight: "Light"</comment>
+  </data>
+  <data name="FontWeight_Medium" xml:space="preserve">
+    <value>Medium</value>
+    <comment>FontWeight: "Medium"</comment>
+  </data>
+  <data name="FontWeight_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontWeight: "Normal"</comment>
+  </data>
+  <data name="FontWeight_SemiBold" xml:space="preserve">
+    <value>SemiBold</value>
+    <comment>FontWeight: "SemiBold"</comment>
+  </data>
+  <data name="FontWeight_SemiLight" xml:space="preserve">
+    <value>SemiLight</value>
+    <comment>FontWeight: "SemiLight"</comment>
+  </data>
+  <data name="FontWeight_Thin" xml:space="preserve">
+    <value>Thin</value>
+    <comment>FontWeight: "Thin"</comment>
   </data>
 </root>

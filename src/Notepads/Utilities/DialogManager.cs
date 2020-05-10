@@ -6,7 +6,7 @@
     using Notepads.Controls.Dialog;
     using Windows.UI.Xaml.Controls;
     using Microsoft.AppCenter.Analytics;
-    
+
     public static class DialogManager
     {
         public static NotepadsDialog ActiveDialog;
@@ -31,7 +31,7 @@
                 {
                     pendingDialogTitle = pendingTitle;
                 }
-                Analytics.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>() 
+                Analytics.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
@@ -43,7 +43,7 @@
             return null;
         }
 
-        static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
+        private static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();
@@ -63,9 +63,15 @@
             }
 
             ActiveDialog = dialog;
-            var result = await ActiveDialog.ShowAsync();
-            nextAwaiter.SetResult(true);
-            return result;
+
+            try
+            {
+                return await ActiveDialog.ShowAsync();
+            }
+            finally
+            {
+                nextAwaiter.SetResult(true);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
@@ -13,6 +14,21 @@
 
         static void Main(string[] args)
         {
+#if DEBUG
+            Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
+#endif
+
+            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
+
+            //if (activatedArgs == null)
+            //{
+            //    // No activated event args, so this is not an activation via the multi-instance ID
+            //    // Just create a new instance and let App OnActivated resolve the launch
+            //    App.IsGameBarWidget = true;
+            //    App.IsFirstInstance = true;
+            //    Windows.UI.Xaml.Application.Start(p => new App());
+            //}
+
             var instances = AppInstance.GetInstances();
 
             if (instances.Count == 0)
@@ -20,8 +36,6 @@
                 IsFirstInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
-
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
             if (activatedArgs is FileActivatedEventArgs)
             {
@@ -33,7 +47,7 @@
             }
             else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
             {
-                LoggingService.LogInfo($"[Main] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
                 var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
