@@ -28,4 +28,4 @@ steps:
                   /p:AppxPackageDir="$(appxPackageDir)"
                   /p:AppxBundle=Always
                   /p:UapAppxPackageBuildMode=StoreUpload
-                  /p:AppxPackageSigningEnabled=false
+                  /p:AppxPackageSigningEnabled=false'
