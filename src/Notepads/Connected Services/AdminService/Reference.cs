@@ -18,9 +18,6 @@ namespace Notepads.AdminService {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="AdminService.IAdminService")]
     public interface IAdminService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAdminService/ReplaceFile", ReplyAction="http://tempuri.org/IAdminService/ReplaceFileResponse")]
-        System.Threading.Tasks.Task<bool> ReplaceFileAsync(string newPath, string oldPath);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAdminService/SaveFile", ReplyAction="http://tempuri.org/IAdminService/SaveFileResponse")]
         System.Threading.Tasks.Task<bool> SaveFileAsync(string filePath, byte[] data);
     }
@@ -66,10 +63,6 @@ namespace Notepads.AdminService {
         
         public AdminServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
-        }
-        
-        public System.Threading.Tasks.Task<bool> ReplaceFileAsync(string newPath, string oldPath) {
-            return base.Channel.ReplaceFileAsync(newPath, oldPath);
         }
         
         public System.Threading.Tasks.Task<bool> SaveFileAsync(string filePath, byte[] data) {

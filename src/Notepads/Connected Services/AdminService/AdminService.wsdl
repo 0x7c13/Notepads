@@ -6,12 +6,6 @@
       <xsd:import schemaLocation="http://localhost:8000/Notepads.DesktopExtension/AdminService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="IAdminService_ReplaceFile_InputMessage">
-    <wsdl:part name="parameters" element="tns:ReplaceFile" />
-  </wsdl:message>
-  <wsdl:message name="IAdminService_ReplaceFile_OutputMessage">
-    <wsdl:part name="parameters" element="tns:ReplaceFileResponse" />
-  </wsdl:message>
   <wsdl:message name="IAdminService_SaveFile_InputMessage">
     <wsdl:part name="parameters" element="tns:SaveFile" />
   </wsdl:message>
@@ -19,10 +13,6 @@
     <wsdl:part name="parameters" element="tns:SaveFileResponse" />
   </wsdl:message>
   <wsdl:portType name="IAdminService">
-    <wsdl:operation name="ReplaceFile">
-      <wsdl:input wsaw:Action="http://tempuri.org/IAdminService/ReplaceFile" message="tns:IAdminService_ReplaceFile_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IAdminService/ReplaceFileResponse" message="tns:IAdminService_ReplaceFile_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="SaveFile">
       <wsdl:input wsaw:Action="http://tempuri.org/IAdminService/SaveFile" message="tns:IAdminService_SaveFile_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAdminService/SaveFileResponse" message="tns:IAdminService_SaveFile_OutputMessage" />
@@ -30,15 +20,6 @@
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IAdminService" type="tns:IAdminService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="ReplaceFile">
-      <soap:operation soapAction="http://tempuri.org/IAdminService/ReplaceFile" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="SaveFile">
       <soap:operation soapAction="http://tempuri.org/IAdminService/SaveFile" style="document" />
       <wsdl:input>

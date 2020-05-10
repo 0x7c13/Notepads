@@ -13,8 +13,5 @@ namespace Notepads.DesktopExtension
     {
         [OperationContract]
         bool SaveFile(string filePath, byte[] data);
-
-        [OperationContract]
-        void Exit();
     }
 }

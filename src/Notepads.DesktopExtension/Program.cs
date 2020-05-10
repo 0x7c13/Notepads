@@ -145,7 +145,8 @@ namespace Notepads.DesktopExtension
                 info.Verb = "runas";
                 info.UseShellExecute = true;
                 info.FileName = aliasPath;
-                Process.Start(info);
+                var process = Process.Start(info);
+                AppDomain.CurrentDomain.ProcessExit += (a, b) => process.Kill();
                 message.Add(_adminCreatedLabel, true);
             }
             catch

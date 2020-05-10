@@ -33,11 +33,6 @@ namespace Notepads.DesktopExtension
             }
         }
 
-        public void Exit()
-        {
-            Application.Exit();
-        }
-
         private async void WriteToFile(string filePath, byte[] data)
         {
             await PathIO.WriteBytesAsync(filePath, data);
