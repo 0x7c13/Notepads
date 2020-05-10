@@ -6,19 +6,52 @@
     using System.Text;
     using Services;
     using Utilities;
+    using Windows.ApplicationModel.Resources;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public sealed partial class TextAndEditorSettingsPage : Page
     {
+        private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
         public IReadOnlyCollection<string> AvailableFonts => FontUtility.GetSystemFontFamilies();
 
         public int[] AvailableFontSizes = FontUtility.PredefinedFontSizes;
 
-        public string[] AvailableFontStyles = FontUtility.FontStyles;
+        private string[] _availableFontStyles;
 
-        public string[] AvailableFontWeights = FontUtility.PredefinedFontWeights.Keys.ToArray();
+        public string[] AvailableFontStyles
+        {
+            get
+            {
+                if (_availableFontStyles != null)
+                {
+                    return _availableFontStyles;
+                }
+
+                _availableFontStyles = FontUtility.FontStyles.Select(fontStyle =>
+                    _resourceLoader.GetString($"FontStyle_{fontStyle}")).ToArray();
+                return _availableFontStyles;
+            }
+        }
+
+        private string[] _availableFontWeights;
+
+        public string[] AvailableFontWeights
+        {
+            get
+            {
+                if (_availableFontWeights != null)
+                {
+                    return _availableFontWeights;
+                }
+
+                _availableFontWeights = FontUtility.PredefinedFontWeights.Select(fontWeight =>
+                    _resourceLoader.GetString($"FontWeight_{fontWeight}")).ToArray();
+                return _availableFontWeights;
+            }
+        }
 
         public TextAndEditorSettingsPage()
         {
@@ -30,10 +63,15 @@
             LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
-            FontStylePicker.SelectedItem = EditorSettingsService.EditorFontStyle.ToString();
-            FontWeightPicker.SelectedItem = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
+
+            var fontStyleIndex = FontUtility.FontStyles.ToList().IndexOf(EditorSettingsService.EditorFontStyle);
+            FontStylePicker.SelectedIndex = fontStyleIndex == -1 ? 0 : fontStyleIndex;
+
+            var fontWeight = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
                 ? fontWeightName
                 : nameof(FontWeights.Normal);
+            var fontWeightIndex = FontUtility.PredefinedFontWeights.ToList().IndexOf(fontWeight);
+            FontWeightPicker.SelectedIndex = fontWeightIndex == -1 ? 0 : fontWeightIndex;
 
             InitializeLineEndingSettings();
 
@@ -318,12 +356,12 @@
 
         private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EditorSettingsService.EditorFontStyle = (FontStyle)Enum.Parse(typeof(FontStyle), (string)e.AddedItems.First());
+            EditorSettingsService.EditorFontStyle = FontUtility.FontStyles[FontStylePicker.SelectedIndex];
         }
 
         private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedValue = (string)e.AddedItems.First();
+            var selectedValue = FontUtility.PredefinedFontWeights[FontWeightPicker.SelectedIndex];
             EditorSettingsService.EditorFontWeight = FontUtility.TryGetFontWeight(selectedValue, out var fontWeight)
                 ? new FontWeight() { Weight = fontWeight }
                 : FontWeights.Normal;
