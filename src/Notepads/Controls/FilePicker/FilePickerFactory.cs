@@ -33,7 +33,7 @@
                 savePicker.DefaultFileExtension = textEditor.EditingFile.FileType;
             }
 
-            savePicker.FileTypeChoices.Add("Text Documents", new List<string>() { ".txt", ".md", ".markdown", ".csv" });
+            savePicker.FileTypeChoices.Add("Text Documents", FileTypeService.TextDocumentFileExtensions);
             savePicker.FileTypeChoices.Add("All Supported Files", FileTypeService.AllSupportedFileExtensions);
             savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             savePicker.SuggestedFileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
