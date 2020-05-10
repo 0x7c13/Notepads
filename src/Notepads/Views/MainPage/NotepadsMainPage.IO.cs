@@ -140,14 +140,6 @@
             return successCount;
         }
 
-        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
-        {
-            NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
-            NotepadsCore.FocusOnTextEditor(textEditor);
-            return file;
-        }
-
         private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
         {
             await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
@@ -173,7 +165,7 @@
             {
                 if (textEditor.EditingFile == null || saveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await PickFileForSavingUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
                 }
                 else
@@ -197,7 +189,7 @@
 
                 if (promptSaveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await PickFileForSavingUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
 
                     await SaveInternal(textEditor, file, rebuildOpenRecentItems);
@@ -218,8 +210,10 @@
             }
         }
 
-        private async Task<StorageFile> SaveFileUsingFileSavePicker(ITextEditor textEditor, bool saveAs)
+        private async Task<StorageFile> PickFileForSavingUsingFileSavePicker(ITextEditor textEditor)
         {
+            NotepadsCore.SwitchTo(textEditor);
+
             StorageFile file = null;
 
             // Create a lambda for the UI work and re-use if not running as a Game Bar widget
@@ -234,7 +228,7 @@
                 return Task.Run(async () =>
                 {
                     file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
-                        await FilePickerFactory.GetFileSavePicker(textEditor, saveAs).PickSaveFileAsync());
+                        await FilePickerFactory.GetFileSavePicker(textEditor, saveAs: true).PickSaveFileAsync());
                     return true;
                 }).AsAsyncOperation<bool>();
             });
@@ -247,6 +241,8 @@
             {
                 await filePickerWork.Invoke();
             }
+
+            NotepadsCore.FocusOnTextEditor(textEditor);
 
             return file;
         }
