@@ -573,6 +573,16 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="lrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.lrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/LrcFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

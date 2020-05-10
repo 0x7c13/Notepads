@@ -221,6 +221,10 @@
     <value>Plik dziennika</value>
     <comment>.log</comment>
   </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>Lyrics File</value>
+    <comment>.lrc</comment>
+  </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>Kod źródłowy języka LUA</value>
     <comment>.lua</comment>
