@@ -21,14 +21,14 @@
 
             IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
-            if (activatedArgs == null)
-            {
-                // No activated event args, so this is not an activation via the multi-instance ID
-                // Just create a new instance and let App OnActivated resolve the launch
-                App.IsGameBarWidget = true;
-                App.IsFirstInstance = true;
-                Windows.UI.Xaml.Application.Start(p => new App());
-            }
+            //if (activatedArgs == null)
+            //{
+            //    // No activated event args, so this is not an activation via the multi-instance ID
+            //    // Just create a new instance and let App OnActivated resolve the launch
+            //    App.IsGameBarWidget = true;
+            //    App.IsFirstInstance = true;
+            //    Windows.UI.Xaml.Application.Start(p => new App());
+            //}
 
             var instances = AppInstance.GetInstances();
 
@@ -151,7 +151,7 @@
         {
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
             {
-                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("Launch");
             }
         }
     }

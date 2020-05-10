@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
@@ -14,7 +15,7 @@
         SyncRecentList,
         RegisterExtension,
         CreateElevetedExtension,
-        ReplaceFile
+        ExitApp
     }
 
     public sealed class InteropConnectionService : IBackgroundTask
@@ -26,7 +27,7 @@
         private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
 
         private static readonly string _commandLabel = "Command";
-        private static readonly string _failureLabel = "Failed";
+        private static readonly string _failedLabel = "Failed";
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -77,40 +78,55 @@
                     }
                     break;
                 case CommandArgs.RegisterExtension:
-                    if(extensionAppServiceConnection==null)
+                    appServiceConnections.Remove(appServiceConnection);
+                    if (extensionAppServiceConnection == null)
                     {
                         extensionAppServiceConnection = appServiceConnection;
                         extensionBackgroundTaskDeferral = this.backgroundTaskDeferral;
-                        appServiceConnections.Remove(appServiceConnection);
                     }
                     else
                     {
-                        appServiceConnections.Remove(appServiceConnection);
                         this.backgroundTaskDeferral.Complete();
                     }
                     break;
                 case CommandArgs.CreateElevetedExtension:
-                    await extensionAppServiceConnection.SendMessageAsync(message);
-                    break;
-                case CommandArgs.ReplaceFile:
-                    var response = await extensionAppServiceConnection.SendMessageAsync(message);
-                    if (response.Status != AppServiceResponseStatus.Success)
+                    if (appServiceConnection == extensionAppServiceConnection)
                     {
-                        message.Clear();
-                        message.Add(_failureLabel, true);
+                        Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
+                        {
+                            await serviceConnection.SendMessageAsync(args.Request.Message);
+                        });
                     }
                     else
                     {
-                        message = response.Message;
+                        if (extensionAppServiceConnection == null)
+                        {
+                            message.Clear();
+                            message.Add(_failedLabel, true);
+                        }
+                        else
+                        {
+                            var response = await extensionAppServiceConnection.SendMessageAsync(message);
+                            if (response.Status != AppServiceResponseStatus.Success)
+                            {
+                                message.Clear();
+                                message.Add(_failedLabel, true);
+                                extensionAppServiceConnection = null;
+                            }
+                            else
+                            {
+                                message = response.Message;
+                            }
+                        }
+                        await args.Request.SendResponseAsync(message);
                     }
-                    await args.Request.SendResponseAsync(message);
                     break;
             }
 
             messageDeferral.Complete();
         }
 
-        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        private async void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             if (this.backgroundTaskDeferral != null)
             {
@@ -118,6 +134,12 @@
                 this.backgroundTaskDeferral.Complete();
                 var details = sender.TriggerDetails as AppServiceTriggerDetails;
                 appServiceConnections.Remove(details.AppServiceConnection);
+                if (appServiceConnections.Count == 0)
+                {
+                    var message = new ValueSet();
+                    message.Add(_commandLabel, CommandArgs.ExitApp);
+                    await extensionAppServiceConnection.SendMessageAsync(message);
+                }
             }
         }
     }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="08677832-90de-435c-b328-367c16ce4458" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.ObservableCollection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8000/Notepads.DesktopExtension/AdminService" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="AdminService.wsdl" MetadataType="Wsdl" ID="42228680-a04f-4717-b25a-312424ab1da2" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?wsdl" />
+    <MetadataFile FileName="AdminService.xsd" MetadataType="Schema" ID="53a77db6-5f57-4b43-820a-4c7cd392a0c7" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?xsd=xsd1" />
+    <MetadataFile FileName="AdminService1.xsd" MetadataType="Schema" ID="d20f7615-ffbb-4f15-8eb9-0d6eefcf8a59" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?xsd=xsd0" />
+    <MetadataFile FileName="AdminService.disco" MetadataType="Disco" ID="6f76655b-d30a-4636-bc30-187911d131e5" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

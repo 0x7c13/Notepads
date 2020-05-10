@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Services
 {
-    using Notepads.ExtensionService;
+    using Notepads.AdminService;
+    using Notepads.Extensions;
     using Notepads.Settings;
     using Notepads.Utilities;
     using System;
@@ -8,6 +9,7 @@
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
+    using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Storage;
     using Windows.UI.Xaml;
@@ -19,18 +21,16 @@
         public static bool EnableSettingsLogging = true;
 
         public static AppServiceConnection InteropServiceConnection = null;
-        private static ExtensionServiceClient adminExtensionServiceClient = new ExtensionServiceClient();
-
-        public const string ExtensionAccessErrorMessage = "Failed to save due to no Extension access";
-        public const string AdminAccessErrorMessage = "Failed to save due to no Adminstration access";
+        public static AdminServiceClient AdminServiceClient = new AdminServiceClient();
+        public static readonly Exception AdminstratorAccessException = new Exception("Failed to save due to no Adminstration access");
+        private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static readonly string _commandLabel = "Command";
+        private static readonly string _failedLabel = "Failed";
         private static readonly string _appIdLabel = "Instance";
         private static readonly string _settingsKeyLabel = "Settings";
         private static readonly string _valueLabel = "Value";
-        private static readonly string _newFileLabel = "From";
-        private static readonly string _oldFileLabel = "To";
-        private static readonly string _failureLabel = "Failed";
+        private static readonly string _adminCreatedLabel = "AdminCreated";
 
         private static IReadOnlyDictionary<string,Settings> SettingsManager = new Dictionary<string, Settings>
         {
@@ -69,7 +69,7 @@
             if (status != AppServiceConnectionStatus.Success) Application.Current.Exit();
         }
 
-        private static void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private static async void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var message = args.Request.Message;
             if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var result)) return;
@@ -89,6 +89,19 @@
                     break;
                 case CommandArgs.SyncRecentList:
                     UpdateRecentList?.Invoke(null, false);
+                    break;
+                case CommandArgs.CreateElevetedExtension:
+                    await DispatcherExtensions.CallOnUIThreadAsync(SettingsDelegate.Dispatcher, () =>
+                    {
+                        if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
+                        {
+                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
+                        }
+                        else
+                        {
+                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreationFailed"), 1500);
+                        }
+                    });
                     break;
             }
         }
@@ -126,54 +139,35 @@
             await InteropServiceConnection.SendMessageAsync(message);
         }
 
-        public static async Task ReplaceFile(StorageFile newFile, StorageFile oldFile, bool isElevationRequired)
+        public static async Task SaveFileAsAdmin(string filePath, byte[] data)
         {
             if (InteropServiceConnection == null) return;
 
-            var newFilePath = newFile.Path;
-            var oldFilePath = oldFile.Path;
-            bool failedFromDesktopExtension = false;
+            bool isAdminExtensionAvailable = true;
             bool failedFromAdminExtension = false;
-            if (isElevationRequired)
-            {
-                try
-                {
-                    failedFromAdminExtension = !await adminExtensionServiceClient.ReplaceFileAsync(newFilePath, oldFilePath);
-                }
-                catch
-                {
-                    failedFromAdminExtension = true;
-                }
-            }
-            else
-            {
-                var message = new ValueSet();
-                message.Add(_commandLabel, CommandArgs.ReplaceFile.ToString());
-                message.Add(_newFileLabel, newFilePath);
-                message.Add(_oldFileLabel, oldFilePath);
 
-                var response = await InteropServiceConnection.SendMessageAsync(message);
-                if (response.Status != AppServiceResponseStatus.Success || 
-                    (response.Message.ContainsKey(_failureLabel) && (bool)response.Message[_failureLabel]))
-                {
-                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-                    failedFromDesktopExtension = true;
-                }
+            try
+            {
+                ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
+                failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(filePath, data);
+            }
+            catch
+            {
+                isAdminExtensionAvailable = false;
+            }
+            finally
+            {
+                ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
             }
 
-            if (await FileSystemUtility.FileExists(newFile))
+            if (!isAdminExtensionAvailable)
             {
-                await newFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            }
-
-            if (failedFromDesktopExtension)
-            {
-                throw new Exception(ExtensionAccessErrorMessage);
+                throw AdminstratorAccessException;
             }
 
             if (failedFromAdminExtension)
             {
-                throw new Exception(AdminAccessErrorMessage);
+                throw new UnauthorizedAccessException();
             }
         }
 
@@ -184,6 +178,12 @@
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.CreateElevetedExtension.ToString());
             var response = await InteropServiceConnection.SendMessageAsync(message);
+            message = response.Message;
+
+            if (message.ContainsKey(_failedLabel) && (bool)message[_failedLabel])
+            {
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");
+            }
         }
     }
 }

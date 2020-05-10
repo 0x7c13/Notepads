@@ -22,7 +22,7 @@ public enum CommandArgs
     SyncRecentList,
     RegisterExtension,
     CreateElevetedExtension,
-    ReplaceFile
+    ExitApp
 }
 
 namespace Notepads.DesktopExtension
@@ -34,12 +34,9 @@ namespace Notepads.DesktopExtension
         private static Mutex mutex;
 
         private static AppServiceConnection connection = null;
-        private static readonly string _commandLabel = "Command";
-        private static readonly string _newFileLabel = "From";
-        private static readonly string _oldFileLabel = "To";
-        private static readonly string _failureLabel = "Failed";
-
         private static ServiceHost selfHost = null;
+        private static readonly string _commandLabel = "Command";
+        private static readonly string _adminCreatedLabel = "AdminCreated";
 
         /// <summary>
         ///  The main entry point for the application.
@@ -55,9 +52,11 @@ namespace Notepads.DesktopExtension
             {
                 CheckInstance(DesktopExtensionMutexIdStr);
                 InitializeAppServiceConnection();
+                if (args[2] == "/admin") CreateElevetedExtension();
             }
 
             Application.Run();
+            Application.ApplicationExit += Application_OnApplicationExit;
         }
 
         private static async void InitializeAppServiceConnection()
@@ -85,7 +84,7 @@ namespace Notepads.DesktopExtension
 
         private static void InitializeExtensionService()
         {
-            selfHost = new ServiceHost(typeof(ExtensionService));
+            selfHost = new ServiceHost(typeof(AdminService));
             selfHost.Open();
         }
 
@@ -99,69 +98,64 @@ namespace Notepads.DesktopExtension
             }
         }
 
+        private static void Application_OnApplicationExit(object sender, EventArgs e)
+        {
+            mutex.Close();
+        }
+
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             // connection to the UWP lost, so we shut down the desktop process
             Application.Exit();
         }
 
-        private static async void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private static void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             // Get a deferral because we use an awaitable API below to respond to the message
             // and we don't want this call to get canceled while we are waiting.
             var messageDeferral = args.GetDeferral();
 
-            try
+            var message = args.Request.Message;
+            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse<CommandArgs>((string)message[_commandLabel], out var command)) return;
+            switch (command)
             {
-                var message = args.Request.Message;
-                if (!message.ContainsKey(_commandLabel) || !Enum.TryParse<CommandArgs>((string)message[_commandLabel], out var command)) return;
-                switch (command)
-                {
-                    case CommandArgs.ReplaceFile:
-                        var failed = false;
-                        failed = ReplaceFile((string)message[_newFileLabel], (string)message[_oldFileLabel]);
-                        message.Clear();
-                        if (failed) message.Add(_failureLabel, true);
-                        await args.Request.SendResponseAsync(message);
-                        break;
-                    case CommandArgs.CreateElevetedExtension:
-                        CreateElevetedExtension();
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("error");
+                case CommandArgs.CreateElevetedExtension:
+                    CreateElevetedExtension();
+                    break;
+                case CommandArgs.ExitApp:
+                    Application.Exit();
+                    break;
             }
 
             messageDeferral.Complete();
         }
 
-        private static bool ReplaceFile(string newPath, string oldPath)
+        private static async void CreateElevetedExtension()
         {
+            var message = new ValueSet();
+            message.Add(_commandLabel, CommandArgs.CreateElevetedExtension.ToString());
             try
             {
-                File.Copy(newPath, oldPath, true);
+                string result = Assembly.GetExecutingAssembly().Location;
+                int index = result.LastIndexOf("\\");
+                string rootPath = $"{result.Substring(0, index)}\\..\\";
+                string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads.DesktopExtension.exe";
+
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.Verb = "runas";
+                info.UseShellExecute = true;
+                info.FileName = aliasPath;
+                Process.Start(info);
+                message.Add(_adminCreatedLabel, true);
             }
-            catch (Exception)
+            catch
             {
-                return true;
+                message.Add(_adminCreatedLabel, false);
             }
-            return false;
-        }
-
-        private static void CreateElevetedExtension()
-        {
-            string result = Assembly.GetExecutingAssembly().Location;
-            int index = result.LastIndexOf("\\");
-            string rootPath = $"{result.Substring(0, index)}\\..\\";
-            string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads.DesktopExtension.exe";
-
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.Verb = "runas";
-            info.UseShellExecute = true;
-            info.FileName = aliasPath;
-            Process.Start(info);
+            finally
+            {
+                await connection.SendMessageAsync(message);
+            }
         }
 
         private static string ReadOrInitializeMutexId(string key)

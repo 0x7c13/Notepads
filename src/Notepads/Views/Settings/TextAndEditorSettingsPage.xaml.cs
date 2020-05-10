@@ -1,0 +1,414 @@
+﻿namespace Notepads.Views.Settings
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Notepads.Settings;
+    using Services;
+    using Utilities;
+    using Windows.UI.Text;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+
+    public sealed partial class TextAndEditorSettingsPage : Page
+    {
+        public IReadOnlyCollection<string> AvailableFonts => FontUtility.GetSystemFontFamilies();
+
+        public int[] AvailableFontSizes = FontUtility.PredefinedFontSizes;
+
+        public string[] AvailableFontStyles = FontUtility.FontStyles;
+
+        public string[] AvailableFontWeights = FontUtility.PredefinedFontWeights.Keys.ToArray();
+
+        public TextAndEditorSettingsPage()
+        {
+            InitializeComponent();
+
+            TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
+            HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
+            LineHighlighterToggle.IsOn = EditorSettingsService.EditorDisplayLineHighlighter;
+            LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
+            FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
+            FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
+            FontStylePicker.SelectedItem = EditorSettingsService.EditorFontStyle.ToString();
+            FontWeightPicker.SelectedItem = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
+                ? fontWeightName
+                : nameof(FontWeights.Normal);
+
+            InitializeLineEndingSettings();
+
+            InitializeEncodingSettings();
+
+            InitializeDecodingSettings();
+
+            InitializeTabIndentationSettings();
+
+            InitializeSearchEngineSettings();
+
+            Loaded += TextAndEditorSettings_Loaded;
+        }
+
+        private void InitializeLineEndingSettings()
+        {
+            switch (EditorSettingsService.EditorDefaultLineEnding)
+            {
+                case LineEnding.Crlf:
+                    CrlfRadioButton.IsChecked = true;
+                    break;
+                case LineEnding.Cr:
+                    CrRadioButton.IsChecked = true;
+                    break;
+                case LineEnding.Lf:
+                    LfRadioButton.IsChecked = true;
+                    break;
+            }
+        }
+
+        private void InitializeEncodingSettings()
+        {
+            if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
+            {
+                if (Equals(EditorSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
+                {
+                    Utf8EncodingRadioButton.IsChecked = true;
+                }
+                else
+                {
+                    Utf8BomEncodingRadioButton.IsChecked = true;
+                }
+            }
+            else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.Unicode.CodePage)
+            {
+                Utf16LeBomEncodingRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.BigEndianUnicode.CodePage)
+            {
+                Utf16BeBomEncodingRadioButton.IsChecked = true;
+            }
+        }
+
+        private void InitializeDecodingSettings()
+        {
+            if (EditorSettingsService.EditorDefaultDecoding == null)
+            {
+                AutoGuessDecodingRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
+            {
+                Utf8DecodingRadioButton.IsChecked = true;
+            }
+            else
+            {
+                AnsiDecodingRadioButton.IsChecked = true;
+            }
+        }
+
+        private void InitializeTabIndentationSettings()
+        {
+            if (EditorSettingsService.EditorDefaultTabIndents == -1)
+            {
+                TabDefaultRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultTabIndents == 2)
+            {
+                TabTwoSpacesRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultTabIndents == 4)
+            {
+                TabFourSpacesRadioButton.IsChecked = true;
+            }
+            else if (EditorSettingsService.EditorDefaultTabIndents == 8)
+            {
+                TabEightSpacesRadioButton.IsChecked = true;
+            }
+        }
+
+        private void InitializeSearchEngineSettings()
+        {
+            switch (EditorSettingsService.EditorDefaultSearchEngine)
+            {
+                case SearchEngine.Bing:
+                    BingRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Google:
+                    GoogleRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.DuckDuckGo:
+                    DuckDuckGoRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Custom:
+                    CustomSearchUrlRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = true;
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(EditorSettingsService.EditorCustomMadeSearchUrl))
+            {
+                CustomSearchUrl.Text = EditorSettingsService.EditorCustomMadeSearchUrl;
+            }
+        }
+
+        private void TextAndEditorSettings_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
+            HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
+            LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
+            LineNumbersToggle.Toggled += LineNumbersToggle_Toggled;
+            FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
+            FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
+            FontStylePicker.SelectionChanged += FontStylePicker_OnSelectionChanged;
+            FontWeightPicker.SelectionChanged += FontWeightPicker_OnSelectionChanged;
+
+            CrlfRadioButton.Checked += LineEndingRadioButton_OnChecked;
+            CrRadioButton.Checked += LineEndingRadioButton_OnChecked;
+            LfRadioButton.Checked += LineEndingRadioButton_OnChecked;
+
+            Utf8EncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf8BomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16LeBomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+            Utf16BeBomEncodingRadioButton.Checked += EncodingRadioButton_Checked;
+
+            Utf8DecodingRadioButton.Checked += DecodingRadioButton_Checked;
+            AnsiDecodingRadioButton.Checked += DecodingRadioButton_Checked;
+            AutoGuessDecodingRadioButton.Checked += DecodingRadioButton_Checked;
+
+            TabDefaultRadioButton.Checked += TabBehaviorRadioButton_Checked;
+            TabTwoSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
+            TabFourSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
+            TabEightSpacesRadioButton.Checked += TabBehaviorRadioButton_Checked;
+
+            BingRadioButton.Checked += SearchEngineRadioButton_Checked;
+            GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
+            DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
+            CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
+        }
+
+        private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Name)
+            {
+                case "BingRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "GoogleRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "DuckDuckGoRadioButton":
+                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
+                    CustomSearchUrl.IsEnabled = false;
+                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    break;
+                case "CustomSearchUrlRadioButton":
+                    CustomSearchUrl.IsEnabled = true;
+                    CustomSearchUrl.Focus(FocusState.Programmatic);
+                    CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
+                    CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+                    EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
+                    break;
+            }
+            
+            InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
+        }
+
+        private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Tag)
+            {
+                case "-1":
+                    EditorSettingsService.EditorDefaultTabIndents = -1;
+                    break;
+                case "2":
+                    EditorSettingsService.EditorDefaultTabIndents = 2;
+                    break;
+                case "4":
+                    EditorSettingsService.EditorDefaultTabIndents = 4;
+                    break;
+                case "8":
+                    EditorSettingsService.EditorDefaultTabIndents = 8;
+                    break;
+            }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultTabIndentsInt, EditorSettingsService.EditorDefaultTabIndents);
+        }
+
+        private void EncodingRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Tag)
+            {
+                case "UTF-8":
+                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(false);
+                    break;
+                case "UTF-8-BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(true);
+                    break;
+                case "UTF-16 LE BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(false, true);
+                    break;
+                case "UTF-16 BE BOM":
+                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
+                    break;
+            }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultEncodingCodePageInt, EditorSettingsService.EditorDefaultEncoding);
+        }
+
+        private void DecodingRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Tag)
+            {
+                case "Auto":
+                    EditorSettingsService.EditorDefaultDecoding = null;
+                    break;
+                case "UTF-8":
+                    EditorSettingsService.EditorDefaultDecoding = new UTF8Encoding(false);
+                    break;
+                case "ANSI":
+                    if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding))
+                    {
+                        EditorSettingsService.EditorDefaultDecoding = systemDefaultEncoding;
+                    }
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding))
+                    {
+                        EditorSettingsService.EditorDefaultDecoding = currentCultureEncoding;
+                    }
+                    else
+                    {
+                        AutoGuessDecodingRadioButton.IsChecked = true;
+                    }
+                    break;
+            }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultDecodingCodePageInt, EditorSettingsService.EditorDefaultDecoding);
+        }
+
+        private void LineEndingRadioButton_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton)) return;
+
+            switch (radioButton.Tag)
+            {
+                case "Crlf":
+                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Crlf;
+                    break;
+                case "Cr":
+                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Cr;
+                    break;
+                case "Lf":
+                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Lf;
+                    break;
+            }
+
+            InteropService.SyncSettings(SettingsKey.EditorDefaultLineEndingStr, EditorSettingsService.EditorDefaultLineEnding);
+        }
+
+        private void FontFamilyPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EditorSettingsService.EditorFontFamily = (string)e.AddedItems.First();
+            InteropService.SyncSettings(SettingsKey.EditorFontFamilyStr, EditorSettingsService.EditorFontFamily);
+        }
+
+        private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EditorSettingsService.EditorFontSize = (int)e.AddedItems.First();
+            InteropService.SyncSettings(SettingsKey.EditorFontSizeInt, EditorSettingsService.EditorFontSize);
+        }
+
+        private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EditorSettingsService.EditorFontStyle = (FontStyle)Enum.Parse(typeof(FontStyle), (string)e.AddedItems.First());
+        }
+
+        private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedValue = (string)e.AddedItems.First();
+            EditorSettingsService.EditorFontWeight = FontUtility.TryGetFontWeight(selectedValue, out var fontWeight)
+                ? new FontWeight() { Weight = fontWeight }
+                : FontWeights.Normal;
+        }
+
+        private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
+            InteropService.SyncSettings(SettingsKey.EditorDefaultTextWrappingStr, EditorSettingsService.EditorDefaultTextWrapping);
+        }
+
+        private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorHighlightMisspelledWordsBool, EditorSettingsService.IsHighlightMisspelledWordsEnabled);
+        }
+
+        private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorDefaultLineHighlighterViewStateBool, EditorSettingsService.EditorDisplayLineHighlighter);
+        }
+
+        private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            EditorSettingsService.EditorDisplayLineNumbers = LineNumbersToggle.IsOn;
+        }
+
+        private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (CustomSearchUrlRadioButton.IsChecked != null &&
+                (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+                InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
+                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
+            }
+            else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
+                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, EditorSettingsService.EditorDefaultSearchEngine);
+            }
+
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private static bool IsValidUrl(string url)
+        {
+            try
+            {
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                {
+                    if (string.Format(url, "s") == url)
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+}

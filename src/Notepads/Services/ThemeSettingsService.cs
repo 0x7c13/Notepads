@@ -122,7 +122,7 @@
             {
                 if (ApplicationSettingsStore.Read(SettingsKey.AppAccentColorHexStr) is string accentColorHexStr)
                 {
-                    _appAccentColor = GetColor(accentColorHexStr);
+                    _appAccentColor = accentColorHexStr.ToColor();
                 }
             }
         }
@@ -131,7 +131,7 @@
         {
             if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
             {
-                _customAccentColor = GetColor(customAccentColorHexStr);
+                _customAccentColor = customAccentColorHexStr.ToColor();
             }
             else
             {
@@ -155,7 +155,7 @@
             }
             else
             {
-                _appBackgroundPanelTintOpacity = 0.7;
+                _appBackgroundPanelTintOpacity = 0.75;
             }
         }
 

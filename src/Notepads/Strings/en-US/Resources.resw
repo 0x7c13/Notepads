@@ -597,4 +597,12 @@
     <value>Save Failed</value>
     <comment>CreateElevatedExtensionDialog: "Title" display text.</comment>
   </data>
+  <data name="TextEditor_NotificationMsg_AdminExtensionCreated" xml:space="preserve">
+    <value>Now system files can be directly modified</value>
+    <comment>TextEditor: Notification message when launching of admin process is successful.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_AdminExtensionCreationFailed" xml:space="preserve">
+    <value>Failed to start admin process</value>
+    <comment>TextEditor: Notification message when launching of admin process is failed.</comment>
+  </data>
 </root>

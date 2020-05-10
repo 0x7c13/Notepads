@@ -1,0 +1,86 @@
+﻿<Page
+    x:Class="Notepads.Views.Settings.PersonalizationSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+
+    <Grid>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <ScrollViewer
+            Grid.Row="0"
+            Padding="20,0,20,0"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock
+                    x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,15,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="ThemePanel" Margin="0,10,0,0">
+                    <RadioButton x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_LightModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeLightButton" Tag="Light" />
+                    <RadioButton x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_DarkModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDarkButton" Tag="Dark" />
+                    <RadioButton x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDefaultButton" Tag="Default" />
+                </StackPanel>
+                <TextBlock x:Name="BackgroundTintOpacityTitle"
+                    x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="BackgroundTintOpacityControls" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Slider Style="{StaticResource CustomSliderStyle}" 
+                                x:Name="BackgroundTintOpacitySlider"
+                                Minimum="0" Maximum="100" 
+                                StepFrequency="1"
+                                Margin="0,0,10,0" 
+                                Width="200"/>
+                        <TextBlock Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}"
+                                   Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                   VerticalAlignment="Center" 
+                                   FontSize="18"/>
+                        <TextBlock Text="%"
+                                   Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                   VerticalAlignment="Center" 
+                                   FontSize="18"/>
+                    </StackPanel>
+                    <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                </StackPanel>
+                <TextBlock
+                    x:Uid="/Settings/PersonalizationPage_AccentColorSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,40">
+                    <ToggleSwitch x:Uid="/Settings/PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" Margin="0,0,0,8"/>
+                    <Viewbox MaxWidth="300" Stretch="Fill">
+                        <ColorPicker
+                            x:Name="AccentColorPicker"
+                            ColorSpectrumShape="Ring"
+                            IsColorSliderVisible="True"
+                            IsColorChannelTextInputVisible="True"
+                            IsHexInputVisible="True"
+                            IsAlphaEnabled="False"
+                            IsAlphaSliderVisible="True"
+                            IsAlphaTextInputVisible="True">
+                        </ColorPicker>
+                    </Viewbox>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

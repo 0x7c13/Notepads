@@ -49,7 +49,7 @@ namespace Notepads.Settings
 
         private static void SetIsLineHighlighterEnabled(object value)
         {
-            EditorSettingsService.IsLineHighlighterEnabled = (bool)value;
+            EditorSettingsService.EditorDisplayLineHighlighter = (bool)value;
         }
 
         private static void SetEditorDefaultLineEnding(object value)
