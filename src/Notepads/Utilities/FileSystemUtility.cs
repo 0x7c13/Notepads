@@ -303,7 +303,7 @@
                 }
                 else // No BOM, need to guess or use default decoding set by user
                 {
-                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    if (AppSettingsService.EditorDefaultDecoding == null)
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
@@ -313,7 +313,7 @@
                     }
                     else
                     {
-                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);
+                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding);
                     }
                 }
             }
@@ -472,8 +472,8 @@
                 if (IsFileReadOnly(file) || !await FileIsWritable(file))
                 {
                     // For file(s) dragged into Notepads, they are read-only
-                    // StorageFile API won't work but can be overwritten by Win32 PathIO API (exploit?)
-                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException exception
+                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
                     var content = encoding.GetBytes(text);
                     var result = encoding.GetPreamble().Concat(content).ToArray();
                     await PathIO.WriteBytesAsync(file.Path, result);
@@ -486,8 +486,7 @@
                         stream.Position = 0;
                         await writer.WriteAsync(text);
                         await writer.FlushAsync();
-                        // Truncate
-                        stream.SetLength(stream.Position);
+                        stream.SetLength(stream.Position); // Truncate
                     }
                 }
             }

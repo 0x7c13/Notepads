@@ -10,7 +10,6 @@
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Foundation;
     using Windows.System;
-    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Text;
     using Windows.UI.Xaml;
@@ -75,7 +74,7 @@
         private const string LineIndicatorName = "LineIndicator";
         private Border _lineIndicator;
 
-        private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
+        private TextWrapping _textWrapping = AppSettingsService.EditorDefaultTextWrapping;
 
         public new TextWrapping TextWrapping
         {
@@ -89,7 +88,7 @@
         }
 
         private double _fontZoomFactor = 100;
-        private double _fontSize = EditorSettingsService.EditorFontSize;
+        private double _fontSize = AppSettingsService.EditorFontSize;
 
         public new double FontSize
         {
@@ -101,7 +100,7 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                var newZoomFactor = Math.Round((value * 100) / AppSettingsService.EditorFontSize);
                 if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
@@ -112,19 +111,19 @@
 
         public TextEditorCore()
         {
-            IsSpellCheckEnabled = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
-            FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
-            FontSize = EditorSettingsService.EditorFontSize;
-            FontStyle = EditorSettingsService.EditorFontStyle;
-            FontWeight = EditorSettingsService.EditorFontWeight;
+            IsSpellCheckEnabled = AppSettingsService.IsHighlightMisspelledWordsEnabled;
+            TextWrapping = AppSettingsService.EditorDefaultTextWrapping;
+            FontFamily = new FontFamily(AppSettingsService.EditorFontFamily);
+            FontSize = AppSettingsService.EditorFontSize;
+            FontStyle = AppSettingsService.EditorFontStyle;
+            FontWeight = AppSettingsService.EditorFontWeight;
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
-            DisplayLineNumbers = EditorSettingsService.EditorDisplayLineNumbers;
-            DisplayLineHighlighter = EditorSettingsService.EditorDisplayLineHighlighter;
+            DisplayLineNumbers = AppSettingsService.EditorDisplayLineNumbers;
+            DisplayLineHighlighter = AppSettingsService.EditorDisplayLineHighlighter;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
@@ -138,25 +137,16 @@
             LostFocus += OnLostFocus;
             Loaded += OnLoaded;
 
-            EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
-            EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
-            EditorSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
-            EditorSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
-            EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
-            EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
-            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
-
             SelectionChanged += OnSelectionChanged;
             TextWrappingChanged += OnTextWrappingChanged;
             SizeChanged += OnSizeChanged;
             FontSizeChanged += OnFontSizeChanged;
 
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
-
             // Init shortcuts
             _keyboardCommandHandler = GetKeyboardCommandHandler();
             _mouseCommandHandler = GetMouseCommandHandler();
+
+            HookExternalEvents();
 
             Window.Current.CoreWindow.Activated += OnCoreWindowActivated;
         }
@@ -222,21 +212,12 @@
             _renderedLineNumberBlocks.Clear();
             _miniRequisiteIntegerTextRenderingWidthCache.Clear();
 
-            EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
-            EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
-            EditorSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
-            EditorSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
-            EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
-            EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
-            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
-
             SelectionChanged -= OnSelectionChanged;
             TextWrappingChanged -= OnTextWrappingChanged;
             SizeChanged -= OnSizeChanged;
             FontSizeChanged -= OnFontSizeChanged;
 
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+            UnhookExternalEvents();
 
             Window.Current.CoreWindow.Activated -= OnCoreWindowActivated;
         }
@@ -266,8 +247,8 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(AppSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(AppSettingsService.EditorDefaultTabIndents)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
@@ -295,80 +276,6 @@
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, false, false, false, ChangeZoomingBasedOnMouseInput),
                 new MouseCommand<PointerRoutedEventArgs>(true, false, false, OnPointerLeftButtonDown),
             }, this);
-        }
-
-        private async void EditorSettingsService_OnFontFamilyChanged(object sender, string fontFamily)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                FontFamily = new FontFamily(fontFamily);
-                SetDefaultTabStopAndLineSpacing(FontFamily, FontSize);
-            });
-        }
-
-        private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                FontSize = fontSize;
-            });
-        }
-
-        private async void EditorSettingsService_OnFontStyleChanged(object sender, FontStyle fontStyle)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                FontStyle = fontStyle;
-            });
-        }
-
-        private async void EditorSettingsService_OnFontWeightChanged(object sender, FontWeight fontWeight)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                FontWeight = fontWeight;
-            });
-        }
-
-        private async void EditorSettingsService_OnDefaultTextWrappingChanged(object sender, TextWrapping textWrapping)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                TextWrapping = textWrapping;
-            });
-        }
-
-        private async void EditorSettingsService_OnHighlightMisspelledWordsChanged(object sender, bool isSpellCheckEnabled)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                IsSpellCheckEnabled = isSpellCheckEnabled;
-            });
-        }
-
-        private async void EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged(object sender, bool displayLineNumbers)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                DisplayLineNumbers = displayLineNumbers;
-            });
-        }
-
-        private async void EditorSettingsService_OnDefaultLineHighlighterViewStateChanged(object sender, bool displayLineHighlighter)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                DisplayLineHighlighter = displayLineHighlighter;
-            });
-        }
-
-        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                SelectionHighlightColor = new SolidColorBrush(color);
-                SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
-            });
         }
 
         private void OnCoreWindowActivated(CoreWindow sender, WindowActivatedEventArgs args)
@@ -717,7 +624,7 @@
         {
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
-                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
+                FontSize = (fontZoomFactorInt / 100) * AppSettingsService.EditorFontSize;
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)

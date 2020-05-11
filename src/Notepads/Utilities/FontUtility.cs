@@ -90,26 +90,26 @@
             8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
         };
 
-        public static readonly string[] FontStyles =
+        public static readonly Dictionary<string, FontStyle> PredefinedFontStylesMap = new Dictionary<string, FontStyle>()
         {
-            FontStyle.Normal.ToString(),
-            FontStyle.Italic.ToString(),
-            FontStyle.Oblique.ToString()
+            {nameof(FontStyle.Normal),  FontStyle.Normal},
+            {nameof(FontStyle.Italic),  FontStyle.Italic},
+            {nameof(FontStyle.Oblique), FontStyle.Oblique}
         };
 
-        public static Dictionary<string, ushort> PredefinedFontWeights = new Dictionary<string, ushort>()
+        public static readonly Dictionary<string, ushort> PredefinedFontWeightsMap = new Dictionary<string, ushort>()
         {
+            {nameof(FontWeights.Normal),     FontWeights.Normal.Weight},
             {nameof(FontWeights.Thin),       FontWeights.Thin.Weight},
             {nameof(FontWeights.ExtraLight), FontWeights.ExtraLight.Weight},
             {nameof(FontWeights.Light),      FontWeights.Light.Weight},
             {nameof(FontWeights.SemiLight),  FontWeights.SemiLight.Weight},
-            {nameof(FontWeights.Normal),     FontWeights.Normal.Weight},
             {nameof(FontWeights.Medium),     FontWeights.Medium.Weight},
             {nameof(FontWeights.SemiBold),   FontWeights.SemiBold.Weight},
             {nameof(FontWeights.Bold),       FontWeights.Bold.Weight},
             {nameof(FontWeights.ExtraBold),  FontWeights.ExtraBold.Weight},
             {nameof(FontWeights.Black),      FontWeights.Black.Weight},
-            {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight},
+            {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight}
         };
 
         public static bool IsMonospacedFont(FontFamily font)
@@ -145,35 +145,6 @@
                 });
                 return DefaultFonts.Where(font => !SymbolFonts.Contains(font)).OrderBy(font => font).ToArray();
             }
-        }
-
-        public static bool TryGetFontWeightName(FontWeight fontWeight, out string fontWeightName)
-        {
-            fontWeightName = nameof(FontWeights.Normal);
-
-            foreach (var weight in PredefinedFontWeights)
-            {
-                if (weight.Value == fontWeight.Weight)
-                {
-                    fontWeightName = weight.Key;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static bool TryGetFontWeight(string fontWeightName, out ushort fontWeight)
-        {
-            fontWeight = FontWeights.Normal.Weight;
-
-            if (PredefinedFontWeights.ContainsKey(fontWeightName))
-            {
-                fontWeight = PredefinedFontWeights[fontWeightName];
-                return true;
-            }
-
-            return false;
         }
     }
 }

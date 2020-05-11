@@ -221,6 +221,10 @@
     <value>लॉग फ़ाइल</value>
     <comment>.log</comment>
   </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>Lyrics File</value>
+    <comment>.lrc</comment>
+  </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>लुआ फ़ाइल</value>
     <comment>.lua</comment>
@@ -284,6 +288,10 @@
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>टाइपस्क्रिप्ट फ़ाइल</value>
     <comment>.ts</comment>
+  </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog File</value>
+    <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>विजुअल बेसिक फ़ाइल</value>

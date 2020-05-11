@@ -23,8 +23,8 @@
     {
         private void InitializeStatusBar()
         {
-            ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
+            ShowHideStatusBar(AppSettingsService.ShowStatusBar);
+            AppSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
         }
 
         private void SetupStatusBar(ITextEditor textEditor)

@@ -63,7 +63,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
 * You cannot associate potentially harmful file types (.ps1, .bat, .xaml, etc.) with Notepads.
-* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
 * Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
 
 ## Downloads:
