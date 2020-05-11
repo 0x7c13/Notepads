@@ -132,7 +132,7 @@
                 if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
                 {
                     var message = new ValueSet();
-                    message.Add(_commandLabel, CommandArgs.ExitApp);
+                    message.Add(_commandLabel, CommandArgs.ExitApp.ToString());
                     await extensionAppServiceConnection.SendMessageAsync(message);
                 }
             }
