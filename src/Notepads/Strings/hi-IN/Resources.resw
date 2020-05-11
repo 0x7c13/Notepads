@@ -586,59 +586,59 @@
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>तिरछा</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>साधारण</value>
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
+    <value>टेढ़ा</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
+    <value>स्याह</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>मोटा</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>ExtraBlack</value>
+    <value>अतिरिक्त स्याह</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>ExtraBold</value>
+    <value>अतिरिक्त मोटा</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>ExtraLight</value>
+    <value>अतिरिक्त सरल</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
+    <value>सरल</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
+    <value>मध्यम</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>साधारण</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>SemiBold</value>
+    <value>अर्ध मोटा</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>SemiLight</value>
+    <value>अर्ध सरल</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
+    <value>पतला</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
 </root>
