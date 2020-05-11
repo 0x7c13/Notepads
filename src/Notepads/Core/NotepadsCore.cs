@@ -100,8 +100,8 @@
         public void OpenNewTextEditor(string fileNamePlaceholder)
         {
             var textFile = new TextFile(string.Empty,
-                EditorSettingsService.EditorDefaultEncoding,
-                EditorSettingsService.EditorDefaultLineEnding);
+                AppSettingsService.EditorDefaultEncoding,
+                AppSettingsService.EditorDefaultLineEnding);
             var newEditor = CreateTextEditor(
                 Guid.NewGuid(),
                 textFile,

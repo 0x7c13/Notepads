@@ -86,7 +86,7 @@
                 rootFrameCreated = true;
 
                 ThemeSettingsService.Initialize();
-                EditorSettingsService.Initialize();
+                AppSettingsService.Initialize();
             }
 
             var appLaunchSettings = new Dictionary<string, string>()
@@ -97,23 +97,23 @@
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
-                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
-                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
-                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
-                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
-                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
-                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
-                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
-                { "EditorFontStyle", EditorSettingsService.EditorFontStyle.ToString() },
-                { "EditorFontWeight", EditorSettingsService.EditorFontWeight.Weight.ToString() },
-                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", AppSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", AppSettingsService.EditorFontFamily },
+                { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
+                { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
+                { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
                 { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
-                { "DisplayLineHighlighter", EditorSettingsService.EditorDisplayLineHighlighter.ToString() },
-                { "DisplayLineNumbers", EditorSettingsService.EditorDisplayLineNumbers.ToString() },
-                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");

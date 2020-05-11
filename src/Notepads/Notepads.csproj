@@ -208,7 +208,7 @@
     <Compile Include="Utilities\EncodingUtility.cs" />
     <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\EditorSettingsService.cs" />
+    <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />

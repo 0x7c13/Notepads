@@ -303,7 +303,7 @@
                 }
                 else // No BOM, need to guess or use default decoding set by user
                 {
-                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    if (AppSettingsService.EditorDefaultDecoding == null)
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
@@ -313,7 +313,7 @@
                     }
                     else
                     {
-                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);
+                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding);
                     }
                 }
             }
