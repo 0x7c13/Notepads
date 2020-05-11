@@ -90,26 +90,41 @@
             8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
         };
 
-        public static readonly string[] FontStyles =
+        public static readonly FontStyle[] FontStyles =
         {
-            FontStyle.Normal.ToString(),
-            FontStyle.Italic.ToString(),
-            FontStyle.Oblique.ToString()
+            FontStyle.Normal,
+            FontStyle.Italic,
+            FontStyle.Oblique
         };
 
-        public static Dictionary<string, ushort> PredefinedFontWeights = new Dictionary<string, ushort>()
+        public static readonly string[] PredefinedFontWeights =
         {
-            {nameof(FontWeights.Thin),       FontWeights.Thin.Weight},
+            nameof(FontWeights.Normal),
+            nameof(FontWeights.Thin),
+            nameof(FontWeights.ExtraLight),
+            nameof(FontWeights.Light),
+            nameof(FontWeights.SemiLight),
+            nameof(FontWeights.Medium),
+            nameof(FontWeights.SemiBold),
+            nameof(FontWeights.Bold),
+            nameof(FontWeights.ExtraBold),
+            nameof(FontWeights.Black),
+            nameof(FontWeights.ExtraBlack)
+        };
+
+        public static readonly Dictionary<string, ushort> PredefinedFontWeightsMap = new Dictionary<string, ushort>()
+        {
+            {nameof(FontWeights.Normal), FontWeights.Normal.Weight},
+            {nameof(FontWeights.Thin), FontWeights.Thin.Weight},
             {nameof(FontWeights.ExtraLight), FontWeights.ExtraLight.Weight},
-            {nameof(FontWeights.Light),      FontWeights.Light.Weight},
-            {nameof(FontWeights.SemiLight),  FontWeights.SemiLight.Weight},
-            {nameof(FontWeights.Normal),     FontWeights.Normal.Weight},
-            {nameof(FontWeights.Medium),     FontWeights.Medium.Weight},
-            {nameof(FontWeights.SemiBold),   FontWeights.SemiBold.Weight},
-            {nameof(FontWeights.Bold),       FontWeights.Bold.Weight},
-            {nameof(FontWeights.ExtraBold),  FontWeights.ExtraBold.Weight},
-            {nameof(FontWeights.Black),      FontWeights.Black.Weight},
-            {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight},
+            {nameof(FontWeights.Light), FontWeights.Light.Weight},
+            {nameof(FontWeights.SemiLight), FontWeights.SemiLight.Weight},
+            {nameof(FontWeights.Medium), FontWeights.Medium.Weight},
+            {nameof(FontWeights.SemiBold), FontWeights.SemiBold.Weight},
+            {nameof(FontWeights.Bold), FontWeights.Bold.Weight},
+            {nameof(FontWeights.ExtraBold), FontWeights.ExtraBold.Weight},
+            {nameof(FontWeights.Black), FontWeights.Black.Weight},
+            {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight}
         };
 
         public static bool IsMonospacedFont(FontFamily font)
@@ -151,7 +166,7 @@
         {
             fontWeightName = nameof(FontWeights.Normal);
 
-            foreach (var weight in PredefinedFontWeights)
+            foreach (var weight in PredefinedFontWeightsMap)
             {
                 if (weight.Value == fontWeight.Weight)
                 {
@@ -167,9 +182,9 @@
         {
             fontWeight = FontWeights.Normal.Weight;
 
-            if (PredefinedFontWeights.ContainsKey(fontWeightName))
+            if (PredefinedFontWeightsMap.ContainsKey(fontWeightName))
             {
-                fontWeight = PredefinedFontWeights[fontWeightName];
+                fontWeight = PredefinedFontWeightsMap[fontWeightName];
                 return true;
             }
 
