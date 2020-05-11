@@ -14,6 +14,7 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -181,7 +182,23 @@
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            try
+            {
+                // In case the previous flushes failed
+                // Here we flush it again to make sure content in clipboard to remain available
+                // after the application shuts down.
+                Clipboard.Flush();
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("FailedToFlushClipboard", new Dictionary<string, string>()
+                {
+                    { "Message", ex.Message },
+                    { "Exception", ex.ToString() },
+                });
+            }
+
             deferral.Complete();
         }
 
