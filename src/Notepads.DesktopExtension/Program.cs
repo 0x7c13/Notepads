@@ -46,7 +46,7 @@
             {
                 CheckInstance(DesktopExtensionMutexIdStr);
                 InitializeAppServiceConnection();
-                if (args[2] == "/admin") CreateElevetedExtension();
+                if (args.Length > 2 && args[2] == "/admin") CreateElevetedExtension();
             }
 
             Application.Run();

@@ -139,8 +139,6 @@
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\InteropService.cs" />
-    <Compile Include="Settings\SettingsDelegate.cs" />
     <Compile Include="Views\Settings\AdvancedSettingsPage.xaml.cs">
       <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
     </Compile>

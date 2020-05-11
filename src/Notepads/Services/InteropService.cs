@@ -25,7 +25,6 @@
 
         private static readonly string _commandLabel = "Command";
         private static readonly string _failedLabel = "Failed";
-        private static readonly string _appIdLabel = "Instance";
         private static readonly string _settingsKeyLabel = "Settings";
         private static readonly string _valueLabel = "Value";
         private static readonly string _adminCreatedLabel = "AdminCreated";
@@ -78,15 +77,12 @@
             switch(command)
             {
                 case CommandArgs.SyncSettings:
-                    if (message.ContainsKey(_appIdLabel) && message[_appIdLabel] is Guid appID && appID != App.Id)
-                    {
-                        EnableSettingsLogging = false;
-                        HideSettingsPane?.Invoke(null, true);
-                        var settingsKey = message[_settingsKeyLabel] as string;
-                        var value = message[_valueLabel] as object;
-                        SettingsManager[settingsKey](value);
-                        EnableSettingsLogging = true;
-                    }
+                    EnableSettingsLogging = false;
+                    HideSettingsPane?.Invoke(null, true);
+                    var settingsKey = message[_settingsKeyLabel] as string;
+                    var value = message[_valueLabel] as object;
+                    SettingsManager[settingsKey](value);
+                    EnableSettingsLogging = true;
                     break;
                 case CommandArgs.SyncRecentList:
                     UpdateRecentList?.Invoke(null, false);

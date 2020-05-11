@@ -62,18 +62,16 @@
             switch (command)
             {
                 case CommandArgs.SyncSettings:
-                    foreach (var serviceConnection in appServiceConnections)
+                    Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
                     {
-                        if (serviceConnection != appServiceConnection)
-                            await serviceConnection.SendMessageAsync(args.Request.Message);
-                    }
+                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
+                    });
                     break;
                 case CommandArgs.SyncRecentList:
-                    foreach (var serviceConnection in appServiceConnections)
+                    Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
                     {
-                        if (serviceConnection != appServiceConnection)
-                            await serviceConnection.SendMessageAsync(args.Request.Message);
-                    }
+                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
+                    });
                     break;
                 case CommandArgs.RegisterExtension:
                     appServiceConnections.Remove(appServiceConnection);
