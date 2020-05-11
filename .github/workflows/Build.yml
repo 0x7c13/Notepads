@@ -11,7 +11,7 @@ jobs:
         configuration: [Debug, Release]
     env:
       Solution_Name: src\Notepads.sln
-      Project_Path: src\Notepads\Notepads.csproj
+      Project_Path: src\Notepads.Package\Notepads.Package.wapproj
 
     runs-on: windows-latest
     steps:
