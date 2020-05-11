@@ -185,8 +185,7 @@
 
             try
             {
-                // In case the previous flushes failed
-                // Here we flush it again to make sure content in clipboard to remain available
+                // Here we flush the Clipboard again to make sure content in clipboard to remain available
                 // after the application shuts down.
                 Clipboard.Flush();
             }
