@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Notepads.DesktopExtension
 {
@@ -12,6 +13,6 @@ namespace Notepads.DesktopExtension
     public interface IAdminService
     {
         [OperationContract]
-        bool SaveFile(string filePath, byte[] data);
+        Task<bool> SaveFile(string filePath, byte[] data);
     }
 }

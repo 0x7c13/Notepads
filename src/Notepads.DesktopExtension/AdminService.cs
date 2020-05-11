@@ -16,7 +16,7 @@ namespace Notepads.DesktopExtension
     {
         internal static string AdminAuthenticationTokenStr = "AdminAuthenticationTokenStr";
 
-        public bool SaveFile(string filePath, byte[] data)
+        public async Task<bool> SaveFile(string filePath, byte[] data)
         {
             try
             {
@@ -24,18 +24,13 @@ namespace Notepads.DesktopExtension
                 if (!localSettings.Values.ContainsKey(AdminAuthenticationTokenStr) ||
                     !(localSettings.Values[AdminAuthenticationTokenStr] is string token)) return false;
                 localSettings.Values.Remove(AdminAuthenticationTokenStr);
-                WriteToFile(filePath, data);
+                await PathIO.WriteBytesAsync(filePath, data);
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-        }
-
-        private async void WriteToFile(string filePath, byte[] data)
-        {
-            await PathIO.WriteBytesAsync(filePath, data);
         }
     }
 }
