@@ -15,7 +15,7 @@
                 }
                 else
                 {
-                    FontSize += delta * EditorSettingsService.EditorFontSize;
+                    FontSize += delta * AppSettingsService.EditorFontSize;
                 }
             }
         }
@@ -30,14 +30,14 @@
                 }
                 else
                 {
-                    FontSize -= delta * EditorSettingsService.EditorFontSize;
+                    FontSize -= delta * AppSettingsService.EditorFontSize;
                 }
             }
         }
 
         private void ResetFontSizeToDefault()
         {
-            FontSize = EditorSettingsService.EditorFontSize;
+            FontSize = AppSettingsService.EditorFontSize;
         }
     }
 }

@@ -30,7 +30,7 @@
                     return;
                 }
 
-                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine)
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(AppSettingsService.EditorDefaultSearchEngine)
                     , string.Join("+", searchString.Split(null))));
                 await Launcher.LaunchUriAsync(searchUri);
             }

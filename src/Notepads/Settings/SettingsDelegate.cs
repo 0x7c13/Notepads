@@ -1,16 +1,13 @@
-﻿using Notepads.Services;
-using Notepads.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-
-namespace Notepads.Settings
+﻿namespace Notepads.Settings
 {
+    using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Services;
+    using Notepads.Utilities;
+    using System;
+    using Windows.UI.Core;
+    using Windows.UI.Text;
+    using Windows.UI.Xaml;
+
     public delegate void Settings(object value);
 
     public static class SettingsDelegate
@@ -19,8 +16,11 @@ namespace Notepads.Settings
 
         public static Settings EditorFontFamily = SetEditorFontFamily;
         public static Settings EditorFontSize = SetEditorFontSize;
+        public static Settings EditorFontStyle = SetEditorFontStyle;
+        public static Settings EditorFontWeight = SetEditorFontWeight; 
         public static Settings EditorDefaultTextWrapping = SetEditorDefaultTextWrapping;
-        public static Settings IsLineHighlighterEnabled = SetIsLineHighlighterEnabled;
+        public static Settings EditorDisplayLineHighlighter = SetEditorDisplayLineHighlighter;
+        public static Settings EditorDisplayLineNumbers = SetEditorDisplayLineNumbers;
         public static Settings EditorDefaultLineEnding = SetEditorDefaultLineEnding;
         public static Settings EditorDefaultEncoding = SetEditorDefaultEncoding;
         public static Settings EditorDefaultDecoding = SetEditorDefaultDecoding;
@@ -33,70 +33,89 @@ namespace Notepads.Settings
 
         private static void SetEditorFontFamily(object value)
         {
-            EditorSettingsService.EditorFontFamily = (string)value;
+            AppSettingsService.EditorFontFamily = (string)value;
         }
 
         private static void SetEditorFontSize(object value)
         {
-            EditorSettingsService.EditorFontSize = (int)value;
+            AppSettingsService.EditorFontSize = (int)value;
+        }
+
+        private static void SetEditorFontStyle(object value)
+        {
+            Enum.TryParse(typeof(FontStyle), (string)value, out var result);
+            AppSettingsService.EditorFontStyle = (FontStyle)result;
+        }
+
+        private static void SetEditorFontWeight(object value)
+        {
+            AppSettingsService.EditorFontWeight = new FontWeight()
+            {
+                Weight = (ushort)value
+            };
         }
 
         private static void SetEditorDefaultTextWrapping(object value)
         {
             Enum.TryParse(typeof(TextWrapping), (string)value, out var result);
-            EditorSettingsService.EditorDefaultTextWrapping = (TextWrapping)result;
+            AppSettingsService.EditorDefaultTextWrapping = (TextWrapping)result;
         }
 
-        private static void SetIsLineHighlighterEnabled(object value)
+        private static void SetEditorDisplayLineHighlighter(object value)
         {
-            EditorSettingsService.IsLineHighlighterEnabled = (bool)value;
+            AppSettingsService.EditorDisplayLineHighlighter = (bool)value;
+        }
+
+        private static void SetEditorDisplayLineNumbers(object value)
+        {
+            AppSettingsService.EditorDisplayLineNumbers = (bool)value;
         }
 
         private static void SetEditorDefaultLineEnding(object value)
         {
             Enum.TryParse(typeof(LineEnding), (string)value, out var result);
-            EditorSettingsService.EditorDefaultLineEnding = (LineEnding)result;
+            AppSettingsService.EditorDefaultLineEnding = (LineEnding)result;
         }
 
         private static void SetEditorDefaultEncoding(object value)
         {
-            EditorSettingsService.InitializeEncodingSettings();
+            AppSettingsService.InitializeEncodingSettings();
         }
 
         private static void SetEditorDefaultDecoding(object value)
         {
-            EditorSettingsService.InitializeDecodingSettings();
+            AppSettingsService.InitializeDecodingSettings();
         }
 
         private static void SetEditorDefaultTabIndents(object value)
         {
-            EditorSettingsService.EditorDefaultTabIndents = (int)value;
+            AppSettingsService.EditorDefaultTabIndents = (int)value;
         }
 
         private static void SetEditorDefaultSearchEngine(object value)
         {
             Enum.TryParse(typeof(SearchEngine), (string)value, out var result);
-            EditorSettingsService.EditorDefaultSearchEngine = (SearchEngine)result;
+            AppSettingsService.EditorDefaultSearchEngine = (SearchEngine)result;
         }
 
         private static void SetEditorCustomMadeSearchUrl(object value)
         {
-            EditorSettingsService.EditorCustomMadeSearchUrl = (string)value;
+            AppSettingsService.EditorCustomMadeSearchUrl = (string)value;
         }
 
         private static void SetShowStatusBar(object value)
         {
-            EditorSettingsService.ShowStatusBar = (bool)value;
+            AppSettingsService.ShowStatusBar = (bool)value;
         }
 
         private static void SetIsHighlightMisspelledWordsEnabled(object value)
         {
-            EditorSettingsService.IsHighlightMisspelledWordsEnabled = (bool)value;
+            AppSettingsService.IsHighlightMisspelledWordsEnabled = (bool)value;
         }
 
         private static void SetAlwaysOpenNewWindow(object value)
         {
-            EditorSettingsService.AlwaysOpenNewWindow = (bool)value;
+            AppSettingsService.AlwaysOpenNewWindow = (bool)value;
         }
 
         public static Settings UseWindowsAccentColor = SetUseWindowsAccentColor;
@@ -120,12 +139,12 @@ namespace Notepads.Settings
 
         private static void SetAppAccentColor(object value)
         {
-            ThemeSettingsService.AppAccentColor = ThemeSettingsService.GetColor((string)value);
+            ThemeSettingsService.AppAccentColor = ((string)value).ToColor();
         }
 
         private static void SetCustomAccentColor(object value)
         {
-            ThemeSettingsService.CustomAccentColor = ThemeSettingsService.GetColor((string)value);
+            ThemeSettingsService.CustomAccentColor = ((string)value).ToColor();
         }
 
         private static void SetThemeMode(object value)

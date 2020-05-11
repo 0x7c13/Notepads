@@ -18,6 +18,8 @@
         // Editor related
         internal static string EditorFontFamilyStr = "EditorFontFamilyStr";
         internal static string EditorFontSizeInt = "EditorFontSizeInt";
+        internal static string EditorFontStyleStr = "EditorFontStyleStr";
+        internal static string EditorFontWeightUshort = "EditorFontWeightUshort";
         internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
         internal static string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
         internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
@@ -30,5 +32,6 @@
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
+        internal static string EditorDefaultDisplayLineNumbersBool = "EditorDefaultDisplayLineNumbersBool";
     }
 }
