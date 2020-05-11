@@ -16,7 +16,6 @@
     using Windows.Storage.Provider;
     using UtfUnknown;
     using Windows.Foundation.Metadata;
-    using Windows.ApplicationModel;
 
     public static class FileSystemUtility
     {

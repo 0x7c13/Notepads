@@ -1,32 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.AppService;
-using Windows.Foundation.Collections;
-using Windows.Storage;
-
-public enum CommandArgs
+﻿namespace Notepads.DesktopExtension
 {
-    SyncSettings,
-    SyncRecentList,
-    RegisterExtension,
-    CreateElevetedExtension,
-    ExitApp
-}
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Security.Principal;
+    using System.ServiceModel;
+    using System.Threading;
+    using System.Windows.Forms;
+    using Windows.ApplicationModel;
+    using Windows.ApplicationModel.AppService;
+    using Windows.Foundation.Collections;
+    using Windows.Storage;
 
-namespace Notepads.DesktopExtension
-{
+    public enum CommandArgs
+    {
+        SyncSettings,
+        SyncRecentList,
+        RegisterExtension,
+        CreateElevetedExtension,
+        ExitApp
+    }
+
     static class Program
     {
         private static string DesktopExtensionMutexIdStr = "DesktopExtensionMutexIdStr";

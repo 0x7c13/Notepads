@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
@@ -22,7 +21,6 @@
     {
         private BackgroundTaskDeferral backgroundTaskDeferral;
         private AppServiceConnection appServiceConnection;
-        private static BackgroundTaskDeferral extensionBackgroundTaskDeferral;
         private static AppServiceConnection extensionAppServiceConnection = null;
         private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
 
@@ -82,7 +80,6 @@
                     if (extensionAppServiceConnection == null)
                     {
                         extensionAppServiceConnection = appServiceConnection;
-                        extensionBackgroundTaskDeferral = this.backgroundTaskDeferral;
                     }
                     else
                     {

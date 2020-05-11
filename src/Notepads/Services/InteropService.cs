@@ -3,7 +3,6 @@
     using Notepads.AdminService;
     using Notepads.Extensions;
     using Notepads.Settings;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -11,7 +10,6 @@
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
-    using Windows.Storage;
     using Windows.UI.Xaml;
 
     public static class InteropService

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Windows.Storage;
-
-namespace Notepads.DesktopExtension
+﻿namespace Notepads.DesktopExtension
 {
+    using System;
+    using System.Threading.Tasks;
+    using Windows.Storage;
+
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "AdminService" in both code and config file together.
     public class AdminService : IAdminService
     {
