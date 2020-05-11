@@ -189,13 +189,9 @@
                 // after the application shuts down.
                 Clipboard.Flush();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Analytics.TrackEvent("FailedToFlushClipboard", new Dictionary<string, string>()
-                {
-                    { "Message", ex.Message },
-                    { "Exception", ex.ToString() },
-                });
+                // ignore
             }
 
             deferral.Complete();
