@@ -128,12 +128,20 @@
                 // Complete the service deferral.
                 this.backgroundTaskDeferral.Complete();
                 var details = sender.TriggerDetails as AppServiceTriggerDetails;
-                appServiceConnections.Remove(details.AppServiceConnection);
-                if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
+                var serviceConnection = details.AppServiceConnection;
+                if (serviceConnection == extensionAppServiceConnection)
                 {
-                    var message = new ValueSet();
-                    message.Add(_commandLabel, CommandArgs.ExitApp.ToString());
-                    await extensionAppServiceConnection.SendMessageAsync(message);
+                    extensionAppServiceConnection = null;
+                }
+                else
+                {
+                    appServiceConnections.Remove(serviceConnection);
+                    if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
+                    {
+                        var message = new ValueSet();
+                        message.Add(_commandLabel, CommandArgs.ExitApp.ToString());
+                        await extensionAppServiceConnection.SendMessageAsync(message);
+                    }
                 }
             }
         }
