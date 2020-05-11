@@ -133,6 +133,8 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
+    <Compile Include="Services\InteropService.cs" />
+    <Compile Include="Settings\SettingsDelegate.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -215,7 +217,7 @@
     <Compile Include="Utilities\EncodingUtility.cs" />
     <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\EditorSettingsService.cs" />
+    <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />

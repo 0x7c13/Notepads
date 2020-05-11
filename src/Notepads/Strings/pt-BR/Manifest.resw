@@ -289,6 +289,10 @@
     <value>Arquivo TypeScript</value>
     <comment>.ts</comment>
   </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog File</value>
+    <comment>.v</comment>
+  </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Arquivo Visual Basic</value>
     <comment>.vb</comment>

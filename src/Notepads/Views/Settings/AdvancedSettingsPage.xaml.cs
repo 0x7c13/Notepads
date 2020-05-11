@@ -11,7 +11,7 @@
         {
             InitializeComponent();
 
-            ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
+            ShowStatusBarToggleSwitch.IsOn = AppSettingsService.ShowStatusBar;
 
             // Disable session snapshot toggle for shadow windows
             if (!App.IsFirstInstance)
@@ -21,10 +21,10 @@
             }
             else
             {
-                EnableSessionSnapshotToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
+                EnableSessionSnapshotToggleSwitch.IsOn = AppSettingsService.IsSessionSnapshotEnabled;
             }
 
-            AlwaysOpenNewWindowToggleSwitch.IsOn = EditorSettingsService.AlwaysOpenNewWindow;
+            AlwaysOpenNewWindowToggleSwitch.IsOn = AppSettingsService.AlwaysOpenNewWindow;
 
             if (App.IsGameBarWidget)
             {
@@ -55,19 +55,19 @@
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsSessionSnapshotEnabled = EnableSessionSnapshotToggleSwitch.IsOn;
+            AppSettingsService.IsSessionSnapshotEnabled = EnableSessionSnapshotToggleSwitch.IsOn;
         }
 
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
-            InteropService.SyncSettings(SettingsKey.EditorShowStatusBarBool, EditorSettingsService.ShowStatusBar);
+            AppSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
+            InteropService.SyncSettings(SettingsKey.EditorShowStatusBarBool, AppSettingsService.ShowStatusBar);
         }
 
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
-            InteropService.SyncSettings(SettingsKey.AlwaysOpenNewWindowBool, EditorSettingsService.AlwaysOpenNewWindow);
+            AppSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
+            InteropService.SyncSettings(SettingsKey.AlwaysOpenNewWindowBool, AppSettingsService.AlwaysOpenNewWindow);
         }
     }
 }

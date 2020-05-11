@@ -40,12 +40,15 @@
             {SettingsKey.EditorDefaultDecodingCodePageInt, SettingsDelegate.EditorDefaultDecoding},
             {SettingsKey.EditorDefaultEncodingCodePageInt, SettingsDelegate.EditorDefaultEncoding},
             {SettingsKey.EditorDefaultLineEndingStr, SettingsDelegate.EditorDefaultLineEnding},
-            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, SettingsDelegate.IsLineHighlighterEnabled},
+            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, SettingsDelegate.EditorDisplayLineHighlighter},
+            {SettingsKey.EditorDefaultDisplayLineNumbersBool, SettingsDelegate.EditorDisplayLineNumbers},
             {SettingsKey.EditorDefaultSearchEngineStr, SettingsDelegate.EditorDefaultSearchEngine},
             {SettingsKey.EditorDefaultTabIndentsInt, SettingsDelegate.EditorDefaultTabIndents},
             {SettingsKey.EditorDefaultTextWrappingStr, SettingsDelegate.EditorDefaultTextWrapping},
             {SettingsKey.EditorFontFamilyStr, SettingsDelegate.EditorFontFamily},
             {SettingsKey.EditorFontSizeInt, SettingsDelegate.EditorFontSize},
+            {SettingsKey.EditorFontStyleStr, SettingsDelegate.EditorFontStyle},
+            {SettingsKey.EditorFontWeightUshort, SettingsDelegate.EditorFontWeight},
             {SettingsKey.EditorHighlightMisspelledWordsBool, SettingsDelegate.IsHighlightMisspelledWordsEnabled},
             {SettingsKey.EditorShowStatusBarBool, SettingsDelegate.ShowStatusBar},
             {SettingsKey.UseWindowsAccentColorBool, SettingsDelegate.UseWindowsAccentColor},
@@ -115,7 +118,6 @@
 
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.SyncSettings.ToString());
-            message.Add(_appIdLabel, App.Id);
             message.Add(_settingsKeyLabel, settingsKey);
             try
             {

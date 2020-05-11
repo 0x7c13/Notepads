@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AegisubAdvancedSubtitleFileDisplayName" xml:space="preserve">
-    <value>Soubor Aegisub Advanced Subtitle </value>
+    <value>Soubor Aegisub Advanced Subtitle</value>
     <comment>.ass</comment>
   </data>
   <data name="AspFileDisplayName" xml:space="preserve">
@@ -288,6 +288,10 @@
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>Soubor TypeScript</value>
     <comment>.ts</comment>
+  </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog File</value>
+    <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Soubor Visual Basic</value>

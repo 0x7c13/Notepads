@@ -7,7 +7,7 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
 
-    public static class EditorSettingsService
+    public static class AppSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
         public static event EventHandler<FontStyle> OnFontStyleChanged;
@@ -58,7 +58,7 @@
             {
                 _editorFontStyle = value;
                 OnFontStyleChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, value.ToString());
+                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, value.ToString());
             }
         }
 
@@ -71,7 +71,7 @@
             {
                 _editorFontWeight = value;
                 OnFontWeightChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
+                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
             }
         }
 
@@ -268,7 +268,7 @@
             {
                 _displayLineNumbers = value;
                 OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, value);
-                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
+                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
             }
         }
 
@@ -444,7 +444,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[{nameof(EditorSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(AppSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
                     _editorDefaultDecoding = null;
                 }
             }
@@ -549,8 +549,11 @@
             OnStatusBarVisibilityChanged?.Invoke(null, _showStatusBar);
             OnFontFamilyChanged?.Invoke(null, _editorFontFamily);
             OnFontSizeChanged?.Invoke(null, _editorFontSize);
+            OnFontStyleChanged?.Invoke(null, _editorFontStyle);
+            OnFontWeightChanged?.Invoke(null, _editorFontWeight);
             OnDefaultTextWrappingChanged?.Invoke(null, _editorDefaultTextWrapping);
             OnDefaultLineHighlighterViewStateChanged?.Invoke(null, _editorDisplayLineHighlighter);
+            OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, _displayLineNumbers);
             OnHighlightMisspelledWordsChanged?.Invoke(null, _isHighlightMisspelledWordsEnabled);
             OnDefaultLineEndingChanged?.Invoke(null, _editorDefaultLineEnding);
             OnDefaultEncodingChanged?.Invoke(null, _editorDefaultEncoding);

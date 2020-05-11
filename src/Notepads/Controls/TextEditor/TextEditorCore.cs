@@ -74,7 +74,7 @@
         private const string LineIndicatorName = "LineIndicator";
         private Border _lineIndicator;
 
-        private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
+        private TextWrapping _textWrapping = AppSettingsService.EditorDefaultTextWrapping;
 
         public new TextWrapping TextWrapping
         {
@@ -88,7 +88,7 @@
         }
 
         private double _fontZoomFactor = 100;
-        private double _fontSize = EditorSettingsService.EditorFontSize;
+        private double _fontSize = AppSettingsService.EditorFontSize;
 
         public new double FontSize
         {
@@ -100,7 +100,7 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                var newZoomFactor = Math.Round((value * 100) / AppSettingsService.EditorFontSize);
                 if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
@@ -111,19 +111,19 @@
 
         public TextEditorCore()
         {
-            IsSpellCheckEnabled = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
-            FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
-            FontSize = EditorSettingsService.EditorFontSize;
-            FontStyle = EditorSettingsService.EditorFontStyle;
-            FontWeight = EditorSettingsService.EditorFontWeight;
+            IsSpellCheckEnabled = AppSettingsService.IsHighlightMisspelledWordsEnabled;
+            TextWrapping = AppSettingsService.EditorDefaultTextWrapping;
+            FontFamily = new FontFamily(AppSettingsService.EditorFontFamily);
+            FontSize = AppSettingsService.EditorFontSize;
+            FontStyle = AppSettingsService.EditorFontStyle;
+            FontWeight = AppSettingsService.EditorFontWeight;
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
-            DisplayLineNumbers = EditorSettingsService.EditorDisplayLineNumbers;
-            DisplayLineHighlighter = EditorSettingsService.EditorDisplayLineHighlighter;
+            DisplayLineNumbers = AppSettingsService.EditorDisplayLineNumbers;
+            DisplayLineHighlighter = AppSettingsService.EditorDisplayLineHighlighter;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
@@ -247,8 +247,8 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(AppSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(AppSettingsService.EditorDefaultTabIndents)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
@@ -624,7 +624,7 @@
         {
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
-                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
+                FontSize = (fontZoomFactorInt / 100) * AppSettingsService.EditorFontSize;
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
