@@ -11,6 +11,20 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
+    public class FontStyleItem
+    {
+        public FontStyle FontStyle { get; set; }
+
+        public string FontStyleLocalizedName { get; set; }
+    }
+
+    public class FontWeightItem
+    {
+        public FontWeight FontWeight { get; set; }
+
+        public string FontWeightLocalizedName { get; set; }
+    }
+
     public sealed partial class TextAndEditorSettingsPage : Page
     {
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
@@ -19,9 +33,9 @@
 
         public int[] AvailableFontSizes = FontUtility.PredefinedFontSizes;
 
-        private string[] _availableFontStyles;
+        private IList<FontStyleItem> _availableFontStyles;
 
-        public string[] AvailableFontStyles
+        public IList<FontStyleItem> AvailableFontStyles
         {
             get
             {
@@ -30,15 +44,23 @@
                     return _availableFontStyles;
                 }
 
-                _availableFontStyles = FontUtility.FontStyles.Select(fontStyle =>
-                    _resourceLoader.GetString($"FontStyle_{fontStyle}")).ToArray();
+                _availableFontStyles = new List<FontStyleItem>();
+                foreach (var (fontStyleName, fontStyle) in FontUtility.PredefinedFontStylesMap)
+                {
+                    _availableFontStyles.Add(new FontStyleItem()
+                    {
+                        FontStyle = fontStyle,
+                        FontStyleLocalizedName = _resourceLoader.GetString($"FontStyle_{fontStyleName}")
+                    });
+                }
+
                 return _availableFontStyles;
             }
         }
 
-        private string[] _availableFontWeights;
+        private IList<FontWeightItem> _availableFontWeights;
 
-        public string[] AvailableFontWeights
+        public IList<FontWeightItem> AvailableFontWeights
         {
             get
             {
@@ -47,8 +69,16 @@
                     return _availableFontWeights;
                 }
 
-                _availableFontWeights = FontUtility.PredefinedFontWeights.Select(fontWeight =>
-                    _resourceLoader.GetString($"FontWeight_{fontWeight}")).ToArray();
+                _availableFontWeights = new List<FontWeightItem>();
+                foreach (var (fontWeightName, fontWeight) in FontUtility.PredefinedFontWeightsMap)
+                {
+                    _availableFontWeights.Add(new FontWeightItem()
+                    {
+                        FontWeight = new FontWeight() { Weight = fontWeight },
+                        FontWeightLocalizedName = _resourceLoader.GetString($"FontWeight_{fontWeightName}")
+                    });
+                }
+
                 return _availableFontWeights;
             }
         }
@@ -63,15 +93,8 @@
             LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
             FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
             FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
-
-            var fontStyleIndex = FontUtility.FontStyles.ToList().IndexOf(EditorSettingsService.EditorFontStyle);
-            FontStylePicker.SelectedIndex = fontStyleIndex == -1 ? 0 : fontStyleIndex;
-
-            var fontWeight = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
-                ? fontWeightName
-                : nameof(FontWeights.Normal);
-            var fontWeightIndex = FontUtility.PredefinedFontWeights.ToList().IndexOf(fontWeight);
-            FontWeightPicker.SelectedIndex = fontWeightIndex == -1 ? 0 : fontWeightIndex;
+            FontStylePicker.SelectedItem = AvailableFontStyles.FirstOrDefault(style => style.FontStyle == EditorSettingsService.EditorFontStyle);
+            FontWeightPicker.SelectedItem = AvailableFontWeights.FirstOrDefault(weight => weight.FontWeight.Weight == EditorSettingsService.EditorFontWeight.Weight);
 
             InitializeLineEndingSettings();
 
@@ -356,15 +379,12 @@
 
         private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EditorSettingsService.EditorFontStyle = FontUtility.FontStyles[FontStylePicker.SelectedIndex];
+            EditorSettingsService.EditorFontStyle = ((FontStyleItem)e.AddedItems.First()).FontStyle;
         }
 
         private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedValue = FontUtility.PredefinedFontWeights[FontWeightPicker.SelectedIndex];
-            EditorSettingsService.EditorFontWeight = FontUtility.TryGetFontWeight(selectedValue, out var fontWeight)
-                ? new FontWeight() { Weight = fontWeight }
-                : FontWeights.Normal;
+            EditorSettingsService.EditorFontWeight = ((FontWeightItem)e.AddedItems.First()).FontWeight;
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
