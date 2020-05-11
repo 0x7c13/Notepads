@@ -289,6 +289,10 @@
     <value>TypeScript 文件</value>
     <comment>.ts</comment>
   </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog 文件</value>
+    <comment>.v</comment>
+  </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Visual Basic 文件</value>
     <comment>.vb</comment>
