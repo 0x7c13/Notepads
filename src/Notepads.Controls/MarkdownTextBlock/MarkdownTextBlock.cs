@@ -7,7 +7,6 @@ namespace Notepads.Controls
 {
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Notepads.Controls.Helpers;
     using Notepads.Controls.Markdown;
 
     /// <summary>
@@ -41,10 +40,13 @@ namespace Notepads.Controls
             Unloaded += OnUnloaded;
         }
 
-        private void ThemeListener_ThemeChanged(Helpers.ThemeListener sender)
-        {
-            RenderMarkdown();
-        }
+        //private void ThemeListener_ThemeChanged(Helpers.ThemeListener sender)
+        //{
+        //    if (ToElementTheme(sender.CurrentTheme) != RequestedTheme)
+        //    {
+        //        RenderMarkdown();
+        //    }
+        //}
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -69,13 +71,13 @@ namespace Notepads.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (themeListener != null)
-            {
-                UnhookListeners();
-                themeListener.ThemeChanged -= ThemeListener_ThemeChanged;
-                //themeListener.Dispose();
-                //themeListener = null;
-            }
+            //if (themeListener != null)
+            //{
+            //    UnhookListeners();
+            //    themeListener.ThemeChanged -= ThemeListener_ThemeChanged;
+            //    themeListener.Dispose();
+            //    themeListener = null;
+            //}
 
             // Register for property callbacks that are owned by our parent class.
             UnregisterPropertyChangedCallback(FontSizeProperty, _fontSizePropertyToken);
@@ -107,9 +109,22 @@ namespace Notepads.Controls
 
         private void RegisterThemeChangedHandler()
         {
-            themeListener = themeListener ?? new ThemeListener();
-            themeListener.ThemeChanged -= ThemeListener_ThemeChanged;
-            themeListener.ThemeChanged += ThemeListener_ThemeChanged;
+            //themeListener = themeListener ?? new ThemeListener();
+            //themeListener.ThemeChanged -= ThemeListener_ThemeChanged;
+            //themeListener.ThemeChanged += ThemeListener_ThemeChanged;
         }
+
+        //public static ElementTheme ToElementTheme(ApplicationTheme theme)
+        //{
+        //    switch (theme)
+        //    {
+        //        case ApplicationTheme.Light:
+        //            return ElementTheme.Light;
+        //        case ApplicationTheme.Dark:
+        //            return ElementTheme.Dark;
+        //        default:
+        //            return ElementTheme.Default;
+        //    }
+        //}
     }
 }

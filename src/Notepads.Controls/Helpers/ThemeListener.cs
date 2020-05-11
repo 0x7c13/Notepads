@@ -74,9 +74,9 @@ namespace Notepads.Controls.Helpers
             }
         }
 
-        private void Accessible_HighContrastChanged(AccessibilitySettings sender, object args)
+        private async void Accessible_HighContrastChanged(AccessibilitySettings sender, object args)
         {
-            UpdateProperties();
+            await DispatcherQueue.ExecuteOnUIThreadAsync(UpdateProperties, DispatcherQueuePriority.Normal);
         }
 
         // Note: This can get called multiple times during HighContrast switch, do we care?
@@ -85,7 +85,6 @@ namespace Notepads.Controls.Helpers
             await OnColorValuesChanged();
         }
 
-        // Internal abstraction is used by the Unit Tests
         internal Task OnColorValuesChanged()
         {
             // Getting called off thread, so we need to dispatch to request value.
@@ -118,7 +117,6 @@ namespace Notepads.Controls.Helpers
             // TODO: Not sure if HighContrastScheme names are localized?
             if (_accessible.HighContrast && _accessible.HighContrastScheme.IndexOf("white", StringComparison.OrdinalIgnoreCase) != -1)
             {
-                // If our HighContrastScheme is ON & a lighter one, then we should remain in 'Light' theme mode for Monaco Themes Perspective
                 IsHighContrast = false;
                 CurrentTheme = ApplicationTheme.Light;
             }

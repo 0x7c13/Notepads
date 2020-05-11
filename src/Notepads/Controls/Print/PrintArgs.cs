@@ -93,8 +93,8 @@
                 if (!string.IsNullOrEmpty(textDocument))
                 {
                     var page = new PrintPageFormat(textDocument,
-                        new FontFamily(EditorSettingsService.EditorFontFamily),
-                        EditorSettingsService.EditorFontSize,
+                        new FontFamily(AppSettingsService.EditorFontFamily),
+                        AppSettingsService.EditorFontSize,
                         _headerText,
                         _footerText);
 
@@ -246,8 +246,8 @@
             {
                 // Flow content (text) from previous pages
                 page = new ContinuationPageFormat(lastRTBOAdded,
-                    new FontFamily(EditorSettingsService.EditorFontFamily),
-                    EditorSettingsService.EditorFontSize,
+                    new FontFamily(AppSettingsService.EditorFontFamily),
+                    AppSettingsService.EditorFontSize,
                     _headerText,
                     _footerText);
             }

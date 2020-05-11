@@ -14,6 +14,7 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -85,30 +86,33 @@
                 rootFrameCreated = true;
 
                 ThemeSettingsService.Initialize();
-                EditorSettingsService.Initialize();
+                AppSettingsService.Initialize();
             }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
-                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
-                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
-                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
-                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
-                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
-                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
-                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
-                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
-                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
+                { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", AppSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", AppSettingsService.EditorFontFamily },
+                { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
+                { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
+                { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
                 { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
-                { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
-                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
@@ -177,7 +181,22 @@
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            try
+            {
+                // Here we flush the Clipboard again to make sure content in clipboard to remain available
+                // after the application shuts down.
+                Clipboard.Flush();
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("FailedToFlushClipboard", new Dictionary<string, string>()
+                {
+                    { "Message", ex.Message },
+                    { "Exception", ex.ToString() },
+                });
+            }
+
             deferral.Complete();
         }
 
