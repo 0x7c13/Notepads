@@ -305,7 +305,6 @@
         {
             ThemeSettingsService.UpdateAllSettings();
             AppSettingsService.UpdateAllSettings();
-            EditorSettingsService.UpdateAllSettings();
             await BuildOpenRecentButtonSubItems(false);
             InteropService.Initialize();
         }
