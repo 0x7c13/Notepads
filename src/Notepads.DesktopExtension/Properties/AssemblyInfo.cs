@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Notepads.DesktopExtension")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Notepads")]
+[assembly: AssemblyDescription("Notepads")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Notepads.DesktopExtension")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyProduct("Notepads")]
+[assembly: AssemblyCopyright("Copyright © 2020 Jackie Liu")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
