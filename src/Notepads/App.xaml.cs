@@ -191,7 +191,7 @@
             }
             catch (Exception)
             {
-                // ignore
+                // Best efforts
             }
 
             deferral.Complete();

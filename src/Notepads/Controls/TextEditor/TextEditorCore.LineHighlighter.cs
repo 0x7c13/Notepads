@@ -38,7 +38,8 @@
             var thickness = new Thickness(0.08 * singleLineHeight);
             var height = selectionRect.Height;
 
-            if (height <= 0) height = singleLineHeight; // Just in case height is not a positive number
+            // Just to make sure height is a positive number and not smaller than single line height
+            if (height < singleLineHeight) height = singleLineHeight;
 
             // Show line highlighter rect when it is enabled when selection is single line only
             if (DisplayLineHighlighter && height < singleLineHeight * 1.5f)
