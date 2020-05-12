@@ -478,7 +478,7 @@
         public double GetSingleLineHeight()
         {
             Document.GetRange(0, 0).GetRect(PointOptions.ClientCoordinates, out var rect, out _);
-            return rect.Height;
+            return rect.Height <= 0 ? 1.35 * FontSize : rect.Height;
         }
 
         /// <summary>
