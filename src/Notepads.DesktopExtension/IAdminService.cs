@@ -10,5 +10,8 @@
     {
         [OperationContract]
         Task<bool> SaveFile(string filePath, byte[] data);
+
+        [OperationContract]
+        bool IsLive();
     }
 }

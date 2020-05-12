@@ -144,8 +144,11 @@
 
             try
             {
-                ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
-                failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(filePath, data);
+                if (await AdminServiceClient.IsLiveAsync())
+                {
+                    ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
+                    failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(filePath, data);
+                }
             }
             catch
             {

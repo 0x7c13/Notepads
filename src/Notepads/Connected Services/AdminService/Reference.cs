@@ -20,6 +20,9 @@ namespace Notepads.AdminService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAdminService/SaveFile", ReplyAction="http://tempuri.org/IAdminService/SaveFileResponse")]
         System.Threading.Tasks.Task<bool> SaveFileAsync(string filePath, byte[] data);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAdminService/IsLive", ReplyAction="http://tempuri.org/IAdminService/IsLiveResponse")]
+        System.Threading.Tasks.Task<bool> IsLiveAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -67,6 +70,10 @@ namespace Notepads.AdminService {
         
         public System.Threading.Tasks.Task<bool> SaveFileAsync(string filePath, byte[] data) {
             return base.Channel.SaveFileAsync(filePath, data);
+        }
+        
+        public System.Threading.Tasks.Task<bool> IsLiveAsync() {
+            return base.Channel.IsLiveAsync();
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync() {

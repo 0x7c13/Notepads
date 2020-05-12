@@ -12,16 +12,35 @@
   <wsdl:message name="IAdminService_SaveFile_OutputMessage">
     <wsdl:part name="parameters" element="tns:SaveFileResponse" />
   </wsdl:message>
+  <wsdl:message name="IAdminService_IsLive_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsLive" />
+  </wsdl:message>
+  <wsdl:message name="IAdminService_IsLive_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsLiveResponse" />
+  </wsdl:message>
   <wsdl:portType name="IAdminService">
     <wsdl:operation name="SaveFile">
       <wsdl:input wsaw:Action="http://tempuri.org/IAdminService/SaveFile" message="tns:IAdminService_SaveFile_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAdminService/SaveFileResponse" message="tns:IAdminService_SaveFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsLive">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAdminService/IsLive" message="tns:IAdminService_IsLive_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAdminService/IsLiveResponse" message="tns:IAdminService_IsLive_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IAdminService" type="tns:IAdminService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="SaveFile">
       <soap:operation soapAction="http://tempuri.org/IAdminService/SaveFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsLive">
+      <soap:operation soapAction="http://tempuri.org/IAdminService/IsLive" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
