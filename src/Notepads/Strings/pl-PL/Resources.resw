@@ -526,7 +526,7 @@
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Błąd modułu drukowania: </value>
+    <value>Błąd modułu drukowania:</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
@@ -598,47 +598,47 @@
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Gruba (300%)</value>
+    <value>Gruba</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Pogrubiona (200%)</value>
+    <value>Pogrubiona</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Najgrubsza (325%)</value>
+    <value>Najgrubsza</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Mocno pogrubiona (225%)</value>
+    <value>Mocno pogrubiona</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Bardzo cienka (25%)</value>
+    <value>Bardzo cienka</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Cienka (50%)</value>
+    <value>Cienka</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Średnia (150%)</value>
+    <value>Średnia</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normalna (100%)</value>
+    <value>Normalna</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Lekko pogrubiona (175%)</value>
+    <value>Lekko pogrubiona</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Lekko cienka (75%)</value>
+    <value>Lekko cienka</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Najcieńsza (10%)</value>
+    <value>Najcieńsza</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
 </root>
