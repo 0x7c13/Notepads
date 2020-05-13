@@ -18,7 +18,7 @@
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Visible;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                    if (AppSettingsService.ShowStatusBar) ShowHideStatusBar(false);
                 }
             }
             else // Default or FullScreen
@@ -27,7 +27,7 @@
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                    if (AppSettingsService.ShowStatusBar) ShowHideStatusBar(true);
                 }
             }
         }

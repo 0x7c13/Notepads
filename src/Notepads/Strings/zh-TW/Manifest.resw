@@ -186,7 +186,7 @@
     <comment>.gitignore</comment>
   </data>
   <data name="GoFileDisplayName" xml:space="preserve">
-    <value>Go 檔</value>
+    <value>Go 檔案</value>
     <comment>.go</comment>
   </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">
@@ -220,6 +220,10 @@
   <data name="LogFileDisplayName" xml:space="preserve">
     <value>日誌檔</value>
     <comment>.log</comment>
+  </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>歌詞檔</value>
+    <comment>.lrc</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>LUA 檔案</value>
@@ -284,6 +288,10 @@
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>TypeScript 檔案</value>
     <comment>.ts</comment>
+  </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog 檔案</value>
+    <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Visual Basic 檔案</value>

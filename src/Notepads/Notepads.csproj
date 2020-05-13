@@ -124,6 +124,7 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
@@ -173,7 +174,6 @@
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DiffViewer\ISideBySideDiffViewer.cs" />
-    <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
     <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
@@ -208,7 +208,7 @@
     <Compile Include="Utilities\EncodingUtility.cs" />
     <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\EditorSettingsService.cs" />
+    <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />
@@ -823,7 +823,6 @@
   <ItemGroup>
     <PRIResource Include="Strings\zh-TW\Manifest.resw" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

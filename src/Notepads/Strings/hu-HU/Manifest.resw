@@ -221,6 +221,10 @@
     <value>Log Fájl</value>
     <comment>.log</comment>
   </data>
+  <data name="LrcFileDisplayName" xml:space="preserve">
+    <value>Lyrics File</value>
+    <comment>.lrc</comment>
+  </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
     <value>LUA Fájl</value>
     <comment>.lua</comment>
@@ -284,6 +288,10 @@
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>TypeScript Fájl</value>
     <comment>.ts</comment>
+  </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Verilog File</value>
+    <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Visual Basic Fájl</value>
