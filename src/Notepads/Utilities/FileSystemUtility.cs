@@ -11,7 +11,6 @@
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
-    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
@@ -39,36 +38,34 @@
                 error = InvalidFileNameError.Empty;
                 return false;
             }
-            else if (fileName.StartsWith(" "))
+
+            if (fileName.StartsWith(" "))
             {
                 error = InvalidFileNameError.ContainsLeadingSpaces;
                 return false;
             }
-            else if (fileName.EndsWith(" "))
+
+            if (fileName.EndsWith(" "))
             {
                 error = InvalidFileNameError.ContainsTrailingSpaces;
                 return false;
             }
-            else if (fileName.EndsWith("."))
+
+            if (fileName.EndsWith("."))
             {
                 error = InvalidFileNameError.EndsWithDot;
                 return false;
             }
-            else
+
+            var illegalChars = Path.GetInvalidFileNameChars();
+            if (fileName.Any(c => illegalChars.Contains(c)))
             {
-                var illegalChars = Path.GetInvalidFileNameChars();
-                var isValid = fileName.All(c => !illegalChars.Contains(c));
-                if (isValid)
-                {
-                    error = InvalidFileNameError.None;
-                    return true;
-                }
-                else
-                {
-                    error = InvalidFileNameError.ContainsInvalidCharacters;
-                    return false;
-                }
+                error = InvalidFileNameError.ContainsInvalidCharacters;
+                return false;
             }
+
+            error = InvalidFileNameError.None;
+            return true;
         }
 
         public static bool IsFullPath(string path)
@@ -601,57 +598,6 @@
             {
                 LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
-            }
-        }
-
-        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
-        {
-            try
-            {
-                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
-                {
-                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get file from future access list: {ex.Message}");
-            }
-            return null;
-        }
-
-        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
-        {
-            try
-            {
-                if (await FileExists(file))
-                {
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
-                    new Dictionary<string, string>()
-                    {
-                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
-                        { "Exception", ex.Message }
-                    });
-            }
-            return false;
-        }
-
-        public static int GetFutureAccessListItemCount()
-        {
-            try
-            {
-                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
-            }
-            catch
-            {
-                return -1;
             }
         }
     }
