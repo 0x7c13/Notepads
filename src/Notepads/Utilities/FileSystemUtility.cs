@@ -16,11 +16,60 @@
     using Windows.Storage.Provider;
     using UtfUnknown;
 
+    public enum InvalidFileNameError
+    {
+        None = 0,
+        Empty,
+        ContainsLeadingSpaces,
+        ContainsTrailingSpaces,
+        ContainsInvalidCharacters,
+        EndsWithDot,
+    }
+
     public static class FileSystemUtility
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string WslRootPath = "\\\\wsl$\\";
+
+        public static bool IsFileNameValid(string fileName, out InvalidFileNameError error)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                error = InvalidFileNameError.Empty;
+                return false;
+            }
+            else if (fileName.StartsWith(" "))
+            {
+                error = InvalidFileNameError.ContainsLeadingSpaces;
+                return false;
+            }
+            else if (fileName.EndsWith(" "))
+            {
+                error = InvalidFileNameError.ContainsTrailingSpaces;
+                return false;
+            }
+            else if (fileName.EndsWith("."))
+            {
+                error = InvalidFileNameError.EndsWithDot;
+                return false;
+            }
+            else
+            {
+                var illegalChars = Path.GetInvalidFileNameChars();
+                var isValid = fileName.All(c => !illegalChars.Contains(c));
+                if (isValid)
+                {
+                    error = InvalidFileNameError.None;
+                    return true;
+                }
+                else
+                {
+                    error = InvalidFileNameError.ContainsInvalidCharacters;
+                    return false;
+                }
+            }
+        }
 
         public static bool IsFullPath(string path)
         {

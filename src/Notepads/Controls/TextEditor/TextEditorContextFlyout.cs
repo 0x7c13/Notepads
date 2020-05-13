@@ -342,7 +342,10 @@
                 });
                 _previewToggle.Click += (sender, args) =>
                 {
-                    _textEditor.ShowHideContentPreview();
+                    if (FileTypeUtility.IsPreviewSupported(_textEditor.FileType))
+                    {
+                        _textEditor.ShowHideContentPreview();
+                    }
                 };
                 return _previewToggle;
             }

@@ -108,6 +108,12 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
+    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
+    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -199,7 +205,6 @@
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Controls\Dialog\NotepadsDialogFactory.cs" />
     <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
