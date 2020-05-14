@@ -166,7 +166,7 @@
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Ustawienia paska stanu</value>
+    <value>Pasek stanu</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
@@ -214,7 +214,7 @@
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (strona kodowa systemu Windows)</value>
+    <value>ANSI (system Windows)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
@@ -238,7 +238,7 @@
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Domyślny rozmiar i rodzaj czcionki</value>
+    <value>Rozmiar i rodzaj czcionki</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Domyślne kończenie linii</value>
+    <value>Kończenie linii</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
@@ -266,7 +266,7 @@
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Zachowanie klawisza Tab</value>
+    <value>Tryb tabulatora</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
@@ -274,15 +274,15 @@
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Zawijanie tekstu</value>
+    <value>Zawijanie wierszy</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zawijaj tekst</value>
+    <value>Zawijaj wiersze</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zawijaj tekst</value>
+    <value>Zawijaj wiersze</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
@@ -298,15 +298,15 @@
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Migawka sesji</value>
+    <value>Włącz migawkę sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Migawka sesji</value>
+    <value>Włącz migawkę sesji</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Ustawienia migawki sesji</value>
+    <value>Migawka sesji</value>
     <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
@@ -322,27 +322,27 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Gdy włączone, Notepads będzie zawsze otwierał plik w nowym oknie zamiast tworzyć nową kartę.</value>
+    <value>Gdy włączone, nowe pliki będą otwierane w nowym oknie zamiast tworzyć nową kartę.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zawsze otwieraj nowe okno</value>
+    <value>Zawsze otwieraj w nowym oknie</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zawsze otwieraj nowe okno</value>
+    <value>Zawsze otwieraj w nowym oknie</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Preferencje uruchomienia</value>
+    <value>Uruchamianie</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wyróżniaj aktualną linię</value>
+    <value>Pokaż prowadnice kolumn</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wyróżniaj aktualną linię</value>
+    <value>Pokaż prowadnice kolumn</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
@@ -370,19 +370,19 @@
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Wyróżnij aktualnie edytowaną linię.</value>
+    <value>Pokazuj prowadnicę wokół aktualnie edytowanej kolumny.</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Pokazuj numery linii w dokumencie.</value>
+    <value>Pokazuj numery kolumn w dokumencie.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Pokaż numery linii</value>
+    <value>Pokaż numery kolumn</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Pokaż numery linii</value>
+    <value>Pokaż numery kolumn</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
