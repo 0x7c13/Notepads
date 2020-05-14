@@ -501,6 +501,8 @@
             else if (_shouldResetScrollViewerToLastKnownPositionAfterViewChanged)
             {
                 _shouldResetScrollViewerToLastKnownPositionAfterViewChanged = false;
+                var textRange = Document.GetRangeFromPoint(new Point(_contentScrollViewerHorizontalOffsetLastKnownPosition, _contentScrollViewerVerticalOffsetLastKnownPosition), PointOptions.None);
+                textRange.ScrollIntoView(PointOptions.None);
                 _contentScrollViewer.ChangeView(
                     _contentScrollViewerHorizontalOffsetLastKnownPosition,
                     _contentScrollViewerVerticalOffsetLastKnownPosition,
