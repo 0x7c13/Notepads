@@ -6,11 +6,13 @@
     using System.Security.Principal;
     using System.ServiceModel;
     using System.Threading;
-    using System.Windows.Forms;
+    using System.Threading.Tasks;
+    using System.Windows;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
     using Windows.Storage;
+    using Windows.System;
 
     public enum CommandArgs
     {
@@ -21,8 +23,17 @@
         ExitApp
     }
 
-    static class Program
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
     {
+#if DEBUG
+        private const string TargetPackageFamilyName = "Notepads_ezhh5fms182ha";
+#else
+        private const string TargetPackageFamilyName = "19282JackieLiu.Notepads-Beta_echhpq9pdbte8";
+#endif
+        private static readonly Uri uri = new Uri("notepads:");
         private static string DesktopExtensionMutexIdStr = "DesktopExtensionMutexIdStr";
         private static string AdminExtensionMutexIdStr = "AdminExtensionMutexIdStr";
         private static Mutex mutex;
@@ -32,25 +43,54 @@
         private static readonly string _commandLabel = "Command";
         private static readonly string _adminCreatedLabel = "AdminCreated";
 
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        static void Main(string[] args)
+        public App()
         {
+            this.Startup += App_Startup;
+        }
+
+        private async void App_Startup(object sender, StartupEventArgs e)
+        {
+            var args = e.Args;
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
-                CheckInstance(AdminExtensionMutexIdStr);
-                InitializeExtensionService();
+                try
+                {
+                    CheckInstance(AdminExtensionMutexIdStr);
+                    InitializeExtensionService();
+                }
+                catch (InvalidOperationException)
+                {
+                    if (args.Length > 0) await LaunchWithhNotepads(args);
+                    Application.Current.Dispatcher.InvokeShutdown();
+                }
             }
             else
             {
-                CheckInstance(DesktopExtensionMutexIdStr);
-                InitializeAppServiceConnection();
-                if (args.Length > 2 && args[2] == "/admin") CreateElevetedExtension();
+                try
+                {
+                    CheckInstance(DesktopExtensionMutexIdStr);
+                    InitializeAppServiceConnection();
+                }
+                catch (InvalidOperationException)
+                {
+                    if (args.Length > 0) await LaunchWithhNotepads(args);
+                    Application.Current.Dispatcher.InvokeShutdown();
+                }
             }
+        }
 
-            Application.Run();
-            Application.ApplicationExit += Application_OnApplicationExit;
+        private async Task LaunchWithhNotepads(string[] filePaths)
+        {
+            var options = new LauncherOptions { TargetApplicationPackageFamilyName = TargetPackageFamilyName };
+            foreach (var filePath in filePaths)
+            {
+                try
+                {
+                    var file = await StorageFile.GetFileFromPathAsync(filePath);
+                    await Launcher.LaunchFileAsync(file, options);
+                }
+                catch { }
+            }
         }
 
         private static async void InitializeAppServiceConnection()
@@ -66,9 +106,9 @@
 
             AppServiceConnectionStatus status = await connection.OpenAsync();
 
-            if(status != AppServiceConnectionStatus.Success)
+            if (status != AppServiceConnectionStatus.Success)
             {
-                Application.Exit();
+                Application.Current.Dispatcher.InvokeShutdown();
             }
 
             var message = new ValueSet();
@@ -88,7 +128,7 @@
             if (!isFirstInstance)
             {
                 mutex.ReleaseMutex();
-                Application.Exit();
+                Application.Current.Dispatcher.InvokeShutdown();
             }
         }
 
@@ -100,7 +140,7 @@
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             // connection to the UWP lost, so we shut down the desktop process
-            Application.Exit();
+            Application.Current.Dispatcher.InvokeShutdown();
         }
 
         private static void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -117,7 +157,7 @@
                     CreateElevetedExtension();
                     break;
                 case CommandArgs.ExitApp:
-                    Application.Exit();
+                    Application.Current.Dispatcher.InvokeShutdown();
                     break;
             }
 
