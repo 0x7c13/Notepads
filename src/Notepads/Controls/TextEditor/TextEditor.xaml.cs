@@ -276,17 +276,24 @@
 
         public void Rename(string newFileName)
         {
-            FileNamePlaceholder = newFileName;
-            FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
-
-            if (SplitPanel != null &&
-                SplitPanel.Visibility == Visibility.Visible &&
-                !FileTypeUtility.IsPreviewSupported(FileType))
+            if (EditingFile == null)
             {
-                ShowHideContentPreview();
-            }
+                FileNamePlaceholder = newFileName;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
 
-            FileRenamed?.Invoke(this, EventArgs.Empty);
+                if (SplitPanel != null &&
+                    SplitPanel.Visibility == Visibility.Visible &&
+                    !FileTypeUtility.IsPreviewSupported(FileType))
+                {
+                    ShowHideContentPreview();
+                }
+
+                FileRenamed?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                // Rename existing file
+            }
         }
 
         public string GetText()
