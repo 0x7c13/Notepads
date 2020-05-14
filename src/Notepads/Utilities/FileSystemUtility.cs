@@ -22,7 +22,6 @@
         ContainsLeadingSpaces,
         ContainsTrailingSpaces,
         ContainsInvalidCharacters,
-        EndsWithDot,
     }
 
     public static class FileSystemUtility
@@ -39,6 +38,8 @@
                 return false;
             }
 
+            // Although shell supports file with leading spaces, explorer and file picker does not
+            // So we treat it as invalid file name as well
             if (fileName.StartsWith(" "))
             {
                 error = InvalidFileNameError.ContainsLeadingSpaces;
@@ -48,12 +49,6 @@
             if (fileName.EndsWith(" "))
             {
                 error = InvalidFileNameError.ContainsTrailingSpaces;
-                return false;
-            }
-
-            if (fileName.EndsWith("."))
-            {
-                error = InvalidFileNameError.EndsWithDot;
                 return false;
             }
 
