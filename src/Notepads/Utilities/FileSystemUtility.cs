@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
@@ -15,13 +16,15 @@
     using Windows.Storage.Provider;
     using UtfUnknown;
 
-    public enum InvalidFileNameError
+    public enum InvalidFilenameError
     {
         None = 0,
-        Empty,
+        EmptyOrAllWhitespace,
         ContainsLeadingSpaces,
         ContainsTrailingSpaces,
         ContainsInvalidCharacters,
+        InvalidOrNotAllowed,
+        TooLong,
     }
 
     public static class FileSystemUtility
@@ -30,36 +33,51 @@
 
         private const string WslRootPath = "\\\\wsl$\\";
 
-        public static bool IsFileNameValid(string fileName, out InvalidFileNameError error)
+        // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
+        private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
+
+        public static bool IsFilenameValid(string filename, out InvalidFilenameError error)
         {
-            if (string.IsNullOrEmpty(fileName))
+            if (filename.Length > 255)
             {
-                error = InvalidFileNameError.Empty;
+                error = InvalidFilenameError.TooLong;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                error = InvalidFilenameError.EmptyOrAllWhitespace;
                 return false;
             }
 
             // Although shell supports file with leading spaces, explorer and file picker does not
             // So we treat it as invalid file name as well
-            if (fileName.StartsWith(" "))
+            if (filename.StartsWith(" "))
             {
-                error = InvalidFileNameError.ContainsLeadingSpaces;
+                error = InvalidFilenameError.ContainsLeadingSpaces;
                 return false;
             }
 
-            if (fileName.EndsWith(" "))
+            if (filename.EndsWith(" "))
             {
-                error = InvalidFileNameError.ContainsTrailingSpaces;
+                error = InvalidFilenameError.ContainsTrailingSpaces;
                 return false;
             }
 
             var illegalChars = Path.GetInvalidFileNameChars();
-            if (fileName.Any(c => illegalChars.Contains(c)))
+            if (filename.Any(c => illegalChars.Contains(c)))
             {
-                error = InvalidFileNameError.ContainsInvalidCharacters;
+                error = InvalidFilenameError.ContainsInvalidCharacters;
                 return false;
             }
 
-            error = InvalidFileNameError.None;
+            if (filename.EndsWith(".") || !ValidWindowsFileNames.IsMatch(filename))
+            {
+                error = InvalidFilenameError.InvalidOrNotAllowed;
+                return false;
+            }
+
+            error = InvalidFilenameError.None;
             return true;
         }
 

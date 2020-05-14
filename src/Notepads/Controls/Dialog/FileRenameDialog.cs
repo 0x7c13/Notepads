@@ -24,8 +24,9 @@
             _fileNameTextBox = new TextBox
             {
                 Style = (Style)Application.Current.Resources["TransparentTextBoxStyle"],
-                IsSpellCheckEnabled = false,
                 Text = fileName,
+                IsSpellCheckEnabled = false,
+                AcceptsReturn = false,
                 SelectionStart = 0,
                 SelectionLength = fileName.Contains(".") ? fileName.LastIndexOf(".", StringComparison.Ordinal) : fileName.Length,
                 Height = 35,
@@ -44,10 +45,10 @@
             contentStack.Children.Add(_fileNameTextBox);
             contentStack.Children.Add(_errorMessageTextBlock);
 
-            Title = "Rename";
+            Title = ResourceLoader.GetString("FileRenameDialog_Title");
             Content = contentStack;
-            PrimaryButtonText = "Save";
-            CloseButtonText = "Cancel";
+            PrimaryButtonText = ResourceLoader.GetString("FileRenameDialog_PrimaryButtonText");
+            CloseButtonText = ResourceLoader.GetString("FileRenameDialog_CloseButtonText");
 
             _fileNameTextBox.TextChanging += OnTextChanging;
             _fileNameTextBox.KeyDown += OnKeyDown;
@@ -55,7 +56,7 @@
             PrimaryButtonClick += (dialog, args) =>
             {
                 var newFileName = _fileNameTextBox.Text;
-                if (FileSystemUtility.IsFileNameValid(newFileName, out var error))
+                if (FileSystemUtility.IsFilenameValid(newFileName, out var error))
                 {
                     confirmedAction(newFileName.Trim());
                 }
@@ -67,7 +68,7 @@
             if (e.Key == VirtualKey.Enter)
             {
                 var newFileName = _fileNameTextBox.Text;
-                if (FileSystemUtility.IsFileNameValid(newFileName, out _))
+                if (FileSystemUtility.IsFilenameValid(newFileName, out _))
                 {
                     _confirmedAction(newFileName.Trim());
                     Hide();
@@ -79,13 +80,13 @@
         {
             if (args.IsContentChanging)
             {
-                var isFileNameValid = FileSystemUtility.IsFileNameValid(sender.Text, out var error);
+                var isFileNameValid = FileSystemUtility.IsFilenameValid(sender.Text, out var error);
 
                 IsPrimaryButtonEnabled = isFileNameValid;
 
                 if (!isFileNameValid)
                 {
-                    _errorMessageTextBlock.Text = error.ToString();
+                    _errorMessageTextBlock.Text = ResourceLoader.GetString($"InvalidFilenameError_{error}");
                     _errorMessageTextBlock.Visibility = Visibility.Visible;
                 }
                 else
