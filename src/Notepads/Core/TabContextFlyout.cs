@@ -253,7 +253,7 @@
                                 }
                                 catch (Exception ex)
                                 {
-                                    var errorMessage = ex.Message?.TrimEnd( '\r', '\n' );
+                                    var errorMessage = ex.Message?.TrimEnd('\r', '\n');
                                     NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
                                 }
                             });
