@@ -228,7 +228,7 @@
                 return Task.Run(async () =>
                 {
                     file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
-                        await FilePickerFactory.GetFileSavePicker(textEditor, saveAs: true).PickSaveFileAsync());
+                        await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync());
                     return true;
                 }).AsAsyncOperation<bool>();
             });
