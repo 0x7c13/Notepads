@@ -27,7 +27,7 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(filePath: null, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -109,7 +109,7 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -200,7 +200,7 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                var fileSaveErrorDialog = new FileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 if (!fileSaveErrorDialog.IsAborted)
                 {

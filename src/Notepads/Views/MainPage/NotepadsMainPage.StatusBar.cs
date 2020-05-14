@@ -30,6 +30,7 @@
         private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
+            UpdateApplicationTitle(textEditor);
             UpdateFileModificationStateIndicator(textEditor);
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
@@ -187,7 +188,7 @@
                     break;
                 case "RevertAllChanges":
                     var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
-                    var revertAllChangesConfirmationDialog = NotepadsDialogFactory.GetRevertAllChangesConfirmationDialog(
+                    var revertAllChangesConfirmationDialog = new RevertAllChangesConfirmationDialog(
                         fileName,
                         confirmedAction: () =>
                          {
@@ -213,7 +214,7 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
+                    var fileOpenErrorDialog = new FileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     if (!fileOpenErrorDialog.IsAborted)
                     {
@@ -359,7 +360,7 @@
             }
         }
 
-        private void PathIndicatorClicked(ITextEditor selectedEditor)
+        private async void PathIndicatorClicked(ITextEditor selectedEditor)
         {
             NotepadsCore.FocusOnSelectedTextEditor();
 
@@ -376,6 +377,15 @@
                 if (selectedEditor.EditingFile != null)
                 {
                     PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                }
+                else
+                {
+                    var fileRenameDialog = new FileRenameDialog(selectedEditor.EditingFileName ?? selectedEditor.FileNamePlaceholder, confirmedAction: selectedEditor.Rename);
+                    await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
+                    if (!fileRenameDialog.IsAborted)
+                    {
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
                 }
             }
             else if (selectedEditor.FileModificationState == FileModificationState.Modified)
@@ -574,7 +584,7 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                    var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     if (!fileOpenErrorDialog.IsAborted)
                     {
@@ -609,7 +619,7 @@
                     }
                     catch (Exception ex)
                     {
-                        var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                        var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                         await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                         if (!fileOpenErrorDialog.IsAborted)
                         {

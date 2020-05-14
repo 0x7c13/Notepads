@@ -51,6 +51,7 @@
         public event EventHandler FontZoomFactorChanged;
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
+        public event EventHandler FileRenamed;
 
         public Guid Id { get; set; }
 
@@ -81,7 +82,7 @@
                 {
                     EditingFileName = null;
                     EditingFilePath = null;
-                    FileType = FileType.TextFile;
+                    FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
                 }
                 else
                 {
@@ -273,6 +274,28 @@
             });
         }
 
+        public void Rename(string newFileName)
+        {
+            if (EditingFile == null)
+            {
+                FileNamePlaceholder = newFileName;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+
+                if (SplitPanel != null &&
+                    SplitPanel.Visibility == Visibility.Visible &&
+                    !FileTypeUtility.IsPreviewSupported(FileType))
+                {
+                    ShowHideContentPreview();
+                }
+
+                FileRenamed?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                // Rename existing file
+            }
+        }
+
         public string GetText()
         {
             return TextEditorCore.GetText();
@@ -414,7 +437,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => { if (FileTypeUtility.IsPreviewSupported(FileType)) ShowHideContentPreview(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),

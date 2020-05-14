@@ -64,6 +64,7 @@
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorSaved += OnTextEditorSaved;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
@@ -383,7 +384,7 @@
                 return;
             }
 
-            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
+            var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
@@ -512,7 +513,6 @@
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
                 SetupStatusBar(textEditor);
-                UpdateApplicationTitle(textEditor);
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
@@ -585,7 +585,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file,
+                var setCloseSaveReminderDialog = new SetCloseSaveReminderDialog(file,
                     saveAction: async () =>
                     {
                         if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
