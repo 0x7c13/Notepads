@@ -258,6 +258,13 @@
             }
         }
 
+        private async void RenameFileAsync(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor?.EditingFile == null) return;
+            await RenameFileAsync(selectedEditor);
+        }
+
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is AppBarButton button)) return;
@@ -356,7 +363,7 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
             }
         }
 
@@ -366,6 +373,7 @@
 
             PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
+            PathIndicatorFlyoutFileRenameFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText");
 
             if (App.IsGameBarWidget)
             {
@@ -380,12 +388,7 @@
                 }
                 else
                 {
-                    var fileRenameDialog = new FileRenameDialog(selectedEditor.EditingFileName ?? selectedEditor.FileNamePlaceholder, confirmedAction: selectedEditor.Rename);
-                    await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
-                    if (!fileRenameDialog.IsAborted)
-                    {
-                        NotepadsCore.FocusOnSelectedTextEditor();
-                    }
+                    await RenameFileAsync(selectedEditor);
                 }
             }
             else if (selectedEditor.FileModificationState == FileModificationState.Modified)
@@ -394,7 +397,7 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
             }
         }
 

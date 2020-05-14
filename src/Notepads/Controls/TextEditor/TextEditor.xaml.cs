@@ -78,19 +78,24 @@
             get => _editingFile;
             private set
             {
-                if (value == null)
-                {
-                    EditingFileName = null;
-                    EditingFilePath = null;
-                    FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
-                }
-                else
-                {
-                    EditingFileName = value.Name;
-                    EditingFilePath = value.Path;
-                    FileType = FileTypeUtility.GetFileTypeByFileName(value.Name);
-                }
                 _editingFile = value;
+                UpdateDocumentInfo();
+            }
+        }
+
+        private void UpdateDocumentInfo()
+        {
+            if (EditingFile == null)
+            {
+                EditingFileName = null;
+                EditingFilePath = null;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+            }
+            else
+            {
+                EditingFileName = EditingFile.Name;
+                EditingFilePath = EditingFile.Path;
+                FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
         }
 
@@ -274,26 +279,27 @@
             });
         }
 
-        public void Rename(string newFileName)
+        public async Task RenameAsync(string newFileName)
         {
             if (EditingFile == null)
             {
                 FileNamePlaceholder = newFileName;
-                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
-
-                if (SplitPanel != null &&
-                    SplitPanel.Visibility == Visibility.Visible &&
-                    !FileTypeUtility.IsPreviewSupported(FileType))
-                {
-                    ShowHideContentPreview();
-                }
-
-                FileRenamed?.Invoke(this, EventArgs.Empty);
             }
             else
             {
-                // Rename existing file
+                await EditingFile.RenameAsync(newFileName);
             }
+
+            UpdateDocumentInfo();
+
+            if (SplitPanel != null &&
+                SplitPanel.Visibility == Visibility.Visible &&
+                !FileTypeUtility.IsPreviewSupported(FileType))
+            {
+                ShowHideContentPreview();
+            }
+
+            FileRenamed?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetText()

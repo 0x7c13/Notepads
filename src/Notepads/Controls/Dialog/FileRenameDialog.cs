@@ -17,18 +17,21 @@
 
         private readonly Action<string> _confirmedAction;
 
-        public FileRenameDialog(string fileName, Action<string> confirmedAction)
+        private readonly string _originalFilename;
+
+        public FileRenameDialog(string filename, Action<string> confirmedAction)
         {
+            _originalFilename = filename;
             _confirmedAction = confirmedAction;
 
             _fileNameTextBox = new TextBox
             {
                 Style = (Style)Application.Current.Resources["TransparentTextBoxStyle"],
-                Text = fileName,
+                Text = filename,
                 IsSpellCheckEnabled = false,
                 AcceptsReturn = false,
                 SelectionStart = 0,
-                SelectionLength = fileName.Contains(".") ? fileName.LastIndexOf(".", StringComparison.Ordinal) : fileName.Length,
+                SelectionLength = filename.Contains(".") ? filename.LastIndexOf(".", StringComparison.Ordinal) : filename.Length,
                 Height = 35,
             };
 
@@ -49,6 +52,7 @@
             Content = contentStack;
             PrimaryButtonText = ResourceLoader.GetString("FileRenameDialog_PrimaryButtonText");
             CloseButtonText = ResourceLoader.GetString("FileRenameDialog_CloseButtonText");
+            IsPrimaryButtonEnabled = false;
 
             _fileNameTextBox.TextChanging += OnTextChanging;
             _fileNameTextBox.KeyDown += OnKeyDown;
@@ -68,7 +72,11 @@
             if (e.Key == VirtualKey.Enter)
             {
                 var newFileName = _fileNameTextBox.Text;
-                if (FileSystemUtility.IsFilenameValid(newFileName, out _))
+
+                var isFilenameValid = FileSystemUtility.IsFilenameValid(newFileName, out var error);
+                var nameChanged = string.Compare(_originalFilename, newFileName, StringComparison.Ordinal) != 0;
+
+                if (isFilenameValid && nameChanged)
                 {
                     _confirmedAction(newFileName.Trim());
                     Hide();
@@ -80,11 +88,12 @@
         {
             if (args.IsContentChanging)
             {
-                var isFileNameValid = FileSystemUtility.IsFilenameValid(sender.Text, out var error);
+                var isFilenameValid = FileSystemUtility.IsFilenameValid(sender.Text, out var error);
+                var nameChanged = string.Compare(_originalFilename, sender.Text, StringComparison.Ordinal) != 0;
 
-                IsPrimaryButtonEnabled = isFileNameValid;
+                IsPrimaryButtonEnabled = isFilenameValid && nameChanged;
 
-                if (!isFileNameValid)
+                if (!isFilenameValid)
                 {
                     _errorMessageTextBlock.Text = ResourceLoader.GetString($"InvalidFilenameError_{error}");
                     _errorMessageTextBlock.Visibility = Visibility.Visible;
