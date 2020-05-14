@@ -264,6 +264,31 @@
             return success;
         }
 
+        private async Task RenameFileAsync(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+
+            if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                confirmedAction: async (newFilename) =>
+                {
+                    try
+                    {
+                        await textEditor.RenameAsync(newFilename);
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+                    }
+                    catch (Exception ex)
+                    {
+                        var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                        NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                    }
+                });
+
+            await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
+        }
+
         public async Task Print(ITextEditor textEditor)
         {
             if (App.IsGameBarWidget) return;

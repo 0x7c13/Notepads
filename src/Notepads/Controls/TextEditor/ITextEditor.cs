@@ -64,7 +64,7 @@
             bool isModified = false,
             bool resetText = true);
 
-        void Rename(string newFileName);
+        Task RenameAsync(string newFileName);
 
         string GetText();
 

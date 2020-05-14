@@ -2,8 +2,10 @@
 {
     using System;
     using System.IO;
+    using Notepads.Controls.Dialog;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -19,6 +21,7 @@
         private MenuFlyoutItem _closeSaved;
         private MenuFlyoutItem _copyFullPath;
         private MenuFlyoutItem _openContainingFolder;
+        private MenuFlyoutItem _rename;
 
         private string _filePath;
         private string _containingFolderPath;
@@ -40,6 +43,8 @@
             Items.Add(new MenuFlyoutSeparator());
             Items.Add(CopyFullPath);
             Items.Add(OpenContainingFolder);
+            Items.Add(new MenuFlyoutSeparator());
+            Items.Add(Rename);
 
             var style = new Style(typeof(MenuFlyoutPresenter));
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
@@ -66,6 +71,7 @@
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+            Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
 
             if (App.IsGameBarWidget)
             {
@@ -219,6 +225,42 @@
                     };
                 }
                 return _openContainingFolder;
+            }
+        }
+
+        private MenuFlyoutItem Rename
+        {
+            get
+            {
+                if (_rename == null)
+                {
+                    _rename = new MenuFlyoutItem() { Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText") };
+                    _rename.KeyboardAccelerators.Add(new KeyboardAccelerator()
+                    {
+                        Key = VirtualKey.F2,
+                        IsEnabled = false,
+                    });
+                    _rename.Click += async (sender, args) =>
+                    {
+                        var fileRenameDialog = new FileRenameDialog(_textEditor.EditingFileName ?? _textEditor.FileNamePlaceholder,
+                            confirmedAction: async (newFilename) =>
+                            {
+                                try
+                                {
+                                    await _textEditor.RenameAsync(newFilename);
+                                    _notepadsCore.SwitchTo(_textEditor);
+                                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+                                }
+                                catch (Exception ex)
+                                {
+                                    var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                                    NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                                }
+                            });
+                        await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
+                    };
+                }
+                return _rename;
             }
         }
 
