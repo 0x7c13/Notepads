@@ -249,7 +249,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> FileIsWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(StorageFile file)
         {
             try
             {
@@ -528,7 +528,7 @@
 
             try
             {
-                if (IsFileReadOnly(file) || !await FileIsWritable(file))
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
                 {
                     // For file(s) dragged into Notepads, they are read-only
                     // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)

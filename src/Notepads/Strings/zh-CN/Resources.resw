@@ -685,4 +685,12 @@
     <value>已重命名</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Notepads暂时不支持无文件后缀名</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>Notepads暂时不支持文件后缀名 "{0}"</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  </data>
 </root>

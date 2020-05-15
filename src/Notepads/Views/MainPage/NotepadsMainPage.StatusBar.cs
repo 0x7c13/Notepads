@@ -375,6 +375,16 @@
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
             PathIndicatorFlyoutFileRenameFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText");
 
+            if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted ||
+                (selectedEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(selectedEditor.EditingFile)))
+            {
+                PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = false;
+            }
+            else
+            {
+                PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = true;
+            }
+
             if (App.IsGameBarWidget)
             {
                 PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Visibility = Visibility.Collapsed;

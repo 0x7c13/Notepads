@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Threading.Tasks;
     using Notepads.Controls.Dialog;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
@@ -62,16 +63,18 @@
 
         private void TabContextFlyout_Opening(object sender, object e)
         {
+            var isFileReadonly = false;
             if (_textEditor.EditingFile != null)
             {
                 _filePath = _textEditor.EditingFile.Path;
                 _containingFolderPath = Path.GetDirectoryName(_filePath);
+                isFileReadonly = FileSystemUtility.IsFileReadOnly(_textEditor.EditingFile);
             }
 
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
-            Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+            Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
 
             if (App.IsGameBarWidget)
             {
@@ -242,13 +245,18 @@
                     });
                     _rename.Click += async (sender, args) =>
                     {
+                        _notepadsCore.SwitchTo(_textEditor);
+
+                        await Task.Delay(10); // Give notepads core enough time to switch to the selected editor
+
                         var fileRenameDialog = new FileRenameDialog(_textEditor.EditingFileName ?? _textEditor.FileNamePlaceholder,
+                            fileExists: _textEditor.EditingFile != null,
                             confirmedAction: async (newFilename) =>
                             {
                                 try
                                 {
                                     await _textEditor.RenameAsync(newFilename);
-                                    _notepadsCore.SwitchTo(_textEditor);
+                                    _notepadsCore.FocusOnSelectedTextEditor();
                                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
                                 }
                                 catch (Exception ex)

@@ -270,7 +270,10 @@
 
             if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
 
+            if (textEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(textEditor.EditingFile)) return;
+
             var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                fileExists: textEditor.EditingFile != null,
                 confirmedAction: async (newFilename) =>
                 {
                     try
