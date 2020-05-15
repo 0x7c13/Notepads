@@ -188,10 +188,10 @@
 
             var numOfReusableLineNumberBlocks = _renderedLineNumberBlocks.Count;
 
-            foreach (var lineNumber in lineNumberTextRenderingPositions)
+            foreach (var (lineNumber, rect) in lineNumberTextRenderingPositions)
             {
                 var margin = new Thickness(lineNumberPadding.Left,
-                    lineNumber.Value.Top + lineNumberPadding.Top + Padding.Top,
+                    rect.Top + lineNumberPadding.Top + Padding.Top,
                     lineNumberPadding.Right,
                     lineNumberPadding.Bottom);
 
@@ -199,7 +199,7 @@
                 if (numOfReusableLineNumberBlocks > 0)
                 {
                     var index = numOfReusableLineNumberBlocks - 1;
-                    _renderedLineNumberBlocks[index].Text = lineNumber.Key.ToString();
+                    _renderedLineNumberBlocks[index].Text = lineNumber.ToString();
                     _renderedLineNumberBlocks[index].Margin = margin;
                     _renderedLineNumberBlocks[index].Height = lineNumberTextBlockHeight;
                     _renderedLineNumberBlocks[index].Width = minLineNumberTextRenderingWidth;
@@ -212,7 +212,7 @@
                 {
                     var lineNumberBlock = new TextBlock()
                     {
-                        Text = lineNumber.Key.ToString(),
+                        Text = lineNumber.ToString(),
                         Height = lineNumberTextBlockHeight,
                         Width = minLineNumberTextRenderingWidth,
                         Margin = margin,

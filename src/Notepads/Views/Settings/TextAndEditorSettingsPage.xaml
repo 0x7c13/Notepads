@@ -111,8 +111,8 @@
                               IsTextSearchEnabled="True">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}"
-                                           FontStyle="{Binding}" />
+                                <TextBlock Text="{Binding FontStyleLocalizedName}"
+                                           FontStyle="{Binding FontStyle}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -133,8 +133,8 @@
                               Background="Transparent">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}"
-                                           FontWeight="{Binding}" />
+                                <TextBlock Text="{Binding FontWeightLocalizedName}"
+                                           FontWeight="{Binding FontWeight}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

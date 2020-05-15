@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Controls.TextEditor
 {
+    using System;
     using Windows.UI.Xaml;
 
     public partial class TextEditorCore
@@ -35,21 +36,25 @@
 
             var singleLineHeight = GetSingleLineHeight();
             var thickness = new Thickness(0.08 * singleLineHeight);
+            var height = selectionRect.Height;
+
+            // Just to make sure height is a positive number and not smaller than single line height
+            if (height < singleLineHeight) height = singleLineHeight;
 
             // Show line highlighter rect when it is enabled when selection is single line only
-            if (DisplayLineHighlighter && selectionRect.Height < singleLineHeight * 1.5f)
+            if (DisplayLineHighlighter && height < singleLineHeight * 1.5f)
             {
-                _lineHighlighter.Height = selectionRect.Height;
+                _lineHighlighter.Height = height;
                 _lineHighlighter.Margin = new Thickness(0, selectionRect.Y + Padding.Top, 0, 0);
                 _lineHighlighter.BorderThickness = thickness;
-                _lineHighlighter.Width = _rootGrid.ActualWidth;
+                _lineHighlighter.Width = Math.Clamp(_rootGrid.ActualWidth, 0, Double.PositiveInfinity);
 
                 _lineHighlighter.Visibility = Visibility.Visible;
                 _lineIndicator.Visibility = Visibility.Collapsed;
             }
             else if (DisplayLineNumbers) // Show line indicator when line highlighter is disabled but line numbers are enabled
             {
-                _lineIndicator.Height = selectionRect.Height;
+                _lineIndicator.Height = height;
                 _lineIndicator.Margin = new Thickness(0, selectionRect.Y + Padding.Top, 0, 0);
                 _lineIndicator.BorderThickness = thickness;
                 _lineIndicator.Width = 0.1 * singleLineHeight;

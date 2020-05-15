@@ -32,6 +32,7 @@
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorSaved;
+        public event EventHandler<ITextEditor> TextEditorRenamed;
         public event EventHandler<ITextEditor> TextEditorClosing;
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
@@ -100,8 +101,8 @@
         public void OpenNewTextEditor(string fileNamePlaceholder)
         {
             var textFile = new TextFile(string.Empty,
-                EditorSettingsService.EditorDefaultEncoding,
-                EditorSettingsService.EditorDefaultLineEnding);
+                AppSettingsService.EditorDefaultEncoding,
+                AppSettingsService.EditorDefaultLineEnding);
             var newEditor = CreateTextEditor(
                 Guid.NewGuid(),
                 textFile,
@@ -201,6 +202,7 @@
             textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed += TextEditor_OnFileRenamed;
 
             return textEditor;
         }
@@ -238,6 +240,7 @@
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed -= TextEditor_OnFileRenamed;
             textEditor.Dispose();
         }
 
@@ -550,6 +553,15 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileRenamed(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
+            item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
+            TextEditorRenamed?.Invoke(this, textEditor);
         }
 
         #region DragAndDrop

@@ -263,7 +263,7 @@
             {
                 // Add the opened file to FutureAccessList so we can access it next launch
                 var futureAccessToken = ToToken(textEditor.Id);
-                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                await FutureAccessListUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
                 textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                 textEditorData.EditingFileName = textEditor.EditingFileName;
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;
@@ -393,7 +393,7 @@
 
             if (editorSessionData.EditingFileFutureAccessToken != null)
             {
-                editingFile = await FileSystemUtility.GetFileFromFutureAccessList(editorSessionData.EditingFileFutureAccessToken);
+                editingFile = await FutureAccessListUtility.GetFileFromFutureAccessList(editorSessionData.EditingFileFutureAccessToken);
             }
 
             string lastSavedFile = editorSessionData.LastSavedBackupFilePath;

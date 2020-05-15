@@ -222,7 +222,7 @@
     <comment>.log</comment>
   </data>
   <data name="LrcFileDisplayName" xml:space="preserve">
-    <value>Lyrics File</value>
+    <value>Plik tekstu piosenki</value>
     <comment>.lrc</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
@@ -288,6 +288,10 @@
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>Kod źródłowy języka TypeScript</value>
     <comment>.ts</comment>
+  </data>
+  <data name="VerilogFileDisplayName" xml:space="preserve">
+    <value>Plik Verilog</value>
+    <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Kod źródłowy języka Visual Basic</value>

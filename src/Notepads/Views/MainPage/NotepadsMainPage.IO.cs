@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Storage;
@@ -11,7 +12,6 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System.IO;
 
     public sealed partial class NotepadsMainPage
     {
@@ -31,7 +31,7 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(filePath: null, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -78,7 +78,7 @@
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -112,7 +112,7 @@
         private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
+            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
             NotepadsCore.FocusOnTextEditor(textEditor);
             return file;
         }
@@ -177,7 +177,7 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                var fileSaveErrorDialog = new FileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 if (!fileSaveErrorDialog.IsAborted)
                 {
@@ -202,6 +202,34 @@
             }
 
             return success;
+        }
+
+        private async Task RenameFileAsync(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+
+            if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            if (textEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(textEditor.EditingFile)) return;
+
+            var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                fileExists: textEditor.EditingFile != null,
+                confirmedAction: async (newFilename) =>
+                {
+                    try
+                    {
+                        await textEditor.RenameAsync(newFilename);
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+                    }
+                    catch (Exception ex)
+                    {
+                        var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                        NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                    }
+                });
+
+            await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         }
 
         public async Task Print(ITextEditor textEditor)

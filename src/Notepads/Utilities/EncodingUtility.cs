@@ -239,21 +239,21 @@
 
         private static Encoding GetEncodingByNameFallback(string name)
         {
-            foreach (var ansiEncoding in ANSIEncodings)
+            foreach (var (codePage, encodingName) in ANSIEncodings)
             {
-                if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(encodingName, name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return Encoding.GetEncoding(ansiEncoding.Key);
+                    return Encoding.GetEncoding(codePage);
                 }
             }
 
             // Hot-fix for legacy/deprecated names used in previous version of Notepads
-            foreach (var ansiEncoding in DeprecatedANSIEncodings)
+            foreach (var (codePage, encodingName) in DeprecatedANSIEncodings)
             {
-                if (string.Equals(ansiEncoding.Value, name, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(encodingName, name, StringComparison.InvariantCultureIgnoreCase))
                 {
                     Analytics.TrackEvent("GetEncodingByName_FoundDeprecatedEncodingName");
-                    return Encoding.GetEncoding(ansiEncoding.Key);
+                    return Encoding.GetEncoding(codePage);
                 }
             }
 
@@ -339,11 +339,11 @@
 
             var encodings = new HashSet<Encoding>();
 
-            foreach (var encoding in ANSIEncodings)
+            foreach (var (codePage, encodingName) in ANSIEncodings)
             {
                 try
                 {
-                    encodings.Add(Encoding.GetEncoding(encoding.Key));
+                    encodings.Add(Encoding.GetEncoding(codePage));
                 }
                 catch (Exception ex)
                 {
@@ -351,8 +351,8 @@
                     {
                         { "Message", ex.Message },
                         { "Exception", ex.ToString() },
-                        { "CodePage", encoding.Key.ToString() },
-                        { "EncodingName", encoding.Value }
+                        { "CodePage", codePage.ToString() },
+                        { "EncodingName", encodingName }
                     });
                 }
             }

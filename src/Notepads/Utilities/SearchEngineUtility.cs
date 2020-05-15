@@ -23,7 +23,7 @@
 
         public static string GetSearchUrlBySearchEngine(SearchEngine searchEngine)
         {
-            return searchEngine != SearchEngine.Custom ? SearchEngineUrlDictionary[searchEngine] : EditorSettingsService.EditorCustomMadeSearchUrl;
+            return searchEngine != SearchEngine.Custom ? SearchEngineUrlDictionary[searchEngine] : AppSettingsService.EditorCustomMadeSearchUrl;
         }
     }
 }

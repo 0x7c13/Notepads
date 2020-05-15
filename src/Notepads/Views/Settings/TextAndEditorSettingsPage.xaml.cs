@@ -11,6 +11,20 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
+    public class FontStyleItem
+    {
+        public FontStyle FontStyle { get; set; }
+
+        public string FontStyleLocalizedName { get; set; }
+    }
+
+    public class FontWeightItem
+    {
+        public FontWeight FontWeight { get; set; }
+
+        public string FontWeightLocalizedName { get; set; }
+    }
+
     public sealed partial class TextAndEditorSettingsPage : Page
     {
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
@@ -19,9 +33,9 @@
 
         public int[] AvailableFontSizes = FontUtility.PredefinedFontSizes;
 
-        private string[] _availableFontStyles;
+        private IList<FontStyleItem> _availableFontStyles;
 
-        public string[] AvailableFontStyles
+        public IList<FontStyleItem> AvailableFontStyles
         {
             get
             {
@@ -30,15 +44,23 @@
                     return _availableFontStyles;
                 }
 
-                _availableFontStyles = FontUtility.FontStyles.Select(fontStyle =>
-                    _resourceLoader.GetString($"FontStyle_{fontStyle}")).ToArray();
+                _availableFontStyles = new List<FontStyleItem>();
+                foreach (var (fontStyleName, fontStyle) in FontUtility.PredefinedFontStylesMap)
+                {
+                    _availableFontStyles.Add(new FontStyleItem()
+                    {
+                        FontStyle = fontStyle,
+                        FontStyleLocalizedName = _resourceLoader.GetString($"FontStyle_{fontStyleName}")
+                    });
+                }
+
                 return _availableFontStyles;
             }
         }
 
-        private string[] _availableFontWeights;
+        private IList<FontWeightItem> _availableFontWeights;
 
-        public string[] AvailableFontWeights
+        public IList<FontWeightItem> AvailableFontWeights
         {
             get
             {
@@ -47,8 +69,16 @@
                     return _availableFontWeights;
                 }
 
-                _availableFontWeights = FontUtility.PredefinedFontWeights.Select(fontWeight =>
-                    _resourceLoader.GetString($"FontWeight_{fontWeight}")).ToArray();
+                _availableFontWeights = new List<FontWeightItem>();
+                foreach (var (fontWeightName, fontWeight) in FontUtility.PredefinedFontWeightsMap)
+                {
+                    _availableFontWeights.Add(new FontWeightItem()
+                    {
+                        FontWeight = new FontWeight() { Weight = fontWeight },
+                        FontWeightLocalizedName = _resourceLoader.GetString($"FontWeight_{fontWeightName}")
+                    });
+                }
+
                 return _availableFontWeights;
             }
         }
@@ -57,21 +87,14 @@
         {
             InitializeComponent();
 
-            TextWrappingToggle.IsOn = (EditorSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
-            HighlightMisspelledWordsToggle.IsOn = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            LineHighlighterToggle.IsOn = EditorSettingsService.EditorDisplayLineHighlighter;
-            LineNumbersToggle.IsOn = EditorSettingsService.EditorDisplayLineNumbers;
-            FontFamilyPicker.SelectedItem = EditorSettingsService.EditorFontFamily;
-            FontSizePicker.SelectedItem = EditorSettingsService.EditorFontSize;
-
-            var fontStyleIndex = FontUtility.FontStyles.ToList().IndexOf(EditorSettingsService.EditorFontStyle);
-            FontStylePicker.SelectedIndex = fontStyleIndex == -1 ? 0 : fontStyleIndex;
-
-            var fontWeight = FontUtility.TryGetFontWeightName(EditorSettingsService.EditorFontWeight, out var fontWeightName)
-                ? fontWeightName
-                : nameof(FontWeights.Normal);
-            var fontWeightIndex = FontUtility.PredefinedFontWeights.ToList().IndexOf(fontWeight);
-            FontWeightPicker.SelectedIndex = fontWeightIndex == -1 ? 0 : fontWeightIndex;
+            TextWrappingToggle.IsOn = (AppSettingsService.EditorDefaultTextWrapping == TextWrapping.Wrap);
+            HighlightMisspelledWordsToggle.IsOn = AppSettingsService.IsHighlightMisspelledWordsEnabled;
+            LineHighlighterToggle.IsOn = AppSettingsService.EditorDisplayLineHighlighter;
+            LineNumbersToggle.IsOn = AppSettingsService.EditorDisplayLineNumbers;
+            FontFamilyPicker.SelectedItem = AppSettingsService.EditorFontFamily;
+            FontSizePicker.SelectedItem = AppSettingsService.EditorFontSize;
+            FontStylePicker.SelectedItem = AvailableFontStyles.FirstOrDefault(style => style.FontStyle == AppSettingsService.EditorFontStyle);
+            FontWeightPicker.SelectedItem = AvailableFontWeights.FirstOrDefault(weight => weight.FontWeight.Weight == AppSettingsService.EditorFontWeight.Weight);
 
             InitializeLineEndingSettings();
 
@@ -88,7 +111,7 @@
 
         private void InitializeLineEndingSettings()
         {
-            switch (EditorSettingsService.EditorDefaultLineEnding)
+            switch (AppSettingsService.EditorDefaultLineEnding)
             {
                 case LineEnding.Crlf:
                     CrlfRadioButton.IsChecked = true;
@@ -104,9 +127,9 @@
 
         private void InitializeEncodingSettings()
         {
-            if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
+            if (AppSettingsService.EditorDefaultEncoding.CodePage == Encoding.UTF8.CodePage)
             {
-                if (Equals(EditorSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
+                if (Equals(AppSettingsService.EditorDefaultEncoding, new UTF8Encoding(false)))
                 {
                     Utf8EncodingRadioButton.IsChecked = true;
                 }
@@ -115,11 +138,11 @@
                     Utf8BomEncodingRadioButton.IsChecked = true;
                 }
             }
-            else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.Unicode.CodePage)
+            else if (AppSettingsService.EditorDefaultEncoding.CodePage == Encoding.Unicode.CodePage)
             {
                 Utf16LeBomEncodingRadioButton.IsChecked = true;
             }
-            else if (EditorSettingsService.EditorDefaultEncoding.CodePage == Encoding.BigEndianUnicode.CodePage)
+            else if (AppSettingsService.EditorDefaultEncoding.CodePage == Encoding.BigEndianUnicode.CodePage)
             {
                 Utf16BeBomEncodingRadioButton.IsChecked = true;
             }
@@ -127,11 +150,11 @@
 
         private void InitializeDecodingSettings()
         {
-            if (EditorSettingsService.EditorDefaultDecoding == null)
+            if (AppSettingsService.EditorDefaultDecoding == null)
             {
                 AutoGuessDecodingRadioButton.IsChecked = true;
             }
-            else if (EditorSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
+            else if (AppSettingsService.EditorDefaultDecoding.CodePage == Encoding.UTF8.CodePage)
             {
                 Utf8DecodingRadioButton.IsChecked = true;
             }
@@ -143,19 +166,19 @@
 
         private void InitializeTabIndentationSettings()
         {
-            if (EditorSettingsService.EditorDefaultTabIndents == -1)
+            if (AppSettingsService.EditorDefaultTabIndents == -1)
             {
                 TabDefaultRadioButton.IsChecked = true;
             }
-            else if (EditorSettingsService.EditorDefaultTabIndents == 2)
+            else if (AppSettingsService.EditorDefaultTabIndents == 2)
             {
                 TabTwoSpacesRadioButton.IsChecked = true;
             }
-            else if (EditorSettingsService.EditorDefaultTabIndents == 4)
+            else if (AppSettingsService.EditorDefaultTabIndents == 4)
             {
                 TabFourSpacesRadioButton.IsChecked = true;
             }
-            else if (EditorSettingsService.EditorDefaultTabIndents == 8)
+            else if (AppSettingsService.EditorDefaultTabIndents == 8)
             {
                 TabEightSpacesRadioButton.IsChecked = true;
             }
@@ -163,7 +186,7 @@
 
         private void InitializeSearchEngineSettings()
         {
-            switch (EditorSettingsService.EditorDefaultSearchEngine)
+            switch (AppSettingsService.EditorDefaultSearchEngine)
             {
                 case SearchEngine.Bing:
                     BingRadioButton.IsChecked = true;
@@ -183,9 +206,9 @@
                     break;
             }
 
-            if (!string.IsNullOrEmpty(EditorSettingsService.EditorCustomMadeSearchUrl))
+            if (!string.IsNullOrEmpty(AppSettingsService.EditorCustomMadeSearchUrl))
             {
-                CustomSearchUrl.Text = EditorSettingsService.EditorCustomMadeSearchUrl;
+                CustomSearchUrl.Text = AppSettingsService.EditorCustomMadeSearchUrl;
             }
         }
 
@@ -231,17 +254,17 @@
             switch (radioButton.Name)
             {
                 case "BingRadioButton":
-                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
                     CustomSearchUrl.IsEnabled = false;
                     CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
                 case "GoogleRadioButton":
-                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
                     CustomSearchUrl.IsEnabled = false;
                     CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
                 case "DuckDuckGoRadioButton":
-                    EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
                     CustomSearchUrl.IsEnabled = false;
                     CustomUrlErrorReport.Visibility = Visibility.Collapsed;
                     break;
@@ -250,7 +273,7 @@
                     CustomSearchUrl.Focus(FocusState.Programmatic);
                     CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
                     CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
-                    EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
                     break;
             }
         }
@@ -262,16 +285,16 @@
             switch (radioButton.Tag)
             {
                 case "-1":
-                    EditorSettingsService.EditorDefaultTabIndents = -1;
+                    AppSettingsService.EditorDefaultTabIndents = -1;
                     break;
                 case "2":
-                    EditorSettingsService.EditorDefaultTabIndents = 2;
+                    AppSettingsService.EditorDefaultTabIndents = 2;
                     break;
                 case "4":
-                    EditorSettingsService.EditorDefaultTabIndents = 4;
+                    AppSettingsService.EditorDefaultTabIndents = 4;
                     break;
                 case "8":
-                    EditorSettingsService.EditorDefaultTabIndents = 8;
+                    AppSettingsService.EditorDefaultTabIndents = 8;
                     break;
             }
         }
@@ -283,16 +306,16 @@
             switch (radioButton.Tag)
             {
                 case "UTF-8":
-                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(false);
+                    AppSettingsService.EditorDefaultEncoding = new UTF8Encoding(false);
                     break;
                 case "UTF-8-BOM":
-                    EditorSettingsService.EditorDefaultEncoding = new UTF8Encoding(true);
+                    AppSettingsService.EditorDefaultEncoding = new UTF8Encoding(true);
                     break;
                 case "UTF-16 LE BOM":
-                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(false, true);
+                    AppSettingsService.EditorDefaultEncoding = new UnicodeEncoding(false, true);
                     break;
                 case "UTF-16 BE BOM":
-                    EditorSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
+                    AppSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
                     break;
             }
         }
@@ -304,19 +327,19 @@
             switch (radioButton.Tag)
             {
                 case "Auto":
-                    EditorSettingsService.EditorDefaultDecoding = null;
+                    AppSettingsService.EditorDefaultDecoding = null;
                     break;
                 case "UTF-8":
-                    EditorSettingsService.EditorDefaultDecoding = new UTF8Encoding(false);
+                    AppSettingsService.EditorDefaultDecoding = new UTF8Encoding(false);
                     break;
                 case "ANSI":
                     if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding))
                     {
-                        EditorSettingsService.EditorDefaultDecoding = systemDefaultEncoding;
+                        AppSettingsService.EditorDefaultDecoding = systemDefaultEncoding;
                     }
                     else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding))
                     {
-                        EditorSettingsService.EditorDefaultDecoding = currentCultureEncoding;
+                        AppSettingsService.EditorDefaultDecoding = currentCultureEncoding;
                     }
                     else
                     {
@@ -333,63 +356,60 @@
             switch (radioButton.Tag)
             {
                 case "Crlf":
-                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Crlf;
+                    AppSettingsService.EditorDefaultLineEnding = LineEnding.Crlf;
                     break;
                 case "Cr":
-                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Cr;
+                    AppSettingsService.EditorDefaultLineEnding = LineEnding.Cr;
                     break;
                 case "Lf":
-                    EditorSettingsService.EditorDefaultLineEnding = LineEnding.Lf;
+                    AppSettingsService.EditorDefaultLineEnding = LineEnding.Lf;
                     break;
             }
         }
 
         private void FontFamilyPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EditorSettingsService.EditorFontFamily = (string)e.AddedItems.First();
+            AppSettingsService.EditorFontFamily = (string)e.AddedItems.First();
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EditorSettingsService.EditorFontSize = (int)e.AddedItems.First();
+            AppSettingsService.EditorFontSize = (int)e.AddedItems.First();
         }
 
         private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EditorSettingsService.EditorFontStyle = FontUtility.FontStyles[FontStylePicker.SelectedIndex];
+            AppSettingsService.EditorFontStyle = ((FontStyleItem)e.AddedItems.First()).FontStyle;
         }
 
         private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedValue = FontUtility.PredefinedFontWeights[FontWeightPicker.SelectedIndex];
-            EditorSettingsService.EditorFontWeight = FontUtility.TryGetFontWeight(selectedValue, out var fontWeight)
-                ? new FontWeight() { Weight = fontWeight }
-                : FontWeights.Normal;
+            AppSettingsService.EditorFontWeight = ((FontWeightItem)e.AddedItems.First()).FontWeight;
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
+            AppSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
         }
 
         private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
+            AppSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
         }
 
         private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
+            AppSettingsService.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
         }
 
         private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.EditorDisplayLineNumbers = LineNumbersToggle.IsOn;
+            AppSettingsService.EditorDisplayLineNumbers = LineNumbersToggle.IsOn;
         }
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EditorSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
@@ -398,11 +418,11 @@
             if (CustomSearchUrlRadioButton.IsChecked != null &&
                 (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
             {
-                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
             }
-            else if (!IsValidUrl(CustomSearchUrl.Text) && EditorSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            else if (!IsValidUrl(CustomSearchUrl.Text) && AppSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
             {
-                EditorSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
             }
 
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
