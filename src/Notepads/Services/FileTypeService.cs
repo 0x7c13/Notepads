@@ -19,5 +19,20 @@
             ".srt", ".ass", ".ssa", ".lrc",
             ".project", ".prj", ".npmrc", ".buildpath",
         };
+
+        public static bool IsFileExtensionSupported(string fileExtension)
+        {
+            if (string.IsNullOrEmpty(fileExtension))
+            {
+                return false;
+            }
+
+            if (!fileExtension.StartsWith("."))
+            {
+                fileExtension = "." + fileExtension;
+            }
+
+            return AllSupportedFileExtensions.Contains(fileExtension.ToLower());
+        }
     }
 }

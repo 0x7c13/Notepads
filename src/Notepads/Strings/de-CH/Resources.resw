@@ -685,4 +685,12 @@
     <value>Renamed</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Empty file extension is not supported at this moment</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>File extension "{0}" is not supported at this moment</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  </data>
 </root>

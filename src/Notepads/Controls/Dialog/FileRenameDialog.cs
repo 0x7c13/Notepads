@@ -3,10 +3,10 @@
     using System;
     using Windows.System;
     using Windows.UI;
-    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using Notepads.Services;
     using Notepads.Utilities;
 
     public class FileRenameDialog : NotepadsDialog
@@ -19,9 +19,12 @@
 
         private readonly string _originalFilename;
 
-        public FileRenameDialog(string filename, Action<string> confirmedAction)
+        private readonly bool _fileExists;
+
+        public FileRenameDialog(string filename, bool fileExists, Action<string> confirmedAction)
         {
             _originalFilename = filename;
+            _fileExists = fileExists;
             _confirmedAction = confirmedAction;
 
             _fileNameTextBox = new TextBox
@@ -40,8 +43,7 @@
                 Visibility = Visibility.Collapsed,
                 Margin = new Thickness(4, 10, 4, 0),
                 FontSize = Math.Clamp(_fileNameTextBox.FontSize - 2, 1, Double.PositiveInfinity),
-                Foreground = new SolidColorBrush(Colors.Red),
-                FontStyle = FontStyle.Italic
+                TextWrapping = TextWrapping.Wrap
             };
 
             var contentStack = new StackPanel();
@@ -57,28 +59,38 @@
             _fileNameTextBox.TextChanging += OnTextChanging;
             _fileNameTextBox.KeyDown += OnKeyDown;
 
-            PrimaryButtonClick += (dialog, args) =>
+            PrimaryButtonClick += (sender, args) => TryRename();
+        }
+
+        private bool TryRename()
+        {
+            var newFileName = _fileNameTextBox.Text;
+
+            if (string.Compare(_originalFilename, newFileName, StringComparison.Ordinal) == 0)
             {
-                var newFileName = _fileNameTextBox.Text;
-                if (FileSystemUtility.IsFilenameValid(newFileName, out var error))
-                {
-                    confirmedAction(newFileName.Trim());
-                }
-            };
+                return false;
+            }
+
+            if (!FileSystemUtility.IsFilenameValid(newFileName, out var error))
+            {
+                return false;
+            }
+
+            if (_fileExists && !FileTypeService.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
+            {
+                return false;
+            }
+
+            _confirmedAction(newFileName.Trim());
+            return true;
         }
 
         private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
             {
-                var newFileName = _fileNameTextBox.Text;
-
-                var isFilenameValid = FileSystemUtility.IsFilenameValid(newFileName, out var error);
-                var nameChanged = string.Compare(_originalFilename, newFileName, StringComparison.Ordinal) != 0;
-
-                if (isFilenameValid && nameChanged)
+                if (TryRename())
                 {
-                    _confirmedAction(newFileName.Trim());
                     Hide();
                 }
             }
@@ -88,20 +100,43 @@
         {
             if (args.IsContentChanging)
             {
-                var isFilenameValid = FileSystemUtility.IsFilenameValid(sender.Text, out var error);
-                var nameChanged = string.Compare(_originalFilename, sender.Text, StringComparison.Ordinal) != 0;
+                var newFilename = sender.Text;
+                var isFilenameValid = FileSystemUtility.IsFilenameValid(newFilename, out var error);
+                var nameChanged = string.Compare(_originalFilename, newFilename, StringComparison.Ordinal) != 0;
+                var isExtensionSupported = false;
+                var fileExtension = FileTypeUtility.GetFileExtension(newFilename);
 
-                IsPrimaryButtonEnabled = isFilenameValid && nameChanged;
+                if (!_fileExists) // User can rename whatever they want for new file
+                {
+                    isExtensionSupported = true;
+                }
+                else if (FileTypeService.IsFileExtensionSupported(fileExtension))
+                {
+                    // User can only rename an existing file if extension is supported by the app
+                    // This is a Windows 10 UWP limitation
+                    isExtensionSupported = true;
+                }
 
                 if (!isFilenameValid)
                 {
+                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.Red);
                     _errorMessageTextBlock.Text = ResourceLoader.GetString($"InvalidFilenameError_{error}");
+                    _errorMessageTextBlock.Visibility = Visibility.Visible;
+                }
+                else if (!isExtensionSupported)
+                {
+                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.Yellow);
+                    _errorMessageTextBlock.Text = string.IsNullOrEmpty(fileExtension)
+                        ? string.Format(ResourceLoader.GetString("FileRenameError_EmptyFileExtension"))
+                        : string.Format(ResourceLoader.GetString("FileRenameError_UnsupportedFileExtension"), fileExtension);
                     _errorMessageTextBlock.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     _errorMessageTextBlock.Visibility = Visibility.Collapsed;
                 }
+
+                IsPrimaryButtonEnabled = isFilenameValid && nameChanged && isExtensionSupported;
             }
         }
     }
