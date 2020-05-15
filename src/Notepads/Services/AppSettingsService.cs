@@ -7,7 +7,7 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
 
-    public static class EditorSettingsService
+    public static class AppSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
         public static event EventHandler<FontStyle> OnFontStyleChanged;
@@ -444,7 +444,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[{nameof(EditorSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(AppSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
                     _editorDefaultDecoding = null;
                 }
             }

@@ -23,13 +23,14 @@
     {
         private void InitializeStatusBar()
         {
-            ShowHideStatusBar(EditorSettingsService.ShowStatusBar);
-            EditorSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
+            ShowHideStatusBar(AppSettingsService.ShowStatusBar);
+            AppSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
         }
 
         private void SetupStatusBar(ITextEditor textEditor)
         {
             if (textEditor == null) return;
+            UpdateApplicationTitle(textEditor);
             UpdateFileModificationStateIndicator(textEditor);
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
@@ -187,7 +188,7 @@
                     break;
                 case "RevertAllChanges":
                     var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
-                    var revertAllChangesConfirmationDialog = NotepadsDialogFactory.GetRevertAllChangesConfirmationDialog(
+                    var revertAllChangesConfirmationDialog = new RevertAllChangesConfirmationDialog(
                         fileName,
                         confirmedAction: () =>
                          {
@@ -213,7 +214,7 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
+                    var fileOpenErrorDialog = new FileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     if (!fileOpenErrorDialog.IsAborted)
                     {
@@ -255,6 +256,13 @@
             {
                 LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open containing folder: {ex.Message}");
             }
+        }
+
+        private async void RenameFileAsync(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            if (selectedEditor?.EditingFile == null) return;
+            await RenameFileAsync(selectedEditor);
         }
 
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
@@ -355,16 +363,27 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
             }
         }
 
-        private void PathIndicatorClicked(ITextEditor selectedEditor)
+        private async void PathIndicatorClicked(ITextEditor selectedEditor)
         {
             NotepadsCore.FocusOnSelectedTextEditor();
 
             PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
+            PathIndicatorFlyoutFileRenameFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText");
+
+            if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted ||
+                (selectedEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(selectedEditor.EditingFile)))
+            {
+                PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = false;
+            }
+            else
+            {
+                PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = true;
+            }
 
             if (App.IsGameBarWidget)
             {
@@ -377,6 +396,10 @@
                 {
                     PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
                 }
+                else
+                {
+                    await RenameFileAsync(selectedEditor);
+                }
             }
             else if (selectedEditor.FileModificationState == FileModificationState.Modified)
             {
@@ -384,7 +407,7 @@
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2000);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
             }
         }
 
@@ -574,7 +597,7 @@
                 }
                 catch (Exception ex)
                 {
-                    var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                    var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     if (!fileOpenErrorDialog.IsAborted)
                     {
@@ -609,7 +632,7 @@
                     }
                     catch (Exception ex)
                     {
-                        var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
+                        var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                         await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                         if (!fileOpenErrorDialog.IsAborted)
                         {

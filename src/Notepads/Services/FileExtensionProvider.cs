@@ -2,14 +2,14 @@
 {
     using System.Collections.Generic;
 
-    public static class FileTypeService
+    public static class FileExtensionProvider
     {
         public static IList<string> TextDocumentFileExtensions { get; } = new List<string>() { ".txt", ".md", ".markdown" };
 
         public static IList<string> AllSupportedFileExtensions { get; } = new List<string>()
         {
             ".txt", ".md", ".markdown", ".csv",
-            ".cfg", ".config", ".cnf", ".conf", ".ini", ".log", ".nfo", ".ahk",
+            ".cfg", ".config", ".cnf", ".conf", ".ini", ".log", ".v", ".nfo", ".ahk",
             ".json", ".yml", ".yaml", ".xml", ".xaml",
             ".html", ".htm", ".asp", ".aspx", ".jsp", ".jspx", ".css", ".scss", ".vue", ".vuerc", ".cgi",
             ".gitignore", ".gitconfig", ".gitattributes",
@@ -19,5 +19,20 @@
             ".srt", ".ass", ".ssa", ".lrc",
             ".project", ".prj", ".npmrc", ".buildpath",
         };
+
+        public static bool IsFileExtensionSupported(string fileExtension)
+        {
+            if (string.IsNullOrEmpty(fileExtension))
+            {
+                return false;
+            }
+
+            if (!fileExtension.StartsWith("."))
+            {
+                fileExtension = "." + fileExtension;
+            }
+
+            return AllSupportedFileExtensions.Contains(fileExtension.ToLower());
+        }
     }
 }

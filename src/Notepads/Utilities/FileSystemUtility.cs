@@ -5,22 +5,81 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
-    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
+
+    public enum InvalidFilenameError
+    {
+        None = 0,
+        EmptyOrAllWhitespace,
+        ContainsLeadingSpaces,
+        ContainsTrailingSpaces,
+        ContainsInvalidCharacters,
+        InvalidOrNotAllowed,
+        TooLong,
+    }
 
     public static class FileSystemUtility
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string WslRootPath = "\\\\wsl$\\";
+
+        // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
+        private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
+
+        public static bool IsFilenameValid(string filename, out InvalidFilenameError error)
+        {
+            if (filename.Length > 255)
+            {
+                error = InvalidFilenameError.TooLong;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                error = InvalidFilenameError.EmptyOrAllWhitespace;
+                return false;
+            }
+
+            // Although shell supports file with leading spaces, explorer and file picker does not
+            // So we treat it as invalid file name as well
+            if (filename.StartsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsLeadingSpaces;
+                return false;
+            }
+
+            if (filename.EndsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsTrailingSpaces;
+                return false;
+            }
+
+            var illegalChars = Path.GetInvalidFileNameChars();
+            if (filename.Any(c => illegalChars.Contains(c)))
+            {
+                error = InvalidFilenameError.ContainsInvalidCharacters;
+                return false;
+            }
+
+            if (filename.EndsWith(".") || !ValidWindowsFileNames.IsMatch(filename))
+            {
+                error = InvalidFilenameError.InvalidOrNotAllowed;
+                return false;
+            }
+
+            error = InvalidFilenameError.None;
+            return true;
+        }
 
         public static bool IsFullPath(string path)
         {
@@ -190,7 +249,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> FileIsWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(StorageFile file)
         {
             try
             {
@@ -303,7 +362,7 @@
                 }
                 else // No BOM, need to guess or use default decoding set by user
                 {
-                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    if (AppSettingsService.EditorDefaultDecoding == null)
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
@@ -313,7 +372,7 @@
                     }
                     else
                     {
-                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);
+                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding);
                     }
                 }
             }
@@ -469,11 +528,11 @@
 
             try
             {
-                if (IsFileReadOnly(file) || !await FileIsWritable(file))
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
                 {
                     // For file(s) dragged into Notepads, they are read-only
-                    // StorageFile API won't work but can be overwritten by Win32 PathIO API (exploit?)
-                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException exception
+                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
                     var content = encoding.GetBytes(text);
                     var result = encoding.GetPreamble().Concat(content).ToArray();
                     await PathIO.WriteBytesAsync(file.Path, result);
@@ -486,8 +545,7 @@
                         stream.Position = 0;
                         await writer.WriteAsync(text);
                         await writer.FlushAsync();
-                        // Truncate
-                        stream.SetLength(stream.Position);
+                        stream.SetLength(stream.Position); // Truncate
                     }
                 }
             }
@@ -553,57 +611,6 @@
             {
                 LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
-            }
-        }
-
-        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
-        {
-            try
-            {
-                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
-                {
-                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get file from future access list: {ex.Message}");
-            }
-            return null;
-        }
-
-        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
-        {
-            try
-            {
-                if (await FileExists(file))
-                {
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
-                    new Dictionary<string, string>()
-                    {
-                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
-                        { "Exception", ex.Message }
-                    });
-            }
-            return false;
-        }
-
-        public static int GetFutureAccessListItemCount()
-        {
-            try
-            {
-                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
-            }
-            catch
-            {
-                return -1;
             }
         }
     }

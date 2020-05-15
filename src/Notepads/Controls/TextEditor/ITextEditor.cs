@@ -27,6 +27,7 @@
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
+        event EventHandler FileRenamed;
 
         Guid Id { get; set; }
 
@@ -62,6 +63,8 @@
             bool clearUndoQueue = true,
             bool isModified = false,
             bool resetText = true);
+
+        Task RenameAsync(string newFileName);
 
         string GetText();
 
