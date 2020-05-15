@@ -125,7 +125,7 @@
                 }
                 else if (!isExtensionSupported)
                 {
-                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.Yellow);
+                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.OrangeRed);
                     _errorMessageTextBlock.Text = string.IsNullOrEmpty(fileExtension)
                         ? string.Format(ResourceLoader.GetString("FileRenameError_EmptyFileExtension"))
                         : string.Format(ResourceLoader.GetString("FileRenameError_UnsupportedFileExtension"), fileExtension);
