@@ -366,7 +366,7 @@
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Display</value>
+    <value>Görüntü</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
@@ -374,23 +374,23 @@
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Display line numbers in the document.</value>
+    <value>Belgede satır numaralarını görüntüle.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Satır numaralarını görüntüle</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Satır numaralarını görüntüle</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Style</value>
+    <value>Varsayılan Yazı Tipi Biçimi</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Weight</value>
+    <value>Varsayılan Yazı Tipi Ağırlığı</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>
