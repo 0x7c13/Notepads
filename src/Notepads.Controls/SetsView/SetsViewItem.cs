@@ -94,7 +94,7 @@ namespace Notepads.Controls
         {
             _isMiddleClick = false;
 
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            if (e?.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 PointerPoint pointerPoint = e.GetCurrentPoint(this);
 

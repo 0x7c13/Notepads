@@ -29,7 +29,7 @@
     </Style>
 
     <Style TargetType="local:InAppNotification" BasedOn="{StaticResource BaseInAppNotificationsStyle}">
-        <Setter Property="Background" Value="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlAcrylicElementBrush}" />
     </Style>
 
 </ResourceDictionary>

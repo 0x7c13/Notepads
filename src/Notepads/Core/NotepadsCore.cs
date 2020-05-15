@@ -32,6 +32,7 @@
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorSaved;
+        public event EventHandler<ITextEditor> TextEditorRenamed;
         public event EventHandler<ITextEditor> TextEditorClosing;
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
@@ -86,13 +87,13 @@
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(_dispatcher, () =>
+            await _dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
                 {
-                    item.Icon.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-                    item.SelectionIndicatorForeground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                    item.Icon.Foreground = new SolidColorBrush(color);
+                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
         }
@@ -100,8 +101,8 @@
         public void OpenNewTextEditor(string fileNamePlaceholder)
         {
             var textFile = new TextFile(string.Empty,
-                EditorSettingsService.EditorDefaultEncoding,
-                EditorSettingsService.EditorDefaultLineEnding);
+                AppSettingsService.EditorDefaultEncoding,
+                AppSettingsService.EditorDefaultLineEnding);
             var newEditor = CreateTextEditor(
                 Guid.NewGuid(),
                 textFile,
@@ -201,6 +202,7 @@
             textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed += TextEditor_OnFileRenamed;
 
             return textEditor;
         }
@@ -238,6 +240,7 @@
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed -= TextEditor_OnFileRenamed;
             textEditor.Dispose();
         }
 
@@ -292,13 +295,25 @@
 
             if (next && setsCount > 1)
             {
-                if (selected == setsCount - 1) Sets.SelectedIndex = 0;
-                else Sets.SelectedIndex += 1;
+                if (selected == setsCount - 1)
+                {
+                    Sets.SelectedIndex = 0;
+                }
+                else
+                {
+                    Sets.SelectedIndex += 1;
+                }
             }
             else if (!next && setsCount > 1)
             {
-                if (selected == 0) Sets.SelectedIndex = setsCount - 1;
-                else Sets.SelectedIndex -= 1;
+                if (selected == 0)
+                {
+                    Sets.SelectedIndex = setsCount - 1;
+                }
+                else
+                {
+                    Sets.SelectedIndex -= 1;
+                }
             }
         }
 
@@ -382,24 +397,16 @@
             Sets.ScrollTo(offset);
         }
 
-        private void SwitchTo(StorageFile file)
-        {
-            var item = GetTextEditorSetsViewItem(file);
-            Sets.SelectedItem = item;
-            Sets.ScrollIntoView(item);
-        }
-
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground =
-                    Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Icon = new SymbolIcon(Symbol.Save)
                 {
-                    Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush,
+                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 }
             };
 
@@ -548,6 +555,15 @@
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
         }
 
+        private void TextEditor_OnFileRenamed(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
+            item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
+            TextEditorRenamed?.Invoke(this, textEditor);
+        }
+
         #region DragAndDrop
 
         private async void Sets_DragOver(object sender, DragEventArgs args)
@@ -651,18 +667,16 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to prepare editor meta data for drag and drop: {ex.Message}");
+                LoggingService.LogError($"[{nameof(NotepadsCore)}] Failed to prepare editor meta data for drag and drop: {ex.Message}");
             }
         }
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView))
+            if (!(sender is SetsView sets))
             {
                 return;
             }
-
-            var sets = sender as SetsView;
 
             // Handle non Notepads drop event
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||

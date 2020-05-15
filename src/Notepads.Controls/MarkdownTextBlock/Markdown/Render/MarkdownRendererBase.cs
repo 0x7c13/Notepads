@@ -17,7 +17,7 @@ namespace Notepads.Controls.Markdown
         /// Initializes a new instance of the <see cref="MarkdownRendererBase"/> class.
         /// </summary>
         /// <param name="document">Markdown Document to Render</param>
-        public MarkdownRendererBase(MarkdownDocument document)
+        protected MarkdownRendererBase(MarkdownDocument document)
         {
             Document = document;
         }
@@ -166,7 +166,7 @@ namespace Notepads.Controls.Markdown
         /// Removes leading whitespace, but only if this is the first run in the block.
         /// </summary>
         /// <returns>The corrected string</returns>
-        protected string CollapseWhitespace(IRenderContext context, string text)
+        protected static string CollapseWhitespace(IRenderContext context, string text)
         {
             bool dontOutputWhitespace = context.TrimLeadingWhitespace;
             StringBuilder result = null;

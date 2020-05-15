@@ -23,8 +23,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderBlocks(IEnumerable<MarkdownBlock> blockElements, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -97,8 +96,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderYamlHeader(YamlHeaderBlock element, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -224,8 +222,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderListElement(ListBlock element, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -285,8 +282,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderHorizontalRule(IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -315,8 +311,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderQuote(QuoteBlock element, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -354,8 +349,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderCode(CodeBlock element, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }
@@ -416,8 +410,7 @@ namespace Notepads.Controls.Markdown
         /// </summary>
         protected override void RenderTable(TableBlock element, IRenderContext context)
         {
-            var localContext = context as UIElementCollectionRenderContext;
-            if (localContext == null)
+            if (!(context is UIElementCollectionRenderContext localContext))
             {
                 throw new RenderContextIncorrectException();
             }

@@ -30,13 +30,13 @@
                     return;
                 }
 
-                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(EditorSettingsService.EditorDefaultSearchEngine)
+                var searchUri = new Uri(string.Format(SearchEngineUtility.GetSearchUrlBySearchEngine(AppSettingsService.EditorDefaultSearchEngine)
                     , string.Join("+", searchString.Split(null))));
                 await Launcher.LaunchUriAsync(searchUri);
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to open search link: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to open search link: {ex.Message}");
             }
         }
     }

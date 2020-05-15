@@ -39,7 +39,6 @@ namespace Notepads.Controls.Markdown
         {
             var result = new QuoteBlock
             {
-
                 // Recursively call into the markdown block parser.
                 Blocks = MarkdownDocument.Parse(markdown, startOfLine, maxEnd, quoteDepth: quoteDepth + 1, actualEnd: out actualEnd)
             };

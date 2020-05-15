@@ -162,7 +162,7 @@ namespace Notepads.Controls.Markdown
                     {
                         var imageWidthStr = markdown.Substring(imageDimensionsPos + 2, pos - imageDimensionsPos - 2);
 
-                        int.TryParse(imageWidthStr, out imageWidth);
+                        _ = int.TryParse(imageWidthStr, out imageWidth);
                     }
                     else
                     {
@@ -171,8 +171,8 @@ namespace Notepads.Controls.Markdown
                         // got width and height
                         if (dimensions.Length == 2)
                         {
-                            int.TryParse(dimensions[0], out imageWidth);
-                            int.TryParse(dimensions[1], out imageHeight);
+                            _ = int.TryParse(dimensions[0], out imageWidth);
+                            _ = int.TryParse(dimensions[1], out imageHeight);
                         }
                     }
                 }

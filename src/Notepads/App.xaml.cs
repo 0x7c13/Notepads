@@ -14,6 +14,7 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -43,8 +44,7 @@
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
 
-            //await LoggingService.InitializeAsync();
-            LoggingService.LogInfo($"[App Started] Instance = {Id} IsFirstInstance: {IsFirstInstance}");
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
@@ -86,34 +86,37 @@
                 rootFrameCreated = true;
 
                 ThemeSettingsService.Initialize();
-                EditorSettingsService.Initialize();
+                AppSettingsService.Initialize();
             }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
-                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
-                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
-                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
-                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
-                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
-                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
-                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
-                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
-                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
+                { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", AppSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", AppSettingsService.EditorFontFamily },
+                { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
+                { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
+                { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
                 { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
-                { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
-                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
-            LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
+            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
             Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
             try
@@ -134,8 +137,8 @@
 
             if (rootFrameCreated)
             {
-                Window.Current.Activate();
                 ExtendViewIntoTitleBar();
+                Window.Current.Activate();
             }
         }
 
@@ -159,7 +162,7 @@
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            var exception = new Exception($"Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
+            var exception = new Exception($"[{nameof(App)}] Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
             LoggingService.LogException(exception);
             Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
@@ -179,14 +182,25 @@
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            try
+            {
+                // Here we flush the Clipboard again to make sure content in clipboard to remain available
+                // after the application shuts down.
+                Clipboard.Flush();
+            }
+            catch (Exception)
+            {
+                // Best efforts
+            }
+
             deferral.Complete();
         }
 
         // Occurs when an exception is not handled on the UI thread.
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            LoggingService.LogError($"OnUnhandledException: {e.Exception}");
+            LoggingService.LogError($"[{nameof(App)}] OnUnhandledException: {e.Exception}");
 
             var diagnosticInfo = new Dictionary<string, string>()
             {
@@ -202,7 +216,11 @@
             };
 
             var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, Message: {e.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}", "UnhandledException");
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "UnhandledException");
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
             Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
@@ -215,7 +233,7 @@
         // ie. A task is fired and forgotten Task.Run(() => {...})
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            LoggingService.LogError($"OnUnobservedException: {e.Exception}");
+            LoggingService.LogError($"[{nameof(App)}] OnUnobservedException: {e.Exception}");
 
             var diagnosticInfo = new Dictionary<string, string>()
             {
@@ -226,7 +244,10 @@
             };
 
             var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, Message: {e.Exception?.Message}, InnerException: {e.Exception?.InnerException}, InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Exception?.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
                 "UnobservedException");
 
             Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);
@@ -236,7 +257,7 @@
             e.SetObserved();
         }
 
-        private void ExtendViewIntoTitleBar()
+        private static void ExtendViewIntoTitleBar()
         {
             if (!IsGameBarWidget)
             {

@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Utilities
 {
+    using System;
     using System.Linq;
 
     public enum FileType
@@ -12,14 +13,24 @@
 
     public static class FileTypeUtility
     {
-        public static FileType GetFileTypeByFileName(string fileName)
+        public static string GetFileExtension(string filename)
         {
-            if (string.IsNullOrEmpty(fileName) || !fileName.Contains("."))
+            if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
+            {
+                return string.Empty;
+            }
+
+            return filename.Substring(filename.LastIndexOf(".", StringComparison.Ordinal));
+        }
+
+        public static FileType GetFileTypeByFileName(string filename)
+        {
+            if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
             {
                 return FileType.Unknown;
             }
 
-            return GetFileTypeByFileExtension(fileName.Split(".").Last());
+            return GetFileTypeByFileExtension(filename.Split(".").Last());
         }
 
         public static FileType GetFileTypeByFileExtension(string extension)

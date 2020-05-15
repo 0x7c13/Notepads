@@ -12,8 +12,15 @@ namespace Notepads.Controls.Markdown
     /// </summary>
     public class RenderContextIncorrectException : Exception
     {
-        internal RenderContextIncorrectException()
-            : base("Markdown Render Context missing or incorrect.")
+        internal RenderContextIncorrectException() : base("Markdown Render Context missing or incorrect.")
+        {
+        }
+
+        public RenderContextIncorrectException(string message) : base(message)
+        {
+        }
+
+        public RenderContextIncorrectException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

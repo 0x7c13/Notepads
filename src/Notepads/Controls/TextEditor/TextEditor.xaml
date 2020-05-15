@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Notepads.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
-    xmlns:diffViewer="using:Notepads.Extensions.DiffViewer"
+    xmlns:diffViewer="using:Notepads.Controls.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
     xmlns:goTo="using:Notepads.Controls.GoTo"
     mc:Ignorable="d"
@@ -22,8 +22,6 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.5"
                                      Color="LightGray"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="#CACACA"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
@@ -32,16 +30,12 @@
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Opacity="0.3"
                                      Color="Black"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="#363636"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
-                    <SolidColorBrush x:Key="LineHighlightBorderBrush" 
-                                     Color="{ThemeResource SystemColorGrayTextColor}"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -95,11 +89,10 @@
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
-                <Border x:Name="LineHighlighter" BorderBrush="{ThemeResource LineHighlightBorderBrush}" VerticalAlignment="Top" Visibility="Collapsed"/>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
-                                       Style="{StaticResource TextEditorCore}" 
-                                       Grid.Column="0"
-                                       Padding="8 , 6, 10, 6"/>
+                                           Style="{StaticResource TextEditorCore}" 
+                                           Grid.Column="0"
+                                           Padding="6 , 6, 10, 6"/>
                 <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"
                                             Padding="0"
@@ -149,12 +142,14 @@
             <controls:DropShadowPanel    
                 Canvas.ZIndex="50"
                 Grid.Column="1"
-                ShadowOpacity="0.4"
+                ShadowOpacity="0.3"
                 BlurRadius="12"
-                Margin="-1,0"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Left">
-                <Grid Width="1"/>
+                <Grid Width="2"/>
+                <controls:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="-12,0,12,12960"></RectangleGeometry>
+                </controls:DropShadowPanel.Clip>
             </controls:DropShadowPanel>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"

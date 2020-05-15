@@ -35,7 +35,7 @@
         RenamedMovedOrDeleted
     }
 
-    public sealed partial class TextEditor : ITextEditor
+    public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;
@@ -51,6 +51,7 @@
         public event EventHandler FontZoomFactorChanged;
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
+        public event EventHandler FileRenamed;
 
         public Guid Id { get; set; }
 
@@ -77,19 +78,24 @@
             get => _editingFile;
             private set
             {
-                if (value == null)
-                {
-                    EditingFileName = null;
-                    EditingFilePath = null;
-                    FileType = FileType.TextFile;
-                }
-                else
-                {
-                    EditingFileName = value.Name;
-                    EditingFilePath = value.Path;
-                    FileType = FileTypeUtility.GetFileTypeByFileName(value.Name);
-                }
                 _editingFile = value;
+                UpdateDocumentInfo();
+            }
+        }
+
+        private void UpdateDocumentInfo()
+        {
+            if (EditingFile == null)
+            {
+                EditingFileName = null;
+                EditingFilePath = null;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+            }
+            else
+            {
+                EditingFileName = EditingFile.Name;
+                EditingFilePath = EditingFile.Path;
+                FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
         }
 
@@ -158,6 +164,18 @@
             }
         }
 
+        public bool DisplayLineNumbers
+        {
+            get => TextEditorCore.DisplayLineNumbers;
+            set => TextEditorCore.DisplayLineNumbers = value;
+        }
+
+        public bool DisplayLineHighlighter
+        {
+            get => TextEditorCore.DisplayLineHighlighter;
+            set => TextEditorCore.DisplayLineHighlighter = value;
+        }
+
         public TextEditor()
         {
             InitializeComponent();
@@ -176,13 +194,6 @@
             base.Loaded += TextEditor_Loaded;
             base.Unloaded += TextEditor_Unloaded;
             base.KeyDown += TextEditor_KeyDown;
-
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += LineHighlighter_OnViewStateChanged;
-            TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
-            TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
-            TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerViewChanging += LineHighlighter_OnScrollViewerViewChanging;
-            TextEditorCore.SizeChanged += LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         }
@@ -214,13 +225,6 @@
             base.Loaded -= TextEditor_Loaded;
             base.Unloaded -= TextEditor_Unloaded;
             base.KeyDown -= TextEditor_KeyDown;
-
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= LineHighlighter_OnViewStateChanged;
-            TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
-            TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
-            TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerViewChanging -= LineHighlighter_OnScrollViewerViewChanging;
-            TextEditorCore.SizeChanged -= LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
@@ -256,22 +260,46 @@
                 UnloadObject(GridSplitter);
             }
 
+            _fileStatusSemaphoreSlim.Dispose();
             TextEditorCore.Dispose();
         }
 
         private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme theme)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (Mode == TextEditorMode.DiffPreview)
                 {
                     SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), theme);
                     Task.Factory.StartNew(async () =>
                     {
-                        await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () => { SideBySideDiffViewer.Focus(); });
+                        await Dispatcher.CallOnUIThreadAsync(() => { SideBySideDiffViewer.Focus(); });
                     });
                 }
             });
+        }
+
+        public async Task RenameAsync(string newFileName)
+        {
+            if (EditingFile == null)
+            {
+                FileNamePlaceholder = newFileName;
+            }
+            else
+            {
+                await EditingFile.RenameAsync(newFileName);
+            }
+
+            UpdateDocumentInfo();
+
+            if (SplitPanel != null &&
+                SplitPanel.Visibility == Visibility.Visible &&
+                !FileTypeUtility.IsPreviewSupported(FileType))
+            {
+                ShowHideContentPreview();
+            }
+
+            FileRenamed?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetText()
@@ -344,8 +372,8 @@
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
-                        LoggingService.LogInfo($"Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        await CheckAndUpdateFileStatus();
+                        LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -356,7 +384,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
             }
         }
 
@@ -368,11 +396,17 @@
             }
         }
 
-        private async Task CheckAndUpdateFileStatus()
+        private async Task CheckAndUpdateFileStatus(CancellationToken cancellationToken)
         {
             if (EditingFile == null) return;
 
-            await _fileStatusSemaphoreSlim.WaitAsync();
+            await _fileStatusSemaphoreSlim.WaitAsync(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
 
             FileModificationState? newState = null;
 
@@ -387,7 +421,13 @@
                     FileModificationState.Untouched;
             }
 
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _fileStatusSemaphoreSlim.Release();
+                return;
+            }
+
+            await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FileModificationState = newState.Value;
             });
@@ -403,30 +443,13 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => { if (FileTypeUtility.IsPreviewSupported(FileType)) ShowHideContentPreview(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
-                {
-                    if (_isContentPreviewPanelOpened)
-                    {
-                        _contentPreviewExtension.IsExtensionEnabled = false;
-                        CloseSplitView();
-                    }
-                    else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideFindAndReplaceControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                    else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
-                    {
-                        HideGoToControl();
-                        TextEditorCore.Focus(FocusState.Programmatic);
-                    }
-                }, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
             });
         }
 
@@ -492,12 +515,10 @@
             }
 
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
-            TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
+            TextEditorCore.FontSize = metadata.FontZoomFactor * AppSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
             TextEditorCore.ClearUndoQueue();
-
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         public void RevertAllChanges()
@@ -742,7 +763,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to copy plain text to Windows clipboard: {ex.Message}");
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
             }
         }
 
@@ -767,6 +788,25 @@
                 return false;
             }
             return true;
+        }
+
+        private void OnEscapeKeyDown()
+        {
+            if (_isContentPreviewPanelOpened)
+            {
+                _contentPreviewExtension.IsExtensionEnabled = false;
+                CloseSplitView();
+            }
+            else if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+            {
+                HideFindAndReplaceControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
+            else if (GoToPlaceholder != null && GoToPlaceholder.Visibility == Visibility.Visible)
+            {
+                HideGoToControl();
+                TextEditorCore.Focus(FocusState.Programmatic);
+            }
         }
 
         private void LoadSplitView()
@@ -1021,98 +1061,6 @@
         {
             GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
-        }
-
-        private void DrawLineHighlighter()
-        {
-            TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
-            LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
-
-            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
-
-            TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
-            var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
-
-            if (lineHighlighterMargin.Top >= 0)
-            {
-                LineHighlighter.Visibility = Visibility.Visible;
-                LineHighlighter.Margin = lineHighlighterMargin;
-                LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness);
-            }
-            else
-            {
-                if (LineHighlighter.Height + lineHighlighterMargin.Top > TextEditorCore.Padding.Top)
-                {
-                    LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness, 0, lineHighlighterBorderThickness, lineHighlighterBorderThickness);
-                    LineHighlighter.Height += lineHighlighterMargin.Top;
-                    LineHighlighter.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    LineHighlighter.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
-
-        private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (enabled)
-                {
-                    LineHighlighter.Visibility = Visibility.Visible;
-                    DrawLineHighlighter();
-                }
-                else
-                {
-                    LineHighlighter.Visibility = Visibility.Collapsed;
-                }
-            });
-        }
-
-        private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled)
-                {
-                    // TextWrapping changed event happens before layout updated, so we need to update here
-                    TextEditorCore.UpdateLayout();
-                    DrawLineHighlighter();
-                }
-            });
-        }
-
-        private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
-        {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, () =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
         }
     }
 }

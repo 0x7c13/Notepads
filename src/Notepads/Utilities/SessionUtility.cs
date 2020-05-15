@@ -16,7 +16,12 @@
         private const string SessionMetaDataFileDefaultName = "NotepadsSessionData.json";
         private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
-        public static ISessionManager GetSessionManager(INotepadsCore notepadCore, string filePathPrefix = null)
+        public static ISessionManager GetSessionManager(INotepadsCore notepadCore)
+        {
+            return GetSessionManager(notepadCore, null);
+        }
+
+        public static ISessionManager GetSessionManager(INotepadsCore notepadCore, string filePathPrefix)
         {
             if (!SessionManagers.TryGetValue(notepadCore, out ISessionManager sessionManager))
             {
@@ -59,13 +64,13 @@
                 if (await localFolder.FileExistsAsync(sessionMetaDataFileName))
                 {
                     var data = await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
-                    LoggingService.LogInfo($"[SessionUtility] Session metadata Loaded from {localFolder.Path}");
+                    LoggingService.LogInfo($"[{nameof(SessionUtility)}] Session metadata Loaded from {localFolder.Path}");
                     return data;
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[SessionUtility] Failed to get session meta data: {ex.Message}");
+                LoggingService.LogError($"[{nameof(SessionUtility)}] Failed to get session meta data: {ex.Message}");
                 Analytics.TrackEvent("FailedToGetSerializedSessionMetaData", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },

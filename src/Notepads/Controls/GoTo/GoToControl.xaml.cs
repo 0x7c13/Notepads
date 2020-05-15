@@ -1,8 +1,8 @@
 ﻿namespace Notepads.Controls.GoTo
 {
     using System;
+    using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
     using Windows.UI;
@@ -32,31 +32,29 @@
         {
             InitializeComponent();
 
-            SetSelectionHighlightColor();
+            SetSelectionHighlightColor(ThemeSettingsService.AppAccentColor);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             Loaded += GoToControl_Loaded;
-            Unloaded += GoToControl_Unloaded;
         }
 
         public void Dispose()
         {
+            Loaded -= GoToControl_Loaded;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void GoToControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus();
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
-        }
-
-        private void GoToControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            await ThreadUtility.CallOnUIThreadAsync(Dispatcher, SetSelectionHighlightColor);
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                SetSelectionHighlightColor(color);
+            });
         }
 
         public double GetHeight()
@@ -64,12 +62,10 @@
             return GoToRootGrid.Height;
         }
 
-        private void SetSelectionHighlightColor()
+        private void SetSelectionHighlightColor(Color color)
         {
-            GoToBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            GoToBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            GoToBar.SelectionHighlightColor = new SolidColorBrush(color);
+            GoToBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
         }
 
         public void Focus()
