@@ -66,7 +66,7 @@
         {
             var newFileName = _fileNameTextBox.Text;
 
-            if (string.Compare(_originalFilename, newFileName, StringComparison.Ordinal) == 0)
+            if (string.Compare(_originalFilename, newFileName, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return false;
             }
@@ -76,7 +76,7 @@
                 return false;
             }
 
-            if (_fileExists && !FileTypeService.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
+            if (_fileExists && !FileExtensionProvider.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
             {
                 return false;
             }
@@ -98,46 +98,45 @@
 
         private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
         {
-            if (args.IsContentChanging)
+            if (!args.IsContentChanging) return;
+
+            var newFilename = sender.Text;
+            var isFilenameValid = FileSystemUtility.IsFilenameValid(newFilename, out var error);
+            var nameChanged = string.Compare(_originalFilename, newFilename, StringComparison.OrdinalIgnoreCase) != 0;
+            var isExtensionSupported = false;
+            var fileExtension = FileTypeUtility.GetFileExtension(newFilename);
+
+            if (!_fileExists) // User can rename whatever they want for new file
             {
-                var newFilename = sender.Text;
-                var isFilenameValid = FileSystemUtility.IsFilenameValid(newFilename, out var error);
-                var nameChanged = string.Compare(_originalFilename, newFilename, StringComparison.Ordinal) != 0;
-                var isExtensionSupported = false;
-                var fileExtension = FileTypeUtility.GetFileExtension(newFilename);
-
-                if (!_fileExists) // User can rename whatever they want for new file
-                {
-                    isExtensionSupported = true;
-                }
-                else if (FileTypeService.IsFileExtensionSupported(fileExtension))
-                {
-                    // User can only rename an existing file if extension is supported by the app
-                    // This is a Windows 10 UWP limitation
-                    isExtensionSupported = true;
-                }
-
-                if (!isFilenameValid)
-                {
-                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.Red);
-                    _errorMessageTextBlock.Text = ResourceLoader.GetString($"InvalidFilenameError_{error}");
-                    _errorMessageTextBlock.Visibility = Visibility.Visible;
-                }
-                else if (!isExtensionSupported)
-                {
-                    _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.OrangeRed);
-                    _errorMessageTextBlock.Text = string.IsNullOrEmpty(fileExtension)
-                        ? string.Format(ResourceLoader.GetString("FileRenameError_EmptyFileExtension"))
-                        : string.Format(ResourceLoader.GetString("FileRenameError_UnsupportedFileExtension"), fileExtension);
-                    _errorMessageTextBlock.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    _errorMessageTextBlock.Visibility = Visibility.Collapsed;
-                }
-
-                IsPrimaryButtonEnabled = isFilenameValid && nameChanged && isExtensionSupported;
+                isExtensionSupported = true;
             }
+            else if (FileExtensionProvider.IsFileExtensionSupported(fileExtension))
+            {
+                // User can only rename an existing file if extension is supported by the app
+                // This is a Windows 10 UWP limitation
+                isExtensionSupported = true;
+            }
+
+            if (!isFilenameValid)
+            {
+                _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                _errorMessageTextBlock.Text = ResourceLoader.GetString($"InvalidFilenameError_{error}");
+                _errorMessageTextBlock.Visibility = Visibility.Visible;
+            }
+            else if (!isExtensionSupported)
+            {
+                _errorMessageTextBlock.Foreground = new SolidColorBrush(Colors.OrangeRed);
+                _errorMessageTextBlock.Text = string.IsNullOrEmpty(fileExtension)
+                    ? string.Format(ResourceLoader.GetString("FileRenameError_EmptyFileExtension"))
+                    : string.Format(ResourceLoader.GetString("FileRenameError_UnsupportedFileExtension"), fileExtension);
+                _errorMessageTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                _errorMessageTextBlock.Visibility = Visibility.Collapsed;
+            }
+
+            IsPrimaryButtonEnabled = isFilenameValid && nameChanged && isExtensionSupported;
         }
     }
 }

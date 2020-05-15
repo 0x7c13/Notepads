@@ -22,7 +22,7 @@
             try
             {
                 var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in FileTypeService.AllSupportedFileExtensions)
+                foreach (var type in FileExtensionProvider.AllSupportedFileExtensions)
                 {
                     fileOpenPicker.FileTypeFilter.Add(type);
                 }

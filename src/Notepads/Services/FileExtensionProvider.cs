@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public static class FileTypeService
+    public static class FileExtensionProvider
     {
         public static IList<string> TextDocumentFileExtensions { get; } = new List<string>() { ".txt", ".md", ".markdown" };
 
