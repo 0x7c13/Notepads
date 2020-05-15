@@ -29,29 +29,29 @@
         private static readonly string _valueLabel = "Value";
         private static readonly string _adminCreatedLabel = "AdminCreated";
 
-        private static IReadOnlyDictionary<string,Settings> SettingsManager = new Dictionary<string, Settings>
+        private static IReadOnlyDictionary<string, Action<object>> SettingsManager = new Dictionary<string, Action<object>>
         {
-            {SettingsKey.AlwaysOpenNewWindowBool, SettingsDelegate.AlwaysOpenNewWindow},
-            {SettingsKey.AppAccentColorHexStr, SettingsDelegate.AppAccentColor},
-            {SettingsKey.AppBackgroundTintOpacityDouble, SettingsDelegate.AppBackgroundPanelTintOpacity},
-            {SettingsKey.CustomAccentColorHexStr, SettingsDelegate.CustomAccentColor},
-            {SettingsKey.EditorCustomMadeSearchUrlStr, SettingsDelegate.EditorCustomMadeSearchUrl},
-            {SettingsKey.EditorDefaultDecodingCodePageInt, SettingsDelegate.EditorDefaultDecoding},
-            {SettingsKey.EditorDefaultEncodingCodePageInt, SettingsDelegate.EditorDefaultEncoding},
-            {SettingsKey.EditorDefaultLineEndingStr, SettingsDelegate.EditorDefaultLineEnding},
-            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, SettingsDelegate.EditorDisplayLineHighlighter},
-            {SettingsKey.EditorDefaultDisplayLineNumbersBool, SettingsDelegate.EditorDisplayLineNumbers},
-            {SettingsKey.EditorDefaultSearchEngineStr, SettingsDelegate.EditorDefaultSearchEngine},
-            {SettingsKey.EditorDefaultTabIndentsInt, SettingsDelegate.EditorDefaultTabIndents},
-            {SettingsKey.EditorDefaultTextWrappingStr, SettingsDelegate.EditorDefaultTextWrapping},
-            {SettingsKey.EditorFontFamilyStr, SettingsDelegate.EditorFontFamily},
-            {SettingsKey.EditorFontSizeInt, SettingsDelegate.EditorFontSize},
-            {SettingsKey.EditorFontStyleStr, SettingsDelegate.EditorFontStyle},
-            {SettingsKey.EditorFontWeightUshort, SettingsDelegate.EditorFontWeight},
-            {SettingsKey.EditorHighlightMisspelledWordsBool, SettingsDelegate.IsHighlightMisspelledWordsEnabled},
-            {SettingsKey.EditorShowStatusBarBool, SettingsDelegate.ShowStatusBar},
-            {SettingsKey.UseWindowsAccentColorBool, SettingsDelegate.UseWindowsAccentColor},
-            {SettingsKey.RequestedThemeStr, SettingsDelegate.ThemeMode}
+            {SettingsKey.AlwaysOpenNewWindowBool, SettingsSyncService.AlwaysOpenNewWindow},
+            {SettingsKey.AppAccentColorHexStr, SettingsSyncService.AppAccentColor},
+            {SettingsKey.AppBackgroundTintOpacityDouble, SettingsSyncService.AppBackgroundPanelTintOpacity},
+            {SettingsKey.CustomAccentColorHexStr, SettingsSyncService.CustomAccentColor},
+            {SettingsKey.EditorCustomMadeSearchUrlStr, SettingsSyncService.EditorCustomMadeSearchUrl},
+            {SettingsKey.EditorDefaultDecodingCodePageInt, SettingsSyncService.EditorDefaultDecoding},
+            {SettingsKey.EditorDefaultEncodingCodePageInt, SettingsSyncService.EditorDefaultEncoding},
+            {SettingsKey.EditorDefaultLineEndingStr, SettingsSyncService.EditorDefaultLineEnding},
+            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, SettingsSyncService.EditorDisplayLineHighlighter},
+            {SettingsKey.EditorDefaultDisplayLineNumbersBool, SettingsSyncService.EditorDisplayLineNumbers},
+            {SettingsKey.EditorDefaultSearchEngineStr, SettingsSyncService.EditorDefaultSearchEngine},
+            {SettingsKey.EditorDefaultTabIndentsInt, SettingsSyncService.EditorDefaultTabIndents},
+            {SettingsKey.EditorDefaultTextWrappingStr, SettingsSyncService.EditorDefaultTextWrapping},
+            {SettingsKey.EditorFontFamilyStr, SettingsSyncService.EditorFontFamily},
+            {SettingsKey.EditorFontSizeInt, SettingsSyncService.EditorFontSize},
+            {SettingsKey.EditorFontStyleStr, SettingsSyncService.EditorFontStyle},
+            {SettingsKey.EditorFontWeightUshort, SettingsSyncService.EditorFontWeight},
+            {SettingsKey.EditorHighlightMisspelledWordsBool, SettingsSyncService.IsHighlightMisspelledWordsEnabled},
+            {SettingsKey.EditorShowStatusBarBool, SettingsSyncService.ShowStatusBar},
+            {SettingsKey.UseWindowsAccentColorBool, SettingsSyncService.UseWindowsAccentColor},
+            {SettingsKey.RequestedThemeStr, SettingsSyncService.ThemeMode}
         };
 
         public static async void Initialize()
@@ -88,7 +88,7 @@
                     UpdateRecentList?.Invoke(null, false);
                     break;
                 case CommandArgs.CreateElevetedExtension:
-                    await DispatcherExtensions.CallOnUIThreadAsync(SettingsDelegate.Dispatcher, () =>
+                    await DispatcherExtensions.CallOnUIThreadAsync(SettingsSyncService.Dispatcher, () =>
                     {
                         if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
                         {

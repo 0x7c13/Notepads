@@ -285,7 +285,7 @@
             {
                 await BuildOpenRecentButtonSubItems(updateForOtherInstaneArgs);
             });
-            SettingsDelegate.Dispatcher = Dispatcher;
+            SettingsSyncService.Dispatcher = Dispatcher;
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
