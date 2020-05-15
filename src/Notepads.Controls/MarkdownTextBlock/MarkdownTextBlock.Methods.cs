@@ -316,7 +316,7 @@ namespace Notepads.Controls
                             //    theme = RequestedTheme;
                             //}
 
-                            formatter = new RichTextBlockFormatter(RequestedTheme);
+                            formatter = new RichTextBlockFormatter(ActualTheme);
                         }
 
                         formatter.FormatInlines(text, language, inlineCollection);

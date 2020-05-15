@@ -76,7 +76,7 @@
                 return false;
             }
 
-            if (_fileExists && !FileTypeService.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
+            if (_fileExists && !FileExtensionProvider.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
             {
                 return false;
             }
@@ -110,7 +110,7 @@
             {
                 isExtensionSupported = true;
             }
-            else if (FileTypeService.IsFileExtensionSupported(fileExtension))
+            else if (FileExtensionProvider.IsFileExtensionSupported(fileExtension))
             {
                 // User can only rename an existing file if extension is supported by the app
                 // This is a Windows 10 UWP limitation
