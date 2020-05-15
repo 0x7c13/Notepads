@@ -237,6 +237,11 @@
             ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color =
                 ThemeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
 
+            if (DialogManager.ActiveDialog != null)
+            {
+                DialogManager.ActiveDialog.RequestedTheme = ThemeMode;
+            }
+
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
         }

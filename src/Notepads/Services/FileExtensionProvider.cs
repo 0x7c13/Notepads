@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public static class FileTypeService
+    public static class FileExtensionProvider
     {
         public static IList<string> TextDocumentFileExtensions { get; } = new List<string>() { ".txt", ".md", ".markdown" };
 
@@ -19,5 +19,20 @@
             ".srt", ".ass", ".ssa", ".lrc",
             ".project", ".prj", ".npmrc", ".buildpath",
         };
+
+        public static bool IsFileExtensionSupported(string fileExtension)
+        {
+            if (string.IsNullOrEmpty(fileExtension))
+            {
+                return false;
+            }
+
+            if (!fileExtension.StartsWith("."))
+            {
+                fileExtension = "." + fileExtension;
+            }
+
+            return AllSupportedFileExtensions.Contains(fileExtension.ToLower());
+        }
     }
 }

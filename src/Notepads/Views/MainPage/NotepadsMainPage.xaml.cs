@@ -60,6 +60,7 @@
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorSaved += OnTextEditorSaved;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
@@ -159,6 +160,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsFirstInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, async (args) => { await RenameFileAsync(NotepadsCore.GetSelectedTextEditor()); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.L, async (args) => { await OpenFile(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); })
             });
         }
@@ -360,7 +362,7 @@
                 return;
             }
 
-            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
+            var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
@@ -446,7 +448,6 @@
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
                 SetupStatusBar(textEditor);
-                UpdateApplicationTitle(textEditor);
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
@@ -519,7 +520,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file,
+                var setCloseSaveReminderDialog = new SetCloseSaveReminderDialog(file,
                     saveAction: async () =>
                     {
                         if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))
