@@ -25,7 +25,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <TextBlock
                     x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
@@ -95,7 +95,7 @@
                         <TextBlock x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Description"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    FontStyle="Italic"
-                                   Margin="0,8,0,40"/>
+                                   Margin="0,8,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
