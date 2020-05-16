@@ -118,207 +118,207 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AegisubAdvancedSubtitleFileDisplayName" xml:space="preserve">
-    <value>Aegisub Advanced Subtitle File</value>
+    <value>Aegisub Gelişmiş Altyazı Dosyası</value>
     <comment>.ass</comment>
   </data>
   <data name="AspFileDisplayName" xml:space="preserve">
-    <value>ASP File</value>
+    <value>ASP Dosyası</value>
     <comment>.asp, .aspx</comment>
   </data>
   <data name="AutoHotkeyScriptFileDisplayName" xml:space="preserve">
-    <value>AutoHotkey Script File</value>
+    <value>AutoHotkey Betiği Dosyası</value>
     <comment>.ahk</comment>
   </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
-    <value>Bash History File</value>
+    <value>Bash Geçmişi Dosyası</value>
     <comment>.bash_history</comment>
   </data>
   <data name="BashScriptFileDisplayName" xml:space="preserve">
-    <value>Bash Script File</value>
+    <value>Bash Betiği Dosyası</value>
     <comment>.bash</comment>
   </data>
   <data name="BibTeXFileDisplayName" xml:space="preserve">
-    <value>BibTeX File</value>
+    <value>BibTeX Dosyası</value>
     <comment>.bib</comment>
   </data>
   <data name="BuildPathFileDisplayName" xml:space="preserve">
-    <value>Build Path File</value>
+    <value>Derleme Yolu Dosyası</value>
     <comment>.buildpath</comment>
   </data>
   <data name="CFileDisplayName" xml:space="preserve">
-    <value>C File</value>
+    <value>C Dosyası</value>
     <comment>.c, .m</comment>
   </data>
   <data name="CgiFileDisplayName" xml:space="preserve">
-    <value>CGI File</value>
+    <value>CGI Dosyası</value>
     <comment>.cgi</comment>
   </data>
   <data name="CmakeFileDisplayName" xml:space="preserve">
-    <value>Cmake File</value>
+    <value>Cmake Dosyası</value>
     <comment>.cmake</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
-    <value>Configuration Settings</value>
+    <value>Yapılandırma Ayarları</value>
     <comment>.cfg, .config, .cnf, .conf</comment>
   </data>
   <data name="CppFileDisplayName" xml:space="preserve">
-    <value>C++ File</value>
+    <value>C++ Dosyası</value>
     <comment>.cpp, .cc, .mm</comment>
   </data>
   <data name="CSharpFileDisplayName" xml:space="preserve">
-    <value>C# File</value>
+    <value>C# Dosyası</value>
     <comment>.cs</comment>
   </data>
   <data name="CssFileDisplayName" xml:space="preserve">
-    <value>CSS File</value>
+    <value>CSS Dosyası</value>
     <comment>.css, .scss</comment>
   </data>
   <data name="GitAttributesFileDisplayName" xml:space="preserve">
-    <value>Git Attributes File</value>
+    <value>Git Öznitelikleri Dosyası</value>
     <comment>.gitattributes</comment>
   </data>
   <data name="GitConfigFileDisplayName" xml:space="preserve">
-    <value>Git Config File</value>
+    <value>Git Yapılandırma Dosyası</value>
     <comment>.gitconfig</comment>
   </data>
   <data name="GitIgnoreFileDisplayName" xml:space="preserve">
-    <value>Git Ignore File</value>
+    <value>Git Yoksayma Dosyası</value>
     <comment>.gitignore</comment>
   </data>
   <data name="GoFileDisplayName" xml:space="preserve">
-    <value>Go File</value>
+    <value>Go Dosyası</value>
     <comment>.go</comment>
   </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">
-    <value>Header File</value>
+    <value>Header Dosyası</value>
     <comment>.h, .hpp</comment>
   </data>
   <data name="HtmlFileDisplayName" xml:space="preserve">
-    <value>HTML File</value>
+    <value>HTML Dosyası</value>
     <comment>.html, .htm</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
-    <value>Initialization File</value>
+    <value>Başlangıç Dosyası</value>
     <comment>.ini</comment>
   </data>
   <data name="JavaFileDisplayName" xml:space="preserve">
-    <value>Java File</value>
+    <value>Java Dosyası</value>
     <comment>.java</comment>
   </data>
   <data name="JavascriptFileDisplayName" xml:space="preserve">
-    <value>Javascript File</value>
+    <value>Javascript Dosyası</value>
     <comment>.js</comment>
   </data>
   <data name="JsonFileDisplayName" xml:space="preserve">
-    <value>JSON File</value>
+    <value>JSON Dosyası</value>
     <comment>.json</comment>
   </data>
   <data name="JspFileDisplayName" xml:space="preserve">
-    <value>JSP File</value>
+    <value>JSP Dosyası</value>
     <comment>.jsp, .jspx</comment>
   </data>
   <data name="LogFileDisplayName" xml:space="preserve">
-    <value>Log File</value>
+    <value>Log Dosyası</value>
     <comment>.log</comment>
   </data>
   <data name="LrcFileDisplayName" xml:space="preserve">
-    <value>Lyrics File</value>
+    <value>Lyrics Dosyası</value>
     <comment>.lrc</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
-    <value>LUA File</value>
+    <value>LUA Dosyası</value>
     <comment>.lua</comment>
   </data>
   <data name="MarkdownFileDisplayName" xml:space="preserve">
-    <value>Markdown File</value>
+    <value>Markdown Dosyası</value>
     <comment>.md, .markdown</comment>
   </data>
   <data name="NfoFileDisplayName" xml:space="preserve">
-    <value>NFO File</value>
+    <value>NFO Dosyası</value>
     <comment>.nfo</comment>
   </data>
   <data name="NpmConfigFileDisplayName" xml:space="preserve">
-    <value>NPM Config File</value>
+    <value>NPM Yapılandırma Dosyası</value>
     <comment>.npmrc</comment>
   </data>
   <data name="PerlFileDisplayName" xml:space="preserve">
-    <value>Perl File</value>
+    <value>Perl Dosyası</value>
     <comment>.pl</comment>
   </data>
   <data name="PhpFileDisplayName" xml:space="preserve">
-    <value>PHP File</value>
+    <value>PHP Dosyası</value>
     <comment>.php</comment>
   </data>
   <data name="ProjectFileDisplayName" xml:space="preserve">
-    <value>Project File</value>
+    <value>Project Dosyası</value>
     <comment>.project, .prj</comment>
   </data>
   <data name="PythonFileDisplayName" xml:space="preserve">
-    <value>Python File</value>
+    <value>Python Dosyası</value>
     <comment>.py</comment>
   </data>
   <data name="RubyFileDisplayName" xml:space="preserve">
-    <value>Ruby File</value>
+    <value>Ruby Dosyası</value>
     <comment>.rb</comment>
   </data>
   <data name="RunCommandsFileDisplayName" xml:space="preserve">
-    <value>Run Commands File</value>
+    <value>Çalıştırma Komut Dosyası</value>
     <comment>.bashrc, .vimrc, .rc</comment>
   </data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve">
-    <value>Shell Script File</value>
+    <value>Kabuk Betiği Dosyası</value>
     <comment>.sh</comment>
   </data>
   <data name="SqlFileDisplayName" xml:space="preserve">
-    <value>SQL File</value>
+    <value>SQL Dosyası</value>
     <comment>.sql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
-    <value>Sub Station Alpha Subtitle File</value>
+    <value>Sub Station Alpha Altyazı Dosyası</value>
     <comment>.ssa</comment>
   </data>
   <data name="SubtitleFileDisplayName" xml:space="preserve">
-    <value>Subtitle File</value>
+    <value>Altyazı Dosyası</value>
     <comment>.srt</comment>
   </data>
   <data name="TextFileDisplayName" xml:space="preserve">
-    <value>Text Document</value>
+    <value>Metin Belgesi</value>
     <comment>.txt</comment>
   </data>
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
-    <value>TypeScript File</value>
+    <value>TypeScript Dosyası</value>
     <comment>.ts</comment>
   </data>
   <data name="VerilogFileDisplayName" xml:space="preserve">
-    <value>Verilog File</value>
+    <value>Verilog Dosyası</value>
     <comment>.v</comment>
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
-    <value>Visual Basic File</value>
+    <value>Visual Basic Dosyası</value>
     <comment>.vb</comment>
   </data>
   <data name="VueConfigFileDisplayName" xml:space="preserve">
-    <value>Vue Config File</value>
+    <value>Vue Yapılandırma Dosyası</value>
     <comment>.vuerc</comment>
   </data>
   <data name="VueFileDisplayName" xml:space="preserve">
-    <value>Vue File</value>
+    <value>Vue Dosyası</value>
     <comment>.vue</comment>
   </data>
   <data name="XmlFileDisplayName" xml:space="preserve">
-    <value>XML File</value>
+    <value>XML Dosyası</value>
     <comment>.xml</comment>
   </data>
   <data name="YamlFileDisplayName" xml:space="preserve">
-    <value>YAML File</value>
+    <value>YAML Dosyası</value>
     <comment>.yml, .yaml</comment>
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
-    <value>Z shell Config File</value>
+    <value>Z shell Yapılandırma Dosyası</value>
     <comment>zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
-    <value>Z shell History File</value>
+    <value>Z shell Geçmişi Dosyası</value>
     <comment>.zsh_history</comment>
   </data>
 </root>
