@@ -8,7 +8,6 @@
         Unknown = 0,
         TextFile,
         MarkdownFile,
-        JsonFile,
     }
 
     public static class FileTypeUtility
@@ -47,14 +46,15 @@
                 return FileType.TextFile;
             }
 
-            if (ext == "md" || ext == "markdown")
+            if (ext == "md" ||
+                ext == "markdown" ||
+                ext == "mkd" ||
+                ext == "mdwn" ||
+                ext == "mdown" ||
+                ext == "markdn" ||
+                ext == "mdtxt")
             {
                 return FileType.MarkdownFile;
-            }
-
-            if (ext == "json")
-            {
-                return FileType.JsonFile;
             }
 
             return FileType.Unknown;
@@ -80,8 +80,6 @@
                     return "TXT";
                 case FileType.MarkdownFile:
                     return "Markdown";
-                case FileType.JsonFile:
-                    return "JSON";
                 default:
                     return string.Empty;
             }

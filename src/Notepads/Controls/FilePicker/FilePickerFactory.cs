@@ -35,21 +35,21 @@
 
             if (FileExtensionProvider.TextDocumentFileExtensions.Contains($".{fileExt}", StringComparer.OrdinalIgnoreCase))
             {
-                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions);
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions);
+                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             }
             else if (FileExtensionProvider.AllSupportedFileExtensions.Contains($".{fileExt}", StringComparer.OrdinalIgnoreCase))
             {
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions);
-                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions);
+                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             }
             else
             {
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
-                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions);
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions);
+                savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
             }
 
             savePicker.SuggestedFileName = fileName;
