@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utilities="using:Notepads.Utilities"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -24,7 +25,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <TextBlock
                     x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
@@ -61,6 +62,41 @@
                                   x:Name="AlwaysOpenNewWindowToggleSwitch" 
                                   Margin="0,0,0,0"/>
                     <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                </StackPanel>
+                <StackPanel x:Name="LanguagePreferenceSettingsPanel" x:Load="False">
+                    <TextBlock
+                    x:Name="LanguagePreferenceSettingsTitle"
+                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,35,0,0"
+                    FontWeight="Normal"/>
+                    <StackPanel x:Name="LanguagePreferenceSettingsControls" Margin="0,10,0,0">
+                        <ComboBox x:Name="LanguagePicker"
+                              ItemsSource="{x:Bind SupportedLanguages, Mode=OneTime}"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              BorderThickness="2"
+                              Height="36"
+                              Background="Transparent"
+                              IsTextSearchEnabled="True">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="utilities:LanguageItem">
+                                    <TextBlock Text="{x:Bind Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock x:Name="RestartPrompt"
+                                   x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="Yellow"
+                                   TextWrapping="Wrap"
+                                   Visibility="Collapsed"
+                                   Margin="0,4,0,0"/>
+                        <TextBlock x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Description"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   FontStyle="Italic"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

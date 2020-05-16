@@ -121,6 +121,10 @@
     <value>Arquivo Aegisub Advanced Subtitle</value>
     <comment>.ass</comment>
   </data>
+  <data name="AsmFileDisplayName" xml:space="preserve">
+    <value>Assembly Language File</value>
+    <comment>.asm</comment>
+  </data>
   <data name="AspFileDisplayName" xml:space="preserve">
     <value>Arquivo ASP</value>
     <comment>.asp, .aspx</comment>
@@ -129,9 +133,25 @@
     <value>Arquivo AutoHotkey Script</value>
     <comment>.ahk</comment>
   </data>
+  <data name="BashAliasesFileDisplayName" xml:space="preserve">
+    <value>Bash Aliases File</value>
+    <comment>.bash_aliases</comment>
+  </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
     <value>Arquivo Bash History</value>
     <comment>.bash_history</comment>
+  </data>
+  <data name="BashLoginFileDisplayName" xml:space="preserve">
+    <value>Bash Login File</value>
+    <comment>.bash_login</comment>
+  </data>
+  <data name="BashLogoutFileDisplayName" xml:space="preserve">
+    <value>Bash Logout File</value>
+    <comment>.bash_logout</comment>
+  </data>
+  <data name="BashProfileFileDisplayName" xml:space="preserve">
+    <value>Bash Profile File</value>
+    <comment>.bash_profile</comment>
   </data>
   <data name="BashScriptFileDisplayName" xml:space="preserve">
     <value>Arquivo Bash Script</value>
@@ -141,37 +161,69 @@
     <value>Arquivo BibTeX</value>
     <comment>.bib</comment>
   </data>
+  <data name="BondFileDisplayName" xml:space="preserve">
+    <value>Bond File</value>
+    <comment>.bond</comment>
+  </data>
   <data name="BuildPathFileDisplayName" xml:space="preserve">
     <value>Arquivo Build Path</value>
     <comment>.buildpath</comment>
   </data>
   <data name="CFileDisplayName" xml:space="preserve">
     <value>Arquivo C</value>
-    <comment>.c, .m</comment>
+    <comment>.c, .m, .i</comment>
   </data>
   <data name="CgiFileDisplayName" xml:space="preserve">
     <value>Arquivo CGI</value>
     <comment>.cgi</comment>
   </data>
+  <data name="ClojureFileDisplayName" xml:space="preserve">
+    <value>Clojure File</value>
+    <comment>.clj, .cljs, .cljc, .cljx, .clojure, .edn</comment>
+  </data>
   <data name="CmakeFileDisplayName" xml:space="preserve">
     <value>Arquivo Cmake</value>
     <comment>.cmake</comment>
   </data>
+  <data name="CoffeeScriptFileDisplayName" xml:space="preserve">
+    <value>CoffeeScript File</value>
+    <comment>.coffee, .cson, .iced</comment>
+  </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
     <value>Definições de configuração</value>
-    <comment>.cfg, .config, .cnf, .conf</comment>
+    <comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment>
   </data>
   <data name="CppFileDisplayName" xml:space="preserve">
     <value>Arquivo C++</value>
-    <comment>.cpp, .cc, .mm</comment>
+    <comment>.cpp, .cc, .mm, .cxx, .ii, .ino</comment>
   </data>
   <data name="CSharpFileDisplayName" xml:space="preserve">
     <value>Arquivo C#</value>
-    <comment>.cs</comment>
+    <comment>.cs, .csx, .cake</comment>
   </data>
   <data name="CssFileDisplayName" xml:space="preserve">
     <value>Arquivo CSS</value>
     <comment>.css, .scss</comment>
+  </data>
+  <data name="DatFileDisplayName" xml:space="preserve">
+    <value>DAT File</value>
+    <comment>.dat</comment>
+  </data>
+  <data name="DiffFileDisplayName" xml:space="preserve">
+    <value>Diff File</value>
+    <comment>.patch, .diff, .rej</comment>
+  </data>
+  <data name="DockerFileDisplayName" xml:space="preserve">
+    <value>Docker File</value>
+    <comment>.dockerfile</comment>
+  </data>
+  <data name="EBuildFileDisplayName" xml:space="preserve">
+    <value>EBuild File</value>
+    <comment>.ebuild</comment>
+  </data>
+  <data name="FSharpFileDisplayName" xml:space="preserve">
+    <value>F# File</value>
+    <comment>.fs, .fsi, .fsx, .fsscript</comment>
   </data>
   <data name="GitAttributesFileDisplayName" xml:space="preserve">
     <value>Arquivo Git Attributes</value>
@@ -185,37 +237,61 @@
     <value>Arquivo Git Ignore</value>
     <comment>.gitignore</comment>
   </data>
+  <data name="GlspFileDisplayName" xml:space="preserve">
+    <value>GLSP File</value>
+    <comment>.glsp</comment>
+  </data>
   <data name="GoFileDisplayName" xml:space="preserve">
     <value>Arquivo Go</value>
     <comment>.go</comment>
   </data>
+  <data name="GroovyFileDisplayName" xml:space="preserve">
+    <value>Groovy File</value>
+    <comment>.groovy, .gvy, .gradle</comment>
+  </data>
+  <data name="HandlebarsFileDisplayName" xml:space="preserve">
+    <value>Handlebars File</value>
+    <comment>.handlebars, .hbs, .hjs</comment>
+  </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">
     <value>Arquivo Header</value>
-    <comment>.h, .hpp</comment>
+    <comment>.h, .hpp, .hh, .hxx</comment>
+  </data>
+  <data name="HlslFileDisplayName" xml:space="preserve">
+    <value>HLSL File</value>
+    <comment>.hlsl, .hlsli, .fx, .fxh, .vsh, .psh, .cginc, .compute</comment>
   </data>
   <data name="HtmlFileDisplayName" xml:space="preserve">
     <value>Arquivo HTML</value>
-    <comment>.html, .htm</comment>
+    <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
     <value>Arquivo de Inicialização</value>
     <comment>.ini</comment>
   </data>
+  <data name="InstallFileDisplayName" xml:space="preserve">
+    <value>Install File</value>
+    <comment>.install</comment>
+  </data>
   <data name="JavaFileDisplayName" xml:space="preserve">
     <value>Arquivo Java</value>
-    <comment>.java</comment>
+    <comment>.java, .jav</comment>
   </data>
   <data name="JavascriptFileDisplayName" xml:space="preserve">
     <value>Arquivo Javascript</value>
-    <comment>.js</comment>
+    <comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment>
   </data>
   <data name="JsonFileDisplayName" xml:space="preserve">
     <value>Arquivo JSON</value>
-    <comment>.json</comment>
+    <comment>.json, .hintrc, .jsonc, .jsonld, .babelrc, .eslintrc, .jslintrc, .bowerrc, .jscsrc, .webmanifest, .har</comment>
   </data>
   <data name="JspFileDisplayName" xml:space="preserve">
     <value>Arquivo JSP</value>
     <comment>.jsp, .jspx</comment>
+  </data>
+  <data name="LessFileDisplayName" xml:space="preserve">
+    <value>Less File</value>
+    <comment>.less</comment>
   </data>
   <data name="LogFileDisplayName" xml:space="preserve">
     <value>Arquivo Log</value>
@@ -229,9 +305,13 @@
     <value>Arquivo LUA</value>
     <comment>.lua</comment>
   </data>
+  <data name="MapFileDisplayName" xml:space="preserve">
+    <value>Map File</value>
+    <comment>.map</comment>
+  </data>
   <data name="MarkdownFileDisplayName" xml:space="preserve">
     <value>Arquivo Markdown</value>
-    <comment>.md, .markdown</comment>
+    <comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment>
   </data>
   <data name="NfoFileDisplayName" xml:space="preserve">
     <value>Arquivo NFO</value>
@@ -241,29 +321,65 @@
     <value>Arquivo NPM Config</value>
     <comment>.npmrc</comment>
   </data>
+  <data name="Perl6FileDisplayName" xml:space="preserve">
+    <value>Perl 6 File</value>
+    <comment>.p6, .pl6, .pm6, .nqp</comment>
+  </data>
   <data name="PerlFileDisplayName" xml:space="preserve">
     <value>Arquivo Perl</value>
-    <comment>.pl</comment>
+    <comment>.pl, .pm, .psgi</comment>
   </data>
   <data name="PhpFileDisplayName" xml:space="preserve">
     <value>Arquivo PHP</value>
-    <comment>.php</comment>
+    <comment>.php, .php4, .php5, .phtml, .ctp</comment>
+  </data>
+  <data name="PodFileDisplayName" xml:space="preserve">
+    <value>Pod File</value>
+    <comment>.pod, .podspec</comment>
+  </data>
+  <data name="PowerShellFileDisplayName" xml:space="preserve">
+    <value>PowerShell File</value>
+    <comment>.ps1, .psm1, .psd1, .pssc, .psrc</comment>
+  </data>
+  <data name="ProfileFileDisplayName" xml:space="preserve">
+    <value>Profile File</value>
+    <comment>.profile</comment>
   </data>
   <data name="ProjectFileDisplayName" xml:space="preserve">
     <value>Arquivo Project</value>
     <comment>.project, .prj</comment>
   </data>
+  <data name="PugFileDisplayName" xml:space="preserve">
+    <value>Pug File</value>
+    <comment>.jade, .pug</comment>
+  </data>
   <data name="PythonFileDisplayName" xml:space="preserve">
     <value>Arquivo Python</value>
     <comment>.py</comment>
   </data>
+  <data name="RazorFileDisplayName" xml:space="preserve">
+    <value>Razor File</value>
+    <comment>.cshtml</comment>
+  </data>
+  <data name="RFileDisplayName" xml:space="preserve">
+    <value>R File</value>
+    <comment>.r, .rhistory, .rprofile, .rt</comment>
+  </data>
   <data name="RubyFileDisplayName" xml:space="preserve">
     <value>Arquivo Ruby</value>
-    <comment>.rb</comment>
+    <comment>.rb, .rbx, .rjs, .gemspec, .rake, .ru, .erb, .rbi, .arb</comment>
   </data>
   <data name="RunCommandsFileDisplayName" xml:space="preserve">
     <value>Arquivo de Execução de Comandos</value>
     <comment>.bashrc, .vimrc, .rc</comment>
+  </data>
+  <data name="RustFileDisplayName" xml:space="preserve">
+    <value>Rust File</value>
+    <comment>.rs</comment>
+  </data>
+  <data name="ShaderFileDisplayName" xml:space="preserve">
+    <value>Shader File</value>
+    <comment>.shader</comment>
   </data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve">
     <value>Arquivo Shell Script</value>
@@ -271,7 +387,7 @@
   </data>
   <data name="SqlFileDisplayName" xml:space="preserve">
     <value>Arquivo SQL</value>
-    <comment>.sql</comment>
+    <comment>.sql, .dsql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
     <value>Arquivo de Legenda Sub Station Alpha</value>
@@ -281,13 +397,25 @@
     <value>Arquivo de Legenda</value>
     <comment>.srt</comment>
   </data>
+  <data name="SwiftFileDisplayName" xml:space="preserve">
+    <value>Swift File</value>
+    <comment>.swift</comment>
+  </data>
   <data name="TextFileDisplayName" xml:space="preserve">
     <value>Documento de Texto</value>
     <comment>.txt</comment>
   </data>
+  <data name="TFileDisplayName" xml:space="preserve">
+    <value>T File</value>
+    <comment>.t</comment>
+  </data>
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
     <value>Arquivo TypeScript</value>
-    <comment>.ts</comment>
+    <comment>.ts, .tsx</comment>
+  </data>
+  <data name="UserFileDisplayName" xml:space="preserve">
+    <value>User File</value>
+    <comment>.user</comment>
   </data>
   <data name="VerilogFileDisplayName" xml:space="preserve">
     <value>Verilog File</value>
@@ -295,7 +423,7 @@
   </data>
   <data name="VisualBasicFileDisplayName" xml:space="preserve">
     <value>Arquivo Visual Basic</value>
-    <comment>.vb</comment>
+    <comment>.vb, .vbs, .brs, .bas</comment>
   </data>
   <data name="VueConfigFileDisplayName" xml:space="preserve">
     <value>Arquivo Vue Config</value>
@@ -305,9 +433,13 @@
     <value>Arquivo Vue</value>
     <comment>.vue</comment>
   </data>
+  <data name="XamlFileDisplayName" xml:space="preserve">
+    <value>XAML File</value>
+    <comment>.xaml</comment>
+  </data>
   <data name="XmlFileDisplayName" xml:space="preserve">
     <value>Arquivo XML</value>
-    <comment>.xml</comment>
+    <comment>.xml, .xsd, .ascx, .atom, .axml, .bpmn, .cpt, .csl</comment>
   </data>
   <data name="YamlFileDisplayName" xml:space="preserve">
     <value>Arquivo YAML</value>

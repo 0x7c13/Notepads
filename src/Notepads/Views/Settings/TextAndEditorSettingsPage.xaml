@@ -24,7 +24,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
@@ -220,7 +220,7 @@
                         <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
                     </StackPanel>
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
+                <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

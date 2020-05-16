@@ -42,9 +42,6 @@
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
-        private const int TitleBarReservedAreaDefaultWidth = 180;
-        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
-
         private INotepadsCore _notepadsCore;
 
         private XboxGameBarWidget _widget;  // maintain throughout the lifetime of the notepads game bar widget

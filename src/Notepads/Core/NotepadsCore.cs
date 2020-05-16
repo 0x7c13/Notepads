@@ -399,15 +399,21 @@
 
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
+            var modifierIcon = new FontIcon()
+            {
+                Glyph = "\uF127",
+                FontSize = 1.5,
+                Width = 3,
+                Height = 3,
+                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+            };
+
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
                 SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-                Icon = new SymbolIcon(Symbol.Save)
-                {
-                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-                }
+                Icon = modifierIcon
             };
 
             if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)

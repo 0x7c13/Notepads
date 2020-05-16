@@ -104,10 +104,10 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <Thickness x:Key="SetsViewItemHeaderMargin">0</Thickness>
-    <Thickness x:Key="SetsViewItemHeaderIconMargin">0,0,8,0</Thickness>
+    <Thickness x:Key="SetsViewItemHeaderIconMargin">0,2,6,0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderCloseMargin">0,1,0,0</Thickness>
     <Thickness x:Key="SetsViewItemHeaderBorderThickness">0,1,0,0</Thickness>
-    <x:Double x:Key="SetsViewItemHeaderIconSize">16</x:Double>
+    <x:Double x:Key="SetsViewItemHeaderIconSize">10</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinWidth">48</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMinHeight">40</x:Double>
     <x:Double x:Key="SetsViewItemHeaderMaxWidth">NaN</x:Double>
@@ -767,7 +767,7 @@
         <Setter Property="Margin" Value="{ThemeResource SetsViewItemHeaderMargin}" />
         <Setter Property="TabNavigation" Value="Local" />
         <Setter Property="IsHoldingEnabled" Value="True" />
-        <Setter Property="Padding" Value="10,0,4,0" />
+        <Setter Property="Padding" Value="8,0,4,0" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="MinWidth" Value="{ThemeResource SetsViewItemHeaderMinWidth}" />

@@ -13,6 +13,7 @@
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Microsoft.AppCenter.Analytics;
     using Microsoft.Gaming.XboxGameBar;
 
     public sealed partial class NotepadsMainPage
@@ -58,12 +59,7 @@
                 {
                     files = await Dispatcher.RunTaskAsync(async () =>
                     {
-                        var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                        foreach (var type in FileTypeService.AllSupportedFileExtensions)
-                        {
-                            fileOpenPicker.FileTypeFilter.Add(type);
-                        }
-                        return await fileOpenPicker.PickMultipleFilesAsync();
+                        return await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
                     });
 
                     return true;
@@ -105,6 +101,9 @@
                 {
                     await BuildOpenRecentButtonSubItems();
                 }
+
+                TrackFileExtensionIfNotSupported(file);
+
                 return true;
             }
             catch (Exception ex)
@@ -116,6 +115,33 @@
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
                 return false;
+            }
+        }
+
+        // Here we track the file extension opened by user but not supported by Notepads.
+        // This information will be used to on-board new extension support for future release.
+        // Because UWP does not allow user to associate arbitrary file extension with the app.
+        // File name will not and should not be tracked.
+        private void TrackFileExtensionIfNotSupported(StorageFile file)
+        {
+            try
+            {
+                var extension = FileTypeUtility.GetFileExtension(file.Name).ToLower();
+                if (!FileExtensionProvider.AllSupportedFileExtensions.Contains(extension))
+                {
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        extension = "<NoExtension>";
+                    }
+                    Analytics.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
+                    {
+                        { "Extension", extension },
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                // ignore
             }
         }
 
