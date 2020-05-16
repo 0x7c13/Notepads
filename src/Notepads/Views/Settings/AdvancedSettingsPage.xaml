@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:Notepads.Utilities"
+    xmlns:utilities="using:Notepads.Utilities"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -80,13 +80,22 @@
                               Background="Transparent"
                               IsTextSearchEnabled="True">
                             <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="data:LanguageItem">
+                                <DataTemplate x:DataType="utilities:LanguageItem">
                                     <TextBlock Text="{x:Bind Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <TextBlock x:Name="RestartPrompt" x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="Yellow" Visibility="{x:Bind data:LanguageUtility.RestrtPromptVisibility,Mode=TwoWay}" Margin="0,4,0,0"/>
-                        <TextBlock x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,40"/>
+                        <TextBlock x:Name="RestartPrompt"
+                                   x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="Yellow"
+                                   TextWrapping="Wrap"
+                                   Visibility="Collapsed"
+                                   Margin="0,4,0,0"/>
+                        <TextBlock x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Description"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   FontStyle="Italic"
+                                   Margin="0,8,0,40"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
