@@ -5,17 +5,42 @@
     using System.Linq;
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
+    using Notepads.Utilities;
     using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
     {
+        private static IList<string> _allSupportedExtensions;
+
+        public static IList<string> AllSupportedExtensions
+        {
+            get
+            {
+                if (_allSupportedExtensions == null)
+                {
+                    var allSupportedExtensions = FileExtensionProvider.AllSupportedFileExtensions.ToList();
+                    allSupportedExtensions.Sort();
+                    _allSupportedExtensions = allSupportedExtensions;
+                }
+
+                return _allSupportedExtensions;
+            }
+        }
+
         public static FileOpenPicker GetFileOpenPicker()
         {
             var fileOpenPicker = new FileOpenPicker
             {
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
             };
-            fileOpenPicker.FileTypeFilter.Add("*");
+
+            fileOpenPicker.FileTypeFilter.Add("*"); // All files
+
+            foreach (var extension in AllSupportedExtensions)
+            {
+                fileOpenPicker.FileTypeFilter.Add(extension);
+            }
+
             return fileOpenPicker;
         }
 
@@ -27,21 +52,17 @@
             };
 
             var fileName = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
-            var fileExt = string.Empty;
-            if (fileName.Contains("."))
-            {
-                fileExt = fileName.Split(".").Last();
-            }
+            var extension = FileTypeUtility.GetFileExtension(fileName).ToLower();
 
-            if (FileExtensionProvider.TextDocumentFileExtensions.Contains($".{fileExt}", StringComparer.OrdinalIgnoreCase))
+            if (FileExtensionProvider.TextDocumentFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
             {
                 savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("All Supported Files", AllSupportedExtensions);
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             }
-            else if (FileExtensionProvider.AllSupportedFileExtensions.Contains($".{fileExt}", StringComparer.OrdinalIgnoreCase))
+            else if (AllSupportedExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
             {
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("All Supported Files", AllSupportedExtensions);
                 savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
             }
@@ -49,7 +70,7 @@
             {
                 savePicker.FileTypeChoices.Add("Unknown", new List<string>() { "." });
                 savePicker.FileTypeChoices.Add("Text Documents", FileExtensionProvider.TextDocumentFileExtensions.ToList());
-                savePicker.FileTypeChoices.Add("All Supported Files", FileExtensionProvider.AllSupportedFileExtensions.ToList());
+                savePicker.FileTypeChoices.Add("All Supported Files", AllSupportedExtensions);
             }
 
             savePicker.SuggestedFileName = fileName;

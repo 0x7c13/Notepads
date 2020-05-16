@@ -22,13 +22,7 @@
 
             try
             {
-                var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in FileExtensionProvider.AllSupportedFileExtensions)
-                {
-                    fileOpenPicker.FileTypeFilter.Add(type);
-                }
-
-                files = await fileOpenPicker.PickMultipleFilesAsync();
+                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
             }
             catch (Exception ex)
             {
@@ -110,7 +104,7 @@
                     Analytics.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
                     {
                         { "Extension", extension },
-                    });   
+                    });
                 }
             }
             catch (Exception)
