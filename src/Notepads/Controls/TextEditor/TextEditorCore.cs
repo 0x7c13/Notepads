@@ -208,6 +208,11 @@
                 _lineNumberGrid.SizeChanged -= OnLineNumberGridSizeChanged;
             }
 
+            if (_rootGrid != null)
+            {
+                _rootGrid.SizeChanged -= OnRootGridSizeChanged;   
+            }
+
             _lineNumberCanvas?.Children.Clear();
             _renderedLineNumberBlocks.Clear();
             _miniRequisiteIntegerTextRenderingWidthCache.Clear();
