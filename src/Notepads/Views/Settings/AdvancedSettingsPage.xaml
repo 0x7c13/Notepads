@@ -41,7 +41,7 @@
                     x:Name="SessionSnapshotSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="SessionSnapshotSettingsControls" Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch"
@@ -54,7 +54,7 @@
                     x:Name="LaunchPreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="LaunchPreferenceSettingsControls" Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch"
@@ -68,7 +68,7 @@
                     x:Name="LanguagePreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                     <StackPanel x:Name="LanguagePreferenceSettingsControls" Margin="0,10,0,0">
                         <ComboBox x:Name="LanguagePicker"

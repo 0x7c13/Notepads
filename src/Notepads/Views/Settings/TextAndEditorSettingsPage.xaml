@@ -33,41 +33,37 @@
                 <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_ToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="TextWrappingToggle" 
-                                  Margin="0,0,0,0"/>
+                                  x:Name="TextWrappingToggle"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_SpellingSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,30,0,0"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="HighlightMisspelledWordsToggle" 
-                                  Margin="0,0,0,0"/>
+                                  x:Name="HighlightMisspelledWordsToggle"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,30,0,0"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineHighlighterToggle" 
-                                  Margin="0,0,0,0"/>
+                                  x:Name="LineHighlighterToggle"/>
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,15"/>
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineNumbersToggle" 
-                                  Margin="0,0,0,0"/>
+                                  x:Name="LineNumbersToggle"/>
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,30,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="FontFamilyPicker"
@@ -99,7 +95,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontStyleSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,30,0,0"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="FontStylePicker"
@@ -120,7 +116,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontWeightSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,30,0,0"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="FontWeightPicker"
@@ -142,7 +138,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="LineEndingPanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CrlfRadioButton" Tag="Crlf" Content="Windows (CRLF)" GroupName="LineEndingGroup"/>
@@ -153,7 +149,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="EncodingPanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8EncodingRadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
@@ -165,7 +161,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="DecodingPanel" Margin="0,10,0,0">
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AutoGuessRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AutoGuessDecodingRadioButton" Tag="Auto" GroupName="DecodingGroup"/>
@@ -176,7 +172,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="TabBehaviorPanel" Margin="0,10,0,0">
                     <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_DefaultRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabDefaultRadioButton" Tag="-1" GroupName="TabBehaviorGroup"/>
@@ -188,7 +184,7 @@
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Title"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="SearchEnginePanel" Margin="0,10,0,0">
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="BingRadioButton" GroupName="SearchEngineGroup">
