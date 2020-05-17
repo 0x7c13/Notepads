@@ -41,9 +41,6 @@
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
-        private const int TitleBarReservedAreaDefaultWidth = 180;
-        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
-
         private INotepadsCore _notepadsCore;
 
         private INotepadsCore NotepadsCore
@@ -362,6 +359,8 @@
                 return;
             }
 
+            HideAllOpenFlyouts();
+
             var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
                 async () =>
                 {
@@ -410,6 +409,17 @@
             if (e.Handled && !appCloseSaveReminderDialog.IsAborted)
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
+            }
+        }
+
+        private void HideAllOpenFlyouts()
+        {
+            // Hide TextEditor ContextFlyout if it is showing
+            // Why we need to do this? Take a look here: https://github.com/microsoft/microsoft-ui-xaml/issues/2461
+            var editorFlyout = NotepadsCore.GetSelectedTextEditor()?.GetContextFlyout();
+            if (editorFlyout != null && editorFlyout.IsOpen)
+            {
+                editorFlyout.Hide();
             }
         }
 
