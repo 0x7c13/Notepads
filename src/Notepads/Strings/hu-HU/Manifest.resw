@@ -190,7 +190,7 @@
     <comment>.coffee, .cson, .iced</comment>
   </data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
-    <value>Comma Separated Values File</value>
+    <value>Vesszővel elválasztott szöveges fájlok</value>
     <comment>.csv</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
