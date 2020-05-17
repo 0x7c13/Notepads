@@ -189,6 +189,10 @@
     <value>CoffeeScript 文件</value>
     <comment>.coffee, .cson, .iced</comment>
   </data>
+  <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
+    <value>逗号分隔值文件</value>
+    <comment>.csv</comment>
+  </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
     <value>配置文件</value>
     <comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment>
@@ -264,6 +268,10 @@
   <data name="HtmlFileDisplayName" xml:space="preserve">
     <value>HTML 文件</value>
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
+  </data>
+  <data name="HypertextAccessFileDisplayName" xml:space="preserve">
+    <value>Hypertext Access 文件</value>
+    <comment>.htaccess</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
     <value>初始化文件</value>

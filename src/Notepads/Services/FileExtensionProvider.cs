@@ -37,6 +37,8 @@
             ".cmake",
             //CoffeeScript
             ".coffee", ".cson", ".iced",
+            //Comma Separated Values
+            ".csv",
             //Configuration
             ".cfg", ".config", ".cnf", ".conf", ".properties", ".directory",
             //C++
@@ -71,6 +73,8 @@
             ".hlsl", ".hlsli", ".fx", ".fxh", ".vsh", ".psh", ".cginc", ".compute",
             //HTML
             ".html", ".htm", ".shtml", ".xhtml", ".mdoc", ".jshtm", ".volt",
+            //Hypertext Access
+            ".htaccess",
             //Initialization
             ".ini",
             //Install
