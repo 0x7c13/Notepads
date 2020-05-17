@@ -670,7 +670,6 @@
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
     <value>A fájl neve érvénytelen vagy nem engedélyezett!</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
