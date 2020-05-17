@@ -270,7 +270,7 @@
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
   </data>
   <data name="HypertextAccessFileDisplayName" xml:space="preserve">
-    <value>Hypertext Access File</value>
+    <value>Hypertext Access Fájl</value>
     <comment>.htaccess</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
