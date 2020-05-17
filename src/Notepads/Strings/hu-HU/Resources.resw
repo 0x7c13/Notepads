@@ -667,6 +667,7 @@
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
     <value>File name cannot be empty or all whitespace</value>
+    <value>A fájl neve nem lehet üres, és nem tartalmazhat csak szóközöket.</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
