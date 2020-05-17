@@ -654,8 +654,8 @@
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
     <value>A fájl neve nem tartalmazhat érvénytelen karaktereket.</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
     <value>A fájl neve nem tartalmazhat szóközöket.</value>
