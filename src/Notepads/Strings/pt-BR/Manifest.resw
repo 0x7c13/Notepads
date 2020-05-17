@@ -447,7 +447,7 @@
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
     <value>Arquivo Z shell Config</value>
-    <comment>zshrc</comment>
+    <comment>.zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>Arquivo Z shell History</value>

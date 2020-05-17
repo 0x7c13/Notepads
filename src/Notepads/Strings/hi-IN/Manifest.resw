@@ -447,7 +447,7 @@
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
     <value>ज़ी शेल कॉन्फिग फाइल</value>
-    <comment>zshrc</comment>
+    <comment>.zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>ज़ी शेल इतिहास फाइल</value>
