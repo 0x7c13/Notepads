@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Controls.Dialog
 {
     using System;
+    using System.Collections.Generic;
     using Windows.System;
     using Windows.UI;
     using Windows.UI.Xaml;
@@ -8,6 +9,7 @@
     using Windows.UI.Xaml.Media;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Microsoft.AppCenter.Analytics;
 
     public class FileRenameDialog : NotepadsDialog
     {
@@ -60,6 +62,11 @@
             _fileNameTextBox.KeyDown += OnKeyDown;
 
             PrimaryButtonClick += (sender, args) => TryRename();
+
+            Analytics.TrackEvent("FileRenameDialogOpened", new Dictionary<string, string>()
+            {
+                { "FileExists", fileExists.ToString() },
+            });
         }
 
         private bool TryRename()
