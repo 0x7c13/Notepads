@@ -121,7 +121,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [fr-FR][French (France)]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
     * [es-ES][Spanish (Spain)]: [Jose Pinilla](https://github.com/joseppinilla)
     * [zh-CN][Chinese (S)]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
-    * [hu-HU][Hungarian (Hungary)]: [Csányi István](https://github.com/AmionSky)
+    * [hu-HU][Hungarian (Hungary)]: [Csányi István](https://github.com/AmionSky), [KristofKekesi](https://github.com/KristofKekesi)
     * [tr-TR][Turkish (Turkey)]: [Mert Can Demir](https://github.com/validatedev)
     * [ja-JP][Japanese (Japan)]: [Mamoru Satoh](https://github.com/pnp0a03)
     * [de-DE][German (Germany)]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
@@ -141,6 +141,4 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 [![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 
 ## Stay tuned 📢:
-
-* [Original Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Notepads Discord Server](https://discord.gg/VqetCub)

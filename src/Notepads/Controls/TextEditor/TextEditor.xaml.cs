@@ -20,6 +20,7 @@
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public enum TextEditorMode
@@ -744,6 +745,11 @@
             {
                 TextEditorCore.ResetFocusAndScrollToPreviousPosition();
             }
+        }
+
+        public FlyoutBase GetContextFlyout()
+        {
+            return TextEditorCore.ContextFlyout;
         }
 
         public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)

@@ -189,6 +189,10 @@
     <value>CoffeeScript Fájl</value>
     <comment>.coffee, .cson, .iced</comment>
   </data>
+  <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
+    <value>Vesszővel elválasztott szöveges fájlok</value>
+    <comment>.csv</comment>
+  </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
     <value>Konfiguráció Beállítások</value>
     <comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment>
@@ -264,6 +268,10 @@
   <data name="HtmlFileDisplayName" xml:space="preserve">
     <value>HTML Fájl</value>
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
+  </data>
+  <data name="HypertextAccessFileDisplayName" xml:space="preserve">
+    <value>Hypertext Access Fájl</value>
+    <comment>.htaccess</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
     <value>Inicializáló Fájl</value>
@@ -447,7 +455,7 @@
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
     <value>Z shell Konfig Fájl</value>
-    <comment>zshrc</comment>
+    <comment>.zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>Z shell Előzmény Fájl</value>

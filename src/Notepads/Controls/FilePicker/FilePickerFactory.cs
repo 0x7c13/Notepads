@@ -19,7 +19,15 @@
                 if (_allSupportedExtensions == null)
                 {
                     var allSupportedExtensions = FileExtensionProvider.AllSupportedFileExtensions.ToList();
+
+                    foreach (var extension in FileExtensionProvider.TextDocumentFileExtensions)
+                    {
+                        allSupportedExtensions.Remove(extension);
+                    }
+
                     allSupportedExtensions.Sort();
+                    allSupportedExtensions.InsertRange(0, FileExtensionProvider.TextDocumentFileExtensions);
+
                     _allSupportedExtensions = allSupportedExtensions;
                 }
 
