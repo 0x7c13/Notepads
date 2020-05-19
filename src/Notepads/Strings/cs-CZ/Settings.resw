@@ -370,11 +370,11 @@
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Zobrazit ohraničení kolem aktuálního řádku</value>
+    <value>Zobrazit ohraničení kolem aktuálního řádku.</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Zobrazit čísla řádků v dokumentu</value>
+    <value>Zobrazit čísla řádků v dokumentu.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">

@@ -370,7 +370,7 @@
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>वर्तमान लाइन के चारों ओर सीमा दिखाएं</value>
+    <value>वर्तमान लाइन के चारों ओर सीमा दिखाएं।</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">

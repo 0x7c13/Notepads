@@ -370,7 +370,7 @@
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>მაჩვენე ჩარჩო მიმდინარე ხაზის გარშემო</value>
+    <value>მაჩვენე ჩარჩო მიმდინარე ხაზის გარშემო.</value>
     <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
