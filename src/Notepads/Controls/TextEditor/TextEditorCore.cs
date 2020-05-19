@@ -212,7 +212,7 @@
 
             if (_rootGrid != null)
             {
-                _rootGrid.SizeChanged -= OnRootGridSizeChanged;   
+                _rootGrid.SizeChanged -= OnRootGridSizeChanged;
             }
 
             _lineNumberCanvas?.Children.Clear();
