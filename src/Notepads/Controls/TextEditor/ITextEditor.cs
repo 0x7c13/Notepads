@@ -8,6 +8,7 @@
     using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
@@ -134,5 +135,7 @@
         void HideGoToControl();
 
         void Dispose();
+
+        FlyoutBase GetContextFlyout();
     }
 }

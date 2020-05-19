@@ -390,7 +390,7 @@
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>ଡିସ୍କରୁ ପୁନଃଲୋଡ୍ କରନ୍ତୁ!</value>
+    <value>ଡିସ୍କରୁ ପୁନଃଲୋଡ୍ କରନ୍ତୁ</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">

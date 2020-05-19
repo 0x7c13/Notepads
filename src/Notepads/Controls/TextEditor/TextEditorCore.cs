@@ -177,6 +177,8 @@
 
             _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
+
+            Microsoft.Toolkit.Uwp.UI.Extensions.ScrollViewerExtensions.SetEnableMiddleClickScrolling(_contentScrollViewer, true);
         }
 
         // Unhook events and clear state
@@ -206,6 +208,11 @@
             if (_lineNumberGrid != null)
             {
                 _lineNumberGrid.SizeChanged -= OnLineNumberGridSizeChanged;
+            }
+
+            if (_rootGrid != null)
+            {
+                _rootGrid.SizeChanged -= OnRootGridSizeChanged;
             }
 
             _lineNumberCanvas?.Children.Clear();

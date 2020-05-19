@@ -189,6 +189,10 @@
     <value>CoffeeScript File</value>
     <comment>.coffee, .cson, .iced</comment>
   </data>
+  <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
+    <value>Comma Separated Values File</value>
+    <comment>.csv</comment>
+  </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
     <value>Файл конфигурации</value>
     <comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment>
@@ -264,6 +268,10 @@
   <data name="HtmlFileDisplayName" xml:space="preserve">
     <value>Файл HTML</value>
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
+  </data>
+  <data name="HypertextAccessFileDisplayName" xml:space="preserve">
+    <value>Hypertext Access File</value>
+    <comment>.htaccess</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
     <value>Параметры конфигурации</value>
@@ -447,7 +455,7 @@
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
     <value>Z shell Config File</value>
-    <comment>zshrc</comment>
+    <comment>.zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>Z shell History File</value>
