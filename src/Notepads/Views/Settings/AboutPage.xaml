@@ -79,7 +79,7 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_ChangelogUrl_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
@@ -90,7 +90,7 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_DependenciesAndReferences_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
@@ -119,7 +119,7 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_Disclaimer_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <RichTextBlock MaxWidth="600" Margin="0,10,0,0" IsTextSelectionEnabled="False">

@@ -98,6 +98,15 @@
                 EditingFilePath = EditingFile.Path;
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
+
+            // Hide content preview if current file type is not supported for previewing
+            if (!FileTypeUtility.IsPreviewSupported(FileType))
+            {
+                if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                {
+                    ShowHideContentPreview();
+                }   
+            }
         }
 
         private bool _isModified;
@@ -292,13 +301,6 @@
             }
 
             UpdateDocumentInfo();
-
-            if (SplitPanel != null &&
-                SplitPanel.Visibility == Visibility.Visible &&
-                !FileTypeUtility.IsPreviewSupported(FileType))
-            {
-                ShowHideContentPreview();
-            }
 
             FileRenamed?.Invoke(this, EventArgs.Empty);
         }
