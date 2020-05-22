@@ -24,6 +24,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -480,6 +481,7 @@
     <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
