@@ -70,7 +70,7 @@
                               ItemsSource="{x:Bind AvailableFonts, Mode=OneTime}"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Center"
-                              BorderThickness="2"
+                              BorderThickness="1"
                               Height="36"
                               Background="Transparent"
                               IsTextSearchEnabled="True">
@@ -86,7 +86,7 @@
                               IsEditable="False"
                               Margin="0,10,0,0"
                               VerticalAlignment="Center"
-                              BorderThickness="2"
+                              BorderThickness="1"
                               Height="36"
                               MinWidth="70"
                               Background="Transparent">
@@ -101,7 +101,7 @@
                     <ComboBox x:Name="FontStylePicker"
                               ItemsSource="{x:Bind AvailableFontStyles, Mode=OneTime}"
                               VerticalAlignment="Center"
-                              BorderThickness="2"
+                              BorderThickness="1"
                               Height="36"
                               Background="Transparent"
                               IsTextSearchEnabled="True">
@@ -123,7 +123,7 @@
                               ItemsSource="{x:Bind AvailableFontWeights, Mode=OneTime}"
                               IsEditable="False"
                               VerticalAlignment="Center"
-                              BorderThickness="2"
+                              BorderThickness="1"
                               Height="36"
                               MinWidth="70"
                               Background="Transparent">

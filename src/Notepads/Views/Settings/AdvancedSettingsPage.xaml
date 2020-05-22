@@ -75,7 +75,7 @@
                               ItemsSource="{x:Bind SupportedLanguages, Mode=OneTime}"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Center"
-                              BorderThickness="2"
+                              BorderThickness="1"
                               Height="36"
                               Background="Transparent"
                               IsTextSearchEnabled="True">
