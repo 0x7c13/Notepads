@@ -1,0 +1,696 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>尚還有未儲存的內容。</value>
+    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>全部儲存並退出</value>
+    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>退出不儲存</value>
+    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>您要儲存這些變更嗎？</value>
+    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
+    <value>找不到任何可以分享的內容。請確認是否有已經選取好文字或者檔案內存在著內容。</value>
+    <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
+  </data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
+    <value>變更後</value>
+    <comment>DiffViewer: Header's text for new text (After changes).</comment>
+  </data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
+    <value>變更前</value>
+    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
+  </data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
+    <value>Notepads 尚未支援開啟超過 1MB 以上的檔案。</value>
+    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>抱歉，檔案「{0}」開啟時發生錯誤：{1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>確定</value>
+    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+    <value>檔案開啟錯誤</value>
+    <comment>FileOpenErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>抱歉，檔案「{0}」儲存時發生錯誤：{1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>確定</value>
+    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+    <value>檔案儲存錯誤</value>
+    <comment>FileSaveErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>關閉</value>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
+    <value>尋找</value>
+    <comment>FindAndReplace: Find bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
+    <value>未找到</value>
+    <comment>FindAndReplace: Notification message when target not found.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>取代全部 (Ctrl+Alt+Enter)</value>
+    <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
+    <value>取代</value>
+    <comment>FindAndReplace: Replace bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>取代 (Alt+R)</value>
+    <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>尋找下一個 (F3)</value>
+    <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋選項</value>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
+    <value>大小寫視為相異</value>
+    <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
+    <value>全字相符</value>
+    <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Find.Text" xml:space="preserve">
+    <value>尋找...</value>
+    <comment>MainMenu: "Find" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New.Text" xml:space="preserve">
+    <value>開新檔案</value>
+    <comment>MainMenu: "New" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open.Text" xml:space="preserve">
+    <value>開啟舊檔...</value>
+    <comment>MainMenu: "Open" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Print.Text" xml:space="preserve">
+    <value>列印...</value>
+    <comment>MainMenu: "Print" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
+    <value>取代...</value>
+    <comment>MainMenu: "Replace" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Save.Text" xml:space="preserve">
+    <value>儲存檔案</value>
+    <comment>MainMenu: "Save" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
+    <value>儲存全部</value>
+    <comment>MainMenu: "Save All" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
+    <value>另存新檔...</value>
+    <comment>MainMenu: "Save As" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
+    <value>設定</value>
+    <comment>MainMenu: "Settings" button display text.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
+    <value>所有對「{0}」的變更包括文字、行尾以及編碼將會被還原！</value>
+    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
+    <value>是</value>
+    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
+    <value>您確定要還原所有變更嗎？</value>
+    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>要儲存對「{0}」的變更嗎？</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>儲存</value>
+    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>不要儲存</value>
+    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>是否儲存變更？</value>
+    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
+    <value>關閉</value>
+    <comment>Tab: ContextFlyout "Close" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
+    <value>關閉其它索引標籤</value>
+    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
+    <value>關閉右邊的項目</value>
+    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
+    <value>關閉已儲存的項目</value>
+    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
+    <value>複製完整路徑</value>
+    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
+    <value>開啟檔案所在之資料夾</value>
+    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
+    <value>複製</value>
+    <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
+    <value>剪下</value>
+    <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
+    <value>貼上</value>
+    <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
+    <value>切換預覽檢視</value>
+    <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
+    <value>取消復原</value>
+    <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
+    <value>選取全部</value>
+    <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
+    <value>共用</value>
+    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
+    <value>共用選取的文字</value>
+    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
+    <value>復原</value>
+    <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
+    <value>自動換行</value>
+    <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
+  </data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
+    <value>未命名.txt</value>
+    <comment>TextEditor: Default file name for new document.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
+    <value>第 {0} 列，第 {1} 行（{3} {2}）</value>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
+    <value>第 {0} 列，第 {1} 行</value>
+    <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
+    <value>預覽文字變更</value>
+    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
+    <value>還原所有變更</value>
+    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
+    <value>已變更</value>
+    <comment>TextEditor: ModificationIndicator display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
+    <value>已複製</value>
+    <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
+    <value>已儲存</value>
+    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>按下 F11 來退出全螢幕模式</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>從硬碟重新讀取檔案</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>檔案已在外部修改過！</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>檔案已被移動、重新命名或刪除！</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>檔案已重新讀取</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>迷你檢視模式</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>全螢幕模式</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>退出迷你檢視模式</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>退出全螢幕模式</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
+    <value>已選取</value>
+    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
+    <value>已選取</value>
+    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>移動索引標籤到此視窗</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>在 Notepads 中打開</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>這是 Notepads 的陰影視窗。工作階段快照以及設定已被停用。</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>檔案已經被開啟了！</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>新增視窗</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>開啟一個新視窗</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>新增視窗</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>開啟最近的檔案</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>跳至此行</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>行數超過當前文件之總行數！</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>請輸入有效的數字！</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>跳至行</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>在網路中搜尋</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>還原預設縮放</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>放大</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>縮小</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>跳至：</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>列印全部...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>僅支援至小數點後一位</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>數值超出範圍</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>頁尾</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>頁首</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>水平邊距 (%)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>紙張寬度或高度的百分比</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>列印時發生錯誤：</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>列印失敗</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>此裝置不支援列印</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>垂直邊距 (%)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>使用規則運算式</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>清除最近開啟的項目</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
+    <value>更多編碼</value>
+    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
+    <value>以編碼重新開啟</value>
+    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
+    <value>以編碼儲存</value>
+    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
+    <value>無效的規則運算式！</value>
+    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>自動猜測編碼</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>無法判斷當前檔案編碼</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>尋找上一個 (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>切換取代模式</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>從右到左的讀取順序</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
+  </data>
+  <data name="FontStyle_Italic" xml:space="preserve">
+    <value>斜體</value>
+    <comment>FontStyle: "Italic"</comment>
+  </data>
+  <data name="FontStyle_Normal" xml:space="preserve">
+    <value>正常</value>
+    <comment>FontStyle: "Normal"</comment>
+  </data>
+  <data name="FontStyle_Oblique" xml:space="preserve">
+    <value>偽斜體</value>
+    <comment>FontStyle: "Oblique"</comment>
+  </data>
+  <data name="FontWeight_Black" xml:space="preserve">
+    <value>黑體</value>
+    <comment>FontWeight: "Black"</comment>
+  </data>
+  <data name="FontWeight_Bold" xml:space="preserve">
+    <value>粗體</value>
+    <comment>FontWeight: "Bold"</comment>
+  </data>
+  <data name="FontWeight_ExtraBlack" xml:space="preserve">
+    <value>特黑</value>
+    <comment>FontWeight: "ExtraBlack"</comment>
+  </data>
+  <data name="FontWeight_ExtraBold" xml:space="preserve">
+    <value>特粗</value>
+    <comment>FontWeight: "ExtraBold"</comment>
+  </data>
+  <data name="FontWeight_ExtraLight" xml:space="preserve">
+    <value>特淡</value>
+    <comment>FontWeight: "ExtraLight"</comment>
+  </data>
+  <data name="FontWeight_Light" xml:space="preserve">
+    <value>淡</value>
+    <comment>FontWeight: "Light"</comment>
+  </data>
+  <data name="FontWeight_Medium" xml:space="preserve">
+    <value>中</value>
+    <comment>FontWeight: "Medium"</comment>
+  </data>
+  <data name="FontWeight_Normal" xml:space="preserve">
+    <value>正常</value>
+    <comment>FontWeight: "Normal"</comment>
+  </data>
+  <data name="FontWeight_SemiBold" xml:space="preserve">
+    <value>半粗</value>
+    <comment>FontWeight: "SemiBold"</comment>
+  </data>
+  <data name="FontWeight_SemiLight" xml:space="preserve">
+    <value>半淡</value>
+    <comment>FontWeight: "SemiLight"</comment>
+  </data>
+  <data name="FontWeight_Thin" xml:space="preserve">
+    <value>細體</value>
+    <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>確定</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>重新命名</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>檔案名稱不應存在非法字元</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>檔案名稱開頭不應含有空白字元</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>檔案名稱尾端不應含有空白字元</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>檔案名稱不可僅有空白字元或為空</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>檔案名稱無效或不允許</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>檔案名稱不可超過 255 個字元</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>重新命名</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>已重新命名</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>目前尚未支援空白副檔名</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>目前尚未支援「{0}」副檔名</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  </data>
+</root>

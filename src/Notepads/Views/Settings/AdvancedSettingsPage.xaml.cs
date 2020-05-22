@@ -1,16 +1,22 @@
-﻿namespace Notepads.Views
+﻿namespace Notepads.Views.Settings
 {
     using Notepads.Services;
+    using Notepads.Utilities;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Windows.Globalization;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public sealed partial class AdvancedSettingsPage : Page
     {
+        private readonly IReadOnlyCollection<LanguageItem> SupportedLanguages;
+
         public AdvancedSettingsPage()
         {
             InitializeComponent();
 
-            ShowStatusBarToggleSwitch.IsOn = EditorSettingsService.ShowStatusBar;
+            ShowStatusBarToggleSwitch.IsOn = AppSettingsService.ShowStatusBar;
 
             // Disable session snapshot toggle for shadow windows
             if (!App.IsFirstInstance)
@@ -20,10 +26,10 @@
             }
             else
             {
-                EnableSessionSnapshotToggleSwitch.IsOn = EditorSettingsService.IsSessionSnapshotEnabled;
+                EnableSessionSnapshotToggleSwitch.IsOn = AppSettingsService.IsSessionSnapshotEnabled;
             }
 
-            AlwaysOpenNewWindowToggleSwitch.IsOn = EditorSettingsService.AlwaysOpenNewWindow;
+            AlwaysOpenNewWindowToggleSwitch.IsOn = AppSettingsService.AlwaysOpenNewWindow;
 
             if (App.IsGameBarWidget)
             {
@@ -34,6 +40,13 @@
                 LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
+#if DEBUG
+            SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
+            FindName("LanguagePreferenceSettingsPanel"); // Lazy loading
+            LanguagePicker.SelectedItem = SupportedLanguages
+                .FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
+#endif
+
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
         }
@@ -43,6 +56,9 @@
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
+#if DEBUG
+            LanguagePicker.SelectionChanged += LanguagePicker_SelectionChanged;
+#endif
         }
 
         private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
@@ -54,17 +70,26 @@
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.IsSessionSnapshotEnabled = EnableSessionSnapshotToggleSwitch.IsOn;
+            AppSettingsService.IsSessionSnapshotEnabled = EnableSessionSnapshotToggleSwitch.IsOn;
         }
 
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
+            AppSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
         }
 
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            EditorSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
+            AppSettingsService.AlwaysOpenNewWindow = AlwaysOpenNewWindowToggleSwitch.IsOn;
+        }
+
+        private void LanguagePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var languageId = ((LanguageItem)e.AddedItems.First()).ID;
+
+            RestartPrompt.Visibility = languageId == LanguageUtility.CurrentLanguageID ? Visibility.Collapsed : Visibility.Visible;
+
+            ApplicationLanguages.PrimaryLanguageOverride = languageId;
         }
     }
 }

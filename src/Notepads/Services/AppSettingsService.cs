@@ -4,11 +4,14 @@
     using System.Text;
     using Notepads.Settings;
     using Notepads.Utilities;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
 
-    public static class EditorSettingsService
+    public static class AppSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
+        public static event EventHandler<FontStyle> OnFontStyleChanged;
+        public static event EventHandler<FontWeight> OnFontWeightChanged;
         public static event EventHandler<int> OnFontSizeChanged;
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
@@ -46,6 +49,32 @@
             }
         }
 
+        private static FontStyle _editorFontStyle;
+
+        public static FontStyle EditorFontStyle
+        {
+            get => _editorFontStyle;
+            set
+            {
+                _editorFontStyle = value;
+                OnFontStyleChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, value.ToString());
+            }
+        }
+
+        private static FontWeight _editorFontWeight;
+
+        public static FontWeight EditorFontWeight
+        {
+            get => _editorFontWeight;
+            set
+            {
+                _editorFontWeight = value;
+                OnFontWeightChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
+            }
+        }
+
         private static TextWrapping _editorDefaultTextWrapping;
 
         public static TextWrapping EditorDefaultTextWrapping
@@ -59,14 +88,14 @@
             }
         }
 
-        private static bool _isLineHighlighterEnabled;
+        private static bool _editorDisplayLineHighlighter;
 
-        public static bool IsLineHighlighterEnabled
+        public static bool EditorDisplayLineHighlighter
         {
-            get => _isLineHighlighterEnabled;
+            get => _editorDisplayLineHighlighter;
             set
             {
-                _isLineHighlighterEnabled = value;
+                _editorDisplayLineHighlighter = value;
                 OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
@@ -308,9 +337,9 @@
 
         private static void InitializeLineEndingSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr &&
+                Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding))
             {
-                Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding);
                 _editorDefaultLineEnding = (LineEnding)lineEnding;
             }
             else
@@ -321,9 +350,9 @@
 
         private static void InitializeTextWrappingSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr &&
+                Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping))
             {
-                Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping);
                 _editorDefaultTextWrapping = (TextWrapping)textWrapping;
             }
             else
@@ -346,13 +375,13 @@
 
         private static void InitializeDisplaySettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool isLineHighlighterEnabled)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool displayLineHighlighter)
             {
-                _isLineHighlighterEnabled = isLineHighlighterEnabled;
+                _editorDisplayLineHighlighter = displayLineHighlighter;
             }
             else
             {
-                _isLineHighlighterEnabled = true;
+                _editorDisplayLineHighlighter = true;
             }
 
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDisplayLineNumbersBool) is bool displayLineNumbers)
@@ -415,7 +444,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[{nameof(EditorSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(AppSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
                     _editorDefaultDecoding = null;
                 }
             }
@@ -439,16 +468,10 @@
 
         private static void InitializeSearchEngineSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr)
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr &&
+                Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
             {
-                if (Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
-                {
-                    _editorDefaultSearchEngine = (SearchEngine)searchEngine;
-                }
-                else
-                {
-                    _editorDefaultSearchEngine = SearchEngine.Bing;
-                }
+                _editorDefaultSearchEngine = (SearchEngine)searchEngine;
             }
             else
             {
@@ -483,6 +506,28 @@
             else
             {
                 _editorFontSize = 14;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorFontStyleStr) is string fontStyleStr &&
+                Enum.TryParse(typeof(FontStyle), fontStyleStr, out var fontStyle))
+            {
+                _editorFontStyle = (FontStyle)fontStyle;
+            }
+            else
+            {
+                _editorFontStyle = FontStyle.Normal;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorFontWeightUshort) is ushort fontWeight)
+            {
+                _editorFontWeight = new FontWeight()
+                {
+                    Weight = fontWeight
+                };
+            }
+            else
+            {
+                _editorFontWeight = FontWeights.Normal;
             }
         }
 

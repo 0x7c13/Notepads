@@ -59,7 +59,7 @@
 
             <Grid RelativePanel.AlignRightWithPanel="True" x:Name="OptionButtonGrid" Background="Transparent">
                 <Border x:Name="OptionButtonSelectionIndicator"
-                        BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                        BorderBrush="{StaticResource SystemControlBackgroundAccentBrush}" 
                         VerticalAlignment="Bottom" 
                         BorderThickness="1" 
                         Margin="9"

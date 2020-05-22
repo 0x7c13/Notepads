@@ -193,74 +193,99 @@
 
         public async Task<CompositionBrush> BuildHostBackdropAcrylicBrushAsync()
         {
-            var luminosityColorEffect = new ColorSourceEffect()
+            int stage = 0;
+
+            try
             {
-                Name = "LuminosityColor",
-                Color = LuminosityColor
-            };
-
-            TintOpacityToArithmeticCompositeEffectSourceAmount(TintOpacity, _acrylicTintOpacityMinThreshold,
-                out var source1Amount,
-                out var source2Amount);
-
-            var luminosityBlendingEffect = new ArithmeticCompositeEffect
-            {
-                Name = "LuminosityBlender",
-                Source1 = new CompositionEffectSourceParameter("Backdrop"),
-                Source2 = luminosityColorEffect,
-                MultiplyAmount = 0,
-                Source1Amount = source1Amount,
-                Source2Amount = source2Amount,
-                Offset = 0
-            };
-
-            var noiseBorderEffect = new BorderEffect()
-            {
-                ExtendX = CanvasEdgeBehavior.Wrap,
-                ExtendY = CanvasEdgeBehavior.Wrap,
-                Source = new CompositionEffectSourceParameter("Noise"),
-            };
-
-            var noiseBlendingEffect = new BlendEffect()
-            {
-                Name = "NoiseBlender",
-                Mode = BlendEffectMode.Overlay,
-                Background = luminosityBlendingEffect,
-                Foreground = noiseBorderEffect
-            };
-
-            _noiseBrush = _noiseBrush ?? await LoadImageBrushAsync(NoiseTextureUri);
-
-            IGraphicsEffect finalEffect;
-
-            if (_noiseBrush == null)
-            {
-                finalEffect = luminosityBlendingEffect;
-            }
-            else
-            {
-                finalEffect = noiseBlendingEffect;
-            }
-
-            CompositionEffectFactory effectFactory = Window.Current.Compositor.CreateEffectFactory(finalEffect,
-                new[]
+                stage = 1;
+                var luminosityColorEffect = new ColorSourceEffect()
                 {
-                    "LuminosityColor.Color",
-                    "LuminosityBlender.Source1Amount",
-                    "LuminosityBlender.Source2Amount"
-                });
+                    Name = "LuminosityColor",
+                    Color = LuminosityColor
+                };
 
-            CompositionEffectBrush brush = effectFactory.CreateBrush();
+                TintOpacityToArithmeticCompositeEffectSourceAmount(TintOpacity, _acrylicTintOpacityMinThreshold,
+                    out var source1Amount,
+                    out var source2Amount);
 
-            var hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
-            brush.SetSourceParameter("Backdrop", hostBackdropBrush);
+                stage = 2;
+                var luminosityBlendingEffect = new ArithmeticCompositeEffect
+                {
+                    Name = "LuminosityBlender",
+                    Source1 = new CompositionEffectSourceParameter("Backdrop"),
+                    Source2 = luminosityColorEffect,
+                    MultiplyAmount = 0,
+                    Source1Amount = source1Amount,
+                    Source2Amount = source2Amount,
+                    Offset = 0
+                };
 
-            if (_noiseBrush != null)
-            {
-                brush.SetSourceParameter("Noise", _noiseBrush);
+                stage = 3;
+                var noiseBorderEffect = new BorderEffect()
+                {
+                    ExtendX = CanvasEdgeBehavior.Wrap,
+                    ExtendY = CanvasEdgeBehavior.Wrap,
+                    Source = new CompositionEffectSourceParameter("Noise"),
+                };
+
+                stage = 4;
+                var noiseBlendingEffect = new BlendEffect()
+                {
+                    Name = "NoiseBlender",
+                    Mode = BlendEffectMode.Overlay,
+                    Background = luminosityBlendingEffect,
+                    Foreground = noiseBorderEffect
+                };
+
+                stage = 5;
+                _noiseBrush = _noiseBrush ?? await LoadImageBrushAsync(NoiseTextureUri);
+
+                IGraphicsEffect finalEffect;
+
+                if (_noiseBrush == null)
+                {
+                    finalEffect = luminosityBlendingEffect;
+                }
+                else
+                {
+                    finalEffect = noiseBlendingEffect;
+                }
+
+                stage = 6;
+                CompositionEffectFactory effectFactory = Window.Current.Compositor.CreateEffectFactory(finalEffect,
+                    new[]
+                    {
+                        "LuminosityColor.Color",
+                        "LuminosityBlender.Source1Amount",
+                        "LuminosityBlender.Source2Amount"
+                    });
+
+                stage = 7;
+                CompositionEffectBrush brush = effectFactory.CreateBrush();
+
+                stage = 8;
+                var hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
+                brush.SetSourceParameter("Backdrop", hostBackdropBrush);
+
+                stage = 9;
+                if (_noiseBrush != null)
+                {
+                    brush.SetSourceParameter("Noise", _noiseBrush);
+                }
+
+                return brush;
+
             }
-
-            return brush;
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("FailedToBuildAcrylicBrushInternal",
+                    new Dictionary<string, string>
+                    {
+                        { "Exception", ex.ToString() },
+                        { "FailedAtStage", stage.ToString() },
+                    });
+                throw; // rethrow here
+            }
         }
 
         private static async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)

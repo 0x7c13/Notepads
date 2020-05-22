@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.2.7.0" />
+    Version="1.3.4.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -41,8 +41,8 @@
         DisplayName="Notepads"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Notepads App"
-        BackgroundColor="#404040">
+        Description="A modern, lightweight text editor with a minimalist design."
+        BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Notepads">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
@@ -84,6 +84,8 @@
               <uap:FileType>.config</uap:FileType>
               <uap:FileType>.cnf</uap:FileType>
               <uap:FileType>.conf</uap:FileType>
+              <uap:FileType>.properties</uap:FileType>
+              <uap:FileType>.directory</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/ConfigFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\cfg.png</uap:Logo>
@@ -105,6 +107,12 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="text/plain">.md</uap:FileType>
               <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
+              <uap:FileType ContentType="text/plain">.mkd</uap:FileType>
+              <uap:FileType ContentType="text/plain">.mdwn</uap:FileType>
+              <uap:FileType ContentType="text/plain">.mdown</uap:FileType>
+              <uap:FileType ContentType="text/plain">.markdn</uap:FileType>
+              <uap:FileType ContentType="text/plain">.mdtxt</uap:FileType>
+              <uap:FileType ContentType="text/plain">.workbook</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/MarkdownFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\md.png</uap:Logo>
@@ -135,6 +143,16 @@
           <uap:FileTypeAssociation Name="json">
             <uap:SupportedFileTypes>
               <uap:FileType>.json</uap:FileType>
+              <uap:FileType>.jsonc</uap:FileType>
+              <uap:FileType>.jsonld</uap:FileType>
+              <uap:FileType>.hintrc</uap:FileType>
+              <uap:FileType>.babelrc</uap:FileType>
+              <uap:FileType>.eslintrc</uap:FileType>
+              <uap:FileType>.jslintrc</uap:FileType>
+              <uap:FileType>.bowerrc</uap:FileType>
+              <uap:FileType>.jscsrc</uap:FileType>
+              <uap:FileType>.webmanifest</uap:FileType>
+              <uap:FileType>.har</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/JsonFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\json.png</uap:Logo>
@@ -156,6 +174,13 @@
           <uap:FileTypeAssociation Name="xml">
             <uap:SupportedFileTypes>
               <uap:FileType>.xml</uap:FileType>
+              <uap:FileType>.xsd</uap:FileType>
+              <uap:FileType>.ascx</uap:FileType>
+              <uap:FileType>.atom</uap:FileType>
+              <uap:FileType>.axml</uap:FileType>
+              <uap:FileType>.bpmn</uap:FileType>
+              <uap:FileType>.cpt</uap:FileType>
+              <uap:FileType>.csl</uap:FileType>   
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/XmlFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\xml.png</uap:Logo>
@@ -167,6 +192,11 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.html</uap:FileType>
               <uap:FileType>.htm</uap:FileType>
+              <uap:FileType>.shtml</uap:FileType>
+              <uap:FileType>.xhtml</uap:FileType>
+              <uap:FileType>.mdoc</uap:FileType>
+              <uap:FileType>.jshtm</uap:FileType>
+              <uap:FileType>.volt</uap:FileType>         
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/HtmlFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\html.png</uap:Logo>
@@ -242,6 +272,11 @@
           <uap:FileTypeAssociation Name="javascript">
             <uap:SupportedFileTypes>
               <uap:FileType>.js</uap:FileType>
+              <uap:FileType>.jsx</uap:FileType>
+              <uap:FileType>.es6</uap:FileType>
+              <uap:FileType>.mjs</uap:FileType>
+              <uap:FileType>.cjs</uap:FileType>
+              <uap:FileType>.pac</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/JavascriptFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\js.png</uap:Logo>
@@ -252,6 +287,7 @@
           <uap:FileTypeAssociation Name="typescript">
             <uap:SupportedFileTypes>
               <uap:FileType>.ts</uap:FileType>
+              <uap:FileType>.tsx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/TypeScriptFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
@@ -273,6 +309,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.c</uap:FileType>
               <uap:FileType>.m</uap:FileType>
+              <uap:FileType>.i</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/CFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\c.png</uap:Logo>
@@ -285,6 +322,9 @@
               <uap:FileType>.cc</uap:FileType>
               <uap:FileType>.mm</uap:FileType>
               <uap:FileType>.cpp</uap:FileType>
+              <uap:FileType>.cxx</uap:FileType>
+              <uap:FileType>.ii</uap:FileType>
+              <uap:FileType>.ino</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/CppFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\cpp.png</uap:Logo>
@@ -295,7 +335,9 @@
           <uap:FileTypeAssociation Name="h">
             <uap:SupportedFileTypes>
               <uap:FileType>.h</uap:FileType>
+              <uap:FileType>.hh</uap:FileType>
               <uap:FileType>.hpp</uap:FileType>
+              <uap:FileType>.hxx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/HeaderFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\h.png</uap:Logo>
@@ -316,6 +358,8 @@
           <uap:FileTypeAssociation Name="csharp">
             <uap:SupportedFileTypes>
               <uap:FileType>.cs</uap:FileType>
+              <uap:FileType>.csx</uap:FileType>
+              <uap:FileType>.cake</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/CSharpFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\cs.png</uap:Logo>
@@ -326,6 +370,10 @@
           <uap:FileTypeAssociation Name="php">
             <uap:SupportedFileTypes>
               <uap:FileType>.php</uap:FileType>
+              <uap:FileType>.php4</uap:FileType>
+              <uap:FileType>.php5</uap:FileType>
+              <uap:FileType>.phtml</uap:FileType>
+              <uap:FileType>.ctp</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/PhpFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\php.png</uap:Logo>
@@ -346,6 +394,14 @@
           <uap:FileTypeAssociation Name="rb">
             <uap:SupportedFileTypes>
               <uap:FileType>.rb</uap:FileType>
+              <uap:FileType>.rbx</uap:FileType>
+              <uap:FileType>.rjs</uap:FileType>
+              <uap:FileType>.gemspec</uap:FileType>
+              <uap:FileType>.rake</uap:FileType>
+              <uap:FileType>.ru</uap:FileType>
+              <uap:FileType>.erb</uap:FileType>
+              <uap:FileType>.rbi</uap:FileType>
+              <uap:FileType>.arb</uap:FileType>              
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/RubyFileDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
@@ -356,6 +412,7 @@
           <uap:FileTypeAssociation Name="java">
             <uap:SupportedFileTypes>
               <uap:FileType>.java</uap:FileType>
+              <uap:FileType>.jav</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/JavaFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\java.png</uap:Logo>
@@ -366,6 +423,9 @@
           <uap:FileTypeAssociation Name="vb">
             <uap:SupportedFileTypes>
               <uap:FileType>.vb</uap:FileType>
+              <uap:FileType>.vbs</uap:FileType>
+              <uap:FileType>.brs</uap:FileType>
+              <uap:FileType>.bas</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/VisualBasicFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\vb.png</uap:Logo>
@@ -494,6 +554,46 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_aliases">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_aliases</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/BashAliasesFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_profile">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_profile</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/BashProfileFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_login">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_login</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/BashLoginFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bash_logout">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bash_logout</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/BashLogoutFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="cgi">
             <uap:SupportedFileTypes>
               <uap:FileType>.cgi</uap:FileType>
@@ -504,9 +604,11 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="pl">
+          <uap:FileTypeAssociation Name="perl">
             <uap:SupportedFileTypes>
               <uap:FileType>.pl</uap:FileType>
+              <uap:FileType>.pm</uap:FileType>
+              <uap:FileType>.psgi</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/PerlFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\perl.png</uap:Logo>
@@ -527,6 +629,7 @@
           <uap:FileTypeAssociation Name="sql">
             <uap:SupportedFileTypes>
               <uap:FileType>.sql</uap:FileType>
+              <uap:FileType>.dsql</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/SqlFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\sql.png</uap:Logo>
@@ -569,6 +672,371 @@
               <uap:FileType>.zsh_history</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/ZshellHistoryFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="lrc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.lrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/LrcFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="verilog">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.v</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/VerilogFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dat">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.dat</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/DatFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="glsp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.glsp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/GlspFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="asm">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.asm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/AsmFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="clojure">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.clj</uap:FileType>
+              <uap:FileType>.cljs</uap:FileType>
+              <uap:FileType>.cljc</uap:FileType>
+              <uap:FileType>.cljx</uap:FileType>
+              <uap:FileType>.clojure</uap:FileType>
+              <uap:FileType>.edn</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/ClojureFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="coffeescript">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.coffee</uap:FileType>
+              <uap:FileType>.cson</uap:FileType>
+              <uap:FileType>.iced</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/CoffeeScriptFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dockerfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.dockerfile</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/DockerFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fsharp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.fs</uap:FileType>
+              <uap:FileType>.fsi</uap:FileType>
+              <uap:FileType>.fsx</uap:FileType>
+              <uap:FileType>.fsscript</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/FSharpFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="diff">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.patch</uap:FileType>
+              <uap:FileType>.diff</uap:FileType>
+              <uap:FileType>.rej</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/DiffFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="groovy">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.groovy</uap:FileType>
+              <uap:FileType>.gvy</uap:FileType>
+              <uap:FileType>.gradle</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/GroovyFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="handlebars">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.handlebars</uap:FileType>
+              <uap:FileType>.hbs</uap:FileType>
+              <uap:FileType>.hjs</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/HandlebarsFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hlsl">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.hlsl</uap:FileType>
+              <uap:FileType>.hlsli</uap:FileType>
+              <uap:FileType>.fx</uap:FileType>
+              <uap:FileType>.fxh</uap:FileType>
+              <uap:FileType>.vsh</uap:FileType>
+              <uap:FileType>.psh</uap:FileType>
+              <uap:FileType>.cginc</uap:FileType>
+              <uap:FileType>.compute</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/HlslFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="map">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.map</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/MapFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="less">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.less</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/LessFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="t">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.t</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/TFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pod">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.pod</uap:FileType>
+              <uap:FileType>.podspec</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/PodFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="perl6">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.p6</uap:FileType>
+              <uap:FileType>.pl6</uap:FileType>
+              <uap:FileType>.pm6</uap:FileType>
+              <uap:FileType>.nqp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/Perl6FileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\perl.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="razor">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cshtml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/RazorFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rust">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.rs</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/RustFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="shader">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.shader</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/ShaderFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pug">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.jade</uap:FileType>
+              <uap:FileType>.pug</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/PugFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="r">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.r</uap:FileType>
+              <uap:FileType>.rhistory</uap:FileType>
+              <uap:FileType>.rprofile</uap:FileType>
+              <uap:FileType>.rt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/RFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="install">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.install</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/InstallFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="profile">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.profile</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/ProfileFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ebuild">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ebuild</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/EBuildFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="swift">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.swift</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/SwiftFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="powershell">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ps1</uap:FileType>
+              <uap:FileType>.psm1</uap:FileType>
+              <uap:FileType>.psd1</uap:FileType>
+              <uap:FileType>.pssc</uap:FileType>
+              <uap:FileType>.psrc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/PowerShellFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="xaml">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.xaml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/XamlFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="user">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.user</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/UserFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bond">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.bond</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/BondFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="htaccess">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.htaccess</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/HypertextAccessFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="csv">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.csv</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/CommaSeparatedValuesFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>

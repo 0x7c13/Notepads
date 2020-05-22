@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Fallback decoding will be used if file's encoding cannot be recognized.</value>
+    <value>Fallback decoding will be used when a file's encoding cannot be recognized.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -384,5 +384,25 @@
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
     <value>Display line numbers</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Style</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Weight</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>Choose a custom language to override system default language used in Notepads. Restart is required to complete changes.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
+    <value>*Restart Notepads to complete changes.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Language Preferences</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
   </data>
 </root>

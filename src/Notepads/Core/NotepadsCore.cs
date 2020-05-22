@@ -32,6 +32,7 @@
         public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
         public event EventHandler<ITextEditor> TextEditorSaved;
+        public event EventHandler<ITextEditor> TextEditorRenamed;
         public event EventHandler<ITextEditor> TextEditorClosing;
         public event EventHandler<ITextEditor> TextEditorSelectionChanged;
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
@@ -100,8 +101,8 @@
         public void OpenNewTextEditor(string fileNamePlaceholder)
         {
             var textFile = new TextFile(string.Empty,
-                EditorSettingsService.EditorDefaultEncoding,
-                EditorSettingsService.EditorDefaultLineEnding);
+                AppSettingsService.EditorDefaultEncoding,
+                AppSettingsService.EditorDefaultLineEnding);
             var newEditor = CreateTextEditor(
                 Guid.NewGuid(),
                 textFile,
@@ -201,6 +202,7 @@
             textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed += TextEditor_OnFileRenamed;
 
             return textEditor;
         }
@@ -238,6 +240,7 @@
             textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
+            textEditor.FileRenamed -= TextEditor_OnFileRenamed;
             textEditor.Dispose();
         }
 
@@ -396,15 +399,21 @@
 
         private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
+            var modifierIcon = new FontIcon()
+            {
+                Glyph = "\uF127",
+                FontSize = 1.5,
+                Width = 3,
+                Height = 3,
+                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+            };
+
             var textEditorSetsViewItem = new SetsViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
                 SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-                Icon = new SymbolIcon(Symbol.Save)
-                {
-                    Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-                }
+                Icon = modifierIcon
             };
 
             if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)
@@ -550,6 +559,15 @@
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorLineEndingChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileRenamed(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
+            item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
+            TextEditorRenamed?.Invoke(this, textEditor);
         }
 
         #region DragAndDrop

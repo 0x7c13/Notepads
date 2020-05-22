@@ -17,10 +17,12 @@
         private readonly SideBySideDiffBuilder differ;
         private readonly object mutex = new object();
         private bool inDiff;
+        private readonly BrushFactory _brushFactory;
 
         public RichTextBlockDiffRenderer()
         {
             differ = new SideBySideDiffBuilder(new Differ());
+            _brushFactory = new BrushFactory();
         }
 
         private const char BreakingSpace = '-';
@@ -38,7 +40,7 @@
             _defaultForeground = defaultForeground;
 
             var diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
-            var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
+            var zippedDiffs = diff.OldText.Lines.Zip(diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
             var leftContext = RenderDiff(zippedDiffs, line => line.Old, piece => piece.Old);
             var rightContext = RenderDiff(zippedDiffs, line => line.New, piece => piece.New);
 
@@ -48,12 +50,12 @@
 
         private RichTextBlockDiffContext RenderDiff(System.Collections.Generic.List<OldNew<DiffPiece>> lines, Func<OldNew<DiffPiece>, DiffPiece> lineSelector, Func<OldNew<DiffPiece>, DiffPiece> pieceSelector)
         {
-            var context = new RichTextBlockDiffContext();
+            var context = new RichTextBlockDiffContext(_brushFactory);
             int index = 0;
             foreach (var line in lines)
             {
                 var lineLength = Math.Max(line.Old.Text?.Length ?? 0, line.New.Text?.Length ?? 0);
-                var lineSubPieces = Enumerable.Zip(line.Old.SubPieces, line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
+                var lineSubPieces = line.Old.SubPieces.Zip(line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
 
                 var oldNewLine = lineSelector(line);
                 switch (oldNewLine.Type)
@@ -111,7 +113,7 @@
             {
                 Text = text,
                 Foreground = foreground.HasValue
-                            ? BrushFactory.GetSolidColorBrush(foreground.Value)
+                            ? _brushFactory.GetOrCreateSolidColorBrush(foreground.Value)
                             : _defaultForeground
             };
 
@@ -129,7 +131,7 @@
             {
                 LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                 Foreground = foreground.HasValue
-                    ? BrushFactory.GetSolidColorBrush(foreground.Value)
+                    ? _brushFactory.GetOrCreateSolidColorBrush(foreground.Value)
                     : _defaultForeground,
             };
             paragraph.LineHeight = paragraph.FontSize + 6;

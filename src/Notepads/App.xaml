@@ -34,6 +34,14 @@
                 <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
+            <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
+                <Setter Property="FontSize" Value="18"/>
+            </Style>
+
+            <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}"/>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
