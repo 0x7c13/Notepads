@@ -105,7 +105,7 @@
                 if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
                 {
                     ShowHideContentPreview();
-                }   
+                }
             }
         }
 
