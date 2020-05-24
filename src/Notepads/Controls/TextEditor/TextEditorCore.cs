@@ -543,52 +543,26 @@
             var lines = GetDocumentLinesCache();
             GetTextSelectionPosition(out var start, out var end);
 
-            startLineIndex = 1;
-            startColumnIndex = 1;
-            endLineIndex = 1;
-            endColumnIndex = 1;
-            selectedCount = 0;
+            var isSelectionEndsWithLineEndingChar = Document.GetRange(start, end).Text.EndsWith(RichEditBoxDefaultLineEnding);
+            startLineIndex = Document.GetRange(start, start).GetIndex(TextRangeUnit.Paragraph);
+            endLineIndex = Document.GetRange(end, end).GetIndex(TextRangeUnit.Paragraph);
+            startColumnIndex = start - (RichEditBoxDefaultLineEnding + _document).LastIndexOf(RichEditBoxDefaultLineEnding, start) + 1;
+            endColumnIndex = end - (RichEditBoxDefaultLineEnding + _document).LastIndexOf(RichEditBoxDefaultLineEnding, isSelectionEndsWithLineEndingChar ? end - 1 : end) + 1;
             lineCount = lines.Length - 1;
 
-            var length = 0;
-            bool startLocated = false;
-
-            for (int i = 0; i < lineCount + 1; i++)
+            if (endLineIndex == startLineIndex || lineEnding != LineEnding.Crlf)
             {
-                var line = lines[i];
+                selectedCount = end - start;
+            }
+            else
+            {
+                selectedCount = end - start + (endLineIndex - startLineIndex);
+            }
 
-                if (line.Length + length >= start && !startLocated)
-                {
-                    startLineIndex = i + 1;
-                    startColumnIndex = start - length + 1;
-                    startLocated = true;
-                }
-
-                if (line.Length + length >= end)
-                {
-                    if (i == startLineIndex - 1 || lineEnding != LineEnding.Crlf)
-                    {
-                        selectedCount = end - start;
-                    }
-                    else
-                    {
-                        selectedCount = end - start + (i - startLineIndex) + 1;
-                    }
-
-                    endLineIndex = i + 1;
-                    endColumnIndex = end - length + 1;
-
-                    // Reposition end position to previous line's end position if last selected char is RichEditBoxDefaultLineEnding ('\r')
-                    if (endColumnIndex == 1 && end != start)
-                    {
-                        endLineIndex--;
-                        endColumnIndex = lines[i - 1].Length + 1;
-                    }
-
-                    return;
-                }
-
-                length += line.Length + 1;
+            if (isSelectionEndsWithLineEndingChar)
+            {
+                endLineIndex--;
+                endColumnIndex--;
             }
         }
 
@@ -602,25 +576,6 @@
 
             return _documentLinesCache;
         }
-
-        /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
-        {
-            GetTextSelectionPosition(out var start, out var end);
-
-            var document = GetText();
-
-            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + 1;
-            columnIndex = start
-                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
-                + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(document)
-                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                : 0;
-            if (end > document.Length) selectedCount -= 2;
-        }*/
 
         public double GetFontZoomFactor()
         {
