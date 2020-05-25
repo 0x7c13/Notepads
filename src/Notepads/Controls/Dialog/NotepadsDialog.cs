@@ -12,7 +12,7 @@
     {
         public bool IsAborted = false;
 
-        private readonly SolidColorBrush _darkModeBackgroundBrush = new SolidColorBrush("#0E0E0E".ToColor());
+        private readonly SolidColorBrush _darkModeBackgroundBrush = new SolidColorBrush("#101010".ToColor());
         private readonly SolidColorBrush _lightModeBackgroundBrush = new SolidColorBrush(Colors.White);
 
         public NotepadsDialog()
