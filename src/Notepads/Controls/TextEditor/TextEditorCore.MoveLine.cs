@@ -14,7 +14,7 @@
                 out _,
                 out _);
 
-            if (startLine == 0) return;
+            if (startLine == 1) return;
 
             var document = GetText();
             var lines = GetDocumentLinesCache();
@@ -35,8 +35,7 @@
                 movingLines = movingLines.TrimStart(RichEditBoxDefaultLineEnding);
             }
 
-             Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect,
-                out var _);
+            Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
             GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
 
@@ -76,7 +75,7 @@
             var lines = GetDocumentLinesCache();
 
             var startLineInitialIndex = start - startColumn + 1;
-            var endLineFinalIndex = end - endColumn + lines[endLine - 1].Length + 
+            var endLineFinalIndex = end - endColumn + lines[endLine - 1].Length +
                 (end > start && document[end - 1].Equals(RichEditBoxDefaultLineEnding) ? 1 : 2);
 
             var selectionMoveAmount = lines[endLine].Length + 1;
