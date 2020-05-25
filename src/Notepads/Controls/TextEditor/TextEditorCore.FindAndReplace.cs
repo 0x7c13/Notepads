@@ -158,6 +158,8 @@
 
         public bool TryFindNextAndReplace(SearchContext searchContext, string replaceText, out bool regexError)
         {
+            Document.Selection.EndPosition = Document.Selection.StartPosition;
+
             if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))
             {
                 regexError = error;
@@ -168,6 +170,7 @@
                 }
 
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
+                TryFindNextAndSelect(searchContext, stopAtEof: true, out _);
                 return true;
             }
 
