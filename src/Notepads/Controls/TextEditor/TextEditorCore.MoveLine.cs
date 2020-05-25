@@ -6,7 +6,6 @@
     {
         private void MoveLinesUp()
         {
-            GetTextSelectionPosition(out var start, out var end);
             GetLineColumnSelection(out var startLine,
                 out var endLine,
                 out var startColumn,
@@ -15,6 +14,8 @@
                 out _);
 
             if (startLine == 1) return;
+
+            GetTextSelectionPosition(out var start, out var end);
 
             var document = GetText();
             var lines = GetDocumentLinesCache();
@@ -47,7 +48,8 @@
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
 
-            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // After SetText() and SetRange(), RichEdit will scroll selection into view
+            // and change scroll viewer's position even if it was already in the viewport
             // It is better to keep its original scroll position after changing the lines' position in this case
             if (wasSelectionInView)
             {
@@ -61,7 +63,6 @@
 
         private void MoveLinesDown()
         {
-            GetTextSelectionPosition(out var start, out var end);
             GetLineColumnSelection(out _,
                 out var endLine,
                 out var startColumn,
@@ -70,6 +71,8 @@
                 out var lineCount);
 
             if (endLine == lineCount) return;
+
+            GetTextSelectionPosition(out var start, out var end);
 
             var document = GetText();
             var lines = GetDocumentLinesCache();
@@ -89,8 +92,7 @@
                 movingLines = movingLines.TrimEnd(RichEditBoxDefaultLineEnding);
             }
 
-            Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect,
-               out var _);
+            Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
             GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
 
@@ -102,7 +104,8 @@
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
 
-            // After SetText() and SetRange(), RichEdit will scroll selection into view and change scroll viewer's position even if it was already in the viewport
+            // After SetText() and SetRange(), RichEdit will scroll selection into view
+            // and change scroll viewer's position even if it was already in the viewport
             // It is better to keep its original scroll position after changing the lines' position in this case
             if (wasSelectionInView)
             {
