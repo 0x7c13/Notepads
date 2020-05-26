@@ -29,7 +29,7 @@
             var movingLines = document.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
             var remainingContent = document.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
 
-            if (insertIndex <= 0)
+            if (insertIndex < 0)
             {
                 insertIndex = 0;
                 remainingContent = RichEditBoxDefaultLineEnding + remainingContent;
