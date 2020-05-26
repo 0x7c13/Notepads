@@ -461,4 +461,52 @@
     <value>Z shell Geçmişi Dosyası</value>
     <comment>.zsh_history</comment>
   </data>
+  <data name="M3uFileDisplayName" xml:space="preserve">
+    <value>M3U File</value>
+    <comment>.m3u, .m3u8</comment>
+  </data>
+  <data name="CheatFileDisplayName" xml:space="preserve">
+    <value>Cheat File</value>
+    <comment>.cht</comment>
+  </data>
+  <data name="CSharpeProjectFileDisplayName" xml:space="preserve">
+    <value>C# Project File</value>
+    <comment>.csproj</comment>
+  </data>
+  <data name="EnvironmentFileDisplayName" xml:space="preserve">
+    <value>Environment File</value>
+    <comment>.env</comment>
+  </data>
+  <data name="GlslFileDisplayName" xml:space="preserve">
+    <value>GLSL File</value>
+    <comment>.glslp</comment>
+  </data>
+  <data name="LicenseFileDisplayName" xml:space="preserve">
+    <value>License File</value>
+    <comment>.lic</comment>
+  </data>
+  <data name="OptFileDisplayName" xml:space="preserve">
+    <value>OPT File</value>
+    <comment>.opt</comment>
+  </data>
+  <data name="PropertyListFileDisplayName" xml:space="preserve">
+    <value>Property List File</value>
+    <comment>.plist</comment>
+  </data>
+  <data name="PvdFileDisplayName" xml:space="preserve">
+    <value>PVD File</value>
+    <comment>.pvd</comment>
+  </data>
+  <data name="ResourceFileDisplayName" xml:space="preserve">
+    <value>Resource File</value>
+    <comment>.resx</comment>
+  </data>
+  <data name="TomlFileDisplayName" xml:space="preserve">
+    <value>TOML File</value>
+    <comment>.toml</comment>
+  </data>
+  <data name="XslFileDisplayName" xml:space="preserve">
+    <value>XSL File</value>
+    <comment>.xsl</comment>
+  </data>
 </root>
