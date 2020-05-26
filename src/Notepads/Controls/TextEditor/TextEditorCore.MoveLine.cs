@@ -29,11 +29,11 @@
             var movingLines = document.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
             var remainingContent = document.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
 
-            if (insertIndex <= 0)
+            if (insertIndex < 0)
             {
                 insertIndex = 0;
                 remainingContent = RichEditBoxDefaultLineEnding + remainingContent;
-                movingLines = movingLines.TrimStart(RichEditBoxDefaultLineEnding);
+                movingLines = movingLines.Remove(0, 1);
             }
 
             Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
@@ -89,7 +89,7 @@
             if (insertIndex >= remainingContent.Length)
             {
                 remainingContent += RichEditBoxDefaultLineEnding;
-                movingLines = movingLines.TrimEnd(RichEditBoxDefaultLineEnding);
+                movingLines = movingLines.Remove(movingLines.Length - 1);
             }
 
             Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
@@ -99,7 +99,6 @@
             var newContent = remainingContent.Insert(insertIndex, movingLines);
             start += selectionMoveAmount;
             end += selectionMoveAmount;
-            if (end > document.Length) end = document.Length;
 
             Document.SetText(TextSetOptions.None, newContent);
             Document.Selection.SetRange(start, end);
