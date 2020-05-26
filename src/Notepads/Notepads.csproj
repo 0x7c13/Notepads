@@ -134,6 +134,7 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.MoveLine.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />
@@ -595,7 +596,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.6.1</Version>
+      <Version>1.6.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>3.2.1</Version>
