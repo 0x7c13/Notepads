@@ -58,20 +58,11 @@ namespace Notepads
                 return continueTask;
             };
 
-            // If Notepads is running as a Game Bar widget, then create an XboxGameBarForegroundWorker object and call ExecuteAsync
-            // Otherwise, just invoke directly
-            if (App.IsGameBarWidget && _widget != null)
-            {
-                var foregroundWorker = new XboxGameBarForegroundWorker(_widget, foregroundWorkHandler);
+            var foregroundWorker = new XboxGameBarForegroundWorker(_widget, foregroundWorkHandler);
 
-                foregroundWorker.CancelOperationRequested += CancelOperationRequestedHandler;
-                await foregroundWorker.ExecuteAsync();
-                foregroundWorker.CancelOperationRequested -= CancelOperationRequestedHandler;
-            }
-            else
-            {
-                await foregroundWorkHandler.Invoke();
-            }
+            foregroundWorker.CancelOperationRequested += CancelOperationRequestedHandler;
+            await foregroundWorker.ExecuteAsync();
+            foregroundWorker.CancelOperationRequested -= CancelOperationRequestedHandler;
         }
 
         private void CancelOperationRequestedHandler(XboxGameBarForegroundWorker sender, object args)

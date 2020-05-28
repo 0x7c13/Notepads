@@ -53,18 +53,27 @@
             IReadOnlyList<StorageFile> files = null;
             IAsyncOperation<IReadOnlyList<StorageFile>> filePickerOperation = null;
 
-            var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, async () =>
+            var filePickerOperationDelegate = new Func<Task>(async () =>
             {
                 filePickerOperation = FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
                 files = await filePickerOperation;
             });
 
-            foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+            if (App.IsGameBarWidget && _widget != null)
             {
-                filePickerOperation.Cancel();
-            };
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
 
-            await foregroundWorkWrapper.ExecuteAsync();
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
+            }
+            else
+            {
+                await filePickerOperationDelegate.Invoke();
+            }
 
             return files;
         }
@@ -233,18 +242,27 @@
             StorageFile file = null;
             IAsyncOperation<StorageFile> filePickerOperation = null;
 
-            var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, async () =>
+            var filePickerOperationDelegate = new Func<Task>(async () =>
             {
                 filePickerOperation = FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
                 file = await filePickerOperation;
             });
 
-            foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+            if (App.IsGameBarWidget && _widget != null)
             {
-                filePickerOperation.Cancel();
-            };
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
 
-            await foregroundWorkWrapper.ExecuteAsync();
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
+            }
+            else
+            {
+                await filePickerOperationDelegate.Invoke();
+            }
 
             NotepadsCore.FocusOnTextEditor(textEditor);
 
