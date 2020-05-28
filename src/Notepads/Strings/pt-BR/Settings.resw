@@ -369,10 +369,6 @@
     <value>Exibição</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Exibe uma borda ao redor da linha atual.</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>Exibe a numeração das linhas no documento.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>

@@ -23,7 +23,7 @@
     [TemplatePart(Name = LineNumberCanvasName, Type = typeof(Canvas))]
     [TemplatePart(Name = LineNumberGridName, Type = typeof(Grid))]
     [TemplatePart(Name = LineHighlighterAndIndicatorCanvasName, Type = typeof(Canvas))]
-    [TemplatePart(Name = LineHighlighterName, Type = typeof(Border))]
+    [TemplatePart(Name = LineHighlighterName, Type = typeof(Grid))]
     [TemplatePart(Name = LineIndicatorName, Type = typeof(Border))]
     public partial class TextEditorCore : RichEditBox
     {
@@ -70,7 +70,7 @@
         private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
         private Canvas _lineHighlighterAndIndicatorCanvas;
         private const string LineHighlighterName = "LineHighlighter";
-        private Border _lineHighlighter;
+        private Grid _lineHighlighter;
         private const string LineIndicatorName = "LineIndicator";
         private Border _lineIndicator;
 
@@ -161,7 +161,7 @@
             _lineNumberCanvas = GetTemplateChild(LineNumberCanvasName) as Canvas;
 
             _lineHighlighterAndIndicatorCanvas = GetTemplateChild(LineHighlighterAndIndicatorCanvasName) as Canvas;
-            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Border;
+            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Grid;
             _lineIndicator = GetTemplateChild(LineIndicatorName) as Border;
 
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;

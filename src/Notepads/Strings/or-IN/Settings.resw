@@ -369,10 +369,6 @@
     <value>ଦର୍ଶନ</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ଚାରିପାଖରେ ପରିସର ଦେଖାନ୍ତୁ |</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>ଡକ୍ୟୁମେଣ୍ଟ୍ ରେ ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ |</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
