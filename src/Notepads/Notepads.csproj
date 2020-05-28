@@ -225,6 +225,7 @@
     <Compile Include="Models\TextFile.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
+    <Compile Include="Widget\XboxGameBarForegroundWorkerWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -605,7 +606,7 @@
       <Version>3.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Gaming.XboxGameBar">
-      <Version>5.2.200415002</Version>
+      <Version>5.3.200522001-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>

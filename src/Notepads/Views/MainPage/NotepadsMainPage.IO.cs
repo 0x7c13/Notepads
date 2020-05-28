@@ -4,17 +4,16 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using Windows.Foundation;
     using Windows.Graphics.Printing;
     using Windows.Storage;
     using Notepads.Controls.Dialog;
     using Notepads.Controls.FilePicker;
     using Notepads.Controls.Print;
     using Notepads.Controls.TextEditor;
-    using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
     using Microsoft.AppCenter.Analytics;
-    using Microsoft.Gaming.XboxGameBar;
 
     public sealed partial class NotepadsMainPage
     {
@@ -52,30 +51,30 @@
         private async Task<IReadOnlyList<StorageFile>> OpenFilesUsingFileOpenPicker()
         {
             IReadOnlyList<StorageFile> files = null;
+            IAsyncOperation<IReadOnlyList<StorageFile>> filePickerOperation = null;
 
-            ForegroundWorkHandler foregroundWork = (() =>
+            var filePickerOperationDelegate = new Func<Task>(async () =>
             {
-                return Task.Run(async () =>
-                {
-                    files = await Dispatcher.RunTaskAsync(async () =>
-                    {
-                        return await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
-                    });
-
-                    return true;
-                }).AsAsyncOperation<bool>();
+                filePickerOperation = FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+                files = await filePickerOperation;
             });
 
-            if (_widget != null)
+            if (App.IsGameBarWidget && _widget != null)
             {
-                var foregroundWorker = new XboxGameBarForegroundWorker(_widget, foregroundWork);
-                await foregroundWorker.ExecuteAsync();
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
+
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
             }
             else
             {
-                await foregroundWork.Invoke();
+                await filePickerOperationDelegate.Invoke();
             }
-            
+
             return files;
         }
 
@@ -241,31 +240,28 @@
             NotepadsCore.SwitchTo(textEditor);
 
             StorageFile file = null;
+            IAsyncOperation<StorageFile> filePickerOperation = null;
 
-            // Create a lambda for the UI work and re-use if not running as a Game Bar widget
-            // If you are doing async work on the UI thread inside this lambda, it must be awaited before the lambda returns to ensure Game Bar is
-            // in the right state for the entirety of the foreground operation.
-            // We recommend using the Dispatcher RunTaskAsync task extension to make this easier
-            // Look at Extensions/DispatcherTaskExtensions.cs
-            // For more information you can read this blog post: https://devblogs.microsoft.com/oldnewthing/20190327-00/?p=102364
-            // For another approach more akin to how C++/WinRT handles awaitable thread switching, read this blog post: https://devblogs.microsoft.com/oldnewthing/20190328-00/?p=102368
-            ForegroundWorkHandler filePickerWork = (() =>
+            var filePickerOperationDelegate = new Func<Task>(async () =>
             {
-                return Task.Run(async () =>
-                {
-                    file = await Dispatcher.RunTaskAsync<StorageFile>(async () =>
-                        await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync());
-                    return true;
-                }).AsAsyncOperation<bool>();
+                filePickerOperation = FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
+                file = await filePickerOperation;
             });
 
             if (App.IsGameBarWidget && _widget != null)
             {
-                await new XboxGameBarForegroundWorker(_widget, filePickerWork).ExecuteAsync();
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
+
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
             }
             else
             {
-                await filePickerWork.Invoke();
+                await filePickerOperationDelegate.Invoke();
             }
 
             NotepadsCore.FocusOnTextEditor(textEditor);
