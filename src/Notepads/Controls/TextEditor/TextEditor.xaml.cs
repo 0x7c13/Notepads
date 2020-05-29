@@ -763,6 +763,10 @@
 
             try
             {
+                if (AppSettingsService.IsSmartCopyEnabled)
+                {
+                    TextEditorCore.SmartlyTrimTextSelection();
+                }
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                 var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
                 dataPackage.SetText(text);

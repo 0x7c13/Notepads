@@ -605,25 +605,6 @@
             return _documentLinesCache;
         }
 
-        /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
-        {
-            GetTextSelectionPosition(out var start, out var end);
-
-            var document = GetText();
-
-            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + 1;
-            columnIndex = start
-                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
-                + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(document)
-                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                : 0;
-            if (end > document.Length) selectedCount -= 2;
-        }*/
-
         public double GetFontZoomFactor()
         {
             return _fontZoomFactor;
@@ -634,6 +615,32 @@
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
                 FontSize = (fontZoomFactorInt / 100) * AppSettingsService.EditorFontSize;
+        }
+
+        public void SmartlyTrimTextSelection()
+        {
+            var selection = Document.Selection;
+            var startPosition = selection.StartPosition;
+            var endPosition = selection.EndPosition;
+            var selectedText = selection.Text;
+
+            if (selectedText.ContainsAllowableCharactersOnly(' ', '\t', RichEditBoxDefaultLineEnding))
+            {
+                // Do not do anything if selected text contains spaces, tabs and line breaks only
+                return;
+            }
+
+            var trimStart = selectedText.TrimStart(' ', '\t', RichEditBoxDefaultLineEnding);
+            var startOffset = selectedText.Length - trimStart.Length;
+
+            var leadingStr = selectedText.Substring(0, startOffset);
+            var lastLineBreakOffset = leadingStr.LastIndexOf(RichEditBoxDefaultLineEnding);
+            startOffset = lastLineBreakOffset == -1 ? 0 : lastLineBreakOffset + 1;
+
+            var trimEnd = trimStart.TrimEnd(' ', '\t', RichEditBoxDefaultLineEnding);
+            var endOffset = trimStart.Length - trimEnd.Length;
+
+            Document.Selection.SetRange(startPosition + startOffset, endPosition - endOffset);
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
