@@ -234,7 +234,7 @@
             }
         }
 
-        public static bool _isHighlightMisspelledWordsEnabled;
+        private static bool _isHighlightMisspelledWordsEnabled;
 
         public static bool IsHighlightMisspelledWordsEnabled
         {
@@ -247,7 +247,7 @@
             }
         }
 
-        public static bool _alwaysOpenNewWindow;
+        private static bool _alwaysOpenNewWindow;
 
         public static bool AlwaysOpenNewWindow
         {
@@ -259,7 +259,7 @@
             }
         }
 
-        public static bool _displayLineNumbers;
+        private static bool _displayLineNumbers;
 
         public static bool EditorDisplayLineNumbers
         {
@@ -272,6 +272,18 @@
             }
         }
 
+        private static bool _isSmartCopyEnabled;
+
+        public static bool IsSmartCopyEnabled
+        {
+            get => _isSmartCopyEnabled;
+            set
+            {
+                _isSmartCopyEnabled = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSmartCopyBool, value);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -281,6 +293,8 @@
             InitializeSpellingSettings();
 
             InitializeDisplaySettings();
+
+            InitializeSmartCopySettings();
 
             InitializeLineEndingSettings();
 
@@ -391,6 +405,18 @@
             else
             {
                 _displayLineNumbers = true;
+            }
+        }
+
+        private static void InitializeSmartCopySettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSmartCopyBool) is bool enableSmartCopy)
+            {
+                _isSmartCopyEnabled = enableSmartCopy;
+            }
+            else
+            {
+                _isSmartCopyEnabled = false;
             }
         }
 
