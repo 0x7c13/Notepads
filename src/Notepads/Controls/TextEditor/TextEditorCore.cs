@@ -31,6 +31,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+        public event EventHandler<TextControlCuttingToClipboardEventArgs> CutSelectedTextToWindowsClipboardRequested;
         public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
@@ -127,6 +128,7 @@
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
+            CuttingToClipboard += OnCuttingToClipboard;
             Paste += OnPaste;
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
@@ -185,6 +187,7 @@
         public void Dispose()
         {
             CopyingToClipboard -= OnCopyingToClipboard;
+            CuttingToClipboard -= OnCuttingToClipboard;
             Paste -= OnPaste;
             TextChanging -= OnTextChanging;
             TextChanged -= OnTextChanged;
@@ -353,6 +356,11 @@
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
             CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
+        }
+
+        private void OnCuttingToClipboard(RichEditBox sender, TextControlCuttingToClipboardEventArgs args)
+        {
+            CutSelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
