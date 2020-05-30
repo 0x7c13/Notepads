@@ -122,7 +122,7 @@
     <comment>.ass</comment>
   </data>
   <data name="AsmFileDisplayName" xml:space="preserve">
-    <value>Assembly Language 檔案</value>
+    <value>組合語言檔案</value>
     <comment>.asm</comment>
   </data>
   <data name="AspFileDisplayName" xml:space="preserve">
@@ -190,7 +190,7 @@
     <comment>.coffee, .cson, .iced</comment>
   </data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
-    <value>Comma Separated Values 檔案</value>
+    <value>逗點分隔值檔案</value>
     <comment>.csv</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
@@ -470,11 +470,11 @@
     <comment>.cht</comment>
   </data>
   <data name="CSharpeProjectFileDisplayName" xml:space="preserve">
-    <value>C# Project 檔案</value>
+    <value>C# 專案檔</value>
     <comment>.csproj</comment>
   </data>
   <data name="EnvironmentFileDisplayName" xml:space="preserve">
-    <value>Environment 檔案</value>
+    <value>環境檔案</value>
     <comment>.env</comment>
   </data>
   <data name="GlslFileDisplayName" xml:space="preserve">
@@ -490,7 +490,7 @@
     <comment>.opt</comment>
   </data>
   <data name="PropertyListFileDisplayName" xml:space="preserve">
-    <value>Property List 檔案</value>
+    <value>屬性列表檔案</value>
     <comment>.plist</comment>
   </data>
   <data name="PvdFileDisplayName" xml:space="preserve">
@@ -498,7 +498,7 @@
     <comment>.pvd</comment>
   </data>
   <data name="ResourceFileDisplayName" xml:space="preserve">
-    <value>Resource 檔案</value>
+    <value>資源檔案</value>
     <comment>.resx</comment>
   </data>
   <data name="TomlFileDisplayName" xml:space="preserve">
