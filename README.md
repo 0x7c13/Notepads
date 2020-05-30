@@ -58,6 +58,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+L/R to change text flow direction. (LTR/RTL)
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
+* Alt+Up/Down to move current line or current selection up/down.
 
 ## Platform limitations (UWP):
 
