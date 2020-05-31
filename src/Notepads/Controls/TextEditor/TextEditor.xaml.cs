@@ -815,11 +815,8 @@
                     return false;
                 }
             }
-            if (!string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText()))
-            {
-                return false;
-            }
-            return true;
+
+            return string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText());
         }
 
         private void OnEscapeKeyDown()
