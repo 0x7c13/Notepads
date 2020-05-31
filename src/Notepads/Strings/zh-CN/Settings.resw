@@ -369,10 +369,6 @@
     <value>显示设置</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>在光标所在行显示边界框。</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>在当前文本中显示行号栏。</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
@@ -404,5 +400,21 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
     <value>语言设置</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>开启后，当复制选中文字时（Ctrl+C），Noteapds会智能的帮你剪裁起始和结尾处的多余空格，制表符以及空白行。</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>开启智能复制功能</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>开启智能复制功能</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>智能复制设置</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
   </data>
 </root>

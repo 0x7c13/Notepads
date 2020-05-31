@@ -23,7 +23,7 @@
     [TemplatePart(Name = LineNumberCanvasName, Type = typeof(Canvas))]
     [TemplatePart(Name = LineNumberGridName, Type = typeof(Grid))]
     [TemplatePart(Name = LineHighlighterAndIndicatorCanvasName, Type = typeof(Canvas))]
-    [TemplatePart(Name = LineHighlighterName, Type = typeof(Border))]
+    [TemplatePart(Name = LineHighlighterName, Type = typeof(Grid))]
     [TemplatePart(Name = LineIndicatorName, Type = typeof(Border))]
     public partial class TextEditorCore : RichEditBox
     {
@@ -31,6 +31,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+        public event EventHandler<TextControlCuttingToClipboardEventArgs> CutSelectedTextToWindowsClipboardRequested;
         public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
@@ -70,7 +71,7 @@
         private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
         private Canvas _lineHighlighterAndIndicatorCanvas;
         private const string LineHighlighterName = "LineHighlighter";
-        private Border _lineHighlighter;
+        private Grid _lineHighlighter;
         private const string LineIndicatorName = "LineIndicator";
         private Border _lineIndicator;
 
@@ -127,6 +128,7 @@
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
+            CuttingToClipboard += OnCuttingToClipboard;
             Paste += OnPaste;
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
@@ -161,7 +163,7 @@
             _lineNumberCanvas = GetTemplateChild(LineNumberCanvasName) as Canvas;
 
             _lineHighlighterAndIndicatorCanvas = GetTemplateChild(LineHighlighterAndIndicatorCanvasName) as Canvas;
-            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Border;
+            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Grid;
             _lineIndicator = GetTemplateChild(LineIndicatorName) as Border;
 
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
@@ -185,6 +187,7 @@
         public void Dispose()
         {
             CopyingToClipboard -= OnCopyingToClipboard;
+            CuttingToClipboard -= OnCuttingToClipboard;
             Paste -= OnPaste;
             TextChanging -= OnTextChanging;
             TextChanged -= OnTextChanged;
@@ -353,6 +356,11 @@
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
             CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
+        }
+
+        private void OnCuttingToClipboard(RichEditBox sender, TextControlCuttingToClipboardEventArgs args)
+        {
+            CutSelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
@@ -605,25 +613,6 @@
             return _documentLinesCache;
         }
 
-        /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
-        {
-            GetTextSelectionPosition(out var start, out var end);
-
-            var document = GetText();
-
-            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + 1;
-            columnIndex = start
-                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
-                + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(document)
-                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                : 0;
-            if (end > document.Length) selectedCount -= 2;
-        }*/
-
         public double GetFontZoomFactor()
         {
             return _fontZoomFactor;
@@ -634,6 +623,32 @@
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
                 FontSize = (fontZoomFactorInt / 100) * AppSettingsService.EditorFontSize;
+        }
+
+        public void SmartlyTrimTextSelection()
+        {
+            var selection = Document.Selection;
+            var startPosition = selection.StartPosition;
+            var endPosition = selection.EndPosition;
+            var selectedText = selection.Text;
+
+            if (selectedText.ContainsAllowableCharactersOnly(' ', '\t', RichEditBoxDefaultLineEnding))
+            {
+                // Do not do anything if selected text contains spaces, tabs and line breaks only
+                return;
+            }
+
+            var trimStart = selectedText.TrimStart(' ', '\t', RichEditBoxDefaultLineEnding);
+            var startOffset = selectedText.Length - trimStart.Length;
+
+            var leadingStr = selectedText.Substring(0, startOffset);
+            var lastLineBreakOffset = leadingStr.LastIndexOf(RichEditBoxDefaultLineEnding);
+            startOffset = lastLineBreakOffset == -1 ? 0 : lastLineBreakOffset + 1;
+
+            var trimEnd = trimStart.TrimEnd(' ', '\t', RichEditBoxDefaultLineEnding);
+            var endOffset = trimStart.Length - trimEnd.Length;
+
+            Document.Selection.SetRange(startPosition + startOffset, endPosition - endOffset);
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)

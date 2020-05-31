@@ -17,6 +17,7 @@
             InitializeComponent();
 
             ShowStatusBarToggleSwitch.IsOn = AppSettingsService.ShowStatusBar;
+            EnableSmartCopyToggleSwitch.IsOn = AppSettingsService.IsSmartCopyEnabled;
 
             // Disable session snapshot toggle for shadow windows
             if (!App.IsFirstInstance)
@@ -54,6 +55,7 @@
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
+            EnableSmartCopyToggleSwitch.Toggled += EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
 #if DEBUG
@@ -64,8 +66,14 @@
         private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
         {
             ShowStatusBarToggleSwitch.Toggled -= ShowStatusBarToggleSwitch_Toggled;
+            EnableSmartCopyToggleSwitch.Toggled -= EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
+        }
+
+        private void EnableSmartCopyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            AppSettingsService.IsSmartCopyEnabled = EnableSmartCopyToggleSwitch.IsOn;
         }
 
         private void EnableSessionBackupAndRestoreToggleSwitch_Toggled(object sender, RoutedEventArgs e)

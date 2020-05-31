@@ -113,7 +113,8 @@
                 { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
                 { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
                 { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
-                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() }
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() },
+                { "IsSmartCopyEnabled", AppSettingsService.IsSmartCopyEnabled.ToString() }
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");

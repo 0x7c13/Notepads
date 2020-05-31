@@ -45,8 +45,8 @@
             for (var i = startLine - 1; i < endLine; i++)
             {
                 indentedStringBuilder.Append(string.Concat(tabStr, lines[i],
-                    (i < endLine - 1 || (endLine == lines.Length - 2 && string.IsNullOrEmpty(lines[endLine]))) 
-                    ? RichEditBoxDefaultLineEnding.ToString() 
+                    (i < endLine - 1 || (endLine == lines.Length - 2 && string.IsNullOrEmpty(lines[endLine])))
+                    ? RichEditBoxDefaultLineEnding.ToString()
                     : string.Empty));
                 end += indentAmount;
             }
@@ -112,7 +112,7 @@
             var indentedStringBuilder = new StringBuilder();
             for (var i = startLine - 1; i < endLine; i++)
             {
-                var lineTrailingString = (i < endLine - 1 || (endLine == lines.Length - 2 && string.IsNullOrEmpty(lines[endLine]))) 
+                var lineTrailingString = (i < endLine - 1 || (endLine == lines.Length - 2 && string.IsNullOrEmpty(lines[endLine])))
                     ? RichEditBoxDefaultLineEnding.ToString()
                     : string.Empty;
 

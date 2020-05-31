@@ -69,6 +69,11 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 Notepads is available in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
 
+You can also use Windows Package Manager to install notepads:
+```cmd
+winget install notepads
+```
+
 ## Roadmap:
 
 * [Project Roadmap](ROADMAP.md)
