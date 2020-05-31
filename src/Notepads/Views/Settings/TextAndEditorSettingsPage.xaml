@@ -53,8 +53,8 @@
                 <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineHighlighterToggle"/>
-                    <TextBlock x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,15"/>
+                                  x:Name="LineHighlighterToggle"
+                                  Margin="0,0,0,10"/>
                     <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="LineNumbersToggle"/>

@@ -266,7 +266,7 @@
 
         private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
-            var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
+            var darkModeBaseColor = Color.FromArgb(255, 46, 46, 46);
             var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
             var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;

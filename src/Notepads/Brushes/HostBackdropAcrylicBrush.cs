@@ -274,7 +274,6 @@
                 }
 
                 return brush;
-
             }
             catch (Exception ex)
             {

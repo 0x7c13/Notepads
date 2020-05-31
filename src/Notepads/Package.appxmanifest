@@ -13,7 +13,7 @@
   <Identity
     Name="Notepads"
     Publisher="CN=jackil"
-    Version="1.3.4.0" />
+    Version="1.3.7.0" />
 
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -1037,6 +1037,127 @@
               <uap:FileType>.csv</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/CommaSeparatedValuesFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="m3u">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.m3u</uap:FileType>
+              <uap:FileType>.m3u8</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/M3uFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="glslp">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.glslp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/GlslFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cht">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.cht</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/CheatFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="opt">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.opt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/OptFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="env">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.env</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/EnvironmentFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="toml">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.toml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/TomlFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pvd">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.pvd</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/PvdFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="xsl">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.xsl</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/XslFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="lic">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.lic</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/LicenseFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="csproj">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.csproj</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/CSharpeProjectFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="resx">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.resx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/ResourceFileDisplayName</uap:DisplayName>
+            <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="plist">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.plist</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:Manifest/PropertyListFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>

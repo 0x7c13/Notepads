@@ -18,6 +18,7 @@
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -105,7 +106,7 @@
                 if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
                 {
                     ShowHideContentPreview();
-                }   
+                }
             }
         }
 
@@ -194,6 +195,7 @@
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested += TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
@@ -222,6 +224,7 @@
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested -= TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
@@ -761,6 +764,27 @@
                 args.Handled = true;
             }
 
+            if (AppSettingsService.IsSmartCopyEnabled)
+            {
+                TextEditorCore.SmartlyTrimTextSelection();
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+        }
+
+        public void CutSelectedTextToWindowsClipboard(TextControlCuttingToClipboardEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+            TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
+        }
+
+        private void CopySelectedTextToWindowsClipboardInternal()
+        {
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
@@ -791,11 +815,8 @@
                     return false;
                 }
             }
-            if (!string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText()))
-            {
-                return false;
-            }
-            return true;
+
+            return string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText());
         }
 
         private void OnEscapeKeyDown()
@@ -896,6 +917,11 @@
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
         {
             CopySelectedTextToWindowsClipboard(e);
+        }
+
+        private void TextEditorCore_CutSelectedTextToWindowsClipboardRequested(object sender, TextControlCuttingToClipboardEventArgs e)
+        {
+            CutSelectedTextToWindowsClipboard(e);
         }
 
         private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)

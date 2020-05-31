@@ -190,7 +190,7 @@
     <comment>.coffee, .cson, .iced</comment>
   </data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
-    <value>Vesszővel elválasztott szöveges fájlok</value>
+    <value>Vesszővel elválasztott szöveges fájl</value>
     <comment>.csv</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
@@ -318,7 +318,7 @@
     <comment>.map</comment>
   </data>
   <data name="MarkdownFileDisplayName" xml:space="preserve">
-    <value>Markdown Fájl</value>
+    <value>Markdown Dokumentációs Fájl</value>
     <comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment>
   </data>
   <data name="NfoFileDisplayName" xml:space="preserve">
@@ -460,5 +460,53 @@
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
     <value>Z shell Előzmény Fájl</value>
     <comment>.zsh_history</comment>
+  </data>
+  <data name="M3uFileDisplayName" xml:space="preserve">
+    <value>M3U Fájl</value>
+    <comment>.m3u, .m3u8</comment>
+  </data>
+  <data name="CheatFileDisplayName" xml:space="preserve">
+    <value>Cheat Kódfájl</value>
+    <comment>.cht</comment>
+  </data>
+  <data name="CSharpeProjectFileDisplayName" xml:space="preserve">
+    <value>C# Projekt Fájl</value>
+    <comment>.csproj</comment>
+  </data>
+  <data name="EnvironmentFileDisplayName" xml:space="preserve">
+    <value>Environment Fájl</value>
+    <comment>.env</comment>
+  </data>
+  <data name="GlslFileDisplayName" xml:space="preserve">
+    <value>GLSL Fájl</value>
+    <comment>.glslp</comment>
+  </data>
+  <data name="LicenseFileDisplayName" xml:space="preserve">
+    <value>License Fájl</value>
+    <comment>.lic</comment>
+  </data>
+  <data name="OptFileDisplayName" xml:space="preserve">
+    <value>OPT Fájl</value>
+    <comment>.opt</comment>
+  </data>
+  <data name="PropertyListFileDisplayName" xml:space="preserve">
+    <value>Property List Beállításfájl</value>
+    <comment>.plist</comment>
+  </data>
+  <data name="PvdFileDisplayName" xml:space="preserve">
+    <value>PVD Fájl</value>
+    <comment>.pvd</comment>
+  </data>
+  <data name="ResourceFileDisplayName" xml:space="preserve">
+    <value>Resource Fájl</value>
+    <comment>.resx</comment>
+  </data>
+  <data name="TomlFileDisplayName" xml:space="preserve">
+    <value>TOML Fájl</value>
+    <comment>.toml</comment>
+  </data>
+  <data name="XslFileDisplayName" xml:space="preserve">
+    <value>XSL Fájl</value>
+    <comment>.xsl</comment>
   </data>
 </root>
