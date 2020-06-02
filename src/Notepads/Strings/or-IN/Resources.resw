@@ -150,7 +150,7 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>ଏହି ମୁହୂର୍ତ୍ତରେ Notepads 1MB ରୁ ଅଧିକ ଫାଇଲକୁ ସପୋର୍ଟ କରେନାହିଁ |</value>
+    <value>ଏହି ମୁହୂର୍ତ୍ତରେ Notepads 1MB ରୁ ଅଧିକ ଫାଇଲକୁ ସପୋର୍ଟ କରେନାହିଁ|</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
@@ -438,7 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>ଏହା ହେଉଛି Notepads ଛାୟା ୱିଣ୍ଡୋ | ଅଧିବେଶନ ସ୍ନାପସଟ୍ ଏବଂ ସେଟିଙ୍ଗ୍ସ ଅକ୍ଷମ ହୋଇଛି |</value>
+    <value>ଏହା ହେଉଛି Notepads ଛାୟା ୱିଣ୍ଡୋ| ଅଧିବେଶନ ସ୍ନାପସଟ୍ ଏବଂ ସେଟିଙ୍ଗ୍ସ ଅକ୍ଷମ ହୋଇଛି|</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
