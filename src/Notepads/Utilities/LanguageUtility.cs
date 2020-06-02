@@ -17,7 +17,7 @@
             {
                 _id = value;
                 Name = string.IsNullOrEmpty(value) 
-                    ? ResourceLoader.GetForCurrentView().GetString("AdvancedPage_LanguagePreferenceSettings_SystemDefaultText") 
+                    ? ResourceLoader.GetForCurrentView().GetString("/Settings/AdvancedPage_LanguagePreferenceSettings_SystemDefaultText") 
                     : new CultureInfo(value).NativeName;
             }
         }
