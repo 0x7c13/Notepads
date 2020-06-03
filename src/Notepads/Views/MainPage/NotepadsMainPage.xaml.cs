@@ -279,7 +279,7 @@
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
 
-            InteropService.Initialize();
+            await InteropService.Initialize();
             InteropService.HideSettingsPane += HideSettingsPane_OnSettingsChanged;
             InteropService.UpdateRecentList += async (_, updateForOtherInstaneArgs) => await Dispatcher.CallOnUIThreadAsync(async () =>
             {
@@ -306,7 +306,7 @@
             ThemeSettingsService.UpdateAllSettings();
             AppSettingsService.UpdateAllSettings();
             await BuildOpenRecentButtonSubItems(false);
-            InteropService.Initialize();
+            await InteropService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)

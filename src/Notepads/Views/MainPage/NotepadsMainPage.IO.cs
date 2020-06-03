@@ -163,11 +163,9 @@
                 {
                     promptSaveAs = true;
                 }
-                catch (Exception ex) // Happens when the file we are saving is read-only, ask user for permission to write
+                catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
                 {
-                    if (ex == InteropService.AdminstratorAccessException)
-                    {
-                        var createElevatedExtensionDialog = NotepadsDialogFactory.GetCreateElevatedExtensionDialog(
+                    var createElevatedExtensionDialog = NotepadsDialogFactory.GetCreateElevatedExtensionDialog(
                         async () =>
                         {
                             await InteropService.CreateElevetedExtension();
@@ -177,14 +175,9 @@
                             promptSaveAs = true;
                         });
 
-                        var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
+                    var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
 
-                        if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
-                        {
-                            promptSaveAs = true;
-                        }
-                    }
-                    else
+                    if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
                     {
                         promptSaveAs = true;
                     }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
@@ -149,7 +150,8 @@
 
         private static async void OpenExtension()
         {
-            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
+            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
+                !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
             }

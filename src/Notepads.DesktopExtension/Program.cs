@@ -88,6 +88,8 @@
             if (!isFirstInstance)
             {
                 mutex.ReleaseMutex();
+                RemoveMutexId(AdminExtensionMutexIdStr);
+                RemoveMutexId(DesktopExtensionMutexIdStr);
                 Application.Exit();
             }
         }
@@ -168,6 +170,16 @@
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = obj;
+        }
+
+        private static void RemoveMutexId(string key)
+        {
+            try
+            {
+                ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values.Remove(key);
+            }
+            catch (Exception) { }
         }
     }
 }

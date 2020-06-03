@@ -12,6 +12,11 @@
     using Windows.Foundation.Collections;
     using Windows.UI.Xaml;
 
+    public class AdminstratorAccessException : Exception
+    {
+        public AdminstratorAccessException():base("Failed to save due to no Adminstration access") { }
+    }
+
     public static class InteropService
     {
         public static EventHandler<bool> HideSettingsPane;
@@ -20,7 +25,7 @@
 
         public static AppServiceConnection InteropServiceConnection = null;
         public static AdminServiceClient AdminServiceClient = new AdminServiceClient();
-        public static readonly Exception AdminstratorAccessException = new Exception("Failed to save due to no Adminstration access");
+        private static bool _isAdminExtensionAvailable = false;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static readonly string _commandLabel = "Command";
@@ -54,7 +59,7 @@
             {SettingsKey.RequestedThemeStr, SettingsSyncService.ThemeMode}
         };
 
-        public static async void Initialize()
+        public static async Task Initialize()
         {
             InteropServiceConnection = new AppServiceConnection()
             {
@@ -93,6 +98,7 @@
                         if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
                         {
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
+                            _isAdminExtensionAvailable = true;
                         }
                         else
                         {
@@ -110,7 +116,7 @@
 
         public static async void SyncSettings(string settingsKey, object value)
         {
-            if (InteropServiceConnection == null) return;
+            if (InteropServiceConnection == null) await Initialize();
 
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.SyncSettings.ToString());
@@ -128,7 +134,7 @@
 
         public static async void SyncRecentList()
         {
-            if (InteropServiceConnection == null) return;
+            if (InteropServiceConnection == null) await Initialize();
 
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.SyncRecentList.ToString());
@@ -137,31 +143,28 @@
 
         public static async Task SaveFileAsAdmin(string filePath, byte[] data)
         {
-            if (InteropServiceConnection == null) return;
+            if (InteropServiceConnection == null) await Initialize();
 
-            bool isAdminExtensionAvailable = true;
             bool failedFromAdminExtension = false;
-
-            try
+            if (_isAdminExtensionAvailable)
             {
-                if (await AdminServiceClient.IsLiveAsync())
+                try
                 {
                     ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
                     failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(filePath, data);
                 }
+                catch
+                {
+                    _isAdminExtensionAvailable = false;
+                }
+                finally
+                {
+                    ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
+                }
             }
-            catch
+            else
             {
-                isAdminExtensionAvailable = false;
-            }
-            finally
-            {
-                ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
-            }
-
-            if (!isAdminExtensionAvailable)
-            {
-                throw AdminstratorAccessException;
+                throw new AdminstratorAccessException();
             }
 
             if (failedFromAdminExtension)
@@ -172,7 +175,7 @@
 
         public static async Task CreateElevetedExtension()
         {
-            if (InteropServiceConnection == null) return;
+            if (InteropServiceConnection == null) await Initialize();
 
             var message = new ValueSet();
             message.Add(_commandLabel, CommandArgs.CreateElevetedExtension.ToString());

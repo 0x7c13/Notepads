@@ -25,10 +25,5 @@
                 return false;
             }
         }
-
-        public bool IsLive()
-        {
-            return true;
-        }
     }
 }
