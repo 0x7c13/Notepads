@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using Windows.ApplicationModel.Resources;
     using Windows.Globalization;
 
     public class LanguageItem
@@ -15,7 +16,9 @@
             set
             {
                 _id = value;
-                Name = string.IsNullOrEmpty(value) ? "System Default" : new CultureInfo(value).NativeName;
+                Name = string.IsNullOrEmpty(value) 
+                    ? ResourceLoader.GetForCurrentView().GetString("/Settings/AdvancedPage_LanguagePreferenceSettings_SystemDefaultText") 
+                    : new CultureInfo(value).NativeName;
             }
         }
 

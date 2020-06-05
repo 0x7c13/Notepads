@@ -46,7 +46,6 @@
             {
                 _lineHighlighter.Height = height;
                 _lineHighlighter.Margin = new Thickness(0, selectionRect.Y + Padding.Top, 0, 0);
-                _lineHighlighter.BorderThickness = thickness;
                 _lineHighlighter.Width = Math.Clamp(_rootGrid.ActualWidth, 0, Double.PositiveInfinity);
 
                 _lineHighlighter.Visibility = Visibility.Visible;

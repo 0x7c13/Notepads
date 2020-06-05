@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>一旦啟用後，Notepads 將會定時備份儲存當前的工作階段供下次啟動時使用，來避免意外損失尚未儲存的資料。每當關閉應用程式時，Notepads 將不會提醒您儲存文件。此外請注意工作階段快照僅會在 Notepads 第一個視窗或者主視窗中啟用。</value>
+    <value>一旦啟用後，Notepads 將會定時備份儲存當前的工作階段供下次啟動時使用，避免意外損失尚未儲存的資料。每當關閉應用程式時，Notepads 將不會提醒您儲存文件。此外請注意工作階段快照僅會在 Notepads 第一個視窗或者主視窗中啟用。</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -369,10 +369,6 @@
     <value>顯示</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>在當前行的四周顯示邊框。</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>在文件當中顯示行數。</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
@@ -394,15 +390,35 @@
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Choose a custom language to override system default language used in Notepads. Restart is required to complete changes.</value>
+    <value>選擇 Notepads 要顯示的語言，預設使用的是系統語言。需要重新啟動來套用變更。</value>
     <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*Restart Notepads to complete changes.</value>
+    <value>*請重啟 Notepads 來套用變更</value>
     <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Language Preferences</value>
+    <value>語言偏好</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>一旦啟用後，Notepads 會在複製已選取文字到剪貼簿之前智慧地修剪開頭和尾端的空格、Tab 字元以及空白行。</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>啟用智慧複製</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>啟用智慧複製</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>智慧複製設定</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>System Default</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>

@@ -55,26 +55,26 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
-                            x:Name="HeaderContentPresenter" 
-                            ContentTemplate="{TemplateBinding HeaderTemplate}" 
-                            Content="{TemplateBinding Header}" 
-                            FontWeight="Normal" 
-                            Foreground="{ThemeResource TextControlHeaderForeground}" 
-                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}" 
-                            Grid.Row="0" 
-                            TextWrapping="Wrap" 
-                            VerticalAlignment="Top" 
-                            Visibility="Collapsed" 
+                            x:Name="HeaderContentPresenter"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Content="{TemplateBinding Header}"
+                            FontWeight="Normal"
+                            Foreground="{ThemeResource TextControlHeaderForeground}"
+                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}"
+                            Grid.Row="0"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Top"
+                            Visibility="Collapsed"
                             x:DeferLoadStrategy="Lazy">
                         </ContentPresenter>
-                        <Border 
-                            x:Name="BorderElement" 
-                            Background="{TemplateBinding Background}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            CornerRadius="{TemplateBinding CornerRadius}" 
-                            MinHeight="{ThemeResource TextControlThemeMinHeight}" 
-                            MinWidth="{ThemeResource TextControlThemeMinWidth}" 
+                        <Border
+                            x:Name="BorderElement"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            MinHeight="{ThemeResource TextControlThemeMinHeight}"
+                            MinWidth="{ThemeResource TextControlThemeMinWidth}"
                             Grid.Row="1"/>
                         <Grid x:Name="RootGrid" Grid.Row="1">
                             <Grid.ColumnDefinitions>
@@ -85,9 +85,11 @@
                                 <Border x:Name="LineIndicator"
                                         BorderBrush="{StaticResource SystemControlForegroundAccentBrush}"
                                         Visibility="Collapsed"/>
-                                <Border x:Name="LineHighlighter"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundListMediumRevealBorderBrush}"
-                                        Visibility="Collapsed"/>
+                                <Grid x:Name="LineHighlighter"
+                                      Background="{ThemeResource SystemControlBackgroundListLowBrush}"
+                                      Opacity="0.65"
+                                      BorderThickness="0"
+                                      Visibility="Collapsed"/>
                             </Canvas>
                             <Grid x:Name="LineNumberGrid" 
                                   Grid.Column="0"
@@ -96,39 +98,39 @@
                                 <Canvas x:Name="LineNumberCanvas"/>
                             </Grid>
                             <Grid Grid.Column="1">
-                                <ScrollViewer 
-                                x:Name="ContentElement" 
-                                AutomationProperties.AccessibilityView="Raw" 
-                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
-                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" 
-                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" 
-                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" 
-                                IsTabStop="False" 
-                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" 
-                                Margin="{TemplateBinding BorderThickness}" 
-                                Padding="{TemplateBinding Padding}" 
-                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" 
-                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" 
+                                <ScrollViewer
+                                x:Name="ContentElement"
+                                AutomationProperties.AccessibilityView="Raw"
+                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                IsTabStop="False"
+                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                Margin="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                 ZoomMode="Disabled"/>
                             </Grid>
                         </Grid>
                         <TextBlock 
-                            x:Name="PlaceholderTextContentPresenter" 
-                            Foreground="{ThemeResource TextControlPlaceholderForeground}" 
-                            IsHitTestVisible="False" 
-                            Margin="{TemplateBinding BorderThickness}" 
-                            Padding="{TemplateBinding Padding}" 
-                            Grid.Row="1" 
-                            Text="{TemplateBinding PlaceholderText}" 
-                            TextWrapping="{TemplateBinding TextWrapping}" 
+                            x:Name="PlaceholderTextContentPresenter"
+                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            IsHitTestVisible="False"
+                            Margin="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            Grid.Row="1"
+                            Text="{TemplateBinding PlaceholderText}"
+                            TextWrapping="{TemplateBinding TextWrapping}"
                             TextAlignment="{TemplateBinding TextAlignment}"
                             OpticalMarginAlignment="TrimSideBearings"/>
                         <ContentPresenter
-                            x:Name="DescriptionPresenter" 
-                            AutomationProperties.AccessibilityView="Raw" 
-                            Content="{TemplateBinding Description}" 
-                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" 
-                            Grid.Row="2" 
+                            x:Name="DescriptionPresenter"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Content="{TemplateBinding Description}"
+                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"
+                            Grid.Row="2"
                             x:Load="False"/>
                     </Grid>
                 </ControlTemplate>

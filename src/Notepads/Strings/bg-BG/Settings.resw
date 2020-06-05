@@ -369,10 +369,6 @@
     <value>Display</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Показване граница на текущата линия.</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>Display line numbers in the document.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
@@ -404,5 +400,25 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
     <value>Language Preferences</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>Once enabled, Notepads will smartly trim leading and trailing spaces, tabs, and empty lines before copying the selected text to the clipboard.</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>Enable Smart Copy</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>Enable Smart Copy</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>Smart Copy Settings</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>System Default</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>

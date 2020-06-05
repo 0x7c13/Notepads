@@ -122,7 +122,7 @@
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>କୌଣସି ପ୍ରକାରର ୱାରେଣ୍ଟି ବିନା ସଫ୍ଟୱେୟାର “ଯେପରି” ପ୍ରଦାନ କରାଯାଇଛି, ୱାରେଣ୍ଟିର ବାଣିଜ୍ୟ ଯୋଗ୍ୟତା, ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ ଫିଟ୍ ଏବଂ ଉଲ୍ଲଂଘନ ସହିତ ସୀମିତ ନୁହେଁ | କୌଣସି ଘଟଣାରେ ଲେଖକ କିମ୍ବା କପିରାଇଟ୍ ହୋଲ୍ଡରମାନେ କୌଣସି ଦାବି, କ୍ଷତି କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଦାୟିତ୍ବ ପାଇଁ ଦାୟୀ ରହିବେ ନାହିଁ, ଯାହା କୌଣସି ଚୁକ୍ତିନାମା, ଟର୍ଟ କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଜ୍ଞାନ, ସଫ୍ଟୱେୟାରର ବ୍ୟବହାର କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଡିଲ୍ ସହିତ ସଂଯୋଗରେ |</value>
+    <value>କୌଣସି ପ୍ରକାରର ୱାରେଣ୍ଟି ବିନା ସଫ୍ଟୱେୟାର “ଯେପରି” ପ୍ରଦାନ କରାଯାଇଛି, ୱାରେଣ୍ଟିର ବାଣିଜ୍ୟ ଯୋଗ୍ୟତା, ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ ଫିଟ୍ ଏବଂ ଉଲ୍ଲଂଘନ ସହିତ ସୀମିତ ନୁହେଁ| କୌଣସି ଘଟଣାରେ ଲେଖକ କିମ୍ବା କପିରାଇଟ୍ ହୋଲ୍ଡରମାନେ କୌଣସି ଦାବି, କ୍ଷତି କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଦାୟିତ୍ବ ପାଇଁ ଦାୟୀ ରହିବେ ନାହିଁ, ଯାହା କୌଣସି ଚୁକ୍ତିନାମା, ଟର୍ଟ କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଜ୍ଞାନ, ସଫ୍ଟୱେୟାରର ବ୍ୟବହାର କିମ୍ବା ଅନ୍ୟାନ୍ୟ ଡିଲ୍ ସହିତ ସଂଯୋଗରେ|</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
@@ -130,7 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>ମାଗଣା ଏବଂ ମୁକ୍ତ ଉତ୍ସ ପାଠ୍ୟ ସମ୍ପାଦକ ଜ୍ୟାକି (ଜିଆକି) ଲିୟୁ ଦ୍ୱାରା ପରିକଳ୍ପିତ ଏବଂ କାର୍ଯ୍ୟକାରୀ |</value>
+    <value>ମାଗଣା ଏବଂ ମୁକ୍ତ ଉତ୍ସ ପାଠ୍ୟ ସମ୍ପାଦକ ଜ୍ୟାକି (ଜିଆକି) ଲିୟୁ ଦ୍ୱାରା ପରିକଳ୍ପିତ ଏବଂ କାର୍ଯ୍ୟକାରୀ|</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>ଯଦି ଫାଇଲର ଏନକୋଡିଂ ଚିହ୍ନଟ ହୋଇପାରିବ ନାହିଁ ତେବେ ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ ବ୍ୟବହାର ହେବ | </value>
+    <value>ଯଦି ଫାଇଲର ଏନକୋଡିଂ ଚିହ୍ନଟ ହୋଇପାରିବ ନାହିଁ ତେବେ ଫଲବ୍ୟାକ୍ ଡିକୋଡିଂ ବ୍ୟବହାର ହେବ| </value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -230,7 +230,7 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ|</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>କେବଳ ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ପାଇଁ ପ୍ରଯୁଜ୍ୟ|</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>ଟ୍ୟାବ୍ କି ଆଚରଣ ପାଇଁ ସେଟିଙ୍ଗ୍ସ କେବଳ ଉପଭୋକ୍ତା ଦ୍ୱାରା ସନ୍ନିବେଶିତ ନୂତନ ଟ୍ୟାବଗୁଡ଼ିକ ପାଇଁ ପ୍ରଯୁଜ୍ୟ |</value>
+    <value>ଟ୍ୟାବ୍ କି ଆଚରଣ ପାଇଁ ସେଟିଙ୍ଗ୍ସ କେବଳ ଉପଭୋକ୍ତା ଦ୍ୱାରା ସନ୍ନିବେଶିତ ନୂତନ ଟ୍ୟାବଗୁଡ଼ିକ ପାଇଁ ପ୍ରଯୁଜ୍ୟ|</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ପରବର୍ତ୍ତୀ ଉନ୍ମୋଚନ ପାଇଁ ସାମ୍ପ୍ରତିକ ଅଧିବେଶନକୁ ମନେ ରଖିବ ଏବଂ ଅନାବଶ୍ୟକ ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ପାଇଁ ଆକସ୍ମିକ ତଥ୍ୟ ନଷ୍ଟକୁ ରୋକିବା ପାଇଁ ଏକ ପର୍ଯ୍ୟାୟ ଅଧିବେଶନ ସ୍ନାପସଟ୍ ବ୍ୟାକଅପ୍ କରିବ | ଯଦି ଏହି ବୈଶିଷ୍ଟ୍ୟ ସକ୍ଷମ ହୋଇଛି, Notepads ଆପଣଙ୍କୁ ଆପ୍ ବନ୍ଦରେ ଆପଣଙ୍କର କାର୍ଯ୍ୟ ସଞ୍ଚୟ କରିବାକୁ ମନେ ପକାଇବ ନାହିଁ | ଦୟାକରି ଏହା ମଧ୍ୟ ମନେରଖନ୍ତୁ ଯେ ଅଧିବେଶନ ସ୍ନାପସଟ୍ କେବଳ Notepads ପ୍ରଥମ କିମ୍ବା ମୁଖ୍ୟ ୱିଣ୍ଡୋରେ କାମ କରେ |</value>
+    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ପରବର୍ତ୍ତୀ ଉନ୍ମୋଚନ ପାଇଁ ସାମ୍ପ୍ରତିକ ଅଧିବେଶନକୁ ମନେ ରଖିବ ଏବଂ ଅନାବଶ୍ୟକ ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ପାଇଁ ଆକସ୍ମିକ ତଥ୍ୟ ନଷ୍ଟକୁ ରୋକିବା ପାଇଁ ଏକ ପର୍ଯ୍ୟାୟ ଅଧିବେଶନ ସ୍ନାପସଟ୍ ବ୍ୟାକଅପ୍ କରିବ| ଯଦି ଏହି ବୈଶିଷ୍ଟ୍ୟ ସକ୍ଷମ ହୋଇଛି, Notepads ଆପଣଙ୍କୁ ଆପ୍ ବନ୍ଦରେ ଆପଣଙ୍କର କାର୍ଯ୍ୟ ସଞ୍ଚୟ କରିବାକୁ ମନେ ପକାଇବ ନାହିଁ| ଦୟାକରି ଏହା ମଧ୍ୟ ମନେରଖନ୍ତୁ ଯେ ଅଧିବେଶନ ସ୍ନାପସଟ୍ କେବଳ Notepads ପ୍ରଥମ କିମ୍ବା ମୁଖ୍ୟ ୱିଣ୍ଡୋରେ କାମ କରେ|</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -322,7 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ସବୁବେଳେ ଏକ ନୂଆ ଟ୍ୟାବ୍ ତିଆରି କରିବା ପରିବର୍ତ୍ତେ ଏକ ନୂତନ ୱିଣ୍ଡୋରେ ଫାଇଲ୍ ଖୋଲିବ |</value>
+    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ସବୁବେଳେ ଏକ ନୂଆ ଟ୍ୟାବ୍ ତିଆରି କରିବା ପରିବର୍ତ୍ତେ ଏକ ନୂତନ ୱିଣ୍ଡୋରେ ଫାଇଲ୍ ଖୋଲିବ|</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
@@ -369,12 +369,8 @@
     <value>ଦର୍ଶନ</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>ସାମ୍ପ୍ରତିକ ଲାଇନ୍ ଚାରିପାଖରେ ପରିସର ଦେଖାନ୍ତୁ |</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>ଡକ୍ୟୁମେଣ୍ଟ୍ ରେ ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ |</value>
+    <value>ଡକ୍ୟୁମେଣ୍ଟ୍ ରେ ଲାଇନ୍ ନମ୍ବର ପ୍ରଦର୍ଶନ କରନ୍ତୁ|</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
@@ -394,15 +390,35 @@
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Choose a custom language to override system default language used in Notepads. Restart is required to complete changes.</value>
+    <value>Notepadsରେ ବ୍ୟବହୃତ ସିଷ୍ଟମ୍ ଡିଫଲ୍ଟ ଭାଷାକୁ ନବଲିଖନ କରିବାକୁ ଏକ ବିଶେଷ ଭାବରେ ଭାଷା ବାଛନ୍ତୁ| ପରିବର୍ତ୍ତନଗୁଡିକ ସଂପୂର୍ଣ୍ଣ କରିବାକୁ ପୁନରାରମ୍ଭ ଆବଶ୍ୟକ|</value>
     <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*Restart Notepads to complete changes.</value>
+    <value>*ପରିବର୍ତ୍ତନଗୁଡିକ ସମ୍ପୂର୍ଣ୍ଣ କରିବାକୁ Notepads ପୁନରାରମ୍ଭ କରନ୍ତୁ|</value>
     <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Language Preferences</value>
+    <value>ପସନ୍ଦିତ ଭାଷା</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>ଥରେ ସକ୍ଷମ ହୋଇଗଲେ, Notepads ଚତୁରତାର ସହିତ ଅଗ୍ରଣୀ ଏବଂ ଟ୍ରେଲିଂ ସ୍ପେସ୍, ଟ୍ୟାବ୍, ଏବଂ ଖାଲି ରେଖାଗୁଡ଼ିକୁ କ୍ଲିପବୋର୍ଡରେ କପି କରିବା ପୂର୍ବରୁ ଛେଦନ କରିବ|</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>ସ୍ମାର୍ଟ କପି ସକ୍ଷମ କରନ୍ତୁ</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>ସ୍ମାର୍ଟ କପି ସକ୍ଷମ କରନ୍ତୁ</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>ସ୍ମାର୍ଟ କପି ସେଟିଂସମୂହ</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>ବ୍ୟବସ୍ଥା ସ୍ଥିତ</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>

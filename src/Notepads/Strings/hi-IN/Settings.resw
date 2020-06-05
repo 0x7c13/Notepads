@@ -369,10 +369,6 @@
     <value>देखाव</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>वर्तमान लाइन के चारों ओर सीमा दिखाएं।</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
     <value>दस्तावेज़ में लाइन नंबर प्रदर्शित करें।</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
@@ -394,15 +390,35 @@
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Choose a custom language to override system default language used in Notepads. Restart is required to complete changes.</value>
+    <value>Notepads में प्रयुक्त सिस्टम डिफ़ॉल्ट भाषा को ओवरराइड करने के लिए एक विशेष रूप से भाषा चुनें। परिवर्तनों को पूरा करने के लिए पुनरारंभ आवश्यक है।</value>
     <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*Restart Notepads to complete changes.</value>
+    <value>*परिवर्तनों को पूरा करने के लिए Notepads को पुनरारंभ करें।</value>
     <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Language Preferences</value>
+    <value>भाषा प्राथमिकताएँ</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>एक बार सक्षम होने के बाद, Notepads चयनित टेक्स्ट को क्लिपबोर्ड पर कॉपी करने से पहले प्रमुख और अनुगामी रिक्त स्थान, टैब और खाली लाइनों को स्मार्ट ट्रिम करेगा।</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>स्मार्ट कॉपी सक्षम करें</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>स्मार्ट कॉपी सक्षम करें</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>स्मार्ट कॉपी सेटिंग्स</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>व्यवस्था निर्धारित</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>
