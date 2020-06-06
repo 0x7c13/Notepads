@@ -132,7 +132,7 @@
                 }
             }
 
-            ReplaceWords(document, replacedWordStartIndex, replacedWordEndIndex, startIndex, endIndex, start, end, replacedWordStartIndex - startIndex);
+            MoveWords(document, replacedWordStartIndex, replacedWordEndIndex, startIndex, endIndex, start, end, replacedWordStartIndex - startIndex);
         }
 
         private void MoveTextRight()
@@ -166,7 +166,7 @@
                 }
             }
 
-            ReplaceWords(document, startIndex, endIndex, replacedWordStartIndex, replacedWordEndIndex, start, end, replacedWordEndIndex - endIndex);
+            MoveWords(document, startIndex, endIndex, replacedWordStartIndex, replacedWordEndIndex, start, end, replacedWordEndIndex - endIndex);
         }
 
         private Tuple<int, int, int> GetMovingWordsIndexData(string document, int selectionStart, int selectionEnd)
@@ -203,7 +203,7 @@
             return Tuple.Create(startIndex, endIndex, selectionEnd);
         }
 
-        private void ReplaceWords(string document,
+        private void MoveWords(string document,
             int leftWordsStartIndex, int leftWordsEndIndex,
             int rightWordsStartIndex, int rightWordsEndIndex,
             int selectionStart, int selectionEnd, int selectionMoveAmount)
