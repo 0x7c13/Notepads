@@ -56,26 +56,26 @@
             int selectionStart, int selectionEnd, int selectionMoveAmount)
         {
             var insertIndex = startLineInitialIndex + selectionMoveAmount;
-            var movingText = document.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
+            var movingLines = document.Substring(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
             var remainingContent = document.Remove(startLineInitialIndex, endLineFinalIndex - startLineInitialIndex);
 
             if (insertIndex < 0)
             {
                 insertIndex = 0;
                 remainingContent = RichEditBoxDefaultLineEnding + remainingContent;
-                movingText = movingText.Remove(0, 1);
+                movingLines = movingLines.Remove(0, 1);
             }
             else if (insertIndex >= remainingContent.Length)
             {
                 remainingContent += RichEditBoxDefaultLineEnding;
-                movingText = movingText.Remove(movingText.Length - 1);
+                movingLines = movingLines.Remove(movingLines.Length - 1);
             }
 
             Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
             GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
 
-            var newContent = remainingContent.Insert(insertIndex, movingText);
+            var newContent = remainingContent.Insert(insertIndex, movingLines);
             selectionStart += selectionMoveAmount;
             selectionEnd += selectionMoveAmount;
             if (selectionStart < 0) selectionStart = 0;
@@ -212,10 +212,10 @@
             GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
 
-            var movingText = document.Substring(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex);
-            var replacedWord = document.Substring(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex);
-            document = document.Remove(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex).Insert(rightWordsStartIndex, movingText)
-                .Remove(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex).Insert(leftWordsStartIndex, replacedWord);
+            var leftWords = document.Substring(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex);
+            var rightWords = document.Substring(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex);
+            document = document.Remove(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex).Insert(rightWordsStartIndex, leftWords)
+                .Remove(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex).Insert(leftWordsStartIndex, rightWords);
             selectionStart += selectionMoveAmount;
             selectionEnd += selectionMoveAmount;
 
