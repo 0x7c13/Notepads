@@ -1,6 +1,6 @@
 ﻿namespace Notepads.Controls.TextEditor
 {
-    using Notepads.Services;
+    using System;
     using Windows.UI.Text;
 
     public partial class TextEditorCore
@@ -125,36 +125,11 @@
 
             if (start == 0) return;
 
-            var startIndex = start;
-            if (end == start || char.IsLetterOrDigit(document[start]))
-            {
-                while (startIndex > 0)
-                {
-                    startIndex--;
-                    if (!char.IsLetterOrDigit(document[startIndex]))
-                    {
-                        startIndex++;
-                        break;
-                    }
-                }
-            }
-            if (startIndex <= 0) return;
-
-            if (end > document.Length) end = document.Length;
-            var endIndex = end;
-            if (end == start || char.IsLetterOrDigit(document[end - 1]))
-            {
-                while (endIndex < document.Length)
-                {
-                    endIndex++;
-                    if (!char.IsLetterOrDigit(document[endIndex - 1]))
-                    {
-                        endIndex--;
-                        break;
-                    }
-                }
-            }
-            if (startIndex >= endIndex) return;
+            var movingWordIndexData = GetMovingWordsIndexData(document, start, end);
+            var startIndex = movingWordIndexData.Item1;
+            var endIndex = movingWordIndexData.Item2;
+            end = movingWordIndexData.Item3;
+            if (startIndex <= 0 || startIndex >= endIndex) return;
 
             var replacedWordEndIndex = startIndex;
             while (replacedWordEndIndex > 0)
@@ -189,33 +164,9 @@
 
             if (end >= document.Length) return;
 
-            var startIndex = start;
-            if (end == start || char.IsLetterOrDigit(document[start]))
-            {
-                while (startIndex > 0)
-                {
-                    startIndex--;
-                    if (!char.IsLetterOrDigit(document[startIndex]))
-                    {
-                        startIndex++;
-                        break;
-                    }
-                }
-            }
-
-            var endIndex = end;
-            if (end == start || char.IsLetterOrDigit(document[end - 1]))
-            {
-                while (endIndex < document.Length)
-                {
-                    endIndex++;
-                    if (!char.IsLetterOrDigit(document[endIndex - 1]))
-                    {
-                        endIndex--;
-                        break;
-                    }
-                }
-            }
+            var movingWordIndexData = GetMovingWordsIndexData(document, start, end);
+            var startIndex = movingWordIndexData.Item1;
+            var endIndex = movingWordIndexData.Item2;
             if (endIndex <= startIndex || endIndex >= document.Length) return;
 
             var replacedWordStartIndex = endIndex;
@@ -237,6 +188,40 @@
             }
 
             ReplaceWords(document, startIndex, endIndex, replacedWordStartIndex, replacedWordEndIndex, start, end, replacedWordEndIndex - endIndex);
+        }
+
+        private Tuple<int, int, int> GetMovingWordsIndexData(string document, int selectionStart, int selectionEnd)
+        {
+            var startIndex = selectionStart;
+            if (selectionEnd == selectionStart || char.IsLetterOrDigit(document[selectionStart]))
+            {
+                while (startIndex > 0)
+                {
+                    startIndex--;
+                    if (!char.IsLetterOrDigit(document[startIndex]))
+                    {
+                        startIndex++;
+                        break;
+                    }
+                }
+            }
+
+            if (selectionEnd > document.Length) selectionEnd = document.Length;
+            var endIndex = selectionEnd;
+            if (selectionEnd == selectionStart || char.IsLetterOrDigit(document[selectionEnd - 1]))
+            {
+                while (endIndex < document.Length)
+                {
+                    endIndex++;
+                    if (!char.IsLetterOrDigit(document[endIndex - 1]))
+                    {
+                        endIndex--;
+                        break;
+                    }
+                }
+            }
+
+            return Tuple.Create(startIndex, endIndex, selectionEnd);
         }
 
         private void ReplaceWords(string document,
