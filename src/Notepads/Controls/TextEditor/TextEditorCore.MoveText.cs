@@ -178,32 +178,7 @@
                 }
             }
 
-            Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
-            GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
-            var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
-            
-            var movingText = document.Substring(startIndex, endIndex - startIndex);
-            var replacedWord = document.Substring(replacedWordStartIndex, replacedWordEndIndex - replacedWordStartIndex);
-            var selectionMoveAmount = startIndex - replacedWordStartIndex;
-            document = document.Remove(startIndex, endIndex - startIndex).Insert(startIndex, replacedWord)
-                .Remove(replacedWordStartIndex, replacedWordEndIndex - replacedWordStartIndex).Insert(replacedWordStartIndex, movingText);
-            start -= selectionMoveAmount;
-            end -= selectionMoveAmount;
-
-            Document.SetText(TextSetOptions.None, document);
-            Document.Selection.SetRange(start, end);
-
-            // After SetText() and SetRange(), RichEdit will scroll selection into view
-            // and change scroll viewer's position even if it was already in the viewport
-            // It is better to keep its original vertical scroll position after changing the texts' position in this case
-            if (wasSelectionInView)
-            {
-                _contentScrollViewer.ChangeView(
-                    null,
-                    verticalOffset,
-                    zoomFactor: null,
-                    disableAnimation: true);
-            }
+            ReplaceWords(document, replacedWordStartIndex, replacedWordEndIndex, startIndex, endIndex, start, end, replacedWordStartIndex - startIndex);
         }
 
         private void MoveTextRight()
@@ -261,20 +236,27 @@
                 }
             }
 
+            ReplaceWords(document, startIndex, endIndex, replacedWordStartIndex, replacedWordEndIndex, start, end, replacedWordEndIndex - endIndex);
+        }
+
+        private void ReplaceWords(string document,
+            int leftWordsStartIndex, int leftWordsEndIndex,
+            int rightWordsStartIndex, int rightWordsEndIndex,
+            int selectionStart, int selectionEnd, int selectionMoveAmount)
+        {
             Document.Selection.GetRect(PointOptions.Transform, out Windows.Foundation.Rect rect, out var _);
             GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
             var wasSelectionInView = IsSelectionRectInView(rect, horizontalOffset, verticalOffset);
 
-            var movingText = document.Substring(startIndex, endIndex - startIndex);
-            var replacedWord = document.Substring(replacedWordStartIndex, replacedWordEndIndex - replacedWordStartIndex);
-            var selectionMoveAmount = replacedWordEndIndex - endIndex;
-            document = document.Remove(replacedWordStartIndex, replacedWordEndIndex - replacedWordStartIndex).Insert(replacedWordStartIndex, movingText)
-                .Remove(startIndex, endIndex - startIndex).Insert(startIndex, replacedWord);
-            start += selectionMoveAmount;
-            end += selectionMoveAmount;
+            var movingText = document.Substring(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex);
+            var replacedWord = document.Substring(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex);
+            document = document.Remove(rightWordsStartIndex, rightWordsEndIndex - rightWordsStartIndex).Insert(rightWordsStartIndex, movingText)
+                .Remove(leftWordsStartIndex, leftWordsEndIndex - leftWordsStartIndex).Insert(leftWordsStartIndex, replacedWord);
+            selectionStart += selectionMoveAmount;
+            selectionEnd += selectionMoveAmount;
 
             Document.SetText(TextSetOptions.None, document);
-            Document.Selection.SetRange(start, end);
+            Document.Selection.SetRange(selectionStart, selectionEnd);
 
             // After SetText() and SetRange(), RichEdit will scroll selection into view
             // and change scroll viewer's position even if it was already in the viewport
