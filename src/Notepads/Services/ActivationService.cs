@@ -1,9 +1,12 @@
 ﻿namespace Notepads.Services
 {
     using System.Threading.Tasks;
+    using Microsoft.Gaming.XboxGameBar;
     using Notepads.Utilities;
     using Notepads.Views.MainPage;
+    using Notepads.Views.Settings;
     using Windows.ApplicationModel.Activation;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public static class ActivationService
@@ -25,6 +28,10 @@
             else if (e is LaunchActivatedEventArgs launchActivatedEventArgs)
             {
                 LaunchActivated(rootFrame, launchActivatedEventArgs);
+            }
+            else if (e is XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
+            {
+                GameBarActivated(rootFrame, xboxGameBarWidgetActivatedEventArgs);
             }
             else // For other types of activated events
             {
@@ -97,6 +104,28 @@
                 if (file != null)
                 {
                     await mainPage.OpenFile(file);
+                }
+            }
+        }
+
+        public static void GameBarActivated(Frame rootFrame, XboxGameBarWidgetActivatedEventArgs xboxGameBarWidgetActivatedEventArgs)
+        {
+            LoggingService.LogInfo($"[{nameof(ActivationService)}] [XboxGameBarWidgetActivated] AppExtensionId: {xboxGameBarWidgetActivatedEventArgs.AppExtensionId}");
+
+            if (xboxGameBarWidgetActivatedEventArgs.IsLaunchActivation)
+            {
+                var xboxGameBarWidget = new XboxGameBarWidget(
+                    xboxGameBarWidgetActivatedEventArgs,
+                    Window.Current.CoreWindow,
+                    rootFrame);
+
+                if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "Notepads")
+                {
+                    rootFrame.Navigate(typeof(NotepadsMainPage), xboxGameBarWidget);
+                }
+                else if (xboxGameBarWidgetActivatedEventArgs.AppExtensionId == "NotepadsSettings")
+                {
+                    rootFrame.Navigate(typeof(SettingsPage), xboxGameBarWidget);
                 }
             }
         }

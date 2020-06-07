@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using Windows.Foundation;
     using Windows.Graphics.Printing;
     using Windows.Storage;
     using Notepads.Controls.Dialog;
@@ -22,7 +23,7 @@
 
             try
             {
-                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+                files = await OpenFilesUsingFileOpenPicker();
             }
             catch (Exception ex)
             {
@@ -45,6 +46,36 @@
             {
                 await OpenFile(file);
             }
+        }
+
+        private async Task<IReadOnlyList<StorageFile>> OpenFilesUsingFileOpenPicker()
+        {
+            IReadOnlyList<StorageFile> files = null;
+            IAsyncOperation<IReadOnlyList<StorageFile>> filePickerOperation = null;
+
+            var filePickerOperationDelegate = new Func<Task>(async () =>
+            {
+                filePickerOperation = FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
+                files = await filePickerOperation;
+            });
+
+            if (App.IsGameBarWidget && _widget != null)
+            {
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
+
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
+            }
+            else
+            {
+                await filePickerOperationDelegate.Invoke();
+            }
+
+            return files;
         }
 
         public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
@@ -134,14 +165,6 @@
             return successCount;
         }
 
-        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
-        {
-            NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
-            NotepadsCore.FocusOnTextEditor(textEditor);
-            return file;
-        }
-
         private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
         {
             await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
@@ -167,7 +190,7 @@
             {
                 if (textEditor.EditingFile == null || saveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await PickFileForSavingUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
                 }
                 else
@@ -191,7 +214,7 @@
 
                 if (promptSaveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await PickFileForSavingUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
 
                     await SaveInternal(textEditor, file, rebuildOpenRecentItems);
@@ -210,6 +233,40 @@
                 }
                 return false;
             }
+        }
+
+        private async Task<StorageFile> PickFileForSavingUsingFileSavePicker(ITextEditor textEditor)
+        {
+            NotepadsCore.SwitchTo(textEditor);
+
+            StorageFile file = null;
+            IAsyncOperation<StorageFile> filePickerOperation = null;
+
+            var filePickerOperationDelegate = new Func<Task>(async () =>
+            {
+                filePickerOperation = FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
+                file = await filePickerOperation;
+            });
+
+            if (App.IsGameBarWidget && _widget != null)
+            {
+                var foregroundWorkWrapper = new XboxGameBarForegroundWorkerWrapper(_widget, Dispatcher, filePickerOperationDelegate);
+
+                foregroundWorkWrapper.CancelOperationRequested += (sender, eventArgs) =>
+                {
+                    filePickerOperation.Cancel();
+                };
+
+                await foregroundWorkWrapper.ExecuteAsync();
+            }
+            else
+            {
+                await filePickerOperationDelegate.Invoke();
+            }
+
+            NotepadsCore.FocusOnTextEditor(textEditor);
+
+            return file;
         }
 
         private async Task<bool> SaveAll(ITextEditor[] textEditors)

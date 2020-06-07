@@ -26,6 +26,7 @@
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
+    using Microsoft.Gaming.XboxGameBar;
     using Windows.Graphics.Printing;
 
     public sealed partial class NotepadsMainPage : Page
@@ -42,6 +43,9 @@
         private bool _appShouldExitAfterLastEditorClosed = false;
 
         private INotepadsCore _notepadsCore;
+
+        private XboxGameBarWidget _widget;  // maintain throughout the lifetime of the notepads game bar widget
+        private XboxGameBarWidgetControl _widgetControl;
 
         private INotepadsCore NotepadsCore
         {
@@ -191,6 +195,17 @@
                 case ProtocolActivatedEventArgs protocol:
                     _appLaunchUri = protocol.Uri;
                     break;
+                case XboxGameBarWidget widget:
+                    _widget = widget;
+                    _widgetControl = new XboxGameBarWidgetControl(_widget);
+                    _widget.SettingsClicked += Widget_SettingsClicked;
+                    //_widget.PinnedChanged += Widget_PinnedChanged;
+                    //_widget.FavoritedChanged += Widget_FavoritedChanged;
+                    //_widget.RequestedThemeChanged += Widget_RequestedThemeChanged;
+                    //_widget.WindowStateChanged += Widget_WindowStateChanged;
+                    //_widget.GameBarDisplayModeChanged += Widget_GameBarDisplayModeChanged;
+                    Window.Current.Closed += Widget_MainWindowClosed;
+                    break;
             }
         }
 
@@ -273,6 +288,14 @@
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            }
+            else
+            {
+                if (_widget != null)
+                {
+                    _widget.VisibleChanged -= Widget_VisibleChanged;
+                    _widget.VisibleChanged += Widget_VisibleChanged;
+                }
             }
         }
 
@@ -447,6 +470,49 @@
             {
                 ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
             }
+        }
+
+        #endregion
+
+        #region XboxGameBar
+
+        private async void Widget_SettingsClicked(XboxGameBarWidget sender, object args)
+        {
+            await _widget.ActivateSettingsAsync();
+        }
+
+        private async void Widget_VisibleChanged(XboxGameBarWidget sender, object args)
+        {
+            if (sender.Visible)
+            {
+                LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
+                NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+                if (AppSettingsService.IsSessionSnapshotEnabled)
+                {
+                    SessionManager.StartSessionBackup();
+                }
+            }
+            else
+            {
+                LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Game Bar Widget Visibility Changed, Visible = {sender.Visible}.", consoleOnly: true);
+                NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+                if (AppSettingsService.IsSessionSnapshotEnabled)
+                {
+                    await SessionManager.SaveSessionAsync();
+                    SessionManager.StopSessionBackup();
+                }
+            }
+        }
+
+        private void Widget_MainWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        {
+            // Un-registering events
+            Window.Current.Closed -= Widget_MainWindowClosed;
+            _widget.SettingsClicked -= Widget_SettingsClicked;
+
+            // Cleanup game bar objects
+            _widget = null;
+            _widgetControl = null;
         }
 
         #endregion
