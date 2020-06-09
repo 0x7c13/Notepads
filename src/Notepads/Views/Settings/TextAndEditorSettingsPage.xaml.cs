@@ -10,6 +10,7 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
 
     public class FontStyleItem
     {
@@ -369,7 +370,9 @@
 
         private void FontFamilyPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppSettingsService.EditorFontFamily = (string)e.AddedItems.First();
+            var fontFamily = new FontFamily((string)e.AddedItems.First());
+            AppSettingsService.EditorFontFamily = fontFamily.Source;
+            FontStylePicker.FontFamily = FontWeightPicker.FontFamily = fontFamily;
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
