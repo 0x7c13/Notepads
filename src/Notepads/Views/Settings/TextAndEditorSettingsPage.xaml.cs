@@ -372,7 +372,8 @@
         {
             var fontFamily = new FontFamily((string)e.AddedItems.First());
             AppSettingsService.EditorFontFamily = fontFamily.Source;
-            FontStylePicker.FontFamily = FontWeightPicker.FontFamily = fontFamily;
+            FontStylePicker.FontFamily = fontFamily;
+            FontWeightPicker.FontFamily = fontFamily;
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

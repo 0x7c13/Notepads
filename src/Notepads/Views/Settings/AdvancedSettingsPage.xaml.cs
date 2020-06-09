@@ -41,12 +41,9 @@
                 LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
-#if DEBUG
             SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
             FindName("LanguagePreferenceSettingsPanel"); // Lazy loading
-            LanguagePicker.SelectedItem = SupportedLanguages
-                .FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
-#endif
+            LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
 
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
@@ -58,9 +55,7 @@
             EnableSmartCopyToggleSwitch.Toggled += EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
-#if DEBUG
             LanguagePicker.SelectionChanged += LanguagePicker_SelectionChanged;
-#endif
         }
 
         private void AdvancedSettings_Unloaded(object sender, RoutedEventArgs e)
