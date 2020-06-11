@@ -814,7 +814,7 @@
 
         private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
         {
-            if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
+            if (Sets.Items?.Count > 1 && e.Set?.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)
