@@ -126,15 +126,15 @@
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Speichern &amp; beenden</value>
+    <value>Speichern</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Verwerfen &amp; beenden</value>
+    <value>Nicht speichern</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Möchten Sie die Änderungen speichern?</value>
+    <value>Änderungen speichern?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
@@ -154,7 +154,7 @@
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Entschuldige, die Datei "{0}" konnte nicht geöffnet werden: {1}</value>
+    <value>Die Datei "{0}" konnte leider nicht geöffnet werden: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -166,7 +166,7 @@
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Entschuldige, die Datei "{0}" konnte nicht gespeichert werden: {1}</value>
+    <value>Die Datei "{0}" konnte leider nicht gespeichert werden: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -342,7 +342,7 @@
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Selektion teilen</value>
+    <value>Auswahl teilen</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
@@ -350,7 +350,7 @@
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Zeilenumbruch</value>
+    <value>Wörter umbrechen</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
@@ -438,7 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Dies ist eine Schattenfenster von Notepads. Die Sitzungsicherung sowie die Einstellungen sind deaktiviert.</value>
+    <value>Dies ist eine Kopie von Notepads. Die Sitzungsicherung sowie die Einstellungen sind deaktiviert.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
@@ -546,7 +546,7 @@
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Liste der zuletzt geöffneten Dateien leeren</value>
+    <value>Liste zuletzt geöffneter Dateien leeren</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
@@ -574,15 +574,15 @@
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>Vorherige finden (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>Ersetzungsmodus umschalten</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
+    <value>Leserichtung rechts nach links</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
@@ -642,15 +642,15 @@
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Abbrechen</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
+    <value>Umbennen</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
