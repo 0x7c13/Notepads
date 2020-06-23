@@ -198,6 +198,8 @@
 
         public static bool IsFileExtensionSupported(string fileExtension)
         {
+            // Windows 10 2004 (build 19041) enables support for handling any kind of file
+            // https://github.com/microsoft/ProjectReunion/issues/27
             if ((int)SystemInformation.OperatingSystemVersion.Build >= 19041)
             {
                 return true;
