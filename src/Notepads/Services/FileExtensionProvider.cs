@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Services
 {
+    using Microsoft.Toolkit.Uwp.Helpers;
     using System.Collections.Generic;
 
     public static class FileExtensionProvider
@@ -197,6 +198,13 @@
 
         public static bool IsFileExtensionSupported(string fileExtension)
         {
+            // Windows 10 2004 (build 19041) enables support for handling any kind of file
+            // https://github.com/microsoft/ProjectReunion/issues/27
+            if ((int)SystemInformation.OperatingSystemVersion.Build >= 19041)
+            {
+                return true;
+            }
+
             if (string.IsNullOrEmpty(fileExtension))
             {
                 return false;
