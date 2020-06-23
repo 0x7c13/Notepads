@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Services
 {
+    using Microsoft.Toolkit.Uwp.Helpers;
     using System.Collections.Generic;
 
     public static class FileExtensionProvider
@@ -197,6 +198,11 @@
 
         public static bool IsFileExtensionSupported(string fileExtension)
         {
+            if ((int)SystemInformation.OperatingSystemVersion.Build >= 19041)
+            {
+                return true;
+            }
+
             if (string.IsNullOrEmpty(fileExtension))
             {
                 return false;
