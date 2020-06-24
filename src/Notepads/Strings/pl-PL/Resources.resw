@@ -122,23 +122,23 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Zapisać dokonane zmiany?</value>
+    <value>Zmiany nie zostały zapisane.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Zapisz i zamknij</value>
+    <value>Zapisz</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Odrzuć zmiany</value>
+    <value>Nie zapisuj</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Nie zapisano zmian</value>
+    <value>Czy chcesz zapisać zmiany w pliku?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Nie ma nic do udostępnienia, ponieważ żaden tekst nie jest zaznaczony lub dokument jest pusty.</value>
+    <value>Brak zawartości do udostępnienia. Nie zaznaczono żadnego tekstu lub dokument jest pusty.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
@@ -162,7 +162,7 @@
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>Błąd podczas otwierania pliku</value>
+    <value>Nie można otworzyć pliku</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>FindAndReplace: Find bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>Nie znaleziono</value>
+    <value>Nie znaleziono szukanej frazy</value>
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -210,11 +210,11 @@
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Uwzględniaj wielkość liter</value>
+    <value>Uwzględnij wielkość liter</value>
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Uwzględniaj całe wyrazy</value>
+    <value>Uwzględnij całe wyrazy</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Wszystkie zmiany takie jak tekst, zakończenia lini oraz kodowanie dokonane w "{0}" zostaną przywrócone!</value>
+    <value>Wszystkie zmiany takie jak: wpisany tekst, zakończenia lini oraz kodowanie dokonane w pliku "{0}" zostaną wycofane!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
@@ -266,7 +266,7 @@
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Czy chcesz przywrócić wszystkie zmiany?</value>
+    <value>Czy chcesz wycofać wszystkie zmiany?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
@@ -274,7 +274,7 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Zmiany w pliku "{0}" nie zostały zapisane</value>
+    <value>Zmiany w pliku "{0}" nie zostały zapisane?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -350,7 +350,7 @@
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Zawijanie tekstu</value>
+    <value>Zawijanie wierszy</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
@@ -358,11 +358,11 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Linia {0}, Kolumna {1} ({3} {2} znak(i/ów))</value>
+    <value>Linia {0}, kolumna {1} ({3} {2} znak(i/ów))</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Linia {0}, Kolumna {1}</value>
+    <value>Linia {0}, kolumna {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
@@ -390,7 +390,7 @@
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Przeładuj plik z dysku</value>
+    <value>Odśwież plik</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
@@ -402,7 +402,7 @@
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>Przeładowano plik</value>
+    <value>Odświeżono</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
@@ -430,7 +430,7 @@
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Przenieś tą kartę tutaj</value>
+    <value>Przenieś tę kartę tutaj</value>
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
@@ -438,7 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>To jest cień okna Notepads. Migawka sesji i ustawienia są wyłączone.</value>
+    <value>Uruchomiono klon Notepads. Migawka sesji i ustawienia są wyłączone.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
@@ -462,11 +462,11 @@
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Idź do lini</value>
+    <value>Numer lini</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Wpisana wartość przekracza całkowitą ilość lini!</value>
+    <value>Wpisana wartość przekracza zakres lini w dokumencie!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
@@ -482,7 +482,7 @@
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Przywróć domyślne przybliżenie</value>
+    <value>Przywróć powiększenie domyślne</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
@@ -502,7 +502,7 @@
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Może przyjąć tylko jedno miejsce po przecinku</value>
+    <value>Możliwe jest tylko jedno miejsce po przecinku</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
@@ -522,7 +522,7 @@
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>Procent szerokości papieru</value>
+    <value>Szerokość papieru (w procentach)</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
@@ -530,11 +530,11 @@
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Błąd druku</value>
+    <value>Błąd drukowanie</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>To urządzenie nie wspiera drukowania</value>
+    <value>Twoje urządzenie nie wspiera drukowania</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
@@ -554,11 +554,11 @@
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Otwórz ponownie z kodowaniem</value>
+    <value>Otwórz z innym kodowaniem</value>
     <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Zapisz z kodowaniem</value>
+    <value>Zapisz z innym kodowaniem</value>
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
@@ -586,15 +586,15 @@
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>Kursywa</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normalny</value>
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
+    <value>Pochylony</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
@@ -602,19 +602,19 @@
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>Pogrubiona</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>ExtraBlack</value>
+    <value>Extra Black</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>ExtraBold</value>
+    <value>Extra Bold</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>ExtraLight</value>
+    <value>Extra Light</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
@@ -622,23 +622,75 @@
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
+    <value>Średnia</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normalna</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>SemiBold</value>
+    <value>Semi Bold</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>SemiLight</value>
+    <value>Semi Light</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
     <value>Thin</value>
     <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>Anuluj</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Zapisz</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>Zmień nazwę</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>Nazwa pliku nie powinna zawierać nieprawidłowych znaków</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>Nazwa pliku nie powinna zawierać wiodących spacji</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>Nazwa pliku nie powinna zawierać końcowych spacji</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>Nazwa pliku nie może być pusta lub być pustym znakiem</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>Nazwa pliku jest niepoprawna lub niedozwolona</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>Nazwa pliku nie może być dłuższa niż 255 znaków</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>Zmień nazwę</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>Zmieniono nazwę</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Puste rozszerzenie nie jest jeszcze wspierane</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>Rozszerzenie "{0}" nie jest jeszcze wspierane</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

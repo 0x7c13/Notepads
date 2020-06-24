@@ -138,7 +138,7 @@
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Поделиться нечем: текст не выбран, а текущий документ пустой.</value>
+    <value>Нет информации для отправки: текст не выбран, а текущий документ пустой.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
@@ -606,15 +606,15 @@
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>ExtraBlack</value>
+    <value>Extra Black</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>ExtraBold</value>
+    <value>Extra Bold</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>ExtraLight</value>
+    <value>Extra Light</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
@@ -630,15 +630,67 @@
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>SemiBold</value>
+    <value>Semi Bold</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>SemiLight</value>
+    <value>Semi Light</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
     <value>Thin</value>
     <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>Отмена</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Сохранить</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>Переименовать</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>Имя файла не должно содержать некорректные символы</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>Имя файла не должно начинаться с пробелов</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>Имя файла не должно заканчиваться пробелами</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>Имя файла не может быть пустым</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>Некорректное имя файла</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>Имя файла не может превышать 255 символов</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>Переименовать</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>Файл переименован</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Пустое расширение файла неподдерживается</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>Расширение файла "{0}" не поддерживается</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

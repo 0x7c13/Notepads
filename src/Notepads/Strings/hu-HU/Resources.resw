@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Vannak nem mentett módosítások.</value>
+    <value>Önnek nem mentett módosításai vannak.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -150,11 +150,11 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads nem támogatja az 1MB-nál nagyobb fájlokat jelenleg.</value>
+    <value>A Notepads nem támogatja az 1MB-nál nagyobb fájlokat jelenleg.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Sajnálom, a fájl "{0}" nem nyitható meg: {1}</value>
+    <value>Sajnos a(z) "{0}" nem nyitható meg: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -166,7 +166,7 @@
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Sajnálom, a fájl "{0}" nem menthető el: {1}</value>
+    <value>Sajnos a fájl "{0}" nem menthető el: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
@@ -214,7 +214,7 @@
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Tejles szó megkülönböztetése</value>
+    <value>Teljes szó megkülönböztetése</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
@@ -286,7 +286,7 @@
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Mentse el a módosításokat?</value>
+    <value>El szeretné menteni a módosításokat?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
@@ -422,11 +422,11 @@
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>kiválasztva</value>
+    <value>Kiválasztva</value>
     <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>kiválasztva</value>
+    <value>Kiválasztva</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
@@ -526,7 +526,7 @@
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>Papír szélesség %-ban</value>
+    <value>Papír Szélesség (%-ban)</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
@@ -562,7 +562,7 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Hibás reguláris kifejezés!</value>
+    <value>Hibás általános kifejezés!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
@@ -586,59 +586,111 @@
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>Dőlt</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normál</value>
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
+    <value>Ferde</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
+    <value>Vastag</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>Kövér</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>ExtraBlack</value>
+    <value>Extra Vastag</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>ExtraBold</value>
+    <value>Extra Kövér</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>ExtraLight</value>
+    <value>Extra Vékony</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
+    <value>Vékony</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
+    <value>Közepes</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normál</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>SemiBold</value>
+    <value>Félkövér</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>SemiLight</value>
+    <value>Félvékony</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
+    <value>Kicsi</value>
     <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>Törlés</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Mentés</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>Átnevezés</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>A fájl neve nem tartalmazhat érvénytelen karaktereket</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>A fájl neve nem tartalmazhat szóközöket</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>A fájl neve nem tartalmazhat szóközöket</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>A fájl neve nem lehet üres, és nem tartalmazhat csak szóközöket</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>A fájl neve érvénytelen vagy nem engedélyezett</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>A fájl neve nem lehet 255 karakternél hosszabb</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>Átnevezés</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>Átnevezve</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Fájformátum nélküli fájlok jelenleg nem engedélyezettek</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>A(z) "{0}" fájlkiterjesztés jelenleg nem támogatott</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

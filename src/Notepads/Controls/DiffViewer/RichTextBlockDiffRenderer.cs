@@ -40,7 +40,7 @@
             _defaultForeground = defaultForeground;
 
             var diff = differ.BuildDiffModel(leftText, rightText, ignoreWhitespace: false);
-            var zippedDiffs = Enumerable.Zip(diff.OldText.Lines, diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
+            var zippedDiffs = diff.OldText.Lines.Zip(diff.NewText.Lines, (oldLine, newLine) => new OldNew<DiffPiece> { Old = oldLine, New = newLine }).ToList();
             var leftContext = RenderDiff(zippedDiffs, line => line.Old, piece => piece.Old);
             var rightContext = RenderDiff(zippedDiffs, line => line.New, piece => piece.New);
 
@@ -55,7 +55,7 @@
             foreach (var line in lines)
             {
                 var lineLength = Math.Max(line.Old.Text?.Length ?? 0, line.New.Text?.Length ?? 0);
-                var lineSubPieces = Enumerable.Zip(line.Old.SubPieces, line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
+                var lineSubPieces = line.Old.SubPieces.Zip(line.New.SubPieces, (oldPiece, newPiece) => new OldNew<DiffPiece> { Old = oldPiece, New = newPiece, Length = Math.Max(oldPiece.Text?.Length ?? 0, newPiece.Text?.Length ?? 0) });
 
                 var oldNewLine = lineSelector(line);
                 switch (oldNewLine.Type)

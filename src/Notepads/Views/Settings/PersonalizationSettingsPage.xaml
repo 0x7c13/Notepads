@@ -24,10 +24,10 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <TextBlock
                     x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,15,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="ThemePanel" Margin="0,10,0,0">
@@ -37,8 +37,8 @@
                 </StackPanel>
                 <TextBlock x:Name="BackgroundTintOpacityTitle"
                     x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="BackgroundTintOpacityControls" Margin="0,10,0,0">
                     <StackPanel Orientation="Horizontal">
@@ -57,14 +57,14 @@
                                    VerticalAlignment="Center" 
                                    FontSize="18"/>
                     </StackPanel>
-                    <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource CaptionTextBlockStyle}" FontStyle="Italic" Margin="0,8,0,0"/>
+                    <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/PersonalizationPage_AccentColorSettings_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
-                <StackPanel Margin="0,10,0,40">
+                <StackPanel Margin="0,10,0,0">
                     <ToggleSwitch x:Uid="/Settings/PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" x:Name="AccentColorToggle" Margin="0,0,0,8"/>
                     <Viewbox MaxWidth="300" Stretch="Fill">
                         <ColorPicker
