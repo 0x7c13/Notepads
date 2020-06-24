@@ -586,7 +586,7 @@
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>İtalik</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
@@ -594,35 +594,35 @@
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
+    <value>Oblik</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
+    <value>Siyah</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>Kalın</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>ExtraBlack</value>
+    <value>Ekstra Siyah</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>ExtraBold</value>
+    <value>Ekstra Kalın</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>ExtraLight</value>
+    <value>Ekstra İnce</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
+    <value>İnce</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
+    <value>Orta</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
@@ -630,15 +630,67 @@
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>SemiBold</value>
+    <value>Yarı Kalın</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>SemiLight</value>
+    <value>Yarı İnce</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
+    <value>İnce</value>
     <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>İptal Et</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Kaydet</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>Yeniden Adlandır</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>Dosya adı geçersiz karakterler içermemelidir</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>Dosya adı önde boşluk içermemelidir</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>Dosya adı arka boşluk içermemelidir</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>Dosya adı boş olamaz ve tamamen boşluktan oluşamaz</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>Dosya adı geçersiz veya izin verilmiyor</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>Dosya adı 255 karakterden uzun olamaz</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>Yeniden Adlandır</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>Yeniden Adlandırıldı</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Boş dosya uzantısı şu anda desteklenmiyor</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>"{0}" dosya uzantısı şu anda desteklenmiyor</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

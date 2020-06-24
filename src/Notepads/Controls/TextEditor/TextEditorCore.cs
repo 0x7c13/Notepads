@@ -23,7 +23,7 @@
     [TemplatePart(Name = LineNumberCanvasName, Type = typeof(Canvas))]
     [TemplatePart(Name = LineNumberGridName, Type = typeof(Grid))]
     [TemplatePart(Name = LineHighlighterAndIndicatorCanvasName, Type = typeof(Canvas))]
-    [TemplatePart(Name = LineHighlighterName, Type = typeof(Border))]
+    [TemplatePart(Name = LineHighlighterName, Type = typeof(Grid))]
     [TemplatePart(Name = LineIndicatorName, Type = typeof(Border))]
     public partial class TextEditorCore : RichEditBox
     {
@@ -31,6 +31,7 @@
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
         public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+        public event EventHandler<TextControlCuttingToClipboardEventArgs> CutSelectedTextToWindowsClipboardRequested;
         public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
@@ -70,11 +71,11 @@
         private const string LineHighlighterAndIndicatorCanvasName = "LineHighlighterAndIndicatorCanvas";
         private Canvas _lineHighlighterAndIndicatorCanvas;
         private const string LineHighlighterName = "LineHighlighter";
-        private Border _lineHighlighter;
+        private Grid _lineHighlighter;
         private const string LineIndicatorName = "LineIndicator";
         private Border _lineIndicator;
 
-        private TextWrapping _textWrapping = EditorSettingsService.EditorDefaultTextWrapping;
+        private TextWrapping _textWrapping = AppSettingsService.EditorDefaultTextWrapping;
 
         public new TextWrapping TextWrapping
         {
@@ -88,7 +89,7 @@
         }
 
         private double _fontZoomFactor = 100;
-        private double _fontSize = EditorSettingsService.EditorFontSize;
+        private double _fontSize = AppSettingsService.EditorFontSize;
 
         public new double FontSize
         {
@@ -100,7 +101,7 @@
                 SetDefaultTabStopAndLineSpacing(FontFamily, value);
                 FontSizeChanged?.Invoke(this, value);
 
-                var newZoomFactor = Math.Round((value * 100) / EditorSettingsService.EditorFontSize);
+                var newZoomFactor = Math.Round((value * 100) / AppSettingsService.EditorFontSize);
                 if (Math.Abs(newZoomFactor - _fontZoomFactor) >= 1)
                 {
                     _fontZoomFactor = newZoomFactor;
@@ -111,22 +112,23 @@
 
         public TextEditorCore()
         {
-            IsSpellCheckEnabled = EditorSettingsService.IsHighlightMisspelledWordsEnabled;
-            TextWrapping = EditorSettingsService.EditorDefaultTextWrapping;
-            FontFamily = new FontFamily(EditorSettingsService.EditorFontFamily);
-            FontSize = EditorSettingsService.EditorFontSize;
-            FontStyle = EditorSettingsService.EditorFontStyle;
-            FontWeight = EditorSettingsService.EditorFontWeight;
+            IsSpellCheckEnabled = AppSettingsService.IsHighlightMisspelledWordsEnabled;
+            TextWrapping = AppSettingsService.EditorDefaultTextWrapping;
+            FontFamily = new FontFamily(AppSettingsService.EditorFontFamily);
+            FontSize = AppSettingsService.EditorFontSize;
+            FontStyle = AppSettingsService.EditorFontStyle;
+            FontWeight = AppSettingsService.EditorFontWeight;
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
-            DisplayLineNumbers = EditorSettingsService.EditorDisplayLineNumbers;
-            DisplayLineHighlighter = EditorSettingsService.EditorDisplayLineHighlighter;
+            DisplayLineNumbers = AppSettingsService.EditorDisplayLineNumbers;
+            DisplayLineHighlighter = AppSettingsService.EditorDisplayLineHighlighter;
             HandwritingView.BorderThickness = new Thickness(0);
 
             CopyingToClipboard += OnCopyingToClipboard;
+            CuttingToClipboard += OnCuttingToClipboard;
             Paste += OnPaste;
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
@@ -161,7 +163,7 @@
             _lineNumberCanvas = GetTemplateChild(LineNumberCanvasName) as Canvas;
 
             _lineHighlighterAndIndicatorCanvas = GetTemplateChild(LineHighlighterAndIndicatorCanvasName) as Canvas;
-            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Border;
+            _lineHighlighter = GetTemplateChild(LineHighlighterName) as Grid;
             _lineIndicator = GetTemplateChild(LineIndicatorName) as Border;
 
             _contentScrollViewer = GetTemplateChild(ContentElementName) as ScrollViewer;
@@ -177,12 +179,15 @@
 
             _lineNumberGrid.SizeChanged += OnLineNumberGridSizeChanged;
             _rootGrid.SizeChanged += OnRootGridSizeChanged;
+
+            Microsoft.Toolkit.Uwp.UI.Extensions.ScrollViewerExtensions.SetEnableMiddleClickScrolling(_contentScrollViewer, true);
         }
 
         // Unhook events and clear state
         public void Dispose()
         {
             CopyingToClipboard -= OnCopyingToClipboard;
+            CuttingToClipboard -= OnCuttingToClipboard;
             Paste -= OnPaste;
             TextChanging -= OnTextChanging;
             TextChanged -= OnTextChanged;
@@ -206,6 +211,11 @@
             if (_lineNumberGrid != null)
             {
                 _lineNumberGrid.SizeChanged -= OnLineNumberGridSizeChanged;
+            }
+
+            if (_rootGrid != null)
+            {
+                _rootGrid.SizeChanged -= OnRootGridSizeChanged;
             }
 
             _lineNumberCanvas?.Children.Clear();
@@ -247,8 +257,12 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(EditorSettingsService.EditorDefaultTabIndents)),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(EditorSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(AppSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(AppSettingsService.EditorDefaultTabIndents)),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Up, (args) => MoveTextUp()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Down, (args) => MoveTextDown()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Left, (args) => MoveTextLeft()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Right, (args) => MoveTextRight()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.D, (args) => ShowEasterEgg(), requiredHits: 10),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, (args) => SwitchTextFlowDirection(FlowDirection.LeftToRight)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, (args) => SwitchTextFlowDirection(FlowDirection.RightToLeft)),
@@ -344,6 +358,11 @@
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
             CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
+        }
+
+        private void OnCuttingToClipboard(RichEditBox sender, TextControlCuttingToClipboardEventArgs args)
+        {
+            CutSelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
@@ -478,7 +497,7 @@
         public double GetSingleLineHeight()
         {
             Document.GetRange(0, 0).GetRect(PointOptions.ClientCoordinates, out var rect, out _);
-            return rect.Height;
+            return rect.Height <= 0 ? 1.35 * FontSize : rect.Height;
         }
 
         /// <summary>
@@ -596,25 +615,6 @@
             return _documentLinesCache;
         }
 
-        /*public void GetLineColumnSelection(out int lineIndex, out int columnIndex, out int selectedCount)
-        {
-            GetTextSelectionPosition(out var start, out var end);
-
-            var document = GetText();
-
-            lineIndex = (document + RichEditBoxDefaultLineEnding).Substring(0, start).Length
-                - document.Substring(0, start).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                + 1;
-            columnIndex = start
-                - (RichEditBoxDefaultLineEnding + document).LastIndexOf(RichEditBoxDefaultLineEnding, start)
-                + 1;
-            selectedCount = start != end && !string.IsNullOrEmpty(document)
-                ? end - start + (document + RichEditBoxDefaultLineEnding).Substring(0, end).Length
-                - (document + RichEditBoxDefaultLineEnding).Substring(0, end).Replace(RichEditBoxDefaultLineEnding.ToString(), string.Empty).Length
-                : 0;
-            if (end > document.Length) selectedCount -= 2;
-        }*/
-
         public double GetFontZoomFactor()
         {
             return _fontZoomFactor;
@@ -624,7 +624,33 @@
         {
             var fontZoomFactorInt = Math.Round(fontZoomFactor);
             if (fontZoomFactorInt >= _minimumZoomFactor && fontZoomFactorInt <= _maximumZoomFactor)
-                FontSize = (fontZoomFactorInt / 100) * EditorSettingsService.EditorFontSize;
+                FontSize = (fontZoomFactorInt / 100) * AppSettingsService.EditorFontSize;
+        }
+
+        public void SmartlyTrimTextSelection()
+        {
+            var selection = Document.Selection;
+            var startPosition = selection.StartPosition;
+            var endPosition = selection.EndPosition;
+            var selectedText = selection.Text;
+
+            if (selectedText.ContainsAllowableCharactersOnly(' ', '\t', RichEditBoxDefaultLineEnding))
+            {
+                // Do not do anything if selected text contains spaces, tabs and line breaks only
+                return;
+            }
+
+            var trimStart = selectedText.TrimStart(' ', '\t', RichEditBoxDefaultLineEnding);
+            var startOffset = selectedText.Length - trimStart.Length;
+
+            var leadingStr = selectedText.Substring(0, startOffset);
+            var lastLineBreakOffset = leadingStr.LastIndexOf(RichEditBoxDefaultLineEnding);
+            startOffset = lastLineBreakOffset == -1 ? 0 : lastLineBreakOffset + 1;
+
+            var trimEnd = trimStart.TrimEnd(' ', '\t', RichEditBoxDefaultLineEnding);
+            var endOffset = trimStart.Length - trimEnd.Length;
+
+            Document.Selection.SetRange(startPosition + startOffset, endPosition - endOffset);
         }
 
         public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)

@@ -7,16 +7,17 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Utilities;
     using Windows.Storage;
-    using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using Microsoft.Toolkit.Uwp.UI;
     using Windows.UI.Xaml.Media.Imaging;
 
     public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {
+        private readonly ImageCache _imageCache = new ImageCache();
+
         private bool _isExtensionEnabled;
 
         private string _parentPath;
@@ -73,6 +74,8 @@
             _editorCore.FontSizeChanged -= OnFontSizeChanged;
 
             ThemeSettingsService.OnThemeChanged -= OnThemeChanged;
+
+            Task.Run(async () => { await _imageCache.ClearAsync(); });
         }
 
         private async void MarkdownTextBlock_ImageResolving(object sender, ImageResolvingEventArgs e)
@@ -130,30 +133,32 @@
         {
             var imageUri = new Uri(url);
 
-            var feed = await Downloader.GetDataFeed(url);
-            feed.Seek(0, SeekOrigin.Begin);
+            return await _imageCache.GetFromCacheAsync(imageUri);
 
-            using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
-            {
-                using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
-                {
-                    writer.WriteBytes(feed.ToArray());
-                    writer.StoreAsync().GetResults();
-                }
+            //var feed = await Downloader.GetDataFeed(url);
+            //feed.Seek(0, SeekOrigin.Begin);
 
-                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
-                {
-                    var image = new SvgImageSource();
-                    await image.SetSourceAsync(ms);
-                    return image;
-                }
-                else
-                {
-                    var image = new BitmapImage();
-                    await image.SetSourceAsync(ms);
-                    return image;
-                }
-            }
+            //using (InMemoryRandomAccessStream ms = new InMemoryRandomAccessStream())
+            //{
+            //    using (DataWriter writer = new DataWriter(ms.GetOutputStreamAt(0)))
+            //    {
+            //        writer.WriteBytes(feed.ToArray());
+            //        writer.StoreAsync().GetResults();
+            //    }
+
+            //    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+            //    {
+            //        var image = new SvgImageSource();
+            //        await image.SetSourceAsync(ms);
+            //        return image;
+            //    }
+            //    else
+            //    {
+            //        var image = new BitmapImage();
+            //        await image.SetSourceAsync(ms);
+            //        return image;
+            //    }
+            //}
         }
 
         private async Task<ImageSource> GetLocalImageAsync(string imagePath)

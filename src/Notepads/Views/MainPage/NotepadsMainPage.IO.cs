@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Storage;
@@ -11,7 +12,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System.IO;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage
     {
@@ -21,17 +22,11 @@
 
             try
             {
-                var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in FileTypeService.AllSupportedFileExtensions)
-                {
-                    fileOpenPicker.FileTypeFilter.Add(type);
-                }
-
-                files = await fileOpenPicker.PickMultipleFilesAsync();
+                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(filePath: null, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -74,17 +69,47 @@
                 {
                     await BuildOpenRecentButtonSubItems();
                 }
+
+                TrackFileExtensionIfNotSupported(file);
+
                 return true;
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
                 return false;
+            }
+        }
+
+        // Here we track the file extension opened by user but not supported by Notepads.
+        // This information will be used to on-board new extension support for future release.
+        // Because UWP does not allow user to associate arbitrary file extension with the app.
+        // File name will not and should not be tracked.
+        private void TrackFileExtensionIfNotSupported(StorageFile file)
+        {
+            try
+            {
+                var extension = FileTypeUtility.GetFileExtension(file.Name).ToLower();
+                if (!FileExtensionProvider.AllSupportedFileExtensions.Contains(extension))
+                {
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        extension = "<NoExtension>";
+                    }
+                    Analytics.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
+                    {
+                        { "Extension", extension },
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                // ignore
             }
         }
 
@@ -112,7 +137,7 @@
         private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
+            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
             NotepadsCore.FocusOnTextEditor(textEditor);
             return file;
         }
@@ -177,7 +202,7 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                var fileSaveErrorDialog = new FileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 if (!fileSaveErrorDialog.IsAborted)
                 {
@@ -202,6 +227,34 @@
             }
 
             return success;
+        }
+
+        private async Task RenameFileAsync(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+
+            if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            if (textEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(textEditor.EditingFile)) return;
+
+            var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                fileExists: textEditor.EditingFile != null,
+                confirmedAction: async (newFilename) =>
+                {
+                    try
+                    {
+                        await textEditor.RenameAsync(newFilename);
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+                    }
+                    catch (Exception ex)
+                    {
+                        var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                        NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                    }
+                });
+
+            await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         }
 
         public async Task Print(ITextEditor textEditor)

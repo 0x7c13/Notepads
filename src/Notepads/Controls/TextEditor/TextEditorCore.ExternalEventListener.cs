@@ -11,28 +11,28 @@
     {
         internal void HookExternalEvents()
         {
-            EditorSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
-            EditorSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
-            EditorSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
-            EditorSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
-            EditorSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
-            EditorSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
-            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
+            AppSettingsService.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
+            AppSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
+            AppSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
+            AppSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
+            AppSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
+            AppSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            AppSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
+            AppSettingsService.OnDefaultLineHighlighterViewStateChanged += EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
         internal void UnhookExternalEvents()
         {
-            EditorSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
-            EditorSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
-            EditorSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
-            EditorSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
-            EditorSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
-            EditorSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
-            EditorSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
+            AppSettingsService.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
+            AppSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
+            AppSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
+            AppSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
+            AppSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
+            AppSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
+            AppSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
+            AppSettingsService.OnDefaultLineHighlighterViewStateChanged -= EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }

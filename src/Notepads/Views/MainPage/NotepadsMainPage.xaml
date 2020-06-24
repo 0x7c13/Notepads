@@ -68,146 +68,16 @@
                         </controls:SetsView.Resources>
 
                         <controls:SetsView.SetsStartHeader>
-                            <Button x:Name="MainMenuButton"
-                                IsTabStop="False"
-                                Width="42"
-                                Height="{StaticResource SetsViewItemHeaderMinHeight}"
-                                Margin="0,0,-1,0"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                Style="{ThemeResource ButtonRevealStyle}"
-                                Padding="0">
-                                <Viewbox MaxWidth="16" MaxHeight="16">
-                                    <SymbolIcon Symbol="GlobalNavigationButton"/>
-                                </Viewbox>
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout x:Name="MainMenuButtonFlyout" 
-                                                Placement="BottomEdgeAlignedLeft">
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_New_Window" x:Name="MenuCreateNewWindowButton" AccessKey="N">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;"/>
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="N" Modifiers="Control,Shift" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE792;"/>
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="S" Modifiers="Control,Shift" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xEA35;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8AB;" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
-                                        <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE740;" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F11" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="CompactOverlay" x:Name="MenuCompactOverlayButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8A7;" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F12" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name="MenuPrintSeparator"/>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="P" Modifiers="Control"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_PrintAll" x:Name="MenuPrintAllButton">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xF56D;"/>
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
-                                        <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F1" IsEnabled="False"/>
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyout.MenuFlyoutPresenterStyle>
-                                            <Style TargetType="MenuFlyoutPresenter">
-                                                <Setter Property="BorderThickness" Value="0" />
-                                                <Setter Property="MaxWidth" Value="1200" />
-                                            </Style>
-                                        </MenuFlyout.MenuFlyoutPresenterStyle>
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                            </Button>
-                        </controls:SetsView.SetsStartHeader>
-
-                        <controls:SetsView.SetsActionHeader>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Button x:Name="NewSetButton"
+                                <Button x:Name="ExitCompactOverlayButton"
                                         Grid.Column="0"
                                         IsTabStop="False"
                                         Width="42"
-                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
-                                        Margin="-1,0,0,0"
-                                        BorderThickness="0"
-                                        Background="Transparent"
-                                        Style="{ThemeResource ButtonRevealStyle}">
-                                        <Viewbox MaxWidth="16"
-                                            MaxHeight="16">
-                                            <FontIcon FontFamily="Segoe MDL2 Assets"
-                                                Glyph="&#xE710;" />
-                                        </Viewbox>
-                                </Button>
-                                <Button x:Name="ExitCompactOverlayButton"
-                                        Grid.Column="1"
-                                        IsTabStop="False"
-                                        Width="48"
                                         Height="{StaticResource SetsViewItemHeaderMinHeight}"
                                         Margin="0,0,0,0"
                                         BorderThickness="0"
@@ -215,14 +85,145 @@
                                         Click="ExitCompactOverlayButton_OnClick"
                                         Visibility="Collapsed"
                                         Style="{ThemeResource ButtonRevealStyle}">
-                                        <Viewbox MaxWidth="19"
-                                             MaxHeight="19">
-                                            <FontIcon FontFamily="Segoe MDL2 Assets"
+                                    <Viewbox MaxWidth="18"
+                                             MaxHeight="18">
+                                        <FontIcon FontFamily="Segoe MDL2 Assets"
                                                   Glyph="&#xE944;" />
-                                        </Viewbox>
+                                    </Viewbox>
+                                </Button>
+
+                                <Button x:Name="MainMenuButton"
+                                        Grid.Column="1"
+                                        IsTabStop="False"
+                                        Width="42"
+                                        Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                        Margin="0,0,-1,0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Style="{ThemeResource ButtonRevealStyle}"
+                                        Padding="0">
+                                    <Viewbox MaxWidth="16" MaxHeight="16">
+                                        <SymbolIcon Symbol="GlobalNavigationButton"/>
+                                    </Viewbox>
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout x:Name="MainMenuButtonFlyout"
+                                                    Placement="BottomEdgeAlignedLeft">
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_New" x:Name="MenuCreateNewButton" Icon="NewFolder" AccessKey="N">
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="N" Modifiers="Control" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_New_Window" x:Name="MenuCreateNewWindowButton" AccessKey="N">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;"/>
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="N" Modifiers="Control,Shift" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Open" x:Name="MenuOpenFileButton" Icon="OpenFile" AccessKey="O" >
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="O" Modifiers="Control" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator />
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Save" x:Name="MenuSaveButton" Icon="Save">
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="S" Modifiers="Control" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAs" x:Name="MenuSaveAsButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE792;"/>
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="S" Modifiers="Control,Shift" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_SaveAll" x:Name="MenuSaveAllButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xEA35;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator />
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Find" x:Name="MenuFindButton" Icon="Find">
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="F" Modifiers="Control" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Replace" x:Name="MenuReplaceButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE8AB;" />
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
+                                            <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE740;" />
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="F11" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Text="CompactOverlay" x:Name="MenuCompactOverlayButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE8A7;" />
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="F12" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator x:Name="MenuPrintSeparator"/>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Print" x:Name="MenuPrintButton" Icon="Print">
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="P" Modifiers="Control"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_PrintAll" x:Name="MenuPrintAllButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xF56D;"/>
+                                                </MenuFlyoutItem.Icon>
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="P" Modifiers="Control,Shift" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutSeparator x:Name="MenuSettingsSeparator" />
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_Settings" x:Name="MenuSettingsButton" Icon="Setting">
+                                                <MenuFlyoutItem.KeyboardAccelerators>
+                                                    <KeyboardAccelerator Key="F1" IsEnabled="False"/>
+                                                </MenuFlyoutItem.KeyboardAccelerators>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                                <Style TargetType="MenuFlyoutPresenter">
+                                                    <Setter Property="BorderThickness" Value="0" />
+                                                    <Setter Property="MaxWidth" Value="1200" />
+                                                </Style>
+                                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
                                 </Button>
                             </Grid>
+                        </controls:SetsView.SetsStartHeader>
 
+                        <controls:SetsView.SetsActionHeader>
+                            <Button x:Name="NewSetButton"
+                                    Grid.Column="0"
+                                    IsTabStop="False"
+                                    Width="42"
+                                    Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                    Margin="-1,0,0,0"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    Style="{ThemeResource ButtonRevealStyle}">
+                                    <Viewbox MaxWidth="14"
+                                        MaxHeight="14">
+                                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                            Glyph="&#xE710;" />
+                                    </Viewbox>
+                            </Button>
                         </controls:SetsView.SetsActionHeader>
 
                         <controls:SetsView.SetsPaddingHeader>
@@ -388,6 +389,17 @@
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;"/>
                                 </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutFileRenameFlyoutItem" 
+                                            Tag="Rename" 
+                                            Click="RenameFileAsync">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8AC;"/>
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="F2" IsEnabled="False"/>
+                                </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">

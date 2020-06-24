@@ -12,6 +12,7 @@ namespace Notepads.Controls
     using System.Threading.Tasks;
     using ColorCode;
     using Windows.UI.Core;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Documents;
     using Windows.UI.Xaml.Media;
@@ -316,7 +317,13 @@ namespace Notepads.Controls
                             //    theme = RequestedTheme;
                             //}
 
-                            formatter = new RichTextBlockFormatter(RequestedTheme);
+                            var theme = ActualTheme;
+                            if (RequestedTheme != ElementTheme.Default)
+                            {
+                                theme = RequestedTheme;
+                            }
+
+                            formatter = new RichTextBlockFormatter(theme);
                         }
 
                         formatter.FormatInlines(text, language, inlineCollection);
