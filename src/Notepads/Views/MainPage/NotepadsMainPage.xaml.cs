@@ -39,7 +39,7 @@
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private bool _loaded = false;
-        private bool _appShouldSaveSessionDataBeforeExit = false;
+        private bool _tabMovedToAnotherInstance = false;
 
         private INotepadsCore _notepadsCore;
 
@@ -462,12 +462,18 @@
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
-                if (_appShouldSaveSessionDataBeforeExit)
+                if (_tabMovedToAnotherInstance && AppSettingsService.IsSessionSnapshotEnabled)
                 {
                     await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 }
 
-                await ApplicationView.GetForCurrentView().TryConsolidateAsync();
+                if (!await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+                {
+                    if (_tabMovedToAnotherInstance)
+                        Application.Current.Exit();
+                    else
+                        NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
+                }
             }
         }
 
@@ -496,7 +502,7 @@
 
         private void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
         {
-            _appShouldSaveSessionDataBeforeExit = AppSettingsService.IsSessionSnapshotEnabled;
+            _tabMovedToAnotherInstance = true;
             NotepadsCore.DeleteTextEditor(textEditor);
         }
 
