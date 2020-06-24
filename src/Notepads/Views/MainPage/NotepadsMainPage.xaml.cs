@@ -39,6 +39,7 @@
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private bool _loaded = false;
+        private bool _appShouldSaveSessionDataBeforeExit = false;
 
         private INotepadsCore _notepadsCore;
 
@@ -461,7 +462,7 @@
         {
             if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
             {
-                if (AppSettingsService.IsSessionSnapshotEnabled)
+                if (_appShouldSaveSessionDataBeforeExit)
                 {
                     await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 }
@@ -495,6 +496,7 @@
 
         private void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
         {
+            _appShouldSaveSessionDataBeforeExit = AppSettingsService.IsSessionSnapshotEnabled;
             NotepadsCore.DeleteTextEditor(textEditor);
         }
 
