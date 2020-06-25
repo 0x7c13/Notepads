@@ -44,9 +44,6 @@
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
-        private const int TitleBarReservedAreaDefaultWidth = 180;
-        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
-
         private INotepadsCore _notepadsCore;
 
         private INotepadsCore NotepadsCore
@@ -63,6 +60,7 @@
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorSaved += OnTextEditorSaved;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
@@ -102,7 +100,7 @@
             InitializeKeyboardShortcuts();
 
             // Session backup and restore toggle
-            EditorSettingsService.OnSessionBackupAndRestoreOptionChanged += OnSessionBackupAndRestoreOptionChanged;
+            AppSettingsService.OnSessionBackupAndRestoreOptionChanged += OnSessionBackupAndRestoreOptionChanged;
 
             // Register for printing
             if (PrintManager.IsSupported())
@@ -162,6 +160,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsFirstInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, async (args) => { await RenameFileAsync(NotepadsCore.GetSelectedTextEditor()); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.L, async (args) => { await OpenFile(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); })
             });
         }
@@ -205,7 +204,7 @@
         {
             int loadedCount = 0;
 
-            if (!_loaded && EditorSettingsService.IsSessionSnapshotEnabled)
+            if (!_loaded && AppSettingsService.IsSessionSnapshotEnabled)
             {
                 try
                 {
@@ -274,7 +273,7 @@
                 _loaded = true;
             }
 
-            if (EditorSettingsService.IsSessionSnapshotEnabled)
+            if (AppSettingsService.IsSessionSnapshotEnabled)
             {
                 SessionManager.IsBackupEnabled = true;
                 SessionManager.StartSessionBackup();
@@ -302,7 +301,7 @@
         {
             var deferral = e.GetDeferral();
 
-            if (EditorSettingsService.IsSessionSnapshotEnabled)
+            if (AppSettingsService.IsSessionSnapshotEnabled)
             {
                 await SessionManager.SaveSessionAsync();
             }
@@ -321,7 +320,7 @@
             {
                 LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] CoreWindow Deactivated.", consoleOnly: true);
                 NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
-                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                if (AppSettingsService.IsSessionSnapshotEnabled)
                 {
                     SessionManager.StopSessionBackup();
                 }
@@ -332,7 +331,7 @@
                 LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] CoreWindow Activated.", consoleOnly: true);
                 Task.Run(() => ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString()));
                 NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
-                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                if (AppSettingsService.IsSessionSnapshotEnabled)
                 {
                     SessionManager.StartSessionBackup();
                 }
@@ -376,7 +375,7 @@
         {
             var deferral = e.GetDeferral();
 
-            if (EditorSettingsService.IsSessionSnapshotEnabled)
+            if (AppSettingsService.IsSessionSnapshotEnabled)
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
@@ -390,7 +389,9 @@
                 return;
             }
 
-            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
+            HideAllOpenFlyouts();
+
+            var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
@@ -441,6 +442,17 @@
             }
         }
 
+        private void HideAllOpenFlyouts()
+        {
+            // Hide TextEditor ContextFlyout if it is showing
+            // Why we need to do this? Take a look here: https://github.com/microsoft/microsoft-ui-xaml/issues/2461
+            var editorFlyout = NotepadsCore.GetSelectedTextEditor()?.GetContextFlyout();
+            if (editorFlyout != null && editorFlyout.IsOpen)
+            {
+                editorFlyout.Hide();
+            }
+        }
+
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)
         {
             await Dispatcher.CallOnUIThreadAsync(async () =>
@@ -476,7 +488,6 @@
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
                 SetupStatusBar(textEditor);
-                UpdateApplicationTitle(textEditor);
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
@@ -521,7 +532,7 @@
 
                 NotepadsCore.DeleteTextEditor(textEditor);
 
-                if (EditorSettingsService.IsSessionSnapshotEnabled)
+                if (AppSettingsService.IsSessionSnapshotEnabled)
                 {
                     await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 }
@@ -549,7 +560,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file,
+                var setCloseSaveReminderDialog = new SetCloseSaveReminderDialog(file,
                     saveAction: async () =>
                     {
                         if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))

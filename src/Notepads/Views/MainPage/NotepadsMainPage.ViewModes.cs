@@ -8,6 +8,10 @@
 
     public sealed partial class NotepadsMainPage
     {
+        private const int TitleBarReservedAreaDefaultWidth = 180;
+
+        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
+
         // Show hide ExitCompactOverlayButton and status bar based on current ViewMode
         // Reset TitleBarReservedArea accordingly
         private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
@@ -18,7 +22,8 @@
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaCompactOverlayWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Visible;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(false);
+                    MainMenuButton.Visibility = Visibility.Collapsed;
+                    if (AppSettingsService.ShowStatusBar) ShowHideStatusBar(false);
                 }
             }
             else // Default or FullScreen
@@ -27,7 +32,8 @@
                 {
                     TitleBarReservedArea.Width = TitleBarReservedAreaDefaultWidth;
                     ExitCompactOverlayButton.Visibility = Visibility.Collapsed;
-                    if (EditorSettingsService.ShowStatusBar) ShowHideStatusBar(true);
+                    MainMenuButton.Visibility = Visibility.Visible;
+                    if (AppSettingsService.ShowStatusBar) ShowHideStatusBar(true);
                 }
             }
         }
