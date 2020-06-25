@@ -847,7 +847,7 @@
             {
                 // Add the opened file to FutureAccessList so we can access it next launch
                 var futureAccessToken = textEditor.Id.ToString("N");
-                await FileSystemUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                await FutureAccessListUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
                 textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                 textEditorData.EditingFileName = textEditor.EditingFileName;
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;
