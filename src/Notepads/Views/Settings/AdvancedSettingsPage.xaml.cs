@@ -30,6 +30,7 @@
                 EnableSessionSnapshotToggleSwitch.IsOn = AppSettingsService.IsSessionSnapshotEnabled;
             }
 
+            ExitingLastTabClosesWindowToggleSwitch.IsOn = AppSettingsService.ExitingLastTabClosesWindow;
             AlwaysOpenNewWindowToggleSwitch.IsOn = AppSettingsService.AlwaysOpenNewWindow;
 
             if (App.IsGameBarWidget)
@@ -54,6 +55,7 @@
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled += EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+            ExitingLastTabClosesWindowToggleSwitch.Toggled += ExitingLastTabClosesWindowToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
             LanguagePicker.SelectionChanged += LanguagePicker_SelectionChanged;
         }
@@ -63,7 +65,9 @@
             ShowStatusBarToggleSwitch.Toggled -= ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled -= EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
+            ExitingLastTabClosesWindowToggleSwitch.Toggled -= ExitingLastTabClosesWindowToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
+            LanguagePicker.SelectionChanged -= LanguagePicker_SelectionChanged;
         }
 
         private void EnableSmartCopyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -79,6 +83,11 @@
         private void ShowStatusBarToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             AppSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
+        }
+
+        private void ExitingLastTabClosesWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            AppSettingsService.ExitingLastTabClosesWindow = ExitingLastTabClosesWindowToggleSwitch.IsOn;
         }
 
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)

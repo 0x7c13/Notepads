@@ -321,21 +321,21 @@
     <value>Spelling</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
-  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Once enabled, Notepads will always open file in a new window instead of creating a new tab.</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>Once enabled, Exiting last tab exits the window, Notepads will always open file in a new window instead of creating a new tab.</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings Description display text.</comment>
   </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
     <value>Always open new window</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
     <value>Always open new window</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Launch Preferences</value>
-    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>App Lifecycle Preferences</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
     <value>Highlight current line</value>
@@ -420,5 +420,13 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
     <value>System Default</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
+  </data>
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_ExitingLastTabClosesWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>Exiting last tab closes window</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_AppLifecyclePreferenceSettings_ExitingLastTabClosesWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>Exiting last tab closes window</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
   </data>
 </root>

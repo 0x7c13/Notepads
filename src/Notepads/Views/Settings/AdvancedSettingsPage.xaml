@@ -61,15 +61,19 @@
                 </StackPanel>
                 <TextBlock
                     x:Name="LaunchPreferenceSettingsTitle"
-                    x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
+                    x:Uid="/Settings/AdvancedPage_AppLifecyclePreferenceSettings_Title"
                     Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
                     FontWeight="Normal"/>
                 <StackPanel x:Name="LaunchPreferenceSettingsControls" Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch"
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_AppLifecyclePreferenceSettings_ExitingLastTabClosesWindowToggleSwitch"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="AlwaysOpenNewWindowToggleSwitch" />
-                    <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                                  x:Name="ExitingLastTabClosesWindowToggleSwitch" />
+                    <ToggleSwitch x:Uid="/Settings/AdvancedPage_AppLifecyclePreferenceSettings_AlwaysOpenNewWindowToggleSwitch"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="AlwaysOpenNewWindowToggleSwitch" 
+                                  Margin="0,10,0,0" />
+                    <TextBlock x:Uid="/Settings/AdvancedPage_AppLifecyclePreferenceSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
                 </StackPanel>
                 <StackPanel x:Name="LanguagePreferenceSettingsPanel" x:Load="False">
                     <TextBlock

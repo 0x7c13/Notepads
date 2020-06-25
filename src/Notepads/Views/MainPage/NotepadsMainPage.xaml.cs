@@ -467,7 +467,8 @@
                     await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 }
 
-                if (!await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+                if (_tabMovedToAnotherInstance || AppSettingsService.ExitingLastTabClosesWindow 
+                    ? !await ApplicationView.GetForCurrentView().TryConsolidateAsync() : true)
                 {
                     if (_tabMovedToAnotherInstance)
                         Application.Current.Exit();
@@ -508,7 +509,12 @@
 
         private async void OnTextEditorClosing(object sender, ITextEditor textEditor)
         {
-            if (!textEditor.IsModified)
+            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1 && textEditor.IsModified == false && textEditor.EditingFile == null)
+            {
+                // Do nothing
+                // Take no action if user is trying to close the last tab and the last tab is a new empty document
+            }
+            else if (!textEditor.IsModified)
             {
                 NotepadsCore.DeleteTextEditor(textEditor);
             }
