@@ -509,10 +509,10 @@
 
         private async void OnTextEditorClosing(object sender, ITextEditor textEditor)
         {
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1 && textEditor.IsModified == false && textEditor.EditingFile == null)
+            if (!AppSettingsService.ExitingLastTabClosesWindow && NotepadsCore.GetNumberOfOpenedTextEditors() == 1 && textEditor.IsModified == false && textEditor.EditingFile == null)
             {
-                // Do nothing
-                // Take no action if user is trying to close the last tab and the last tab is a new empty document
+                // Do nothing if user doesn't want closing window when last tab closed
+                // And if user is trying to close the last tab and the last tab is a new empty document
             }
             else if (!textEditor.IsModified)
             {
