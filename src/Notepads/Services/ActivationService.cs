@@ -30,7 +30,6 @@
                         rootFrame.Navigate(typeof(NotepadsMainPage));
                     }
                     break;
-
             }
         }
 

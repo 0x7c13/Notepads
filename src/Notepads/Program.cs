@@ -86,6 +86,7 @@
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
             App.PassedEditorData = (string)ApplicationSettingsStore.Read("EditorData");
+            ApplicationSettingsStore.Remove("EditorData");
             App.IsFirstInstance = IsFirstInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
             IsFirstInstance = false;
