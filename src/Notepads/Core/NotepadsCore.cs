@@ -794,11 +794,12 @@
         {
             if (Sets.Items?.Count > 1 && e.Set.Content is ITextEditor textEditor)
             {
+                var index = Sets.SelectedIndex;
+                var message = new ValueSet();
+                var textEditorData = JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented);
                 if (textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
                 {
-                    var index = Sets.SelectedIndex;
-                    var message = new ValueSet();
-                    message.Add("EditorData", JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented));
+                    message.Add("EditorData", textEditorData);
                     DeleteTextEditor(textEditor);
                     if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message))
                     {
@@ -807,7 +808,12 @@
                 }
                 else
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 3500);
+                    ApplicationSettingsStore.Write("EditorData", textEditorData);
+                    DeleteTextEditor(textEditor);
+                    if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, textEditor.EditingFile))
+                    {
+                        OpenTextEditor(textEditor, index);
+                    }
                 }
             }
         }
@@ -829,7 +835,7 @@
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;
             }
 
-            if (textEditor.IsModified || textEditor.FileModificationState == FileModificationState.Modified)
+            if (textEditor.IsModified || textEditor.FileModificationState != FileModificationState.Untouched)
             {
                 if (textEditor.EditingFile != null)
                 {

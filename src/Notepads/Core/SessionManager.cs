@@ -387,7 +387,7 @@
             textEditor.FileReloaded -= RemoveTextEditorSessionData;
         }
 
-        public async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
+        public async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData, StorageFile file = null)
         {
             StorageFile editingFile = null;
 
@@ -444,6 +444,11 @@
                 }
 
                 textEditor.ResetEditorState(editorSessionData.StateMetaData, pendingText);
+            }
+
+            if (file != null)
+            {
+                textEditor.UpdateEditingFile(file);
             }
 
             return textEditor;

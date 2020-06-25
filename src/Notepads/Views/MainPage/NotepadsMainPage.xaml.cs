@@ -34,7 +34,6 @@
     public sealed partial class NotepadsMainPage : Page
     {
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
-
         private string _appLaunchCmdDir;
         private string _appLaunchCmdArgs;
         private Uri _appLaunchUri;
@@ -221,8 +220,16 @@
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                loadedCount += await OpenFiles(_appLaunchFiles);
-                _appLaunchFiles = null;
+                if (string.IsNullOrEmpty(App.PassedEditorData))
+                {
+                    loadedCount += await OpenFiles(_appLaunchFiles);
+                    _appLaunchFiles = null;
+                }
+                else
+                {
+                    await OpenEditor(App.PassedEditorData, (StorageFile)_appLaunchFiles[0]);
+                    loadedCount++;
+                }
             }
             else if (_appLaunchCmdDir != null)
             {
@@ -241,11 +248,7 @@
                 {
                     try
                     {
-                        var textEditorData = JsonConvert.DeserializeObject<TextEditorSessionDataV1>((string)_appLaunchEditorData["EditorData"]);
-                        var textEditor = await SessionManager.RecoverTextEditorAsync(textEditorData);
-                        NotepadsCore.OpenTextEditor(textEditor);
-                        await FileSystemUtility.DeleteFile(textEditorData.LastSavedBackupFilePath);
-                        await FileSystemUtility.DeleteFile(textEditorData.PendingBackupFilePath);
+                        await OpenEditor((string)_appLaunchEditorData["EditorData"]);
                         loadedCount++;
                     }
                     catch (Exception)
@@ -334,6 +337,15 @@
                     SessionManager.StartSessionBackup();
                 }
             }
+        }
+
+        private async Task OpenEditor(string textEditorDataStr, StorageFile file = null)
+        {
+            var textEditorData = JsonConvert.DeserializeObject<TextEditorSessionDataV1>(textEditorDataStr);
+            var textEditor = await SessionManager.RecoverTextEditorAsync(textEditorData, file);
+            NotepadsCore.OpenTextEditor(textEditor);
+            await FileSystemUtility.DeleteFile(textEditorData.LastSavedBackupFilePath);
+            await FileSystemUtility.DeleteFile(textEditorData.PendingBackupFilePath);
         }
 
         private void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)

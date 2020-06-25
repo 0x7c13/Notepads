@@ -6,6 +6,7 @@
     using Microsoft.AppCenter.Analytics;
     using Windows.ApplicationModel;
     using Windows.Foundation.Collections;
+    using Windows.Storage;
     using Windows.System;
 
     public enum NotepadsOperationProtocol
@@ -20,24 +21,17 @@
 
         public static NotepadsOperationProtocol GetOperationProtocol(Uri uri, out string context)
         {
-            context = null;
+            context = string.IsNullOrEmpty(uri.Query) ? null : uri.Query.TrimStart('?');
 
             try
             {
-                var uriStr = uri.ToString().Trim();
-
-                if (string.IsNullOrEmpty(uriStr) || !uriStr.StartsWith("notepads://", StringComparison.OrdinalIgnoreCase))
+                var uriScheme = uri.GetLeftPart(UriPartial.Scheme);
+                if (string.IsNullOrEmpty(uriScheme) || !string.Equals("notepads://", uriScheme, StringComparison.OrdinalIgnoreCase))
                 {
                     return NotepadsOperationProtocol.Unrecognized;
                 }
 
-                var operation = uriStr.Substring("notepads://".Length);
-
-                if (operation.EndsWith("/"))
-                {
-                    operation = operation.Remove(operation.Length - 1);
-                }
-
+                var operation = uri.Authority;
                 if (!string.IsNullOrEmpty(operation) && string.Equals(NewInstanceProtocolStr, operation, StringComparison.OrdinalIgnoreCase))
                 {
                     return NotepadsOperationProtocol.OpenNewInstance;
@@ -66,10 +60,35 @@
                 }
                 else if (operation == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    var uriToLaunch = $"notepads://{NewInstanceProtocolStr}";
-                    var launcherOptions = new LauncherOptions();
-                    launcherOptions.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-                    return await Launcher.LaunchUriAsync(new Uri(uriToLaunch.ToLower()), launcherOptions, message);
+                    var uri = new Uri($"notepads://{NewInstanceProtocolStr}".ToLower());
+                    var launcherOptions = new LauncherOptions() { TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName };
+                    return await Launcher.LaunchUriAsync(uri, launcherOptions, message);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(NotepadsProtocolService)}] Failed to execute protocol: {operation}, Exception: {ex}");
+                Analytics.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
+                {
+                    { "Protocol", operation.ToString() },
+                    { "Exception", ex.Message }
+                });
+                return false;
+            }
+        }
+
+        public static async Task<bool> LaunchProtocolAsync(NotepadsOperationProtocol operation, IStorageFile storageFile)
+        {
+            try
+            {
+                if (operation == NotepadsOperationProtocol.OpenNewInstance)
+                {
+                    var launchOptions = new LauncherOptions() { TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName };
+                    return await Launcher.LaunchFileAsync(storageFile, launchOptions);
                 }
                 else
                 {

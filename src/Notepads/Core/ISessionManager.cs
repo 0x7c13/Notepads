@@ -4,6 +4,7 @@
     using Notepads.Core.SessionDataModels;
     using System;
     using System.Threading.Tasks;
+    using Windows.Storage;
 
     internal interface ISessionManager
     {
@@ -19,6 +20,6 @@
 
         Task ClearSessionDataAsync();
 
-        Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData);
+        Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData, StorageFile file = null);
     }
 }

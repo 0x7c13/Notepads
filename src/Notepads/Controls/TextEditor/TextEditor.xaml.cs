@@ -690,6 +690,12 @@
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
 
+        public void UpdateEditingFile(StorageFile file)
+        {
+            EditingFile = file;
+            StartCheckingFileStatusPeriodically();
+        }
+
         public string GetContentForSharing()
         {
             return TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition ?
