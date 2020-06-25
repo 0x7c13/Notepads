@@ -85,6 +85,7 @@
                 Window.Current.Content = rootFrame;
                 rootFrameCreated = true;
 
+                ApplicationSettingsStore.Initialize();
                 ThemeSettingsService.Initialize();
                 AppSettingsService.Initialize();
             }
