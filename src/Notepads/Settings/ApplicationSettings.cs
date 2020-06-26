@@ -23,6 +23,13 @@
         {
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = obj;
+
+            if (InterInstanceSyncService.SyncManager.ContainsKey(key))
+            {
+                localSettings.Values[SettingsKey.LastChangedSettingsKeyStr] = key;
+                localSettings.Values[SettingsKey.LastChangedSettingsAppInstanceIdStr] = App.Id.ToString();
+                ApplicationData.Current.SignalDataChanged();
+            }
         }
 
         public static bool Remove(string key)

@@ -93,7 +93,6 @@
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
-                { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },

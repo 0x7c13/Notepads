@@ -286,13 +286,17 @@
 
         public static void Initialize()
         {
-            InitializeFontSettings();
+            InitializeFontFamilySettings();
+            InitializeFontSizeSettings();
+            InitializeFontStyleSettings();
+            InitializeFontWeightSettings();
 
             InitializeTextWrappingSettings();
 
             InitializeSpellingSettings();
 
-            InitializeDisplaySettings();
+            InitializeDisplayLineHighlighterSettings();
+            InitializeDisplayLineNumbersSettings();
 
             InitializeSmartCopySettings();
 
@@ -305,6 +309,7 @@
             InitializeTabIndentsSettings();
 
             InitializeSearchEngineSettings();
+            InitializeCustomSearchUrlSettings();
 
             InitializeStatusBarSettings();
 
@@ -313,7 +318,7 @@
             InitializeAppOpeningPreferencesSettings();
         }
 
-        private static void InitializeStatusBarSettings()
+        public static void InitializeStatusBarSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorShowStatusBarBool) is bool showStatusBar)
             {
@@ -323,6 +328,8 @@
             {
                 _showStatusBar = true;
             }
+
+            if (invokeChangedEvent) OnStatusBarVisibilityChanged?.Invoke(null, _showStatusBar);
         }
 
         private static void InitializeSessionSnapshotSettings()
@@ -349,7 +356,7 @@
             }
         }
 
-        private static void InitializeLineEndingSettings()
+        public static void InitializeLineEndingSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr &&
                 Enum.TryParse(typeof(LineEnding), lineEndingStr, out var lineEnding))
@@ -360,9 +367,11 @@
             {
                 _editorDefaultLineEnding = LineEnding.Crlf;
             }
+
+            if (invokeChangedEvent) OnDefaultLineEndingChanged?.Invoke(null, _editorDefaultLineEnding);
         }
 
-        private static void InitializeTextWrappingSettings()
+        public static void InitializeTextWrappingSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTextWrappingStr) is string textWrappingStr &&
                 Enum.TryParse(typeof(TextWrapping), textWrappingStr, out var textWrapping))
@@ -373,9 +382,11 @@
             {
                 _editorDefaultTextWrapping = TextWrapping.NoWrap;
             }
+
+            if (invokeChangedEvent) OnDefaultTextWrappingChanged?.Invoke(null, _editorDefaultTextWrapping);
         }
 
-        private static void InitializeSpellingSettings()
+        public static void InitializeSpellingSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorHighlightMisspelledWordsBool) is bool highlightMisspelledWords)
             {
@@ -385,9 +396,11 @@
             {
                 _isHighlightMisspelledWordsEnabled = false;
             }
+
+            if (invokeChangedEvent) OnHighlightMisspelledWordsChanged?.Invoke(null, _isHighlightMisspelledWordsEnabled);
         }
 
-        private static void InitializeDisplaySettings()
+        public static void InitializeDisplayLineHighlighterSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineHighlighterViewStateBool) is bool displayLineHighlighter)
             {
@@ -398,6 +411,11 @@
                 _editorDisplayLineHighlighter = true;
             }
 
+            if (invokeChangedEvent) OnDefaultLineHighlighterViewStateChanged?.Invoke(null, _editorDisplayLineHighlighter);
+        }
+
+        public static void InitializeDisplayLineNumbersSettings(bool invokeChangedEvent = false)
+        {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDisplayLineNumbersBool) is bool displayLineNumbers)
             {
                 _displayLineNumbers = displayLineNumbers;
@@ -406,9 +424,11 @@
             {
                 _displayLineNumbers = true;
             }
+
+            if (invokeChangedEvent) OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, _displayLineNumbers);
         }
 
-        private static void InitializeSmartCopySettings()
+        public static void InitializeSmartCopySettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSmartCopyBool) is bool enableSmartCopy)
             {
@@ -420,7 +440,7 @@
             }
         }
 
-        private static void InitializeEncodingSettings()
+        public static void InitializeEncodingSettings(bool invokeChangedEvent = false)
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
@@ -446,9 +466,11 @@
             {
                 _editorDefaultEncoding = new UTF8Encoding(false);
             }
+
+            if (invokeChangedEvent) OnDefaultEncodingChanged?.Invoke(null, _editorDefaultEncoding);
         }
 
-        private static void InitializeDecodingSettings()
+        public static void InitializeDecodingSettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
             {
@@ -480,7 +502,7 @@
             }
         }
 
-        private static void InitializeTabIndentsSettings()
+        public static void InitializeTabIndentsSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTabIndentsInt) is int tabIndents)
             {
@@ -490,9 +512,11 @@
             {
                 _editorDefaultTabIndents = -1;
             }
+
+            if (invokeChangedEvent) OnDefaultTabIndentsChanged?.Invoke(null, _editorDefaultTabIndents);
         }
 
-        private static void InitializeSearchEngineSettings()
+        public static void InitializeSearchEngineSettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr &&
                 Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
@@ -503,7 +527,10 @@
             {
                 _editorDefaultSearchEngine = SearchEngine.Bing;
             }
+        }
 
+        public static void InitializeCustomSearchUrlSettings()
+        {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadeSearchUrl)
             {
                 _editorCustomMadeSearchUrl = customMadeSearchUrl;
@@ -514,7 +541,7 @@
             }
         }
 
-        private static void InitializeFontSettings()
+        public static void InitializeFontFamilySettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorFontFamilyStr) is string fontFamily)
             {
@@ -525,6 +552,11 @@
                 _editorFontFamily = "Consolas";
             }
 
+            if (invokeChangedEvent) OnFontFamilyChanged?.Invoke(null, _editorFontFamily);
+        }
+
+        public static void InitializeFontSizeSettings(bool invokeChangedEvent = false)
+        {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorFontSizeInt) is int fontSize)
             {
                 _editorFontSize = fontSize;
@@ -534,6 +566,11 @@
                 _editorFontSize = 14;
             }
 
+            if (invokeChangedEvent) OnFontSizeChanged?.Invoke(null, _editorFontSize);
+        }
+
+        public static void InitializeFontStyleSettings(bool invokeChangedEvent = false)
+        {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorFontStyleStr) is string fontStyleStr &&
                 Enum.TryParse(typeof(FontStyle), fontStyleStr, out var fontStyle))
             {
@@ -544,6 +581,11 @@
                 _editorFontStyle = FontStyle.Normal;
             }
 
+            if (invokeChangedEvent) OnFontStyleChanged?.Invoke(null, _editorFontStyle);
+        }
+
+        public static void InitializeFontWeightSettings(bool invokeChangedEvent = false)
+        {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorFontWeightUshort) is ushort fontWeight)
             {
                 _editorFontWeight = new FontWeight()
@@ -555,9 +597,11 @@
             {
                 _editorFontWeight = FontWeights.Normal;
             }
+
+            if (invokeChangedEvent) OnFontWeightChanged?.Invoke(null, _editorFontWeight);
         }
 
-        private static void InitializeAppOpeningPreferencesSettings()
+        public static void InitializeAppOpeningPreferencesSettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
             {
