@@ -284,34 +284,34 @@
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(bool shouldInvokeChangedEvent = false)
         {
-            InitializeFontFamilySettings();
-            InitializeFontSizeSettings();
-            InitializeFontStyleSettings();
-            InitializeFontWeightSettings();
+            InitializeFontFamilySettings(shouldInvokeChangedEvent);
+            InitializeFontSizeSettings(shouldInvokeChangedEvent);
+            InitializeFontStyleSettings(shouldInvokeChangedEvent);
+            InitializeFontWeightSettings(shouldInvokeChangedEvent);
 
-            InitializeTextWrappingSettings();
+            InitializeTextWrappingSettings(shouldInvokeChangedEvent);
 
-            InitializeSpellingSettings();
+            InitializeSpellingSettings(shouldInvokeChangedEvent);
 
-            InitializeDisplayLineHighlighterSettings();
-            InitializeDisplayLineNumbersSettings();
+            InitializeDisplayLineHighlighterSettings(shouldInvokeChangedEvent);
+            InitializeDisplayLineNumbersSettings(shouldInvokeChangedEvent);
 
             InitializeSmartCopySettings();
 
-            InitializeLineEndingSettings();
+            InitializeLineEndingSettings(shouldInvokeChangedEvent);
 
-            InitializeEncodingSettings();
+            InitializeEncodingSettings(shouldInvokeChangedEvent);
 
             InitializeDecodingSettings();
 
-            InitializeTabIndentsSettings();
+            InitializeTabIndentsSettings(shouldInvokeChangedEvent);
 
             InitializeSearchEngineSettings();
             InitializeCustomSearchUrlSettings();
 
-            InitializeStatusBarSettings();
+            InitializeStatusBarSettings(shouldInvokeChangedEvent);
 
             InitializeSessionSnapshotSettings();
 

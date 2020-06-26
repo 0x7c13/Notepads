@@ -92,15 +92,15 @@
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(bool shouldInvokeChangedEvent = false)
         {
-            InitializeThemeMode();
+            InitializeThemeMode(shouldInvokeChangedEvent);
 
-            InitializeAppAccentColor();
+            InitializeAppAccentColor(shouldInvokeChangedEvent);
 
             InitializeCustomAccentColor();
 
-            InitializeAppBackgroundPanelTintOpacity();
+            InitializeAppBackgroundPanelTintOpacity(shouldInvokeChangedEvent);
         }
 
         public static void InitializeAppAccentColor(bool invokeChangedEvent = false)
