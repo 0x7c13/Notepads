@@ -546,7 +546,7 @@
                         {
                             throw ex;
                         }
-                        await InteropService.SaveFileAsAdmin(file.Path, result);
+                        await DesktopExtensionService.SaveFileAsAdmin(file.Path, result);
                     }
                 }
                 else // Use StorageFile API to save 

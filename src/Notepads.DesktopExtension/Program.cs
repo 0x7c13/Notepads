@@ -14,8 +14,6 @@
 
     public enum CommandArgs
     {
-        SyncSettings,
-        SyncRecentList,
         RegisterExtension,
         CreateElevetedExtension,
         ExitApp
@@ -57,7 +55,7 @@
         {
             connection = new AppServiceConnection()
             {
-                AppServiceName = "InteropServiceConnection",
+                AppServiceName = "DesktopExtensionServiceConnection",
                 PackageFamilyName = Package.Current.Id.FamilyName
             };
 

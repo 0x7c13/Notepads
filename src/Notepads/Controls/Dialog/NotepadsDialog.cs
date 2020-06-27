@@ -17,8 +17,8 @@
 
         public NotepadsDialog()
         {
-            RequestedTheme = ThemeSettingsService.ThemeMode;
-            Background = ThemeSettingsService.ThemeMode == ElementTheme.Dark
+            RequestedTheme = ThemeSettingsService.GetActualTheme(ThemeSettingsService.ThemeMode);
+            Background = RequestedTheme == ElementTheme.Dark
                 ? _darkModeBackgroundBrush
                 : _lightModeBackgroundBrush;
 

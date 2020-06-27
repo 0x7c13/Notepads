@@ -10,14 +10,12 @@
 
     public enum CommandArgs
     {
-        SyncSettings,
-        SyncRecentList,
         RegisterExtension,
         CreateElevetedExtension,
         ExitApp
     }
 
-    public sealed class InteropConnectionService : IBackgroundTask
+    public sealed class DesktopExtensionConnectionService : IBackgroundTask
     {
         private BackgroundTaskDeferral backgroundTaskDeferral;
         private AppServiceConnection appServiceConnection;
@@ -61,18 +59,6 @@
 
             switch (command)
             {
-                case CommandArgs.SyncSettings:
-                    Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
-                    {
-                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
-                    });
-                    break;
-                case CommandArgs.SyncRecentList:
-                    Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
-                    {
-                        if (serviceConnection != appServiceConnection) await serviceConnection.SendMessageAsync(args.Request.Message);
-                    });
-                    break;
                 case CommandArgs.RegisterExtension:
                     appServiceConnections.Remove(appServiceConnection);
                     if (extensionAppServiceConnection == null)

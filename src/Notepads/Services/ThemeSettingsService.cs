@@ -202,7 +202,7 @@
 
             // Set ContentDialog background dimming color
             var themeMode = ThemeMode;
-            if (themeMode == ElementTheme.Default) themeMode = Application.Current.RequestedTheme.ToElementTheme();
+            themeMode = GetActualTheme(themeMode);
             ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color =
                 themeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
 
@@ -233,12 +233,21 @@
             }
         }
 
+        public static ElementTheme GetActualTheme(ElementTheme theme)
+        {
+            if (theme == ElementTheme.Default)
+                return Application.Current.RequestedTheme.ToElementTheme();
+            else
+                return theme;
+        }
+
+
         private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
             var darkModeBaseColor = Color.FromArgb(255, 46, 46, 46);
             var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
-            if (theme == ElementTheme.Default) theme = Application.Current.RequestedTheme.ToElementTheme();
+            theme = GetActualTheme(theme);
             var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
 
             if (AppBackgroundPanelTintOpacity > 0.99f ||
@@ -261,7 +270,7 @@
 
         public static void ApplyThemeForTitleBarButtons(ApplicationViewTitleBar titleBar, ElementTheme theme)
         {
-            if (theme == ElementTheme.Default) theme = Application.Current.RequestedTheme.ToElementTheme();
+            theme = GetActualTheme(theme);
             if (theme == ElementTheme.Dark)
             {
                 // Set active window colors

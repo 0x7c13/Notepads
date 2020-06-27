@@ -278,7 +278,7 @@
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
 
-            await InteropService.Initialize();
+            await DesktopExtensionService.Initialize();
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -290,13 +290,13 @@
                 await SessionManager.SaveSessionAsync();
             }
 
-            InteropService.InteropServiceConnection.Dispose();
+            DesktopExtensionService.InteropServiceConnection.Dispose();
             deferral.Complete();
         }
 
         private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
         {
-            await InteropService.Initialize();
+            await DesktopExtensionService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)

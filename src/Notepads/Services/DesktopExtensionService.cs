@@ -10,6 +10,7 @@
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
+    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
 
@@ -18,7 +19,7 @@
         public AdminstratorAccessException():base("Failed to save due to no Adminstration access") { }
     }
 
-    public static class InteropService
+    public static class DesktopExtensionService
     {
         public static AppServiceConnection InteropServiceConnection = null;
         public static AdminServiceClient AdminServiceClient = new AdminServiceClient();
@@ -33,7 +34,7 @@
         {
             InteropServiceConnection = new AppServiceConnection()
             {
-                AppServiceName = "InteropServiceConnection",
+                AppServiceName = "DesktopExtensionServiceConnection",
                 PackageFamilyName = Package.Current.Id.FamilyName
             };
 
@@ -51,7 +52,7 @@
             if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var commandObj) ||
                 (CommandArgs)commandObj != CommandArgs.CreateElevetedExtension) return;
 
-            await DispatcherExtensions.CallOnUIThreadAsync(CoreApplication.GetCurrentView().Dispatcher, () =>
+            await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
             {
                 if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
                 {

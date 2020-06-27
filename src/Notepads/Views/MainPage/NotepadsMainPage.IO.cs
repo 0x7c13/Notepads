@@ -193,7 +193,7 @@
                     var createElevatedExtensionDialog = new CreateElevatedExtensionDialog(
                         async () =>
                         {
-                            await InteropService.CreateElevetedExtension();
+                            await DesktopExtensionService.CreateElevetedExtension();
                         },
                         () =>
                         {

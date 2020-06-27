@@ -109,6 +109,11 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Connected Services\AdminService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\Dialog\CreateElevatedExtensionDialog.cs" />
     <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
@@ -116,11 +121,6 @@
     <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
     <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
     <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
-    <Compile Include="Connected Services\AdminService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -142,7 +142,7 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
-    <Compile Include="Services\InteropService.cs" />
+    <Compile Include="Services\DesktopExtensionService.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />
     <Compile Include="Utilities\LanguageUtility.cs" />

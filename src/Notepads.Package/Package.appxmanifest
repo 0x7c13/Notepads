@@ -71,8 +71,8 @@
             <uap5:ExecutionAlias Alias="Notepads.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
-        <uap:Extension Category="windows.appService" EntryPoint="Notepads.Services.InteropConnectionService">
-          <uap3:AppService Name="InteropServiceConnection"/>
+        <uap:Extension Category="windows.appService" EntryPoint="Notepads.Services.DesktopExtensionConnectionService">
+          <uap3:AppService Name="DesktopExtensionServiceConnection"/>
         </uap:Extension>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads.DesktopExtension\Notepads.DesktopExtension.exe">
           <desktop:FullTrustProcess>
