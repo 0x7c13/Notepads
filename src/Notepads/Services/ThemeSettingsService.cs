@@ -241,7 +241,6 @@
                 return theme;
         }
 
-
         private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
             var darkModeBaseColor = Color.FromArgb(255, 46, 46, 46);

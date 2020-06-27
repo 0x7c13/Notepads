@@ -10,7 +10,6 @@
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
-    using Windows.UI.Core;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
 
