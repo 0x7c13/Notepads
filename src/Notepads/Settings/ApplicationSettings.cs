@@ -6,14 +6,15 @@
 
     public static class ApplicationSettingsStore
     {
+        private static readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
+
         public static object Read(string key)
         {
             object obj = null;
 
-            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            if (localSettings.Values.ContainsKey(key))
+            if (_localSettings.Values.ContainsKey(key))
             {
-                obj = localSettings.Values[key];
+                obj = _localSettings.Values[key];
             }
 
             return obj;
@@ -21,13 +22,16 @@
 
         public static void Write(string key, object obj)
         {
-            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values[key] = obj;
+            _localSettings.Values[key] = obj;
+            SignalDataChanged(key);
+        }
 
+        public static void SignalDataChanged(string key)
+        {
             if (InterInstanceSyncService.SyncManager.ContainsKey(key))
             {
-                localSettings.Values[SettingsKey.LastChangedSettingsKeyStr] = key;
-                localSettings.Values[SettingsKey.LastChangedSettingsAppInstanceIdStr] = App.Id.ToString();
+                _localSettings.Values[SettingsKey.LastChangedSettingsKeyStr] = key;
+                _localSettings.Values[SettingsKey.LastChangedSettingsAppInstanceIdStr] = App.Id.ToString();
                 ApplicationData.Current.SignalDataChanged();
             }
         }
@@ -36,8 +40,7 @@
         {
             try
             {
-                ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                return localSettings.Values.Remove(key);
+                return _localSettings.Values.Remove(key);
             }
             catch (Exception ex)
             {

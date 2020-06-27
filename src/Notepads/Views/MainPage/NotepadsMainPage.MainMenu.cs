@@ -169,12 +169,7 @@
                 MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
             }
 
-            if (invokeAfterChanged)
-            {
-                ApplicationSettingsStore.Write(SettingsKey.LastChangedSettingsKeyStr, InterInstanceSyncService.RecentFilesListKey);
-                ApplicationSettingsStore.Write(SettingsKey.LastChangedSettingsAppInstanceIdStr, App.Id.ToString());
-                ApplicationData.Current.SignalDataChanged();
-            }
+            if (invokeAfterChanged) ApplicationSettingsStore.SignalDataChanged(InterInstanceSyncService.RecentFilesListKey);
         }
     }
 }
