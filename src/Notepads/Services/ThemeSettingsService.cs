@@ -98,7 +98,7 @@
 
             InitializeAppAccentColor(shouldInvokeChangedEvent);
 
-            InitializeCustomAccentColor();
+            InitializeCustomAccentColor(shouldInvokeChangedEvent);
 
             InitializeAppBackgroundPanelTintOpacity(shouldInvokeChangedEvent);
         }
@@ -129,7 +129,7 @@
             if (invokeChangedEvent) OnAccentColorChanged?.Invoke(null, _appAccentColor);
         }
 
-        public static void InitializeCustomAccentColor()
+        public static void InitializeCustomAccentColor(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
             {

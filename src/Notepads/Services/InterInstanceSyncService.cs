@@ -11,33 +11,33 @@
     {
         private static NotepadsMainPage _notepadsMainPage = null;
 
-        public static readonly string OpenRecentKey = "BuildOpenRecentButtonSubItems";
+        public static readonly string RecentFilesListKey = "BuildOpenRecentButtonSubItems";
 
-        public static IReadOnlyDictionary<string, Action> SyncManager = new Dictionary<string, Action>
+        public static IReadOnlyDictionary<string, Action<bool>> SyncManager = new Dictionary<string, Action<bool>>
         {
-            {SettingsKey.AppBackgroundTintOpacityDouble, () => ThemeSettingsService.InitializeAppBackgroundPanelTintOpacity(true)},
-            {SettingsKey.RequestedThemeStr, () => ThemeSettingsService.InitializeThemeMode(true)},
-            {SettingsKey.UseWindowsAccentColorBool, () => { } },
-            {SettingsKey.AppAccentColorHexStr, () => { } },
-            {SettingsKey.CustomAccentColorHexStr, () => ThemeSettingsService.InitializeCustomAccentColor()},
-            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, () => AppSettingsService.InitializeDisplayLineHighlighterSettings(true)},
-            {SettingsKey.EditorDefaultDisplayLineNumbersBool, () => AppSettingsService.InitializeDisplayLineNumbersSettings(true)},
-            {SettingsKey.EditorDefaultTabIndentsInt, () => AppSettingsService.InitializeTabIndentsSettings(true)},
-            {SettingsKey.EditorDefaultTextWrappingStr, () => AppSettingsService.InitializeTextWrappingSettings(true)},
-            {SettingsKey.EditorFontFamilyStr, () => AppSettingsService.InitializeFontFamilySettings(true)},
-            {SettingsKey.EditorFontSizeInt, () => AppSettingsService.InitializeFontSizeSettings(true)},
-            {SettingsKey.EditorFontStyleStr, () => AppSettingsService.InitializeFontStyleSettings(true)},
-            {SettingsKey.EditorFontWeightUshort, () => AppSettingsService.InitializeFontWeightSettings(true)},
-            {SettingsKey.EditorHighlightMisspelledWordsBool, () => AppSettingsService.InitializeSpellingSettings(true)},
-            {SettingsKey.EditorDefaultEncodingCodePageInt, () => AppSettingsService.InitializeEncodingSettings(true)},
-            {SettingsKey.EditorDefaultLineEndingStr, () => AppSettingsService.InitializeLineEndingSettings(true)},
-            {SettingsKey.EditorShowStatusBarBool, () => AppSettingsService.InitializeStatusBarSettings(true)},
-            {SettingsKey.EditorCustomMadeSearchUrlStr, () => AppSettingsService.InitializeCustomSearchUrlSettings()},
-            {SettingsKey.EditorDefaultDecodingCodePageInt, () => AppSettingsService.InitializeDecodingSettings()},
-            {SettingsKey.EditorDefaultSearchEngineStr, () => AppSettingsService.InitializeSearchEngineSettings()},
-            {SettingsKey.EditorEnableSmartCopyBool, () => AppSettingsService.InitializeSmartCopySettings() },
-            {SettingsKey.AlwaysOpenNewWindowBool, () => AppSettingsService.InitializeAppOpeningPreferencesSettings() },
-            {OpenRecentKey, async () => await _notepadsMainPage.BuildOpenRecentButtonSubItems(false) }
+            {SettingsKey.AppBackgroundTintOpacityDouble, ThemeSettingsService.InitializeAppBackgroundPanelTintOpacity },
+            {SettingsKey.RequestedThemeStr, ThemeSettingsService.InitializeThemeMode },
+            {SettingsKey.UseWindowsAccentColorBool, ThemeSettingsService.InitializeAppAccentColor },
+            {SettingsKey.AppAccentColorHexStr, ThemeSettingsService.InitializeAppAccentColor },
+            {SettingsKey.CustomAccentColorHexStr, ThemeSettingsService.InitializeCustomAccentColor },
+            {SettingsKey.EditorDefaultLineHighlighterViewStateBool, AppSettingsService.InitializeDisplayLineHighlighterSettings },
+            {SettingsKey.EditorDefaultDisplayLineNumbersBool, AppSettingsService.InitializeDisplayLineNumbersSettings },
+            {SettingsKey.EditorDefaultTabIndentsInt, AppSettingsService.InitializeTabIndentsSettings },
+            {SettingsKey.EditorDefaultTextWrappingStr, AppSettingsService.InitializeTextWrappingSettings },
+            {SettingsKey.EditorFontFamilyStr, AppSettingsService.InitializeFontFamilySettings },
+            {SettingsKey.EditorFontSizeInt, AppSettingsService.InitializeFontSizeSettings },
+            {SettingsKey.EditorFontStyleStr, AppSettingsService.InitializeFontStyleSettings },
+            {SettingsKey.EditorFontWeightUshort, AppSettingsService.InitializeFontWeightSettings },
+            {SettingsKey.EditorHighlightMisspelledWordsBool, AppSettingsService.InitializeSpellingSettings },
+            {SettingsKey.EditorDefaultEncodingCodePageInt, AppSettingsService.InitializeEncodingSettings },
+            {SettingsKey.EditorDefaultLineEndingStr, AppSettingsService.InitializeLineEndingSettings },
+            {SettingsKey.EditorShowStatusBarBool, AppSettingsService.InitializeStatusBarSettings },
+            {SettingsKey.EditorCustomMadeSearchUrlStr, AppSettingsService.InitializeCustomSearchUrlSettings },
+            {SettingsKey.EditorDefaultDecodingCodePageInt, AppSettingsService.InitializeDecodingSettings },
+            {SettingsKey.EditorDefaultSearchEngineStr, AppSettingsService.InitializeSearchEngineSettings },
+            {SettingsKey.EditorEnableSmartCopyBool, AppSettingsService.InitializeSmartCopySettings },
+            {SettingsKey.AlwaysOpenNewWindowBool, AppSettingsService.InitializeAppOpeningPreferencesSettings },
+            {RecentFilesListKey, async (permission) => await _notepadsMainPage.BuildOpenRecentButtonSubItems(!permission) }
         };
 
         public static void Initialize(NotepadsMainPage page)
@@ -59,9 +59,8 @@
             {
                 await DispatcherExtensions.CallOnUIThreadAsync(_notepadsMainPage.Dispatcher, () =>
                 {
-                    if (lastChangedSettingsKeyStr != OpenRecentKey) _notepadsMainPage.CloseSettingsPane();
-                    SyncManager[lastChangedSettingsKeyStr].Invoke();
-                    ThemeSettingsService.InitializeAppAccentColor(true);
+                    if (lastChangedSettingsKeyStr != RecentFilesListKey) _notepadsMainPage.CloseSettingsPane();
+                    SyncManager[lastChangedSettingsKeyStr].Invoke(true);
                 });
             }
         }

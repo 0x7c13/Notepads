@@ -136,8 +136,8 @@
         {
             if (AccentColorPicker.IsEnabled)
             {
-                ThemeSettingsService.AppAccentColor = args.NewColor;
                 if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+                ThemeSettingsService.AppAccentColor = args.NewColor;
             }
         }
 

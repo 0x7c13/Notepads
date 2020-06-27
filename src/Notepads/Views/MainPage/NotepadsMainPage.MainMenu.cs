@@ -171,7 +171,8 @@
 
             if (invokeAfterChanged)
             {
-                ApplicationSettingsStore.Write(SettingsKey.LastChangedSettingsKeyStr, InterInstanceSyncService.OpenRecentKey);
+                ApplicationSettingsStore.Write(SettingsKey.LastChangedSettingsKeyStr, InterInstanceSyncService.RecentFilesListKey);
+                ApplicationSettingsStore.Write(SettingsKey.LastChangedSettingsAppInstanceIdStr, App.Id.ToString());
                 ApplicationData.Current.SignalDataChanged();
             }
         }

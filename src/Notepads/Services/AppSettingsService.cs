@@ -298,24 +298,24 @@
             InitializeDisplayLineHighlighterSettings(shouldInvokeChangedEvent);
             InitializeDisplayLineNumbersSettings(shouldInvokeChangedEvent);
 
-            InitializeSmartCopySettings();
+            InitializeSmartCopySettings(shouldInvokeChangedEvent);
 
             InitializeLineEndingSettings(shouldInvokeChangedEvent);
 
             InitializeEncodingSettings(shouldInvokeChangedEvent);
 
-            InitializeDecodingSettings();
+            InitializeDecodingSettings(shouldInvokeChangedEvent);
 
             InitializeTabIndentsSettings(shouldInvokeChangedEvent);
 
-            InitializeSearchEngineSettings();
-            InitializeCustomSearchUrlSettings();
+            InitializeSearchEngineSettings(shouldInvokeChangedEvent);
+            InitializeCustomSearchUrlSettings(shouldInvokeChangedEvent);
 
             InitializeStatusBarSettings(shouldInvokeChangedEvent);
 
-            InitializeSessionSnapshotSettings();
+            InitializeSessionSnapshotSettings(shouldInvokeChangedEvent);
 
-            InitializeAppOpeningPreferencesSettings();
+            InitializeAppOpeningPreferencesSettings(shouldInvokeChangedEvent);
         }
 
         public static void InitializeStatusBarSettings(bool invokeChangedEvent = false)
@@ -332,7 +332,7 @@
             if (invokeChangedEvent) OnStatusBarVisibilityChanged?.Invoke(null, _showStatusBar);
         }
 
-        private static void InitializeSessionSnapshotSettings()
+        private static void InitializeSessionSnapshotSettings(bool invokeChangedEvent = false)
         {
             // We should disable session snapshot feature on multi instances
             if (!App.IsFirstInstance)
@@ -428,7 +428,7 @@
             if (invokeChangedEvent) OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, _displayLineNumbers);
         }
 
-        public static void InitializeSmartCopySettings()
+        public static void InitializeSmartCopySettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSmartCopyBool) is bool enableSmartCopy)
             {
@@ -470,7 +470,7 @@
             if (invokeChangedEvent) OnDefaultEncodingChanged?.Invoke(null, _editorDefaultEncoding);
         }
 
-        public static void InitializeDecodingSettings()
+        public static void InitializeDecodingSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultDecodingCodePageInt) is int decodingCodePage)
             {
@@ -516,7 +516,7 @@
             if (invokeChangedEvent) OnDefaultTabIndentsChanged?.Invoke(null, _editorDefaultTabIndents);
         }
 
-        public static void InitializeSearchEngineSettings()
+        public static void InitializeSearchEngineSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultSearchEngineStr) is string searchEngineStr &&
                 Enum.TryParse(typeof(SearchEngine), searchEngineStr, out var searchEngine))
@@ -529,7 +529,7 @@
             }
         }
 
-        public static void InitializeCustomSearchUrlSettings()
+        public static void InitializeCustomSearchUrlSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.EditorCustomMadeSearchUrlStr) is string customMadeSearchUrl)
             {
@@ -601,7 +601,7 @@
             if (invokeChangedEvent) OnFontWeightChanged?.Invoke(null, _editorFontWeight);
         }
 
-        public static void InitializeAppOpeningPreferencesSettings()
+        public static void InitializeAppOpeningPreferencesSettings(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
             {
