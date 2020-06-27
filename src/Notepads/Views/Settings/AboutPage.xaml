@@ -24,7 +24,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left">
+            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                     <Image x:Name="AppIconImage" Width="90" Margin="-6,0,0,0" Source="/Assets/appicon_ws.png"/>
                     <StackPanel Margin="10,0,0,0">
@@ -79,8 +79,8 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_ChangelogUrl_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
                     <Paragraph Margin="0,10,0,10">
@@ -90,8 +90,8 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_DependenciesAndReferences_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
                 <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
                     <Paragraph Margin="0,10,0,10">
@@ -119,10 +119,10 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_Disclaimer_Title"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Margin="0,35,0,0"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
                     FontWeight="Normal"/>
-                <RichTextBlock MaxWidth="600" Margin="0,10,0,40" IsTextSelectionEnabled="False">
+                <RichTextBlock MaxWidth="600" Margin="0,10,0,0" IsTextSelectionEnabled="False">
                     <Paragraph>
                         <Run x:Uid="/Settings/AboutPage_Disclaimer_Content"/>
                     </Paragraph>

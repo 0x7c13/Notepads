@@ -18,8 +18,10 @@
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public enum TextEditorMode
@@ -51,6 +53,7 @@
         public event EventHandler FontZoomFactorChanged;
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
+        public event EventHandler FileRenamed;
 
         public Guid Id { get; set; }
 
@@ -77,19 +80,33 @@
             get => _editingFile;
             private set
             {
-                if (value == null)
-                {
-                    EditingFileName = null;
-                    EditingFilePath = null;
-                    FileType = FileType.TextFile;
-                }
-                else
-                {
-                    EditingFileName = value.Name;
-                    EditingFilePath = value.Path;
-                    FileType = FileTypeUtility.GetFileTypeByFileName(value.Name);
-                }
                 _editingFile = value;
+                UpdateDocumentInfo();
+            }
+        }
+
+        private void UpdateDocumentInfo()
+        {
+            if (EditingFile == null)
+            {
+                EditingFileName = null;
+                EditingFilePath = null;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+            }
+            else
+            {
+                EditingFileName = EditingFile.Name;
+                EditingFilePath = EditingFile.Path;
+                FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
+            }
+
+            // Hide content preview if current file type is not supported for previewing
+            if (!FileTypeUtility.IsPreviewSupported(FileType))
+            {
+                if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                {
+                    ShowHideContentPreview();
+                }
             }
         }
 
@@ -178,6 +195,7 @@
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested += TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
@@ -206,6 +224,7 @@
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested -= TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
@@ -271,6 +290,22 @@
                     });
                 }
             });
+        }
+
+        public async Task RenameAsync(string newFileName)
+        {
+            if (EditingFile == null)
+            {
+                FileNamePlaceholder = newFileName;
+            }
+            else
+            {
+                await EditingFile.RenameAsync(newFileName);
+            }
+
+            UpdateDocumentInfo();
+
+            FileRenamed?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetText()
@@ -414,7 +449,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => { if (FileTypeUtility.IsPreviewSupported(FileType)) ShowHideContentPreview(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
@@ -717,6 +752,11 @@
             }
         }
 
+        public FlyoutBase GetContextFlyout()
+        {
+            return TextEditorCore.ContextFlyout;
+        }
+
         public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
         {
             if (args != null)
@@ -724,6 +764,27 @@
                 args.Handled = true;
             }
 
+            if (AppSettingsService.IsSmartCopyEnabled)
+            {
+                TextEditorCore.SmartlyTrimTextSelection();
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+        }
+
+        public void CutSelectedTextToWindowsClipboard(TextControlCuttingToClipboardEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+            TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
+        }
+
+        private void CopySelectedTextToWindowsClipboardInternal()
+        {
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
@@ -754,11 +815,8 @@
                     return false;
                 }
             }
-            if (!string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText()))
-            {
-                return false;
-            }
-            return true;
+
+            return string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText());
         }
 
         private void OnEscapeKeyDown()
@@ -859,6 +917,11 @@
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
         {
             CopySelectedTextToWindowsClipboard(e);
+        }
+
+        private void TextEditorCore_CutSelectedTextToWindowsClipboardRequested(object sender, TextControlCuttingToClipboardEventArgs e)
+        {
+            CutSelectedTextToWindowsClipboard(e);
         }
 
         private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)

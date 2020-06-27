@@ -32,7 +32,7 @@
             {
                 _editorFontFamily = value;
                 OnFontFamilyChanged?.Invoke(null, value);
-                if(InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontFamilyStr, value);
             }
         }
 
@@ -45,7 +45,7 @@
             {
                 _editorFontSize = value;
                 OnFontSizeChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, value);
             }
         }
 
@@ -58,7 +58,7 @@
             {
                 _editorFontStyle = value;
                 OnFontStyleChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, value.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, value.ToString());
             }
         }
 
@@ -71,7 +71,7 @@
             {
                 _editorFontWeight = value;
                 OnFontWeightChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
             }
         }
 
@@ -84,7 +84,7 @@
             {
                 _editorDefaultTextWrapping = value;
                 OnDefaultTextWrappingChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, value.ToString());
             }
         }
 
@@ -97,7 +97,7 @@
             {
                 _editorDisplayLineHighlighter = value;
                 OnDefaultLineHighlighterViewStateChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, value);
             }
         }
 
@@ -110,7 +110,7 @@
             {
                 _editorDefaultLineEnding = value;
                 OnDefaultLineEndingChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, value.ToString());
             }
         }
 
@@ -125,12 +125,11 @@
 
                 if (value is UTF8Encoding)
                 {
-                    if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool,
-                        Equals(value, new UTF8Encoding(true)));
+                    ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool, Equals(value, new UTF8Encoding(true)));
                 }
 
                 OnDefaultEncodingChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, value.CodePage);
             }
         }
 
@@ -167,7 +166,7 @@
             {
                 _editorDefaultDecoding = value;
                 var codePage = value?.CodePage ?? -1;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, codePage);
             }
         }
 
@@ -180,7 +179,7 @@
             {
                 _editorDefaultTabIndents = value;
                 OnDefaultTabIndentsChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, value);
             }
         }
 
@@ -192,7 +191,7 @@
             set
             {
                 _editorDefaultSearchEngine = value;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString());
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, value.ToString());
             }
         }
 
@@ -204,7 +203,7 @@
             set
             {
                 _editorCustomMadeSearchUrl = value;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorCustomMadeSearchUrlStr, value);
             }
         }
 
@@ -217,7 +216,7 @@
             {
                 _showStatusBar = value;
                 OnStatusBarVisibilityChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorShowStatusBarBool, value);
             }
         }
 
@@ -230,11 +229,11 @@
             {
                 _isSessionSnapshotEnabled = value;
                 OnSessionBackupAndRestoreOptionChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, value);
             }
         }
 
-        public static bool _isHighlightMisspelledWordsEnabled;
+        private static bool _isHighlightMisspelledWordsEnabled;
 
         public static bool IsHighlightMisspelledWordsEnabled
         {
@@ -243,11 +242,11 @@
             {
                 _isHighlightMisspelledWordsEnabled = value;
                 OnHighlightMisspelledWordsChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value);
             }
         }
 
-        public static bool _alwaysOpenNewWindow;
+        private static bool _alwaysOpenNewWindow;
 
         public static bool AlwaysOpenNewWindow
         {
@@ -255,11 +254,11 @@
             set
             {
                 _alwaysOpenNewWindow = value;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, value);
             }
         }
 
-        public static bool _displayLineNumbers;
+        private static bool _displayLineNumbers;
 
         public static bool EditorDisplayLineNumbers
         {
@@ -268,7 +267,19 @@
             {
                 _displayLineNumbers = value;
                 OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, value);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDisplayLineNumbersBool, value);
+            }
+        }
+
+        private static bool _isSmartCopyEnabled;
+
+        public static bool IsSmartCopyEnabled
+        {
+            get => _isSmartCopyEnabled;
+            set
+            {
+                _isSmartCopyEnabled = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSmartCopyBool, value);
             }
         }
 
@@ -281,6 +292,8 @@
             InitializeSpellingSettings();
 
             InitializeDisplaySettings();
+
+            InitializeSmartCopySettings();
 
             InitializeLineEndingSettings();
 
@@ -391,6 +404,18 @@
             else
             {
                 _displayLineNumbers = true;
+            }
+        }
+
+        private static void InitializeSmartCopySettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSmartCopyBool) is bool enableSmartCopy)
+            {
+                _isSmartCopyEnabled = enableSmartCopy;
+            }
+            else
+            {
+                _isSmartCopyEnabled = false;
             }
         }
 
@@ -541,23 +566,6 @@
             {
                 _alwaysOpenNewWindow = false;
             }
-        }
-
-        public static void UpdateAllSettings()
-        {
-            Initialize();
-            OnStatusBarVisibilityChanged?.Invoke(null, _showStatusBar);
-            OnFontFamilyChanged?.Invoke(null, _editorFontFamily);
-            OnFontSizeChanged?.Invoke(null, _editorFontSize);
-            OnFontStyleChanged?.Invoke(null, _editorFontStyle);
-            OnFontWeightChanged?.Invoke(null, _editorFontWeight);
-            OnDefaultTextWrappingChanged?.Invoke(null, _editorDefaultTextWrapping);
-            OnDefaultLineHighlighterViewStateChanged?.Invoke(null, _editorDisplayLineHighlighter);
-            OnDefaultDisplayLineNumbersViewStateChanged?.Invoke(null, _displayLineNumbers);
-            OnHighlightMisspelledWordsChanged?.Invoke(null, _isHighlightMisspelledWordsEnabled);
-            OnDefaultLineEndingChanged?.Invoke(null, _editorDefaultLineEnding);
-            OnDefaultEncodingChanged?.Invoke(null, _editorDefaultEncoding);
-            OnDefaultTabIndentsChanged?.Invoke(null, _editorDefaultTabIndents);
         }
     }
 }

@@ -33,7 +33,7 @@
                 {
                     _themeMode = value;
                     OnThemeChanged?.Invoke(null, value);
-                    if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, value.ToString());
+                    ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, value.ToString());
                 }
             }
         }
@@ -50,7 +50,7 @@
                 {
                     AppAccentColor = UISettings.GetColorValue(UIColorType.Accent);
                 }
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor);
+                ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor);
             }
         }
 
@@ -63,7 +63,7 @@
             {
                 _appBackgroundPanelTintOpacity = value;
                 OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value);
+                ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value);
             }
         }
 
@@ -76,7 +76,7 @@
             {
                 _appAccentColor = value;
                 OnAccentColorChanged?.Invoke(null, _appAccentColor);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex());
+                ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex());
             }
         }
 
@@ -88,7 +88,7 @@
             set
             {
                 _customAccentColor = value;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex());
+                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex());
             }
         }
 
@@ -206,6 +206,11 @@
             ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color =
                 themeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
 
+            if (DialogManager.ActiveDialog != null)
+            {
+                DialogManager.ActiveDialog.RequestedTheme = ThemeMode;
+            }
+
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
         }
@@ -230,7 +235,7 @@
 
         private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
-            var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
+            var darkModeBaseColor = Color.FromArgb(255, 46, 46, 46);
             var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
             if (theme == ElementTheme.Default) theme = Application.Current.RequestedTheme.ToElementTheme();

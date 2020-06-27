@@ -34,5 +34,6 @@
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
         internal static string EditorDefaultDisplayLineNumbersBool = "EditorDefaultDisplayLineNumbersBool";
+        internal static string EditorEnableSmartCopyBool = "EditorEnableSmartCopyBool";
     }
 }

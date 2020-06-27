@@ -131,7 +131,6 @@
                         ThemeSettingsService.ThemeMode = ElementTheme.Default;
                         break;
                 }
-                InteropService.SyncSettings(SettingsKey.RequestedThemeStr, ThemeSettingsService.ThemeMode);
             }
         }
 
@@ -143,16 +142,13 @@
                 if (!AccentColorToggle.IsOn)
                 {
                     ThemeSettingsService.CustomAccentColor = args.NewColor;
-                    InteropService.SyncSettings(SettingsKey.CustomAccentColorHexStr, ThemeSettingsService.CustomAccentColor);
                 }
-                InteropService.SyncSettings(SettingsKey.AppAccentColorHexStr, ThemeSettingsService.AppAccentColor);
             }
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             ThemeSettingsService.AppBackgroundPanelTintOpacity = e.NewValue / 100;
-            InteropService.SyncSettings(SettingsKey.AppBackgroundTintOpacityDouble, ThemeSettingsService.AppBackgroundPanelTintOpacity);
         }
 
         private void WindowsAccentColorToggle_OnToggled(object sender, RoutedEventArgs e)
@@ -160,7 +156,6 @@
             AccentColorPicker.IsEnabled = !AccentColorToggle.IsOn;
             ThemeSettingsService.UseWindowsAccentColor = AccentColorToggle.IsOn;
             AccentColorPicker.Color = AccentColorToggle.IsOn ? ThemeSettingsService.AppAccentColor : ThemeSettingsService.CustomAccentColor;
-            InteropService.SyncSettings(SettingsKey.UseWindowsAccentColorBool, ThemeSettingsService.UseWindowsAccentColor);
         }
     }
 }

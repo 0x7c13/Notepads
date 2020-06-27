@@ -11,6 +11,7 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
 
     public class FontStyleItem
     {
@@ -275,11 +276,8 @@
                     CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
                     CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
                     AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
-                    InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
                     break;
             }
-            
-            InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, AppSettingsService.EditorDefaultSearchEngine);
         }
 
         private void TabBehaviorRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -301,8 +299,6 @@
                     AppSettingsService.EditorDefaultTabIndents = 8;
                     break;
             }
-
-            InteropService.SyncSettings(SettingsKey.EditorDefaultTabIndentsInt, AppSettingsService.EditorDefaultTabIndents);
         }
 
         private void EncodingRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -324,8 +320,6 @@
                     AppSettingsService.EditorDefaultEncoding = new UnicodeEncoding(true, true);
                     break;
             }
-
-            InteropService.SyncSettings(SettingsKey.EditorDefaultEncodingCodePageInt, AppSettingsService.EditorDefaultEncoding);
         }
 
         private void DecodingRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -355,8 +349,6 @@
                     }
                     break;
             }
-
-            InteropService.SyncSettings(SettingsKey.EditorDefaultDecodingCodePageInt, AppSettingsService.EditorDefaultDecoding);
         }
 
         private void LineEndingRadioButton_OnChecked(object sender, RoutedEventArgs e)
@@ -375,63 +367,54 @@
                     AppSettingsService.EditorDefaultLineEnding = LineEnding.Lf;
                     break;
             }
-
-            InteropService.SyncSettings(SettingsKey.EditorDefaultLineEndingStr, AppSettingsService.EditorDefaultLineEnding);
         }
 
         private void FontFamilyPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppSettingsService.EditorFontFamily = (string)e.AddedItems.First();
-            InteropService.SyncSettings(SettingsKey.EditorFontFamilyStr, AppSettingsService.EditorFontFamily);
+            var fontFamily = new FontFamily((string)e.AddedItems.First());
+            AppSettingsService.EditorFontFamily = fontFamily.Source;
+            FontStylePicker.FontFamily = FontWeightPicker.FontFamily = fontFamily;
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             AppSettingsService.EditorFontSize = (int)e.AddedItems.First();
-            InteropService.SyncSettings(SettingsKey.EditorFontSizeInt, AppSettingsService.EditorFontSize);
         }
 
         private void FontStylePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             AppSettingsService.EditorFontStyle = ((FontStyleItem)e.AddedItems.First()).FontStyle;
-            InteropService.SyncSettings(SettingsKey.EditorFontStyleStr, AppSettingsService.EditorFontStyle);
         }
 
         private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             AppSettingsService.EditorFontWeight = ((FontWeightItem)e.AddedItems.First()).FontWeight;
-            InteropService.SyncSettings(SettingsKey.EditorFontWeightUshort, AppSettingsService.EditorFontWeight.Weight);
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             AppSettingsService.EditorDefaultTextWrapping = TextWrappingToggle.IsOn ? TextWrapping.Wrap : TextWrapping.NoWrap;
-            InteropService.SyncSettings(SettingsKey.EditorDefaultTextWrappingStr, AppSettingsService.EditorDefaultTextWrapping);
         }
 
         private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             AppSettingsService.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
-            InteropService.SyncSettings(SettingsKey.EditorHighlightMisspelledWordsBool, AppSettingsService.IsHighlightMisspelledWordsEnabled);
         }
 
         private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
         {
             AppSettingsService.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
-            InteropService.SyncSettings(SettingsKey.EditorDefaultLineHighlighterViewStateBool, AppSettingsService.EditorDisplayLineHighlighter);
         }
 
         private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)
         {
             AppSettingsService.EditorDisplayLineNumbers = LineNumbersToggle.IsOn;
-            InteropService.SyncSettings(SettingsKey.EditorDefaultDisplayLineNumbersBool, AppSettingsService.EditorDisplayLineNumbers);
         }
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
             AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
-            InteropService.SyncSettings(SettingsKey.EditorCustomMadeSearchUrlStr, CustomSearchUrl.Text);
         }
 
         private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
@@ -440,12 +423,10 @@
                 (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
             {
                 AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
-                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, AppSettingsService.EditorDefaultSearchEngine);
             }
             else if (!IsValidUrl(CustomSearchUrl.Text) && AppSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
             {
                 AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
-                InteropService.SyncSettings(SettingsKey.EditorDefaultSearchEngineStr, AppSettingsService.EditorDefaultSearchEngine);
             }
 
             CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
