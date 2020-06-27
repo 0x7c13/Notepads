@@ -13,7 +13,7 @@
 
         public static readonly string RecentFilesListKey = "BuildOpenRecentButtonSubItems";
 
-        public static IReadOnlyDictionary<string, Action<bool>> SyncManager = new Dictionary<string, Action<bool>>
+        public static readonly IReadOnlyDictionary<string, Action<bool>> SyncManager = new Dictionary<string, Action<bool>>
         {
             {SettingsKey.AppBackgroundTintOpacityDouble, ThemeSettingsService.InitializeAppBackgroundPanelTintOpacity },
             {SettingsKey.RequestedThemeStr, ThemeSettingsService.InitializeThemeMode },
