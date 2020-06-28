@@ -246,6 +246,8 @@
             GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
             DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
             CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
+            CustomSearchUrl.TextChanged += CustomSearchUrl_TextChanged;
+            CustomSearchUrlSetter.Click += CustomSearchUrlSetter_Clicked;
         }
 
         private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -256,25 +258,18 @@
             {
                 case "BingRadioButton":
                     AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
-                    CustomSearchUrl.IsEnabled = false;
-                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    OnCustomSearchEngineSelectionChanged(false);
                     break;
                 case "GoogleRadioButton":
                     AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Google;
-                    CustomSearchUrl.IsEnabled = false;
-                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    OnCustomSearchEngineSelectionChanged(false);
                     break;
                 case "DuckDuckGoRadioButton":
                     AppSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
-                    CustomSearchUrl.IsEnabled = false;
-                    CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+                    OnCustomSearchEngineSelectionChanged(false);
                     break;
                 case "CustomSearchUrlRadioButton":
-                    CustomSearchUrl.IsEnabled = true;
-                    CustomSearchUrl.Focus(FocusState.Programmatic);
-                    CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
-                    CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
-                    AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                    OnCustomSearchEngineSelectionChanged(true);
                     break;
             }
         }
@@ -413,23 +408,19 @@
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
-            AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
-            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+            var isUrlChanged = AppSettingsService.EditorCustomMadeSearchUrl != CustomSearchUrl.Text;
+            var isUrlValid = IsValidUrl(CustomSearchUrl.Text);
+
+            CustomSearchUrlSetter.IsEnabled = isUrlChanged & isUrlValid;
+            CustomUrlErrorReport.Visibility = isUrlValid ? Visibility.Collapsed : Visibility.Visible;
+            CustomSearchUrlSetter.Content = isUrlChanged ? new FontIcon { FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE73E" } : null;
         }
 
-        private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
+        private void CustomSearchUrlSetter_Clicked(object sender, RoutedEventArgs e)
         {
-            if (CustomSearchUrlRadioButton.IsChecked != null &&
-                (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
-            {
-                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
-            }
-            else if (!IsValidUrl(CustomSearchUrl.Text) && AppSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
-            {
-                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
-            }
-
-            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
+            CustomSearchUrlSetter.Content = null;
+            AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
         }
 
         private static bool IsValidUrl(string url)
@@ -451,6 +442,29 @@
                 return false;
             }
             return true;
+        }
+
+        private void OnCustomSearchEngineSelectionChanged(bool selected)
+        {
+            if (selected)
+            {
+                CustomSearchUrl.IsEnabled = true;
+                CustomSearchUrl.Focus(FocusState.Programmatic);
+                CustomSearchUrl.Select(CustomSearchUrl.Text.Length, 0);
+                if (IsValidUrl(CustomSearchUrl.Text))
+                {
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+                    AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+                }
+                CustomSearchUrl_TextChanged(null, null);
+            }
+            else
+            {
+                CustomSearchUrl.IsEnabled = false;
+                CustomSearchUrl.Text = AppSettingsService.EditorCustomMadeSearchUrl;
+                CustomSearchUrlSetter.Content = null;
+                CustomUrlErrorReport.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

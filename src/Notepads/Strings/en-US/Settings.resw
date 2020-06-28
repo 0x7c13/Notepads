@@ -421,4 +421,8 @@
     <value>System Default</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomSearchUrlSetter.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Set custom search engine url</value>
+    <comment>TextAndEditorPage CustomSearchUrlSetter tooltip display text.</comment>
+  </data>
 </root>
