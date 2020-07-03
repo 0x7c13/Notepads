@@ -74,7 +74,7 @@
         <uap:Extension Category="windows.appService" EntryPoint="Notepads.Services.DesktopExtensionConnectionService">
           <uap3:AppService Name="DesktopExtensionServiceConnection"/>
         </uap:Extension>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads.DesktopExtension\Notepads.DesktopExtension.exe">
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads.DesktopExtension\Notepads32.exe">
           <desktop:FullTrustProcess>
             <desktop:ParameterGroup GroupId="Launch" Parameters="/user" />
             <desktop:ParameterGroup GroupId="LaunchAdmin" Parameters="/admin" />

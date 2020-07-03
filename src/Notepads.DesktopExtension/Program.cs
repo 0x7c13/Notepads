@@ -133,7 +133,7 @@
                 string result = Assembly.GetExecutingAssembly().Location;
                 int index = result.LastIndexOf("\\");
                 string rootPath = $"{result.Substring(0, index)}\\..\\";
-                string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads.DesktopExtension.exe";
+                string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads32.exe";
 
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.Verb = "runas";
