@@ -39,9 +39,9 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/t:build;_GenerateAppxPackage
                   /p:AppxBundlePlatforms="$(buildPlatform)"
-                  /p:AppxPackageDir="$(appxPackageDir)" 
-                  /p:AppxBundle=Always 
-                  /p:UapAppxPackageBuildMode=StoreUpload 
+                  /p:AppxPackageDir="$(appxPackageDir)"
+                  /p:AppxBundle=Always
+                  /p:UapAppxPackageBuildMode=StoreUpload
                   /p:AppxPackageSigningEnabled=false'
 
 - task: CopyFiles@2
