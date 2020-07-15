@@ -22,6 +22,8 @@
 
         public static void Write(string key, object obj)
         {
+            if (_localSettings.Values.ContainsKey(key) && _localSettings.Values[key].Equals(obj)) return;
+
             _localSettings.Values[key] = obj;
             SignalDataChanged(key);
         }
