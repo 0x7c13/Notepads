@@ -44,6 +44,7 @@
             SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
             FindName("LanguagePreferenceSettingsPanel"); // Lazy loading
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
+            RestartPrompt.Visibility = LanguageUtility.CurrentLanguageID == ApplicationLanguages.PrimaryLanguageOverride ? Visibility.Collapsed : Visibility.Visible;
 
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;

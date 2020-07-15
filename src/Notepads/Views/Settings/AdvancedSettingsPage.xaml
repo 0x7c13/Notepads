@@ -96,7 +96,7 @@
                         <TextBlock x:Name="RestartPrompt"
                                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
                                    Style="{ThemeResource DescriptionTextBlockStyle}"
-                                   Foreground="Yellow"
+                                   Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                    TextWrapping="Wrap"
                                    Visibility="Collapsed"
                                    Margin="0,4,0,0"/>
