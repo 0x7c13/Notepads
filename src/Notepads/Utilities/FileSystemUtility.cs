@@ -118,6 +118,7 @@
 
             try
             {
+                args = ReplaceEnvironmentVariables(args);
                 path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
             }
             catch (Exception ex)
@@ -133,6 +134,14 @@
             LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
+        }
+
+        private static string ReplaceEnvironmentVariables(string args)
+        {
+            args = args.Replace("%temp%", 
+                (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment", "TEMP", Environment.GetEnvironmentVariable("temp")));
+
+            return Environment.ExpandEnvironmentVariables(args);
         }
 
         public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
