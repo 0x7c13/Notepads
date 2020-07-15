@@ -24,7 +24,7 @@ steps:
       $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
       $manifest.Save('$(Build.SourcesDirectory)\src\Notepads\Package.appxmanifest')
     failOnStderr: true
-  
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
