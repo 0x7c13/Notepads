@@ -152,6 +152,45 @@
             }
         }
 
+        private async Task<bool> TrySaveFile(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        {
+            var promptSaveAs = false;
+
+            try
+            {
+                await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+            }
+            catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+            {
+                promptSaveAs = true;
+            }
+            catch (FileNotFoundException) // Happens when the file not found or storage media is removed
+            {
+                promptSaveAs = true;
+            }
+            catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
+            {
+                var createElevatedExtensionDialog = new CreateElevatedExtensionDialog(
+                    async () =>
+                    {
+                        await DesktopExtensionService.CreateElevetedExtension();
+                    },
+                    () =>
+                    {
+                        promptSaveAs = true;
+                    });
+
+                var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
+
+                if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
+                {
+                    promptSaveAs = true;
+                }
+            }
+
+            return promptSaveAs;
+        }
+
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
@@ -175,38 +214,8 @@
                     file = textEditor.EditingFile;
                 }
 
-                bool promptSaveAs = false;
-                try
-                {
-                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
-                }
-                catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
-                {
-                    promptSaveAs = true;
-                }
-                catch (FileNotFoundException) // Happens when the file not found or storage media is removed
-                {
-                    promptSaveAs = true;
-                }
-                catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
-                {
-                    var createElevatedExtensionDialog = new CreateElevatedExtensionDialog(
-                        async () =>
-                        {
-                            await DesktopExtensionService.CreateElevetedExtension();
-                        },
-                        () =>
-                        {
-                            promptSaveAs = true;
-                        });
-
-                    var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
-
-                    if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
-                    {
-                        promptSaveAs = true;
-                    }
-                }
+                var promptSaveAs = await TrySaveFile(textEditor, file, rebuildOpenRecentItems);
+                
 
                 if (promptSaveAs)
                 {
