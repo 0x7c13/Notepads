@@ -13,6 +13,18 @@ variables:
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      [xml]$manifest = Get-Content $(Build.SourcesDirectory)\src\Notepads\Package.appxmanifest
+      $manifest.Package.Identity.Name="Notepads"
+      $manifest.Package.Properties.DisplayName="Notepads App"
+      $manifest.Package.Applications.Application.VisualElements.DisplayName="Notepads"
+      $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
+      $manifest.Save('$(Build.SourcesDirectory)\src\Notepads\Package.appxmanifest')
+    failOnStderr: true
+  
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
