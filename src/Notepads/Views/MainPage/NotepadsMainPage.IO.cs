@@ -154,7 +154,7 @@
 
         private async Task<bool> TrySaveFile(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
         {
-            var promptSaveAs = false;
+            var isSaveSuccess = true;
 
             try
             {
@@ -162,11 +162,11 @@
             }
             catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
             {
-                promptSaveAs = true;
+                isSaveSuccess = false;
             }
             catch (FileNotFoundException) // Happens when the file not found or storage media is removed
             {
-                promptSaveAs = true;
+                isSaveSuccess = false;
             }
             catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
             {
@@ -177,18 +177,18 @@
                     },
                     () =>
                     {
-                        promptSaveAs = true;
+                        isSaveSuccess = false;
                     });
 
                 var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
 
                 if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
                 {
-                    promptSaveAs = true;
+                    isSaveSuccess = false;
                 }
             }
 
-            return promptSaveAs;
+            return isSaveSuccess;
         }
 
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
@@ -214,10 +214,7 @@
                     file = textEditor.EditingFile;
                 }
 
-                var promptSaveAs = await TrySaveFile(textEditor, file, rebuildOpenRecentItems);
-                
-
-                if (promptSaveAs)
+                if (!await TrySaveFile(textEditor, file, rebuildOpenRecentItems))
                 {
                     file = await OpenFileUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled

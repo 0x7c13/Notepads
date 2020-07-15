@@ -13,6 +13,15 @@ variables:
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
+- task: PowerShell@2
+  displayName: 'Update appxmanifest'
+  inputs:
+    targetType: 'inline'
+    script: |
+      [xml]$manifest = Get-Content $(Build.SourcesDirectory)\Notepads.Package\Package.appxmanifest
+      $manifest.Save('$(Build.SourcesDirectory)\Notepads.Package\Package.appxmanifest')
+    failOnStderr: true
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
