@@ -42,7 +42,6 @@
                 instanceHandlerMutex.Close();
             }
 
-
             if (activatedArgs is FileActivatedEventArgs)
             {
                 RedirectOrCreateNewInstance();
