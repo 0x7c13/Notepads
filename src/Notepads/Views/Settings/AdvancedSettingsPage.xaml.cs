@@ -20,7 +20,7 @@
             EnableSmartCopyToggleSwitch.IsOn = AppSettingsService.IsSmartCopyEnabled;
 
             // Disable session snapshot toggle for shadow windows
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 EnableSessionSnapshotToggleSwitch.IsOn = false;
                 EnableSessionSnapshotToggleSwitch.IsEnabled = false;
