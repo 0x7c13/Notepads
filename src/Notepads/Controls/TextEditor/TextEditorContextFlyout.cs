@@ -81,7 +81,6 @@
 
         public void PrepareForInsertionMode()
         {
-            Cut.Visibility = Visibility.Collapsed;
             RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
@@ -89,7 +88,6 @@
 
         public void PrepareForSelectionMode()
         {
-            Cut.Visibility = Visibility.Visible;
             RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
