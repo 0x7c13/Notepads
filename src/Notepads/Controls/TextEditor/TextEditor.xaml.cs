@@ -39,6 +39,8 @@
 
     public sealed partial class TextEditor : ITextEditor, IDisposable
     {
+        private const string RichEditBoxDefaultLineEnding = "\r";
+
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;
         public new event KeyEventHandler KeyDown;
@@ -792,7 +794,27 @@
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
+
+                var selectedText = TextEditorCore.Document.Selection.Text;
+                string text;
+                if (TextEditorCore.Document.Selection.Length == 0) //If text isn't selected
+                {
+                    int cursorIndex = TextEditorCore.Document.Selection.StartPosition;
+                    var lineText = TextEditorCore.GetText();
+
+                    var rightNewLineIndex = lineText.IndexOf(RichEditBoxDefaultLineEnding, cursorIndex);
+                    if (rightNewLineIndex > 0)
+                        lineText = lineText.Remove(rightNewLineIndex); //Clear all text after current line.
+
+                    var leftNewLineIndex = lineText.LastIndexOf(RichEditBoxDefaultLineEnding) + RichEditBoxDefaultLineEnding.Length;
+                    if (leftNewLineIndex > 1)
+                        lineText = lineText.Remove(0, leftNewLineIndex); //Clear all text before current line.
+
+                    text = LineEndingUtility.ApplyLineEnding(lineText, GetLineEnding());
+                }
+                else
+                    text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
+
                 dataPackage.SetText(text);
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                 Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
