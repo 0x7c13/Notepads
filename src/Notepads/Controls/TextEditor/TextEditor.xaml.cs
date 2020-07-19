@@ -831,7 +831,6 @@
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                 Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
 
-
                 if(rightNewLineIndex < 0)
                 {
                     rightNewLineIndex = allText.Length - 1;
