@@ -788,8 +788,58 @@
                 args.Handled = true;
             }
 
-            CopySelectedTextToWindowsClipboardInternal();
-            TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
+            if (TextEditorCore.Document.Selection.Length == 0)
+            {
+                CutCurrentLineTextToWindowsClipboardInternal();
+            }
+            else
+            {
+                CopySelectedTextToWindowsClipboardInternal();
+                TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
+            }
+        }
+
+        private void CutCurrentLineTextToWindowsClipboardInternal()
+        {
+            try
+            {
+                DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+
+                int cursorIndex = TextEditorCore.Document.Selection.StartPosition;
+                var allText = TextEditorCore.GetText();
+                var lineText = allText;
+
+                var rightNewLineIndex = lineText.IndexOf(RichEditBoxDefaultLineEnding, cursorIndex);
+                if (rightNewLineIndex > 0)
+                {
+                    lineText = lineText.Remove(rightNewLineIndex); //Clear all text after current line.
+                }
+
+                var leftNewLineIndex = lineText.LastIndexOf(RichEditBoxDefaultLineEnding) + RichEditBoxDefaultLineEnding.Length;
+                if (leftNewLineIndex > 1)
+                {
+                    lineText = lineText.Remove(0, leftNewLineIndex); //Clear all text before current line.
+                }
+
+                var text = LineEndingUtility.ApplyLineEnding(lineText, GetLineEnding());
+
+                dataPackage.SetText(text);
+                Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
+
+
+                if(rightNewLineIndex < 0)
+                {
+                    rightNewLineIndex = allText.Length - 1;
+                }
+
+                TextEditorCore.SetText(allText.Remove(leftNewLineIndex, rightNewLineIndex - leftNewLineIndex + 1));
+                TextEditorCore.Document.Selection.StartPosition = leftNewLineIndex;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
+            }
         }
 
         private void CopyCurrentLineTextToWindowsClipboardInternal()
@@ -797,8 +847,6 @@
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-
-                var selectedText = TextEditorCore.Document.Selection.Text;
 
                 int cursorIndex = TextEditorCore.Document.Selection.StartPosition;
                 var lineText = TextEditorCore.GetText();
