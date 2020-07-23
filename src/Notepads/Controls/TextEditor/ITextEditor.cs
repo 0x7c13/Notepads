@@ -8,6 +8,7 @@
     using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
@@ -27,6 +28,7 @@
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
+        event EventHandler FileRenamed;
 
         Guid Id { get; set; }
 
@@ -52,12 +54,18 @@
 
         TextEditorMode Mode { get; }
 
+        bool DisplayLineNumbers { get; set; }
+
+        bool DisplayLineHighlighter { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,
             bool clearUndoQueue = true,
             bool isModified = false,
             bool resetText = true);
+
+        Task RenameAsync(string newFileName);
 
         string GetText();
 
@@ -91,7 +99,16 @@
 
         void CloseSideBySideDiffViewer();
 
-        void GetCurrentLineColumn(out int lineIndex, out int columnIndex, out int selectedCount);
+        /// <summary>
+        /// Returns 1-based indexing values
+        /// </summary>
+        void GetLineColumnSelection(
+            out int startLineIndex,
+            out int endLineIndex,
+            out int startColumnIndex,
+            out int endColumnIndex,
+            out int selectedCount,
+            out int lineCount);
 
         double GetFontZoomFactor();
 
@@ -114,9 +131,11 @@
         void HideFindAndReplaceControl();
 
         void ShowGoToControl();
-      
+
         void HideGoToControl();
 
         void Dispose();
+
+        FlyoutBase GetContextFlyout();
     }
 }

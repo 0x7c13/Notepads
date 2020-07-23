@@ -5,20 +5,81 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
-    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
 
+    public enum InvalidFilenameError
+    {
+        None = 0,
+        EmptyOrAllWhitespace,
+        ContainsLeadingSpaces,
+        ContainsTrailingSpaces,
+        ContainsInvalidCharacters,
+        InvalidOrNotAllowed,
+        TooLong,
+    }
+
     public static class FileSystemUtility
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
+
+        private const string WslRootPath = "\\\\wsl$\\";
+
+        // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
+        private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
+
+        public static bool IsFilenameValid(string filename, out InvalidFilenameError error)
+        {
+            if (filename.Length > 255)
+            {
+                error = InvalidFilenameError.TooLong;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                error = InvalidFilenameError.EmptyOrAllWhitespace;
+                return false;
+            }
+
+            // Although shell supports file with leading spaces, explorer and file picker does not
+            // So we treat it as invalid file name as well
+            if (filename.StartsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsLeadingSpaces;
+                return false;
+            }
+
+            if (filename.EndsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsTrailingSpaces;
+                return false;
+            }
+
+            var illegalChars = Path.GetInvalidFileNameChars();
+            if (filename.Any(c => illegalChars.Contains(c)))
+            {
+                error = InvalidFilenameError.ContainsInvalidCharacters;
+                return false;
+            }
+
+            if (filename.EndsWith(".") || !ValidWindowsFileNames.IsMatch(filename))
+            {
+                error = InvalidFilenameError.InvalidOrNotAllowed;
+                return false;
+            }
+
+            error = InvalidFilenameError.None;
+            return true;
+        }
 
         public static bool IsFullPath(string path)
         {
@@ -34,12 +95,19 @@
             if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
             {
                 if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                {
                     finalPath = Path.Combine(Path.GetPathRoot(basePath), path.TrimStart(Path.DirectorySeparatorChar));
+                }
                 else
+                {
                     finalPath = Path.Combine(basePath, path);
+                }
             }
             else
+            {
                 finalPath = path;
+            }
+
             // Resolves any internal "..\" to get the true full path.
             return Path.GetFullPath(finalPath);
         }
@@ -54,7 +122,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to parse command line: {args} with Exception: {ex}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to parse command line: {args} with Exception: {ex}");
             }
 
             if (string.IsNullOrEmpty(path))
@@ -62,7 +130,7 @@
                 return null;
             }
 
-            LoggingService.LogInfo($"OpenFileFromCommandLine: {path}");
+            LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
         }
@@ -89,6 +157,19 @@
                 if (index == -1) return null;
                 path = args.Substring(1, index - 1);
             }
+
+            if (dir.StartsWith(WslRootPath))
+            {
+                if (path.StartsWith('/'))
+                {
+                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', WslRootPath.Length) + 1);
+                    var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+                    if (IsFullPath(fullPath)) return fullPath;
+                }
+            }
+
+            // Replace all forward slash with platform supported directory separator 
+            path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
 
             if (IsFullPath(path))
             {
@@ -168,7 +249,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> FileIsWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(StorageFile file)
         {
             try
             {
@@ -237,7 +318,7 @@
                 {
                     text = PeekAndRead();
                 }
-                catch (DecoderFallbackException) 
+                catch (DecoderFallbackException)
                 {
                     stream.Position = 0; // Reset stream position
                     encoding = GetFallBackEncoding();
@@ -281,17 +362,17 @@
                 }
                 else // No BOM, need to guess or use default decoding set by user
                 {
-                    if (EditorSettingsService.EditorDefaultDecoding == null)
+                    if (AppSettingsService.EditorDefaultDecoding == null)
                     {
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
-                        reader = success ? 
-                            new StreamReader(stream, autoEncoding) : 
+                        reader = success ?
+                            new StreamReader(stream, autoEncoding) :
                             new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
                     }
                     else
                     {
-                        reader = new StreamReader(stream, EditorSettingsService.EditorDefaultDecoding);   
+                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding);
                     }
                 }
             }
@@ -310,20 +391,17 @@
                     encoding = AnalyzeAndGuessEncoding(result);
                     return true;
                 }
-                else
+                else if (stream.Length > 0) // We do not care about empty file
                 {
                     Analytics.TrackEvent("UnableToDetectEncoding");
                 }
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>() {
-                    {
-                        "Exception", ex.ToString()
-                    },
-                    {
-                        "Message", ex.Message
-                    }
+                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() },
+                    { "Message", ex.Message }
                 });
             }
 
@@ -356,12 +434,12 @@
                     {
                         foundBetterMatch = true;
                     }
-                    else if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding) 
+                    else if (EncodingUtility.TryGetSystemDefaultANSIEncoding(out var systemDefaultEncoding)
                              && EncodingUtility.Equals(systemDefaultEncoding, detail.Encoding))
                     {
                         foundBetterMatch = true;
                     }
-                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding) 
+                    else if (EncodingUtility.TryGetCurrentCultureANSIEncoding(out var currentCultureEncoding)
                              && EncodingUtility.Equals(currentCultureEncoding, detail.Encoding))
                     {
                         foundBetterMatch = true;
@@ -404,7 +482,7 @@
         {
             if (encoding is UTF8Encoding)
             {
-                // UTF8 with BOM - UTF-8-BOM 
+                // UTF8 with BOM - UTF-8-BOM
                 // UTF8 byte order mark is: 0xEF,0xBB,0xBF
                 if (bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
                 {
@@ -420,14 +498,22 @@
             return encoding;
         }
 
-        // Will throw if not succeeded, exception should be caught and handled by caller
+        /// <summary>
+        /// Save text to a file with requested encoding
+        /// Exception will be thrown if not succeeded
+        /// Exception should be caught and handled by caller
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
 
             try
             {
-                // Prevent updates to the remote version of the file until we 
+                // Prevent updates to the remote version of the file until we
                 // finish making changes and call CompleteUpdatesAsync.
                 CachedFileManager.DeferUpdates(file);
             }
@@ -440,31 +526,45 @@
             // Write to file
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            using (var stream = await file.OpenStreamForWriteAsync())
-            using (var writer = new StreamWriter(stream, encoding))
+            try
             {
-                stream.Position = 0;
-                writer.Write(text);
-                writer.Flush();
-                // Truncate
-                stream.SetLength(stream.Position);
-            }
-
-            if (usedDeferUpdates)
-            {
-                // Let Windows know that we're finished changing the file so the 
-                // other app can update the remote version of the file.
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                if (status != FileUpdateStatus.Complete)
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
                 {
-                    // Track FileUpdateStatus here to better understand the failed scenarios
-                    // File name, path and content are not included to respect/protect user privacy 
-                    Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>() {
+                    // For file(s) dragged into Notepads, they are read-only
+                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
+                    var content = encoding.GetBytes(text);
+                    var result = encoding.GetPreamble().Concat(content).ToArray();
+                    await PathIO.WriteBytesAsync(file.Path, result);
+                }
+                else // Use StorageFile API to save 
+                {
+                    using (var stream = await file.OpenStreamForWriteAsync())
+                    using (var writer = new StreamWriter(stream, encoding))
+                    {
+                        stream.Position = 0;
+                        await writer.WriteAsync(text);
+                        await writer.FlushAsync();
+                        stream.SetLength(stream.Position); // Truncate
+                    }
+                }
+            }
+            finally
+            {
+                if (usedDeferUpdates)
+                {
+                    // Let Windows know that we're finished changing the file so the
+                    // other app can update the remote version of the file.
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status != FileUpdateStatus.Complete)
+                    {
+                        // Track FileUpdateStatus here to better understand the failed scenarios
+                        // File name, path and content are not included to respect/protect user privacy
+                        Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
                         {
-                            "FileUpdateStatus", nameof(status)
-                        }
-                    });
-                    throw new Exception($"Failed to invoke [CompleteUpdatesAsync], FileUpdateStatus: {nameof(status)}");
+                            { "FileUpdateStatus", nameof(status) }
+                        });
+                    }
                 }
             }
         }
@@ -481,7 +581,7 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to delete file: {filePath}, Exception: {ex.Message}");
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to delete file: {filePath}, Exception: {ex.Message}");
             }
         }
 
@@ -509,59 +609,8 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
-            }
-        }
-
-        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
-        {
-            try
-            {
-                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
-                {
-                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"Failed to get file from future access list: {ex.Message}");
-            }
-            return null;
-        }
-
-        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
-        {
-            try
-            {
-                if (await FileExists(file))
-                {
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList", 
-                    new Dictionary<string, string>()
-                    {
-                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
-                        { "Exception", ex.Message }
-                    });
-            }
-            return false;
-        }
-
-        public static int GetFutureAccessListItemCount()
-        {
-            try
-            {
-                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
-            }
-            catch
-            {
-                return -1;
             }
         }
     }

@@ -8,8 +8,8 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'x86|x64|ARM'
-  buildConfiguration: 'Debug'
+  buildPlatform: 'x86|x64|arm64'
+  buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
@@ -18,12 +18,6 @@ steps:
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
-
-- task: DownloadSecureFile@1
-  name: signingCert
-  displayName: 'Download Notepads build certificate'
-  inputs:
-    secureFile: 'Notepads_TemporaryKey.pfx'
 
 - task: VSBuild@1
   inputs:
@@ -34,6 +28,4 @@ steps:
                   /p:AppxPackageDir="$(appxPackageDir)"
                   /p:AppxBundle=Always
                   /p:UapAppxPackageBuildMode=StoreUpload
-                  /p:AppxPackageSigningEnabled=true
-                  /p:PackageCertificateThumbprint=""
-                  /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"'
+                  /p:AppxPackageSigningEnabled=false'

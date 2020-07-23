@@ -1,9 +1,11 @@
 ﻿namespace Notepads.Controls.GoTo
 {
     using System;
+    using Notepads.Extensions;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -12,13 +14,12 @@
     public sealed partial class GoToControl : UserControl
     {
         public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
-
         public event EventHandler<GoToEventArgs> OnGoToButtonClicked;
 
+        public event EventHandler<KeyRoutedEventArgs> OnGoToControlKeyDown;
+
         private int _currentLine;
-
         private int _maxLine;
-
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public void SetLineData(int currentLine, int maxLine)
@@ -31,31 +32,29 @@
         {
             InitializeComponent();
 
-            SetSelectionHighlightColor();
+            SetSelectionHighlightColor(ThemeSettingsService.AppAccentColor);
+            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
             Loaded += GoToControl_Loaded;
-            Unloaded += GoToControl_Unloaded;
         }
 
         public void Dispose()
         {
+            Loaded -= GoToControl_Loaded;
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
         private void GoToControl_Loaded(object sender, RoutedEventArgs e)
         {
             Focus();
-            ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         }
 
-        private void GoToControl_Unloaded(object sender, RoutedEventArgs e)
+        private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
         {
-            ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-        }
-
-        private void ThemeSettingsService_OnAccentColorChanged(object sender, Windows.UI.Color e)
-        {
-            SetSelectionHighlightColor();
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                SetSelectionHighlightColor(color);
+            });
         }
 
         public double GetHeight()
@@ -63,18 +62,15 @@
             return GoToRootGrid.Height;
         }
 
-        private void SetSelectionHighlightColor()
+        private void SetSelectionHighlightColor(Color color)
         {
-            GoToBar.SelectionHighlightColor =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            GoToBar.SelectionHighlightColorWhenNotFocused =
-                Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            GoToBar.SelectionHighlightColor = new SolidColorBrush(color);
+            GoToBar.SelectionHighlightColorWhenNotFocused = new SolidColorBrush(color);
         }
 
         public void Focus()
         {
-            GoToBar.Text = "";
-            GoToBar.SelectedText = _currentLine.ToString();
+            GoToBar.Text = _currentLine.ToString();
             GoToBar.Focus(FocusState.Programmatic);
         }
 
@@ -103,9 +99,15 @@
             }
         }
 
+        private void GoToBar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            GoToBar.SelectionStart = 0;
+            GoToBar.SelectionLength = GoToBar.Text.Length;
+        }
+
         private void GoToBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            OnDismissKeyDown?.Invoke(sender, e);
+            GoToBar.SelectionStart = GoToBar.Text.Length;
         }
 
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)
@@ -126,6 +128,14 @@
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("GoTo_NotificationMsg_InputError_ExceedInputLimit"), 1500);
                 args.Cancel = true;
+            }
+        }
+
+        private void GoToRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                OnGoToControlKeyDown?.Invoke(sender, e);
             }
         }
     }

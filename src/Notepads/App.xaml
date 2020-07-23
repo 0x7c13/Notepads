@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-<Application.Resources>
+    <Application.Resources>
         <ResourceDictionary>
 
             <!--<ResourceDictionary.ThemeDictionaries>
@@ -19,9 +19,9 @@
             </ResourceDictionary.ThemeDictionaries>-->
 
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/SetsView.xaml" />
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>
@@ -33,6 +33,14 @@
                 <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
+                <Setter Property="FontSize" Value="18"/>
+            </Style>
+
+            <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}"/>
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>

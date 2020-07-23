@@ -40,7 +40,25 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"JumpListService_FailedToSetupJumpList: {ex.Message}");
+                LoggingService.LogError($"[{nameof(JumpListService)}] FailedToSetupJumpList: {ex.Message}");
+            }
+
+            return false;
+        }
+
+        public static async Task<bool> ClearJumpList()
+        {
+            if (!JumpList.IsSupported()) return false;
+
+            try
+            {
+                JumpList jumpList = await JumpList.LoadCurrentAsync();
+                jumpList.Items.Clear();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(JumpListService)}] FailedToClearJumpList: {ex.Message}");
             }
 
             return false;

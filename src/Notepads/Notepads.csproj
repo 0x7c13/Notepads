@@ -11,7 +11,7 @@
     <AssemblyName>Notepads</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -23,7 +23,8 @@
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -43,29 +44,6 @@
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -123,13 +101,25 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\IMouseCommand.cs" />
     <Compile Include="Commands\IKeyboardCommand.cs" />
-    <Compile Include="Commands\IKeyboardCommandHandler.cs" />
-    <Compile Include="Commands\KeyboardShortcut.cs" />
+    <Compile Include="Commands\ICommandHandler.cs" />
+    <Compile Include="Commands\CommandHandlerResult.cs" />
+    <Compile Include="Commands\MouseCommand.cs" />
+    <Compile Include="Commands\MouseCommandHandler.cs" />
+    <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
+    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
+    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FindAndReplace\FindAndReplaceTextBox.cs" />
+    <Compile Include="Controls\FindAndReplace\SearchContext.cs" />
     <Compile Include="Controls\GoTo\GoToControl.xaml.cs">
       <DependentUpon>GoToControl.xaml</DependentUpon>
     </Compile>
@@ -141,23 +131,31 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\AboutPage.xaml.cs">
+    <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
+    <Compile Include="Extensions\DispatcherExtensions.cs" />
+    <Compile Include="Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="Utilities\FutureAccessListUtility.cs" />
+    <Compile Include="Utilities\LanguageUtility.cs" />
+    <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\AdvancedSettings.xaml.cs">
-      <DependentUpon>AdvancedSettings.xaml</DependentUpon>
+    <Compile Include="Views\Settings\AdvancedSettingsPage.xaml.cs">
+      <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\SettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\SettingsPanel.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\PersonalizationSettings.xaml.cs">
-      <DependentUpon>PersonalizationSettings.xaml</DependentUpon>
+    <Compile Include="Views\Settings\PersonalizationSettingsPage.xaml.cs">
+      <DependentUpon>PersonalizationSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Settings\TextAndEditorSettings.xaml.cs">
-      <DependentUpon>TextAndEditorSettings.xaml</DependentUpon>
+    <Compile Include="Views\Settings\TextAndEditorSettingsPage.xaml.cs">
+      <DependentUpon>TextAndEditorSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextEditor\ITextEditor.cs" />
     <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
@@ -165,6 +163,12 @@
     </Compile>
     <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
     <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.DateTime.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.DuplicateText.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.FindAndReplace.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.FontSize.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.Indentation.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.WebSearch.cs" />
     <Compile Include="Controls\TextEditor\TextEditorStateMetaData.cs" />
     <Compile Include="Core\INotepadsCore.cs" />
     <Compile Include="Core\ISessionManager.cs" />
@@ -174,21 +178,24 @@
     <Compile Include="Core\TabContextFlyout.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
     <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
-    <Compile Include="Extensions\DiffViewer\BrushFactory.cs" />
-    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffContext.cs" />
-    <Compile Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml.cs">
+    <Compile Include="Controls\DiffViewer\BrushFactory.cs" />
+    <Compile Include="Controls\DiffViewer\RichTextBlockDiffContext.cs" />
+    <Compile Include="Controls\DiffViewer\SideBySideDiffViewer.xaml.cs">
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\DiffViewer\ISideBySideDiffViewer.cs" />
-    <Compile Include="Extensions\IContentExtension.cs" />
-    <Compile Include="Extensions\DiffViewer\ScrollViewerSynchronizer.cs" />
-    <Compile Include="Extensions\DiffViewer\RichTextBlockDiffRenderer.cs" />
-    <Compile Include="Services\FileTypeService.cs" />
+    <Compile Include="Controls\DiffViewer\ISideBySideDiffViewer.cs" />
+    <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
+    <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Notification.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Theme.cs" />
+    <Compile Include="Services\FileExtensionProvider.cs" />
     <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="NotepadsMainPage.IO.cs" />
-    <Compile Include="NotepadsMainPage.StatusBar.cs" />
-    <Compile Include="NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.IO.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.ViewModes.cs" />
     <Compile Include="Services\MRUService.cs" />
+    <Compile Include="Utilities\BrushUtility.cs" />
     <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\NotepadsProtocolService.cs" />
@@ -197,32 +204,33 @@
     <Compile Include="Utilities\FileTypeUtility.cs" />
     <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
     <Compile Include="Extensions\IContentPreviewExtension.cs" />
-    <Compile Include="Extensions\Markdown\MarkdownExtensionView.xaml.cs">
+    <Compile Include="Controls\Markdown\MarkdownExtensionView.xaml.cs">
       <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Services\NotepadsDialogFactory.cs" />
-    <Compile Include="Services\FilePickerFactory.cs" />
+    <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
     <Compile Include="Utilities\FileSystemUtility.cs" />
     <Compile Include="Utilities\FontUtility.cs" />
     <Compile Include="Utilities\EncodingUtility.cs" />
+    <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\EditorSettingsService.cs" />
+    <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Utilities\ThreadUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NotepadsMainPage.xaml.cs">
+    <Compile Include="Views\MainPage\NotepadsMainPage.xaml.cs">
       <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -238,124 +246,123 @@
     <Content Include="Assets\appicon_bs.png" />
     <Content Include="Assets\appicon_w.png" />
     <Content Include="Assets\appicon_ws.png" />
-    <Content Include="Assets\asp.targetsize-512.png" />
-    <Content Include="Assets\asp.png" />
-    <Content Include="Assets\asp.targetsize-16.png" />
-    <Content Include="Assets\asp.targetsize-32.png" />
-    <Content Include="Assets\asp.targetsize-48.png" />
-    <Content Include="Assets\bash.targetsize-512.png" />
-    <Content Include="Assets\bash.png" />
-    <Content Include="Assets\bash.targetsize-16.png" />
-    <Content Include="Assets\bash.targetsize-32.png" />
-    <Content Include="Assets\bash.targetsize-48.png" />
-    <Content Include="Assets\c.targetsize-512.png" />
-    <Content Include="Assets\c.png" />
-    <Content Include="Assets\c.targetsize-16.png" />
-    <Content Include="Assets\c.targetsize-32.png" />
-    <Content Include="Assets\c.targetsize-48.png" />
-    <Content Include="Assets\cfg.targetsize-512.png" />
-    <Content Include="Assets\cfg.png" />
-    <Content Include="Assets\cfg.targetsize-16.png" />
-    <Content Include="Assets\cfg.targetsize-32.png" />
-    <Content Include="Assets\cfg.targetsize-48.png" />
-    <Content Include="Assets\cpp.targetsize-512.png" />
-    <Content Include="Assets\cpp.png" />
-    <Content Include="Assets\cpp.targetsize-16.png" />
-    <Content Include="Assets\cpp.targetsize-32.png" />
-    <Content Include="Assets\cpp.targetsize-48.png" />
-    <Content Include="Assets\cs.targetsize-512.png" />
-    <Content Include="Assets\cs.png" />
-    <Content Include="Assets\cs.targetsize-16.png" />
-    <Content Include="Assets\cs.targetsize-32.png" />
-    <Content Include="Assets\cs.targetsize-48.png" />
-    <Content Include="Assets\css.targetsize-512.png" />
-    <Content Include="Assets\css.png" />
-    <Content Include="Assets\css.targetsize-16.png" />
-    <Content Include="Assets\css.targetsize-32.png" />
-    <Content Include="Assets\css.targetsize-48.png" />
-    <Content Include="Assets\file.targetsize-512.png" />
-    <Content Include="Assets\file.png" />
-    <Content Include="Assets\file.targetsize-16.png" />
-    <Content Include="Assets\file.targetsize-32.png" />
-    <Content Include="Assets\file.targetsize-48.png" />
-    <Content Include="Assets\h.targetsize-512.png" />
-    <Content Include="Assets\h.png" />
-    <Content Include="Assets\h.targetsize-16.png" />
-    <Content Include="Assets\h.targetsize-32.png" />
-    <Content Include="Assets\h.targetsize-48.png" />
-    <Content Include="Assets\html.targetsize-512.png" />
-    <Content Include="Assets\html.png" />
-    <Content Include="Assets\html.targetsize-16.png" />
-    <Content Include="Assets\html.targetsize-32.png" />
-    <Content Include="Assets\html.targetsize-48.png" />
-    <Content Include="Assets\ini.targetsize-512.png" />
-    <Content Include="Assets\ini.png" />
-    <Content Include="Assets\ini.targetsize-16.png" />
-    <Content Include="Assets\ini.targetsize-32.png" />
-    <Content Include="Assets\ini.targetsize-48.png" />
-    <Content Include="Assets\java.targetsize-512.png" />
-    <Content Include="Assets\java.png" />
-    <Content Include="Assets\java.targetsize-16.png" />
-    <Content Include="Assets\java.targetsize-32.png" />
-    <Content Include="Assets\java.targetsize-48.png" />
-    <Content Include="Assets\js.targetsize-512.png" />
-    <Content Include="Assets\js.png" />
-    <Content Include="Assets\js.targetsize-16.png" />
-    <Content Include="Assets\js.targetsize-32.png" />
-    <Content Include="Assets\js.targetsize-48.png" />
-    <Content Include="Assets\json.targetsize-512.png" />
-    <Content Include="Assets\json.png" />
-    <Content Include="Assets\json.targetsize-16.png" />
-    <Content Include="Assets\json.targetsize-32.png" />
-    <Content Include="Assets\json.targetsize-48.png" />
-    <Content Include="Assets\jsp.targetsize-512.png" />
-    <Content Include="Assets\jsp.png" />
-    <Content Include="Assets\jsp.targetsize-16.png" />
-    <Content Include="Assets\jsp.targetsize-32.png" />
-    <Content Include="Assets\jsp.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\asp.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\asp.png" />
+    <Content Include="Assets\FileIcons\asp.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\asp.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\asp.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\bash.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\bash.png" />
+    <Content Include="Assets\FileIcons\bash.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\bash.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\bash.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\c.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\c.png" />
+    <Content Include="Assets\FileIcons\c.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\c.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\c.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\cfg.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\cfg.png" />
+    <Content Include="Assets\FileIcons\cfg.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\cfg.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\cfg.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\cpp.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\cpp.png" />
+    <Content Include="Assets\FileIcons\cpp.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\cpp.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\cpp.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\cs.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\cs.png" />
+    <Content Include="Assets\FileIcons\cs.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\cs.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\cs.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\css.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\css.png" />
+    <Content Include="Assets\FileIcons\css.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\css.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\css.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\file.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\file.png" />
+    <Content Include="Assets\FileIcons\file.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\file.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\file.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\h.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\h.png" />
+    <Content Include="Assets\FileIcons\h.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\h.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\h.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\html.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\html.png" />
+    <Content Include="Assets\FileIcons\html.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\html.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\html.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\ini.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\ini.png" />
+    <Content Include="Assets\FileIcons\ini.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\ini.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\ini.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\java.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\java.png" />
+    <Content Include="Assets\FileIcons\java.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\java.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\java.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\js.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\js.png" />
+    <Content Include="Assets\FileIcons\js.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\js.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\js.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\json.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\json.png" />
+    <Content Include="Assets\FileIcons\json.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\json.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\json.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\jsp.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\jsp.png" />
+    <Content Include="Assets\FileIcons\jsp.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\jsp.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\jsp.targetsize-48.png" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
     <Content Include="Assets\LargeTile.scale-150.png" />
     <Content Include="Assets\LargeTile.scale-200.png" />
     <Content Include="Assets\LargeTile.scale-400.png" />
-    <Content Include="Assets\md.targetsize-512.png" />
-    <Content Include="Assets\md.png" />
-    <Content Include="Assets\md.targetsize-16.png" />
-    <Content Include="Assets\md.targetsize-32.png" />
-    <Content Include="Assets\md.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\md.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\md.png" />
+    <Content Include="Assets\FileIcons\md.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\md.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\md.targetsize-48.png" />
     <Content Include="Assets\noise_high.png" />
     <Content Include="Assets\noise_low.png" />
-    <Content Include="Assets\notepads.png" />
     <Content Include="Assets\no_noise.png" />
-    <Content Include="Assets\php.targetsize-512.png" />
-    <Content Include="Assets\php.png" />
-    <Content Include="Assets\php.targetsize-16.png" />
-    <Content Include="Assets\php.targetsize-32.png" />
-    <Content Include="Assets\php.targetsize-48.png" />
-    <Content Include="Assets\py.targetsize-512.png" />
-    <Content Include="Assets\py.png" />
-    <Content Include="Assets\py.targetsize-16.png" />
-    <Content Include="Assets\py.targetsize-32.png" />
-    <Content Include="Assets\py.targetsize-48.png" />
-    <Content Include="Assets\rb.targetsize-512.png" />
-    <Content Include="Assets\rb.png" />
-    <Content Include="Assets\rb.targetsize-16.png" />
-    <Content Include="Assets\rb.targetsize-32.png" />
-    <Content Include="Assets\rb.targetsize-48.png" />
-    <Content Include="Assets\rc.targetsize-512.png" />
-    <Content Include="Assets\rc.png" />
-    <Content Include="Assets\rc.targetsize-16.png" />
-    <Content Include="Assets\rc.targetsize-32.png" />
-    <Content Include="Assets\rc.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\php.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\php.png" />
+    <Content Include="Assets\FileIcons\php.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\php.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\php.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\py.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\py.png" />
+    <Content Include="Assets\FileIcons\py.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\py.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\py.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\rb.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\rb.png" />
+    <Content Include="Assets\FileIcons\rb.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\rb.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\rb.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\rc.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\rc.png" />
+    <Content Include="Assets\FileIcons\rc.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\rc.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\rc.targetsize-48.png" />
     <Content Include="Assets\search_bing.png" />
     <Content Include="Assets\search_custom.png" />
     <Content Include="Assets\search_duckduckgo.png" />
     <Content Include="Assets\search_google.png" />
-    <Content Include="Assets\sh.targetsize-512.png" />
-    <Content Include="Assets\sh.png" />
-    <Content Include="Assets\sh.targetsize-16.png" />
-    <Content Include="Assets\sh.targetsize-32.png" />
-    <Content Include="Assets\sh.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\sh.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\sh.png" />
+    <Content Include="Assets\FileIcons\sh.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\sh.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\sh.targetsize-48.png" />
     <Content Include="Assets\SmallTile.scale-100.png" />
     <Content Include="Assets\SmallTile.scale-125.png" />
     <Content Include="Assets\SmallTile.scale-150.png" />
@@ -392,30 +399,30 @@
     <Content Include="Assets\StoreLogo.scale-150.png" />
     <Content Include="Assets\StoreLogo.scale-200.png" />
     <Content Include="Assets\StoreLogo.scale-400.png" />
-    <Content Include="Assets\txt.targetsize-512.png" />
-    <Content Include="Assets\txt.png" />
-    <Content Include="Assets\txt.targetsize-16.png" />
-    <Content Include="Assets\txt.targetsize-32.png" />
-    <Content Include="Assets\txt.targetsize-48.png" />
-    <Content Include="Assets\vb.targetsize-512.png" />
-    <Content Include="Assets\vb.png" />
-    <Content Include="Assets\vb.targetsize-16.png" />
-    <Content Include="Assets\vb.targetsize-32.png" />
-    <Content Include="Assets\vb.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\txt.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\txt.png" />
+    <Content Include="Assets\FileIcons\txt.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\txt.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\txt.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\vb.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\vb.png" />
+    <Content Include="Assets\FileIcons\vb.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\vb.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\vb.targetsize-48.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <Content Include="Assets\xml.targetsize-512.png" />
-    <Content Include="Assets\xml.png" />
-    <Content Include="Assets\xml.targetsize-16.png" />
-    <Content Include="Assets\xml.targetsize-32.png" />
-    <Content Include="Assets\xml.targetsize-48.png" />
-    <Content Include="Assets\yml.targetsize-512.png" />
-    <Content Include="Assets\yml.png" />
-    <Content Include="Assets\yml.targetsize-16.png" />
-    <Content Include="Assets\yml.targetsize-32.png" />
-    <Content Include="Assets\yml.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\xml.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\xml.png" />
+    <Content Include="Assets\FileIcons\xml.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\xml.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\xml.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\yml.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\yml.png" />
+    <Content Include="Assets\FileIcons\yml.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\yml.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\yml.targetsize-48.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -423,6 +430,59 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\FileIcons\ass.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\ass.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\ass.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\ass.png" />
+    <Content Include="Assets\FileIcons\ass.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\bib.png" />
+    <Content Include="Assets\FileIcons\bib.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\bib.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\bib.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\bib.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\log.png" />
+    <Content Include="Assets\FileIcons\log.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\log.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\log.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\log.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\perl.png" />
+    <Content Include="Assets\FileIcons\perl.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\perl.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\perl.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\perl.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\sql.png" />
+    <Content Include="Assets\FileIcons\sql.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\sql.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\sql.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\sql.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\srt.png" />
+    <Content Include="Assets\FileIcons\srt.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\srt.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\srt.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\srt.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\ssa.png" />
+    <Content Include="Assets\FileIcons\ssa.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\ssa.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\ssa.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\ssa.targetsize-512.png" />
+    <Content Include="Assets\FileIcons\vue.png" />
+    <Content Include="Assets\FileIcons\vue.targetsize-16.png" />
+    <Content Include="Assets\FileIcons\vue.targetsize-32.png" />
+    <Content Include="Assets\FileIcons\vue.targetsize-48.png" />
+    <Content Include="Assets\FileIcons\vue.targetsize-512.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-16.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-20.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-24.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-256.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-32.png" />
+    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-44.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-16.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-20.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-24.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
+    <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -445,27 +505,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\AboutPage.xaml">
+    <Page Include="Views\Settings\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\AdvancedSettings.xaml">
+    <Page Include="Views\Settings\AdvancedSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\SettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\SettingsPanel.xaml">
+    <Page Include="Views\Settings\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Settings\PersonalizationSettings.xaml">
+    <Page Include="Views\Settings\PersonalizationSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Settings\TextAndEditorSettings.xaml">
+    <Page Include="Views\Settings\TextAndEditorSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -477,15 +537,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\DiffViewer\SideBySideDiffViewer.xaml">
+    <Page Include="Controls\DiffViewer\SideBySideDiffViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Extensions\Markdown\MarkdownExtensionView.xaml">
+    <Page Include="Controls\Markdown\MarkdownExtensionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NotepadsMainPage.xaml">
+    <Page Include="Views\MainPage\NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -529,10 +589,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resource\SetsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Resource\TransparentTextBoxStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -540,18 +596,18 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.5.0</Version>
+      <Version>1.6.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.0.0</Version>
+      <Version>3.2.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.0.0</Version>
+      <Version>3.2.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.9</Version>
+      <Version>6.2.10</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
       <Version>6.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
@@ -560,17 +616,14 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
     </PackageReference>
-    <PackageReference Include="UICompositionAnimations">
-      <Version>4.1.1</Version>
-    </PackageReference>
     <PackageReference Include="UTF.Unknown">
       <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SetsView\SetsView.csproj">
+    <ProjectReference Include="..\Notepads.Controls\Notepads.Controls.csproj">
       <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
-      <Name>SetsView</Name>
+      <Name>Notepads.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +739,99 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\or-IN\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ka-GE\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ka-GE\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\bg-BG\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\bg-BG\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\bg-BG\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-CH\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-DE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\es-ES\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fi-FI\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fr-FR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hi-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hu-HU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\it-IT\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ja-JP\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ka-GE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ko-KR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\or-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pt-BR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ru-RU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\tr-TR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\uk-UA\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-CN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

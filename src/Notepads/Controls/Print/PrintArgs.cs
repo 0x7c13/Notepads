@@ -93,8 +93,8 @@
                 if (!string.IsNullOrEmpty(textDocument))
                 {
                     var page = new PrintPageFormat(textDocument,
-                        new FontFamily(EditorSettingsService.EditorFontFamily),
-                        EditorSettingsService.EditorFontSize,
+                        new FontFamily(AppSettingsService.EditorFontFamily),
+                        AppSettingsService.EditorFontSize,
                         _headerText,
                         _footerText);
 
@@ -129,7 +129,7 @@
         }
 
         /// <summary>
-        /// This function unregisters the app for printing with Windows.
+        /// This function un-registers the app for printing with Windows.
         /// </summary>
         public static void UnregisterForPrinting()
         {
@@ -168,7 +168,7 @@
                 RichTextBlockOverflow lastRTBOOnPage;
 
                 // Get the PrintTaskOptions
-                PrintTaskOptions printingOptions = ((PrintTaskOptions)e.PrintTaskOptions);
+                PrintTaskOptions printingOptions = e.PrintTaskOptions;
 
                 // Get the page description to determine how big the page is
                 PrintPageDescription pageDescription = printingOptions.GetPageDescription(0);
@@ -187,7 +187,7 @@
                         lastRTBOOnPage = AddOnePrintPreviewPage(lastRTBOOnPage, pageDescription, count);
                     }
 
-                    count += 1; 
+                    count += 1;
                 } while (count < _firstPage.Count);
 
                 PrintDocument printDoc = (PrintDocument)sender;
@@ -217,7 +217,7 @@
                 // If this is the first page add the specific scenario content
                 page = _firstPage[count];
 
-                // Hide headr and footer if not provided
+                // Hide header and footer if not provided
                 StackPanel header = (StackPanel)page.FindName("Header");
                 if (!string.IsNullOrEmpty(_headerText))
                 {
@@ -246,8 +246,8 @@
             {
                 // Flow content (text) from previous pages
                 page = new ContinuationPageFormat(lastRTBOAdded,
-                    new FontFamily(EditorSettingsService.EditorFontFamily),
-                    EditorSettingsService.EditorFontSize,
+                    new FontFamily(AppSettingsService.EditorFontFamily),
+                    AppSettingsService.EditorFontSize,
                     _headerText,
                     _footerText);
             }

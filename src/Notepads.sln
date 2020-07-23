@@ -8,26 +8,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepads", "Notepads\Notepa
 		{7AA5E631-B663-420E-A08F-002CD81DF855} = {7AA5E631-B663-420E-A08F-002CD81DF855}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetsView", "SetsView\SetsView.csproj", "{7AA5E631-B663-420E-A08F-002CD81DF855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepads.Controls", "Notepads.Controls\Notepads.Controls.csproj", "{7AA5E631-B663-420E-A08F-002CD81DF855}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FE6A4F54-39DC-40E3-8BFB-5B1962DED402}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|ARM = Debug|ARM
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
-		Release|ARM = Release|ARM
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{99274932-9E86-480C-8142-38525F80007D}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM.ActiveCfg = Debug|ARM
-		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM.Build.0 = Debug|ARM
-		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM.Deploy.0 = Debug|ARM
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM64.Build.0 = Debug|ARM64
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM64.Deploy.0 = Debug|ARM64
@@ -37,10 +34,6 @@ Global
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|x86.ActiveCfg = Debug|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|x86.Build.0 = Debug|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|x86.Deploy.0 = Debug|x86
-		{99274932-9E86-480C-8142-38525F80007D}.Release|Any CPU.ActiveCfg = Release|x86
-		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM.ActiveCfg = Release|ARM
-		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM.Build.0 = Release|ARM
-		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM.Deploy.0 = Release|ARM
 		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM64.ActiveCfg = Release|ARM64
 		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM64.Build.0 = Release|ARM64
 		{99274932-9E86-480C-8142-38525F80007D}.Release|ARM64.Deploy.0 = Release|ARM64
@@ -50,20 +43,12 @@ Global
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.ActiveCfg = Release|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.Build.0 = Release|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.Deploy.0 = Release|x86
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM.ActiveCfg = Debug|ARM
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM.Build.0 = Debug|ARM
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM64.Build.0 = Debug|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|x64.ActiveCfg = Debug|x64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|x64.Build.0 = Debug|x64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|x86.ActiveCfg = Debug|x86
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|x86.Build.0 = Debug|x86
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|ARM.ActiveCfg = Release|ARM
-		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|ARM.Build.0 = Release|ARM
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|ARM64.ActiveCfg = Release|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|ARM64.Build.0 = Release|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|x64.ActiveCfg = Release|x64
