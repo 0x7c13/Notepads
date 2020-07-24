@@ -18,7 +18,7 @@
         public void TryInsertNewLogEntry()
         {
             var docText = _hasAddedLogEntry ? string.Empty : GetText();
-            if (string.IsNullOrEmpty(docText) || (docText.StartsWith("LOG"))) return;
+            if (string.IsNullOrEmpty(docText) || !docText.StartsWith(".LOG")) return;
 
             _hasAddedLogEntry = true;
             Document.Selection.StartPosition = docText.Length;
