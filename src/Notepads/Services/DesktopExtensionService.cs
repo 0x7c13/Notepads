@@ -91,7 +91,8 @@
                     ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
                 }
             }
-            else
+
+            if (!_isAdminExtensionAvailable)
             {
                 throw new AdminstratorAccessException();
             }
