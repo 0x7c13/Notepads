@@ -438,7 +438,7 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Ceci est une fenêtre récupérée de Notepads. L'instantané de session et les paramètres sont désactivés.</value>
+    <value>Ceci est une fenêtre secondaire de Notepads. La sauvegarde de la session et les paramètres sont désactivés pour cette fenêtre.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
