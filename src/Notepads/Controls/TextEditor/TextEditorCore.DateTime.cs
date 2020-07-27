@@ -15,6 +15,14 @@
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
+        /// <summary>
+        /// <para>
+        /// Adds "Windows Notepad" style header with current date and time, 
+        /// if a text document contains ".LOG" at the very beginning of file.
+        /// User can then add log entry from the very next line.
+        /// </para>
+        /// <see cref="https://support.microsoft.com/help/260563/how-to-use-notepad-to-create-a-log-file"/>
+        /// </summary>
         public void TryInsertNewLogEntry()
         {
             var docText = _hasAddedLogEntry ? string.Empty : GetText();
