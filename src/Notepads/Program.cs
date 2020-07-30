@@ -18,8 +18,6 @@
             Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
 #endif
 
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
-
             //if (activatedArgs == null)
             //{
             //    // No activated event args, so this is not an activation via the multi-instance ID
@@ -37,55 +35,58 @@
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
             }
 
-            if (activatedArgs is FileActivatedEventArgs)
+            switch (AppInstance.GetActivatedEventArgs())
             {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is CommandLineActivatedEventArgs)
-            {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
-            {
-                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
-                if (protocol == NotepadsOperationProtocol.OpenNewInstance)
-                {
-                    OpenNewInstance();
-                }
-                else
-                {
-                    RedirectOrCreateNewInstance();
-                }
-            }
-            else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
-            {
-                bool handled = false;
+                case LaunchActivatedEventArgs launchActivatedEventArgs:
+                    bool handled = false;
 
-                if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
-                {
-                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
-                    if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+                    if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                     {
-                        handled = true;
+                        var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
+                        if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+                        {
+                            handled = true;
+                            OpenNewInstance();
+                        }
+                    }
+
+                    if (!handled)
+                    {
+                        RedirectOrCreateNewInstance();
+                    }
+                    break;
+                case FileActivatedEventArgs fileActivatedEventArgs:
+                    if (fileActivatedEventArgs.CallerPackageFamilyName == Package.Current.Id.FamilyName)
+                    {
                         OpenNewInstance();
                     }
-                }
-
-                if (!handled)
-                {
+                    else
+                    {
+                        RedirectOrCreateNewInstance();
+                    }
+                    break;
+                case ProtocolActivatedEventArgs protocolActivatedEventArgs:
+                    LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+                    if (NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _) == NotepadsOperationProtocol.OpenNewInstance)
+                    {
+                        OpenNewInstance();
+                    }
+                    else
+                    {
+                        RedirectOrCreateNewInstance();
+                    }
+                    break;
+                default:
                     RedirectOrCreateNewInstance();
-                }
-            }
-            else
-            {
-                RedirectOrCreateNewInstance();
+                    break;
             }
         }
 
         private static void OpenNewInstance()
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
+            App.PassedEditorData = (string)ApplicationSettingsStore.Read("EditorData");
+            ApplicationSettingsStore.Remove("EditorData");
             App.IsFirstInstance = IsFirstInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
             IsFirstInstance = false;

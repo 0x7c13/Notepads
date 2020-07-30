@@ -27,14 +27,17 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
+    using Windows.Foundation.Collections;
+    using Notepads.Core.SessionDataModels;
+    using Newtonsoft.Json;
 
     public sealed partial class NotepadsMainPage : Page
     {
         private IReadOnlyList<IStorageItem> _appLaunchFiles;
-
         private string _appLaunchCmdDir;
         private string _appLaunchCmdArgs;
         private Uri _appLaunchUri;
+        private ValueSet _appLaunchEditorData;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -190,6 +193,7 @@
                     break;
                 case ProtocolActivatedEventArgs protocol:
                     _appLaunchUri = protocol.Uri;
+                    _appLaunchEditorData = protocol.Data;
                     break;
             }
         }
@@ -215,8 +219,16 @@
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
-                loadedCount += await OpenFiles(_appLaunchFiles);
-                _appLaunchFiles = null;
+                if (string.IsNullOrEmpty(App.PassedEditorData))
+                {
+                    loadedCount += await OpenFiles(_appLaunchFiles);
+                    _appLaunchFiles = null;
+                }
+                else
+                {
+                    await OpenEditor(App.PassedEditorData, (StorageFile)_appLaunchFiles[0]);
+                    loadedCount++;
+                }
             }
             else if (_appLaunchCmdDir != null)
             {
@@ -231,9 +243,18 @@
             else if (_appLaunchUri != null)
             {
                 var operation = NotepadsProtocolService.GetOperationProtocol(_appLaunchUri, out var context);
-                if (operation == NotepadsOperationProtocol.OpenNewInstance || operation == NotepadsOperationProtocol.Unrecognized)
+                if (operation == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    // Do nothing
+                    try
+                    {
+                        await OpenEditor((string)_appLaunchEditorData["EditorData"]);
+                        loadedCount++;
+                    }
+                    catch (Exception)
+                    {
+                        // Do nothing
+                    }
+                    _appLaunchEditorData = null;
                 }
                 _appLaunchUri = null;
             }
@@ -315,6 +336,15 @@
                     SessionManager.StartSessionBackup();
                 }
             }
+        }
+
+        private async Task OpenEditor(string textEditorDataStr, StorageFile file = null)
+        {
+            var textEditorData = JsonConvert.DeserializeObject<TextEditorSessionDataV1>(textEditorDataStr);
+            var textEditor = await SessionManager.RecoverTextEditorAsync(textEditorData, file);
+            NotepadsCore.OpenTextEditor(textEditor);
+            await FileSystemUtility.DeleteFile(textEditorData.LastSavedBackupFilePath);
+            await FileSystemUtility.DeleteFile(textEditorData.PendingBackupFilePath);
         }
 
         private void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)

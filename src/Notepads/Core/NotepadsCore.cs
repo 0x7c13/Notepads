@@ -24,6 +24,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Core.SessionDataModels;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -56,6 +57,7 @@
 
         private readonly CoreDispatcher _dispatcher;
 
+        public const string NotepadsShouldHandleFileDrop = "NotepadsShouldHandleFileDrop";
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
@@ -63,6 +65,8 @@
         private const string NotepadsTextEditorLastSavedContent = "NotepadsTextEditorLastSavedContent";
         private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
+        private const string NotepadsTextEditorEditingFile = "NotepadsTextEditorEditingFile";
+        private const string NotepadsTextEditorTempFolderPath = "Temp";
 
         public NotepadsCore(SetsView sets,
             INotepadsExtensionProvider extensionProvider,
@@ -596,7 +600,8 @@
                 }
             }
 
-            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems))
+            if (!canHandle && args.DataView.Contains(StandardDataFormats.StorageItems) &&
+                !args.DataView.Properties.TryGetValue(NotepadsShouldHandleFileDrop, out object handleFileDrop))
             {
                 try
                 {
@@ -659,9 +664,8 @@
                 // Add Editing File
                 if (editor.EditingFile != null)
                 {
-                    args.Data.Properties.FileTypes.Add(StandardDataFormats.StorageItems);
                     args.Data.Properties.Add(NotepadsTextEditorEditingFilePath, editor.EditingFilePath);
-                    args.Data.SetStorageItems(new List<IStorageItem>() { editor.EditingFile }, readOnly: false);
+                    args.Data.Properties.Add(NotepadsTextEditorEditingFile, editor.EditingFile);
                 }
 
                 args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
@@ -688,7 +692,8 @@
             if (string.IsNullOrEmpty(args.DataView?.Properties?.ApplicationName) ||
                 !string.Equals(args.DataView?.Properties?.ApplicationName, App.ApplicationName))
             {
-                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems)) return;
+                if (args.DataView == null || !args.DataView.Contains(StandardDataFormats.StorageItems) ||
+                    args.DataView.Properties.TryGetValue(NotepadsShouldHandleFileDrop, out object handleFileDrop)) return;
                 var fileDropDeferral = args.GetDeferral();
                 var storageItems = await args.DataView.GetStorageItemsAsync();
                 StorageItemsDropped?.Invoke(this, storageItems);
@@ -719,18 +724,9 @@
                 }
 
                 StorageFile editingFile = null;
-
-                if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
+                if (metaData.HasEditingFile && args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFile, out object editingFileObj))
                 {
-                    var storageItems = await args.DataView.GetStorageItemsAsync();
-                    if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
-                    {
-                        editingFile = file;
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to read storage file from dropped set: Expecting only one storage file.");
-                    }
+                    editingFile = (StorageFile)editingFileObj;
                 }
 
                 string lastSavedText = null;
@@ -816,13 +812,91 @@
         {
             if (Sets.Items?.Count > 1 && e.Set?.Content is ITextEditor textEditor)
             {
-                // Only allow untitled empty document to be dragged outside for now
-                if (!textEditor.IsModified && textEditor.EditingFile == null)
+                var index = Sets.SelectedIndex;
+                var message = new ValueSet();
+                var textEditorData = JsonConvert.SerializeObject(await BuildTextEditorSessionData(textEditor), Formatting.Indented);
+                if (textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
                 {
+                    message.Add("EditorData", textEditorData);
                     DeleteTextEditor(textEditor);
-                    await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
+                    if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, message))
+                    {
+                        OpenTextEditor(textEditor, index);
+                    }
+                }
+                else
+                {
+                    ApplicationSettingsStore.Write("EditorData", textEditorData);
+                    DeleteTextEditor(textEditor);
+                    if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance, textEditor.EditingFile))
+                    {
+                        OpenTextEditor(textEditor, index);
+                    }
                 }
             }
+        }
+
+        private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
+        {
+            TextEditorSessionDataV1 textEditorData = new TextEditorSessionDataV1
+            {
+                Id = textEditor.Id,
+            };
+
+            if (textEditor.EditingFile != null)
+            {
+                // Add the opened file to FutureAccessList so we can access it next launch
+                var futureAccessToken = textEditor.Id.ToString("N");
+                await FutureAccessListUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                textEditorData.EditingFileFutureAccessToken = futureAccessToken;
+                textEditorData.EditingFileName = textEditor.EditingFileName;
+                textEditorData.EditingFilePath = textEditor.EditingFilePath;
+            }
+
+            if (textEditor.IsModified || textEditor.FileModificationState != FileModificationState.Untouched)
+            {
+                if (textEditor.EditingFile != null)
+                {
+                    // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
+                    var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
+                        textEditor.Id.ToString("N") + "-LastSaved",
+                        CreationCollisionOption.ReplaceExisting,
+                        NotepadsTextEditorTempFolderPath);
+
+                    if (!await SessionManager.BackupTextAsync(textEditor.LastSavedSnapshot.Content,
+                        textEditor.LastSavedSnapshot.Encoding,
+                        textEditor.LastSavedSnapshot.LineEnding,
+                        lastSavedBackupFile))
+                    {
+                        return null; // Error: Failed to write backup text to file
+                    }
+
+                    textEditorData.LastSavedBackupFilePath = lastSavedBackupFile.Path;
+                }
+                
+                if (textEditor.IsModified)
+                {
+                    // Persist pending changes relative to the last save
+                    var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
+                        textEditor.Id.ToString("N") + "-Pending",
+                        CreationCollisionOption.ReplaceExisting,
+                        NotepadsTextEditorTempFolderPath);
+
+                    if (!await SessionManager.BackupTextAsync(textEditor.GetText(),
+                        textEditor.LastSavedSnapshot.Encoding,
+                        textEditor.LastSavedSnapshot.LineEnding,
+                        pendingBackupFile))
+                    {
+                        return null; // Error: Failed to write backup text to file
+                    }
+
+                    textEditorData.PendingBackupFilePath = pendingBackupFile.Path;
+                }
+            }
+
+            textEditorData.StateMetaData = textEditor.GetTextEditorStateMetaData();
+
+            return textEditorData;
         }
 
         #endregion

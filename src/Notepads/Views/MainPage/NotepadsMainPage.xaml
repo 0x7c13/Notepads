@@ -343,7 +343,9 @@
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            Padding ="4,4,8,4"
                            IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped">
+                           CanDrag="True"
+                           Tapped="StatusBarComponent_OnTapped"
+                           DragStarting="PathIndicator_DragStarting">
 
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="PointerEntered">

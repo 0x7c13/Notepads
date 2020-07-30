@@ -12,6 +12,8 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Notepads.Models;
+    using Notepads.Core.SessionDataModels;
     using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage

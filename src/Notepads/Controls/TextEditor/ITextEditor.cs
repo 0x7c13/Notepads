@@ -118,6 +118,8 @@
 
         Task SaveContentToFileAndUpdateEditorState(StorageFile file);
 
+        void UpdateEditingFile(StorageFile file);
+
         string GetContentForSharing();
 
         void TypeText(string text);

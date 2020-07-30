@@ -29,6 +29,7 @@
 
         public static bool IsFirstInstance = false;
         public static bool IsGameBarWidget = false;
+        public static string PassedEditorData = string.Empty;
 
         private const string AppCenterSecret = null;
 
