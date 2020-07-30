@@ -118,6 +118,7 @@
 
             try
             {
+                args = ReplaceEnvironmentVariables(args);
                 path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
             }
             catch (Exception ex)
@@ -133,6 +134,43 @@
             LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
+        }
+
+        private static string ReplaceEnvironmentVariables(string args)
+        {
+            if (args.Contains("%homepath%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%homepath%",
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%localappdata%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%localappdata%",
+                    UserDataPaths.GetDefault().LocalAppData,
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%temp%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%temp%",
+                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
+                    "TEMP",
+                    Environment.GetEnvironmentVariable("temp")),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%tmp%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%tmp%",
+                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
+                    "TEMP",
+                    Environment.GetEnvironmentVariable("tmp")),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            return Environment.ExpandEnvironmentVariables(args);
         }
 
         public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
