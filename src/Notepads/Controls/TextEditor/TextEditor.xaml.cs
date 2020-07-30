@@ -355,6 +355,8 @@
         {
             Loaded?.Invoke(this, e);
             StartCheckingFileStatusPeriodically();
+
+            TextEditorCore.TryInsertNewLogEntry();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
