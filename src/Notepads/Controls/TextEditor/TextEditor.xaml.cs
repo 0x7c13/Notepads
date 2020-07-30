@@ -354,8 +354,10 @@
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded?.Invoke(this, e);
+
             StartCheckingFileStatusPeriodically();
 
+            // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
             TextEditorCore.TryInsertNewLogEntry();
         }
 

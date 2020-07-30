@@ -25,10 +25,14 @@
         /// </summary>
         public void TryInsertNewLogEntry()
         {
-            var docText = _hasAddedLogEntry ? string.Empty : GetText();
-            if (string.IsNullOrEmpty(docText) || !docText.StartsWith(".LOG")) return;
+            if (_hasAddedLogEntry) return;
+
+            var docText = GetText();
+
+            if (!docText.StartsWith(".LOG")) return;
 
             _hasAddedLogEntry = true;
+
             Document.Selection.StartPosition = docText.Length;
 
             Document.Selection.SetText(TextSetOptions.None, RichEditBoxDefaultLineEnding
