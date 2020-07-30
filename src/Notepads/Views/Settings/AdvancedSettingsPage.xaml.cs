@@ -10,7 +10,7 @@
 
     public sealed partial class AdvancedSettingsPage : Page
     {
-        private readonly IReadOnlyCollection<LanguageItem> SupportedLanguages;
+        private readonly IReadOnlyCollection<LanguageItem> SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
 
         public AdvancedSettingsPage()
         {
@@ -41,9 +41,8 @@
                 LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
-            SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
-            FindName("LanguagePreferenceSettingsPanel"); // Lazy loading
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
+            RestartPrompt.Visibility = LanguageUtility.CurrentLanguageID == ApplicationLanguages.PrimaryLanguageOverride ? Visibility.Collapsed : Visibility.Visible;
 
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
