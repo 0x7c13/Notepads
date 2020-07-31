@@ -14,6 +14,7 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -26,7 +27,7 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsFirstInstance = false;
+        public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
@@ -43,7 +44,7 @@
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
 
-            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
@@ -85,31 +86,35 @@
                 rootFrameCreated = true;
 
                 ThemeSettingsService.Initialize();
-                EditorSettingsService.Initialize();
+                AppSettingsService.Initialize();
             }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
-                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}" },
-                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
-                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
-                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
-                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
-                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
-                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
-                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
-                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
+                { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", AppSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", AppSettingsService.EditorFontFamily },
+                { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
+                { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
+                { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
-                { "IsLineHighlighterEnabled", EditorSettingsService.IsLineHighlighterEnabled.ToString() },
-                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() },
+                { "IsSmartCopyEnabled", AppSettingsService.IsSmartCopyEnabled.ToString() }
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
@@ -178,7 +183,18 @@
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            try
+            {
+                // Here we flush the Clipboard again to make sure content in clipboard to remain available
+                // after the application shuts down.
+                Clipboard.Flush();
+            }
+            catch (Exception)
+            {
+                // Best efforts
+            }
+
             deferral.Complete();
         }
 
@@ -196,7 +212,7 @@
                 { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 

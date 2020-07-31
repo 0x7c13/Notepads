@@ -8,6 +8,7 @@
     using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
@@ -27,6 +28,7 @@
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
+        event EventHandler FileRenamed;
 
         Guid Id { get; set; }
 
@@ -52,12 +54,18 @@
 
         TextEditorMode Mode { get; }
 
+        bool DisplayLineNumbers { get; set; }
+
+        bool DisplayLineHighlighter { get; set; }
+
         void Init(TextFile textFile,
             StorageFile file,
             bool resetLastSavedSnapshot = true,
             bool clearUndoQueue = true,
             bool isModified = false,
             bool resetText = true);
+
+        Task RenameAsync(string newFileName);
 
         string GetText();
 
@@ -127,5 +135,7 @@
         void HideGoToControl();
 
         void Dispose();
+
+        FlyoutBase GetContextFlyout();
     }
 }

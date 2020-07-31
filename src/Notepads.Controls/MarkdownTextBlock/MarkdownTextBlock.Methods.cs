@@ -311,7 +311,13 @@ namespace Notepads.Controls
                         }
                         else
                         {
-                            var theme = themeListener.CurrentTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                            //var theme = themeListener.CurrentTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                            //if (RequestedTheme != ElementTheme.Default)
+                            //{
+                            //    theme = RequestedTheme;
+                            //}
+
+                            var theme = ActualTheme;
                             if (RequestedTheme != ElementTheme.Default)
                             {
                                 theme = RequestedTheme;

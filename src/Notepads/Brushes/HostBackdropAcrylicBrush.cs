@@ -99,17 +99,17 @@
             }
         }
 
-        public Uri TextureUri { get; set; }
+        public Uri NoiseTextureUri { get; set; }
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
 
-        private static readonly UISettings UISettings = new UISettings();
+        private readonly UISettings UISettings = new UISettings();
 
         private const float _acrylicTintOpacityMinThreshold = 0.35f;
 
         private readonly DispatcherQueue _dispatcherQueue;
 
-        private static readonly Dictionary<Uri, CanvasBitmap> CanvasBitmapCache = new Dictionary<Uri, CanvasBitmap>();
+        private CompositionSurfaceBrush _noiseBrush;
 
         public HostBackdropAcrylicBrush()
         {
@@ -193,123 +193,139 @@
 
         public async Task<CompositionBrush> BuildHostBackdropAcrylicBrushAsync()
         {
-            var luminosityColorEffect = new ColorSourceEffect()
+            int stage = 0;
+
+            try
             {
-                Name = "LuminosityColor",
-                Color = LuminosityColor
-            };
-
-            TintOpacityToArithmeticCompositeEffectSourceAmount(TintOpacity, _acrylicTintOpacityMinThreshold,
-                out var source1Amount,
-                out var source2Amount);
-
-            var luminosityBlendingEffect = new ArithmeticCompositeEffect
-            {
-                Name = "LuminosityBlender",
-                Source1 = new CompositionEffectSourceParameter("Backdrop"),
-                Source2 = luminosityColorEffect,
-                MultiplyAmount = 0,
-                Source1Amount = source1Amount,
-                Source2Amount = source2Amount,
-                Offset = 0
-            };
-
-            var noiseBorderEffect = new BorderEffect()
-            {
-                ExtendX = CanvasEdgeBehavior.Wrap,
-                ExtendY = CanvasEdgeBehavior.Wrap,
-                Source = new CompositionEffectSourceParameter("Noise"),
-            };
-
-            var noiseBlendingEffect = new BlendEffect()
-            {
-                Name = "NoiseBlender",
-                Mode = BlendEffectMode.Overlay,
-                Background = luminosityBlendingEffect,
-                Foreground = noiseBorderEffect
-            };
-
-            var noiseImageBrush = await LoadImageBrushAsync(TextureUri);
-
-            IGraphicsEffect finalEffect;
-
-            if (noiseImageBrush == null)
-            {
-                finalEffect = luminosityBlendingEffect;
-            }
-            else
-            {
-                finalEffect = noiseBlendingEffect;
-            }
-
-            CompositionEffectFactory effectFactory = Window.Current.Compositor.CreateEffectFactory(finalEffect,
-                new[]
+                stage = 1;
+                var luminosityColorEffect = new ColorSourceEffect()
                 {
-                    "LuminosityColor.Color",
-                    "LuminosityBlender.Source1Amount",
-                    "LuminosityBlender.Source2Amount"
-                });
+                    Name = "LuminosityColor",
+                    Color = LuminosityColor
+                };
 
-            CompositionEffectBrush brush = effectFactory.CreateBrush();
+                TintOpacityToArithmeticCompositeEffectSourceAmount(TintOpacity, _acrylicTintOpacityMinThreshold,
+                    out var source1Amount,
+                    out var source2Amount);
 
-            var hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
-            brush.SetSourceParameter("Backdrop", hostBackdropBrush);
+                stage = 2;
+                var luminosityBlendingEffect = new ArithmeticCompositeEffect
+                {
+                    Name = "LuminosityBlender",
+                    Source1 = new CompositionEffectSourceParameter("Backdrop"),
+                    Source2 = luminosityColorEffect,
+                    MultiplyAmount = 0,
+                    Source1Amount = source1Amount,
+                    Source2Amount = source2Amount,
+                    Offset = 0
+                };
 
-            if (noiseImageBrush != null)
-            {
-                brush.SetSourceParameter("Noise", noiseImageBrush);
+                stage = 3;
+                var noiseBorderEffect = new BorderEffect()
+                {
+                    ExtendX = CanvasEdgeBehavior.Wrap,
+                    ExtendY = CanvasEdgeBehavior.Wrap,
+                    Source = new CompositionEffectSourceParameter("Noise"),
+                };
+
+                stage = 4;
+                var noiseBlendingEffect = new BlendEffect()
+                {
+                    Name = "NoiseBlender",
+                    Mode = BlendEffectMode.Overlay,
+                    Background = luminosityBlendingEffect,
+                    Foreground = noiseBorderEffect
+                };
+
+                stage = 5;
+                _noiseBrush = _noiseBrush ?? await LoadImageBrushAsync(NoiseTextureUri);
+
+                IGraphicsEffect finalEffect;
+
+                if (_noiseBrush == null)
+                {
+                    finalEffect = luminosityBlendingEffect;
+                }
+                else
+                {
+                    finalEffect = noiseBlendingEffect;
+                }
+
+                stage = 6;
+                CompositionEffectFactory effectFactory = Window.Current.Compositor.CreateEffectFactory(finalEffect,
+                    new[]
+                    {
+                        "LuminosityColor.Color",
+                        "LuminosityBlender.Source1Amount",
+                        "LuminosityBlender.Source2Amount"
+                    });
+
+                stage = 7;
+                CompositionEffectBrush brush = effectFactory.CreateBrush();
+
+                stage = 8;
+                var hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
+                brush.SetSourceParameter("Backdrop", hostBackdropBrush);
+
+                stage = 9;
+                if (_noiseBrush != null)
+                {
+                    brush.SetSourceParameter("Noise", _noiseBrush);
+                }
+
+                return brush;
             }
-
-            return brush;
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("FailedToBuildAcrylicBrushInternal",
+                    new Dictionary<string, string>
+                    {
+                        { "Exception", ex.ToString() },
+                        { "FailedAtStage", stage.ToString() },
+                    });
+                throw; // rethrow here
+            }
         }
 
         private static async Task<CompositionSurfaceBrush> LoadImageBrushAsync(Uri textureUri)
         {
             try
             {
-                CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice();
-                DisplayInformation display = DisplayInformation.GetForCurrentView();
-                float dpi = display.LogicalDpi;
-
-                CanvasBitmap bitmap;
-                if (CanvasBitmapCache.ContainsKey(textureUri))
+                using (CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice())
                 {
-                    bitmap = CanvasBitmapCache[textureUri];
-                }
-                else
-                {
-                    bitmap = await CanvasBitmap.LoadAsync(sharedDevice, textureUri, dpi >= 96 ? dpi : 96);
-                    CanvasBitmapCache[textureUri] = bitmap;
-                }
+                    DisplayInformation display = DisplayInformation.GetForCurrentView();
+                    float dpi = display.LogicalDpi;
 
-                CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(Window.Current.Compositor, sharedDevice);
-                CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+                    CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(sharedDevice, textureUri, dpi >= 96 ? dpi : 96);
 
-                Size size = bitmap.Size;
-                Size sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
-                CanvasComposition.Resize(surface, sizeInPixels);
+                    CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(Window.Current.Compositor, sharedDevice);
+                    CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
 
-                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi))
-                {
-                    session.Clear(Color.FromArgb(0, 0, 0, 0));
-                    session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                    session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+                    Size size = bitmap.Size;
+                    Size sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
+                    CanvasComposition.Resize(surface, sizeInPixels);
 
-                    CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
-                    brush.Stretch = CompositionStretch.None;
-                    double pixels = display.RawPixelsPerViewPixel;
-                    if (pixels > 1)
+                    using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi))
                     {
-                        brush.Scale = new Vector2((float)(1 / pixels));
-                        brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
+                        session.Clear(Color.FromArgb(0, 0, 0, 0));
+                        session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
+                        session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+
+                        CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
+                        brush.Stretch = CompositionStretch.None;
+                        double pixels = display.RawPixelsPerViewPixel;
+                        if (pixels > 1)
+                        {
+                            brush.Scale = new Vector2((float)(1 / pixels));
+                            brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
+                        }
+                        return brush;
                     }
-                    return brush;
                 }
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToLoadImageBrush",
-                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
+                Analytics.TrackEvent("FailedToLoadImageBrush", new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 return null;
             }
         }
@@ -330,7 +346,6 @@
             UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
 
             _semaphoreSlim?.Dispose();
-            CanvasBitmapCache.Clear();
         }
     }
 }

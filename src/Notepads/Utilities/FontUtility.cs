@@ -5,6 +5,7 @@
     using System.Linq;
     using Windows.Foundation;
     using Windows.Globalization;
+    using Windows.UI.Text;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
@@ -83,6 +84,33 @@
             "Verdana",
             "Yu Gothic"
         });
+
+        public static readonly int[] PredefinedFontSizes =
+        {
+            8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 36, 48, 72
+        };
+
+        public static readonly Dictionary<string, FontStyle> PredefinedFontStylesMap = new Dictionary<string, FontStyle>()
+        {
+            {nameof(FontStyle.Normal),  FontStyle.Normal},
+            {nameof(FontStyle.Italic),  FontStyle.Italic},
+            {nameof(FontStyle.Oblique), FontStyle.Oblique}
+        };
+
+        public static readonly Dictionary<string, ushort> PredefinedFontWeightsMap = new Dictionary<string, ushort>()
+        {
+            {nameof(FontWeights.Normal),     FontWeights.Normal.Weight},
+            {nameof(FontWeights.Thin),       FontWeights.Thin.Weight},
+            {nameof(FontWeights.ExtraLight), FontWeights.ExtraLight.Weight},
+            {nameof(FontWeights.Light),      FontWeights.Light.Weight},
+            {nameof(FontWeights.SemiLight),  FontWeights.SemiLight.Weight},
+            {nameof(FontWeights.Medium),     FontWeights.Medium.Weight},
+            {nameof(FontWeights.SemiBold),   FontWeights.SemiBold.Weight},
+            {nameof(FontWeights.Bold),       FontWeights.Bold.Weight},
+            {nameof(FontWeights.ExtraBold),  FontWeights.ExtraBold.Weight},
+            {nameof(FontWeights.Black),      FontWeights.Black.Weight},
+            {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight}
+        };
 
         public static bool IsMonospacedFont(FontFamily font)
         {

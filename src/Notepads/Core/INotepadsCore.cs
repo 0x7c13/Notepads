@@ -10,7 +10,9 @@
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
 
-    // INotepadsCore handles Tabs and TextEditor life cycle
+    /// <summary>
+    /// INotepadsCore handles Tabs and TextEditor life cycle
+    /// </summary>
     public interface INotepadsCore
     {
         event EventHandler<ITextEditor> TextEditorLoaded;
@@ -19,6 +21,7 @@
         event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
         event EventHandler<ITextEditor> TextEditorSaved;
         event EventHandler<ITextEditor> TextEditorClosing;
+        event EventHandler<ITextEditor> TextEditorRenamed;
         event EventHandler<ITextEditor> TextEditorSelectionChanged;
         event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
         event EventHandler<ITextEditor> TextEditorEncodingChanged;

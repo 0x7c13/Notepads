@@ -11,7 +11,7 @@
     <AssemblyName>Notepads</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -24,6 +24,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -108,6 +109,12 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
+    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
+    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -124,23 +131,30 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
-    <Compile Include="Views\AboutPage.xaml.cs">
+    <Compile Include="Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="Utilities\FutureAccessListUtility.cs" />
+    <Compile Include="Utilities\LanguageUtility.cs" />
+    <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdvancedSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\AdvancedSettingsPage.xaml.cs">
       <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPanel.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPanel.xaml.cs">
       <DependentUpon>SettingsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PersonalizationSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\PersonalizationSettingsPage.xaml.cs">
       <DependentUpon>PersonalizationSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TextAndEditorSettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\TextAndEditorSettingsPage.xaml.cs">
       <DependentUpon>TextAndEditorSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextEditor\ITextEditor.cs" />
@@ -170,17 +184,16 @@
       <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DiffViewer\ISideBySideDiffViewer.cs" />
-    <Compile Include="Extensions\IContentExtension.cs" />
     <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
     <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
-    <Compile Include="Views\NotepadsMainPage.MainMenu.cs" />
-    <Compile Include="Views\NotepadsMainPage.Notification.cs" />
-    <Compile Include="Views\NotepadsMainPage.Theme.cs" />
-    <Compile Include="Services\FileTypeService.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Notification.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.Theme.cs" />
+    <Compile Include="Services\FileExtensionProvider.cs" />
     <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="Views\NotepadsMainPage.IO.cs" />
-    <Compile Include="Views\NotepadsMainPage.StatusBar.cs" />
-    <Compile Include="Views\NotepadsMainPage.ViewModes.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.IO.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.StatusBar.cs" />
+    <Compile Include="Views\MainPage\NotepadsMainPage.ViewModes.cs" />
     <Compile Include="Services\MRUService.cs" />
     <Compile Include="Utilities\BrushUtility.cs" />
     <Compile Include="Utilities\Downloader.cs" />
@@ -196,7 +209,6 @@
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Controls\Dialog\NotepadsDialogFactory.cs" />
     <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
@@ -205,7 +217,7 @@
     <Compile Include="Utilities\EncodingUtility.cs" />
     <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
     <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\EditorSettingsService.cs" />
+    <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
     <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />
@@ -218,7 +230,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NotepadsMainPage.xaml.cs">
+    <Compile Include="Views\MainPage\NotepadsMainPage.xaml.cs">
       <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -321,7 +333,6 @@
     <Content Include="Assets\FileIcons\md.targetsize-48.png" />
     <Content Include="Assets\noise_high.png" />
     <Content Include="Assets\noise_low.png" />
-    <Content Include="Assets\notepads.png" />
     <Content Include="Assets\no_noise.png" />
     <Content Include="Assets\FileIcons\php.targetsize-512.png" />
     <Content Include="Assets\FileIcons\php.png" />
@@ -471,6 +482,7 @@
     <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -493,27 +505,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AboutPage.xaml">
+    <Page Include="Views\Settings\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdvancedSettingsPage.xaml">
+    <Page Include="Views\Settings\AdvancedSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPanel.xaml">
+    <Page Include="Views\Settings\SettingsPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PersonalizationSettingsPage.xaml">
+    <Page Include="Views\Settings\PersonalizationSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TextAndEditorSettingsPage.xaml">
+    <Page Include="Views\Settings\TextAndEditorSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -533,7 +545,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NotepadsMainPage.xaml">
+    <Page Include="Views\MainPage\NotepadsMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -584,19 +596,22 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.6.1</Version>
+      <Version>1.6.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.1.0</Version>
+      <Version>3.4.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.1.0</Version>
+      <Version>3.4.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>6.0.0</Version>
+      <Version>6.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.Registry">
+      <Version>4.7.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
@@ -739,6 +754,87 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\bg-BG\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\bg-BG\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-CH\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\de-DE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\es-ES\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fi-FI\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\fr-FR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hi-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hr-HR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\hu-HU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\it-IT\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ja-JP\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ka-GE\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ko-KR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\or-IN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pl-PL\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\pt-BR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ru-RU\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\tr-TR\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\uk-UA\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-CN\Manifest.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

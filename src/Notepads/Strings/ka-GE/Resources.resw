@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -584,5 +584,113 @@
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
     <value>მარჯვნიდან მარცხნივ კითხვა</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
+  </data>
+  <data name="FontStyle_Italic" xml:space="preserve">
+    <value>Italic</value>
+    <comment>FontStyle: "Italic"</comment>
+  </data>
+  <data name="FontStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontStyle: "Normal"</comment>
+  </data>
+  <data name="FontStyle_Oblique" xml:space="preserve">
+    <value>Oblique</value>
+    <comment>FontStyle: "Oblique"</comment>
+  </data>
+  <data name="FontWeight_Black" xml:space="preserve">
+    <value>Black</value>
+    <comment>FontWeight: "Black"</comment>
+  </data>
+  <data name="FontWeight_Bold" xml:space="preserve">
+    <value>Bold</value>
+    <comment>FontWeight: "Bold"</comment>
+  </data>
+  <data name="FontWeight_ExtraBlack" xml:space="preserve">
+    <value>Extra Black</value>
+    <comment>FontWeight: "ExtraBlack"</comment>
+  </data>
+  <data name="FontWeight_ExtraBold" xml:space="preserve">
+    <value>Extra Bold</value>
+    <comment>FontWeight: "ExtraBold"</comment>
+  </data>
+  <data name="FontWeight_ExtraLight" xml:space="preserve">
+    <value>Extra Light</value>
+    <comment>FontWeight: "ExtraLight"</comment>
+  </data>
+  <data name="FontWeight_Light" xml:space="preserve">
+    <value>Light</value>
+    <comment>FontWeight: "Light"</comment>
+  </data>
+  <data name="FontWeight_Medium" xml:space="preserve">
+    <value>Medium</value>
+    <comment>FontWeight: "Medium"</comment>
+  </data>
+  <data name="FontWeight_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontWeight: "Normal"</comment>
+  </data>
+  <data name="FontWeight_SemiBold" xml:space="preserve">
+    <value>Semi Bold</value>
+    <comment>FontWeight: "SemiBold"</comment>
+  </data>
+  <data name="FontWeight_SemiLight" xml:space="preserve">
+    <value>Semi Light</value>
+    <comment>FontWeight: "SemiLight"</comment>
+  </data>
+  <data name="FontWeight_Thin" xml:space="preserve">
+    <value>Thin</value>
+    <comment>FontWeight: "Thin"</comment>
+  </data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>FileRenameDialog: CloseButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+    <comment>FileRenameDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileRenameDialog_Title" xml:space="preserve">
+    <value>Rename</value>
+    <comment>FileRenameDialog: "Title" display text.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
+    <value>File name should not contain invalid characters</value>
+    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
+    <value>File name should not contain leading spaces</value>
+    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
+    <value>File name should not contain trailing spaces</value>
+    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
+  </data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
+    <value>File name cannot be empty or all whitespace</value>
+    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
+  </data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
+    <value>File name is invalid or not allowed</value>
+    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
+  </data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
+    <value>File name cannot be longer than 255 characters</value>
+    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
+    <value>Rename</value>
+    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
+    <value>Renamed</value>
+    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
+  </data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
+    <value>Empty file extension is not supported at this moment</value>
+    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
+  </data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
+    <value>File extension "{0}" is not supported at this moment</value>
+    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

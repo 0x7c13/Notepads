@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="150" align="center" src="src/Notepads/Assets/appicon_ws.gif">
+  <img width="128" align="center" src="src/Notepads/Assets/appicon_ws.gif">
 </p>
 <h1 align="center">
   Notepads
@@ -62,13 +62,17 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ## Platform limitations (UWP):
 
 * You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
-* You cannot associate potentially harmful file types (.ps1, .bat, .xaml, etc.) with Notepads.
-* If you drag a file into Notepads, file save picker will ask you to save it before closing due to UWP restriction.
+* You cannot associate potentially harmful file types (.cmd, .bat etc.) with Notepads.
 * Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
 
 ## Downloads:
 
-Notepads is avaialbe in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+Notepads is available in Microsoft Store. You can get the latest version of Notepads here for free: [Microsoft Store Link](https://www.microsoft.com/store/apps/9nhl4nsc67wm).
+
+You can also use Windows Package Manager to install notepads:
+```cmd
+winget install notepads
+```
 
 ## Roadmap:
 
@@ -112,32 +116,34 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 
 ## Special Thanks:
 
-* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon is greatly inspired by the new icon for Windows Terminal.
+* [Yi Zhou](http://zhouyiwork.com/) - App icon designer, Notepads App Icon (old) is greatly inspired by the new icon for Windows Terminal.
+* [Mahmoud Qurashy](https://github.com/mah-qurashy) - App icon and file icon(s) designer, creator of the new Notepads App Icon.
+
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis), [Maickonn Richard](https://github.com/Maickonn)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
 * Localization Contributors: 
-    * [fr-FR][French]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
-    * [es-ES][Spanish]: [Jose Pinilla](https://github.com/joseppinilla)
-    * [zh-CN][Simplified Chinese]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
-    * [hu-HU][Hungarian]: [Csányi István](https://github.com/AmionSky)
-    * [tr-TR][Turkish]: [Mert Can Demir](https://github.com/validatedev)
-    * [ja-JP][Japanese]: [Mamoru Satoh](https://github.com/pnp0a03)
-    * [de-DE][German]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
-    * [ru-RU][Russian]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
-    * [fi-FI][Finnish]: [Esa Elo](https://github.com/sauihdik)
-    * [uk-UA][Ukrainian]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
-    * [it-IT][Italian]: [Andrea Guarinoni](https://github.com/guari)
-    * [cs-CZ][Czech]: [Jan Rajnoha](https://github.com/JanRajnoha)
-    * [pt-BR][Brazilian]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
-    * [ko-KR][Korean]: [Donghyeok Tak](https://github.com/tdh8316)
+    * [fr-FR][French (France)]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou)
+    * [es-ES][Spanish (Spain)]: [Jose Pinilla](https://github.com/joseppinilla)
+    * [zh-CN][Chinese (S)]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
+    * [hu-HU][Hungarian (Hungary)]: [Csányi István](https://github.com/AmionSky), [Kristóf Kékesi](https://github.com/KristofKekesi)
+    * [tr-TR][Turkish (Turkey)]: [Mert Can Demir](https://github.com/validatedev)
+    * [ja-JP][Japanese (Japan)]: [Mamoru Satoh](https://github.com/pnp0a03)
+    * [de-DE][German (Germany)]/[de-CH][German (Switzerland)]: [Walter Wolf](https://github.com/WalterWolf49)
+    * [ru-RU][Russian (Russia)]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
+    * [fi-FI][Finnish (Finland)]: [Esa Elo](https://github.com/sauihdik)
+    * [uk-UA][Ukrainian (Ukraine)]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
+    * [it-IT][Italian (Italy)]: [Andrea Guarinoni](https://github.com/guari)
+    * [cs-CZ][Czech (Czech Republic)]: [Jan Rajnoha](https://github.com/JanRajnoha)
+    * [pt-BR][Portuguese (Brazil)]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
+    * [ko-KR][Korean (Korea)]: [Donghyeok Tak](https://github.com/tdh8316)
     * [hi-IN][Hindi (India)]/[or-IN][Odia (India)]: [Soumya Ranjan Mahunt](https://github.com/soumyamahunt)
-    * [pl-PL][Polish]: [Daxxxis](https://github.com/Daxxxis)
+    * [pl-PL][Polish (Poland)]: [Daxxxis](https://github.com/Daxxxis)
     * [ka-GE][Georgian (Georgia)]: [guram mazanashvili](https://github.com/gmaza)
+    * [hr-HR][Croatian (Croatia)]: [milotype](https://github.com/milotype)
+    * [zh-TW][Chinese (T)]: [Tony Yao](https://github.com/SeaBao)
 
 [![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 
 ## Stay tuned 📢:
-
-* [Original Reddit Post](https://www.reddit.com/r/Windows10/comments/btx5qs/my_design_implementation_of_modern_fluent_notepad/)
 * [Notepads Discord Server](https://discord.gg/VqetCub)

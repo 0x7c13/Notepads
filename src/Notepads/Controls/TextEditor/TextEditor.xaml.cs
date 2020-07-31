@@ -18,8 +18,10 @@
     using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public enum TextEditorMode
@@ -51,6 +53,7 @@
         public event EventHandler FontZoomFactorChanged;
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
+        public event EventHandler FileRenamed;
 
         public Guid Id { get; set; }
 
@@ -77,19 +80,33 @@
             get => _editingFile;
             private set
             {
-                if (value == null)
-                {
-                    EditingFileName = null;
-                    EditingFilePath = null;
-                    FileType = FileType.TextFile;
-                }
-                else
-                {
-                    EditingFileName = value.Name;
-                    EditingFilePath = value.Path;
-                    FileType = FileTypeUtility.GetFileTypeByFileName(value.Name);
-                }
                 _editingFile = value;
+                UpdateDocumentInfo();
+            }
+        }
+
+        private void UpdateDocumentInfo()
+        {
+            if (EditingFile == null)
+            {
+                EditingFileName = null;
+                EditingFilePath = null;
+                FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+            }
+            else
+            {
+                EditingFileName = EditingFile.Name;
+                EditingFilePath = EditingFile.Path;
+                FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
+            }
+
+            // Hide content preview if current file type is not supported for previewing
+            if (!FileTypeUtility.IsPreviewSupported(FileType))
+            {
+                if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
+                {
+                    ShowHideContentPreview();
+                }
             }
         }
 
@@ -158,6 +175,18 @@
             }
         }
 
+        public bool DisplayLineNumbers
+        {
+            get => TextEditorCore.DisplayLineNumbers;
+            set => TextEditorCore.DisplayLineNumbers = value;
+        }
+
+        public bool DisplayLineHighlighter
+        {
+            get => TextEditorCore.DisplayLineHighlighter;
+            set => TextEditorCore.DisplayLineHighlighter = value;
+        }
+
         public TextEditor()
         {
             InitializeComponent();
@@ -166,6 +195,7 @@
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested += TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
             // Init shortcuts
@@ -176,13 +206,6 @@
             base.Loaded += TextEditor_Loaded;
             base.Unloaded += TextEditor_Unloaded;
             base.KeyDown += TextEditor_KeyDown;
-
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged += LineHighlighter_OnViewStateChanged;
-            TextEditorCore.SelectionChanged += LineHighlighter_OnSelectionChanged;
-            TextEditorCore.FontSizeChanged += LineHighlighter_OnFontSizeChanged;
-            TextEditorCore.TextWrappingChanged += LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerViewChanging += LineHighlighter_OnScrollViewerViewChanging;
-            TextEditorCore.SizeChanged += LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         }
@@ -201,6 +224,7 @@
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
             TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CutSelectedTextToWindowsClipboardRequested -= TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
             {
@@ -214,13 +238,6 @@
             base.Loaded -= TextEditor_Loaded;
             base.Unloaded -= TextEditor_Unloaded;
             base.KeyDown -= TextEditor_KeyDown;
-
-            EditorSettingsService.OnDefaultLineHighlighterViewStateChanged -= LineHighlighter_OnViewStateChanged;
-            TextEditorCore.SelectionChanged -= LineHighlighter_OnSelectionChanged;
-            TextEditorCore.FontSizeChanged -= LineHighlighter_OnFontSizeChanged;
-            TextEditorCore.TextWrappingChanged -= LineHighlighter_OnTextWrappingChanged;
-            TextEditorCore.ScrollViewerViewChanging -= LineHighlighter_OnScrollViewerViewChanging;
-            TextEditorCore.SizeChanged -= LineHighlighter_OnSizeChanged;
 
             TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
@@ -275,6 +292,22 @@
             });
         }
 
+        public async Task RenameAsync(string newFileName)
+        {
+            if (EditingFile == null)
+            {
+                FileNamePlaceholder = newFileName;
+            }
+            else
+            {
+                await EditingFile.RenameAsync(newFileName);
+            }
+
+            UpdateDocumentInfo();
+
+            FileRenamed?.Invoke(this, EventArgs.Empty);
+        }
+
         public string GetText()
         {
             return TextEditorCore.GetText();
@@ -321,7 +354,11 @@
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded?.Invoke(this, e);
+
             StartCheckingFileStatusPeriodically();
+
+            // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
+            TextEditorCore.TryInsertNewLogEntry();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -416,7 +453,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => ShowHideContentPreview()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => { if (FileTypeUtility.IsPreviewSupported(FileType)) ShowHideContentPreview(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
@@ -488,12 +525,10 @@
             }
 
             TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
-            TextEditorCore.FontSize = metadata.FontZoomFactor * EditorSettingsService.EditorFontSize;
+            TextEditorCore.FontSize = metadata.FontZoomFactor * AppSettingsService.EditorFontSize;
             TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
             TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
             TextEditorCore.ClearUndoQueue();
-
-            if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
         }
 
         public void RevertAllChanges()
@@ -721,6 +756,11 @@
             }
         }
 
+        public FlyoutBase GetContextFlyout()
+        {
+            return TextEditorCore.ContextFlyout;
+        }
+
         public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
         {
             if (args != null)
@@ -728,6 +768,27 @@
                 args.Handled = true;
             }
 
+            if (AppSettingsService.IsSmartCopyEnabled)
+            {
+                TextEditorCore.SmartlyTrimTextSelection();
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+        }
+
+        public void CutSelectedTextToWindowsClipboard(TextControlCuttingToClipboardEventArgs args)
+        {
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+
+            CopySelectedTextToWindowsClipboardInternal();
+            TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
+        }
+
+        private void CopySelectedTextToWindowsClipboardInternal()
+        {
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
@@ -758,11 +819,8 @@
                     return false;
                 }
             }
-            if (!string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText()))
-            {
-                return false;
-            }
-            return true;
+
+            return string.Equals(LastSavedSnapshot.Content, TextEditorCore.GetText());
         }
 
         private void OnEscapeKeyDown()
@@ -863,6 +921,11 @@
         private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
         {
             CopySelectedTextToWindowsClipboard(e);
+        }
+
+        private void TextEditorCore_CutSelectedTextToWindowsClipboardRequested(object sender, TextControlCuttingToClipboardEventArgs e)
+        {
+            CutSelectedTextToWindowsClipboard(e);
         }
 
         private void FindAndReplaceControl_OnToggleReplaceModeButtonClicked(object sender, bool showReplaceBar)
@@ -1036,98 +1099,6 @@
         {
             GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
-        }
-
-        private void DrawLineHighlighter()
-        {
-            TextEditorCore.Document.Selection.GetRect(Windows.UI.Text.PointOptions.ClientCoordinates, out Windows.Foundation.Rect highlightRect, out var _);
-            LineHighlighter.Height = 1.35 * TextEditorCore.FontSize;
-
-            var lineHighlighterBorderThickness = 0.1 * LineHighlighter.Height;
-
-            TextEditorCore.GetScrollViewerPosition(out var _, out var verticalOffset);
-            var lineHighlighterMargin = new Thickness(0, TextEditorCore.Padding.Top + highlightRect.Y - verticalOffset, 0, 0);
-
-            if (lineHighlighterMargin.Top >= 0)
-            {
-                LineHighlighter.Visibility = Visibility.Visible;
-                LineHighlighter.Margin = lineHighlighterMargin;
-                LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness);
-            }
-            else
-            {
-                if (LineHighlighter.Height + lineHighlighterMargin.Top > TextEditorCore.Padding.Top)
-                {
-                    LineHighlighter.BorderThickness = new Thickness(lineHighlighterBorderThickness, 0, lineHighlighterBorderThickness, lineHighlighterBorderThickness);
-                    LineHighlighter.Height += lineHighlighterMargin.Top;
-                    LineHighlighter.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    LineHighlighter.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
-
-        private async void LineHighlighter_OnViewStateChanged(object sender, bool enabled)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (enabled)
-                {
-                    LineHighlighter.Visibility = Visibility.Visible;
-                    DrawLineHighlighter();
-                }
-                else
-                {
-                    LineHighlighter.Visibility = Visibility.Collapsed;
-                }
-            });
-        }
-
-        private async void LineHighlighter_OnSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnTextWrappingChanged(object sender, TextWrapping e)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled)
-                {
-                    // TextWrapping changed event happens before layout updated, so we need to update here
-                    TextEditorCore.UpdateLayout();
-                    DrawLineHighlighter();
-                }
-            });
-        }
-
-        private async void LineHighlighter_OnFontSizeChanged(object sender, double e)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
-        }
-
-        private async void LineHighlighter_OnScrollViewerViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
-        {
-            await Dispatcher.CallOnUIThreadAsync(() =>
-            {
-                if (EditorSettingsService.IsLineHighlighterEnabled) DrawLineHighlighter();
-            });
         }
     }
 }

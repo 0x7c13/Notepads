@@ -14,24 +14,26 @@
 
             if (searchString.Contains(RichEditBoxDefaultLineEnding.ToString())) return string.Empty;
 
-            if (string.IsNullOrEmpty(searchString) && Document.Selection.StartPosition < _content.Length)
+            var document = GetText();
+
+            if (string.IsNullOrEmpty(searchString) && Document.Selection.StartPosition < document.Length)
             {
                 var startIndex = Document.Selection.StartPosition;
                 var endIndex = startIndex;
 
                 for (; startIndex >= 0; startIndex--)
                 {
-                    if (!char.IsLetterOrDigit(_content[startIndex]))
+                    if (!char.IsLetterOrDigit(document[startIndex]))
                         break;
                 }
 
-                for (; endIndex < _content.Length; endIndex++)
+                for (; endIndex < document.Length; endIndex++)
                 {
-                    if (!char.IsLetterOrDigit(_content[endIndex]))
+                    if (!char.IsLetterOrDigit(document[endIndex]))
                         break;
                 }
 
-                if (startIndex != endIndex) return _content.Substring(startIndex + 1, endIndex - startIndex - 1);
+                if (startIndex != endIndex) return document.Substring(startIndex + 1, endIndex - startIndex - 1);
             }
 
             return searchString;
@@ -46,21 +48,21 @@
                 return false;
             }
 
-            var text = GetText();
+            var document = GetText();
 
-            if (Document.Selection.EndPosition > text.Length) Document.Selection.EndPosition = text.Length;
+            if (Document.Selection.EndPosition > document.Length) Document.Selection.EndPosition = document.Length;
 
             if (searchContext.UseRegex)
             {
-                return TryFindNextAndSelectUsingRegex(text, searchContext, stopAtEof, out regexError);
+                return TryFindNextAndSelectUsingRegex(document, searchContext, stopAtEof, out regexError);
             }
             else
             {
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 var index = searchContext.MatchWholeWord
-                    ? text.IndexOfWholeWord(searchContext.SearchText, Document.Selection.EndPosition, comparison)
-                    : text.IndexOf(searchContext.SearchText, Document.Selection.EndPosition, comparison);
+                    ? document.IndexOfWholeWord(searchContext.SearchText, Document.Selection.EndPosition, comparison)
+                    : document.IndexOf(searchContext.SearchText, Document.Selection.EndPosition, comparison);
 
                 if (index != -1)
                 {
@@ -72,8 +74,8 @@
                     if (!stopAtEof)
                     {
                         index = searchContext.MatchWholeWord
-                            ? text.IndexOfWholeWord(searchContext.SearchText, 0, comparison)
-                            : text.IndexOf(searchContext.SearchText, 0, comparison);
+                            ? document.IndexOfWholeWord(searchContext.SearchText, 0, comparison)
+                            : document.IndexOf(searchContext.SearchText, 0, comparison);
 
                         if (index != -1)
                         {
@@ -102,18 +104,18 @@
                 return false;
             }
 
-            var text = GetText();
+            var document = GetText();
 
             if (searchContext.UseRegex)
             {
-                return TryFindPreviousAndSelectUsingRegex(text, searchContext, out regexError, stopAtBof);
+                return TryFindPreviousAndSelectUsingRegex(document, searchContext, out regexError, stopAtBof);
             }
             else
             {
                 var searchIndex = Document.Selection.StartPosition - 1;
                 if (!stopAtBof && searchIndex < 0)
                 {
-                    searchIndex = text.Length - 1;
+                    searchIndex = document.Length - 1;
                 }
                 else if (stopAtBof)
                 {
@@ -123,8 +125,8 @@
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 var index = searchContext.MatchWholeWord
-                    ? text.LastIndexOfWholeWord(searchContext.SearchText, searchIndex, comparison)
-                    : text.LastIndexOf(searchContext.SearchText, searchIndex, comparison);
+                    ? document.LastIndexOfWholeWord(searchContext.SearchText, searchIndex, comparison)
+                    : document.LastIndexOf(searchContext.SearchText, searchIndex, comparison);
 
                 if (index != -1)
                 {
@@ -134,8 +136,8 @@
                 else
                 {
                     index = searchContext.MatchWholeWord
-                        ? text.LastIndexOfWholeWord(searchContext.SearchText, text.Length - 1, comparison)
-                        : text.LastIndexOf(searchContext.SearchText, text.Length - 1, comparison);
+                        ? document.LastIndexOfWholeWord(searchContext.SearchText, document.Length - 1, comparison)
+                        : document.LastIndexOf(searchContext.SearchText, document.Length - 1, comparison);
 
                     if (index != -1)
                     {
@@ -156,6 +158,8 @@
 
         public bool TryFindNextAndReplace(SearchContext searchContext, string replaceText, out bool regexError)
         {
+            Document.Selection.EndPosition = Document.Selection.StartPosition;
+
             if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))
             {
                 regexError = error;
@@ -166,6 +170,7 @@
                 }
 
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
+                TryFindNextAndSelect(searchContext, stopAtEof: true, out _);
                 return true;
             }
 
