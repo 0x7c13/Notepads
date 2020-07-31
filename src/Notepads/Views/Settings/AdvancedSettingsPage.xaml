@@ -71,7 +71,7 @@
                                   x:Name="AlwaysOpenNewWindowToggleSwitch" />
                     <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
                 </StackPanel>
-                <StackPanel x:Name="LanguagePreferenceSettingsPanel" x:Load="False">
+                <StackPanel x:Name="LanguagePreferenceSettingsPanel">
                     <TextBlock
                     x:Name="LanguagePreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title"
@@ -96,7 +96,7 @@
                         <TextBlock x:Name="RestartPrompt"
                                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
                                    Style="{ThemeResource DescriptionTextBlockStyle}"
-                                   Foreground="Yellow"
+                                   Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                    TextWrapping="Wrap"
                                    Visibility="Collapsed"
                                    Margin="0,4,0,0"/>
