@@ -1004,10 +1004,15 @@
                             out regexError);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.TryFindNextAndReplace(
-                        findAndReplaceEventArgs.SearchContext,
-                        findAndReplaceEventArgs.ReplaceText,
-                        out regexError);
+                    found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
+                        ? TextEditorCore.TryFindNextAndReplace(
+                            findAndReplaceEventArgs.SearchContext,
+                            findAndReplaceEventArgs.ReplaceText,
+                            out regexError)
+                        : TextEditorCore.TryFindPreviousAndReplace(
+                            findAndReplaceEventArgs.SearchContext,
+                            findAndReplaceEventArgs.ReplaceText,
+                            out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
                     found = TextEditorCore.TryFindAndReplaceAll(
