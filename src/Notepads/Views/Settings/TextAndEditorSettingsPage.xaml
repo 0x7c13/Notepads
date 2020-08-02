@@ -214,21 +214,10 @@
                             <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton" Text="Custom Search Engine" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
-                    <Grid x:Name="CustomSearchUrlPanel" Margin="-7,5,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomSearchUrlSetter" Style="{StaticResource DismissButtonStyle}" x:Name="CustomSearchUrlSetter" Grid.Row="0" Grid.Column="0" Width="36" Height="30" FontSize="17" Visibility="Visible" IsEnabled="False"/>
-                        <TextBox Style="{StaticResource TransparentTextBoxStyle}" x:Name="CustomSearchUrl" Grid.Row="0" Grid.Column="1" Height="30" BorderThickness="0" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False"/>
-                        <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource DescriptionTextBlockStyle}" x:Name="CustomUrlErrorReport" Grid.Row="1" Grid.Column="1" Foreground="Red" Visibility="Collapsed" TextWrapping="Wrap"/>
-                    </Grid>
+                    <StackPanel  Margin="28,5,0,10">
+                        <TextBox Style="{StaticResource TransparentTextBoxStyle}" BorderThickness="0" x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
+                        <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource DescriptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
+                    </StackPanel>
                 </StackPanel>
                 <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
             </StackPanel>

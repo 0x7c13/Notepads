@@ -246,8 +246,6 @@
             GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
             DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
             CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
-            CustomSearchUrl.TextChanged += CustomSearchUrl_TextChanged;
-            CustomSearchUrlSetter.Click += CustomSearchUrlSetter_Clicked;
         }
 
         private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -411,16 +409,23 @@
             var isUrlChanged = AppSettingsService.EditorCustomMadeSearchUrl != CustomSearchUrl.Text;
             var isUrlValid = IsValidUrl(CustomSearchUrl.Text);
 
-            CustomSearchUrlSetter.IsEnabled = isUrlChanged & isUrlValid;
             CustomUrlErrorReport.Visibility = isUrlValid ? Visibility.Collapsed : Visibility.Visible;
-            CustomSearchUrlSetter.Content = isUrlChanged ? new FontIcon { FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE73E" } : null;
         }
 
-        private void CustomSearchUrlSetter_Clicked(object sender, RoutedEventArgs e)
+        private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
         {
-            CustomSearchUrlSetter.Content = null;
+            if (CustomSearchUrlRadioButton.IsChecked != null &&
+                (IsValidUrl(CustomSearchUrl.Text) && (bool)CustomSearchUrlRadioButton.IsChecked))
+            {
+                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
+            }
+            else if (!IsValidUrl(CustomSearchUrl.Text) && AppSettingsService.EditorDefaultSearchEngine == SearchEngine.Custom)
+            {
+                AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Bing;
+            }
+
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
             AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
-            AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Custom;
         }
 
         private static bool IsValidUrl(string url)
@@ -462,7 +467,6 @@
             {
                 CustomSearchUrl.IsEnabled = false;
                 CustomSearchUrl.Text = AppSettingsService.EditorCustomMadeSearchUrl;
-                CustomSearchUrlSetter.Content = null;
                 CustomUrlErrorReport.Visibility = Visibility.Collapsed;
             }
         }
