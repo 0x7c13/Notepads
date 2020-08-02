@@ -23,6 +23,7 @@
         private MenuFlyoutItem _copyFullPath;
         private MenuFlyoutItem _openContainingFolder;
         private MenuFlyoutItem _rename;
+        private MenuFlyoutItem _toggleReadOnly;
 
         private string _filePath;
         private string _containingFolderPath;
@@ -46,6 +47,7 @@
             Items.Add(OpenContainingFolder);
             Items.Add(new MenuFlyoutSeparator());
             Items.Add(Rename);
+            Items.Add(ToggleReadOnly);
 
             var style = new Style(typeof(MenuFlyoutPresenter));
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
@@ -69,12 +71,21 @@
                 _filePath = _textEditor.EditingFile.Path;
                 _containingFolderPath = Path.GetDirectoryName(_filePath);
                 isFileReadonly = FileSystemUtility.IsFileReadOnly(_textEditor.EditingFile);
+                ToggleReadOnly.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ToggleReadOnly.Visibility = Visibility.Collapsed;
             }
 
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
             Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
+            ToggleReadOnly.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+            ToggleReadOnly.Text = _textEditor.IsReadOnly
+                ? _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOffButtonDisplayText")
+                : _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText");
 
             if (App.IsGameBarWidget)
             {
@@ -269,6 +280,23 @@
                     };
                 }
                 return _rename;
+            }
+        }
+
+        private MenuFlyoutItem ToggleReadOnly
+        {
+            get
+            {
+                if (_toggleReadOnly == null)
+                {
+                    _toggleReadOnly = new MenuFlyoutItem() { Text = _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText") };
+                    _toggleReadOnly.Click += (sender, args) =>
+                    {
+                        _textEditor.IsReadOnly = (_toggleReadOnly.Text == _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText"));
+                        _notepadsCore.SwitchTo(_textEditor);
+                    };
+                }
+                return _toggleReadOnly;
             }
         }
 

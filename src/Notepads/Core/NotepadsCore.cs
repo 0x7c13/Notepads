@@ -92,7 +92,10 @@
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
                 {
-                    item.Icon.Foreground = new SolidColorBrush(color);
+                    var textEditor = item.Content as ITextEditor;
+                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly 
+                    ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush 
+                    : new SolidColorBrush(color);
                     item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
@@ -203,6 +206,7 @@
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
             textEditor.FileRenamed += TextEditor_OnFileRenamed;
+            textEditor.FileAttributeChanged += TextEditor_OnFileAttributeChanged;
 
             return textEditor;
         }
@@ -241,6 +245,7 @@
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
             textEditor.FileRenamed -= TextEditor_OnFileRenamed;
+            textEditor.FileAttributeChanged -= TextEditor_OnFileAttributeChanged;
             textEditor.Dispose();
         }
 
@@ -568,6 +573,15 @@
             if (item == null) return;
             item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             TextEditorRenamed?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileAttributeChanged(object sender, EventArgs e)
+        {
+            if (!(sender is FrameworkElement element) || !(element.Parent is SetsViewItem item) || !(sender is ITextEditor textEditor)) return;
+
+            item.Icon.Foreground = textEditor.IsReadOnly
+                ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush
+                : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
         }
 
         #region DragAndDrop

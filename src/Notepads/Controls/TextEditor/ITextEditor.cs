@@ -29,6 +29,7 @@
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
         event EventHandler FileRenamed;
+        event EventHandler FileAttributeChanged;
 
         Guid Id { get; set; }
 
@@ -46,7 +47,7 @@
 
         string EditingFilePath { get; }
 
-        bool IsReadOnly { get; }
+        bool IsReadOnly { get; set; }
 
         StorageFile EditingFile { get; }
 

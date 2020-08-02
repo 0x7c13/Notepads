@@ -401,6 +401,11 @@
                                     <KeyboardAccelerator Key="F2" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutToggleFileReadonlyFlyoutItem"
+                                            Tag="ToggleFileReadonly"
+                                            Visibility="Collapsed"
+                                            Click="ToggleFileReadonlyAttribute">
+                            </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />

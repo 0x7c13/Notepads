@@ -265,6 +265,15 @@
             await RenameFileAsync(selectedEditor);
         }
 
+        private void ToggleFileReadonlyAttribute(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuFlyoutItem item)) return;
+
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            selectedEditor.IsReadOnly = !selectedEditor.IsReadOnly;
+            NotepadsCore.FocusOnTextEditor(selectedEditor);
+        }
+
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is AppBarButton button)) return;
@@ -374,6 +383,7 @@
             PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
             PathIndicatorFlyoutFileRenameFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText");
+            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Text = _resourceLoader.GetString("TextEditor_PathIndicator_ToggleMenuFlyoutItem_ToggleFileReadonly");
 
             if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted ||
                 (selectedEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(selectedEditor.EditingFile)))
@@ -384,6 +394,12 @@
             {
                 PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = true;
             }
+
+            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = selectedEditor.EditingFile == null ? Visibility.Collapsed : Visibility.Visible;
+            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.IsEnabled = selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Icon = selectedEditor.IsReadOnly
+                ? new FontIcon { FontFamily = new Windows.UI.Xaml.Media.FontFamily("Segoe MDL2 Assets"), Glyph = "\uE73E" }
+                : null;
 
             if (App.IsGameBarWidget)
             {

@@ -55,6 +55,7 @@
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
         public event EventHandler FileRenamed;
+        public event EventHandler FileAttributeChanged;
 
         public Guid Id { get; set; }
 
@@ -74,7 +75,28 @@
 
         public string EditingFilePath { get; private set; }
 
-        public bool IsReadOnly { get; private set; }
+        private Win32FileSystemUtility.File_Attributes _fileAttributes;
+
+        public bool IsReadOnly
+        {
+            get => _fileAttributes.HasFlag(Win32FileSystemUtility.File_Attributes.Readonly);
+            set
+            {
+                if (EditingFile == null) return;
+
+                if (value)
+                {
+                    _fileAttributes |= Win32FileSystemUtility.File_Attributes.Readonly;
+                }
+                else
+                {
+                    _fileAttributes &= ~Win32FileSystemUtility.File_Attributes.Readonly;
+                }
+
+                Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes);
+                UpdateAttributesInfo();
+            }
+        }
 
         private StorageFile _editingFile;
 
@@ -95,31 +117,15 @@
                 EditingFileName = null;
                 EditingFilePath = null;
                 FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
-                IsReadOnly = false;
             }
             else
             {
                 EditingFileName = EditingFile.Name;
                 EditingFilePath = EditingFile.Path;
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
-                unsafe
-                {
-                    var buff = new byte[4096];
-                    fixed (byte* fileInformationBuff = buff)
-                    {
-                        ref var fileInformation = ref Unsafe.As<byte, Win32FileSystemUtility.WIN32_FILE_ATTRIBUTE_DATA>(ref buff[0]);
-                        var isAttributeAccessSuccess = Win32FileSystemUtility.GetFileAttributesExFromApp(EditingFilePath,
-                            Win32FileSystemUtility.GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard,
-                            fileInformationBuff);
-
-                        if (isAttributeAccessSuccess)
-                        {
-                            IsReadOnly = ((Win32FileSystemUtility.File_Attributes)fileInformation.dwFileAttributes).
-                                HasFlag(Win32FileSystemUtility.File_Attributes.Readonly);
-                        }
-                    }
-                }
             }
+
+            UpdateAttributesInfo();
 
             // Hide content preview if current file type is not supported for previewing
             if (!FileTypeUtility.IsPreviewSupported(FileType))
@@ -129,6 +135,30 @@
                     ShowHideContentPreview();
                 }
             }
+        }
+
+        private void UpdateAttributesInfo()
+        {
+            if (EditingFile != null)
+            {
+                unsafe
+                {
+                    var buff = new byte[4096];
+                    fixed (byte* fileInformationBuff = buff)
+                    {
+                        ref var fileInformation = ref Unsafe.As<byte, Win32FileSystemUtility.WIN32_FILE_ATTRIBUTE_DATA>(ref buff[0]);
+
+                        if (Win32FileSystemUtility.GetFileAttributesExFromApp(EditingFilePath,
+                            Win32FileSystemUtility.GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard,
+                            fileInformationBuff))
+                        {
+                            _fileAttributes = (Win32FileSystemUtility.File_Attributes)fileInformation.dwFileAttributes;
+                        }
+                    }
+                }
+            }
+
+            FileAttributeChanged?.Invoke(this, null);
         }
 
         private bool _isModified;
