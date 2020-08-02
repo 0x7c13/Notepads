@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
@@ -10,7 +11,7 @@
 
     public static class Program
     {
-        public static bool IsFirstInstance { get; set; }
+        public static bool IsPrimaryInstance { get; set; }
 
         static void Main(string[] args)
         {
@@ -25,16 +26,20 @@
             //    // No activated event args, so this is not an activation via the multi-instance ID
             //    // Just create a new instance and let App OnActivated resolve the launch
             //    App.IsGameBarWidget = true;
-            //    App.IsFirstInstance = true;
+            //    App.IsPrimaryInstance = true;
             //    Windows.UI.Xaml.Application.Start(p => new App());
             //}
 
-            var instances = AppInstance.GetInstances();
-
-            if (instances.Count == 0)
+            var instanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+            if (isNew)
             {
-                IsFirstInstance = true;
+                IsPrimaryInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
+                instanceHandlerMutex.ReleaseMutex();
+            }
+            else
+            {
+                instanceHandlerMutex.Close();
             }
 
             if (activatedArgs is FileActivatedEventArgs)
@@ -86,9 +91,9 @@
         private static void OpenNewInstance()
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
-            App.IsFirstInstance = IsFirstInstance;
+            App.IsPrimaryInstance = IsPrimaryInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
-            IsFirstInstance = false;
+            IsPrimaryInstance = false;
         }
 
         private static void RedirectOrCreateNewInstance()
@@ -97,9 +102,9 @@
 
             if (instance.IsCurrentInstance)
             {
-                App.IsFirstInstance = IsFirstInstance;
+                App.IsPrimaryInstance = IsPrimaryInstance;
                 Windows.UI.Xaml.Application.Start(p => new App());
-                IsFirstInstance = false;
+                IsPrimaryInstance = false;
             }
             else
             {
