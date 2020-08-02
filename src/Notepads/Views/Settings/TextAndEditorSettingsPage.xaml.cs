@@ -406,10 +406,8 @@
 
         private void CustomSearchUrl_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var isUrlChanged = AppSettingsService.EditorCustomMadeSearchUrl != CustomSearchUrl.Text;
-            var isUrlValid = IsValidUrl(CustomSearchUrl.Text);
-
-            CustomUrlErrorReport.Visibility = isUrlValid ? Visibility.Collapsed : Visibility.Visible;
+            AppSettingsService.EditorCustomMadeSearchUrl = CustomSearchUrl.Text;
+            CustomUrlErrorReport.Visibility = IsValidUrl(CustomSearchUrl.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void CustomSearchUrl_LostFocus(object sender, RoutedEventArgs e)
