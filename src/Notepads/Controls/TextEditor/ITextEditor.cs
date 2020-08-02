@@ -46,6 +46,8 @@
 
         string EditingFilePath { get; }
 
+        bool IsReadOnly { get; }
+
         StorageFile EditingFile { get; }
 
         bool IsModified { get; }

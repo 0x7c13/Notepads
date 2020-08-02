@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -73,6 +74,8 @@
 
         public string EditingFilePath { get; private set; }
 
+        public bool IsReadOnly { get; private set; }
+
         private StorageFile _editingFile;
 
         public StorageFile EditingFile
@@ -92,12 +95,30 @@
                 EditingFileName = null;
                 EditingFilePath = null;
                 FileType = FileTypeUtility.GetFileTypeByFileName(FileNamePlaceholder);
+                IsReadOnly = false;
             }
             else
             {
                 EditingFileName = EditingFile.Name;
                 EditingFilePath = EditingFile.Path;
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
+                unsafe
+                {
+                    var buff = new byte[4096];
+                    fixed (byte* fileInformationBuff = buff)
+                    {
+                        ref var fileInformation = ref Unsafe.As<byte, Win32FileSystemUtility.WIN32_FILE_ATTRIBUTE_DATA>(ref buff[0]);
+                        var isAttributeAccessSuccess = Win32FileSystemUtility.GetFileAttributesExFromApp(EditingFilePath,
+                            Win32FileSystemUtility.GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard,
+                            fileInformationBuff);
+
+                        if (isAttributeAccessSuccess)
+                        {
+                            IsReadOnly = ((Win32FileSystemUtility.File_Attributes)fileInformation.dwFileAttributes).
+                                HasFlag(Win32FileSystemUtility.File_Attributes.Readonly);
+                        }
+                    }
+                }
             }
 
             // Hide content preview if current file type is not supported for previewing

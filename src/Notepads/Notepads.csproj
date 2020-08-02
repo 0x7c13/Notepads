@@ -84,6 +84,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <Optimize>false</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -139,6 +140,7 @@
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />
     <Compile Include="Utilities\LanguageUtility.cs" />
+    <Compile Include="Utilities\Win32FileSystemUtility.cs" />
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
