@@ -167,7 +167,7 @@
         private void UpdateShadowWindowIndicator()
         {
             if (StatusBar == null) return;
-            ShadowWindowIndicator.Visibility = !App.IsFirstInstance ? Visibility.Visible : Visibility.Collapsed;
+            ShadowWindowIndicator.Visibility = !App.IsPrimaryInstance ? Visibility.Visible : Visibility.Collapsed;
             if (ShadowWindowIndicator.Visibility == Visibility.Visible)
             {
                 ToolTipService.SetToolTip(ShadowWindowIndicator, _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
