@@ -270,7 +270,7 @@
             if (!(sender is MenuFlyoutItem item)) return;
 
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
-            selectedEditor.IsReadOnly = !selectedEditor.IsReadOnly;
+            selectedEditor.IsReadOnly = item.Icon.Visibility == Visibility.Collapsed;
             NotepadsCore.FocusOnTextEditor(selectedEditor);
         }
 
@@ -395,11 +395,16 @@
                 PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = true;
             }
 
-            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = selectedEditor.EditingFile == null ? Visibility.Collapsed : Visibility.Visible;
-            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.IsEnabled = selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
-            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Icon = selectedEditor.IsReadOnly
-                ? new FontIcon { FontFamily = new Windows.UI.Xaml.Media.FontFamily("Segoe MDL2 Assets"), Glyph = "\uE73E" }
-                : null;
+            if (selectedEditor.EditingFile == null)
+            {
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = Visibility.Visible;
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.IsEnabled = selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Icon.Visibility = selectedEditor.IsReadOnly ? Visibility.Visible : Visibility.Collapsed;
+            }
 
             if (App.IsGameBarWidget)
             {

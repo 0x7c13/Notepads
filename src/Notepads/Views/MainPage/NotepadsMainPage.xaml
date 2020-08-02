@@ -405,6 +405,9 @@
                                             Tag="ToggleFileReadonly"
                                             Visibility="Collapsed"
                                             Click="ToggleFileReadonlyAttribute">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE001;" Visibility="Collapsed" />
+                                </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
