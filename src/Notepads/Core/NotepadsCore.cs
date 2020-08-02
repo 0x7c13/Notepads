@@ -410,7 +410,9 @@
                 FontSize = 1.5,
                 Width = 3,
                 Height = 3,
-                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+                Foreground = textEditor.IsReadOnly
+                ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush
+                : new SolidColorBrush(ThemeSettingsService.AppAccentColor)
             };
 
             var textEditorSetsViewItem = new SetsViewItem
