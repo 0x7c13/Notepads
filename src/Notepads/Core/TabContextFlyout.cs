@@ -13,6 +13,7 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
+    using Windows.UI.Xaml.Media;
 
     public class TabContextFlyout : MenuFlyout
     {
@@ -82,7 +83,7 @@
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
             Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
-            ToggleReadOnly.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted;
+            ToggleReadOnly.IsEnabled = _textEditor.FileModificationState == FileModificationState.Untouched;
             ToggleReadOnly.Text = _textEditor.IsReadOnly
                 ? _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOffButtonDisplayText")
                 : _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText");
@@ -292,8 +293,13 @@
                     _toggleReadOnly = new MenuFlyoutItem() { Text = _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText") };
                     _toggleReadOnly.Click += (sender, args) =>
                     {
+                        if (!(this.Target is Notepads.Controls.SetsViewItem item)) return;
+
                         _textEditor.IsReadOnly = (_toggleReadOnly.Text == _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText"));
-                        _notepadsCore.SwitchTo(_textEditor);
+
+                        item.Icon.Foreground= _textEditor.IsReadOnly
+                        ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                        : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
                     };
                 }
                 return _toggleReadOnly;

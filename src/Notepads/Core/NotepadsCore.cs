@@ -600,6 +600,9 @@
             item.Icon.Foreground = textEditor.IsReadOnly
                 ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
                 : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+
+            TextEditorFileModificationStateChanged?.Invoke(this, textEditor);
+            TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
         #region DragAndDrop

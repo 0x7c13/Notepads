@@ -705,4 +705,8 @@
     <value>Read-only</value>
     <comment>TextEditor: PathIndicator "Toggle File Read-only Attribute" ToggleMenuFlyoutItem display text.</comment>
   </data>
+  <data name="TextEditor_FileIsReadOnly_ToolTip" xml:space="preserve">
+    <value>File is read-only, changes wouldn't be saved</value>
+    <comment>TextEditor: FileIsReadOnlyIndicator tool tip display text.</comment>
+  </data>
 </root>
