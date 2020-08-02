@@ -82,7 +82,23 @@
             _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
 
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme e)
+        {
+            await _dispatcher.CallOnUIThreadAsync(() =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    var textEditor = item.Content as ITextEditor;
+                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly
+                    ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                    : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+                }
+            });
         }
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
@@ -93,8 +109,8 @@
                 foreach (SetsViewItem item in Sets.Items)
                 {
                     var textEditor = item.Content as ITextEditor;
-                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly 
-                    ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush 
+                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly
+                    ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
                     : new SolidColorBrush(color);
                     item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
@@ -411,7 +427,7 @@
                 Width = 3,
                 Height = 3,
                 Foreground = textEditor.IsReadOnly
-                ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush
+                ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
                 : new SolidColorBrush(ThemeSettingsService.AppAccentColor)
             };
 
@@ -582,7 +598,7 @@
             if (!(sender is FrameworkElement element) || !(element.Parent is SetsViewItem item) || !(sender is ITextEditor textEditor)) return;
 
             item.Icon.Foreground = textEditor.IsReadOnly
-                ? Application.Current.Resources["HyperlinkButtonForegroundDisabled"] as SolidColorBrush
+                ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
                 : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
         }
 
