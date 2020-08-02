@@ -31,7 +31,7 @@ jobs:
 
     - name: Build
       run: |
-        msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
+        msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:AllowUnsafeBlocks=true /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
