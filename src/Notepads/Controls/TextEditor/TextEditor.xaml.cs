@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -93,7 +94,11 @@
                     _fileAttributes &= ~Win32FileSystemUtility.File_Attributes.Readonly;
                 }
 
-                Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes);
+                if (!Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes))
+                {
+                    NotificationCenter.Instance.PostNotification(Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message, 1500);
+                }
+                
                 UpdateAttributesInfo();
             }
         }
