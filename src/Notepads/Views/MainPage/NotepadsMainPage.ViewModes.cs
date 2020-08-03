@@ -5,6 +5,7 @@
     using Windows.UI.Xaml;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
+    using Windows.Foundation;
 
     public sealed partial class NotepadsMainPage
     {
@@ -44,8 +45,10 @@
 
             if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
             {
+                var compactOverlayViewModePreferences = ViewModePreferences.CreateDefault(ApplicationViewMode.Default);
+                compactOverlayViewModePreferences.CustomSize = new Size(1000, 1000);
                 var modeSwitched = await ApplicationView.GetForCurrentView()
-                    .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                    .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOverlayViewModePreferences);
                 if (!modeSwitched)
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter CompactOverlay view mode.");
