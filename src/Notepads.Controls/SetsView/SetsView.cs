@@ -223,17 +223,16 @@ namespace Notepads.Controls
 
         private void UpdateSetSeparators()
         {
-            int i = 0;
-            if (SelectedIndex != i)
+            if (SelectedIndex != 0)
             {
-                (ContainerFromIndex(i) as SetsViewItem)?.ShowLeftSideSeparator();
+                (ContainerFromIndex(0) as SetsViewItem)?.ShowLeftSideSeparator();
             }
             else
             {
-                (ContainerFromIndex(i) as SetsViewItem)?.HideLeftSideSeparator();
+                (ContainerFromIndex(0) as SetsViewItem)?.HideLeftSideSeparator();
             }
 
-            for (; i < Items?.Count; i++)
+            for (int i = 0; i < Items?.Count; i++)
             {
                 if (i != SelectedIndex && i != SelectedIndex - 1)
                 {
