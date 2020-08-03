@@ -21,17 +21,22 @@ namespace Notepads.Controls
     /// Item Container for a <see cref="SetsView"/>.
     /// </summary>
     [TemplatePart(Name = SetCloseButtonName, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = SetLeftSideSeparatorName, Type = typeof(Border))]
     [TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
     [TemplatePart(Name = SetSelectionIndicatorName, Type = typeof(Rectangle))]
     public partial class SetsViewItem : ListViewItem
     {
         private const string SetCloseButtonName = "CloseButton";
 
+        private const string SetLeftSideSeparatorName = "LeftSideSeparator";
+
         private const string SetRightSideSeparatorName = "RightSideSeparator";
 
         private const string SetSelectionIndicatorName = "SelectionIndicator";
 
         private ButtonBase _setCloseButton;
+
+        private Border _setLeftSideSeparator;
 
         private Border _setRightSideSeparator;
 
@@ -51,6 +56,22 @@ namespace Notepads.Controls
         /// Fired when the Set's close button is clicked.
         /// </summary>
         public event EventHandler<SetClosingEventArgs> Closing;
+
+        public void ShowLeftSideSeparator()
+        {
+            if (_setLeftSideSeparator != null)
+            {
+                _setLeftSideSeparator.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void HideLeftSideSeparator()
+        {
+            if (_setLeftSideSeparator != null)
+            {
+                _setLeftSideSeparator.Visibility = Visibility.Collapsed;
+            }
+        }
 
         public void ShowRightSideSeparator()
         {
@@ -85,6 +106,7 @@ namespace Notepads.Controls
                 _setCloseButton.Click += SetCloseButton_Click;
             }
 
+            _setLeftSideSeparator = GetTemplateChild(SetLeftSideSeparatorName) as Border;
             _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
             _setSelectionIndicator = GetTemplateChild(SetSelectionIndicatorName) as Rectangle;
         }
