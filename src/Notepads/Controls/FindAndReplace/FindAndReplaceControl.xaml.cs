@@ -171,16 +171,21 @@
 
         private void FindBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 _enterPressed = true;
-                SearchForwardButton_OnClick(sender, e);
+                if (shiftDown)
+                {
+                    SearchBackwardButton_OnClick(sender, e);
+                }
+                else
+                {
+                    SearchForwardButton_OnClick(sender, e);
+                }
             }
-
-            if (e.Key == VirtualKey.Tab)
+            else if (e.Key == VirtualKey.Tab)
             {
                 e.Handled = true;
                 if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible) ReplaceBar.Focus(FocusState.Programmatic);
@@ -204,16 +209,22 @@
 
         private void ReplaceBar_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (!ctrlDown && !altDown && e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
+            if (e.Key == VirtualKey.Enter && !string.IsNullOrEmpty(FindBar.Text))
             {
                 _enterPressed = true;
-                ReplaceButton_OnClick(sender, e);
+                if (shiftDown)
+                {
+                    OnFindAndReplaceButtonClicked?.Invoke(sender,
+                        new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.Replace, SearchDirection.Previous));
+                }
+                else
+                {
+                    ReplaceButton_OnClick(sender, e);
+                }
             }
-
-            if (e.Key == VirtualKey.Tab)
+            else if (e.Key == VirtualKey.Tab)
             {
                 e.Handled = true;
                 if (ReplaceBarPlaceHolder.Visibility == Visibility.Visible) FindBar.Focus(FocusState.Programmatic);
@@ -241,7 +252,7 @@
 
         private void ReplaceButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.Replace));
+            OnFindAndReplaceButtonClicked?.Invoke(sender, new FindAndReplaceEventArgs(GetSearchContext(), ReplaceBar.Text, FindAndReplaceMode.Replace, SearchDirection.Next));
         }
 
         private void ReplaceAllButton_OnClick(object sender, RoutedEventArgs e)
