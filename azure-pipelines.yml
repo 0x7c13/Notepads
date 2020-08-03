@@ -19,7 +19,6 @@ steps:
     script: |
       [xml]$manifest = Get-Content $(Build.SourcesDirectory)\src\Notepads\Package.appxmanifest
       $manifest.Package.Identity.Name="Notepads"
-      $manifest.Package.Properties.DisplayName="Notepads App"
       $manifest.Package.Applications.Application.VisualElements.DisplayName="Notepads"
       $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
       $manifest.Save('$(Build.SourcesDirectory)\src\Notepads\Package.appxmanifest')
