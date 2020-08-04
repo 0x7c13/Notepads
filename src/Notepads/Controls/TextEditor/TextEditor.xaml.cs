@@ -356,7 +356,11 @@
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded?.Invoke(this, e);
+
             StartCheckingFileStatusPeriodically();
+
+            // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
+            TextEditorCore.TryInsertNewLogEntry();
         }
 
         private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -1084,10 +1088,15 @@
                             out regexError);
                     break;
                 case FindAndReplaceMode.Replace:
-                    found = TextEditorCore.TryFindNextAndReplace(
-                        findAndReplaceEventArgs.SearchContext,
-                        findAndReplaceEventArgs.ReplaceText,
-                        out regexError);
+                    found = findAndReplaceEventArgs.SearchDirection == SearchDirection.Next
+                        ? TextEditorCore.TryFindNextAndReplace(
+                            findAndReplaceEventArgs.SearchContext,
+                            findAndReplaceEventArgs.ReplaceText,
+                            out regexError)
+                        : TextEditorCore.TryFindPreviousAndReplace(
+                            findAndReplaceEventArgs.SearchContext,
+                            findAndReplaceEventArgs.ReplaceText,
+                            out regexError);
                     break;
                 case FindAndReplaceMode.ReplaceAll:
                     found = TextEditorCore.TryFindAndReplaceAll(
