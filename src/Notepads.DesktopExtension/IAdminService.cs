@@ -9,6 +9,6 @@
     public interface IAdminService
     {
         [OperationContract]
-        Task<bool> SaveFile(string filePath, byte[] data);
+        Task<bool> SaveFile(string memoryMapName, string filePath, int dataArrayLength);
     }
 }

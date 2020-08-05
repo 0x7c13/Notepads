@@ -3,8 +3,9 @@
   <xs:element name="SaveFile">
     <xs:complexType>
       <xs:sequence>
+        <xs:element minOccurs="0" name="memoryMapName" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="filePath" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="dataArrayLength" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

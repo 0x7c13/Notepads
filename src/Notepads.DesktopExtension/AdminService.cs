@@ -1,6 +1,8 @@
 ﻿namespace Notepads.DesktopExtension
 {
     using System;
+    using System.IO;
+    using System.IO.MemoryMappedFiles;
     using System.Threading.Tasks;
     using Windows.Storage;
 
@@ -9,7 +11,7 @@
     {
         internal static string AdminAuthenticationTokenStr = "AdminAuthenticationTokenStr";
 
-        public async Task<bool> SaveFile(string filePath, byte[] data)
+        public async Task<bool> SaveFile(string memoryMapName, string filePath, int dataArrayLength)
         {
             try
             {
@@ -17,7 +19,19 @@
                 if (!localSettings.Values.ContainsKey(AdminAuthenticationTokenStr) ||
                     !(localSettings.Values[AdminAuthenticationTokenStr] is string token)) return false;
                 localSettings.Values.Remove(AdminAuthenticationTokenStr);
-                await PathIO.WriteBytesAsync(filePath, data);
+
+                // Open the memory-mapped file.
+                using (var mmf = MemoryMappedFile.OpenExisting(memoryMapName))
+                {
+                    using (var stream = mmf.CreateViewStream())
+                    {
+                        var reader = new BinaryReader(stream);
+                        var data = reader.ReadBytes(dataArrayLength);
+
+                        await PathIO.WriteBytesAsync(filePath, data);
+                    }
+                }
+
                 return true;
             }
             catch (Exception)

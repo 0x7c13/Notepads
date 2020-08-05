@@ -4,12 +4,15 @@
     using Notepads.Extensions;
     using Notepads.Settings;
     using System;
+    using System.IO;
+    using System.IO.MemoryMappedFiles;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
+    using Windows.Security.Authentication.Web;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
 
@@ -77,18 +80,34 @@
             bool failedFromAdminExtension = false;
             if (_isAdminExtensionAvailable)
             {
-                try
+                var mapName = Guid.NewGuid().ToString();
+
+                // Create the memory-mapped file.
+                using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length, MemoryMappedFileAccess.ReadWrite))
                 {
-                    ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
-                    failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(filePath, data);
-                }
-                catch
-                {
-                    _isAdminExtensionAvailable = false;
-                }
-                finally
-                {
-                    ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
+                    using (var stream = mmf.CreateViewStream())
+                    {
+                        var writer = new BinaryWriter(stream);
+                        writer.Write(data);
+                        writer.Flush();
+                    }
+
+                    try
+                    {
+                        ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
+                        failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(
+                            $"AppContainerNamedObjects\\{ WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper() }\\{ mapName }",
+                            filePath,
+                            data.Length);
+                    }
+                    catch
+                    {
+                        _isAdminExtensionAvailable = false;
+                    }
+                    finally
+                    {
+                        ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
+                    }
                 }
             }
 
