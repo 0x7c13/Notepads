@@ -83,7 +83,7 @@
                 var mapName = Guid.NewGuid().ToString();
 
                 // Create the memory-mapped file.
-                using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length, MemoryMappedFileAccess.ReadWrite))
+                using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length > 0 ? data.Length : 1, MemoryMappedFileAccess.ReadWrite))
                 {
                     using (var stream = mmf.CreateViewStream())
                     {
