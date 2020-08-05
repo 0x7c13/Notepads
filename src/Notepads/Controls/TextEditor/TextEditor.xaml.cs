@@ -39,8 +39,6 @@
 
     public sealed partial class TextEditor : ITextEditor, IDisposable
     {
-        private const string RichEditBoxDefaultLineEnding = "\r";
-
         public new event RoutedEventHandler Loaded;
         public new event RoutedEventHandler Unloaded;
         public new event KeyEventHandler KeyDown;
