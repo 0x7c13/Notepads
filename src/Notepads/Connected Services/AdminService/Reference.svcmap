@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="7c1db87a-8170-4832-8241-42ef6184439d" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="64ce277b-8e86-4480-9789-ce13d4e4b8ad" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -21,13 +21,13 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8000/Notepads.DesktopExtension/AdminService" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:8000/Notepads.DesktopExtension.Services/AdminService" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="AdminService.wsdl" MetadataType="Wsdl" ID="8f933e6f-a657-4b9c-9f16-2d6fa3d49976" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?wsdl" />
-    <MetadataFile FileName="AdminService.xsd" MetadataType="Schema" ID="7cf7dee6-f285-4ec0-9cec-bc0b217b3ee0" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?xsd=xsd1" />
-    <MetadataFile FileName="AdminService1.xsd" MetadataType="Schema" ID="22c19c26-4b27-43e2-b464-08489c47f7e5" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?xsd=xsd0" />
-    <MetadataFile FileName="AdminService.disco" MetadataType="Disco" ID="8678f248-938e-4c3b-9bca-54fea820651b" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension/AdminService?disco" />
+    <MetadataFile FileName="AdminService.wsdl" MetadataType="Wsdl" ID="d02a78a2-baae-4875-b730-2476ced2bbfa" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension.Services/AdminService?wsdl" />
+    <MetadataFile FileName="AdminService.xsd" MetadataType="Schema" ID="6329122c-48e3-4a87-a62b-f7ad5618d71a" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension.Services/AdminService?xsd=xsd1" />
+    <MetadataFile FileName="AdminService.disco" MetadataType="Disco" ID="bce0e11d-8d2d-4b43-8df8-403702fb75c2" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension.Services/AdminService?disco" />
+    <MetadataFile FileName="AdminService1.xsd" MetadataType="Schema" ID="996b71d3-641d-450f-b307-6a85fb880df6" SourceId="1" SourceUrl="http://localhost:8000/Notepads.DesktopExtension.Services/AdminService?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

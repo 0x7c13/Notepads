@@ -1,5 +1,6 @@
 ﻿namespace Notepads.DesktopExtension
 {
+    using Notepads.DesktopExtension.Services;
     using System;
     using System.Diagnostics;
     using System.Reflection;
@@ -10,7 +11,6 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
-    using Windows.Storage;
 
     public enum CommandArgs
     {
@@ -21,14 +21,14 @@
 
     static class Program
     {
-        private static string DesktopExtensionMutexIdStr = "DesktopExtensionMutexIdStr";
-        private static string AdminExtensionMutexIdStr = "AdminExtensionMutexIdStr";
-        private static Mutex mutex;
+        private const string DesktopExtensionMutexName = "DesktopExtensionMutexName";
+        private const string AdminExtensionMutexName = "AdminExtensionMutexName";
+
+        private static readonly string _commandLabel = "Command";
+        private static readonly string _adminCreatedLabel = "AdminCreated";
 
         private static AppServiceConnection connection = null;
         private static ServiceHost selfHost = null;
-        private static readonly string _commandLabel = "Command";
-        private static readonly string _adminCreatedLabel = "AdminCreated";
 
         /// <summary>
         ///  The main entry point for the application.
@@ -37,18 +37,17 @@
         {
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
-                CheckInstance(AdminExtensionMutexIdStr);
+                if (!IsFirstInstance(AdminExtensionMutexName)) return;
                 InitializeExtensionService();
             }
             else
             {
-                CheckInstance(DesktopExtensionMutexIdStr);
+                if (!IsFirstInstance(DesktopExtensionMutexName)) return;
                 InitializeAppServiceConnection();
                 if (args.Length > 2 && args[2] == "/admin") CreateElevetedExtension();
             }
 
             Application.Run();
-            Application.ApplicationExit += Application_OnApplicationExit;
         }
 
         private static async void InitializeAppServiceConnection()
@@ -80,21 +79,20 @@
             selfHost.Open();
         }
 
-        private static void CheckInstance(string key)
+        private static bool IsFirstInstance(string mutexName)
         {
-            mutex = new Mutex(true, ReadOrInitializeMutexId(key), out var isFirstInstance);
-            if (!isFirstInstance)
-            {
-                mutex.ReleaseMutex();
-                RemoveMutexId(AdminExtensionMutexIdStr);
-                RemoveMutexId(DesktopExtensionMutexIdStr);
-                Application.Exit();
-            }
-        }
+            var instanceHandlerMutex = new Mutex(true, mutexName, out var isFirstInstance);
 
-        private static void Application_OnApplicationExit(object sender, EventArgs e)
-        {
-            mutex.Close();
+            if (isFirstInstance)
+            {
+                instanceHandlerMutex.ReleaseMutex();
+            }
+            else
+            {
+                instanceHandlerMutex.Close();
+            }
+
+            return isFirstInstance;
         }
 
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
@@ -151,33 +149,6 @@
             {
                 await connection.SendMessageAsync(message);
             }
-        }
-
-        private static string ReadOrInitializeMutexId(string key)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            if (!localSettings.Values.ContainsKey(key) || !(localSettings.Values[key] is string mutexId) || string.IsNullOrEmpty(mutexId))
-            {
-                mutexId = Guid.NewGuid().ToString();
-                WriteMutexId(key, mutexId);
-            }
-            return mutexId;
-        }
-
-        private static void WriteMutexId(string key, object obj)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[key] = obj;
-        }
-
-        private static void RemoveMutexId(string key)
-        {
-            try
-            {
-                ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                localSettings.Values.Remove(key);
-            }
-            catch (Exception) { }
         }
     }
 }

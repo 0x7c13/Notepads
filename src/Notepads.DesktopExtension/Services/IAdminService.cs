@@ -1,4 +1,4 @@
-﻿namespace Notepads.DesktopExtension
+﻿namespace Notepads.DesktopExtension.Services
 {
     using System.Runtime.Serialization;
     using System.ServiceModel;

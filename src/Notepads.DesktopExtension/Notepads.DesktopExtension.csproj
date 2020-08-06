@@ -103,8 +103,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminService.cs" />
-    <Compile Include="IAdminService.cs" />
+    <Compile Include="Services\AdminService.cs" />
+    <Compile Include="Services\IAdminService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -124,6 +124,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="..\Notepads\Settings\SettingsKey.cs">
+      <Link>Settings\SettingsKey.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

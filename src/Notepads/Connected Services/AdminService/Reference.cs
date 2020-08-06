@@ -91,7 +91,7 @@ namespace Notepads.AdminService {
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration) {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IAdminService)) {
-                return new System.ServiceModel.EndpointAddress("http://localhost:8000/Notepads.DesktopExtension/AdminService");
+                return new System.ServiceModel.EndpointAddress("http://localhost:8000/Notepads.DesktopExtension.Services/AdminService");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
