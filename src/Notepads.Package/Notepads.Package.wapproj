@@ -63,7 +63,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.csproj" />
+    <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.csproj">
+      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
     <ProjectReference Include="..\Notepads\Notepads.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />

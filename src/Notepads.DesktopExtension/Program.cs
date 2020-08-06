@@ -9,7 +9,6 @@
     using System.Reflection;
     using System.Security.Principal;
     using System.Threading;
-    using System.Windows.Forms;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
@@ -31,6 +30,7 @@
         private static readonly string _adminCreatedLabel = "AdminCreated";
 
         private static AppServiceConnection connection = null;
+        private static AutoResetEvent appServiceExit;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -49,7 +49,8 @@
                 if (args.Length > 2 && args[2] == "/admin") CreateElevetedExtension();
             }
 
-            Application.Run();
+            appServiceExit = new AutoResetEvent(false);
+            appServiceExit.WaitOne();
         }
 
         private static async void InitializeAppServiceConnection()
@@ -65,9 +66,9 @@
 
             AppServiceConnectionStatus status = await connection.OpenAsync();
 
-            if(status != AppServiceConnectionStatus.Success)
+            if (status != AppServiceConnectionStatus.Success)
             {
-                Application.Exit();
+                appServiceExit.Set();
             }
 
             var message = new ValueSet();
@@ -99,7 +100,7 @@
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             // connection to the UWP lost, so we shut down the desktop process
-            Application.Exit();
+            appServiceExit.Set();
         }
 
         private static void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -116,7 +117,7 @@
                     CreateElevetedExtension();
                     break;
                 case CommandArgs.ExitApp:
-                    Application.Exit();
+                    appServiceExit.Set();
                     break;
             }
 
