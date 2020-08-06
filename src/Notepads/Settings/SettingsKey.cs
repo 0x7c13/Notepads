@@ -7,7 +7,7 @@
         internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
         internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
         internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
-        internal static string AdminAuthenticationTokenStr = "AdminAuthenticationTokenStr";
+        internal static string PackageSidStr = "PackageSidStr";
 
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";

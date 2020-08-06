@@ -1,11 +1,10 @@
 ﻿namespace Notepads.Services
 {
-    using Notepads.AdminService;
     using Notepads.Extensions;
-    using Notepads.Settings;
     using System;
     using System.IO;
     using System.IO.MemoryMappedFiles;
+    using System.IO.Pipes;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
@@ -24,8 +23,6 @@
     public static class DesktopExtensionService
     {
         public static AppServiceConnection InteropServiceConnection = null;
-        public static AdminServiceClient AdminServiceClient = new AdminServiceClient();
-        private static bool _isAdminExtensionAvailable = false;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static readonly string _commandLabel = "Command";
@@ -59,7 +56,6 @@
                 if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
-                    _isAdminExtensionAvailable = true;
                 }
                 else
                 {
@@ -77,48 +73,47 @@
         {
             if (InteropServiceConnection == null) await Initialize();
 
-            bool failedFromAdminExtension = false;
-            if (_isAdminExtensionAvailable)
+            using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
+                PipeDirection.InOut, 254, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
             {
+                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
+                {
+                    throw new AdminstratorAccessException();
+                }
+
+                var pipeReader = new StreamReader(adminConnectionPipeStream);
+                var pipeWriter = new StreamWriter(adminConnectionPipeStream);
+
                 var mapName = Guid.NewGuid().ToString();
 
                 // Create the memory-mapped file.
                 using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length > 0 ? data.Length : 1, MemoryMappedFileAccess.ReadWrite))
                 {
-                    using (var stream = mmf.CreateViewStream())
+                    using (var writer = new BinaryWriter(mmf.CreateViewStream()))
                     {
-                        var writer = new BinaryWriter(stream);
                         writer.Write(data);
                         writer.Flush();
                     }
 
-                    try
-                    {
-                        ApplicationSettingsStore.Write(SettingsKey.AdminAuthenticationTokenStr, Guid.NewGuid().ToString());
-                        failedFromAdminExtension = !await AdminServiceClient.SaveFileAsync(
+                    pipeWriter.WriteLine(string.Join("?:",
                             $"AppContainerNamedObjects\\{ WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper() }\\{ mapName }",
                             filePath,
-                            data.Length);
-                    }
-                    catch
+                            data.Length));
+                    pipeWriter.Flush();
+
+                    while (true)
                     {
-                        _isAdminExtensionAvailable = false;
-                    }
-                    finally
-                    {
-                        ApplicationSettingsStore.Remove(SettingsKey.AdminAuthenticationTokenStr);
+                        var result = pipeReader.ReadLine();
+                        if ("Success".Equals(result))
+                        {
+                            return;
+                        }
+                        else if ("Failed".Equals(result))
+                        {
+                            throw new UnauthorizedAccessException();
+                        }
                     }
                 }
-            }
-
-            if (!_isAdminExtensionAvailable)
-            {
-                throw new AdminstratorAccessException();
-            }
-
-            if (failedFromAdminExtension)
-            {
-                throw new UnauthorizedAccessException();
             }
         }
 

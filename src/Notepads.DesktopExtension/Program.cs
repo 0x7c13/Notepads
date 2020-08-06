@@ -1,16 +1,19 @@
 ﻿namespace Notepads.DesktopExtension
 {
-    using Notepads.DesktopExtension.Services;
+    using Notepads.Settings;
     using System;
     using System.Diagnostics;
+    using System.IO;
+    using System.IO.MemoryMappedFiles;
+    using System.IO.Pipes;
     using System.Reflection;
     using System.Security.Principal;
-    using System.ServiceModel;
     using System.Threading;
     using System.Windows.Forms;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
+    using Windows.Storage;
 
     public enum CommandArgs
     {
@@ -28,7 +31,6 @@
         private static readonly string _adminCreatedLabel = "AdminCreated";
 
         private static AppServiceConnection connection = null;
-        private static ServiceHost selfHost = null;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -75,8 +77,7 @@
 
         private static void InitializeExtensionService()
         {
-            selfHost = new ServiceHost(typeof(AdminService));
-            selfHost.Open();
+            SaveFileFromPipeData();
         }
 
         private static bool IsFirstInstance(string mutexName)
@@ -149,6 +150,62 @@
             {
                 await connection.SendMessageAsync(message);
             }
+        }
+
+        private static async void SaveFileFromPipeData()
+        {
+            using (var clientStream = new NamedPipeClientStream(".",
+                $"Sessions\\1\\AppContainerNamedObjects\\{ReadSettingsKey(SettingsKey.PackageSidStr)}\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
+                PipeDirection.InOut, PipeOptions.Asynchronous))
+            {
+                await clientStream.ConnectAsync();
+                new Thread(new ThreadStart(SaveFileFromPipeData)).Start();
+
+                var pipeReader = new StreamReader(clientStream);
+                var pipeWriter = new StreamWriter(clientStream);
+
+                var writeData = pipeReader.ReadLine().Split(new string[] { "?:" }, StringSplitOptions.None);
+
+                var memoryMapName = writeData[0];
+                var filePath = writeData[1];
+                int.TryParse(writeData[2], out int dataArrayLength);
+
+                var result = "Failed";
+                try
+                {
+                    // Open the memory-mapped file.
+                    using (var mmf = MemoryMappedFile.OpenExisting(memoryMapName))
+                    {
+                        using (var stream = mmf.CreateViewStream())
+                        {
+                            var reader = new BinaryReader(stream);
+                            var data = reader.ReadBytes(dataArrayLength);
+
+                            await PathIO.WriteBytesAsync(filePath, data);
+                        }
+                    }
+
+                    result = "Success";
+                }
+                finally
+                {
+                    pipeWriter.WriteLine(result);
+                    pipeWriter.Flush();
+                }
+            }
+        }
+
+        public static object ReadSettingsKey(string key)
+        {
+            object obj = null;
+
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                obj = localSettings.Values[key];
+            }
+
+            return obj;
         }
     }
 }

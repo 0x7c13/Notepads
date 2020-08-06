@@ -9,6 +9,7 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Foundation.Metadata;
+    using Windows.Security.Authentication.Web;
 
     public static class Program
     {
@@ -153,6 +154,8 @@
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
                 !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
+                ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
+
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
             }
         }
