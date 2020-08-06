@@ -194,7 +194,7 @@
             TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown += TextEditorCore_OnKeyDown;
-            TextEditorCore.CopySelectedTextToWindowsClipboardRequested += TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CopyTextToWindowsClipboardRequested += TextEditorCore_CopyTextToWindowsClipboardRequested;
             TextEditorCore.CutSelectedTextToWindowsClipboardRequested += TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
             TextEditorCore.ContextFlyout = new TextEditorContextFlyout(this, TextEditorCore);
 
@@ -223,7 +223,7 @@
             TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
             TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
             TextEditorCore.KeyDown -= TextEditorCore_OnKeyDown;
-            TextEditorCore.CopySelectedTextToWindowsClipboardRequested -= TextEditorCore_CopySelectedTextToWindowsClipboardRequested;
+            TextEditorCore.CopyTextToWindowsClipboardRequested -= TextEditorCore_CopyTextToWindowsClipboardRequested;
             TextEditorCore.CutSelectedTextToWindowsClipboardRequested -= TextEditorCore_CutSelectedTextToWindowsClipboardRequested;
 
             if (TextEditorCore.ContextFlyout is TextEditorContextFlyout contextFlyout)
@@ -761,7 +761,7 @@
             return TextEditorCore.ContextFlyout;
         }
 
-        public void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
+        public void CopyTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args)
         {
             if (args != null)
             {
@@ -773,7 +773,7 @@
                 TextEditorCore.SmartlyTrimTextSelection();
             }
 
-            CopySelectedTextToWindowsClipboardInternal();
+            CopyTextToWindowsClipboardInternal(true);
         }
 
         public void CutSelectedTextToWindowsClipboard(TextControlCuttingToClipboardEventArgs args)
@@ -783,17 +783,31 @@
                 args.Handled = true;
             }
 
-            CopySelectedTextToWindowsClipboardInternal();
+            CopyTextToWindowsClipboardInternal(false);
             TextEditorCore.Document.Selection.SetText(TextSetOptions.None, string.Empty);
         }
 
-        private void CopySelectedTextToWindowsClipboardInternal()
+        private void CopyTextToWindowsClipboardInternal(bool clearLineSelection)
         {
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                var isTextSelected = TextEditorCore.Document.Selection.Length > 0;
+                var cursorPosition = TextEditorCore.Document.Selection.StartPosition;
+
+                if (!isTextSelected)
+                {
+                    TextEditorCore.Document.Selection.Expand(TextRangeUnit.Paragraph);
+                }
+
                 var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.Document.Selection.Text, GetLineEnding());
                 dataPackage.SetText(text);
+
+                if (clearLineSelection && !isTextSelected)
+                {
+                    TextEditorCore.Document.Selection.SetRange(cursorPosition, cursorPosition);
+                }
+
                 Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                 Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
             }
@@ -918,9 +932,9 @@
             GoToPlaceholder?.Dismiss();
         }
 
-        private void TextEditorCore_CopySelectedTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
+        private void TextEditorCore_CopyTextToWindowsClipboardRequested(object sender, TextControlCopyingToClipboardEventArgs e)
         {
-            CopySelectedTextToWindowsClipboard(e);
+            CopyTextToWindowsClipboard(e);
         }
 
         private void TextEditorCore_CutSelectedTextToWindowsClipboardRequested(object sender, TextControlCuttingToClipboardEventArgs e)
