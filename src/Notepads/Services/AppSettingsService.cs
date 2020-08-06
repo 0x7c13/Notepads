@@ -327,7 +327,7 @@
         private static void InitializeSessionSnapshotSettings()
         {
             // We should disable session snapshot feature on multi instances
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 _isSessionSnapshotEnabled = false;
             }

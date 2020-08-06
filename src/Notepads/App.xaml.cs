@@ -27,7 +27,7 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsFirstInstance = false;
+        public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
@@ -44,7 +44,7 @@
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
 
-            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
@@ -106,7 +106,7 @@
                 { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
                 { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
                 { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() },
                 { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
                 { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
@@ -211,7 +211,7 @@
                 { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 

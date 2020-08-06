@@ -11,7 +11,7 @@
 
     public sealed partial class AdvancedSettingsPage : Page
     {
-        private readonly IReadOnlyCollection<LanguageItem> SupportedLanguages;
+        private readonly IReadOnlyCollection<LanguageItem> SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
 
         public AdvancedSettingsPage()
         {
@@ -21,7 +21,7 @@
             EnableSmartCopyToggleSwitch.IsOn = AppSettingsService.IsSmartCopyEnabled;
 
             // Disable session snapshot toggle for shadow windows
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 EnableSessionSnapshotToggleSwitch.IsOn = false;
                 EnableSessionSnapshotToggleSwitch.IsEnabled = false;
@@ -42,9 +42,8 @@
                 LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
-            SupportedLanguages = LanguageUtility.GetSupportedLanguageItems();
-            FindName("LanguagePreferenceSettingsPanel"); // Lazy loading
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
+            RestartPrompt.Visibility = LanguageUtility.CurrentLanguageID == ApplicationLanguages.PrimaryLanguageOverride ? Visibility.Collapsed : Visibility.Visible;
 
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;

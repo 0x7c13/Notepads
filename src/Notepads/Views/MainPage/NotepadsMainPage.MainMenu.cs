@@ -32,7 +32,7 @@
             MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 MainMenuButton.Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
             }
