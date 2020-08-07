@@ -27,26 +27,26 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win-x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|.NETCoreApp,Version=v3.1/win-x64'">
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|win-x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|.NETCoreApp,Version=v3.1/win-x64'">
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win-x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|.NETCoreApp,Version=v3.1/win-x86'">
     <PlatformTarget>x86</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|win-x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|.NETCoreApp,Version=v3.1/win-x86'">
     <PlatformTarget>x86</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
