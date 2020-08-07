@@ -88,7 +88,7 @@
 
         Encoding GetEncoding();
 
-        void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
+        void CopyTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
 
         void RevertAllChanges();
 
