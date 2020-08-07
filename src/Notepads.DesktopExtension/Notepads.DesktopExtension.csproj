@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeIdentifier Condition=" '$(Platform)' != 'AnyCPU' ">win-$(Platform)</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
     <AssemblyName>Notepads32</AssemblyName>
     <AssemblyTitle>Notepads</AssemblyTitle>
     <Product>Notepads</Product>
