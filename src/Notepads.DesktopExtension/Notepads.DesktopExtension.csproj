@@ -1,66 +1,97 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
-    <AssemblyName>Notepads32</AssemblyName>
-    <AssemblyTitle>Notepads</AssemblyTitle>
-    <Product>Notepads</Product>
-    <Copyright>Copyright © 2020 Jackie Liu</Copyright>
-    <PackageId>Notepads</PackageId>
-    <Authors>Jackie Liu</Authors>
-    <Description>Notepads</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<TargetFramework>net5.0</TargetFramework>
+		<RuntimeIdentifiers>win10-x86; win10-x64; win10-arm64; win10-arm</RuntimeIdentifiers>
+		<AssemblyName>Notepads32</AssemblyName>
+		<AssemblyTitle>Notepads</AssemblyTitle>
+		<Product>Notepads</Product>
+		<Copyright>Copyright © 2020 Jackie Liu</Copyright>
+		<PackageId>Notepads</PackageId>
+		<Authors>Jackie Liu</Authors>
+		<Description>Notepads</Description>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputType>Exe</OutputType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+        <Prefer32Bit>true</Prefer32Bit>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputType>WinExe</OutputType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<OutputType>Exe</OutputType>
+		<PlatformTarget>x64</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<OutputType>WinExe</OutputType>
+		<PlatformTarget>x64</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+		<OutputType>Exe</OutputType>
+		<PlatformTarget>x86</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<OutputType>WinExe</OutputType>
+		<PlatformTarget>x86</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Notepads\Settings\SettingsKey.cs" Link="Settings\SettingsKey.cs" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+		<OutputType>Exe</OutputType>
+		<PlatformTarget>ARM64</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+		<OutputType>WinExe</OutputType>
+		<PlatformTarget>ARM64</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+		<OutputType>Exe</OutputType>
+		<PlatformTarget>ARM</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+		<OutputType>WinExe</OutputType>
+		<PlatformTarget>ARM</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Notepads\Settings\SettingsKey.cs" Link="Settings\SettingsKey.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Windows.SDK.NET" Version="10.0.18362.3-preview" />
+		<PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
+	</ItemGroup>
+	
 </Project>

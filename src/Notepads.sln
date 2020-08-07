@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepads.Services", "Notepa
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Notepads.Package", "Notepads.Package\Notepads.Package.wapproj", "{F451C0EB-4F7F-47D4-BCCE-B0E265909DD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepads.DesktopExtension", "Notepads.DesktopExtension\Notepads.DesktopExtension.csproj", "{6B373CFA-95F2-44E8-A948-CED6E6E0EDA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notepads.DesktopExtension", "Notepads.DesktopExtension\Notepads.DesktopExtension.csproj", "{6B373CFA-95F2-44E8-A948-CED6E6E0EDA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
