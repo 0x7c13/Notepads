@@ -8,6 +8,9 @@
         internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
         internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
         internal static string PackageSidStr = "PackageSidStr";
+        internal static string InteropCommandLabel = "Command";
+        internal static string InteropCommandFailedLabel = "Failed";
+        internal static string InteropCommandAdminCreatedLabel = "AdminCreated";
 
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";

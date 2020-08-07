@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Services
 {
+    using Notepads.Settings;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -20,10 +21,7 @@
         private BackgroundTaskDeferral backgroundTaskDeferral;
         private AppServiceConnection appServiceConnection;
         private static AppServiceConnection extensionAppServiceConnection = null;
-        private static IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
-
-        private static readonly string _commandLabel = "Command";
-        private static readonly string _failedLabel = "Failed";
+        private static readonly IList<AppServiceConnection> appServiceConnections = new List<AppServiceConnection>();
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -54,7 +52,8 @@
             var messageDeferral = args.GetDeferral();
 
             var message = args.Request.Message;
-            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var result)) return;
+            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
+                !Enum.TryParse(typeof(CommandArgs), (string)message[SettingsKey.InteropCommandLabel], out var result)) return;
             var command = (CommandArgs)result;
 
             switch (command)
@@ -83,7 +82,7 @@
                         if (extensionAppServiceConnection == null)
                         {
                             message.Clear();
-                            message.Add(_failedLabel, true);
+                            message.Add(SettingsKey.InteropCommandFailedLabel, true);
                         }
                         else
                         {
@@ -91,7 +90,7 @@
                             if (response.Status != AppServiceResponseStatus.Success)
                             {
                                 message.Clear();
-                                message.Add(_failedLabel, true);
+                                message.Add(SettingsKey.InteropCommandFailedLabel, true);
                                 extensionAppServiceConnection = null;
                             }
                             else
@@ -124,8 +123,7 @@
                     appServiceConnections.Remove(serviceConnection);
                     if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
                     {
-                        var message = new ValueSet();
-                        message.Add(_commandLabel, CommandArgs.ExitApp.ToString());
+                        var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.ExitApp.ToString() } };
                         await extensionAppServiceConnection.SendMessageAsync(message);
                     }
                 }

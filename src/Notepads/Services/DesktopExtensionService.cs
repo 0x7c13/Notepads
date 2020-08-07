@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Services
 {
     using Notepads.Extensions;
+    using Notepads.Settings;
     using System;
     using System.IO;
     using System.IO.MemoryMappedFiles;
@@ -18,16 +19,15 @@
     public class AdminstratorAccessException : Exception
     {
         public AdminstratorAccessException():base("Failed to save due to no Adminstration access") { }
+
+        public AdminstratorAccessException(string message) : base(message) { }
+        public AdminstratorAccessException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     public static class DesktopExtensionService
     {
         public static AppServiceConnection InteropServiceConnection = null;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
-
-        private static readonly string _commandLabel = "Command";
-        private static readonly string _failedLabel = "Failed";
-        private static readonly string _adminCreatedLabel = "AdminCreated";
 
         public static async Task Initialize()
         {
@@ -48,12 +48,13 @@
         private static async void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var message = args.Request.Message;
-            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse(typeof(CommandArgs), (string)message[_commandLabel], out var commandObj) ||
+            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
+                !Enum.TryParse(typeof(CommandArgs), (string)message[SettingsKey.InteropCommandLabel], out var commandObj) ||
                 (CommandArgs)commandObj != CommandArgs.CreateElevetedExtension) return;
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
             {
-                if (message.ContainsKey(_adminCreatedLabel) && (bool)message[_adminCreatedLabel])
+                if (message.ContainsKey(SettingsKey.InteropCommandAdminCreatedLabel) && (bool)message[SettingsKey.InteropCommandAdminCreatedLabel])
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
                 }
@@ -69,6 +70,14 @@
             return;
         }
 
+        /// <summary>
+        /// Write data to system file.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
+        /// <param name="filePath">Absolute path of the file to write.</param>
+        /// <param name="data">Data to write.</param>
         public static async Task SaveFileAsAdmin(string filePath, byte[] data)
         {
             if (InteropServiceConnection == null) await Initialize();
@@ -76,8 +85,11 @@
             using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
                 PipeDirection.InOut, 254, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
             {
+                // Wait for 250 ms for desktop extension to accept request.
                 if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
                 {
+                    // If the connection fails, desktop extension is not launched with elevated privilages.
+                    // In that case, prompt user to launch desktop extension with elevated privilages.
                     throw new AdminstratorAccessException();
                 }
 
@@ -86,7 +98,7 @@
 
                 var mapName = Guid.NewGuid().ToString();
 
-                // Create the memory-mapped file.
+                // Create the memory-mapped file and write original file data to be written.
                 using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length > 0 ? data.Length : 1, MemoryMappedFileAccess.ReadWrite))
                 {
                     using (var writer = new BinaryWriter(mmf.CreateViewStream()))
@@ -101,6 +113,7 @@
                             data.Length));
                     pipeWriter.Flush();
 
+                    // Wait for desktop extension to send response.
                     while (true)
                     {
                         var result = pipeReader.ReadLine();
@@ -110,6 +123,7 @@
                         }
                         else if ("Failed".Equals(result))
                         {
+                            // Promt user to "Save As" if extension failed to save data.
                             throw new UnauthorizedAccessException();
                         }
                     }
@@ -117,16 +131,21 @@
             }
         }
 
+        /// <summary>
+        /// Launch desktop extension with elevated privilages.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
         public static async Task CreateElevetedExtension()
         {
             if (InteropServiceConnection == null) await Initialize();
 
-            var message = new ValueSet();
-            message.Add(_commandLabel, CommandArgs.CreateElevetedExtension.ToString());
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.CreateElevetedExtension.ToString() } };
             var response = await InteropServiceConnection.SendMessageAsync(message);
             message = response.Message;
 
-            if (message.ContainsKey(_failedLabel) && (bool)message[_failedLabel])
+            if (message.ContainsKey(SettingsKey.InteropCommandFailedLabel) && (bool)message[SettingsKey.InteropCommandFailedLabel])
             {
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");
             }

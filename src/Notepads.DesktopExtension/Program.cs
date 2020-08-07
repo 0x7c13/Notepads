@@ -26,9 +26,6 @@
         private const string DesktopExtensionMutexName = "DesktopExtensionMutexName";
         private const string AdminExtensionMutexName = "AdminExtensionMutexName";
 
-        private static readonly string _commandLabel = "Command";
-        private static readonly string _adminCreatedLabel = "AdminCreated";
-
         private static AppServiceConnection connection = null;
         private static AutoResetEvent appServiceExit;
 
@@ -71,8 +68,7 @@
                 appServiceExit.Set();
             }
 
-            var message = new ValueSet();
-            message.Add(_commandLabel, CommandArgs.RegisterExtension.ToString());
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.RegisterExtension.ToString() } };
             await connection.SendMessageAsync(message);
         }
 
@@ -110,7 +106,7 @@
             var messageDeferral = args.GetDeferral();
 
             var message = args.Request.Message;
-            if (!message.ContainsKey(_commandLabel) || !Enum.TryParse<CommandArgs>((string)message[_commandLabel], out var command)) return;
+            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) || !Enum.TryParse<CommandArgs>((string)message[SettingsKey.InteropCommandLabel], out var command)) return;
             switch (command)
             {
                 case CommandArgs.CreateElevetedExtension:
@@ -126,8 +122,8 @@
 
         private static async void CreateElevetedExtension()
         {
-            var message = new ValueSet();
-            message.Add(_commandLabel, CommandArgs.CreateElevetedExtension.ToString());
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.CreateElevetedExtension.ToString() } };
+
             try
             {
                 string result = Assembly.GetExecutingAssembly().Location;
@@ -135,17 +131,20 @@
                 string rootPath = $"{result.Substring(0, index)}\\..\\";
                 string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads32.exe";
 
-                ProcessStartInfo info = new ProcessStartInfo();
-                info.Verb = "runas";
-                info.UseShellExecute = true;
-                info.FileName = aliasPath;
+                ProcessStartInfo info = new ProcessStartInfo
+                {
+                    Verb = "runas",
+                    UseShellExecute = true,
+                    FileName = aliasPath
+                };
+
                 var process = Process.Start(info);
                 AppDomain.CurrentDomain.ProcessExit += (a, b) => process.Kill();
-                message.Add(_adminCreatedLabel, true);
+                message.Add(SettingsKey.InteropCommandAdminCreatedLabel, true);
             }
             catch
             {
-                message.Add(_adminCreatedLabel, false);
+                message.Add(SettingsKey.InteropCommandAdminCreatedLabel, false);
             }
             finally
             {
@@ -155,44 +154,46 @@
 
         private static async void SaveFileFromPipeData()
         {
-            using (var clientStream = new NamedPipeClientStream(".",
+            using var clientStream = new NamedPipeClientStream(".",
                 $"Sessions\\1\\AppContainerNamedObjects\\{ReadSettingsKey(SettingsKey.PackageSidStr)}\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
-                PipeDirection.InOut, PipeOptions.Asynchronous))
+                PipeDirection.InOut, PipeOptions.Asynchronous);
+
+            // Wait for uwp app to send request to write to file.
+            await clientStream.ConnectAsync();
+
+            // Start another thread to accept more write requests.
+            new Thread(new ThreadStart(SaveFileFromPipeData)).Start();
+
+            var pipeReader = new StreamReader(clientStream);
+            var pipeWriter = new StreamWriter(clientStream);
+
+            var writeData = pipeReader.ReadLine().Split(new string[] { "?:" }, StringSplitOptions.None);
+
+            var memoryMapName = writeData[0];
+            var filePath = writeData[1];
+            int.TryParse(writeData[2], out int dataArrayLength);
+
+            var result = "Failed";
+            try
             {
-                await clientStream.ConnectAsync();
-                new Thread(new ThreadStart(SaveFileFromPipeData)).Start();
-
-                var pipeReader = new StreamReader(clientStream);
-                var pipeWriter = new StreamWriter(clientStream);
-
-                var writeData = pipeReader.ReadLine().Split(new string[] { "?:" }, StringSplitOptions.None);
-
-                var memoryMapName = writeData[0];
-                var filePath = writeData[1];
-                int.TryParse(writeData[2], out int dataArrayLength);
-
-                var result = "Failed";
-                try
+                // Open the memory-mapped file and read data from it.
+                using (var reader = new BinaryReader(MemoryMappedFile.OpenExisting(memoryMapName).CreateViewStream()))
                 {
-                    // Open the memory-mapped file.
-                    using (var mmf = MemoryMappedFile.OpenExisting(memoryMapName))
-                    {
-                        using (var stream = mmf.CreateViewStream())
-                        {
-                            var reader = new BinaryReader(stream);
-                            var data = reader.ReadBytes(dataArrayLength);
+                    var data = reader.ReadBytes(dataArrayLength);
 
-                            await PathIO.WriteBytesAsync(filePath, data);
-                        }
-                    }
+                    await PathIO.WriteBytesAsync(filePath, data);
+                }
 
-                    result = "Success";
-                }
-                finally
-                {
-                    pipeWriter.WriteLine(result);
-                    pipeWriter.Flush();
-                }
+                result = "Success";
+            }
+            catch
+            {
+                // Do nothing
+            }
+            finally
+            {
+                pipeWriter.WriteLine(result);
+                pipeWriter.Flush();
             }
         }
 

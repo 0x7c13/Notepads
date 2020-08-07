@@ -578,7 +578,7 @@
                     {
                         await PathIO.WriteBytesAsync(file.Path, result);
                     }
-                    catch (UnauthorizedAccessException ex) // Try to save as admin if dektop extension supported
+                    catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
                     {
                         if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
                         {
