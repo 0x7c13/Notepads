@@ -411,6 +411,8 @@
         {
             Loaded?.Invoke(this, e);
 
+            UpdateAttributesInfo();
+
             StartCheckingFileStatusPeriodically();
 
             // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
