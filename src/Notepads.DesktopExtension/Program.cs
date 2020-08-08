@@ -52,6 +52,8 @@
 
         private static async void InitializeAppServiceConnection()
         {
+            PrintDebugMessage("Successfully started Desktop Extension.");
+
             connection = new AppServiceConnection()
             {
                 AppServiceName = "DesktopExtensionServiceConnection",
@@ -70,10 +72,15 @@
 
             var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.RegisterExtension.ToString() } };
             await connection.SendMessageAsync(message);
+
+            PrintDebugMessage("Successfully created App Service.");
         }
 
         private static void InitializeExtensionService()
         {
+            PrintDebugMessage("Successfully started Adminstrator Extension.");
+            PrintDebugMessage("Waiting on uwp app to send data.");
+
             SaveFileFromPipeData();
         }
 
@@ -88,6 +95,8 @@
             else
             {
                 instanceHandlerMutex.Close();
+
+                PrintDebugMessage("Closing this instance as another instance is already running.", 5000);
             }
 
             return isFirstInstance;
@@ -141,10 +150,14 @@
                 var process = Process.Start(info);
                 AppDomain.CurrentDomain.ProcessExit += (a, b) => process.Kill();
                 message.Add(SettingsKey.InteropCommandAdminCreatedLabel, true);
+
+                PrintDebugMessage("Adminstrator Extension has been launched.");
             }
             catch
             {
                 message.Add(SettingsKey.InteropCommandAdminCreatedLabel, false);
+
+                PrintDebugMessage("User canceled launching of Adminstrator Extension.");
             }
             finally
             {
@@ -185,15 +198,19 @@
                 }
 
                 result = "Success";
+
+                PrintDebugMessage($"Successfully wrote to \"{filePath}\".");
             }
             catch
             {
-                // Do nothing
+                PrintDebugMessage($"Failed to write to \"{filePath}\".");
             }
             finally
             {
                 pipeWriter.WriteLine(result);
                 pipeWriter.Flush();
+
+                PrintDebugMessage("Waiting on uwp app to send data.");
             }
         }
 
@@ -208,6 +225,15 @@
             }
 
             return obj;
+        }
+
+        private static void PrintDebugMessage(string message, int waitAfterPrintingTime = 0)
+        {
+#if DEBUG
+            Console.WriteLine(message);
+            Debug.WriteLine(message);
+            Thread.Sleep(waitAfterPrintingTime);
+#endif
         }
     }
 }
