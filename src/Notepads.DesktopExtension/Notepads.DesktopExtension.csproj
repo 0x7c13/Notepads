@@ -5,7 +5,7 @@
 		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
 		<TargetFramework>net5.0</TargetFramework>
 		<RuntimeIdentifiers>win10-x86; win10-x64; win10-arm64; win10-arm</RuntimeIdentifiers>
-		<Platforms>AnyCPU; x64; x86; ARM64; ARM</Platforms>
+		<Platforms>x64; x86; ARM64; ARM</Platforms>
 		<AssemblyName>Notepads32</AssemblyName>
 		<AssemblyTitle>Notepads</AssemblyTitle>
 		<Product>Notepads</Product>
@@ -19,14 +19,12 @@
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>x64</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>x64</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
@@ -34,14 +32,12 @@
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>x86</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>x86</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
@@ -49,14 +45,12 @@
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>ARM64</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>ARM64</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
@@ -64,14 +58,12 @@
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>ARM</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>ARM</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
