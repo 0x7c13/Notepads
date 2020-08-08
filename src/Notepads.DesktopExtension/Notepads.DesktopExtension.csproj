@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
 		<TargetFramework>net5.0</TargetFramework>
 		<RuntimeIdentifiers>win10-x86; win10-x64; win10-arm64; win10-arm</RuntimeIdentifiers>
 		<Platforms>AnyCPU; x64; x86; ARM64; ARM</Platforms>
@@ -70,21 +70,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>ARM</PlatformTarget>
-		<Prefer32Bit>true</Prefer32Bit>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputType>Exe</OutputType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-        <Prefer32Bit>true</Prefer32Bit>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputType>WinExe</OutputType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Prefer32Bit>true</Prefer32Bit>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
