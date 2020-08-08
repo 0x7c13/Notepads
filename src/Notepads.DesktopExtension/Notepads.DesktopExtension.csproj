@@ -5,6 +5,7 @@
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<TargetFramework>net5.0</TargetFramework>
 		<RuntimeIdentifiers>win10-x86; win10-x64; win10-arm64; win10-arm</RuntimeIdentifiers>
+		<Platforms>AnyCPU; x64; x86; ARM64; ARM</Platforms>
 		<AssemblyName>Notepads32</AssemblyName>
 		<AssemblyTitle>Notepads</AssemblyTitle>
 		<Product>Notepads</Product>
@@ -32,12 +33,14 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>x86</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>x86</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
@@ -60,12 +63,14 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
 		<OutputType>Exe</OutputType>
 		<PlatformTarget>ARM</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
 		<OutputType>WinExe</OutputType>
 		<PlatformTarget>ARM</PlatformTarget>
+		<Prefer32Bit>true</Prefer32Bit>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
