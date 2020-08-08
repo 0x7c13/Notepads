@@ -26,6 +26,7 @@
         private const string DesktopExtensionMutexName = "DesktopExtensionMutexName";
         private const string AdminExtensionMutexName = "AdminExtensionMutexName";
 
+        private static readonly int sessionId = Process.GetCurrentProcess().SessionId;
         private static AppServiceConnection connection = null;
         private static AutoResetEvent appServiceExit;
 
@@ -168,7 +169,7 @@
         private static async void SaveFileFromPipeData()
         {
             using var clientStream = new NamedPipeClientStream(".",
-                $"Sessions\\1\\AppContainerNamedObjects\\{ReadSettingsKey(SettingsKey.PackageSidStr)}\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
+                $"Sessions\\{sessionId}\\AppContainerNamedObjects\\{ReadSettingsKey(SettingsKey.PackageSidStr)}\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
                 PipeDirection.InOut, PipeOptions.Asynchronous);
 
             // Wait for uwp app to send request to write to file.
