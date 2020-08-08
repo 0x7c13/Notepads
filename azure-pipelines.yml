@@ -20,9 +20,8 @@ steps:
     script: |
       [xml]$manifest = Get-Content $(Build.SourcesDirectory)\src\Notepads.Package\Package.appxmanifest
       $manifest.Package.Identity.Name="Notepads"
-      $manifest.Package.Identity.Version="1.3.9.0"
-      $manifest.Package.Properties.DisplayName="Notepads App"
       $manifest.Package.Applications.Application.VisualElements.DisplayName="Notepads"
+      $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
       $manifest.Save('$(Build.SourcesDirectory)\src\Notepads.Package\Package.appxmanifest')
     failOnStderr: true
 
