@@ -95,14 +95,8 @@
         {
             var instanceHandlerMutex = new Mutex(true, mutexName, out var isFirstInstance);
 
-            if (isFirstInstance)
+            if (!isFirstInstance)
             {
-                instanceHandlerMutex.ReleaseMutex();
-            }
-            else
-            {
-                instanceHandlerMutex.Close();
-
                 PrintDebugMessage("Closing this instance as another instance is already running.", 5000);
             }
 

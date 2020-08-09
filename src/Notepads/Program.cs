@@ -38,7 +38,6 @@
             {
                 IsPrimaryInstance = true;
                 ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
-                instanceHandlerMutex.ReleaseMutex();
             }
             else
             {
