@@ -9,6 +9,7 @@
     using System.Reflection;
     using System.Security.Principal;
     using System.Threading;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
@@ -35,6 +36,11 @@
         /// </summary>
         static void Main(string[] args)
         {
+#if DEBUG
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnUnobservedException;
+#endif
+
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 if (!IsFirstInstance(AdminExtensionMutexName)) return;
@@ -235,6 +241,18 @@
             Debug.WriteLine(message);
             Thread.Sleep(waitAfterPrintingTime);
 #endif
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            // TODO: Log/Track Unhandled exception
+        }
+
+        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            // TODO: Log/Track Unobserved exception
+
+            e.SetObserved();
         }
     }
 }

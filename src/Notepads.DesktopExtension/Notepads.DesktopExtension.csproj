@@ -12,7 +12,7 @@
 		<Copyright>Copyright © 2020 Jackie Liu</Copyright>
 		<PackageId>Notepads</PackageId>
 		<Authors>Jackie Liu</Authors>
-		<Description>Notepads</Description>
+		<Description>Desktop Extension to allow users modifying system files with Notepads</Description>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
