@@ -7,10 +7,6 @@
         internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
         internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
         internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
-        internal static string PackageSidStr = "PackageSidStr";
-        internal static string InteropCommandLabel = "Command";
-        internal static string InteropCommandFailedLabel = "Failed";
-        internal static string InteropCommandAdminCreatedLabel = "AdminCreated";
 
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";
@@ -38,5 +34,15 @@
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
         internal static string EditorDefaultDisplayLineNumbersBool = "EditorDefaultDisplayLineNumbersBool";
         internal static string EditorEnableSmartCopyBool = "EditorEnableSmartCopyBool";
+
+        // Interop related
+        internal static string PackageSidStr = "PackageSidStr";
+        internal static string InteropCommandLabel = "Command";
+        internal static string InteropCommandFailedLabel = "Failed";
+        internal static string InteropCommandAdminCreatedLabel = "AdminCreated";
+        internal const string RegisterExtensionCommandStr = "RegisterExtension";
+        internal const string CreateElevetedExtensionCommandStr = "CreateElevetedExtension";
+        internal const string ExitAppCommandStr = "ExitApp";
+        internal const string AppCenterSecret = null;
     }
 }

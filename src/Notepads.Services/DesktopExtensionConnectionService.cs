@@ -9,13 +9,6 @@
     using Windows.ApplicationModel.Background;
     using Windows.Foundation.Collections;
 
-    public enum CommandArgs
-    {
-        RegisterExtension,
-        CreateElevetedExtension,
-        ExitApp
-    }
-
     public sealed class DesktopExtensionConnectionService : IBackgroundTask
     {
         private BackgroundTaskDeferral backgroundTaskDeferral;
@@ -53,12 +46,11 @@
 
             var message = args.Request.Message;
             if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
-                !Enum.TryParse(typeof(CommandArgs), (string)message[SettingsKey.InteropCommandLabel], out var result)) return;
-            var command = (CommandArgs)result;
+                !(message[SettingsKey.InteropCommandLabel] is string command)) return;
 
             switch (command)
             {
-                case CommandArgs.RegisterExtension:
+                case SettingsKey.RegisterExtensionCommandStr:
                     appServiceConnections.Remove(appServiceConnection);
                     if (extensionAppServiceConnection == null)
                     {
@@ -69,7 +61,7 @@
                         this.backgroundTaskDeferral.Complete();
                     }
                     break;
-                case CommandArgs.CreateElevetedExtension:
+                case SettingsKey.CreateElevetedExtensionCommandStr:
                     if (appServiceConnection == extensionAppServiceConnection)
                     {
                         Parallel.ForEach(appServiceConnections, async (serviceConnection) =>
@@ -123,7 +115,7 @@
                     appServiceConnections.Remove(serviceConnection);
                     if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
                     {
-                        var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.ExitApp.ToString() } };
+                        var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.ExitAppCommandStr } };
                         await extensionAppServiceConnection.SendMessageAsync(message);
                     }
                 }

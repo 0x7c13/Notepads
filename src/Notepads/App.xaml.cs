@@ -30,8 +30,6 @@
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
-        private const string AppCenterSecret = null;
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -42,7 +40,7 @@
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(AppCenterSecret, services);
+            AppCenter.Start(SettingsKey.AppCenterSecret, services);
 
             LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
@@ -219,7 +217,8 @@
                 $"Exception: {e.Exception}, " +
                 $"Message: {e.Message}, " +
                 $"InnerException: {e.Exception?.InnerException}, " +
-                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}, " +
+                $"IsDesktopExtension: {false}",
                 "UnhandledException");
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);

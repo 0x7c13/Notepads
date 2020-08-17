@@ -1,26 +1,27 @@
 ﻿namespace Notepads.DesktopExtension
 {
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
     using Notepads.Settings;
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.IO.MemoryMappedFiles;
     using System.IO.Pipes;
-    using System.Reflection;
+    using System.Linq;
     using System.Security.Principal;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.Foundation.Collections;
     using Windows.Storage;
-
-    public enum CommandArgs
-    {
-        RegisterExtension,
-        CreateElevetedExtension,
-        ExitApp
-    }
+    using Windows.System;
+    using Windows.System.UserProfile;
 
     static class Program
     {
@@ -29,17 +30,14 @@
 
         private static readonly int sessionId = Process.GetCurrentProcess().SessionId;
         private static AppServiceConnection connection = null;
-        private static AutoResetEvent appServiceExit;
 
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         static void Main(string[] args)
         {
-#if DEBUG
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
-#endif
 
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
@@ -53,8 +51,10 @@
                 if (args.Length > 2 && args[2] == "/admin") CreateElevetedExtension();
             }
 
-            appServiceExit = new AutoResetEvent(false);
-            appServiceExit.WaitOne();
+            var services = new Type[] { typeof(Crashes), typeof(Analytics) };
+            AppCenter.Start(SettingsKey.AppCenterSecret, services);
+
+            Application.Run();
         }
 
         private static async void InitializeAppServiceConnection()
@@ -74,10 +74,10 @@
 
             if (status != AppServiceConnectionStatus.Success)
             {
-                appServiceExit.Set();
+                Application.Exit();
             }
 
-            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.RegisterExtension.ToString() } };
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.RegisterExtensionCommandStr } };
             await connection.SendMessageAsync(message);
 
             PrintDebugMessage("Successfully created App Service.");
@@ -106,7 +106,7 @@
         private static void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             // connection to the UWP lost, so we shut down the desktop process
-            appServiceExit.Set();
+            Application.Exit();
         }
 
         private static void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -116,14 +116,14 @@
             var messageDeferral = args.GetDeferral();
 
             var message = args.Request.Message;
-            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) || !Enum.TryParse<CommandArgs>((string)message[SettingsKey.InteropCommandLabel], out var command)) return;
+            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) || !(message[SettingsKey.InteropCommandLabel] is string command)) return;
             switch (command)
             {
-                case CommandArgs.CreateElevetedExtension:
+                case SettingsKey.CreateElevetedExtensionCommandStr:
                     CreateElevetedExtension();
                     break;
-                case CommandArgs.ExitApp:
-                    appServiceExit.Set();
+                case SettingsKey.ExitAppCommandStr:
+                    Application.Exit();
                     break;
             }
 
@@ -132,20 +132,15 @@
 
         private static async void CreateElevetedExtension()
         {
-            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.CreateElevetedExtension.ToString() } };
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.CreateElevetedExtensionCommandStr } };
 
             try
             {
-                string result = Assembly.GetExecutingAssembly().Location;
-                int index = result.LastIndexOf("\\");
-                string rootPath = $"{result.Substring(0, index)}\\..\\";
-                string aliasPath = rootPath + @"\Notepads.DesktopExtension\Notepads32.exe";
-
                 ProcessStartInfo info = new ProcessStartInfo
                 {
                     Verb = "runas",
                     UseShellExecute = true,
-                    FileName = aliasPath
+                    FileName = Application.ExecutablePath
                 };
 
                 var process = Process.Start(info);
@@ -153,12 +148,21 @@
                 message.Add(SettingsKey.InteropCommandAdminCreatedLabel, true);
 
                 PrintDebugMessage("Adminstrator Extension has been launched.");
+                Analytics.TrackEvent("OnAdminstratorPrivilageGranted", new Dictionary<string, string> { { "Accepted", true.ToString() } });
             }
-            catch
+            catch (Exception ex)
             {
                 message.Add(SettingsKey.InteropCommandAdminCreatedLabel, false);
 
                 PrintDebugMessage("User canceled launching of Adminstrator Extension.");
+                Analytics.TrackEvent("OnAdminstratorPrivilageDenied",
+                    new Dictionary<string, string> {
+                        { "Denied", true.ToString() },
+                        { "Message", ex.Message },
+                        { "Exception", ex.ToString() },
+                        { "InnerException", ex.InnerException?.ToString() },
+                        { "InnerExceptionMessage", ex.InnerException?.Message }
+                    });
             }
             finally
             {
@@ -202,9 +206,17 @@
 
                 PrintDebugMessage($"Successfully wrote to \"{filePath}\".");
             }
-            catch
+            catch (Exception ex)
             {
                 PrintDebugMessage($"Failed to write to \"{filePath}\".");
+                Analytics.TrackEvent("OnWriteToSystemFileRequested",
+                    new Dictionary<string, string> {
+                        { "Result", result },
+                        { "Message", ex.Message },
+                        { "Exception", ex.ToString() },
+                        { "InnerException", ex.InnerException?.ToString() },
+                        { "InnerExceptionMessage", ex.InnerException?.Message }
+                    });
             }
             finally
             {
@@ -212,6 +224,10 @@
                 pipeWriter.Flush();
 
                 PrintDebugMessage("Waiting on uwp app to send data.");
+                if ("Success".Equals(result))
+                {
+                    Analytics.TrackEvent("OnWriteToSystemFileRequested", new Dictionary<string, string> { { "Result", result } });
+                }
             }
         }
 
@@ -239,13 +255,56 @@
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // TODO: Log/Track Unhandled exception
+            var exception = e.ExceptionObject as Exception;
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", exception?.Message },
+                { "Exception", exception?.ToString() },
+                { "Culture", (GlobalizationPreferences.Languages.Count > 0 ? new CultureInfo(GlobalizationPreferences.Languages.First()) : null).EnglishName },
+                { "AvailableMemory", ((float)MemoryManager.AppMemoryUsageLimit / 1024 / 1024).ToString("F0") },
+                { "FirstUseTimeUTC", Process.GetCurrentProcess().StartTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "OSArchitecture", Package.Current.Id.Architecture.ToString() },
+                { "OSVersion", Environment.OSVersion.Version.ToString() },
+                { "IsElevated", new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator).ToString() }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {exception}, " +
+                $"Message: {exception?.Message}, " +
+                $"InnerException: {exception?.InnerException}, " +
+                $"InnerExceptionMessage: {exception?.InnerException?.Message}",
+                "UnhandledException");
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
+            Crashes.TrackError(exception, diagnosticInfo, attachment);
+
+            // handle it manually.
+            if (e.IsTerminating) Application.Restart();
         }
 
         private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            // TODO: Log/Track Unobserved exception
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Exception?.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "InnerException", e.Exception?.InnerException?.ToString() },
+                { "InnerExceptionMessage", e.Exception?.InnerException?.Message }
+            };
 
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Exception?.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}, " +
+                $"IsDesktopExtension: {true}",
+                "UnobservedException");
+
+            Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
             e.SetObserved();
         }
     }

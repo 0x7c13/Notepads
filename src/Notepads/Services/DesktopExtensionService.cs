@@ -49,8 +49,7 @@
         {
             var message = args.Request.Message;
             if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
-                !Enum.TryParse(typeof(CommandArgs), (string)message[SettingsKey.InteropCommandLabel], out var commandObj) ||
-                (CommandArgs)commandObj != CommandArgs.CreateElevetedExtension) return;
+                SettingsKey.CreateElevetedExtensionCommandStr.Equals(message[SettingsKey.InteropCommandLabel])) return;
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
             {
@@ -141,7 +140,7 @@
         {
             if (InteropServiceConnection == null) await Initialize();
 
-            var message = new ValueSet { { SettingsKey.InteropCommandLabel, CommandArgs.CreateElevetedExtension.ToString() } };
+            var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.CreateElevetedExtensionCommandStr } };
             var response = await InteropServiceConnection.SendMessageAsync(message);
             message = response.Message;
 
