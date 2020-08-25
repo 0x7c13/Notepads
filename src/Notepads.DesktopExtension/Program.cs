@@ -37,6 +37,7 @@
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            Application.ThreadException += (sender, args) => OnUnhandledException(sender, new UnhandledExceptionEventArgs(args.Exception, true));
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
@@ -199,7 +200,7 @@
                 {
                     var data = reader.ReadBytes(dataArrayLength);
 
-                    await PathIO.WriteBytesAsync(filePath, data);
+                    await File.WriteAllBytesAsync(filePath, data);
                 }
 
                 result = "Success";
