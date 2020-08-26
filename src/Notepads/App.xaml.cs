@@ -124,7 +124,7 @@
                 { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
             };
 
-            LoggingService.LogInfo($"[{nameof(App)}] Editor settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            LoggingService.LogInfo($"[{nameof(App)}] Editor settings: \n{string.Join("\n", appLaunchEditorSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
             Analytics.TrackEvent("AppLaunch_Editor_Settings", appLaunchEditorSettings);
 
             try
