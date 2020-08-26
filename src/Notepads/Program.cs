@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
@@ -12,6 +11,8 @@
     public static class Program
     {
         public static bool IsPrimaryInstance { get; set; }
+
+        public static Mutex InstanceHandlerMutex { get; set; }
 
         static void Main(string[] args)
         {
@@ -30,7 +31,7 @@
             //    Windows.UI.Xaml.Application.Start(p => new App());
             //}
 
-            var instanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)
             {
                 IsPrimaryInstance = true;
@@ -38,7 +39,7 @@
             }
             else
             {
-                instanceHandlerMutex.Close();
+                InstanceHandlerMutex.Close();
             }
 
             if (activatedArgs is FileActivatedEventArgs)
