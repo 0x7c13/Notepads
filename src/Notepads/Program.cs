@@ -13,6 +13,8 @@
     {
         public static bool IsPrimaryInstance { get; set; }
 
+        public static Mutex InstanceHandlerMutex { get; set; }
+
         static void Main(string[] args)
         {
 #if DEBUG
@@ -30,7 +32,7 @@
             //    Windows.UI.Xaml.Application.Start(p => new App());
             //}
 
-            var instanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)
             {
                 IsPrimaryInstance = true;
@@ -38,7 +40,7 @@
             }
             else
             {
-                instanceHandlerMutex.Close();
+                InstanceHandlerMutex.Close();
             }
 
             if (activatedArgs is FileActivatedEventArgs)
