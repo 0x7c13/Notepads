@@ -619,7 +619,7 @@
       <Version>1.6.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.4.0</Version>
+      <Version>3.4.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
       <Version>3.4.1</Version>
