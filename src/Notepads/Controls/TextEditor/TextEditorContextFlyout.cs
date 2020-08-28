@@ -25,7 +25,7 @@
         private MenuFlyoutItem _share;
 
         private MenuFlyout _proofingFlyout;
-        private readonly MenuFlyoutSeparator _separator0 = new MenuFlyoutSeparator();
+        private readonly MenuFlyoutSeparator _proofingSeparator = new MenuFlyoutSeparator();
 
         private readonly ITextEditor _textEditor;
         private readonly TextEditorCore _textEditorCore;
@@ -72,19 +72,19 @@
                         Items.Insert(_proofingFlyout.Items.IndexOf(item), item);
                     }
 
-                    if (!Items.Contains(_separator0))
+                    if (!Items.Contains(_proofingSeparator))
                     {
-                        Items.Insert(_proofingFlyout.Items.Count, _separator0);
+                        Items.Insert(_proofingFlyout.Items.Count, _proofingSeparator);
                     }
 
-                    if (_separator0.Visibility == Visibility.Collapsed)
+                    if (_proofingSeparator.Visibility == Visibility.Collapsed)
                     {
-                        _separator0.Visibility = Visibility.Visible;
+                        _proofingSeparator.Visibility = Visibility.Visible;
                     }
                 }
                 else
                 {
-                    _separator0.Visibility = Visibility.Collapsed;
+                    _proofingSeparator.Visibility = Visibility.Collapsed;
                 }
             }
 
