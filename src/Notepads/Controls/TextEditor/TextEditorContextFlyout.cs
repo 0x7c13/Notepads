@@ -24,6 +24,9 @@
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
+        private MenuFlyout _proofingFlyout;
+        private readonly MenuFlyoutSeparator _separator0 = new MenuFlyoutSeparator();
+
         private readonly ITextEditor _textEditor;
         private readonly TextEditorCore _textEditorCore;
 
@@ -47,15 +50,44 @@
             Items.Add(Share);
 
             Opening += TextEditorContextFlyout_Opening;
+            Closed += TextEditorContextFlyout_Closed;
         }
 
         public void Dispose()
         {
             Opening -= TextEditorContextFlyout_Opening;
+            Closed -= TextEditorContextFlyout_Closed;
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
         {
+            if (_textEditorCore.IsSpellCheckEnabled)
+            {
+                _proofingFlyout = _textEditorCore.ProofingMenuFlyout as MenuFlyout;
+
+                if (_proofingFlyout.Items.Count > 0)
+                {
+                    foreach (var item in _proofingFlyout.Items)
+                    {
+                        Items.Insert(_proofingFlyout.Items.IndexOf(item), item);
+                    }
+
+                    if (!Items.Contains(_separator0))
+                    {
+                        Items.Insert(_proofingFlyout.Items.Count, _separator0);
+                    }
+
+                    if (_separator0.Visibility == Visibility.Collapsed)
+                    {
+                        _separator0.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    _separator0.Visibility = Visibility.Collapsed;
+                }
+            }
+
             if (_textEditorCore.Document.Selection.Type == SelectionType.InsertionPoint ||
                 _textEditorCore.Document.Selection.Type == SelectionType.None)
             {
@@ -76,6 +108,17 @@
             if (App.IsGameBarWidget)
             {
                 Share.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void TextEditorContextFlyout_Closed(object sender, object e)
+        {
+            if (_proofingFlyout != null)
+            {
+                foreach (var item in _proofingFlyout.Items)
+                {
+                    Items.Remove(item);
+                }
             }
         }
 
