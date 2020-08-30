@@ -61,31 +61,15 @@
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
         {
-            if (_textEditorCore.IsSpellCheckEnabled)
+            if (_textEditorCore.IsSpellCheckEnabled &&
+                _textEditorCore.ProofingMenuFlyout is MenuFlyout proofingFlyout &&
+                proofingFlyout.Items?.Count > 0)
             {
-                _proofingFlyout = _textEditorCore.ProofingMenuFlyout as MenuFlyout;
-
-                if (_proofingFlyout.Items.Count > 0)
-                {
-                    foreach (var item in _proofingFlyout.Items)
-                    {
-                        Items.Insert(_proofingFlyout.Items.IndexOf(item), item);
-                    }
-
-                    if (!Items.Contains(_proofingSeparator))
-                    {
-                        Items.Insert(_proofingFlyout.Items.Count, _proofingSeparator);
-                    }
-
-                    if (_proofingSeparator.Visibility == Visibility.Collapsed)
-                    {
-                        _proofingSeparator.Visibility = Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    _proofingSeparator.Visibility = Visibility.Collapsed;
-                }
+                BuildProofingSubItems(proofingFlyout);
+            }
+            else
+            {
+                _proofingSeparator.Visibility = Visibility.Collapsed;
             }
 
             if (_textEditorCore.Document.Selection.Type == SelectionType.InsertionPoint ||
@@ -108,6 +92,26 @@
             if (App.IsGameBarWidget)
             {
                 Share.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void BuildProofingSubItems(MenuFlyout proofingFlyout)
+        {
+            _proofingFlyout = proofingFlyout;
+
+            foreach (var item in _proofingFlyout.Items)
+            {
+                Items.Insert(_proofingFlyout.Items.IndexOf(item), item);
+            }
+
+            if (!Items.Contains(_proofingSeparator))
+            {
+                Items.Insert(_proofingFlyout.Items.Count, _proofingSeparator);
+            }
+
+            if (_proofingSeparator.Visibility == Visibility.Collapsed)
+            {
+                _proofingSeparator.Visibility = Visibility.Visible;
             }
         }
 
