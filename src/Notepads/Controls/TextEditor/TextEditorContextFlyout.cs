@@ -117,7 +117,7 @@
 
         private void TextEditorContextFlyout_Closed(object sender, object e)
         {
-            if (_proofingFlyout != null)
+            if (_proofingFlyout?.Items?.Count > 0)
             {
                 foreach (var item in _proofingFlyout.Items)
                 {
