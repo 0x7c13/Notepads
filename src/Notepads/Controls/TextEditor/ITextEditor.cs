@@ -8,6 +8,7 @@
     using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Input;
 
     public interface ITextEditor
@@ -27,6 +28,7 @@
         event EventHandler ChangeReverted;
         event EventHandler FileSaved;
         event EventHandler FileReloaded;
+        event EventHandler FileRenamed;
 
         Guid Id { get; set; }
 
@@ -63,6 +65,8 @@
             bool isModified = false,
             bool resetText = true);
 
+        Task RenameAsync(string newFileName);
+
         string GetText();
 
         void StartCheckingFileStatusPeriodically();
@@ -81,7 +85,7 @@
 
         Encoding GetEncoding();
 
-        void CopySelectedTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
+        void CopyTextToWindowsClipboard(TextControlCopyingToClipboardEventArgs args);
 
         void RevertAllChanges();
 
@@ -131,5 +135,7 @@
         void HideGoToControl();
 
         void Dispose();
+
+        FlyoutBase GetContextFlyout();
     }
 }

@@ -336,8 +336,7 @@ namespace Notepads.Controls.Markdown
                         if (useBlockParser)
                         {
                             // Parse the list item as a series of blocks.
-                            int actualEnd;
-                            newBlockList.AddRange(MarkdownDocument.Parse(blockText, 0, blockText.Length, quoteDepth: 0, actualEnd: out actualEnd));
+                            newBlockList.AddRange(MarkdownDocument.Parse(blockText, 0, blockText.Length, quoteDepth: 0, actualEnd: out var actualEnd));
                             usedBlockParser = true;
                         }
                         else

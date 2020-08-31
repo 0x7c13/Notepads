@@ -7,7 +7,7 @@
     using Windows.UI.Text;
     using Windows.UI.Xaml;
 
-    public static class EditorSettingsService
+    public static class AppSettingsService
     {
         public static event EventHandler<string> OnFontFamilyChanged;
         public static event EventHandler<FontStyle> OnFontStyleChanged;
@@ -234,7 +234,7 @@
             }
         }
 
-        public static bool _isHighlightMisspelledWordsEnabled;
+        private static bool _isHighlightMisspelledWordsEnabled;
 
         public static bool IsHighlightMisspelledWordsEnabled
         {
@@ -247,7 +247,7 @@
             }
         }
 
-        public static bool _alwaysOpenNewWindow;
+        private static bool _alwaysOpenNewWindow;
 
         public static bool AlwaysOpenNewWindow
         {
@@ -259,7 +259,7 @@
             }
         }
 
-        public static bool _displayLineNumbers;
+        private static bool _displayLineNumbers;
 
         public static bool EditorDisplayLineNumbers
         {
@@ -272,6 +272,18 @@
             }
         }
 
+        private static bool _isSmartCopyEnabled;
+
+        public static bool IsSmartCopyEnabled
+        {
+            get => _isSmartCopyEnabled;
+            set
+            {
+                _isSmartCopyEnabled = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSmartCopyBool, value);
+            }
+        }
+
         public static void Initialize()
         {
             InitializeFontSettings();
@@ -281,6 +293,8 @@
             InitializeSpellingSettings();
 
             InitializeDisplaySettings();
+
+            InitializeSmartCopySettings();
 
             InitializeLineEndingSettings();
 
@@ -314,7 +328,7 @@
         private static void InitializeSessionSnapshotSettings()
         {
             // We should disable session snapshot feature on multi instances
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 _isSessionSnapshotEnabled = false;
             }
@@ -394,6 +408,18 @@
             }
         }
 
+        private static void InitializeSmartCopySettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSmartCopyBool) is bool enableSmartCopy)
+            {
+                _isSmartCopyEnabled = enableSmartCopy;
+            }
+            else
+            {
+                _isSmartCopyEnabled = false;
+            }
+        }
+
         private static void InitializeEncodingSettings()
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -444,7 +470,7 @@
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError($"[{nameof(EditorSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
+                    LoggingService.LogError($"[{nameof(AppSettingsService)}] Failed to get encoding, code page: {decodingCodePage}, ex: {ex.Message}");
                     _editorDefaultDecoding = null;
                 }
             }
