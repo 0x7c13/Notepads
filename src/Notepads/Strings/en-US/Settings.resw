@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Acrylic background tint opacity.</value>
+    <value>Acrylic background tint opacity. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Fallback decoding will be used if file's encoding cannot be recognized. ANSI decoding is only recommended to open legacy text files.</value>
+    <value>Fallback decoding will be used when a file's encoding cannot be recognized.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -226,7 +226,7 @@
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (Recommended)</value>
+    <value>UTF-8</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads will remember the current session for next launch and do a periodic session snapshot backup to prevent accidental data loss for uncommitted changes. Notepads will NOT remind you to save your work on app close if this feature is enabled.</value>
+    <value>Once enabled, Notepads will remember the current session for next launch and do a periodic session snapshot backup to prevent accidental data loss for uncommitted changes. Notepads will NOT remind you to save your work on app close if this feature is enabled. Please also remember that session snapshot only works in the first or main window of Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -308,5 +308,89 @@
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>Session Snapshot Settings</value>
     <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>Highlight misspelled words</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>Highlight misspelled words</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>Spelling</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>Once enabled, Notepads will always open file in a new window instead of creating a new tab.</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>Always open new window</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>Always open new window</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Launch Preferences</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Highlight current line</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Highlight current line</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>Custom Search Engine</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>*Enter a url of format https://www.example.com/search?q={0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>Settings for default search engine choosen when a web search is done.</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>Default Search Engine</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>Auto guess Encoding (Recommended)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>Display</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
+    <value>Show border around current line.</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>Display line numbers in the document.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Style</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Weight</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>

@@ -1,0 +1,588 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>გაუქმება</value>
+    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>ცვლილებები შენახული არ არის.</value>
+    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>შეინახე ყველაფერი &amp; გამოდი</value>
+    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>არ შეინახო</value>
+    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>გსურთ ცვლილებების შენახვა?</value>
+    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
+    <value>არაფერია გასაზიარებელი, რადგან ტექსტი არ არის მონიშნული დამიმდინარე დოკუმენტი ცარიელია.</value>
+    <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
+  </data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
+    <value>თქვენი ცვლილებების შემდეგ</value>
+    <comment>DiffViewer: Header's text for new text (After changes).</comment>
+  </data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
+    <value>თქვენს ცვლილებებამდე</value>
+    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
+  </data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
+    <value>Notepads არ აქვს 1MB-ზე დიდი ფაილის მხარდაჭერა ამ დროისთვის.</value>
+    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
+    <value>სამწუხაროდ ფაილი "{0}"-ის გახსნა შეუძლებელია: {1}</value>
+    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>კარგი</value>
+    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+    <value>ფაილის გახსნის შეცდომა</value>
+    <comment>FileOpenErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
+    <value>სამწუხაროდ ფაილი "{0}"-ის შენახვა შეუძლებელია: {1}</value>
+    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>კარგი</value>
+    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+    <value>ფაილის შენახვის შეცდომა</value>
+    <comment>FileSaveErrorDialog: "Title" display text.</comment>
+  </data>
+  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>დახურვა</value>
+    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
+    <value>მოძებნე</value>
+    <comment>FindAndReplace: Find bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
+    <value>ვერ მოიძებნა</value>
+    <comment>FindAndReplace: Notification message when target not found.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>ჩაანაცვლე ყველა (Ctrl+Alt+Enter)</value>
+    <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
+    <value>ჩაანაცვლე</value>
+    <comment>FindAndReplace: Replace bar placeholder text.</comment>
+  </data>
+  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>ჩაანაცვლე (Alt+R)</value>
+    <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>მოძებნე შემდეგი (F3)</value>
+    <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>ძებნის პარამეტრები</value>
+    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
+    <value>დამთხვევის შემთხვევა</value>
+    <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
+    <value>მთლიანი სიტყვის დამთხვევა</value>
+    <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Find.Text" xml:space="preserve">
+    <value>ძებნა...</value>
+    <comment>MainMenu: "Find" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New.Text" xml:space="preserve">
+    <value>ახალი</value>
+    <comment>MainMenu: "New" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open.Text" xml:space="preserve">
+    <value>გახსნა...</value>
+    <comment>MainMenu: "Open" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Print.Text" xml:space="preserve">
+    <value>ბეჭდვა...</value>
+    <comment>MainMenu: "Print" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
+    <value>ჩანაცვლება...</value>
+    <comment>MainMenu: "Replace" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Save.Text" xml:space="preserve">
+    <value>შენახვა</value>
+    <comment>MainMenu: "Save" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
+    <value>ყველაფრის შენახვა</value>
+    <comment>MainMenu: "Save All" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
+    <value>შენახვა როგორც...</value>
+    <comment>MainMenu: "Save As" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
+    <value>სეთინგები</value>
+    <comment>MainMenu: "Settings" button display text.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
+    <value>შეწყვეტა</value>
+    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
+    <value>ყველა ცვლილება ტექსტის, ხაზის დაბოლოების და ენკოდინგის ჩათვლით გათებეული "{0}"-ს მიხედვით, იქნება უკუშექცეული!</value>
+    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
+    <value>დიახ</value>
+    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
+    <value>ნამდვილად გსურთ ყველაფრის უკან დაბრუნება?</value>
+    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+    <value>შეწყვეტა</value>
+    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
+    <value>შეინახე ფაილი "{0}"?</value>
+    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+    <value>შეინახე</value>
+    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+    <value>არ შეინახო</value>
+    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
+  </data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+    <value>გსურთ თქვენი ფაილების შენახვა?</value>
+    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
+    <value>დახურვა</value>
+    <comment>Tab: ContextFlyout "Close" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
+    <value>დანარჩენების დახურვა</value>
+    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
+    <value>მარჯვნივ დახურვა</value>
+    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
+    <value>დახურე შენახული</value>
+    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
+    <value>სრული მისამართის კოპირება</value>
+    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
+    <value>გახსენი შემცვლელი ფოლდერი</value>
+    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
+    <value>კოპირება</value>
+    <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
+    <value>ამოჭრა</value>
+    <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
+    <value>ჩასმა</value>
+    <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
+    <value>წინაჩვენებაზე გადართვა</value>
+    <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
+    <value>დაბრუნების გაუქმება</value>
+    <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
+    <value>ყველაფრის მონიშვნა</value>
+    <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
+    <value>გაზიარება</value>
+    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
+    <value>მონიშნულის გაზიარება</value>
+    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
+    <value>უკან დაბრუნება</value>
+    <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
+    <value>სიტყვის შეფუთვა</value>
+    <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
+  </data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
+    <value>უსახელო.txt</value>
+    <comment>TextEditor: Default file name for new document.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
+    <value>ხაზი {0}, სვეტი {1} ({2} {3})</value>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
+    <value>ხაზი {0}, სვეტი {1}</value>
+    <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
+    <value>ტექსტის ცვლილებების გადახედვა</value>
+    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
+    <value>დააბრუნე ყელა ცვლილება</value>
+    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
+  </data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
+    <value>გადაკეთებულია</value>
+    <comment>TextEditor: ModificationIndicator display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
+    <value>დაკოპირებულია</value>
+    <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
+    <value>შენახულია</value>
+    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
+    <value>დააჭირე F11-ს სრული ეკრანიდან გამოსასვლელად</value>
+    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
+    <value>გადატვირთე ფაილი დისკიდან</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
+    <value>ფაილი შეიცვალა გარედან!</value>
+    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
+    <value>ფაილი გადაადგილდა, სახელი შეეცვალა ან წაიშალა!</value>
+    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
+    <value>ფაილი გადაიტვრითა</value>
+    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
+  </data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
+    <value>კომპაქტური ზედა ფენა</value>
+    <comment>App: "Compact Overlay" display text</comment>
+  </data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
+    <value>სრული ეკრანი</value>
+    <comment>App: "Full Screen" display text</comment>
+  </data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
+    <value>კომპაქტური ზედა ფენიდან გამოსვლა</value>
+    <comment>App: "Exit Compact Overlay" display text</comment>
+  </data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
+    <value>სრული ეკრანიდან გამოსვლა</value>
+    <comment>App: "Exit Full Screen" display text</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
+    <value>არჩეული</value>
+    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
+    <value>არჩეული</value>
+    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>ტაბი მიიტანეთ აქ</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>გახსენი Notepads-ით</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>ეს არის Notepads-ის ჩრდილი ფანჯარა. სესიის ანაბეჭდი და სეთინგები არის გათიშული.</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>ფაილი უკვე გახსნილია!</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>ახალი ფანჯარა</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>ხსნის ახალ ფანჯარაში</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>ახალი ფანჯარა</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>გახსენი ბოლო</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>გადადი ხაზზე</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>ხაზის ნომერი აღემატება ხაზების ჯამურ რაოდენობას!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>მხოლოდ რიცვის ჩაწერა შეგიძლიათ!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>გადადი ხაზზე</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>ვებში ძებნა</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>დააბრუნე საწყისი ზომა</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>მიახლოვება</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>დაშორება</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>გადადი:</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>ამობეჭდე ყველაფერი...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>შესაძლებელია მხოლოდ ერთი ათელის მიღება</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>მნიშვნელობა რეინჯს სცდება</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>ფუთერი</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>ჰედერი</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>ჰორიზონტალური დაშორება (in %)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>%-ში გვერდის სიგანე</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>ერორი იბეჭდება:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>ბეჭდვა გაფეილდა</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>ბეჭდვა არ არის მხარდაჭერილი ამ მოწყობილობაზე</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>ვერტიკალური დაშორება (%-ში)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>გამოიყენე ჩვეულებრივი გამოსახულება</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>გაასუფთავე ბოლოს გახსნილი</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
+    <value>დანარჩენი კოდირება</value>
+    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
+    <value>გახსენი კოდირებით</value>
+    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
+    <value>შეინახე კოდირებით</value>
+    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
+    <value>არასწორი რეგულარული გამოსახულება!</value>
+    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>ავტომატურად მიხვდი კოდირებას</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>კოდირების განსაზღვრა შეუძლებელია</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>იპოვნე წინა (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>გადართე გადაწერის რეჟიმზე</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>მარჯვნიდან მარცხნივ კითხვა</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
+  </data>
+</root>

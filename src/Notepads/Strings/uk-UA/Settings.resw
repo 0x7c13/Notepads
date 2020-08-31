@@ -130,7 +130,7 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Безкошнтовний редактор з відкритим кодом, спроєктований та розроблений Jackie (Jiaqi) Liu</value>
+    <value>Безкоштовний редактор з відкритим кодом, спроєктований та розроблений Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Прозорість "акрилового" фону</value>
+    <value>Прозорість "акрилового" фону. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Запасне кодування буде використане, якщо неможливо визначити кодування файлу. ANSI рекомендується тільки у тому випадку, якщо ви відкриваєте старі файли.</value>
+    <value>Запасне кодування буде використане, якщо неможливо визначити кодування файлу.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -226,11 +226,11 @@
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8 (рекомендовано)</value>
+    <value>UTF-8</value>
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Тільки для нових файлів</value>
+    <value>Тільки для нових файлів.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Тільки для нових файлів</value>
+    <value>Тільки для нових файлів.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Не впливає на раніше введений текст</value>
+    <value>Не впливає на раніше введений текст.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads запам'ятає список відкритих файлів до наступного запуску та робитиме періодичне резервне копіювання відкритих документів щоб уникнути втрати незбережених змін. Notepads НЕ пропонуватиме вам зберігати ваші файли коли ви закриваєте Notepads, якщо ця опція увімкнена.</value>
+    <value>Notepads запам'ятає список відкритих файлів до наступного запуску та робитиме періодичне резервне копіювання відкритих документів щоб уникнути втрати незбережених змін. Notepads НЕ пропонуватиме вам зберігати ваші файли коли ви закриваєте Notepads, якщо ця опція увімкнена. Зверніть увагу, ця функція працює тільки в першому/основному вікні Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -308,5 +308,89 @@
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
     <value>Збереження і відновлення відкритих документів</value>
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>Не підсвічувати невідомі слова</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>Підсвічувати невідомі слова</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>Перевірка правильності слів</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>Якщо увімкнено, Notepads завжди відкриватиме файл у новому вікні замість вкладки.</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>Не відкривати у новому вікні</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>Завжди відкривати у новому вікні</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Налаштування запуску</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Підсвічувати вибраний рядок</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Підсвічувати вибраний рядок</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>Інший</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>*Введіть адресу у форматі https://www.example.com/search?q={0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>Налаштування для пошуковика (шукати в Інтернеті).</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>Стандартний пошуковик</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>Автоматично визначати кодування (рекомендовано)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>Display</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
+    <value>Показувати рамку навколо вибраного рядка.</value>
+    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>Display line numbers in the document.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Display line numbers</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Style</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Weight</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
 </root>

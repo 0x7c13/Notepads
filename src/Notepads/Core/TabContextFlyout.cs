@@ -1,10 +1,9 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
     using System;
     using System.IO;
+    using Notepads.Controls.TextEditor;
+    using Notepads.Services;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.System;
@@ -25,11 +24,11 @@ namespace Notepads.Core
         private string _containingFolderPath;
 
         private readonly INotepadsCore _notepadsCore;
-        private readonly TextEditor _textEditor;
+        private readonly ITextEditor _textEditor;
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public TabContextFlyout(INotepadsCore notepadsCore, TextEditor textEditor)
+        public TabContextFlyout(INotepadsCore notepadsCore, ITextEditor textEditor)
         {
             _notepadsCore = notepadsCore;
             _textEditor = textEditor;
@@ -50,6 +49,12 @@ namespace Notepads.Core
             Closed += TabContextFlyout_Closed;
         }
 
+        public void Dispose()
+        {
+            Opening -= TabContextFlyout_Opening;
+            Closed -= TabContextFlyout_Closed;
+        }
+
         private void TabContextFlyout_Opening(object sender, object e)
         {
             if (_textEditor.EditingFile != null)
@@ -61,6 +66,11 @@ namespace Notepads.Core
             CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
             CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
             OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+
+            if (App.IsGameBarWidget)
+            {
+                OpenContainingFolder.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TabContextFlyout_Closed(object sender, object e)
@@ -176,12 +186,12 @@ namespace Notepads.Core
                             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
                             dataPackage.SetText(_filePath);
                             Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                            Clipboard.Flush();
+                            Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
                             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
                         }
                         catch (Exception ex)
                         {
-                            LoggingService.LogError($"Failed to copy full path: {ex.Message}");
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
                         }
                     };
                 }
@@ -198,16 +208,23 @@ namespace Notepads.Core
                     _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
                     _openContainingFolder.Click += async (sender, args) =>
                     {
-                        await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        try
+                        {
+                            await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
+                        }
                     };
                 }
                 return _openContainingFolder;
             }
         }
 
-        private void ExecuteOnAllTextEditors(Action<TextEditor> action)
+        private void ExecuteOnAllTextEditors(Action<ITextEditor> action)
         {
-            foreach (TextEditor textEditor in _notepadsCore.GetAllTextEditors())
+            foreach (ITextEditor textEditor in _notepadsCore.GetAllTextEditors())
             {
                 action(textEditor);
             }

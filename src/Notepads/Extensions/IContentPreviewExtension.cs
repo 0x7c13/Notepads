@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Extensions
+﻿namespace Notepads.Extensions
 {
     using Notepads.Controls.TextEditor;
 
@@ -8,5 +7,7 @@ namespace Notepads.Extensions
         void Bind(TextEditorCore editor);
 
         bool IsExtensionEnabled { get; set; }
+
+        void Dispose();
     }
 }

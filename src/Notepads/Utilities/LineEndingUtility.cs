@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Utilities
+﻿namespace Notepads.Utilities
 {
     public enum LineEnding
     {
@@ -43,6 +42,26 @@ namespace Notepads.Utilities
                 default:
                     return "Windows (CRLF)";
             }
+        }
+
+        public static string GetLineEndingName(LineEnding lineEnding)
+        {
+            string lineEndingName = "CRLF";
+
+            switch (lineEnding)
+            {
+                case LineEnding.Crlf:
+                    lineEndingName = "CRLF";
+                    break;
+                case LineEnding.Cr:
+                    lineEndingName = "CR";
+                    break;
+                case LineEnding.Lf:
+                    lineEndingName = "LF";
+                    break;
+            }
+
+            return lineEndingName;
         }
 
         public static LineEnding GetLineEndingByName(string name)

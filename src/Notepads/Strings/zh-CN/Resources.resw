@@ -122,7 +122,7 @@
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>您有尚未保存的内容</value>
+    <value>您有尚未保存的内容。</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads 暂时不支持打开 1MB 以上的文件</value>
+    <value>Notepads 暂时不支持打开 1MB 以上的文件。</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
@@ -186,11 +186,11 @@
     <comment>FindAndReplace: Find bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>找不到</value>
+    <value>未找到</value>
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>全部替换</value>
+    <value>全部替换 (Ctrl+Alt+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -198,10 +198,10 @@
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>替换</value>
+    <value>替换 (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
-  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>查找下一个 (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
@@ -218,23 +218,23 @@
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>查找…</value>
+    <value>查找...</value>
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>新建</value>
+    <value>新建文件</value>
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>打开…</value>
+    <value>打开...</value>
     <comment>MainMenu: "Open" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>打印…</value>
+    <value>打印...</value>
     <comment>MainMenu: "Print" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>替换…</value>
+    <value>替换...</value>
     <comment>MainMenu: "Replace" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Save.Text" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>另存为…</value>
+    <value>另存为...</value>
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
@@ -306,7 +306,7 @@
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>复制路径</value>
+    <value>复制文件路径</value>
     <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
@@ -358,8 +358,8 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>第 {0} 行，第 {1} 列 (已选择{2})</value>
-    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters. You can change the order but DO NOT REMOVE them from the string.</comment>
+    <value>第 {0} 行，第 {1} 列 ( {3} {2} )</value>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
     <value>第 {0} 行，第 {1} 列</value>
@@ -406,7 +406,7 @@
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>画中画模式</value>
+    <value>置顶模式</value>
     <comment>App: "Compact Overlay" display text</comment>
   </data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
@@ -414,11 +414,175 @@
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>退出画中画模式</value>
+    <value>退出置顶模式</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
     <value>退出全屏模式</value>
     <comment>App: "Exit Full Screen" display text</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
+    <value>已选择</value>
+    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
+    <value>已选择</value>
+    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>移动标签到此窗口</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>在Notepads中打开</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>这是Notepads的一个影子窗口，快照备份功能和设置已被禁用。</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>文件已打开！</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>打开一个新窗口</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>新建窗口</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>新建窗口</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>打开最近的文件</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>转到此行</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>跳转至(指定行):</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>行数超过当前文本总行数!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>请输入合法数字!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>跳转至指定行</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>在互联网中搜索</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>重置缩放</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>放大</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>缩小</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>使用正则表达式查找</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>打印全部...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>仅支持到小数点后一位</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>数值超出范围</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>页脚</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>页眉</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>水平边距 (%)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>打印纸所占百分比数值</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>打印错误:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>打印失败</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>此设备不支持打印</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>垂直边距  (%)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>清除最近打开记录</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
+    <value>更多编码选项</value>
+    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
+    <value>通过编码重新打开</value>
+    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
+    <value>通过编码保存</value>
+    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
+    <value>正则表达式不合法!</value>
+    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>自动猜测编码</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>无法识别当前文件编码</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>查找上一个 (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>切换替换模式</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>从右到左阅读顺序</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
 </root>

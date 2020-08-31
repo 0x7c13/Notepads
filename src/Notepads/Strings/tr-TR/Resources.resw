@@ -190,7 +190,7 @@
     <comment>FindAndReplace: Notification message when target not found.</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Tümünü Değiştir</value>
+    <value>Tümünü Değiştir (Ctrl+Alt+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
@@ -198,10 +198,10 @@
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Değiştir</value>
+    <value>Değiştir (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
-  <data name="FindAndReplace_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Sonrakini Bul (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
@@ -358,8 +358,8 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Sat {0}, Süt {1} ({2} seçildi)</value>
-    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters. You can change the order but DO NOT REMOVE them from the string.</comment>
+    <value>Sat {0}, Süt {1} ({2} {3})</value>
+    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
     <value>Sat {0}, Süt {1}</value>
@@ -420,5 +420,169 @@
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
     <value>Tam Ekrandan Çık</value>
     <comment>App: "Exit Full Screen" display text</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
+    <value>seçildi</value>
+    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
+  </data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
+    <value>seçildi</value>
+    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
+    <value>Sekmeyi buraya taşı</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
+  </data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
+    <value>Notepads ile aç</value>
+    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
+  </data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
+    <value>Bu bir Notepads gölge penceresidir. Oturum görüntüsü ve ayarları devre dışı bırakıldı.</value>
+    <comment>App: ShadowWindowIndicator Description display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
+    <value>Dosya zaten açık!</value>
+    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Yeni pencere aç</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
+  </data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>Yeni pencere</value>
+    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
+  </data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
+    <value>Yeni Pencere</value>
+    <comment>MainMenu: "New Window" button display text.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
+    <value>Open Recent</value>
+    <comment>MainMenu: "Open Recent" button display text.</comment>
+  </data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
+    <value>Satıra Git</value>
+    <comment>GoTo: Go to bar placeholder text.</comment>
+  </data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>Git:</value>
+    <comment>GoTo:Go to bar label</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
+    <value>Satır sayısı toplam satır sayısından fazla!</value>
+    <comment>GoTo: Notification message when input exceeds input limit.</comment>
+  </data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
+    <value>Sadece sayı yazabilirsiniz!</value>
+    <comment>GoTo: Notification message when invalid input entered.</comment>
+  </data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Satıra Git</value>
+    <comment>GoTo: "Search" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
+    <value>Web'de ara</value>
+    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
+    <value>Yakınlaştırma Ayarını Varsayılan Hale Getir</value>
+    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
+    <value>Yakınlaştır</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
+  </data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
+    <value>Uzaklaştır</value>
+    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
+  </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>Düzenli İfade Kullan</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
+    <value>Tümünü Yazdır...</value>
+    <comment>MainMenu: "Print All" button display text.</comment>
+  </data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
+    <value>Yalnızca bir ondalık basamağa kadar kabul edilebilir</value>
+    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
+    <value>Değer sınırın dışında</value>
+    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
+  </data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve">
+    <value>Alt Bilgi</value>
+    <comment>Print: PrintManager custom option "FooterText" title.</comment>
+  </data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve">
+    <value>Üst Bilgi</value>
+    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
+  </data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
+    <value>Yatay Kenar Boşluğu (yüzde olarak)</value>
+    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
+  </data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve">
+    <value>Kağıt genişliğinin yüzdesi olarak</value>
+    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
+    <value>Yazdırma hatası:</value>
+    <comment>Print: Notification message when error occurs while showing print ui.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
+    <value>Yazdırılamadı</value>
+    <comment>Print: Notification message on print failure.</comment>
+  </data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
+    <value>Bu cihazda yazdırma desteklenmiyor</value>
+    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
+  </data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
+    <value>Dikey Kenar Boşluğu (yüzde olarak)</value>
+    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
+  </data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
+    <value>Son Açılanları Temizle</value>
+    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
+    <value>Daha Fazla Kodlama</value>
+    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
+    <value>Kodlama ile Yeniden Aç</value>
+    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
+    <value>Kodlama ile Kaydet</value>
+    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
+    <value>Geçersiz düzenli ifade!</value>
+    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
+  </data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
+    <value>Otomatik Tahmin Kodlaması</value>
+    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
+    <value>Kodlama belirlenemiyor</value>
+    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
+  </data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Öncekini Bul (Shift+F3)</value>
+    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
+  </data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Değiştirme Modunu Değiştir</value>
+    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
+  </data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
+    <value>Sağdan sola okuma sırası</value>
+    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
 </root>

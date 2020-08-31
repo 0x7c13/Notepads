@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Controls.FindAndReplace
+﻿namespace Notepads.Controls.FindAndReplace
 {
     using System;
 
@@ -10,25 +9,32 @@ namespace Notepads.Controls.FindAndReplace
         ReplaceAll
     }
 
+    public enum SearchDirection
+    {
+        Previous,
+        Next
+    }
+
     public class FindAndReplaceEventArgs : EventArgs
     {
-        public FindAndReplaceEventArgs(string searchText, string replaceText, bool matchCase, bool matchWholeWord, FindAndReplaceMode findAndReplaceMode)
+        public FindAndReplaceEventArgs(
+            SearchContext searchContext,
+            string replaceText,
+            FindAndReplaceMode findAndReplaceMode,
+            SearchDirection searchDirection = SearchDirection.Next)
         {
-            SearchText = searchText;
-            MatchCase = matchCase;
-            MatchWholeWord = matchWholeWord;
+            SearchContext = searchContext;
             ReplaceText = replaceText;
             FindAndReplaceMode = findAndReplaceMode;
+            SearchDirection = searchDirection;
         }
 
-        public string SearchText { get; }
+        public SearchContext SearchContext { get; }
 
         public string ReplaceText { get; }
 
-        public bool MatchCase { get; }
-
-        public bool MatchWholeWord { get; }
-
         public FindAndReplaceMode FindAndReplaceMode { get; }
+
+        public SearchDirection SearchDirection { get; }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace Notepads.Commands
+﻿namespace Notepads.Commands
 {
     using Windows.System;
 
@@ -8,6 +7,10 @@ namespace Notepads.Commands
         bool Hit(bool ctrlDown, bool altDown, bool shiftDown, VirtualKey key);
 
         bool ShouldExecute(IKeyboardCommand<T> lastCommand);
+
+        bool ShouldHandleAfterExecution();
+
+        bool ShouldSwallowAfterExecution();
 
         void Execute(T args);
     }

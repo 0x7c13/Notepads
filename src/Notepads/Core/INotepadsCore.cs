@@ -1,10 +1,11 @@
-﻿
-namespace Notepads.Core
+﻿namespace Notepads.Core
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
     using Notepads.Controls.TextEditor;
+    using Notepads.Models;
     using Notepads.Utilities;
     using Windows.Storage;
     using Windows.UI.Xaml.Input;
@@ -12,67 +13,76 @@ namespace Notepads.Core
     // INotepadsCore handles Tabs and TextEditor life cycle
     public interface INotepadsCore
     {
-        event EventHandler<TextEditor> TextEditorLoaded;
-
-        event EventHandler<TextEditor> TextEditorUnloaded;
-
-        event EventHandler<TextEditor> TextEditorEditorModificationStateChanged;
-
-        event EventHandler<TextEditor> TextEditorFileModificationStateChanged;
-
-        event EventHandler<TextEditor> TextEditorSaved;
-
-        event EventHandler<TextEditor> TextEditorClosingWithUnsavedContent;
-
-        event EventHandler<TextEditor> TextEditorSelectionChanged;
-
-        event EventHandler<TextEditor> TextEditorEncodingChanged;
-
-        event EventHandler<TextEditor> TextEditorLineEndingChanged;
-
-        event EventHandler<TextEditor> TextEditorModeChanged;
-
+        event EventHandler<ITextEditor> TextEditorLoaded;
+        event EventHandler<ITextEditor> TextEditorUnloaded;
+        event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
+        event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
+        event EventHandler<ITextEditor> TextEditorSaved;
+        event EventHandler<ITextEditor> TextEditorClosing;
+        event EventHandler<ITextEditor> TextEditorSelectionChanged;
+        event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
+        event EventHandler<ITextEditor> TextEditorEncodingChanged;
+        event EventHandler<ITextEditor> TextEditorLineEndingChanged;
+        event EventHandler<ITextEditor> TextEditorModeChanged;
+        event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+        event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
         event KeyEventHandler TextEditorKeyDown;
 
-        TextEditor OpenNewTextEditor(Guid? id = null);
-
-        Task<TextEditor> OpenNewTextEditor(StorageFile file, Guid? id = null);
-
-        TextEditor OpenNewTextEditor(
+        Task<ITextEditor> CreateTextEditor(
             Guid id,
-            string text,
             StorageFile file,
-            long dateModifiedFileTime,
-            Encoding encoding,
-            LineEnding lineEnding,
-            bool isModified);
+            Encoding encoding = null,
+            bool ignoreFileSizeLimit = false);
 
-        Task SaveContentToFileAndUpdateEditorState(TextEditor textEditor, StorageFile file);
+        ITextEditor CreateTextEditor(
+            Guid id,
+            TextFile textFile,
+            StorageFile editingFile,
+            string fileNamePlaceHolder,
+            bool isModified = false);
 
-        void DeleteTextEditor(TextEditor textEditor);
+        void OpenNewTextEditor(string fileNamePlaceholder);
+
+        void OpenTextEditor(ITextEditor editor, int atIndex = -1);
+
+        void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
+
+        Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
+
+        void DeleteTextEditor(ITextEditor textEditor);
 
         int GetNumberOfOpenedTextEditors();
 
-        bool TryGetSharingContent(TextEditor textEditor, out string title, out string content);
+        bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content);
 
         bool HaveUnsavedTextEditor();
 
-        void ChangeLineEnding(TextEditor textEditor, LineEnding lineEnding);
+        bool HaveNonemptyTextEditor();
 
-        void ChangeEncoding(TextEditor textEditor, Encoding encoding);
+        void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
         void SwitchTo(bool next);
 
-        void SwitchTo(TextEditor textEditor);
+        void SwitchTo(int index);
 
-        TextEditor GetSelectedTextEditor();
+        void SwitchTo(ITextEditor textEditor);
 
-        TextEditor[] GetAllTextEditors();
+        ITextEditor GetSelectedTextEditor();
 
-        void FocusOnTextEditor(TextEditor textEditor);
+        ITextEditor GetTextEditor(StorageFile file);
+
+        ITextEditor GetTextEditor(string editingFilePath);
+
+        ITextEditor[] GetAllTextEditors();
+
+        void FocusOnTextEditor(ITextEditor textEditor);
 
         void FocusOnSelectedTextEditor();
 
-        void CloseTextEditor(TextEditor textEditor);
+        void CloseTextEditor(ITextEditor textEditor);
+
+        double GetTabScrollViewerHorizontalOffset();
+
+        void SetTabScrollViewerHorizontalOffset(double offset);
     }
 }

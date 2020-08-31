@@ -1,15 +1,16 @@
-﻿
-namespace Notepads
+﻿namespace Notepads
 {
-    using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
-    using Notepads.Services;
-    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Services;
+    using Notepads.Settings;
+    using Notepads.Utilities;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
@@ -21,6 +22,13 @@ namespace Notepads
 
     sealed partial class App : Application
     {
+        public static string ApplicationName = "Notepads";
+
+        public static Guid Id { get; } = Guid.NewGuid();
+
+        public static bool IsFirstInstance = false;
+        public static bool IsGameBarWidget = false;
+
         private const string AppCenterSecret = null;
 
         /// <summary>
@@ -29,56 +37,19 @@ namespace Notepads
         /// </summary>
         public App()
         {
-            //await LoggingService.InitializeAsync();
-
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
 
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
+
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
+
             InitializeComponent();
+
             Suspending += OnSuspending;
-        }
-
-        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            // Occurs when an exception is not handled on the UI thread.
-
-            LoggingService.LogException(e.Exception);
-
-            Analytics.TrackEvent("OnUnhandledException", new Dictionary<string, string>() {
-                {
-                    "Message", e.Message
-                },
-                {
-                    "Exception", e.Exception.ToString()
-                }
-            });
-
-            // if you want to suppress and handle it manually, 
-            // otherwise app shuts down.
-            e.Handled = true;
-        }
-
-        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            // Occurs when an exception is not handled on a background thread.
-            // ie. A task is fired and forgotten Task.Run(() => {...})
-
-            LoggingService.LogException(e.Exception);
-
-            Analytics.TrackEvent("OnUnobservedException", new Dictionary<string, string>() {
-                {
-                    "Message", e.Exception.Message
-                },
-                {
-                    "Exception", e.Exception.ToString()
-                }
-            });
-
-            // suppress and handle it manually.
-            e.SetObserved();
         }
 
         /// <summary>
@@ -103,61 +74,69 @@ namespace Notepads
             base.OnActivated(args);
         }
 
-        private async System.Threading.Tasks.Task ActivateAsync(IActivatedEventArgs e)
+        private async Task ActivateAsync(IActivatedEventArgs e)
         {
+            bool rootFrameCreated = false;
+
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 rootFrame = CreateRootFrame(e);
                 Window.Current.Content = rootFrame;
-            }
+                rootFrameCreated = true;
 
-            ThemeSettingsService.Initialize();
-            EditorSettingsService.Initialize();
+                ThemeSettingsService.Initialize();
+                EditorSettingsService.Initialize();
+            }
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
-                {
-                    "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString()
-                },
-                {
-                    "ThemeMode", ThemeSettingsService.ThemeMode.ToString()
-                },
-                {
-                    "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString()
-                },
-                {
-                    "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 100.0)}"
-                },
-                {
-                    "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString()
-                },
-                {
-                    "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString()
-                },
-                {
-                    "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding)
-                },
-                {
-                    "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString()
-                },
-                {
-                    "EditorDefaultDecoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding)
-                },
-                {
-                    "EditorFontFamily", EditorSettingsService.EditorFontFamily
-                },
-                {
-                    "EditorFontSize", EditorSettingsService.EditorFontSize.ToString()
-                },
+                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
+                { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
+                { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
+                { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
+                { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
+                { "ShowStatusBar", EditorSettingsService.ShowStatusBar.ToString() },
+                { "EditorDefaultLineEnding", EditorSettingsService.EditorDefaultLineEnding.ToString() },
+                { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultEncoding) },
+                { "EditorDefaultTabIndents", EditorSettingsService.EditorDefaultTabIndents.ToString() },
+                { "EditorDefaultDecoding", EditorSettingsService.EditorDefaultDecoding == null ? "Auto" : EncodingUtility.GetEncodingName(EditorSettingsService.EditorDefaultDecoding) },
+                { "EditorFontFamily", EditorSettingsService.EditorFontFamily },
+                { "EditorFontSize", EditorSettingsService.EditorFontSize.ToString() },
+                { "IsSessionSnapshotEnabled", EditorSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
+                { "AlwaysOpenNewWindow", EditorSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", EditorSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "DisplayLineHighlighter", EditorSettingsService.EditorDisplayLineHighlighter.ToString() },
+                { "DisplayLineNumbers", EditorSettingsService.EditorDisplayLineNumbers.ToString() },
+                { "EditorDefaultSearchEngine", EditorSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
-            LoggingService.LogInfo($"AppLaunchSettings: {string.Join(";", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}");
-            Analytics.TrackEvent("AppLaunchSettings", appLaunchSettings);
+            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
-            await ActivationService.ActivateAsync(rootFrame, e);
+            try
+            {
+                await ActivationService.ActivateAsync(rootFrame, e);
+            }
+            catch (Exception ex)
+            {
+                var diagnosticInfo = new Dictionary<string, string>()
+                {
+                    { "Message", ex?.Message },
+                    { "Exception", ex?.ToString() },
+                };
+                Analytics.TrackEvent("AppFailedToActivate", diagnosticInfo);
+                Crashes.TrackError(ex, diagnosticInfo);
+                throw;
+            }
 
-            Window.Current.Activate();
-            ExtendAcrylicIntoTitleBar();
+            if (rootFrameCreated)
+            {
+                ExtendViewIntoTitleBar();
+                Window.Current.Activate();
+            }
         }
 
         private Frame CreateRootFrame(IActivatedEventArgs e)
@@ -180,16 +159,12 @@ namespace Notepads
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            var exception = new Exception($"Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
+            var exception = new Exception($"[{nameof(App)}] Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
             LoggingService.LogException(exception);
             Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
-                {
-                    "Page", e.SourcePageType.FullName
-                },
-                {
-                    "Exception", e.Exception.Message
-                }
+                { "Page", e.SourcePageType.FullName },
+                { "Exception", e.Exception.Message }
             });
             throw exception;
         }
@@ -208,12 +183,99 @@ namespace Notepads
             deferral.Complete();
         }
 
-        private void ExtendAcrylicIntoTitleBar()
+        // Occurs when an exception is not handled on the UI thread.
+        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            LoggingService.LogError($"[{nameof(App)}] OnUnhandledException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "Culture", SystemInformation.Culture.EnglishName },
+                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "UnhandledException");
+
+            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
+            e.Handled = true;
         }
+
+        // Occurs when an exception is not handled on a background thread.
+        // ie. A task is fired and forgotten Task.Run(() => {...})
+        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            LoggingService.LogError($"[{nameof(App)}] OnUnobservedException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Exception?.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "InnerException", e.Exception?.InnerException?.ToString() },
+                { "InnerExceptionMessage", e.Exception?.InnerException?.Message }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Exception?.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "UnobservedException");
+
+            Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
+            e.SetObserved();
+        }
+
+        private static void ExtendViewIntoTitleBar()
+        {
+            if (!IsGameBarWidget)
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
+        }
+
+        //private static void UpdateAppVersion()
+        //{
+        //    var packageVer = Package.Current.Id.Version;
+        //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
+        //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
+
+        //    if (currentVer != oldVer)
+        //    {
+        //        JumpListService.IsJumpListOutOfDate = true;
+        //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
+        //    }
+        //}
+
+        //private static async Task UpdateJumpList()
+        //{
+        //    if (JumpListService.IsJumpListOutOfDate)
+        //    {
+        //        if (await JumpListService.UpdateJumpList())
+        //        {
+        //            JumpListService.IsJumpListOutOfDate = false;
+        //        }
+        //    }
+        //}
     }
 }
