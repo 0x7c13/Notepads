@@ -223,6 +223,15 @@ namespace Notepads.Controls
 
         private void UpdateSetSeparators()
         {
+            if (SelectedIndex != 0)
+            {
+                (ContainerFromIndex(0) as SetsViewItem)?.ShowLeftSideSeparator();
+            }
+            else
+            {
+                (ContainerFromIndex(0) as SetsViewItem)?.HideLeftSideSeparator();
+            }
+
             for (int i = 0; i < Items?.Count; i++)
             {
                 if (i != SelectedIndex && i != SelectedIndex - 1)
@@ -302,6 +311,8 @@ namespace Notepads.Controls
                 {
                     (ContainerFromIndex(index - 1) as SetsViewItem)?.HideRightSideSeparator();
                 }
+
+                set.HideLeftSideSeparator();
             }
         }
 
@@ -310,6 +321,11 @@ namespace Notepads.Controls
             if (sender is SetsViewItem set)
             {
                 var index = IndexFromContainer(set);
+
+                if (index == 0 && SelectedIndex != index)
+                {
+                    set.ShowLeftSideSeparator();
+                }
 
                 if (SelectedIndex == index - 1)
                 {

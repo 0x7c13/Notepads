@@ -75,7 +75,7 @@
                                   Margin="0,10,0,0" />
                     <TextBlock x:Uid="/Settings/AdvancedPage_AppLifecyclePreferenceSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
                 </StackPanel>
-                <StackPanel x:Name="LanguagePreferenceSettingsPanel" x:Load="False">
+                <StackPanel x:Name="LanguagePreferenceSettingsPanel">
                     <TextBlock
                     x:Name="LanguagePreferenceSettingsTitle"
                     x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title"
@@ -100,7 +100,7 @@
                         <TextBlock x:Name="RestartPrompt"
                                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
                                    Style="{ThemeResource DescriptionTextBlockStyle}"
-                                   Foreground="Yellow"
+                                   Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                    TextWrapping="Wrap"
                                    Visibility="Collapsed"
                                    Margin="0,4,0,0"/>

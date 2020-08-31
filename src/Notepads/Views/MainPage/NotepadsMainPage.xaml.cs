@@ -156,7 +156,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsFirstInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsPrimaryInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, async (args) => { await RenameFileAsync(NotepadsCore.GetSelectedTextEditor()); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.L, async (args) => { await OpenFile(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); })
             });
@@ -245,7 +245,7 @@
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
 
-                if (!App.IsFirstInstance)
+                if (!App.IsPrimaryInstance)
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
                 }

@@ -30,7 +30,7 @@
         public event EventHandler<TextWrapping> TextWrappingChanged;
         public event EventHandler<double> FontSizeChanged;
         public event EventHandler<double> FontZoomFactorChanged;
-        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopySelectedTextToWindowsClipboardRequested;
+        public event EventHandler<TextControlCopyingToClipboardEventArgs> CopyTextToWindowsClipboardRequested;
         public event EventHandler<TextControlCuttingToClipboardEventArgs> CutSelectedTextToWindowsClipboardRequested;
         public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
@@ -357,7 +357,7 @@
 
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
         {
-            CopySelectedTextToWindowsClipboardRequested?.Invoke(sender, args);
+            CopyTextToWindowsClipboardRequested?.Invoke(sender, args);
         }
 
         private void OnCuttingToClipboard(RichEditBox sender, TextControlCuttingToClipboardEventArgs args)

@@ -396,6 +396,15 @@
                        Opacity="0">
             </Rectangle>
 
+            <Border x:Name="LeftSideSeparator"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    Visibility="Collapsed"
+                    Width="1"
+                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                    BorderThickness="1"
+                    Margin="0,6,0,6"/>
+
             <Border x:Name="RightSideSeparator"
                     HorizontalAlignment="Right"
                     Visibility="Collapsed"

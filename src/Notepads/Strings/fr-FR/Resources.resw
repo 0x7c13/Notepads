@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -158,11 +158,11 @@
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>OK</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>Erreur lors de l'ouverture du fichier</value>
+    <value>Erreur lors de l'ouverture du fichier.</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
@@ -170,11 +170,11 @@
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>OK</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>Erreur lors de l'enregistrement du fichier</value>
+    <value>Erreur lors de l'enregistrement du fichier.</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -210,7 +210,7 @@
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Respecter la case</value>
+    <value>Respecter la casse</value>
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
@@ -218,7 +218,7 @@
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>Rechercher...</value>
+    <value>Rechercher…</value>
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
@@ -226,15 +226,15 @@
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>Ouvrir...</value>
+    <value>Ouvrir…</value>
     <comment>MainMenu: "Open" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>Imprimer...</value>
+    <value>Imprimer…</value>
     <comment>MainMenu: "Print" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>Remplacer...</value>
+    <value>Remplacer…</value>
     <comment>MainMenu: "Replace" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Save.Text" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>Enregistrer sous...</value>
+    <value>Enregistrer sous…</value>
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Toutes les modifications, y compris le texte, la fin de ligne et l'encodage, ont été apportées à "{0}" seront annulés!</value>
+    <value>Toutes les modifications du texte, des fins de lignes et de l'encodage apportées à "{0}" seront annulées !</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
@@ -266,7 +266,7 @@
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Êtes-vous sûr de revenir sur tous les changements?</value>
+    <value>Êtes-vous sûr de vouloir annuler toutes les modifications ?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
@@ -294,15 +294,15 @@
     <comment>Tab: ContextFlyout "Close" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>Fermer les autres</value>
+    <value>Fermer les autres onglets</value>
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Fermer à droite</value>
+    <value>Fermer les onglets à droite</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Fermer Enregistré</value>
+    <value>Fermer les fichiers enregistrés</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
@@ -310,7 +310,7 @@
     <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
-    <value>Ouvrir dossier contenant</value>
+    <value>Ouvrir le dossier</value>
     <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
@@ -326,7 +326,7 @@
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>Basculer l'aperçu</value>
+    <value>Afficher/masquer l'aperçu</value>
     <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
@@ -350,7 +350,7 @@
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Retour à la ligne</value>
+    <value>Retour automatique à la ligne</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
@@ -366,11 +366,11 @@
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>Aperçu des modifications de texte</value>
+    <value>Aperçu des modifications du texte</value>
     <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Annuler touts changements</value>
+    <value>Annuler tous les changements</value>
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
@@ -386,19 +386,19 @@
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Appuyez sur F11 pour quitter le mode plein écran</value>
+    <value>Appuyez sur F11 pour quitter le mode plein écran.</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Fichier de rechargement du disque</value>
+    <value>Recharger le fichier depuis le disque</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>Fichier a été modifié à l'extérieur!</value>
+    <value>Le fichier a été modifié depuis un autre programme !</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>Fichier a été déplacé, renommé ou supprimé!</value>
+    <value>Le fichier a été déplacé, renommé ou supprimé !</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
@@ -438,11 +438,11 @@
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Ceci est une instance d'ombre de Notepads. Instantané de session et les paramètres sont désactivés.</value>
+    <value>Ceci est une fenêtre secondaire de Notepads. La sauvegarde de la session et les paramètres sont désactivés pour cette fenêtre.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>Fichier déjà ouvert!</value>
+    <value>Fichier déjà ouvert !</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
@@ -458,7 +458,7 @@
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Ouvrir un récent</value>
+    <value>Ouvrir un élément récent</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
@@ -466,15 +466,15 @@
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Aller à:</value>
+    <value>Aller à :</value>
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Le nombre de lignes dépasse le nombre total de lignes!</value>
+    <value>Le nombre de lignes dépasse le nombre total de lignes !</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>Vous ne pouvez saisir qu'un nombre!</value>
+    <value>Vous ne pouvez saisir qu'une valeur numérique.</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -486,7 +486,7 @@
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restaurer le zomm par défaut</value>
+    <value>Restaurer le zoom par défaut</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
@@ -502,15 +502,15 @@
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Imprimer tout...</value>
+    <value>Imprimer tout…</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Ne peut accepter que jusqu'à une décimale</value>
+    <value>Ne peut accepter que jusqu'à une décimale.</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Valeur hors plage</value>
+    <value>Valeur hors de la plage.</value>
     <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
@@ -526,19 +526,19 @@
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>En% de la largeur du papier</value>
+    <value>En % de la largeur du papier</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Erreur d'impression:</value>
+    <value>Erreur d'impression :</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Impossible d'imprimer</value>
+    <value>Impossible d'imprimer.</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>L'impression est pas supportée sur cet appareil</value>
+    <value>L'impression n'est pas supportée sur cet appareil.</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
@@ -546,7 +546,7 @@
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Effacer les récemment ouvertsd</value>
+    <value>Effacer les éléments récemment ouverts</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
@@ -562,7 +562,7 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Expression régulière invalide!</value>
+    <value>Expression régulière invalide.</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
@@ -570,23 +570,23 @@
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Le codage ne peut pas être déterminé</value>
+    <value>L'encodage ne peut pas être déterminé.</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>Rechercher le précédent (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>Basculer de mode de remplacement</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
+    <value>Ordre de lecture de droite à gauche</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>Italique</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
@@ -598,27 +598,27 @@
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
+    <value>Noir</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>Gras</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Extra Black</value>
+    <value>Extra noir</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Extra Bold</value>
+    <value>Extra gras</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Extra Light</value>
+    <value>Extra léger</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
+    <value>Léger</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
@@ -630,67 +630,67 @@
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Semi Bold</value>
+    <value>Demi gras</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Semi Light</value>
+    <value>Semi léger</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
+    <value>Mince</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Sauvegarder</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
+    <value>Renommer</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
+    <value>Le nom du fichier ne doit pas contenir de caractères non valides.</value>
     <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>File name should not contain leading spaces</value>
+    <value>Le nom du fichier ne doit pas commencer par un espace.</value>
     <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>File name should not contain trailing spaces</value>
+    <value>Le nom du fichier ne doit pas finir par un espace.</value>
     <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>File name cannot be empty or all whitespace</value>
+    <value>Le nom du fichier ne peut pas être vide ou contenir uniquement des espaces.</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
+    <value>Le nom du fichier n'est pas valide ou n'est pas autorisé.</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>File name cannot be longer than 255 characters</value>
+    <value>Le nom du fichier ne peut pas dépasser 255 caractères.</value>
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>Renommer</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
+    <value>Renommé</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Empty file extension is not supported at this moment</value>
+    <value>L'extension de fichier vide n'est pas prise en charge pour le moment.</value>
     <comment>FileRenameError: Empty file extension is not currently supported.</comment>
   </data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>File extension "{0}" is not supported at this moment</value>
+    <value>L'extension de fichier "{0}" n'est pas prise en charge pour le moment.</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

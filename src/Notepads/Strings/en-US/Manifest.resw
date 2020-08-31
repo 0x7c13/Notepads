@@ -286,7 +286,7 @@
     <comment>.java, .jav</comment>
   </data>
   <data name="JavascriptFileDisplayName" xml:space="preserve">
-    <value>Javascript File</value>
+    <value>JavaScript File</value>
     <comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment>
   </data>
   <data name="JsonFileDisplayName" xml:space="preserve">
@@ -398,7 +398,7 @@
     <comment>.sql, .dsql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
-    <value>Sub Station Alpha Subtitle File</value>
+    <value>SubStation Alpha Subtitle File</value>
     <comment>.ssa</comment>
   </data>
   <data name="SubtitleFileDisplayName" xml:space="preserve">
