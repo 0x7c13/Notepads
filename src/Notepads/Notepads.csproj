@@ -475,6 +475,9 @@
   <ItemGroup>
     <PRIResource Include="Strings\cs-CZ\Settings.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
