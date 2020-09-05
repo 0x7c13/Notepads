@@ -402,7 +402,7 @@
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>开启后，当复制选中文字时（Ctrl+C），Noteapds会智能的帮你剪裁起始和结尾处的多余空格，制表符以及空白行。</value>
+    <value>开启后，当复制选中文字时（Ctrl+C），Notepads会智能的帮你剪裁起始和结尾处的多余空格，制表符以及空白行。</value>
     <comment>AdvancedPage SmartCopySettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
