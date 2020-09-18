@@ -12,6 +12,7 @@
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
+    using Windows.Foundation.Metadata;
     using Windows.Security.Authentication.Web;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -29,8 +30,10 @@
         public static AppServiceConnection InteropServiceConnection = null;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public static async Task Initialize()
+        public static async Task<bool> Initialize()
         {
+            if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0)) return false;
+
             InteropServiceConnection = new AppServiceConnection()
             {
                 AppServiceName = "DesktopExtensionServiceConnection",
@@ -41,8 +44,12 @@
             InteropServiceConnection.ServiceClosed += InteropServiceConnection_ServiceClosed;
 
             AppServiceConnectionStatus status = await InteropServiceConnection.OpenAsync();
-            if (status != AppServiceConnectionStatus.Success && !await ApplicationView.GetForCurrentView().TryConsolidateAsync()) 
+            if (status != AppServiceConnectionStatus.Success && !await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+            {
                 Application.Current.Exit();
+            }
+
+            return true;
         }
 
         private static async void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -79,7 +86,7 @@
         /// <param name="data">Data to write.</param>
         public static async Task SaveFileAsAdmin(string filePath, byte[] data)
         {
-            if (InteropServiceConnection == null) await Initialize();
+            if (InteropServiceConnection == null && !(await Initialize())) return;
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
                 PipeDirection.InOut, 254, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
@@ -138,7 +145,7 @@
         /// </remarks>
         public static async Task CreateElevetedExtension()
         {
-            if (InteropServiceConnection == null) await Initialize();
+            if (InteropServiceConnection == null && !(await Initialize())) return;
 
             var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.CreateElevetedExtensionCommandStr } };
             var response = await InteropServiceConnection.SendMessageAsync(message);
