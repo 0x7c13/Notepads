@@ -190,7 +190,7 @@
             var pipeReader = new StreamReader(clientStream);
             var pipeWriter = new StreamWriter(clientStream);
 
-            var writeData = pipeReader.ReadLine().Split(new string[] { "?:" }, StringSplitOptions.None);
+            var writeData = (await pipeReader.ReadLineAsync()).Split(new string[] { "?:" }, StringSplitOptions.None);
             var filePath = writeData[0];
             var memoryMapName = $"AppContainerNamedObjects\\{packageSID}\\{writeData[1]}";
 
@@ -224,8 +224,8 @@
             }
             finally
             {
-                pipeWriter.WriteLine(result);
-                pipeWriter.Flush();
+                await pipeWriter.WriteLineAsync(result);
+                await pipeWriter.FlushAsync();
 
                 PrintDebugMessage("Waiting on uwp app to send data.");
                 if ("Success".Equals(result))

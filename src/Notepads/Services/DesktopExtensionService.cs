@@ -115,22 +115,18 @@
                         writer.Flush();
                     }
 
-                    pipeWriter.WriteLine(string.Join("?:", filePath, mapName, data.Length));
-                    pipeWriter.Flush();
+                    await pipeWriter.WriteLineAsync(string.Join("?:", filePath, mapName, data.Length));
+                    await pipeWriter.FlushAsync();
 
                     // Wait for desktop extension to send response.
-                    while (true)
+                    if ("Success".Equals(await pipeReader.ReadLineAsync()))
                     {
-                        var result = pipeReader.ReadLine();
-                        if ("Success".Equals(result))
-                        {
-                            return;
-                        }
-                        else if ("Failed".Equals(result))
-                        {
-                            // Promt user to "Save As" if extension failed to save data.
-                            throw new UnauthorizedAccessException();
-                        }
+                        return;
+                    }
+                    else
+                    {
+                        // Promt user to "Save As" if extension failed to save data.
+                        throw new UnauthorizedAccessException();
                     }
                 }
             }
