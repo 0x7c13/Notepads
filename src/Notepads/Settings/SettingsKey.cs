@@ -3,43 +3,44 @@
     internal static class SettingsKey
     {
         // App related
-        internal static string AppVersionStr = "AppVersionStr";
-        internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
-        internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
-        internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
+        internal const string AppVersionStr = "AppVersionStr";
+        internal const string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
+        internal const string ActiveInstanceIdStr = "ActiveInstanceIdStr";
+        internal const string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
 
         // Theme related
-        internal static string RequestedThemeStr = "RequestedThemeStr";
-        internal static string AppBackgroundTintOpacityDouble = "AppBackgroundTintOpacityDouble";
-        internal static string AppAccentColorHexStr = "AppAccentColorHexStr";
-        internal static string CustomAccentColorHexStr = "CustomAccentColorHexStr";
-        internal static string UseWindowsAccentColorBool = "UseWindowsAccentColorBool";
+        internal const string RequestedThemeStr = "RequestedThemeStr";
+        internal const string AppBackgroundTintOpacityDouble = "AppBackgroundTintOpacityDouble";
+        internal const string AppAccentColorHexStr = "AppAccentColorHexStr";
+        internal const string CustomAccentColorHexStr = "CustomAccentColorHexStr";
+        internal const string UseWindowsAccentColorBool = "UseWindowsAccentColorBool";
 
         // Editor related
-        internal static string EditorFontFamilyStr = "EditorFontFamilyStr";
-        internal static string EditorFontSizeInt = "EditorFontSizeInt";
-        internal static string EditorFontStyleStr = "EditorFontStyleStr";
-        internal static string EditorFontWeightUshort = "EditorFontWeightUshort";
-        internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
-        internal static string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
-        internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
-        internal static string EditorDefaultEncodingCodePageInt = "EditorDefaultEncodingCodePageInt";
-        internal static string EditorDefaultDecodingCodePageInt = "EditorDefaultDecodingCodePageInt";
-        internal static string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
-        internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
-        internal static string EditorDefaultSearchEngineStr = "EditorDefaultSearchUrlStr";
-        internal static string EditorCustomMadeSearchUrlStr = "EditorCustomMadeSearchUrlStr";
-        internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
-        internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
-        internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
-        internal static string EditorDefaultDisplayLineNumbersBool = "EditorDefaultDisplayLineNumbersBool";
-        internal static string EditorEnableSmartCopyBool = "EditorEnableSmartCopyBool";
+        internal const string EditorFontFamilyStr = "EditorFontFamilyStr";
+        internal const string EditorFontSizeInt = "EditorFontSizeInt";
+        internal const string EditorFontStyleStr = "EditorFontStyleStr";
+        internal const string EditorFontWeightUshort = "EditorFontWeightUshort";
+        internal const string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
+        internal const string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
+        internal const string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";
+        internal const string EditorDefaultEncodingCodePageInt = "EditorDefaultEncodingCodePageInt";
+        internal const string EditorDefaultDecodingCodePageInt = "EditorDefaultDecodingCodePageInt";
+        internal const string EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool = "EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool";
+        internal const string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
+        internal const string EditorDefaultSearchEngineStr = "EditorDefaultSearchUrlStr";
+        internal const string EditorCustomMadeSearchUrlStr = "EditorCustomMadeSearchUrlStr";
+        internal const string EditorShowStatusBarBool = "EditorShowStatusBarBool";
+        internal const string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
+        internal const string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";
+        internal const string EditorDefaultDisplayLineNumbersBool = "EditorDefaultDisplayLineNumbersBool";
+        internal const string EditorEnableSmartCopyBool = "EditorEnableSmartCopyBool";
 
         // Interop related
-        internal static string PackageSidStr = "PackageSidStr";
-        internal static string InteropCommandLabel = "Command";
-        internal static string InteropCommandFailedLabel = "Failed";
-        internal static string InteropCommandAdminCreatedLabel = "AdminCreated";
+        internal const string PackageSidStr = "PackageSidStr";
+        internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
+        internal const string InteropCommandLabel = "Command";
+        internal const string InteropCommandFailedLabel = "Failed";
+        internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
         internal const string RegisterExtensionCommandStr = "RegisterExtension";
         internal const string CreateElevetedExtensionCommandStr = "CreateElevetedExtension";
         internal const string ExitAppCommandStr = "ExitApp";

@@ -580,7 +580,7 @@
                     }
                     catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
                     {
-                        if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
+                        if (!DesktopExtensionService.ShouldUseDesktopExtension)
                         {
                             throw ex;
                         }

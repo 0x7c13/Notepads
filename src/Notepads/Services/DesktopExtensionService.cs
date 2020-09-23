@@ -6,6 +6,7 @@
     using System.IO;
     using System.IO.MemoryMappedFiles;
     using System.IO.Pipes;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
@@ -13,7 +14,6 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Foundation.Metadata;
-    using Windows.Security.Authentication.Web;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
 
@@ -28,11 +28,13 @@
     public static class DesktopExtensionService
     {
         public static AppServiceConnection InteropServiceConnection = null;
+        public static readonly bool ShouldUseDesktopExtension = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
+            !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         public static async Task<bool> Initialize()
         {
-            if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0)) return false;
+            if (!ShouldUseDesktopExtension) return false;
 
             InteropServiceConnection = new AppServiceConnection()
             {
@@ -88,7 +90,7 @@
         {
             if (InteropServiceConnection == null && !(await Initialize())) return;
 
-            using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
+            using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminPipeConnectionNameStr}",
                 PipeDirection.InOut, 254, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
             {
                 // Wait for 250 ms for desktop extension to accept request.
@@ -113,10 +115,7 @@
                         writer.Flush();
                     }
 
-                    pipeWriter.WriteLine(string.Join("?:",
-                            $"AppContainerNamedObjects\\{ WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper() }\\{ mapName }",
-                            filePath,
-                            data.Length));
+                    pipeWriter.WriteLine(string.Join("?:", filePath, mapName, data.Length));
                     pipeWriter.Flush();
 
                     // Wait for desktop extension to send response.

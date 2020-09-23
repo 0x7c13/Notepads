@@ -29,6 +29,8 @@
         private const string AdminExtensionMutexName = "AdminExtensionMutexName";
 
         private static readonly int sessionId = Process.GetCurrentProcess().SessionId;
+        private static readonly string packageSID = ReadSettingsKey(SettingsKey.PackageSidStr) as string;
+
         private static AppServiceConnection connection = null;
 
         /// <summary>
@@ -173,8 +175,10 @@
 
         private static async void SaveFileFromPipeData()
         {
+            var result = "Failed";
+
             using var clientStream = new NamedPipeClientStream(".",
-                $"Sessions\\{sessionId}\\AppContainerNamedObjects\\{ReadSettingsKey(SettingsKey.PackageSidStr)}\\{Package.Current.Id.FamilyName}\\AdminWritePipe",
+                $"Sessions\\{sessionId}\\AppContainerNamedObjects\\{packageSID}\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminPipeConnectionNameStr}",
                 PipeDirection.InOut, PipeOptions.Asynchronous);
 
             // Wait for uwp app to send request to write to file.
@@ -187,14 +191,13 @@
             var pipeWriter = new StreamWriter(clientStream);
 
             var writeData = pipeReader.ReadLine().Split(new string[] { "?:" }, StringSplitOptions.None);
+            var filePath = writeData[0];
+            var memoryMapName = $"AppContainerNamedObjects\\{packageSID}\\{writeData[1]}";
 
-            var memoryMapName = writeData[0];
-            var filePath = writeData[1];
-            int.TryParse(writeData[2], out int dataArrayLength);
-
-            var result = "Failed";
             try
             {
+                if (!int.TryParse(writeData[2], out int dataArrayLength)) throw new Exception("Failed to read piped data");
+
                 // Open the memory-mapped file and read data from it.
                 using (var reader = new BinaryReader(MemoryMappedFile.OpenExisting(memoryMapName).CreateViewStream()))
                 {
