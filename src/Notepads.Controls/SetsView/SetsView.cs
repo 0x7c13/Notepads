@@ -223,7 +223,7 @@ namespace Notepads.Controls
 
         private void UpdateSetSeparators()
         {
-            if (SelectedIndex != 0)
+            if (SelectedIndex > 0)
             {
                 (ContainerFromIndex(0) as SetsViewItem)?.ShowLeftSideSeparator();
             }

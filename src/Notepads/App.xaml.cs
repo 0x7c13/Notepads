@@ -95,6 +95,19 @@
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
                 { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "IsSmartCopyEnabled", AppSettingsService.IsSmartCopyEnabled.ToString() }
+            };
+
+            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+
+            var appLaunchEditorSettings = new Dictionary<string, string>()
+            {
                 { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
                 { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
                 { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
@@ -103,19 +116,13 @@
                 { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
                 { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
                 { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
-                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
-                { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() },
                 { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
                 { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
-                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() },
-                { "IsSmartCopyEnabled", AppSettingsService.IsSmartCopyEnabled.ToString() }
             };
 
-            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
-            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+            LoggingService.LogInfo($"[{nameof(App)}] Editor settings: \n{string.Join("\n", appLaunchEditorSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            Analytics.TrackEvent("AppLaunch_Editor_Settings", appLaunchEditorSettings);
 
             try
             {
