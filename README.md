@@ -61,7 +61,6 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 ## Platform limitations (UWP):
 
-* You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
 * You cannot associate potentially harmful file types (.cmd, .bat etc.) with Notepads.
 * Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
 
