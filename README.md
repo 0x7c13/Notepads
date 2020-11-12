@@ -119,7 +119,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * [Mahmoud Qurashy](https://github.com/mah-qurashy) - App icon and file icon(s) designer, creator of the new Notepads App Icon.
 
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
-* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis), [Maickonn Richard](https://github.com/Maickonn)
+* Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis), [Maickonn Richard](https://github.com/Maickonn), [Xam](https://github.com/XamDR)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
 * Localization Contributors: 
     * [fr-FR][French (France)]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou), [Armand Delessert](https://github.com/ArmandDelessert)
