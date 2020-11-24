@@ -495,7 +495,7 @@
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
     <value>Go To:</value>
-    <comment>GoTo:Go to bar label</comment>
+    <comment>GoTo: Go to bar label</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
     <value>Print All...</value>
