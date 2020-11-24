@@ -1017,8 +1017,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)' == 'Production'">
-    <PreBuildEvent>powershell -ExecutionPolicy Bypass $(SolutionDir)build.ps1 -project_dir $(ProjectDir) -event PreBuild</PreBuildEvent>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass $(SolutionDir)build.ps1 -project_dir $(ProjectDir) -event PostBuild</PostBuildEvent>
+    <PreBuildEvent>powershell -ExecutionPolicy Bypass $(SolutionDir)build.ps1 -project_dir $(ProjectDir) -target PreBuild</PreBuildEvent>
+    <PostBuildEvent>powershell -ExecutionPolicy Bypass $(SolutionDir)build.ps1 -project_dir $(ProjectDir) -target PostBuild</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
