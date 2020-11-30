@@ -8,10 +8,10 @@ using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage;
 
-constexpr int PIPE_READ_BUFFER = MAX_PATH + 40;
-
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
+
+constexpr int PIPE_READ_BUFFER = MAX_PATH + 40;
 
 HANDLE appExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 HANDLE childProcessHandle = INVALID_HANDLE_VALUE;
@@ -63,14 +63,14 @@ IInspectable readSettingsKey(hstring key)
     return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
 }
 
-hstring packageSid = unbox_value_or<hstring>(readSettingsKey(L"PackageSidStr"), L"");
+hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
 DWORD saveFileFromPipeData(LPVOID param)
 {
     LPCSTR result = "Failed";
 
     wstringstream pipeName;
-    pipeName << "\\\\.\\pipe\\Sessions\\" << sessionId << "\\AppContainerNamedObjects\\"<< packageSid.c_str() << "\\" << Package::Current().Id().FamilyName().c_str() << "\\NotepadsAdminWritePipe";
+    pipeName << "\\\\.\\pipe\\Sessions\\" << sessionId << "\\AppContainerNamedObjects\\"<< packageSid.c_str() << "\\" << Package::Current().Id().FamilyName().c_str() << "\\" << AdminPipeConnectionNameStr;
     
     HANDLE hPipe = INVALID_HANDLE_VALUE;
     while (hPipe == INVALID_HANDLE_VALUE)
@@ -96,9 +96,9 @@ DWORD saveFileFromPipeData(LPVOID param)
     } while (byteRead >= PIPE_READ_BUFFER);
 
     string filePathBuffer;
-    wstring filePath;
     string memoryMapId;
     string dataArrayLengthStr;
+    wstring filePath;
     getline(bufferStore, filePathBuffer, '|');
     getline(bufferStore, memoryMapId, '|');
     getline(bufferStore, dataArrayLengthStr);
@@ -188,16 +188,16 @@ fire_and_forget launchElevatedProcess()
     shExInfo.hInstApp = 0;
 
     auto message = ValueSet();
-    message.Insert(L"Command", box_value(L"CreateElevetedExtension"));
+    message.Insert(InteropCommandLabel, box_value(CreateElevetedExtensionCommandStr));
     if (ShellExecuteEx(&shExInfo))
     {
         childProcessHandle = shExInfo.hProcess;
-        message.Insert(L"AdminCreated", box_value(true));
+        message.Insert(InteropCommandAdminCreatedLabel, box_value(true));
         printDebugMessage(L"Adminstrator Extension has been launched.");
     }
     else
     {
-        message.Insert(L"AdminCreated", box_value(false));
+        message.Insert(InteropCommandAdminCreatedLabel, box_value(false));
         printDebugMessage(L"User canceled launching of Adminstrator Extension.");
     }
     co_await interopServiceConnection.SendMessageAsync(message);
@@ -210,14 +210,14 @@ void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceR
     auto messageDeferral = args.GetDeferral();
 
     auto message = args.Request().Message();
-    if (!message.HasKey(L"Command")) return;
+    if (!message.HasKey(InteropCommandLabel)) return;
 
-    auto command = unbox_value_or<hstring>(message.TryLookup(L"Command"), L"");
-    if (command == L"CreateElevetedExtension")
+    auto command = unbox_value_or<hstring>(message.TryLookup(InteropCommandLabel), L"");
+    if (command == CreateElevetedExtensionCommandStr)
     {
         launchElevatedProcess();
     }
-    else if (command == L"ExitApp")
+    else if (command == ExitAppCommandStr)
     {
         exitApp();
     }
@@ -248,7 +248,7 @@ fire_and_forget initializeInteropService()
     }
 
     auto message = ValueSet();
-    message.Insert(L"Command", box_value(L"RegisterExtension"));
+    message.Insert(InteropCommandLabel, box_value(RegisterExtensionCommandStr));
     co_await interopServiceConnection.SendMessageAsync(message);
 
     printDebugMessage(L"Successfully created App Service.");
