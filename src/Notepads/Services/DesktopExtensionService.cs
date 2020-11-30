@@ -58,7 +58,7 @@
         {
             var message = args.Request.Message;
             if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
-                SettingsKey.CreateElevetedExtensionCommandStr.Equals(message[SettingsKey.InteropCommandLabel])) return;
+                !SettingsKey.CreateElevetedExtensionCommandStr.Equals(message[SettingsKey.InteropCommandLabel])) return;
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
             {
@@ -115,7 +115,7 @@
                         writer.Flush();
                     }
 
-                    await pipeWriter.WriteLineAsync(string.Join("?:", filePath, mapName, data.Length));
+                    await pipeWriter.WriteLineAsync(string.Join('|', filePath, mapName, data.Length));
                     await pipeWriter.FlushAsync();
 
                     // Wait for desktop extension to send response.
