@@ -65,7 +65,7 @@ IInspectable readSettingsKey(hstring key)
 
 hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
-DWORD saveFileFromPipeData(LPVOID param)
+DWORD WINAPI saveFileFromPipeData(LPVOID param)
 {
     LPCSTR result = "Failed";
 
