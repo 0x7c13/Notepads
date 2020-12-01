@@ -235,7 +235,7 @@ fire_and_forget initializeInteropService()
     printDebugMessage(L"Successfully started Desktop Extension.");
 
     interopServiceConnection = AppServiceConnection();
-    interopServiceConnection.AppServiceName(L"DesktopExtensionServiceConnection");
+    interopServiceConnection.AppServiceName(InteropServiceName);
     interopServiceConnection.PackageFamilyName(Package::Current().Id().FamilyName());
 
     interopServiceConnection.RequestReceived(onConnectionServiceRequestRecieved);
@@ -252,6 +252,21 @@ fire_and_forget initializeInteropService()
     co_await interopServiceConnection.SendMessageAsync(message);
 
     printDebugMessage(L"Successfully created App Service.");
+}
+
+bool isElevetedProcessLaunchRequested()
+{
+    bool result = false;
+
+    LPTSTR* argList;
+    int argCount;
+    argList = CommandLineToArgvW(GetCommandLine(), &argCount);
+    if (argCount > 3 && wcscmp(argList[3], L"/admin") == 0)
+    {
+        result = true;
+    }
+
+    return result;
 }
 
 bool isFirstInstance(LPCTSTR mutexName)
@@ -322,6 +337,7 @@ int main()
         if (isFirstInstance(DesktopExtensionMutexName))
         {
             initializeInteropService();
+            if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
         }
     }
 

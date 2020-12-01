@@ -12,6 +12,7 @@
 
 // These values depend upon constant fields described in ..\Notepads\Settings\SettingsKey.cs.
 // Changing value in one place require change in another.
+constexpr LPCTSTR InteropServiceName = L"DesktopExtensionServiceConnection";
 constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
 constexpr LPCTSTR AdminPipeConnectionNameStr = L"NotepadsAdminWritePipe";
 constexpr LPCTSTR InteropCommandLabel = L"Command";

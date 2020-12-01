@@ -38,7 +38,7 @@
 
             InteropServiceConnection = new AppServiceConnection()
             {
-                AppServiceName = "DesktopExtensionServiceConnection",
+                AppServiceName = SettingsKey.InteropServiceName,
                 PackageFamilyName = Package.Current.Id.FamilyName
             };
 
@@ -148,6 +148,7 @@
 
             if (message.ContainsKey(SettingsKey.InteropCommandFailedLabel) && (bool)message[SettingsKey.InteropCommandFailedLabel])
             {
+                // Pass the group id that describes the correct parameter for prompting admin process launch
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");
             }
         }

@@ -2,6 +2,7 @@
 {
     internal static class SettingsKey
     {
+#if DISABLE_XAML_GENERATED_MAIN
         // App related
         internal const string AppVersionStr = "AppVersionStr";
         internal const string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
@@ -36,14 +37,18 @@
         internal const string EditorEnableSmartCopyBool = "EditorEnableSmartCopyBool";
 
         // Interop related
+        // These values depend upon constant fields described in ..\Notepads.DesktopExtension\pch.h.
+        // Changing value in one place require change in another.
+        internal const string AppCenterSecret = null;
+        internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName in manifest
         internal const string PackageSidStr = "PackageSidStr";
         internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
+        internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
+#endif
         internal const string InteropCommandLabel = "Command";
         internal const string InteropCommandFailedLabel = "Failed";
-        internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
         internal const string RegisterExtensionCommandStr = "RegisterExtension";
         internal const string CreateElevetedExtensionCommandStr = "CreateElevetedExtension";
         internal const string ExitAppCommandStr = "ExitApp";
-        internal const string AppCenterSecret = null;
     }
 }
