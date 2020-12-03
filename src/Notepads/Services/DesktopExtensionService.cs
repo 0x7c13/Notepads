@@ -146,7 +146,7 @@
             var response = await InteropServiceConnection.SendMessageAsync(message);
             message = response.Message;
 
-            if (message.ContainsKey(SettingsKey.InteropCommandFailedLabel) && (bool)message[SettingsKey.InteropCommandFailedLabel])
+            if (message?.ContainsKey(SettingsKey.InteropCommandFailedLabel) ?? false && (bool)message[SettingsKey.InteropCommandFailedLabel])
             {
                 // Pass the group id that describes the correct parameter for prompting admin process launch
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");

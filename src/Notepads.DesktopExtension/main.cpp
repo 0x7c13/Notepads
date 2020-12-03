@@ -11,25 +11,28 @@ using namespace Windows::Storage;
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
 
-constexpr int PIPE_READ_BUFFER = MAX_PATH + 40;
+constexpr int PIPE_READ_BUFFER = MAX_PATH + 240;
+constexpr int MAX_TIME_STR = 9;
+constexpr int MAX_DATE_STR = 11;
 
 HANDLE appExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-HANDLE childProcessHandle = INVALID_HANDLE_VALUE;
+HANDLE appExitJob = NULL;
 
 DWORD sessionId;
 
 AppServiceConnection interopServiceConnection = { 0 };
 
+StorageFile logFile = nullptr;
+
 int releaseResources()
 {
     CloseHandle(appExitEvent);
-    CloseHandle(childProcessHandle);
+    CloseHandle(appExitJob);
     return 0;
 }
 
 void exitApp()
 {
-    if(childProcessHandle) TerminateProcess(childProcessHandle, 0);
     SetEvent(appExitEvent);
 }
 
@@ -41,21 +44,65 @@ void printDebugMessage(LPCTSTR message, DWORD sleepTime = 0)
 #endif
 }
 
-void printDebugMessage(LPCTSTR message, LPCTSTR parameter)
+void printDebugMessage(LPCTSTR message, LPCTSTR parameter, DWORD sleepTime = 0)
 {
 #ifdef _DEBUG
     wcout << message << " \"" << parameter << "\"" << endl;
+    Sleep(sleepTime);
 #endif
+}
+
+fire_and_forget logLastError(LPCTSTR errorTitle)
+{
+    if (logFile != nullptr)
+    {
+        LPVOID msgBuf;
+        DWORD errorCode = GetLastError();
+
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            errorCode,
+            0,
+            (LPTSTR)&msgBuf,
+            0,
+            NULL);
+
+        wstringstream msgStrm;
+        wstring msg;
+        msgStrm << (LPCTSTR)msgBuf;
+        LocalFree(msgBuf);
+        getline(msgStrm, msg, L'\r');
+
+        SYSTEMTIME systemTime;
+        GetSystemTime(&systemTime);
+        TCHAR timeStr[MAX_TIME_STR];
+        GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, timeStr, MAX_TIME_STR);
+        TCHAR dateStr[MAX_DATE_STR];
+        GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, dateStr, MAX_DATE_STR, NULL);
+        wstringstream debugMsg;
+        debugMsg << dateStr << " " << timeStr << " " << "[" << "Error" << "]" << " " << "[" << "Error Code: " << errorCode << "]" << " " << errorTitle << msg << endl;
+
+        co_await PathIO::AppendTextAsync(logFile.Path(), debugMsg.str().c_str());
+    }
 }
 
 void onUnhandledException()
 {
-    //TODO: Implement exception handling
+    logLastError(L"OnUnhandledException: ");
+    exitApp();
 }
 
 void onUnexpectedException()
 {
-    //TODO: Implement exception handling
+    logLastError(L"OnUnexpectedException: ");
+    exitApp();
+}
+
+void setExceptionHandling()
+{
+    set_terminate(onUnhandledException);
+    set_unexpected(onUnexpectedException);
 }
 
 IInspectable readSettingsKey(hstring key)
@@ -67,6 +114,8 @@ hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L""
 
 DWORD WINAPI saveFileFromPipeData(LPVOID param)
 {
+    setExceptionHandling();
+
     LPCSTR result = "Failed";
 
     wstringstream pipeName;
@@ -168,7 +217,7 @@ void initializeAdminService()
     printDebugMessage(L"Successfully started Adminstrator Extension.");
     printDebugMessage(L"Waiting on uwp app to send data.");
 
-    saveFileFromPipeData(NULL);
+    CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 }
 
 fire_and_forget launchElevatedProcess()
@@ -191,7 +240,14 @@ fire_and_forget launchElevatedProcess()
     message.Insert(InteropCommandLabel, box_value(CreateElevetedExtensionCommandStr));
     if (ShellExecuteEx(&shExInfo))
     {
-        childProcessHandle = shExInfo.hProcess;
+        // Create Job to close child process when parent exits/crashes.
+        if (appExitJob) CloseHandle(appExitJob);
+        appExitJob = CreateJobObject(NULL, NULL);
+        JOBOBJECT_EXTENDED_LIMIT_INFORMATION info = { 0 };
+        info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+        SetInformationJobObject(appExitJob, JobObjectExtendedLimitInformation, &info, sizeof(info));
+        AssignProcessToJobObject(appExitJob, shExInfo.hProcess);
+
         message.Insert(InteropCommandAdminCreatedLabel, box_value(true));
         printDebugMessage(L"Adminstrator Extension has been launched.");
     }
@@ -208,6 +264,7 @@ void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceR
     // Get a deferral because we use an awaitable API below to respond to the message
     // and we don't want this call to get canceled while we are waiting.
     auto messageDeferral = args.GetDeferral();
+    setExceptionHandling();
 
     auto message = args.Request().Message();
     if (!message.HasKey(InteropCommandLabel)) return;
@@ -254,6 +311,21 @@ fire_and_forget initializeInteropService()
     printDebugMessage(L"Successfully created App Service.");
 }
 
+fire_and_forget initializeLogging(LPCTSTR trailStr)
+{
+    auto localFolder = ApplicationData::Current().LocalFolder();
+    auto logFolder = co_await localFolder.CreateFolderAsync(L"Logs", CreationCollisionOption::OpenIfExists);
+    SYSTEMTIME systemTime;
+    GetSystemTime(&systemTime);
+    TCHAR timeStr[MAX_TIME_STR];
+    GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, L"HHmmss", timeStr, MAX_TIME_STR);
+    TCHAR dateStr[MAX_DATE_STR];
+    GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, L"yyyyMMdd", dateStr, MAX_DATE_STR, NULL);
+    wstringstream logFilePath;
+    logFilePath << dateStr << "T" << timeStr << trailStr;
+    logFile = co_await logFolder.CreateFileAsync(logFilePath.str(), CreationCollisionOption::OpenIfExists);
+}
+
 bool isElevetedProcessLaunchRequested()
 {
     bool result = false;
@@ -272,22 +344,19 @@ bool isElevetedProcessLaunchRequested()
 bool isFirstInstance(LPCTSTR mutexName)
 {
     bool result = true;
-    try
+
+    auto hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutexName);
+    if (!hMutex)
     {
-        auto hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutexName);
-        if (!hMutex)
-        {
-            CreateMutex(NULL, FALSE, mutexName);
-        }
-        else
-        {
-            result = false;
-            exitApp();
-            printDebugMessage(L"Closing this instance as another instance is already running.", 5000);
-        }
-        ReleaseMutex(hMutex);
+        CreateMutex(NULL, FALSE, mutexName);
     }
-    catch (...) { }
+    else
+    {
+        result = false;
+        printDebugMessage(L"Closing this instance as another instance is already running.", 5000);
+        exitApp();
+    }
+    ReleaseMutex(hMutex);
     
     return result;
 }
@@ -317,31 +386,37 @@ bool isElevatedProcess()
 
 int main()
 {
-    set_terminate(onUnhandledException);
-    set_unexpected(onUnexpectedException);
+    setExceptionHandling();
+    SetErrorMode(SEM_NOGPFAULTERRORBOX);
     _onexit(releaseResources);
 
     init_apartment();
 
-    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-
     if (isElevatedProcess())
     {
-        if (isFirstInstance(AdminExtensionMutexName))
-        {
-            initializeAdminService();
-        }
+        if (!isFirstInstance(AdminExtensionMutexName)) return 0;
+
+#ifdef _DEBUG
+        initializeLogging(L"-elevated-extension.log");
+#endif
+
+        ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+        initializeAdminService();
     }
     else
     {
-        if (isFirstInstance(DesktopExtensionMutexName))
-        {
-            initializeInteropService();
-            if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
-        }
+        if (!isFirstInstance(DesktopExtensionMutexName)) return 0;
+
+#ifdef _DEBUG
+        initializeLogging(L"-extension.log");
+#endif
+
+        initializeInteropService();
+        if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
     }
 
     WaitForSingleObject(appExitEvent, INFINITE);
+    exit(0);
 }
 
 #ifndef _DEBUG
