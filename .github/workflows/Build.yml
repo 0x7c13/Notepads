@@ -24,10 +24,9 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+    - name: Restore NuGet packages
+      uses: NuGet/setup-nuget@v1.0.5
+      run: nuget restore $env:Solution_Name
 
     - name: Build
       run: |
