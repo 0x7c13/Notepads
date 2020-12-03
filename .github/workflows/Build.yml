@@ -24,8 +24,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    - name: Restore NuGet packages
+    - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
+
+    - name: Restore NuGet packages
       run: nuget restore $env:Solution_Name
 
     - name: Build
