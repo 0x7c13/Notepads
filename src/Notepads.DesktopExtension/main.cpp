@@ -384,7 +384,11 @@ bool isElevatedProcess()
     return result;
 }
 
+#ifndef _DEBUG
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
+#else
 int main()
+#endif
 {
     setExceptionHandling();
     SetErrorMode(SEM_NOGPFAULTERRORBOX);
@@ -418,13 +422,3 @@ int main()
     WaitForSingleObject(appExitEvent, INFINITE);
     exit(0);
 }
-
-#ifndef _DEBUG
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
-{
-    main();
-}
-#endif
