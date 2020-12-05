@@ -133,27 +133,38 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 
-    char readBuffer[PIPE_READ_BUFFER];
-    stringstream bufferStore;
+    char readBuffer[PIPE_READ_BUFFER] = { 0 };
+    string pipeDataStr;
     DWORD byteRead;
     do
     {
-        if (ReadFile(hPipe, readBuffer, PIPE_READ_BUFFER * sizeof(char), &byteRead, NULL))
+        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(char), &byteRead, NULL))
         {
-            bufferStore << readBuffer;
+            pipeDataStr.append(readBuffer);
+            fill(begin(readBuffer), end(readBuffer), '\0');
         }
-    } while (byteRead >= PIPE_READ_BUFFER);
+    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(char));
 
-    string filePathBuffer;
-    string memoryMapId;
-    string dataArrayLengthStr;
+    // Need to cnvert pipe data string to UTF-16 to properly read unicode characters
+    wstring pipeDataWstr;
+    int convertResult = MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (int)strlen(pipeDataStr.c_str()), NULL, 0);
+    if (convertResult > 0)
+    {
+        pipeDataWstr.resize(convertResult);
+        MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (int)pipeDataStr.size(), &pipeDataWstr[0], (int)pipeDataWstr.size());
+    }
+    wstringstream pipeData(pipeDataWstr);
+
     wstring filePath;
-    getline(bufferStore, filePathBuffer, '|');
-    getline(bufferStore, memoryMapId, '|');
-    getline(bufferStore, dataArrayLengthStr);
+    wstring memoryMapId;
+    wstring dataArrayLengthStr;
+    getline(pipeData, filePath, L'|');
+    getline(pipeData, memoryMapId, L'|');
+    getline(pipeData, dataArrayLengthStr);
+
     int dataArrayLength = stoi(dataArrayLengthStr);
     wstringstream memoryMapName;
-    memoryMapName << "AppContainerNamedObjects\\" << packageSid.c_str() << "\\" << memoryMapId.c_str();
+    memoryMapName << "AppContainerNamedObjects\\" << packageSid.c_str() << "\\" << memoryMapId;
 
     HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.str().c_str());
     if (hMemory)
@@ -161,14 +172,6 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
         LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, dataArrayLength);
         if (mapView)
         {
-            // Need to cnvert file path string to UTF-16 to properly read emoji characters if present
-            int convertResult = MultiByteToWideChar(CP_UTF8, 0, filePathBuffer.c_str(), (int)strlen(filePathBuffer.c_str()), NULL, 0);
-            if (convertResult > 0)
-            {
-                filePath.resize(convertResult);
-                MultiByteToWideChar(CP_UTF8, 0, filePathBuffer.c_str(), (int)filePathBuffer.size(), &filePath[0], (int)filePath.size());
-            }
-
             HANDLE hFile = CreateFile(
                 filePath.c_str(),
                 GENERIC_READ | GENERIC_WRITE,
