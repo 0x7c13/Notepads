@@ -12,8 +12,8 @@ constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
 
 constexpr int PIPE_READ_BUFFER = MAX_PATH + 240;
-constexpr int MAX_TIME_STR = 9;
-constexpr int MAX_DATE_STR = 11;
+constexpr int MAX_TIME_STR = 10;
+constexpr int MAX_DATE_STR = 20;
 
 HANDLE appExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 HANDLE appExitJob = NULL;
@@ -52,7 +52,7 @@ void printDebugMessage(LPCTSTR message, LPCTSTR parameter, DWORD sleepTime = 0)
 #endif
 }
 
-fire_and_forget logLastError(LPCTSTR errorTitle)
+IAsyncAction logLastError(LPCTSTR errorTitle)
 {
     if (logFile != nullptr)
     {
@@ -89,13 +89,13 @@ fire_and_forget logLastError(LPCTSTR errorTitle)
 
 void onUnhandledException()
 {
-    logLastError(L"OnUnhandledException: ");
+    logLastError(L"OnUnhandledException: ").get();
     exitApp();
 }
 
 void onUnexpectedException()
 {
-    logLastError(L"OnUnexpectedException: ");
+    logLastError(L"OnUnexpectedException: ").get();
     exitApp();
 }
 
@@ -321,11 +321,11 @@ fire_and_forget initializeLogging(LPCTSTR trailStr)
     SYSTEMTIME systemTime;
     GetSystemTime(&systemTime);
     TCHAR timeStr[MAX_TIME_STR];
-    GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, L"HHmmss", timeStr, MAX_TIME_STR);
+    GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, L"THHmmss", timeStr, MAX_TIME_STR);
     TCHAR dateStr[MAX_DATE_STR];
     GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, L"yyyyMMdd", dateStr, MAX_DATE_STR, NULL);
     wstringstream logFilePath;
-    logFilePath << dateStr << "T" << timeStr << trailStr;
+    logFilePath << dateStr << timeStr << trailStr;
     logFile = co_await logFolder.CreateFileAsync(logFilePath.str(), CreationCollisionOption::OpenIfExists);
 }
 
