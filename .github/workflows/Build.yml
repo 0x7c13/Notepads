@@ -38,7 +38,7 @@ jobs:
 
     - name: Restore vcpkg packages
       run: |
-        $VCPKG_ROOT/vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+        $VCPKG_ROOT\vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
 
     - name: Build
       run: |

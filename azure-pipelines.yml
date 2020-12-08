@@ -23,7 +23,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $VCPKG_ROOT/vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+      $VCPKG_ROOT\vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
     failOnStderr: true
 
 - task: MSBuild@1
