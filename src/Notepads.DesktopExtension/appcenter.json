@@ -1,0 +1,73 @@
+{
+    "logs":  [
+                 {
+                     "type":  "managedError",
+                     "timestamp":  "",
+                     "appLaunchTimestamp":  "",
+                     "processId":  "",
+                     "id":  "",
+                     "fatal":  false,
+                     "processName":  "Notepads32.exe",
+                     "errorThreadId":  0,
+                     "device":  {
+                                    "appNamespace":  "Notepads.DesktopExtension",
+                                    "appVersion":  "1.4.2.0",
+                                    "appBuild":  "1.4.2.0",
+                                    "sdkName":  "appcenter.uwp",
+                                    "sdkVersion":  "3.4.1",
+                                    "osName":  "",
+                                    "osVersion":  "",
+                                    "osBuild":  "",
+                                    "model":  "",
+                                    "oemName":  "",
+                                    "screenSize":  "",
+                                    "locale":  "",
+                                    "timeZoneOffset":  0
+                                },
+                     "exception":  {
+                                       "type":  "Win32Exception",
+                                       "message":  "",
+                                       "stackTrace":  "",
+                                       "innerExceptions":  [
+                                                               {
+                                                                   "type":  ""
+                                                               }
+                                                           ]
+                                   },
+                     "properties":  {
+                                        "exception":  "",
+                                        "message":  "",
+                                        "culture":  "",
+                                        "availableMemory":  "",
+                                        "firstUseTimeUTC":  "",
+                                        "osArchitecture":  "",
+                                        "osVersion":  "",
+                                        "isDesktopExtension":  "True",
+                                        "isElevated":  "False"
+                                    }
+                 },
+                 {
+                     "type":  "errorAttachment",
+                     "contentType":  "text/plain",
+                     "timestamp":  "",
+                     "data":  "",
+                     "errorId":  "",
+                     "id":  "",
+                     "device":  {
+                                    "appNamespace":  "Notepads.DesktopExtension",
+                                    "appVersion":  "1.4.2.0",
+                                    "appBuild":  "1.4.2.0",
+                                    "sdkName":  "appcenter.uwp",
+                                    "sdkVersion":  "3.4.1",
+                                    "osName":  "",
+                                    "osVersion":  "",
+                                    "osBuild":  "",
+                                    "model":  "",
+                                    "oemName":  "",
+                                    "screenSize":  "",
+                                    "locale":  "",
+                                    "timeZoneOffset":  0
+                                }
+                 }
+             ]
+}

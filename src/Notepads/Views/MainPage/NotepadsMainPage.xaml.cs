@@ -285,19 +285,22 @@
         {
             var deferral = e.GetDeferral();
 
+            DesktopExtensionService.InteropServiceConnection?.Dispose();
+
             if (AppSettingsService.IsSessionSnapshotEnabled)
             {
                 await SessionManager.SaveSessionAsync();
             }
 
-            DesktopExtensionService.InteropServiceConnection.Dispose();
             deferral.Complete();
         }
 
         private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
         {
-            await DesktopExtensionService.Initialize();
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            if (await DesktopExtensionService.Initialize())
+            {
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            }
         }
 
         public void ExecuteProtocol(Uri uri)

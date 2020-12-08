@@ -13,23 +13,18 @@ variables:
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
-- task: PowerShell@2
-  displayName: 'Update appxmanifest'
-  inputs:
-    targetType: 'inline'
-    script: |
-      [xml]$manifest = Get-Content $(Build.SourcesDirectory)\src\Notepads.Package\Package.appxmanifest
-      $manifest.Package.Identity.Name="Notepads"
-      $manifest.Package.Applications.Application.VisualElements.DisplayName="Notepads"
-      $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
-      $manifest.Save('$(Build.SourcesDirectory)\src\Notepads.Package\Package.appxmanifest')
-    failOnStderr: true
-
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $VCPKG_ROOT/vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+    failOnStderr: true
 
 - task: MSBuild@1
   inputs:

@@ -46,8 +46,6 @@
                 InstanceHandlerMutex.Close();
             }
 
-            OpenDesktopExtension();
-
             if (activatedArgs is FileActivatedEventArgs)
             {
                 RedirectOrCreateNewInstance();
@@ -154,17 +152,6 @@
 
             // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
-        }
-
-        private static async void OpenDesktopExtension()
-        {
-            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
-                !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
-
-                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-            }
         }
     }
 }

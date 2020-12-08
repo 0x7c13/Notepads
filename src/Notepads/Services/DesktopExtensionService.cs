@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Services
 {
+    using Microsoft.AppCenter;
     using Notepads.Extensions;
     using Notepads.Settings;
     using System;
@@ -14,6 +15,7 @@
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Foundation.Metadata;
+    using Windows.Security.Authentication.Web;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
 
@@ -31,6 +33,17 @@
         public static readonly bool ShouldUseDesktopExtension = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        public static async void InitializeDesktopExtension()
+        {
+            if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) ||
+            new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)) return;
+
+            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
+            var appcenterInstallidstr = (await AppCenter.GetInstallIdAsync())?.ToString();
+            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, appcenterInstallidstr);
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
 
         public static async Task<bool> Initialize()
         {

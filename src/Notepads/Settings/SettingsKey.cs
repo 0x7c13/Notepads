@@ -38,9 +38,10 @@
 
         // Interop related
         // These values depend upon constant fields described in ..\Notepads.DesktopExtension\pch.h.
-        // Changing value in one place require change in another.
+        // Changing value in one place require changing variable with similar name in another.
         internal const string AppCenterSecret = null;
-        internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName in manifest
+        internal const string AppCenterInstallIdStr = "AppCenterInstallIdStr";
+        internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName value in manifest
         internal const string PackageSidStr = "PackageSidStr";
         internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
         internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
