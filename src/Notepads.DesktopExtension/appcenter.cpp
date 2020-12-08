@@ -1,9 +1,12 @@
+// Documentation is at https://docs.microsoft.com/en-us/appcenter/diagnostics/upload-crashes
 #include "pch.h"
 #include "resource.h"
 #include "combaseapi.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+
+#define APPCENTER_ENDPOINT "https://in.appcenter.ms/logs?Api-Version=1.0.0"
 
 using namespace std;
 using namespace rapidjson;
@@ -30,13 +33,13 @@ void AppCenter::start()
 	headerList = curl_slist_append(headerList, "Content-Type: application/json");
 
 	stringstream appSecretHeader;
-	appSecretHeader << "app-secret: " << AppCenterSecret;
+	appSecretHeader << "app-secret: " << to_string(AppCenterSecret);
 	headerList = curl_slist_append(headerList, appSecretHeader.str().c_str());
 
 	hstring installId = unbox_value_or<hstring>(readSettingsKey(AppCenterInstallIdStr), L"");
 	if (installId == L"") return;
 	stringstream installIdHeader;
-	installIdHeader << "install-id: " << installId.c_str();
+	installIdHeader << "install-id: " << to_string(installId);
 	headerList = curl_slist_append(headerList, installIdHeader.str().c_str());
 }
 
@@ -114,7 +117,6 @@ void AppCenter::trackError(DWORD errorCode, string message, bool isFatal)
 			logReports[i]["errorThreadId"].SetInt(GetCurrentThreadId());
 
 			logReports[i]["exception"]["message"].SetString(message.c_str(), errorReportForm.GetAllocator());
-			logReports[i]["exception"]["innerExceptions"][0]["type"].SetString(exceptionProp.str().c_str(), errorReportForm.GetAllocator());
 
 			logReports[i]["properties"]["exception"].SetString(exceptionProp.str().c_str(), errorReportForm.GetAllocator());
 			logReports[i]["properties"]["message"].SetString(message.c_str(), errorReportForm.GetAllocator());
@@ -138,12 +140,10 @@ void AppCenter::trackError(DWORD errorCode, string message, bool isFatal)
 	Writer<StringBuffer> writer(errorReport);
 	errorReportForm.Accept(writer);
 
-	cout << errorReport.GetString() << endl;
-
-	/*CURL* curl = curl_easy_init();
+	CURL* curl = curl_easy_init();
 	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerList);
-		curl_easy_setopt(curl, CURLOPT_URL, "https://in.appcenter.ms/logs?Api-Version=1.0.0");
+		curl_easy_setopt(curl, CURLOPT_URL, APPCENTER_ENDPOINT);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, errorReport.GetString());
 
 #ifdef  _DEBUG
@@ -153,8 +153,6 @@ void AppCenter::trackError(DWORD errorCode, string message, bool isFatal)
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
 			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		else
-			fprintf(stderr, "curl_easy_perform() succeded: %s\n", curl_easy_strerror(res));
 	}
-	curl_easy_cleanup(curl);*/
+	curl_easy_cleanup(curl);
 }

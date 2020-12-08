@@ -27,12 +27,7 @@
                      "exception":  {
                                        "type":  "Win32Exception",
                                        "message":  "",
-                                       "stackTrace":  "",
-                                       "innerExceptions":  [
-                                                               {
-                                                                   "type":  ""
-                                                               }
-                                                           ]
+                                       "stackTrace":  ""
                                    },
                      "properties":  {
                                         "exception":  "",

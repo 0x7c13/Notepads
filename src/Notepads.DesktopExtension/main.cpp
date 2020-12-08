@@ -109,7 +109,6 @@ int main()
 
     init_apartment();
     AppCenter::start();
-    AppCenter::trackError(6, "Test message", true);
 
     if (isElevatedProcess())
     {
