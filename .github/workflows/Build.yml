@@ -35,11 +35,10 @@ jobs:
       uses: lukka/run-vcpkg@v6.0
       with:
         setupOnly: true
-        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
 
     - name: Restore vcpkg packages
       run: |
-        ${{ runner.workspace }}/vcpkg/vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+        $VCPKG_ROOT\vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
 
     - name: Build
       run: |
