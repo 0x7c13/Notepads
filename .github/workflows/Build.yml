@@ -38,6 +38,9 @@ jobs:
         vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
         vcpkgGitCommitId: a2135fd97e834e83a705b1cff0d91a0e45a0fb00
 
+    - name: Integrate vcpkg with msbuild
+      run: ${{ runner.workspace }}/vcpkg/vcpkg integrate install
+
     - name: Build
       run: |
         msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
