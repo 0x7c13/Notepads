@@ -31,11 +31,15 @@ jobs:
       run: nuget restore $env:Solution_Name
 
     # Restore from cache ,if cache-miss, download and build vcpkg: https://github.com/lukka/run-vcpkg
-    - name: Setup vcpkg and restore packages
+    - name: Setup vcpkg
       uses: lukka/run-vcpkg@v6.0
       with:
-        vcpkgArguments: rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+        setupOnly: true
         vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+
+    - name: Restore vcpkg packages
+      run: |
+        ${{ runner.workspace }}/vcpkg/vcpkg install rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
 
     - name: Build
       run: |
