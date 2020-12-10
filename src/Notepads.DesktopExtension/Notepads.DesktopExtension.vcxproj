@@ -159,5 +159,10 @@
   <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild" Condition="!Exists('..\..\vcpkg\vcpkg.exe')">
     <Exec Command="git submodule update --init --recursive" />
     <Exec Command="..\..\vcpkg\bootstrap-vcpkg.bat" />
+    <PropertyGroup>
+      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from https://github.com/microsoft/vcpkg and place it in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\..\vcpkg\', '..\..\vcpkg\vcpkg.exe'))" />
+    <Error Condition="!Exists('..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\vcpkg\', '..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />
   </Target>
 </Project>
