@@ -34,8 +34,8 @@ jobs:
     - name: Setup vcpkg
       run: |
         git submodule update --init --recursive
-        $env:Vcpkg_Root\bootstrap-vcpkg.bat
-        $env:Vcpkg_Root\vcpkg integrate install
+        $env:Vcpkg_Root/bootstrap-vcpkg.bat
+        $env:Vcpkg_Root/vcpkg integrate install
 
     - name: Build
       run: |
