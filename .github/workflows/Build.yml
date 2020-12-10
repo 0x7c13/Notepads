@@ -32,10 +32,7 @@ jobs:
       run: nuget restore $env:Solution_Name
 
     - name: Setup vcpkg
-      run: |
-        git submodule update --init --recursive
-        $env:Vcpkg_Root/bootstrap-vcpkg.bat
-        $env:Vcpkg_Root/vcpkg integrate install
+      run: powershell -ExecutionPolicy Bypass .\setup-vcpkg.ps1 -vcpkg_root $env:Vcpkg_Root
 
     - name: Build
       run: |
