@@ -31,6 +31,6 @@ If ($platform -eq "Win32") {
   $vcpkg_triplet = "x86-windows"
 }
 
-& ${project_dir}\..\..\setup-vcpkg.ps1 -vcpkg_root ${vcpkg_root_dir}
+#& ${project_dir}\..\..\setup-vcpkg.ps1 -vcpkg_root ${vcpkg_root_dir}
 
 & ${vcpkg_root_dir}\vcpkg install rapidjson curl --triplet=$vcpkg_triplet
