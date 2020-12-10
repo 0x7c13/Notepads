@@ -1,5 +1,6 @@
 param (
-  [string]$project_dir = $(throw "-project_dir=<path to project> is required")
+  [string]$project_dir = $(throw "-project_dir=<path to project> is required"),
+  [string]$platform = "x86"
 )
 
 $project_dir = Resolve-Path $project_dir.TrimEnd("\")
@@ -21,3 +22,20 @@ $sdk_target.Project.ItemGroup.PackageReference | ForEach-Object {if($_.Include -
 $appcenter_format.logs.device | ForEach-Object {$_.sdkVersion = $appcenter_sdk_version}
 
 $appcenter_format | ConvertTo-Json -depth 10| Set-Content $appcenter_file
+
+# Set up vcpkg and packages
+git submodule update --init --recursive
+
+$vcpkg_root_dir = "${project_dir}\..\..\vcpkg"
+
+$vcpkg_triplet = "${platform}-windows"
+If ($platform -eq "Win32") {
+  $vcpkg_triplet = "x86-windows"
+}
+
+If (!(Test-Path -Path "${vcpkg_root_dir}\vcpkg.exe")) {
+  & ${vcpkg_root_dir}\bootstrap-vcpkg.bat
+}
+
+& ${vcpkg_root_dir}\vcpkg integrate install
+& ${vcpkg_root_dir}\vcpkg install rapidjson curl --triplet=$vcpkg_triplet

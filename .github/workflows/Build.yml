@@ -30,16 +30,6 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore $env:Solution_Name
 
-    # Restore from cache ,if cache-miss, download and build vcpkg: https://github.com/lukka/run-vcpkg
-    - name: Setup vcpkg and restore packages
-      uses: lukka/run-vcpkg@v6.0
-      with:
-        vcpkgArguments: rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
-        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
-
-    - name: Integrate vcpkg with msbuild
-      run: ${{ runner.workspace }}/vcpkg/vcpkg integrate install
-
     - name: Build
       run: |
         msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
