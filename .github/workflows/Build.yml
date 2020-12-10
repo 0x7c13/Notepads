@@ -12,6 +12,7 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
+      Vcpkg_Root: vcpkg
 
     runs-on: windows-latest
     steps:
@@ -29,6 +30,9 @@ jobs:
 
     - name: Restore NuGet packages
       run: nuget restore $env:Solution_Name
+
+    - name: Setup vcpkg
+      run: .\setup-vcpkg.ps1 -vcpkg_root $env:Vcpkg_Root
 
     - name: Build
       run: |
