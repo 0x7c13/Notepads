@@ -35,6 +35,7 @@ jobs:
       uses: lukka/run-vcpkg@v6.0
       with:
         vcpkgArguments: rapidjson:arm-windows rapidjson:arm64-windows rapidjson:x86-windows rapidjson:x64-windows curl:arm-windows curl:arm64-windows curl:x86-windows curl:x64-windows
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
 
     - name: Integrate vcpkg with msbuild
       run: ${{ runner.workspace }}/vcpkg/vcpkg integrate install
