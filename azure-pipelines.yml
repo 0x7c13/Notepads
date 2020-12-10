@@ -19,13 +19,6 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- task: PowerShell@2
-  inputs:
-    targetType: 'filePath'
-    filePath: '.\setup-vcpkg.ps1'
-    arguments: '-vcpkg_root $(system.defaultworkingdirectory)\vcpkg'
-    failOnStderr: true
-
 - task: MSBuild@1
   inputs:
     platform: 'x86'

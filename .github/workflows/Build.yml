@@ -12,7 +12,6 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
-      Vcpkg_Root: vcpkg
 
     runs-on: windows-latest
     steps:
@@ -30,12 +29,6 @@ jobs:
 
     - name: Restore NuGet packages
       run: nuget restore $env:Solution_Name
-
-    - name: Setup vcpkg
-      run: |
-        git submodule update --init --recursive
-        vcpkg\bootstrap-vcpkg.bat
-        vcpkg\vcpkg integrate install
 
     - name: Build
       run: |

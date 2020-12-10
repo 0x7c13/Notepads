@@ -23,14 +23,12 @@ $appcenter_format.logs.device | ForEach-Object {$_.sdkVersion = $appcenter_sdk_v
 
 $appcenter_format | ConvertTo-Json -depth 10| Set-Content $appcenter_file
 
-# Set up vcpkg and packages
+# Set up vcpkg packages
 $vcpkg_root_dir = "${project_dir}\..\..\vcpkg"
 
 $vcpkg_triplet = "${platform}-windows"
 If ($platform -eq "Win32") {
   $vcpkg_triplet = "x86-windows"
 }
-
-#& ${project_dir}\..\..\setup-vcpkg.ps1 -vcpkg_root ${vcpkg_root_dir}
 
 & ${vcpkg_root_dir}\vcpkg install rapidjson curl --triplet=$vcpkg_triplet
