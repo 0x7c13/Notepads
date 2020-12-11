@@ -80,6 +80,12 @@
     <Import Project="PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg">
+    <!--Update this value to latest commit to update vcpkg and dependencies-->
+    <VcPkgCommitHash>c30903782c88967652178486a5f3e490fb2e8143</VcPkgCommitHash>
+    <!--###################################################################-->
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -140,6 +146,7 @@
     <None Include="appcenter.json" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AssemblyInfo.rc" />
@@ -147,7 +154,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
+    <Import Project="..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -156,13 +163,15 @@
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets'))" />
   </Target>
-  <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild" Condition="!Exists('..\..\vcpkg\vcpkg.exe')">
-    <Exec Command="git submodule update --init --recursive" />
-    <Exec Command="..\..\vcpkg\bootstrap-vcpkg.bat" />
+  <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
+    <Exec Command="git clone https://github.com/microsoft/vcpkg.git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\bootstrap-vcpkg.bat')" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git checkout $(VcPkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" />
+    <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" />
     <PropertyGroup>
-      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from https://github.com/microsoft/vcpkg and place it in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
+      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from https://github.com/microsoft/vcpkg and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\..\vcpkg\', '..\..\vcpkg\vcpkg.exe'))" />
-    <Error Condition="!Exists('..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\vcpkg\', '..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />
+    <Error Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\vcpkg.exe'))" />
+    <Error Condition="!Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />
   </Target>
 </Project>

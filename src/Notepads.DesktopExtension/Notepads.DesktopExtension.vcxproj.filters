@@ -48,6 +48,7 @@
     <None Include="appcenter.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AssemblyInfo.rc">
