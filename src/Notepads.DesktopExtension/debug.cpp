@@ -1,5 +1,7 @@
 #include "pch.h"
+#include "appcenter.h"
 
+using namespace fmt;
 using namespace std;
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -16,14 +18,6 @@ void printDebugMessage(LPCTSTR message, DWORD sleepTime)
 {
 #ifdef _DEBUG
     wcout << message << endl;
-    Sleep(sleepTime);
-#endif
-}
-
-void printDebugMessage(LPCTSTR message, LPCTSTR parameter, DWORD sleepTime)
-{
-#ifdef _DEBUG
-    wcout << message << " \"" << parameter << "\"" << endl;
     Sleep(sleepTime);
 #endif
 }
@@ -53,29 +47,27 @@ string getTimeStamp()
 {
 	SYSTEMTIME systemTime;
 	GetSystemTime(&systemTime);
-	stringstream timeStamp;
-	timeStamp << getTimeStamp("%FT%T") << "." << systemTime.wMilliseconds << "Z";
-	return timeStamp.str();
+	return format("{}.{}Z", getTimeStamp("%FT%T"), systemTime.wMilliseconds);
 }
 
 string getTimeStamp(const char* format)
 {
 	time_t timePast = time(NULL);
-	tm* utcTime = gmtime(&timePast);
+	tm utcTime;
+	gmtime_s(&utcTime, &timePast);
 	CHAR timeStamp[MAX_DATETIME_STR];
-	strftime(timeStamp, sizeof(timeStamp), format, utcTime);
+	strftime(timeStamp, sizeof(timeStamp), format, &utcTime);
 	return timeStamp;
 }
 
 //From https://stackoverflow.com/a/34571089/5155484
-typedef unsigned char uchar;
 static const string b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 string base64_encode(const string& in)
 {
 	string out;
 
 	int val = 0, valb = -6;
-	for (uchar c : in) {
+	for (UCHAR c : in) {
 		val = (val << 8) + c;
 		valb += 8;
 		while (valb >= 0) {
@@ -88,7 +80,7 @@ string base64_encode(const string& in)
 	return out;
 }
 
-IAsyncAction logLastError(LPCTSTR errorTitle)
+IAsyncAction logLastError(bool isFatal)
 {
     LPVOID msgBuf;
     DWORD errorCode = GetLastError();
@@ -108,7 +100,7 @@ IAsyncAction logLastError(LPCTSTR errorTitle)
     LocalFree(msgBuf);
     getline(msgStrm, msg, L'\r');
 
-    AppCenter::trackError(errorCode, to_string(msg), wcscmp(errorTitle, L"OnUnhandledException: ") == 0);
+    AppCenter::trackError(errorCode, to_string(msg), isFatal);
 
     if (logFile != nullptr)
     {
@@ -118,10 +110,10 @@ IAsyncAction logLastError(LPCTSTR errorTitle)
         GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, timeStr, MAX_TIME_STR);
         TCHAR dateStr[MAX_DATE_STR];
         GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, dateStr, MAX_DATE_STR, NULL);
-        wstringstream debugMsg;
-        debugMsg << dateStr << " " << timeStr << " " << "[" << "Error" << "]" << " " << "[" << "Error Code: " << errorCode << "]" << " " << errorTitle << msg << endl;
+		wstring debugMsg = format(L"{} {} [Error] [Error Code: {}] {}{}\n",
+			dateStr, timeStr, errorCode, isFatal ? L"OnUnhandledException: " : L"OnUnexpectedException: ", msg);
 
-        co_await PathIO::AppendTextAsync(logFile.Path(), debugMsg.str().c_str());
+        co_await PathIO::AppendTextAsync(logFile.Path(), debugMsg);
     }
 }
 

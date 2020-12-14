@@ -1,5 +1,8 @@
 #include "pch.h"
+#include "appcenter.h"
+#include "fmt/format.h"
 
+using namespace fmt;
 using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
@@ -23,16 +26,16 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
 
     LPCSTR result = "Failed";
 
-    wstringstream pipeName;
-    pipeName << "\\\\.\\pipe\\Sessions\\" << sessionId << "\\AppContainerNamedObjects\\" << packageSid.c_str() << "\\" << Package::Current().Id().FamilyName().c_str() << "\\" << AdminPipeConnectionNameStr;
+    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
+        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminPipeConnectionNameStr);
 
     HANDLE hPipe = INVALID_HANDLE_VALUE;
     while (hPipe == INVALID_HANDLE_VALUE)
     {
         Sleep(50);
-        if (WaitNamedPipe(pipeName.str().c_str(), NMPWAIT_WAIT_FOREVER))
+        if (WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
         {
-            hPipe = CreateFile(pipeName.str().c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
         }
     }
 
@@ -68,10 +71,9 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
     getline(pipeData, dataArrayLengthStr);
 
     int dataArrayLength = stoi(dataArrayLengthStr);
-    wstringstream memoryMapName;
-    memoryMapName << "AppContainerNamedObjects\\" << packageSid.c_str() << "\\" << memoryMapId;
+    wstring memoryMapName = format(L"AppContainerNamedObjects\\{}\\{}", packageSid, memoryMapId);
 
-    HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.str().c_str());
+    HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
     if (hMemory)
     {
         LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, dataArrayLength);
@@ -109,13 +111,17 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
 
     if (strcmp(result, "Success") == 0)
     {
-        printDebugMessage(L"Successfully wrote to", filePath.c_str());
+        printDebugMessage(format(L"Successfully wrote to", filePath).c_str());
     }
     else
     {
-        printDebugMessage(L"Failed to write to", filePath.c_str());
+        printDebugMessage(format(L"Failed to write to", filePath).c_str());
     }
     printDebugMessage(L"Waiting on uwp app to send data.");
+
+    vector<pair<const char*, string>> properties;
+    properties.push_back(pair("Result", result));
+    AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 
     return 0;
 }

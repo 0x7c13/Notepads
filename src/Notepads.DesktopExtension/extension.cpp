@@ -1,5 +1,7 @@
 #include "pch.h"
+#include "appcenter.h"
 
+using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::AppService;
@@ -27,6 +29,7 @@ fire_and_forget launchElevatedProcess()
     shExInfo.hInstApp = 0;
 
     auto message = ValueSet();
+    vector<pair<const char*, string>> properties;
     message.Insert(InteropCommandLabel, box_value(CreateElevetedExtensionCommandStr));
     if (ShellExecuteEx(&shExInfo))
     {
@@ -40,13 +43,16 @@ fire_and_forget launchElevatedProcess()
 
         message.Insert(InteropCommandAdminCreatedLabel, box_value(true));
         printDebugMessage(L"Adminstrator Extension has been launched.");
+        properties.push_back(pair("Accepted", "True"));
     }
     else
     {
         message.Insert(InteropCommandAdminCreatedLabel, box_value(false));
         printDebugMessage(L"User canceled launching of Adminstrator Extension.");
+        properties.push_back(pair("Denied", "True"));
     }
     co_await interopServiceConnection.SendMessageAsync(message);
+    AppCenter::trackEvent("OnAdminstratorPrivilageGranted", properties);
 }
 
 void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)

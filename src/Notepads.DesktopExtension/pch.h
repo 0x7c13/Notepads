@@ -12,7 +12,7 @@
 #include "winrt/Windows.Storage.h"
 #include "winrt/Windows.System.h"
 #include "winrt/Windows.System.Profile.h"
-#include "curl/curl.h"
+#include "fmt/core.h"
 
 // These values depend upon constant fields described in ..\Notepads\Settings\SettingsKey.cs.
 // Changing value in one place require changing variable with similar name in another.
@@ -34,7 +34,6 @@ void setExceptionHandling();
 void exitApp();
 
 void printDebugMessage(LPCTSTR message, DWORD sleepTime = 0);
-void printDebugMessage(LPCTSTR message, LPCTSTR parameter, DWORD sleepTime = 0);
 std::string getTimeStamp();
 std::string getTimeStamp(const char* format);
 std::string to_string(winrt::Windows::System::ProcessorArchitecture arch);
@@ -46,18 +45,5 @@ winrt::fire_and_forget launchElevatedProcess();
 void initializeAdminService();
 winrt::Windows::Foundation::IInspectable readSettingsKey(winrt::hstring key);
 
-winrt::Windows::Foundation::IAsyncAction logLastError(LPCTSTR errorTitle);
+winrt::Windows::Foundation::IAsyncAction logLastError(bool isFatal);
 winrt::fire_and_forget initializeLogging(LPCTSTR trailStr);
-
-namespace AppCenter
-{
-	namespace
-	{
-		static std::string launchTimeStamp;
-		static char* appCenterJSON;
-		static struct curl_slist* headerList;
-	}
-
-	void start();
-	void trackError(DWORD errorCode, std::string message, bool isFatal);
-}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="EnsureVcpkgBuild" DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
@@ -94,9 +94,10 @@
       <PreprocessorDefinitions>_CONSOLE;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalOptions>%(AdditionalOptions) /permissive- /bigobj</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -platform $(Platform)</Command>
+      <Command>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -129,6 +130,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="appcenter.h" />
+    <ClCompile Include="log.h" />
+    <ClCompile Include="models.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -153,25 +157,25 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets')" />
     <Import Project="..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201113.7\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-  </Target>
   <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
-    <Exec Command="git clone https://github.com/microsoft/vcpkg.git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\bootstrap-vcpkg.bat')" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git checkout $(VcPkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" />
-    <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" />
+    <Exec Command="git clone https://github.com/microsoft/vcpkg.git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\bootstrap-vcpkg.bat')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git checkout $(VcPkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
     <PropertyGroup>
       <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from https://github.com/microsoft/vcpkg and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\vcpkg.exe'))" />
     <Error Condition="!Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets'))" />
   </Target>
 </Project>

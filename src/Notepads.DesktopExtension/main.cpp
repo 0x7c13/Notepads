@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
+#include "appcenter.h"
 
-using namespace std;
 using namespace winrt;
 
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
@@ -23,13 +23,13 @@ void exitApp()
 
 void onUnhandledException()
 {
-    logLastError(L"OnUnhandledException: ").get();
+    logLastError(true).get();
     exitApp();
 }
 
 void onUnexpectedException()
 {
-    logLastError(L"OnUnexpectedException: ").get();
+    logLastError(false).get();
     exitApp();
 }
 

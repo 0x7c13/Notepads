@@ -13,15 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="AppCenter">
+      <UniqueIdentifier>{de4d9f33-9346-4bce-97fe-469f12bf39a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="appcenter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="elevated.cpp">
@@ -33,6 +33,9 @@
     <ClCompile Include="debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="appcenter.cpp">
+      <Filter>AppCenter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -41,14 +44,23 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="appcenter.h">
+      <Filter>AppCenter</Filter>
+    </ClInclude>
+    <ClCompile Include="log.h">
+      <Filter>AppCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="models.h">
+      <Filter>AppCenter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="appcenter.json">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="vcpkg.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AssemblyInfo.rc">
