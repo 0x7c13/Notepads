@@ -58,12 +58,9 @@ namespace AppCenter
 	public:
 		Device()
 		{
-			HMODULE handle = ::GetModuleHandle(NULL);
-			HRSRC rc = FindResource(handle, MAKEINTRESOURCE(APPCENTER_JSON), MAKEINTRESOURCE(JSONFILE));
-			HGLOBAL rcData = LoadResource(handle, rc);
-			DWORD size = SizeofResource(handle, rc);
 			Document versionData;
-			versionData.Parse(static_cast<char*>(LockResource(rcData)));
+			versionData.Parse(static_cast<CHAR*>(LockResource(LoadResource(GetModuleHandle(NULL),
+				FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(APPCENTER_JSON), MAKEINTRESOURCE(JSONFILE))))));
 			_appVersion = versionData["appVersion"].GetString();
 			_appBuild = versionData["appBuild"].GetString();
 			_sdkVersion = versionData["sdkVersion"].GetString();
@@ -86,9 +83,9 @@ namespace AppCenter
 			GetWindowRect(GetDesktopWindow(), &desktop);
 			_screenSize = format("{}x{}", desktop.right, desktop.bottom);
 
-			WCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
+			TCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
 			LCIDToLocaleName(GetThreadLocale(), locale, LOCALE_NAME_MAX_LENGTH, 0);
-			WCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
+			TCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
 			GetLocaleInfoEx(locale, LOCALE_SENGLISHDISPLAYNAME, localeDisplayName, LOCALE_NAME_MAX_LENGTH);
 			_locale = to_string(locale);
 

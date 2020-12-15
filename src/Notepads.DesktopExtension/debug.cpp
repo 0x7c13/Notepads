@@ -8,14 +8,13 @@ using namespace Windows::Foundation;
 using namespace Windows::Storage;
 using namespace Windows::System;
 
-constexpr int MAX_TIME_STR = 20;
-constexpr int MAX_DATE_STR = 20;
-constexpr int MAX_DATETIME_STR = 100;
+constexpr INT MAX_TIME_STR = 20;
+constexpr INT MAX_DATE_STR = 20;
+constexpr INT MAX_DATETIME_STR = 100;
 
 StorageFile logFile = nullptr;
 
-void printDebugMessage(LPCTSTR message, DWORD sleepTime)
-{
+void printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime) {
 #ifdef _DEBUG
     wcout << message << endl;
     Sleep(sleepTime);
@@ -50,7 +49,7 @@ string getTimeStamp()
 	return format("{}.{}Z", getTimeStamp("%FT%T"), systemTime.wMilliseconds);
 }
 
-string getTimeStamp(const char* format)
+string getTimeStamp(const CHAR* format)
 {
 	time_t timePast = time(NULL);
 	tm utcTime;
@@ -66,7 +65,7 @@ string base64_encode(const string& in)
 {
 	string out;
 
-	int val = 0, valb = -6;
+	INT val = 0, valb = -6;
 	for (UCHAR c : in) {
 		val = (val << 8) + c;
 		valb += 8;
@@ -102,7 +101,7 @@ IAsyncAction logLastError(bool isFatal)
 
     AppCenter::trackError(errorCode, to_string(msg), isFatal);
 
-    if (logFile != nullptr)
+    if (logFile)
     {
         SYSTEMTIME systemTime;
         GetSystemTime(&systemTime);

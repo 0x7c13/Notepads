@@ -43,15 +43,15 @@ void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
 	string errorAttachmentId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
 	errorAttachmentId.erase(0, errorAttachmentId.find_first_not_of('{')).erase(errorAttachmentId.find_last_not_of('}') + 1);
 
-	WCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
+	TCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
 	LCIDToLocaleName(GetThreadLocale(), locale, LOCALE_NAME_MAX_LENGTH, 0);
-	WCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
+	TCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
 	GetLocaleInfoEx(locale, LOCALE_SENGLISHDISPLAYNAME, localeDisplayName, LOCALE_NAME_MAX_LENGTH);
 
 	string isElevated = isElevatedProcess() ? "True" : "False";
 	string eventType = isFatal ? "OnWin32UnhandledException" : "OnWin32UnexpectedException";
 
-	vector<pair<const char*, string>> properties;
+	vector<pair<const CHAR*, string>> properties;
 	properties.push_back(pair("Exception", format("Win32Exception: Exception of code no. {} was thrown.", errorCode)));
 	properties.push_back(pair("Message", message));
 	properties.push_back(pair("Culture", to_string(localeDisplayName)));
@@ -106,7 +106,7 @@ void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
 	trackEvent(eventType, properties, crashReportSid);
 }
 
-void AppCenter::trackEvent(const string& name, const vector<pair<const char*, string>>& properties, const string& sid)
+void AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid)
 {
 	if (!AppCenterSecret) return;
 

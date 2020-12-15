@@ -9,7 +9,7 @@ constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
 HANDLE appExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 extern HANDLE appExitJob;
 
-int releaseResources()
+INT releaseResources()
 {
     CloseHandle(appExitEvent);
     CloseHandle(appExitJob);
@@ -41,10 +41,10 @@ void setExceptionHandling()
 
 bool isElevetedProcessLaunchRequested()
 {
-    bool result = false;
+    auto result = false;
 
     LPTSTR* argList;
-    int argCount;
+    INT argCount;
     argList = CommandLineToArgvW(GetCommandLine(), &argCount);
     if (argCount > 3 && wcscmp(argList[3], L"/admin") == 0)
     {
@@ -56,9 +56,9 @@ bool isElevetedProcessLaunchRequested()
 
 bool isFirstInstance(LPCTSTR mutexName)
 {
-    bool result = true;
+    auto result = true;
 
-    auto hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutexName);
+    HANDLE hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutexName);
     if (!hMutex)
     {
         CreateMutex(NULL, FALSE, mutexName);
@@ -76,7 +76,7 @@ bool isFirstInstance(LPCTSTR mutexName)
 
 bool isElevatedProcess()
 {
-    bool result = false;
+    auto result = false;
 
     HANDLE hToken = NULL;
     if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
@@ -98,9 +98,9 @@ bool isElevatedProcess()
 }
 
 #ifndef _DEBUG
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
+INT APIENTRY wWinMain(_In_ HINSTANCE /* hInstance */, _In_opt_ HINSTANCE /* hPrevInstance */, _In_ LPWSTR /* lpCmdLine */, _In_ INT /* nCmdShow */)
 #else
-int main()
+INT main()
 #endif
 {
     setExceptionHandling();

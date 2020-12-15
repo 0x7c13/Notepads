@@ -10,7 +10,7 @@ using namespace Windows::Foundation::Collections;
 
 HANDLE appExitJob = NULL;
 
-AppServiceConnection interopServiceConnection = { 0 };
+AppServiceConnection interopServiceConnection = NULL;
 
 fire_and_forget launchElevatedProcess()
 {
@@ -29,7 +29,7 @@ fire_and_forget launchElevatedProcess()
     shExInfo.hInstApp = 0;
 
     auto message = ValueSet();
-    vector<pair<const char*, string>> properties;
+    vector<pair<const CHAR*, string>> properties;
     message.Insert(InteropCommandLabel, box_value(CreateElevetedExtensionCommandStr));
     if (ShellExecuteEx(&shExInfo))
     {

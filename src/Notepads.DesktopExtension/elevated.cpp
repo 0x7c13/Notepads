@@ -9,7 +9,7 @@ using namespace Windows::ApplicationModel;
 using namespace Windows::Foundation;
 using namespace Windows::Storage;
 
-constexpr int PIPE_READ_BUFFER = MAX_PATH + 240;
+constexpr INT PIPE_READ_BUFFER = MAX_PATH + 240;
 
 DWORD sessionId;
 
@@ -20,7 +20,7 @@ IInspectable readSettingsKey(hstring key)
 
 hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
-DWORD WINAPI saveFileFromPipeData(LPVOID param)
+DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
     setExceptionHandling();
 
@@ -41,25 +41,25 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 
-    char readBuffer[PIPE_READ_BUFFER] = { 0 };
+    CHAR readBuffer[PIPE_READ_BUFFER] = { 0 };
     string pipeDataStr;
     DWORD byteRead;
     do
     {
-        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(char), &byteRead, NULL))
+        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(CHAR), &byteRead, NULL))
         {
             pipeDataStr.append(readBuffer);
             fill(begin(readBuffer), end(readBuffer), '\0');
         }
-    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(char));
+    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(CHAR));
 
     // Need to cnvert pipe data string to UTF-16 to properly read unicode characters
     wstring pipeDataWstr;
-    int convertResult = MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (int)strlen(pipeDataStr.c_str()), NULL, 0);
+    INT convertResult = MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (INT)strlen(pipeDataStr.c_str()), NULL, 0);
     if (convertResult > 0)
     {
         pipeDataWstr.resize(convertResult);
-        MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (int)pipeDataStr.size(), &pipeDataWstr[0], (int)pipeDataWstr.size());
+        MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (INT)pipeDataStr.size(), &pipeDataWstr[0], (INT)pipeDataWstr.size());
     }
     wstringstream pipeData(pipeDataWstr);
 
@@ -70,7 +70,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
     getline(pipeData, memoryMapId, L'|');
     getline(pipeData, dataArrayLengthStr);
 
-    int dataArrayLength = stoi(dataArrayLengthStr);
+    INT dataArrayLength = stoi(dataArrayLengthStr);
     wstring memoryMapName = format(L"AppContainerNamedObjects\\{}\\{}", packageSid, memoryMapId);
 
     HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
@@ -105,7 +105,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
         CloseHandle(hMemory);
     }
 
-    if (WriteFile(hPipe, result, strlen(result) * sizeof(char), NULL, NULL)) FlushFileBuffers(hPipe);
+    if (WriteFile(hPipe, result, strlen(result) * sizeof(CHAR), NULL, NULL)) FlushFileBuffers(hPipe);
 
     CloseHandle(hPipe);
 
@@ -119,7 +119,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID param)
     }
     printDebugMessage(L"Waiting on uwp app to send data.");
 
-    vector<pair<const char*, string>> properties;
+    vector<pair<const CHAR*, string>> properties;
     properties.push_back(pair("Result", result));
     AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 

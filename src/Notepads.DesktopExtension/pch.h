@@ -33,9 +33,9 @@ bool isElevatedProcess();
 void setExceptionHandling();
 void exitApp();
 
-void printDebugMessage(LPCTSTR message, DWORD sleepTime = 0);
+void printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime = 0);
 std::string getTimeStamp();
-std::string getTimeStamp(const char* format);
+std::string getTimeStamp(const CHAR* format);
 std::string to_string(winrt::Windows::System::ProcessorArchitecture arch);
 std::string base64_encode(const std::string& in);
 

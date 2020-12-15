@@ -33,7 +33,7 @@ namespace AppCenter
 			InitializeLog();
 		}
 
-		Log(LogType type, const string& id, const string& sid, bool isFatal, Exception* exception, const vector<pair<const char*, string>>& properties) :
+		Log(LogType type, const string& id, const string& sid, bool isFatal, Exception* exception, const vector<pair<const CHAR*, string>>& properties) :
 			_type(type), _id(id), _sid(sid), _fatal(isFatal), _exception(exception), _properties(properties)
 		{
 			InitializeLog();
@@ -53,7 +53,7 @@ namespace AppCenter
 
 		#pragma region  Constructor for event report
 
-		Log(LogType type, const string& id, const string& sid, const string& name, const vector<pair<const char*, string>>& properties) :
+		Log(LogType type, const string& id, const string& sid, const string& name, const vector<pair<const CHAR*, string>>& properties) :
 			_type(type), _id(id), _sid(sid), _name(name), _properties(properties)
 		{
 			InitializeLog();
@@ -156,7 +156,7 @@ namespace AppCenter
 			{
 				writer.String("properties");
 				writer.StartObject();
-				for (vector<pair<const char*, string>>::const_iterator property = _properties.begin(); property != _properties.end(); ++property)
+				for (vector<pair<const CHAR*, string>>::const_iterator property = _properties.begin(); property != _properties.end(); ++property)
 				{
 					writer.String(property->first);
 					writer.String(property->second.c_str(), static_cast<SizeType>(property->second.length()));
@@ -181,7 +181,7 @@ namespace AppCenter
 		string _data;
 		string _errorId;
 		Exception* _exception = NULL;
-		vector<pair<const char*, string>> _properties;
+		vector<pair<const CHAR*, string>> _properties;
 
 		void InitializeLog()
 		{

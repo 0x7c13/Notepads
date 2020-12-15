@@ -19,5 +19,5 @@ namespace AppCenter
 
 	void start();
 	void trackError(DWORD errorCode, const string& message, bool isFatal);
-	void trackEvent(const string& name, const vector<pair<const char*, string>>& properties, const string& sid = "");
+	void trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid = "");
 }
