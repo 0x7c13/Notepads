@@ -163,7 +163,8 @@
   </ImportGroup>
   <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
     <Exec Command="git clone https://github.com/microsoft/vcpkg.git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\bootstrap-vcpkg.bat')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git -git-dir=..\packages\vcpkg\.git reset --hard" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git -git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="git --git-dir=..\packages\vcpkg\.git checkout $(VcPkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
     <PropertyGroup>

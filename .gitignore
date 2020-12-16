@@ -357,6 +357,4 @@ Thumbs.db
 
 # vcpkg generated files #
 #########################
-**/ports/
-**/toolsrc/
 **/vcpkg_installed/
