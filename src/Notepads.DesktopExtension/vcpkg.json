@@ -2,6 +2,7 @@
   "name": "notepads-desktopextension",
   "version-string": "1.0.0.0",
   "dependencies": [
+    "boost-stacktrace",
     "curl",
     "fmt",
     "rapidjson"

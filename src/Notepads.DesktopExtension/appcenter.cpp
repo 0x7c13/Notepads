@@ -32,7 +32,7 @@ void AppCenter::start()
 	headerList = curl_slist_append(headerList, format("install-id: {}", to_string(installId)).c_str());
 }
 
-void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
+void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace)
 {
 	if (!AppCenterSecret) return;
 
@@ -42,6 +42,8 @@ void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
 	crashReportSid.erase(0, crashReportSid.find_first_not_of('{')).erase(crashReportSid.find_last_not_of('}') + 1);
 	string errorAttachmentId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
 	errorAttachmentId.erase(0, errorAttachmentId.find_first_not_of('{')).erase(errorAttachmentId.find_last_not_of('}') + 1);
+	string eventReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
+	eventReportId.erase(0, eventReportId.find_first_not_of('{')).erase(eventReportId.find_last_not_of('}') + 1);
 
 	TCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
 	LCIDToLocaleName(GetThreadLocale(), locale, LOCALE_NAME_MAX_LENGTH, 0);
@@ -63,10 +65,11 @@ void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
 	properties.push_back(pair("IsElevated", isElevated));
 
 	vector<Log> errorReportSet;
-	errorReportSet.push_back(Log(LogType::managedError, crashReportId, crashReportSid, isFatal, new Exception(message), properties));
+	errorReportSet.push_back(Log(LogType::managedError, crashReportId, crashReportSid, isFatal, new Exception(message, stackTrace), properties));
 	errorReportSet.push_back(Log(LogType::errorAttachment, errorAttachmentId, crashReportId,
 		base64_encode(format("Exception: Win32Exception code no. {}, Message: {}, IsDesktopExtension: True, IsElevated: {}",
 			errorCode, message, isElevated))));
+	errorReportSet.push_back(Log(LogType::event, eventReportId, crashReportSid, eventType, properties));
 
 	StringBuffer errorReport;
 #ifdef  _DEBUG
@@ -102,8 +105,6 @@ void AppCenter::trackError(DWORD errorCode, const string& message, bool isFatal)
 		}
 	}
 	curl_easy_cleanup(curl);
-
-	trackEvent(eventType, properties, crashReportSid);
 }
 
 void AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid)

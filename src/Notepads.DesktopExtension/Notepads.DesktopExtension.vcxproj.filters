@@ -47,12 +47,15 @@
     <ClInclude Include="appcenter.h">
       <Filter>AppCenter</Filter>
     </ClInclude>
-    <ClCompile Include="log.h">
+    <ClInclude Include="log.h">
       <Filter>AppCenter</Filter>
-    </ClCompile>
-    <ClCompile Include="models.h">
+    </ClInclude>
+    <ClInclude Include="device.h">
       <Filter>AppCenter</Filter>
-    </ClCompile>
+    </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>AppCenter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />

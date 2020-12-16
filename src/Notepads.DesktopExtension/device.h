@@ -12,47 +12,6 @@ namespace AppCenter
 	using namespace Windows::Security::ExchangeActiveSyncProvisioning;
 	using namespace Windows::System::Profile;
 
-	class Exception
-	{
-	public:
-		Exception(const string& message) : _message(message) {}
-		Exception(const string& message, const string& stackTrace) : _message(message), _stackTrace(stackTrace) {}
-		Exception(const Exception& exception) : _message(exception._message), _stackTrace(exception._stackTrace) {}
-		Exception(const exception& exception) : _message(exception.what()) {}
-
-		~Exception() {}
-
-		Exception& operator=(const Exception& exception)
-		{
-			if (this == &exception) return *this;
-
-			_type = exception._type;
-			_message = exception._message;
-			_stackTrace = exception._stackTrace;
-			return *this;
-		}
-
-		template <typename Writer>
-		void Serialize(Writer& writer) const
-		{
-			writer.StartObject();
-
-			writer.String("type");
-			writer.String(_type.c_str(), static_cast<SizeType>(_type.length()));
-			writer.String("message");
-			writer.String(_message.c_str(), static_cast<SizeType>(_message.length()));
-			writer.String("stackTrace");
-			writer.String(_stackTrace.c_str(), static_cast<SizeType>(_stackTrace.length()));
-
-			writer.EndObject();
-		}
-
-	private:
-		string _type = "Win32Exception";
-		string _message;
-		string _stackTrace = "";
-	};
-
 	class Device
 	{
 	public:

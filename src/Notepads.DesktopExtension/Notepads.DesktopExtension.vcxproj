@@ -131,8 +131,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="appcenter.h" />
-    <ClCompile Include="log.h" />
-    <ClCompile Include="models.h" />
+    <ClInclude Include="device.h" />
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

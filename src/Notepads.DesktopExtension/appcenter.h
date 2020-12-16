@@ -10,6 +10,7 @@
 
 namespace AppCenter
 {
+	using namespace boost::stacktrace;
 	using namespace std;
 
 	namespace
@@ -18,6 +19,6 @@ namespace AppCenter
 	}
 
 	void start();
-	void trackError(DWORD errorCode, const string& message, bool isFatal);
+	void trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace);
 	void trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid = "");
 }

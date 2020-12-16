@@ -12,6 +12,7 @@
 #include "winrt/Windows.Storage.h"
 #include "winrt/Windows.System.h"
 #include "winrt/Windows.System.Profile.h"
+#include "boost/stacktrace.hpp"
 #include "fmt/core.h"
 
 // These values depend upon constant fields described in ..\Notepads\Settings\SettingsKey.cs.

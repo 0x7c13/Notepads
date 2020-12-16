@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
-#include "models.h"
+#include "device.h"
+#include "exception.h"
 
 namespace AppCenter
 {

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "appcenter.h"
 
+using namespace boost::stacktrace;
+using namespace boost::stacktrace::detail;
 using namespace fmt;
 using namespace std;
 using namespace winrt;
@@ -81,9 +83,11 @@ string base64_encode(const string& in)
 
 IAsyncAction logLastError(bool isFatal)
 {
+	stacktrace st = stacktrace();
+	hstring stackTrace = to_hstring(to_string(&st.as_vector()[0], st.size()));
+
     LPVOID msgBuf;
     DWORD errorCode = GetLastError();
-
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
@@ -99,7 +103,8 @@ IAsyncAction logLastError(bool isFatal)
     LocalFree(msgBuf);
     getline(msgStrm, msg, L'\r');
 
-    AppCenter::trackError(errorCode, to_string(msg), isFatal);
+	printDebugMessage(stackTrace.c_str(), 5000);
+    AppCenter::trackError(isFatal, errorCode, to_string(msg), st);
 
     if (logFile)
     {
@@ -109,8 +114,8 @@ IAsyncAction logLastError(bool isFatal)
         GetTimeFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, timeStr, MAX_TIME_STR);
         TCHAR dateStr[MAX_DATE_STR];
         GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, dateStr, MAX_DATE_STR, NULL);
-		wstring debugMsg = format(L"{} {} [Error] [Error Code: {}] {}{}\n",
-			dateStr, timeStr, errorCode, isFatal ? L"OnUnhandledException: " : L"OnUnexpectedException: ", msg);
+		wstring debugMsg = format(L"{} {} [Error] [Error Code: {}] {}{}\n{}\n",
+			dateStr, timeStr, errorCode, isFatal ? L"OnUnhandledException: " : L"OnUnexpectedException: ", msg, stackTrace);
 
         co_await PathIO::AppendTextAsync(logFile.Path(), debugMsg);
     }
