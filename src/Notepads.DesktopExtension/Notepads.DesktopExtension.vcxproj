@@ -81,9 +81,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Label="Vcpkg">
-    <!--Update this value to latest commit to update vcpkg and dependencies-->
-    <VcPkgCommitHash>c30903782c88967652178486a5f3e490fb2e8143</VcPkgCommitHash>
-    <!--###################################################################-->
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -162,13 +159,14 @@
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201201.7\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
   <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
-    <Exec Command="git clone https://github.com/microsoft/vcpkg.git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\bootstrap-vcpkg.bat')" ContinueOnError="true" />
-    <Exec Command="git -git-dir=..\packages\vcpkg\.git reset --hard" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git -git-dir=..\packages\vcpkg\.git pull https://github.com/microsoft/vcpkg.git master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git checkout $(VcPkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git clone $(VcpkgRepo).git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg clean -d --force" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg checkout master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg pull --ff-only" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
+    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg checkout $(VcpkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
     <PropertyGroup>
-      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from https://github.com/microsoft/vcpkg and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
+      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from $(VcpkgRepo) and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\vcpkg.exe'))" />
     <Error Condition="!Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />

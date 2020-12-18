@@ -11,6 +11,11 @@
     For more advanced scenarios, and complete documentation, please see:
     https://github.com/Microsoft/cppwinrt/tree/master/nuget 
     -->
-  <PropertyGroup />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgRepo>https://github.com/microsoft/vcpkg</VcpkgRepo>
+    <!--Update this value to latest commit to update vcpkg and dependencies-->
+    <VcpkgCommitHash>e1417916bc1ed24bacd9cbc54bd42a99f996f618</VcpkgCommitHash>
+    <!--###################################################################-->
+  </PropertyGroup>
   <ItemDefinitionGroup />
 </Project>
