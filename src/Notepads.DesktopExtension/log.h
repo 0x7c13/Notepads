@@ -18,7 +18,7 @@ namespace AppCenter
 	namespace
 	{
 		static const string logTypes[] = { "managedError", "errorAttachment", "event" };
-		static string launchTimeStamp;
+		static string launchTimeStamp = getTimeStamp();
 		static Device deviceInfo = Device();
 	}
 

@@ -2,8 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by AssemblyInfo.rc
 //
-#define APPCENTER_JSON                  101
-#define JSONFILE                        256
+#define APPCENTER_SDK_VERSION           101
+#define TEXTFILE                        256
 
 // Next default values for new objects
 // 

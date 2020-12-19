@@ -22,8 +22,6 @@ void AppCenter::start()
 {
 	if (!AppCenterSecret) return;
 
-	launchTimeStamp = getTimeStamp();
-
 	hstring installId = unbox_value_or<hstring>(readSettingsKey(AppCenterInstallIdStr), L"");
 	if (installId.empty()) return;
 

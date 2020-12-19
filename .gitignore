@@ -354,7 +354,3 @@ healthchecksdb
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# vcpkg generated files #
-#########################
-**/vcpkg_installed/

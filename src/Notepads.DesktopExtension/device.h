@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "resource.h"
-#include "rapidjson/document.h"
 
 namespace AppCenter
 {
@@ -9,6 +8,7 @@ namespace AppCenter
 	using namespace rapidjson;
 	using namespace std;
 	using namespace winrt;
+	using namespace Windows::ApplicationModel;
 	using namespace Windows::Security::ExchangeActiveSyncProvisioning;
 	using namespace Windows::System::Profile;
 
@@ -17,12 +17,13 @@ namespace AppCenter
 	public:
 		Device()
 		{
-			Document versionData;
-			versionData.Parse(static_cast<CHAR*>(LockResource(LoadResource(GetModuleHandle(NULL),
-				FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(APPCENTER_JSON), MAKEINTRESOURCE(JSONFILE))))));
-			_appVersion = versionData["appVersion"].GetString();
-			_appBuild = versionData["appBuild"].GetString();
-			_sdkVersion = versionData["sdkVersion"].GetString();
+			auto packageVersion = Package::Current().Id().Version();
+			_appVersion = format("{}.{}.{}.{}", packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+			_appBuild = _appVersion;
+
+			HMODULE appModule = GetModuleHandle(NULL);
+			_sdkVersion = static_cast<CHAR*>(LockResource(LoadResource(appModule,
+				FindResource(appModule, MAKEINTRESOURCE(APPCENTER_SDK_VERSION), MAKEINTRESOURCE(TEXTFILE)))));
 
 			EasClientDeviceInformation oemInfo = EasClientDeviceInformation();
 			_osName = to_string(oemInfo.OperatingSystem());

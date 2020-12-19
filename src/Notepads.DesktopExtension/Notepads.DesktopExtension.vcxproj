@@ -145,7 +145,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="appcenter.json" />
+    <None Include="appcenter-sdk-version.txt" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="vcpkg.json" />

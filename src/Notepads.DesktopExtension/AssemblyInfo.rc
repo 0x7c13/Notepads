@@ -97,8 +97,9 @@ END
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
-// Custom json file for AppCenter data upload.
+// TEXTFILE
 //
-APPCENTER_JSON          JSONFILE                     "appcenter.json"
+APPCENTER_SDK_VERSION       TEXTFILE       "appcenter-sdk-version.txt"
