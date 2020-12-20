@@ -1,5 +1,8 @@
 ﻿namespace Notepads.Services
 {
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
     using Notepads.Settings;
     using System;
     using System.Collections.Generic;
@@ -20,6 +23,11 @@
         {
             // Get a deferral so that the service isn't terminated.
             this.backgroundTaskDeferral = taskInstance.GetDeferral();
+
+            TaskScheduler.UnobservedTaskException += OnUnobservedException;
+
+            var services = new Type[] { typeof(Crashes), typeof(Analytics) };
+            AppCenter.Start(SettingsKey.AppCenterSecret, services);
 
             // Retrieve the app service connection and set up a listener for incoming app service requests.
             var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
@@ -90,7 +98,17 @@
                                 message = response.Message;
                             }
                         }
-                        await args.Request.SendResponseAsync(message);
+
+                        var res = await args.Request.SendResponseAsync(message);
+                        if (res != AppServiceResponseStatus.Success)
+                        {
+                            var info = new Dictionary<string, string>()
+                            {
+                                { "Response", res.ToString() }
+                            };
+
+                            Analytics.TrackEvent("OnAppServiceConnectionResponseToUWPFailed", info);
+                        }
                     }
                     break;
             }
@@ -120,6 +138,34 @@
                     }
                 }
             }
+        }
+
+        // Occurs when an exception is not handled on a background thread.
+        // ie. A task is fired and forgotten Task.Run(() => {...})
+        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            //LoggingService.LogError($"[{nameof(App)}] OnUnobservedException: {e.Exception}");
+
+            var diagnosticInfo = new Dictionary<string, string>()
+            {
+                { "Message", e.Exception?.Message },
+                { "Exception", e.Exception?.ToString() },
+                { "InnerException", e.Exception?.InnerException?.ToString() },
+                { "InnerExceptionMessage", e.Exception?.InnerException?.Message }
+            };
+
+            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                $"Exception: {e.Exception}, " +
+                $"Message: {e.Exception?.Message}, " +
+                $"InnerException: {e.Exception?.InnerException}, " +
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                "AppServiceUnobservedException");
+
+            Analytics.TrackEvent("OnAppServiceUnobservedException", diagnosticInfo);
+            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+
+            // suppress and handle it manually.
+            e.SetObserved();
         }
     }
 }

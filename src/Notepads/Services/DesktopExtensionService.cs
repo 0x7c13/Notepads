@@ -103,8 +103,12 @@
         {
             if (InteropServiceConnection == null && !(await Initialize())) return;
 
-            using (var adminConnectionPipeStream = new NamedPipeServerStream($"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminPipeConnectionNameStr}",
-                PipeDirection.InOut, 254, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
+            using (var adminConnectionPipeStream = new NamedPipeServerStream(
+                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminPipeConnectionNameStr}",
+                PipeDirection.InOut,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous))
             {
                 // Wait for 250 ms for desktop extension to accept request.
                 if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))

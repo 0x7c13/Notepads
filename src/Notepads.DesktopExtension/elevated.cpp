@@ -41,15 +41,15 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 
-    CHAR readBuffer[PIPE_READ_BUFFER] = { 0 };
+    CHAR readBuffer[PIPE_READ_BUFFER] = { '\0' };
     string pipeDataStr;
     DWORD byteRead;
     do
     {
+        fill(begin(readBuffer), end(readBuffer), '\0');
         if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(CHAR), &byteRead, NULL))
         {
             pipeDataStr.append(readBuffer);
-            fill(begin(readBuffer), end(readBuffer), '\0');
         }
     } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(CHAR));
 
@@ -111,7 +111,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
     if (strcmp(result, "Success") == 0)
     {
-        printDebugMessage(format(L"Successfully wrote to", filePath).c_str());
+        printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
     }
     else
     {
