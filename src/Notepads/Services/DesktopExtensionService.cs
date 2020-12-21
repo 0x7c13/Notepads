@@ -132,7 +132,7 @@
                         writer.Flush();
                     }
 
-                    await pipeWriter.WriteLineAsync(string.Join('|', filePath, mapName, data.Length));
+                    await pipeWriter.WriteAsync($"{filePath}|{mapName}|{data.Length}");
                     await pipeWriter.FlushAsync();
 
                     // Wait for desktop extension to send response.
