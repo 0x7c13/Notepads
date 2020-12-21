@@ -30,9 +30,6 @@
     <ClCompile Include="extension.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="appcenter.cpp">
       <Filter>AppCenter</Filter>
     </ClCompile>

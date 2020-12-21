@@ -136,7 +136,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="appcenter.cpp" />
-    <ClCompile Include="debug.cpp" />
     <ClCompile Include="elevated.cpp" />
     <ClCompile Include="extension.cpp" />
     <ClCompile Include="main.cpp" />

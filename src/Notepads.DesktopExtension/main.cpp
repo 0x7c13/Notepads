@@ -62,11 +62,15 @@ bool isFirstInstance(LPCTSTR mutexName)
     if (!hMutex)
     {
         CreateMutex(NULL, FALSE, mutexName);
+
+#ifdef _DEBUG
+        initializeLogging(wcscmp(mutexName, DesktopExtensionMutexName) == 0 ? L"-extension.log" : L"-elevated-extension.log");
+#endif
     }
     else
     {
         result = false;
-        printDebugMessage(L"Closing this instance as another instance is already running.", 5000);
+        printDebugMessage(L"Closing this instance as another instance is already running.", 3000);
         exitApp();
     }
     ReleaseMutex(hMutex);
@@ -114,19 +118,11 @@ INT main()
     {
         if (!isFirstInstance(AdminExtensionMutexName)) return 0;
 
-#ifdef _DEBUG
-        initializeLogging(L"-elevated-extension.log");
-#endif
-
         initializeAdminService();
     }
     else
     {
         if (!isFirstInstance(DesktopExtensionMutexName)) return 0;
-
-#ifdef _DEBUG
-        initializeLogging(L"-extension.log");
-#endif
 
         initializeInteropService();
         if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
