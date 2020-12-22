@@ -118,10 +118,10 @@
                     throw new AdminstratorAccessException();
                 }
 
-                var pipeReader = new StreamReader(adminConnectionPipeStream);
+                var pipeReader = new StreamReader(adminConnectionPipeStream, System.Text.Encoding.Unicode);
                 var pipeWriter = new StreamWriter(adminConnectionPipeStream);
 
-                var mapName = Guid.NewGuid().ToString();
+                var mapName = filePath.Replace(Path.DirectorySeparatorChar, '-');
 
                 // Create the memory-mapped file and write original file data to be written.
                 using (var mmf = MemoryMappedFile.CreateOrOpen(mapName, data.Length > 0 ? data.Length : 1, MemoryMappedFileAccess.ReadWrite))

@@ -9,7 +9,7 @@ using namespace Windows::ApplicationModel;
 using namespace Windows::Foundation;
 using namespace Windows::Storage;
 
-constexpr INT PIPE_READ_BUFFER = MAX_PATH + 240;
+constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
 
 DWORD sessionId;
 
@@ -24,7 +24,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
     setExceptionHandling();
 
-    LPCSTR result = "Failed";
+    LPCTSTR result = L"Failed";
 
     wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
         sessionId, packageSid, Package::Current().Id().FamilyName(), AdminPipeConnectionNameStr);
@@ -53,7 +53,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
         }
     } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(CHAR));
 
-    // Need to cnvert pipe data string to UTF-16 to properly read unicode characters
+    // Need to convert pipe data string to UTF-16 to properly read unicode characters
     wstring pipeDataWstr;
     INT convertResult = MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (INT)strlen(pipeDataStr.c_str()), NULL, 0);
     if (convertResult > 0)
@@ -93,7 +93,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
                 DWORD byteWrote;
                 if (WriteFile(hFile, mapView, dataArrayLength, &byteWrote, NULL) && FlushFileBuffers(hFile))
                 {
-                    result = "Success";
+                    result = L"Success";
                 }
 
                 CloseHandle(hFile);
@@ -105,22 +105,22 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
         CloseHandle(hMemory);
     }
 
-    if (WriteFile(hPipe, result, strlen(result) * sizeof(CHAR), NULL, NULL)) FlushFileBuffers(hPipe);
+    if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
 
     CloseHandle(hPipe);
 
-    if (strcmp(result, "Success") == 0)
+    if (wcscmp(result, L"Success") == 0)
     {
         printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
     }
     else
     {
-        printDebugMessage(format(L"Failed to write to", filePath).c_str());
+        printDebugMessage(format(L"Failed to write to \"{}\"", filePath).c_str());
     }
     printDebugMessage(L"Waiting on uwp app to send data.");
 
     vector<pair<const CHAR*, string>> properties;
-    properties.push_back(pair("Result", result));
+    properties.push_back(pair("Result", to_string(result)));
     AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 
     return 0;
