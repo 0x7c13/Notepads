@@ -41,27 +41,19 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 
-    CHAR readBuffer[PIPE_READ_BUFFER] = { '\0' };
-    string pipeDataStr;
+    TCHAR readBuffer[PIPE_READ_BUFFER];
+    wstringstream pipeData;
     DWORD byteRead;
+    INT count = -1;
     do
     {
         fill(begin(readBuffer), end(readBuffer), '\0');
-        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(CHAR), &byteRead, NULL))
+        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL) && count >= 0)
         {
-            pipeDataStr.append(readBuffer);
+            pipeData << readBuffer;
         }
-    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(CHAR));
-
-    // Need to convert pipe data string to UTF-16 to properly read unicode characters
-    wstring pipeDataWstr;
-    INT convertResult = MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (INT)strlen(pipeDataStr.c_str()), NULL, 0);
-    if (convertResult > 0)
-    {
-        pipeDataWstr.resize(convertResult);
-        MultiByteToWideChar(CP_UTF8, 0, pipeDataStr.c_str(), (INT)pipeDataStr.size(), &pipeDataWstr[0], (INT)pipeDataWstr.size());
-    }
-    wstringstream pipeData(pipeDataWstr);
+        ++count;
+    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR) || count <= 0);
 
     wstring filePath;
     wstring memoryMapId;
@@ -119,8 +111,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     }
     printDebugMessage(L"Waiting on uwp app to send data.");
 
-    vector<pair<const CHAR*, string>> properties;
-    properties.push_back(pair("Result", to_string(result)));
+    vector<pair<const CHAR*, string>> properties{ pair("Result", to_string(result)) };
     AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 
     return 0;

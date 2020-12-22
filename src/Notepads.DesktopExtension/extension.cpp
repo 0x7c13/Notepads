@@ -17,16 +17,7 @@ fire_and_forget launchElevatedProcess()
     TCHAR fileName[MAX_PATH];
     GetModuleFileName(NULL, fileName, MAX_PATH);
 
-    SHELLEXECUTEINFO shExInfo = { 0 };
-    shExInfo.cbSize = sizeof(shExInfo);
-    shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-    shExInfo.hwnd = 0;
-    shExInfo.lpVerb = L"runas";
-    shExInfo.lpFile = fileName;
-    shExInfo.lpParameters = L"";
-    shExInfo.lpDirectory = 0;
-    shExInfo.nShow = SW_SHOW;
-    shExInfo.hInstApp = 0;
+    SHELLEXECUTEINFO shExInfo{ sizeof(shExInfo), SEE_MASK_NOCLOSEPROCESS, 0, L"runas", fileName, L"", 0, SW_SHOW, 0 };
 
     auto message = ValueSet();
     vector<pair<const CHAR*, string>> properties;
@@ -34,12 +25,13 @@ fire_and_forget launchElevatedProcess()
     if (ShellExecuteEx(&shExInfo))
     {
         // Create Job to close child process when parent exits/crashes.
+        TerminateJobObject(appExitJob, 0);
         if (appExitJob) CloseHandle(appExitJob);
         appExitJob = CreateJobObject(NULL, NULL);
         JOBOBJECT_EXTENDED_LIMIT_INFORMATION info = { 0 };
         info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
         SetInformationJobObject(appExitJob, JobObjectExtendedLimitInformation, &info, sizeof(info));
-        AssignProcessToJobObject(appExitJob, shExInfo.hProcess);
+        if (shExInfo.hProcess) AssignProcessToJobObject(appExitJob, shExInfo.hProcess);
 
         message.Insert(InteropCommandAdminCreatedLabel, box_value(true));
         printDebugMessage(L"Adminstrator Extension has been launched.");

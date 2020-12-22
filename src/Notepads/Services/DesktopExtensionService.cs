@@ -119,7 +119,7 @@
                 }
 
                 var pipeReader = new StreamReader(adminConnectionPipeStream, System.Text.Encoding.Unicode);
-                var pipeWriter = new StreamWriter(adminConnectionPipeStream);
+                var pipeWriter = new StreamWriter(adminConnectionPipeStream, System.Text.Encoding.Unicode);
 
                 var mapName = filePath.Replace(Path.DirectorySeparatorChar, '-');
 

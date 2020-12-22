@@ -96,10 +96,9 @@ IAsyncAction logLastError(bool isFatal)
 		(LPTSTR)&msgBuf,
 		0,
 		NULL);
-	wcout << winrt::hresult_error(errorCode).message().c_str() << endl;
-	wstringstream msgStrm;
+
+	wstringstream msgStrm((LPCTSTR)msgBuf);
 	wstring msg;
-	msgStrm << (LPCTSTR)msgBuf;
 	LocalFree(msgBuf);
 	getline(msgStrm, msg, L'\r');
 

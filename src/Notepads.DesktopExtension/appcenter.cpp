@@ -32,7 +32,7 @@ void AppCenter::start()
 
 void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace)
 {
-	if (!AppCenterSecret) return;
+	if (!headerList) return;
 
 	string crashReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
 	crashReportId.erase(0, crashReportId.find_first_not_of('{')).erase(crashReportId.find_last_not_of('}') + 1);
@@ -51,23 +51,28 @@ void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 	string isElevated = isElevatedProcess() ? "True" : "False";
 	string eventType = isFatal ? "OnWin32UnhandledException" : "OnWin32UnexpectedException";
 
-	vector<pair<const CHAR*, string>> properties;
-	properties.push_back(pair("Exception", format("Win32Exception: Exception of code no. {} was thrown.", errorCode)));
-	properties.push_back(pair("Message", message));
-	properties.push_back(pair("Culture", to_string(localeDisplayName)));
-	properties.push_back(pair("AvailableMemory", to_string((FLOAT)MemoryManager::AppMemoryUsageLimit() / 1024 / 1024)));
-	properties.push_back(pair("FirstUseTimeUTC", getTimeStamp("%m/%d/%Y %T")));
-	properties.push_back(pair("OSArchitecture", to_string(Package::Current().Id().Architecture())));
-	properties.push_back(pair("OSVersion", deviceInfo.getOsVersion()));
-	properties.push_back(pair("IsDesktopExtension", "True"));
-	properties.push_back(pair("IsElevated", isElevated));
+	vector<pair<const CHAR*, string>> properties
+	{
+		pair("Exception", format("Win32Exception: Exception of code no. {} was thrown.", errorCode)),
+		pair("Message", message),
+		pair("Culture", to_string(localeDisplayName)),
+		pair("AvailableMemory", to_string((FLOAT)MemoryManager::AppMemoryUsageLimit() / 1024 / 1024)),
+		pair("FirstUseTimeUTC", getTimeStamp("%m/%d/%Y %T")),
+		pair("OSArchitecture", to_string(Package::Current().Id().Architecture())),
+		pair("OSVersion", deviceInfo.getOsVersion()),
+		pair("IsDesktopExtension", "True"),
+		pair("IsElevated", isElevated)
+	};
+	
 
-	vector<Log> errorReportSet;
-	errorReportSet.push_back(Log(LogType::managedError, crashReportId, crashReportSid, isFatal, new Exception(message, stackTrace), properties));
-	errorReportSet.push_back(Log(LogType::errorAttachment, errorAttachmentId, crashReportId,
-		base64_encode(format("Exception: Win32Exception code no. {}, Message: {}, IsDesktopExtension: True, IsElevated: {}",
-			errorCode, message, isElevated))));
-	errorReportSet.push_back(Log(LogType::event, eventReportId, crashReportSid, eventType, properties));
+	vector<Log> errorReportSet
+	{
+		Log(LogType::managedError, crashReportId, crashReportSid, isFatal, new Exception(message, stackTrace), properties),
+		Log(LogType::errorAttachment, errorAttachmentId, crashReportId, base64_encode(
+			format("Exception: Win32Exception code no. {}, Message: {}, IsDesktopExtension: True, IsElevated: {}",
+				errorCode, message, isElevated))),
+		Log(LogType::event, eventReportId, crashReportSid, eventType, properties)
+	};
 
 	StringBuffer errorReport;
 #ifdef  _DEBUG
@@ -87,7 +92,8 @@ void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 	writer.EndObject();
 
 	CURL* curl = curl_easy_init();
-	if (curl) {
+	if (curl)
+	{
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerList);
 		curl_easy_setopt(curl, CURLOPT_URL, APPCENTER_ENDPOINT);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, errorReport.GetString());
@@ -107,7 +113,7 @@ void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 
 void AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid)
 {
-	if (!AppCenterSecret) return;
+	if (!headerList) return;
 
 	string eventReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
 	eventReportId.erase(0, eventReportId.find_first_not_of('{')).erase(eventReportId.find_last_not_of('}') + 1);
@@ -127,7 +133,8 @@ void AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, st
 	writer.EndObject();
 
 	CURL* curl = curl_easy_init();
-	if (curl) {
+	if (curl)
+	{
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerList);
 		curl_easy_setopt(curl, CURLOPT_URL, APPCENTER_ENDPOINT);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, eventReport.GetString());
