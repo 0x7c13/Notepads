@@ -45,16 +45,14 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     TCHAR readBuffer[PIPE_READ_BUFFER];
     wstringstream pipeData;
     DWORD byteRead;
-    INT count = -1;
     do
     {
         fill(begin(readBuffer), end(readBuffer), '\0');
-        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL) && count >= 0)
+        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
         {
             pipeData << readBuffer;
         }
-        ++count;
-    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR) || count <= 0);
+    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
     wstring filePath;
     wstring memoryMapId;

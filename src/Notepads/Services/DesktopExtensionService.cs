@@ -122,8 +122,8 @@
                     throw new AdminstratorAccessException();
                 }
 
-                var pipeReader = new StreamReader(adminConnectionPipeStream, System.Text.Encoding.Unicode);
-                var pipeWriter = new StreamWriter(adminConnectionPipeStream, System.Text.Encoding.Unicode);
+                var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
                 var mapName = filePath.Replace(Path.DirectorySeparatorChar, '-');
 
@@ -167,7 +167,9 @@
             var response = await InteropServiceConnection.SendMessageAsync(message);
             message = response.Message;
 
-            if (message?.ContainsKey(SettingsKey.InteropCommandFailedLabel) ?? false && (bool)message[SettingsKey.InteropCommandFailedLabel])
+            if (response.Status != AppServiceResponseStatus.Success ||
+                (message?.ContainsKey(SettingsKey.InteropCommandFailedLabel) ?? false &&
+                (bool)message[SettingsKey.InteropCommandFailedLabel]))
             {
                 // Pass the group id that describes the correct parameter for prompting admin process launch
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");
