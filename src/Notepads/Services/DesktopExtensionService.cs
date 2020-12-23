@@ -1,9 +1,12 @@
 ﻿namespace Notepads.Services
 {
     using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Extensions;
     using Notepads.Settings;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.IO.MemoryMappedFiles;
     using System.IO.Pipes;
@@ -16,8 +19,6 @@
     using Windows.Foundation.Collections;
     using Windows.Foundation.Metadata;
     using Windows.Security.Authentication.Web;
-    using Windows.UI.ViewManagement;
-    using Windows.UI.Xaml;
 
     public class AdminstratorAccessException : Exception
     {
@@ -34,17 +35,6 @@
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        public static async void InitializeDesktopExtension()
-        {
-            if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) ||
-            new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)) return;
-
-            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
-            var appcenterInstallidstr = (await AppCenter.GetInstallIdAsync())?.ToString();
-            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, appcenterInstallidstr);
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-        }
-
         public static async Task<bool> Initialize()
         {
             if (!ShouldUseDesktopExtension) return false;
@@ -59,10 +49,24 @@
             InteropServiceConnection.ServiceClosed += InteropServiceConnection_ServiceClosed;
 
             AppServiceConnectionStatus status = await InteropServiceConnection.OpenAsync();
-            if (status != AppServiceConnectionStatus.Success && !await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+            if (status != AppServiceConnectionStatus.Success)
             {
-                Application.Current.Exit();
+                Analytics.TrackEvent("OnConnectionToAppServiceFailed", new Dictionary<string, string>
+                {
+                    { "ConnectionStatus", status.ToString() },
+                    { "Culture", SystemInformation.Culture.EnglishName },
+                    { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                    { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                    { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                    { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
+                });
+
+                return false;
             }
+
+            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
+            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
 
             return true;
         }

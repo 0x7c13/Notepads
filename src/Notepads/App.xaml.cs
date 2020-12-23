@@ -49,8 +49,6 @@
             InitializeComponent();
 
             Suspending += OnSuspending;
-
-            DesktopExtensionService.InitializeDesktopExtension();
         }
 
         /// <summary>

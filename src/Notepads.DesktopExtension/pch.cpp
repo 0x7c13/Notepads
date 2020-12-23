@@ -81,11 +81,8 @@ string base64_encode(const string& in)
 	return out;
 }
 
-IAsyncAction logLastError(bool isFatal)
+pair<DWORD, wstring> getLastErrorDetails()
 {
-	stacktrace st = stacktrace();
-	hstring stackTrace = to_hstring(to_string(&st.as_vector()[0], st.size()));
-
 	LPVOID msgBuf;
 	DWORD errorCode = GetLastError();
 	FormatMessage(
@@ -102,8 +99,18 @@ IAsyncAction logLastError(bool isFatal)
 	LocalFree(msgBuf);
 	getline(msgStrm, msg, L'\r');
 
+	return pair<DWORD, const wstring&> { errorCode, msg };
+}
+
+IAsyncAction logLastError(bool isFatal)
+{
+	stacktrace st = stacktrace();
+	hstring stackTrace = to_hstring(to_string(&st.as_vector()[0], st.size()));
+
+	pair<DWORD, wstring> ex = getLastErrorDetails();
+
 	printDebugMessage(stackTrace.c_str(), 5000);
-	AppCenter::trackError(isFatal, errorCode, to_string(msg), st);
+	AppCenter::trackError(isFatal, ex.first, to_string(ex.second), st);
 
 	if (logFile)
 	{
@@ -114,7 +121,7 @@ IAsyncAction logLastError(bool isFatal)
 		TCHAR dateStr[MAX_DATE_STR];
 		GetDateFormatEx(LOCALE_NAME_INVARIANT, 0, &systemTime, NULL, dateStr, MAX_DATE_STR, NULL);
 		wstring debugMsg = format(L"{} {} [Error] [Error Code: {}] {}{}\n{}\n",
-			dateStr, timeStr, errorCode, isFatal ? L"OnUnhandledException: " : L"OnUnexpectedException: ", msg, stackTrace);
+			dateStr, timeStr, ex.first, isFatal ? L"OnUnhandledException: " : L"OnUnexpectedException: ", ex.second, stackTrace);
 
 		co_await PathIO::AppendTextAsync(logFile.Path(), debugMsg);
 	}

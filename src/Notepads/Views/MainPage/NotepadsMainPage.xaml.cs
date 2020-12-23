@@ -297,10 +297,7 @@
 
         private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
         {
-            if (await DesktopExtensionService.Initialize())
-            {
-                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-            }
+            await DesktopExtensionService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)

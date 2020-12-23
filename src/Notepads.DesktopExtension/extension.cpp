@@ -40,11 +40,18 @@ fire_and_forget launchElevatedProcess()
     else
     {
         message.Insert(InteropCommandAdminCreatedLabel, box_value(false));
-        printDebugMessage(L"User canceled launching of Adminstrator Extension.");
-        properties.push_back(pair("Denied", "True"));
+        printDebugMessage(L"Launching of Adminstrator Extension was cancelled.");
+
+        pair<DWORD, wstring> ex = getLastErrorDetails();
+        properties.insert(properties.end(), 
+            {
+                pair("Denied", "True"),
+                pair("Error Code", to_string(ex.first)),
+                pair("Error Message", to_string(ex.second))
+            });
     }
     co_await interopServiceConnection.SendMessageAsync(message);
-    AppCenter::trackEvent("OnAdminstratorPrivilageGranted", properties);
+    AppCenter::trackEvent("OnAdminstratorPrivilageRequested", properties);
 }
 
 void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -89,6 +96,14 @@ fire_and_forget initializeInteropService()
     auto status = co_await interopServiceConnection.OpenAsync();
     if (status != AppServiceConnectionStatus::Success)
     {
+        pair<DWORD, wstring> ex = getLastErrorDetails();
+        vector<pair<const CHAR*, string>> properties
+        {
+            pair("Error Code", to_string(ex.first)),
+            pair("Error Message", to_string(ex.second))
+        };
+
+        AppCenter::trackEvent("OnWin32ConnectionToAppServiceFailed", properties);
         exitApp();
     }
 

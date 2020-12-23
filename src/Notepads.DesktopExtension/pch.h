@@ -46,5 +46,6 @@ winrt::fire_and_forget launchElevatedProcess();
 void initializeAdminService();
 winrt::Windows::Foundation::IInspectable readSettingsKey(winrt::hstring key);
 
+std::pair<DWORD, std::wstring> getLastErrorDetails();
 winrt::Windows::Foundation::IAsyncAction logLastError(bool isFatal);
 winrt::fire_and_forget initializeLogging(LPCTSTR trailStr);

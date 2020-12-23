@@ -24,6 +24,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
     setExceptionHandling();
 
+    vector<pair<const CHAR*, string>> properties;
     LPCTSTR result = L"Failed";
 
     wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
@@ -101,17 +102,24 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
     CloseHandle(hPipe);
 
+    properties.push_back(pair("Result", to_string(result)));
     if (wcscmp(result, L"Success") == 0)
     {
         printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
     }
     else
     {
+        pair<DWORD, wstring> ex = getLastErrorDetails();
+        properties.insert(properties.end(),
+            {
+                pair("Error Code", to_string(ex.first)),
+                pair("Error Message", winrt::to_string(ex.second))
+            });
+
         printDebugMessage(format(L"Failed to write to \"{}\"", filePath).c_str());
     }
     printDebugMessage(L"Waiting on uwp app to send data.");
 
-    vector<pair<const CHAR*, string>> properties{ pair("Result", to_string(result)) };
     AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 
     return 0;
