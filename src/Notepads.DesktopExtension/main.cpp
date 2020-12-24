@@ -43,9 +43,8 @@ bool isElevetedProcessLaunchRequested()
 {
     auto result = false;
 
-    LPTSTR* argList;
     INT argCount;
-    argList = CommandLineToArgvW(GetCommandLine(), &argCount);
+    LPTSTR* argList = CommandLineToArgvW(GetCommandLine(), &argCount);
     if (argCount > 3 && wcscmp(argList[3], L"/admin") == 0)
     {
         result = true;
@@ -73,7 +72,7 @@ bool isFirstInstance(LPCTSTR mutexName)
         printDebugMessage(L"Closing this instance as another instance is already running.", 3000);
         exitApp();
     }
-    ReleaseMutex(hMutex);
+    if (hMutex) ReleaseMutex(hMutex);
     
     return result;
 }

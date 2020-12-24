@@ -17,7 +17,18 @@ fire_and_forget launchElevatedProcess()
     TCHAR fileName[MAX_PATH];
     GetModuleFileName(NULL, fileName, MAX_PATH);
 
-    SHELLEXECUTEINFO shExInfo{ sizeof(shExInfo), SEE_MASK_NOCLOSEPROCESS, 0, L"runas", fileName, L"", 0, SW_SHOW, 0 };
+    SHELLEXECUTEINFO shExInfo
+    { 
+        .cbSize = sizeof(shExInfo),
+        .fMask = SEE_MASK_NOCLOSEPROCESS,
+        .hwnd = 0,
+        .lpVerb = L"runas",
+        .lpFile = fileName,
+        .lpParameters = L"",
+        .lpDirectory = 0,
+        .nShow = SW_SHOW,
+        .hInstApp = 0
+    };
 
     auto message = ValueSet();
     vector<pair<const CHAR*, string>> properties;
@@ -28,8 +39,12 @@ fire_and_forget launchElevatedProcess()
         TerminateJobObject(appExitJob, 0);
         if (appExitJob) CloseHandle(appExitJob);
         appExitJob = CreateJobObject(NULL, NULL);
-        JOBOBJECT_EXTENDED_LIMIT_INFORMATION info = { 0 };
-        info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+
+        JOBOBJECT_EXTENDED_LIMIT_INFORMATION info {
+            .BasicLimitInformation {
+                .LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 
+            }
+        };
         SetInformationJobObject(appExitJob, JobObjectExtendedLimitInformation, &info, sizeof(info));
         if (shExInfo.hProcess) AssignProcessToJobObject(appExitJob, shExInfo.hProcess);
 

@@ -9,7 +9,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{0a3b698e-6add-4c9e-9741-08f8ae576b2e}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Notepads_DesktopExtension</RootNamespace>
+    <RootNamespace>Notepads.DesktopExtension</RootNamespace>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>Notepads32</TargetName>
@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_CONSOLE;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalOptions>%(AdditionalOptions) /permissive- /bigobj</AdditionalOptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir)</Command>

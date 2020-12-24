@@ -81,8 +81,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
             if (hFile)
             {
-                DWORD byteWrote;
-                if (WriteFile(hFile, mapView, dataArrayLength, &byteWrote, NULL) && FlushFileBuffers(hFile))
+                if (WriteFile(hFile, mapView, dataArrayLength, NULL, NULL) && FlushFileBuffers(hFile))
                 {
                     result = L"Success";
                 }

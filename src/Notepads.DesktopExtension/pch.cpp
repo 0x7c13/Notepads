@@ -14,7 +14,7 @@ constexpr INT MAX_TIME_STR = 20;
 constexpr INT MAX_DATE_STR = 20;
 constexpr INT MAX_DATETIME_STR = 100;
 
-StorageFile logFile = nullptr;
+StorageFile logFile = NULL;
 
 void printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime) {
 #ifdef _DEBUG
@@ -94,12 +94,11 @@ pair<DWORD, wstring> getLastErrorDetails()
 		0,
 		NULL);
 
-	wstringstream msgStrm((LPCTSTR)msgBuf);
 	wstring msg;
+	getline(wstringstream((LPCTSTR)msgBuf), msg, L'\r');
 	LocalFree(msgBuf);
-	getline(msgStrm, msg, L'\r');
 
-	return pair<DWORD, const wstring&> { errorCode, msg };
+	return pair<DWORD, wstring> { errorCode, msg };
 }
 
 IAsyncAction logLastError(bool isFatal)
