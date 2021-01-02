@@ -2,15 +2,12 @@
 {
     using System;
     using System.Linq;
-    using System.Security.Principal;
     using System.Threading;
     using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
-    using Windows.Foundation.Metadata;
-    using Windows.Security.Authentication.Web;
 
     public static class Program
     {

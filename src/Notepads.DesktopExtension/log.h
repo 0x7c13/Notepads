@@ -25,7 +25,6 @@ namespace AppCenter
 	class Log
 	{
 	public:
-
 		#pragma region  Constructors for error report
 
 		Log(LogType type, const string& id, const string& sid, bool isFatal, Exception* exception) :

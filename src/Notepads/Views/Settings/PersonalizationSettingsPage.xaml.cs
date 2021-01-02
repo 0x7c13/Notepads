@@ -2,8 +2,6 @@
 {
     using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Settings;
-    using Notepads.Utilities;
     using Windows.System.Power;
     using Windows.UI;
     using Windows.UI.ViewManagement;

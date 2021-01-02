@@ -15,7 +15,6 @@
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
-    using Windows.Foundation.Metadata;
 
     public enum InvalidFilenameError
     {

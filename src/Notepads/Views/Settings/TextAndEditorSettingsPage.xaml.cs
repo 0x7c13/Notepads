@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Notepads.Settings;
     using Services;
     using Utilities;
     using Windows.ApplicationModel.Resources;

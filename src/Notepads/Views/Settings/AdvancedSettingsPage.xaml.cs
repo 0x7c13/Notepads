@@ -5,7 +5,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Windows.Globalization;
-    using Notepads.Settings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
