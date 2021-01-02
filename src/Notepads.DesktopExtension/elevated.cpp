@@ -13,6 +13,8 @@ constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
 
 DWORD sessionId;
 
+HANDLE adminWriteEvent = NULL;
+
 IInspectable readSettingsKey(hstring key)
 {
     return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
@@ -33,13 +35,22 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     HANDLE hPipe = INVALID_HANDLE_VALUE;
     while (hPipe == INVALID_HANDLE_VALUE)
     {
-        Sleep(50);
+        if (adminWriteEvent)
+        {
+            WaitForSingleObject(adminWriteEvent, INFINITE);
+        }
+        else
+        {
+            Sleep(50);
+        }
+
         if (WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
         {
             hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
         }
     }
 
+    ResetEvent(adminWriteEvent);
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
 
     TCHAR readBuffer[PIPE_READ_BUFFER];
@@ -125,6 +136,9 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 void initializeAdminService()
 {
     ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+
+    adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
+        format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminWriteEventNameStr).c_str());
 
     printDebugMessage(L"Successfully started Adminstrator Extension.");
     printDebugMessage(L"Waiting on uwp app to send data.");

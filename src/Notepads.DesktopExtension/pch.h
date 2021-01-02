@@ -22,6 +22,7 @@ constexpr LPCTSTR AppCenterSecret = NULL;
 constexpr LPCTSTR AppCenterInstallIdStr = L"AppCenterInstallIdStr";
 constexpr LPCTSTR InteropServiceName = L"DesktopExtensionServiceConnection";
 constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
+constexpr LPCTSTR AdminWriteEventNameStr = L"NotepadsAdminWriteEvent";
 constexpr LPCTSTR AdminPipeConnectionNameStr = L"NotepadsAdminWritePipe";
 constexpr LPCTSTR InteropCommandLabel = L"Command";
 constexpr LPCTSTR InteropCommandAdminCreatedLabel = L"AdminCreated";

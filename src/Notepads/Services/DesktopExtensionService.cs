@@ -11,6 +11,7 @@
     using System.IO.MemoryMappedFiles;
     using System.IO.Pipes;
     using System.Security.Principal;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
@@ -30,14 +31,19 @@
 
     public static class DesktopExtensionService
     {
-        public static AppServiceConnection InteropServiceConnection = null;
         public static readonly bool ShouldUseDesktopExtension = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
+        public static AppServiceConnection InteropServiceConnection = null;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
+
+        private static EventWaitHandle _adminWriteEvent = null;
 
         public static async Task<bool> Initialize()
         {
             if (!ShouldUseDesktopExtension) return false;
+
+            _adminWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminWriteEventNameStr);
 
             InteropServiceConnection = new AppServiceConnection()
             {
@@ -114,11 +120,13 @@
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous))
             {
+                _adminWriteEvent.Set();
                 // Wait for 250 ms for desktop extension to accept request.
                 if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
                 {
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
+                    _adminWriteEvent.Reset();
                     throw new AdminstratorAccessException();
                 }
 

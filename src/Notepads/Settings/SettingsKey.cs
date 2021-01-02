@@ -42,6 +42,7 @@
         internal const string AppCenterInstallIdStr = "AppCenterInstallIdStr";
         internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName value in manifest
         internal const string PackageSidStr = "PackageSidStr";
+        internal const string AdminWriteEventNameStr = "NotepadsAdminWriteEvent";
         internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
         internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
 #endif
