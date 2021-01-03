@@ -22,13 +22,13 @@ constexpr LPCTSTR AppCenterSecret = NULL;
 constexpr LPCTSTR AppCenterInstallIdStr = L"AppCenterInstallIdStr";
 constexpr LPCTSTR InteropServiceName = L"DesktopExtensionServiceConnection";
 constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
+constexpr LPCTSTR DesktopExtensionLifetimeObjNameStr = L"DesktopExtensionLifetimeObj";
 constexpr LPCTSTR AdminWriteEventNameStr = L"NotepadsAdminWriteEvent";
 constexpr LPCTSTR AdminPipeConnectionNameStr = L"NotepadsAdminWritePipe";
 constexpr LPCTSTR InteropCommandLabel = L"Command";
 constexpr LPCTSTR InteropCommandAdminCreatedLabel = L"AdminCreated";
 constexpr LPCTSTR RegisterExtensionCommandStr = L"RegisterExtension";
 constexpr LPCTSTR CreateElevetedExtensionCommandStr = L"CreateElevetedExtension";
-constexpr LPCTSTR ExitAppCommandStr = L"ExitApp";
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 bool isElevatedProcess();

@@ -11,7 +11,8 @@ using namespace Windows::Storage;
 
 constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
 
-DWORD sessionId;
+extern DWORD sessionId;
+extern hstring packageSid;
 
 HANDLE adminWriteEvent = NULL;
 
@@ -19,8 +20,6 @@ IInspectable readSettingsKey(hstring key)
 {
     return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
 }
-
-hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
 DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
@@ -33,110 +32,108 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
         sessionId, packageSid, Package::Current().Id().FamilyName(), AdminPipeConnectionNameStr);
 
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    while (hPipe == INVALID_HANDLE_VALUE)
+    if (!WaitForSingleObject(adminWriteEvent, INFINITE) && ResetEvent(adminWriteEvent) && WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
     {
-        if (adminWriteEvent)
+        hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    }
+
+    if (hPipe)
+    {
+        CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
+
+        TCHAR readBuffer[PIPE_READ_BUFFER];
+        wstringstream pipeData;
+        DWORD byteRead;
+        do
         {
-            WaitForSingleObject(adminWriteEvent, INFINITE);
+            fill(begin(readBuffer), end(readBuffer), '\0');
+            if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
+            {
+                pipeData << readBuffer;
+            }
+        } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
+
+        wstring filePath;
+        wstring memoryMapId;
+        wstring dataArrayLengthStr;
+        getline(pipeData, filePath, L'|');
+        getline(pipeData, memoryMapId, L'|');
+        getline(pipeData, dataArrayLengthStr);
+
+        INT dataArrayLength = stoi(dataArrayLengthStr);
+        wstring memoryMapName = format(L"AppContainerNamedObjects\\{}\\{}", packageSid, memoryMapId);
+
+        HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
+        if (hMemory)
+        {
+            LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, dataArrayLength);
+            if (mapView)
+            {
+                HANDLE hFile = CreateFile(
+                    filePath.c_str(),
+                    GENERIC_READ | GENERIC_WRITE,
+                    0,
+                    NULL,
+                    TRUNCATE_EXISTING,
+                    0,
+                    NULL);
+
+                if (hFile)
+                {
+                    if (WriteFile(hFile, mapView, dataArrayLength, NULL, NULL) && FlushFileBuffers(hFile))
+                    {
+                        result = L"Success";
+                    }
+
+                    CloseHandle(hFile);
+                }
+
+                CloseHandle(mapView);
+            }
+
+            CloseHandle(hMemory);
+        }
+
+        if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
+        CloseHandle(hPipe);
+
+        properties.push_back(pair("Result", to_string(result)));
+        if (wcscmp(result, L"Success") == 0)
+        {
+            printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
         }
         else
         {
-            Sleep(50);
-        }
-
-        if (WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
-        {
-            hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-        }
-    }
-
-    ResetEvent(adminWriteEvent);
-    CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
-
-    TCHAR readBuffer[PIPE_READ_BUFFER];
-    wstringstream pipeData;
-    DWORD byteRead;
-    do
-    {
-        fill(begin(readBuffer), end(readBuffer), '\0');
-        if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
-        {
-            pipeData << readBuffer;
-        }
-    } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
-
-    wstring filePath;
-    wstring memoryMapId;
-    wstring dataArrayLengthStr;
-    getline(pipeData, filePath, L'|');
-    getline(pipeData, memoryMapId, L'|');
-    getline(pipeData, dataArrayLengthStr);
-
-    INT dataArrayLength = stoi(dataArrayLengthStr);
-    wstring memoryMapName = format(L"AppContainerNamedObjects\\{}\\{}", packageSid, memoryMapId);
-
-    HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
-    if (hMemory)
-    {
-        LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, dataArrayLength);
-        if (mapView)
-        {
-            HANDLE hFile = CreateFile(
-                filePath.c_str(),
-                GENERIC_READ | GENERIC_WRITE,
-                0,
-                NULL,
-                TRUNCATE_EXISTING,
-                0,
-                NULL);
-
-            if (hFile)
-            {
-                if (WriteFile(hFile, mapView, dataArrayLength, NULL, NULL) && FlushFileBuffers(hFile))
+            pair<DWORD, wstring> ex = getLastErrorDetails();
+            properties.insert(properties.end(),
                 {
-                    result = L"Success";
-                }
-
-                CloseHandle(hFile);
-            }
-
-            CloseHandle(mapView);
+                    pair("Error Code", to_string(ex.first)),
+                    pair("Error Message", winrt::to_string(ex.second))
+                });
+            printDebugMessage(format(L"Failed to write to \"{}\"", filePath).c_str());
         }
+        printDebugMessage(L"Waiting on uwp app to send data.");
 
-        CloseHandle(hMemory);
-    }
-
-    if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
-
-    CloseHandle(hPipe);
-
-    properties.push_back(pair("Result", to_string(result)));
-    if (wcscmp(result, L"Success") == 0)
-    {
-        printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
+        AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
     }
     else
     {
+        properties.push_back(pair("Result", to_string(result))); 
         pair<DWORD, wstring> ex = getLastErrorDetails();
         properties.insert(properties.end(),
             {
                 pair("Error Code", to_string(ex.first)),
                 pair("Error Message", winrt::to_string(ex.second))
             });
-
-        printDebugMessage(format(L"Failed to write to \"{}\"", filePath).c_str());
+        AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
+        exitApp();
     }
-    printDebugMessage(L"Waiting on uwp app to send data.");
-
-    AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
 
     return 0;
 }
 
 void initializeAdminService()
 {
-    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-
     adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
         format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminWriteEventNameStr).c_str());
 

@@ -42,6 +42,7 @@
         internal const string AppCenterInstallIdStr = "AppCenterInstallIdStr";
         internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName value in manifest
         internal const string PackageSidStr = "PackageSidStr";
+        internal const string DesktopExtensionLifetimeObjNameStr = "DesktopExtensionLifetimeObj";
         internal const string AdminWriteEventNameStr = "NotepadsAdminWriteEvent";
         internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
         internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
@@ -51,6 +52,5 @@
         internal const string InteropCommandFailedLabel = "Failed";
         internal const string RegisterExtensionCommandStr = "RegisterExtension";
         internal const string CreateElevetedExtensionCommandStr = "CreateElevetedExtension";
-        internal const string ExitAppCommandStr = "ExitApp";
     }
 }

@@ -35,6 +35,7 @@
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         public static AppServiceConnection InteropServiceConnection = null;
+        public static NamedPipeServerStream ExtensionLifetimeObject = null;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static EventWaitHandle _adminWriteEvent = null;
@@ -43,7 +44,18 @@
         {
             if (!ShouldUseDesktopExtension) return false;
 
-            _adminWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminWriteEventNameStr);
+            if (ExtensionLifetimeObject == null)
+            {
+                ExtensionLifetimeObject = new NamedPipeServerStream(
+                    $"Local\\{SettingsKey.DesktopExtensionLifetimeObjNameStr}",
+                    PipeDirection.In,
+                    NamedPipeServerStream.MaxAllowedServerInstances);
+            }
+
+            if (_adminWriteEvent == null)
+            {
+                _adminWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminWriteEventNameStr);
+            }
 
             InteropServiceConnection = new AppServiceConnection()
             {

@@ -10,7 +10,6 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Background;
-    using Windows.Foundation.Collections;
 
     public sealed class DesktopExtensionConnectionService : IBackgroundTask
     {
@@ -116,8 +115,10 @@
             messageDeferral.Complete();
         }
 
-        private async void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
+            var deferral = sender.GetDeferral();
+
             if (this.backgroundTaskDeferral != null)
             {
                 // Complete the service deferral.
@@ -131,13 +132,10 @@
                 else
                 {
                     appServiceConnections.Remove(serviceConnection);
-                    if (appServiceConnections.Count == 0 && extensionAppServiceConnection != null)
-                    {
-                        var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.ExitAppCommandStr } };
-                        await extensionAppServiceConnection.SendMessageAsync(message);
-                    }
                 }
             }
+
+            deferral.Complete();
         }
 
         // Occurs when an exception is not handled on a background thread.

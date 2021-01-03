@@ -1,24 +1,29 @@
 ﻿#include "pch.h"
 #include "appcenter.h"
 
+using namespace fmt;
+using namespace std;
 using namespace winrt;
 
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
 
-HANDLE appExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+DWORD sessionId;
+hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
+
+extern HANDLE adminWriteEvent;
 extern HANDLE appExitJob;
 
 INT releaseResources()
 {
-    CloseHandle(appExitEvent);
+    CloseHandle(adminWriteEvent);
     CloseHandle(appExitJob);
     return 0;
 }
 
 void exitApp()
 {
-    SetEvent(appExitEvent);
+    exit(0);
 }
 
 void onUnhandledException()
@@ -110,6 +115,8 @@ INT main()
     SetErrorMode(SEM_NOGPFAULTERRORBOX);
     _onexit(releaseResources);
 
+    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+
     init_apartment();
     AppCenter::start();
 
@@ -127,6 +134,11 @@ INT main()
         if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
     }
 
-    WaitForSingleObject(appExitEvent, INFINITE);
+    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}",
+        sessionId, packageSid, DesktopExtensionLifetimeObjNameStr);
+    while (WaitNamedPipe(pipeName.c_str(), 2000) || GetLastError() == ERROR_SEM_TIMEOUT)
+    {
+        WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER);
+    }
     exit(0);
 }

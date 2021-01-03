@@ -8,9 +8,8 @@ using namespace Windows::ApplicationModel::AppService;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 
-HANDLE appExitJob = NULL;
-
 AppServiceConnection interopServiceConnection = NULL;
+HANDLE appExitJob = NULL;
 
 fire_and_forget launchElevatedProcess()
 {
@@ -83,10 +82,6 @@ void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceR
     if (command == CreateElevetedExtensionCommandStr)
     {
         launchElevatedProcess();
-    }
-    else if (command == ExitAppCommandStr)
-    {
-        exitApp();
     }
 
     messageDeferral.Complete();

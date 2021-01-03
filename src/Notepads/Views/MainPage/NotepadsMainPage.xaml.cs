@@ -361,12 +361,14 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
+                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
                 return;
             }
@@ -398,15 +400,18 @@
                         await BuildOpenRecentButtonSubItems();
                     }
 
+                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
+                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 },
                 cancelAction: () =>
                 {
                     e.Handled = true;
+                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 });
 
@@ -415,6 +420,7 @@
             if (result == null)
             {
                 e.Handled = true;
+                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
             }
 
