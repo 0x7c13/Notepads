@@ -399,8 +399,11 @@
                         e.Handled = true;
                         await BuildOpenRecentButtonSubItems();
                     }
+                    else
+                    {
+                        DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
+                    }
 
-                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
@@ -411,7 +414,6 @@
                 cancelAction: () =>
                 {
                     e.Handled = true;
-                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 });
 
@@ -420,7 +422,6 @@
             if (result == null)
             {
                 e.Handled = true;
-                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
             }
 
