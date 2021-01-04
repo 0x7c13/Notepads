@@ -7,16 +7,22 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Services;
+    using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
     using Microsoft.Toolkit.Uwp.UI;
+    using Windows.UI.Xaml.Media.Imaging;
 
     public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {
         private readonly ImageCache _imageCache = new ImageCache();
 
         private bool _isExtensionEnabled;
+
+        private string _parentPath;
+
+        private readonly char[] ignoredChars = { '?', '#', ' ' };
 
         public bool IsExtensionEnabled
         {
@@ -78,18 +84,40 @@
 
             try
             {
-                var imageUri = new Uri(e.Url);
-                if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                try
                 {
-                    // SvgImageSource is not working properly when width and height are not set in uri
-                    // I am disabling Svg parsing here.
-                    // e.Image = await GetImageAsync(e.Url);
-                    e.Handled = true;
+                    var imageUri = new Uri(e.Url);
+                    if (Path.GetExtension(imageUri.AbsolutePath)?.ToLowerInvariant() == ".svg")
+                    {
+                        // SvgImageSource is not working properly when width and height are not set in uri
+                        // I am disabling Svg parsing here.
+                        // e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    e.Image = await GetImageAsync(e.Url);
-                    e.Handled = true;
+                    var ignoreIndex = e.Url.IndexOfAny(ignoredChars);
+                    var imagePath = _parentPath + (ignoreIndex > -1
+                        ? e.Url.Remove(ignoreIndex).Replace('/', Path.DirectorySeparatorChar)
+                        : e.Url.Replace('/', Path.DirectorySeparatorChar));
+                    if (Path.GetExtension(imagePath)?.ToLowerInvariant() == ".svg")
+                    {
+                        // SvgImageSource is not working properly when width and height are not set in uri
+                        // I am disabling Svg parsing here.
+                        // e.Image = await GetImageAsync(e.Url);
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        e.Image = await GetLocalImageAsync(imagePath);
+                        e.Handled = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -133,7 +161,28 @@
             //}
         }
 
-        public void Bind(TextEditorCore editorCore)
+        private async Task<ImageSource> GetLocalImageAsync(string imagePath)
+        {
+            var imageFile = await StorageFile.GetFileFromPathAsync(imagePath);
+
+            using (var ms = await imageFile.OpenReadAsync())
+            {
+                if (Path.GetExtension(imagePath)?.ToLowerInvariant() == ".svg")
+                {
+                    var image = new SvgImageSource();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+                else
+                {
+                    var image = new BitmapImage();
+                    await image.SetSourceAsync(ms);
+                    return image;
+                }
+            }
+        }
+
+        public void Bind(TextEditorCore editorCore, string parentPath)
         {
             if (_editorCore != null)
             {
@@ -146,6 +195,8 @@
             _editorCore.TextChanged += OnTextChanged;
             _editorCore.TextWrappingChanged += OnTextWrappingChanged;
             _editorCore.FontSizeChanged += OnFontSizeChanged;
+
+            _parentPath = parentPath;
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -213,8 +264,16 @@
 
             try
             {
-                var uri = new Uri(e.Link);
-                await Windows.System.Launcher.LaunchUriAsync(uri);
+                try
+                {
+                    var uri = new Uri(e.Link);
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                }
+                catch (Exception)
+                {
+                    var file = await StorageFile.GetFileFromPathAsync(_parentPath + e.Link.Replace('/', Path.DirectorySeparatorChar));
+                    await Windows.System.Launcher.LaunchFileAsync(file);
+                }
             }
             catch (Exception ex)
             {

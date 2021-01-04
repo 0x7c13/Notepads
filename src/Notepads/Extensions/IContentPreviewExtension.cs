@@ -4,7 +4,7 @@
 
     public interface IContentPreviewExtension
     {
-        void Bind(TextEditorCore editor);
+        void Bind(TextEditorCore editor, string parentPath);
 
         bool IsExtensionEnabled { get; set; }
 

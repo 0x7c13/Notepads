@@ -617,7 +617,7 @@
             {
                 _contentPreviewExtension = ExtensionProvider?.GetContentPreviewExtension(FileType);
                 if (_contentPreviewExtension == null) return;
-                _contentPreviewExtension.Bind(TextEditorCore);
+                _contentPreviewExtension.Bind(TextEditorCore, System.IO.Path.GetDirectoryName(EditingFilePath) + System.IO.Path.DirectorySeparatorChar);
             }
 
             if (SplitPanel == null) LoadSplitView();
