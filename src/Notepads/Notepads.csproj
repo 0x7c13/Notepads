@@ -25,13 +25,7 @@
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
     <DevLabel>-dev</DevLabel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Production'">
-    <DevLabel>
-    </DevLabel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x86'">
     <OutputPath>bin\x86\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
@@ -95,7 +89,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|ARM64'">
     <OutputPath>bin\ARM64\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -131,7 +125,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x64'">
     <OutputPath>bin\x64\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -287,209 +281,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\appicon_b$(DevLabel).png">
-      <Link>Assets\appicon_b.png</Link>
-    </Content>
-    <Content Include="Assets\appicon_bs$(DevLabel).png">
-      <Link>Assets\appicon_bs.png</Link>
-    </Content>
-    <Content Include="Assets\appicon_w$(DevLabel).png">
-      <Link>Assets\appicon_w.png</Link>
-    </Content>
-    <Content Include="Assets\appicon_ws$(DevLabel).png">
-      <Link>Assets\appicon_ws.png</Link>
-    </Content>
-    <Content Include="Assets\LargeTile.scale-100$(DevLabel).png">
-      <Link>Assets\LargeTile.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\LargeTile.scale-125$(DevLabel).png">
-      <Link>Assets\LargeTile.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\LargeTile.scale-150$(DevLabel).png">
-      <Link>Assets\LargeTile.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\LargeTile.scale-200$(DevLabel).png">
-      <Link>Assets\LargeTile.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\LargeTile.scale-400$(DevLabel).png">
-      <Link>Assets\LargeTile.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\SmallTile.scale-100$(DevLabel).png">
-      <Link>Assets\SmallTile.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\SmallTile.scale-125$(DevLabel).png">
-      <Link>Assets\SmallTile.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\SmallTile.scale-150$(DevLabel).png">
-      <Link>Assets\SmallTile.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\SmallTile.scale-200$(DevLabel).png">
-      <Link>Assets\SmallTile.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\SmallTile.scale-400$(DevLabel).png">
-      <Link>Assets\SmallTile.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\SplashScreen.scale-100$(DevLabel).png">
-      <Link>Assets\SplashScreen.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\SplashScreen.scale-125$(DevLabel).png">
-      <Link>Assets\SplashScreen.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\SplashScreen.scale-150$(DevLabel).png">
-      <Link>Assets\SplashScreen.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\SplashScreen.scale-400$(DevLabel).png">
-      <Link>Assets\SplashScreen.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-100$(DevLabel).png">
-      <Link>Assets\Square150x150Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-125$(DevLabel).png">
-      <Link>Assets\Square150x150Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-150$(DevLabel).png">
-      <Link>Assets\Square150x150Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-400$(DevLabel).png">
-      <Link>Assets\Square150x150Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.altform-unplated_targetsize-16.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.altform-unplated_targetsize-256.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.altform-unplated_targetsize-32.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.altform-unplated_targetsize-48.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-100$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-125$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-150$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-400$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-16$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-16.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-16_altform-lightunplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-16_altform-lightunplated.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-24$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-24.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-lightunplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-24_altform-lightunplated.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-256$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-256.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-256_altform-lightunplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-256_altform-lightunplated.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-32$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-32.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-32_altform-lightunplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-32_altform-lightunplated.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-48$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-48.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-48_altform-lightunplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-48_altform-lightunplated.png</Link>
-    </Content>
-    <Content Include="Assets\StoreLogo.scale-100$(DevLabel).png">
-      <Link>Assets\StoreLogo.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\StoreLogo.scale-125$(DevLabel).png">
-      <Link>Assets\StoreLogo.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\StoreLogo.scale-150$(DevLabel).png">
-      <Link>Assets\StoreLogo.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\StoreLogo.scale-200$(DevLabel).png">
-      <Link>Assets\StoreLogo.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\StoreLogo.scale-400$(DevLabel).png">
-      <Link>Assets\StoreLogo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-100$(DevLabel).png">
-      <Link>Assets\Wide310x150Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-125$(DevLabel).png">
-      <Link>Assets\Wide310x150Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-150$(DevLabel).png">
-      <Link>Assets\Wide310x150Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-400$(DevLabel).png">
-      <Link>Assets\Wide310x150Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\SplashScreen.scale-200$(DevLabel).png">
-      <Link>Assets\SplashScreen.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-200$(DevLabel).png">
-      <Link>Assets\Square150x150Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-200$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated$(DevLabel).png">
-      <Link>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</Link>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-200$(DevLabel).png">
-      <Link>Assets\Wide310x150Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-16$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-16.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-20$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-20.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-24$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-24.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-256$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-256.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-32$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-32.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-44$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.light.targetsize-44.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-16$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-16.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-20$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-20.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-24$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-24.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-256$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-256.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-32$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-32.png</Link>
-    </Content>
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-44$(DevLabel).png">
-      <Link>Assets\GameBar\Icons\icon.targetsize-44.png</Link>
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <Content Include="Assets\**\*$(DevLabel).png">
+      <Link>$([System.String]::new('%(Identity)').Replace('$(DevLabel)',''))</Link>
     </Content>
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\*noise*.png" />
     <Content Include="Assets\search_*.png" />
     <Content Include="Assets\FileIcons\*.png" />
-    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Production'">
+    <Content Include="Assets\**\*.png" Exclude="Assets\**\*$(DevLabel).png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
