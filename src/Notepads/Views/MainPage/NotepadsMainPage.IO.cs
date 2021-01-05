@@ -170,7 +170,8 @@
             }
             catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
             {
-                var createElevatedExtensionDialog = new CreateElevatedExtensionDialog(
+                var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
+                    AdminOperationType.Save, file.Path,
                     async () =>
                     {
                         await DesktopExtensionService.CreateElevetedExtension();
@@ -180,9 +181,9 @@
                         isSaveSuccess = false;
                     });
 
-                var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
+                var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
 
-                if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
+                if (dialogResult == null || launchElevatedExtensionDialog.IsAborted)
                 {
                     isSaveSuccess = false;
                 }
@@ -270,7 +271,6 @@
                     {
                         await textEditor.RenameAsync(newFilename);
                         NotepadsCore.FocusOnSelectedTextEditor();
-                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
                     }
                     catch (Exception ex)
                     {

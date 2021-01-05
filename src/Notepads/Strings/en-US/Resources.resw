@@ -693,17 +693,17 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
-  <data name="CreateElevatedExtensionDialog_CloseButtonText" xml:space="preserve">
-    <value>No</value>
-    <comment>CreateElevatedExtensionDialog: CloseButtonText.</comment>
+  <data name="LaunchElevatedExtensionDialog_SaveFailed_CloseButtonText" xml:space="preserve">
+    <value>Save As</value>
+    <comment>LaunchElevatedExtensionDialog: Save Failed CloseButtonText.</comment>
   </data>
-  <data name="CreateElevatedExtensionDialog_Content" xml:space="preserve">
-    <value>The file cannot be saved, it may be protected. Do you want to give Notepads Adminstrator permission?</value>
-    <comment>CreateElevatedExtensionDialog: "Content" display text.</comment>
+  <data name="LaunchElevatedExtensionDialog_SaveFailed_Content" xml:space="preserve">
+    <value>Notepads needs Adminstrative Privilage to modify file "{0}"</value>
+    <comment>LaunchElevatedExtensionDialog: Save Failed "Content" display text.</comment>
   </data>
-  <data name="CreateElevatedExtensionDialog_Title" xml:space="preserve">
+  <data name="LaunchElevatedExtensionDialog_SaveFailed_Title" xml:space="preserve">
     <value>Save Failed</value>
-    <comment>CreateElevatedExtensionDialog: "Title" display text.</comment>
+    <comment>LaunchElevatedExtensionDialog: Save Failed "Title" display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_AdminExtensionCreated" xml:space="preserve">
     <value>Now system files can be directly modified</value>
@@ -712,5 +712,21 @@
   <data name="TextEditor_NotificationMsg_AdminExtensionCreationFailed" xml:space="preserve">
     <value>Failed to start admin process</value>
     <comment>TextEditor: Notification message when launching of admin process is failed.</comment>
+  </data>
+  <data name="LaunchElevatedExtensionDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Give Access</value>
+    <comment>LaunchElevatedExtensionDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="LaunchElevatedExtensionDialog_RenameFailed_CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>LaunchElevatedExtensionDialog: Rename Failed CloseButtonText.</comment>
+  </data>
+  <data name="LaunchElevatedExtensionDialog_RenameFailed_Content" xml:space="preserve">
+    <value>Notepads needs Adminstrative Privilage to rename file "{0}"</value>
+    <comment>LaunchElevatedExtensionDialog: Rename Failed "Content" display text.</comment>
+  </data>
+  <data name="LaunchElevatedExtensionDialog_RenameFailed_Title1" xml:space="preserve">
+    <value>Rename Failed</value>
+    <comment>LaunchElevatedExtensionDialog: Rename Failed "Title" display text.</comment>
   </data>
 </root>

@@ -132,7 +132,7 @@
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
     <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
-    <Compile Include="Controls\Dialog\CreateElevatedExtensionDialog.cs" />
+    <Compile Include="Controls\Dialog\LaunchElevatedExtensionDialog.cs" />
     <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
     <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
     <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />

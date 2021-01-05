@@ -257,7 +257,6 @@
                                 {
                                     await _textEditor.RenameAsync(newFilename);
                                     _notepadsCore.FocusOnSelectedTextEditor();
-                                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
                                 }
                                 catch (Exception ex)
                                 {

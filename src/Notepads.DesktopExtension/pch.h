@@ -6,6 +6,7 @@
 #include "shellapi.h"
 #include "winrt/Windows.ApplicationModel.h"
 #include "winrt/Windows.ApplicationModel.AppService.h"
+#include "winrt/Windows.ApplicationModel.DataTransfer.h"
 #include "winrt/Windows.Foundation.h"
 #include "winrt/Windows.Foundation.Collections.h"
 #include "winrt/Windows.Security.ExchangeActiveSyncProvisioning.h"
@@ -24,7 +25,9 @@ constexpr LPCTSTR InteropServiceName = L"DesktopExtensionServiceConnection";
 constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
 constexpr LPCTSTR DesktopExtensionLifetimeObjNameStr = L"DesktopExtensionLifetimeObj";
 constexpr LPCTSTR AdminWriteEventNameStr = L"NotepadsAdminWriteEvent";
-constexpr LPCTSTR AdminPipeConnectionNameStr = L"NotepadsAdminWritePipe";
+constexpr LPCTSTR AdminWritePipeConnectionNameStr = L"NotepadsAdminWritePipe";
+constexpr LPCTSTR AdminRenameEventNameStr = L"NotepadsAdminRenameEvent";
+constexpr LPCTSTR AdminRenamePipeConnectionNameStr = L"NotepadsAdminRenamePipe";
 constexpr LPCTSTR InteropCommandLabel = L"Command";
 constexpr LPCTSTR InteropCommandAdminCreatedLabel = L"AdminCreated";
 constexpr LPCTSTR RegisterExtensionCommandStr = L"RegisterExtension";

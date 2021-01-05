@@ -6,6 +6,7 @@ using namespace fmt;
 using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
+using namespace Windows::ApplicationModel::DataTransfer;
 using namespace Windows::Foundation;
 using namespace Windows::Storage;
 
@@ -15,6 +16,7 @@ extern DWORD sessionId;
 extern hstring packageSid;
 
 HANDLE adminWriteEvent = NULL;
+HANDLE adminRenameEvent = NULL;
 
 IInspectable readSettingsKey(hstring key)
 {
@@ -29,7 +31,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     LPCTSTR result = L"Failed";
 
     wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
-        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminPipeConnectionNameStr);
+        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminWritePipeConnectionNameStr);
 
     HANDLE hPipe = INVALID_HANDLE_VALUE;
     if (!WaitForSingleObject(adminWriteEvent, INFINITE) && ResetEvent(adminWriteEvent) && WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
@@ -132,13 +134,99 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     return 0;
 }
 
+DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
+{
+    setExceptionHandling();
+
+    vector<pair<const CHAR*, string>> properties;
+    LPCTSTR result = L"Failed";
+
+    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
+        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminRenamePipeConnectionNameStr);
+
+    HANDLE hPipe = INVALID_HANDLE_VALUE;
+    if (!WaitForSingleObject(adminRenameEvent, INFINITE) && ResetEvent(adminRenameEvent) && WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    {
+        hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    }
+
+    if (hPipe)
+    {
+        CreateThread(NULL, 0, renameFileFromPipeData, NULL, 0, NULL);
+
+        TCHAR readBuffer[PIPE_READ_BUFFER];
+        wstringstream pipeData;
+        DWORD byteRead;
+        do
+        {
+            fill(begin(readBuffer), end(readBuffer), '\0');
+            if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
+            {
+                pipeData << readBuffer;
+            }
+        } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
+
+        wstring fileToken;
+        wstring newName;
+        getline(pipeData, fileToken, L'|');
+        getline(pipeData, newName, L'|');
+
+        auto file = SharedStorageAccessManager::RedeemTokenForFileAsync(fileToken).get();
+        SharedStorageAccessManager::RemoveFile(fileToken);
+        file.RenameAsync(newName).get();
+        result = SharedStorageAccessManager::AddFile(file).c_str();
+
+        if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
+        CloseHandle(hPipe);
+
+        if (wcscmp(result, L"Failed") == 0)
+        {
+            pair<DWORD, wstring> ex = getLastErrorDetails();
+            properties.insert(properties.end(),
+                {
+                    pair("Result", to_string(result)),
+                    pair("Error Code", to_string(ex.first)),
+                    pair("Error Message", winrt::to_string(ex.second))
+                });
+            printDebugMessage(format(L"Failed to write to \"{}\"", file.Path()).c_str());
+        }
+        else
+        {
+            properties.push_back(pair("Result", "Success"));
+            printDebugMessage(format(L"Successfully wrote to \"{}\"", file.Path()).c_str());
+        }
+        printDebugMessage(L"Waiting on uwp app to send data.");
+
+        AppCenter::trackEvent("OnRenameToSystemFileRequested", properties);
+    }
+    else
+    {
+        properties.push_back(pair("Result", to_string(result)));
+        pair<DWORD, wstring> ex = getLastErrorDetails();
+        properties.insert(properties.end(),
+            {
+                pair("Result", to_string(result)),
+                pair("Error Code", to_string(ex.first)),
+                pair("Error Message", winrt::to_string(ex.second))
+            });
+        AppCenter::trackEvent("OnRenameToSystemFileRequested", properties);
+        exitApp();
+    }
+
+    return 0;
+}
+
 void initializeAdminService()
 {
     adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
         format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminWriteEventNameStr).c_str());
 
+    adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
+        format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminRenameEventNameStr).c_str());
+
     printDebugMessage(L"Successfully started Adminstrator Extension.");
     printDebugMessage(L"Waiting on uwp app to send data.");
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
+    CreateThread(NULL, 0, renameFileFromPipeData, NULL, 0, NULL);
 }

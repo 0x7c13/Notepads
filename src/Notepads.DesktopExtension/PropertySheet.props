@@ -16,6 +16,7 @@
     <!--Update this value to latest commit to update vcpkg and dependencies-->
     <VcpkgCommitHash>50ea8c0ab7aca3bb9245bba7fc877ad2f2a4464c</VcpkgCommitHash>
     <!--###################################################################-->
+    <VcpkgOSTarget>windows</VcpkgOSTarget>
   </PropertyGroup>
   <ItemDefinitionGroup />
 </Project>

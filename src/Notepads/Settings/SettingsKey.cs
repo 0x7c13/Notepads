@@ -44,7 +44,9 @@
         internal const string PackageSidStr = "PackageSidStr";
         internal const string DesktopExtensionLifetimeObjNameStr = "DesktopExtensionLifetimeObj";
         internal const string AdminWriteEventNameStr = "NotepadsAdminWriteEvent";
-        internal const string AdminPipeConnectionNameStr = "NotepadsAdminWritePipe";
+        internal const string AdminWritePipeConnectionNameStr = "NotepadsAdminWritePipe";
+        internal const string AdminRenameEventNameStr = "NotepadsAdminRenameEvent";
+        internal const string AdminRenamePipeConnectionNameStr = "NotepadsAdminRenamePipe";
         internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
 #endif
         internal const string AppCenterSecret = null;

@@ -294,18 +294,38 @@
 
         public async Task RenameAsync(string newFileName)
         {
+            var result = false;
+
             if (EditingFile == null)
             {
                 FileNamePlaceholder = newFileName;
+                result = true;
             }
             else
             {
-                await EditingFile.RenameAsync(newFileName);
+                try
+                {
+                    await EditingFile.RenameAsync(newFileName);
+                    result = true;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    var file = await DesktopExtensionService.RenameFileAsAdmin(EditingFile, newFileName);
+                    if (file != null)
+                    {
+                        EditingFile = file;
+                        result = true;
+                    }
+                }
             }
 
-            UpdateDocumentInfo();
+            if (result)
+            {
+                UpdateDocumentInfo();
 
-            FileRenamed?.Invoke(this, EventArgs.Empty);
+                FileRenamed?.Invoke(this, EventArgs.Empty);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+            }
         }
 
         public string GetText()

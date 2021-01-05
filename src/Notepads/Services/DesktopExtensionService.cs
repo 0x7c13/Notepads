@@ -3,8 +3,10 @@
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Controls.Dialog;
     using Notepads.Extensions;
     using Notepads.Settings;
+    using Notepads.Utilities;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -16,10 +18,18 @@
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.AppService;
     using Windows.ApplicationModel.Core;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Collections;
     using Windows.Foundation.Metadata;
     using Windows.Security.Authentication.Web;
+    using Windows.Storage;
+
+    public enum AdminOperationType
+    {
+        Save,
+        Rename
+    }
 
     public class AdminstratorAccessException : Exception
     {
@@ -39,6 +49,7 @@
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static EventWaitHandle _adminWriteEvent = null;
+        private static EventWaitHandle _adminRenameEvent = null;
 
         public static async Task<bool> Initialize()
         {
@@ -55,6 +66,11 @@
             if (_adminWriteEvent == null)
             {
                 _adminWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminWriteEventNameStr);
+            }
+
+            if (_adminRenameEvent == null)
+            {
+                _adminRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminRenameEventNameStr);
             }
 
             InteropServiceConnection = new AppServiceConnection()
@@ -126,7 +142,7 @@
             if (InteropServiceConnection == null && !(await Initialize())) return;
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream(
-                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminPipeConnectionNameStr}",
+                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminWritePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
@@ -169,6 +185,58 @@
                         // Promt user to "Save As" if extension failed to save data.
                         throw new UnauthorizedAccessException();
                     }
+                }
+            }
+        }
+
+        public static async Task<StorageFile> RenameFileAsAdmin(StorageFile file, string newName)
+        {
+            if (InteropServiceConnection == null && !(await Initialize())) return null;
+
+            var token = SharedStorageAccessManager.AddFile(file);
+
+            using (var adminConnectionPipeStream = new NamedPipeServerStream(
+                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminRenamePipeConnectionNameStr}",
+                PipeDirection.InOut,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous))
+            {
+                _adminRenameEvent.Set();
+                // Wait for 250 ms for desktop extension to accept request.
+                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
+                {
+                    // If the connection fails, desktop extension is not launched with elevated privilages.
+                    // In that case, prompt user to launch desktop extension with elevated privilages.
+                    _adminRenameEvent.Reset();
+                    var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
+                        AdminOperationType.Rename,
+                        file.Path,
+                        async () => { await DesktopExtensionService.CreateElevetedExtension(); },
+                        null);
+
+                    var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
+
+                    return null;
+                }
+
+                var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+
+                await pipeWriter.WriteAsync($"{token}|{newName}");
+                await pipeWriter.FlushAsync();
+
+                // Wait for desktop extension to send response.
+                token = await pipeReader.ReadLineAsync();
+                try
+                {
+                    file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                    SharedStorageAccessManager.RemoveFile(token);
+                    return file;
+                }
+                catch
+                {
+                    throw new UnauthorizedAccessException();
                 }
             }
         }
