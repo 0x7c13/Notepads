@@ -7,10 +7,10 @@ using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::DataTransfer;
-using namespace Windows::Foundation;
-using namespace Windows::Storage;
 
 constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
+constexpr LPCTSTR pipeNameFormat = L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}";
+constexpr LPCTSTR namedObjectFormat = L"AppContainerNamedObjects\\{}\\{}";
 
 extern DWORD sessionId;
 extern hstring packageSid;
@@ -18,10 +18,8 @@ extern hstring packageSid;
 HANDLE adminWriteEvent = NULL;
 HANDLE adminRenameEvent = NULL;
 
-IInspectable readSettingsKey(hstring key)
-{
-    return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
-}
+wstring writePipeName;
+wstring renamePipeName;
 
 DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
@@ -30,13 +28,10 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     vector<pair<const CHAR*, string>> properties;
     LPCTSTR result = L"Failed";
 
-    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
-        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminWritePipeConnectionNameStr);
-
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(adminWriteEvent, INFINITE) && ResetEvent(adminWriteEvent) && WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    if (!WaitForSingleObject(adminWriteEvent, INFINITE) && ResetEvent(adminWriteEvent) && WaitNamedPipe(writePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
     {
-        hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+        hPipe = CreateFile(writePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     }
 
     if (hPipe)
@@ -63,7 +58,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
         getline(pipeData, dataArrayLengthStr);
 
         INT dataArrayLength = stoi(dataArrayLengthStr);
-        wstring memoryMapName = format(L"AppContainerNamedObjects\\{}\\{}", packageSid, memoryMapId);
+        wstring memoryMapName = format(namedObjectFormat, packageSid, memoryMapId);
 
         HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
         if (hMemory)
@@ -120,10 +115,10 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     }
     else
     {
-        properties.push_back(pair("Result", to_string(result))); 
         pair<DWORD, wstring> ex = getLastErrorDetails();
         properties.insert(properties.end(),
             {
+                pair("Result", to_string(result)),
                 pair("Error Code", to_string(ex.first)),
                 pair("Error Message", winrt::to_string(ex.second))
             });
@@ -141,13 +136,10 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
     vector<pair<const CHAR*, string>> properties;
     LPCTSTR result = L"Failed";
 
-    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}",
-        sessionId, packageSid, Package::Current().Id().FamilyName(), AdminRenamePipeConnectionNameStr);
-
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(adminRenameEvent, INFINITE) && ResetEvent(adminRenameEvent) && WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    if (!WaitForSingleObject(adminRenameEvent, INFINITE) && ResetEvent(adminRenameEvent) && WaitNamedPipe(renamePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
     {
-        hPipe = CreateFile(pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+        hPipe = CreateFile(renamePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     }
 
     if (hPipe)
@@ -173,6 +165,7 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
 
         auto file = SharedStorageAccessManager::RedeemTokenForFileAsync(fileToken).get();
         SharedStorageAccessManager::RemoveFile(fileToken);
+        auto oldName = file.Path();
         file.RenameAsync(newName).get();
         result = SharedStorageAccessManager::AddFile(file).c_str();
 
@@ -188,12 +181,12 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
                     pair("Error Code", to_string(ex.first)),
                     pair("Error Message", winrt::to_string(ex.second))
                 });
-            printDebugMessage(format(L"Failed to write to \"{}\"", file.Path()).c_str());
+            printDebugMessage(format(L"Failed to rename \"{}\" to \"{}\"", oldName, newName).c_str());
         }
         else
         {
             properties.push_back(pair("Result", "Success"));
-            printDebugMessage(format(L"Successfully wrote to \"{}\"", file.Path()).c_str());
+            printDebugMessage(format(L"Successfully renamed \"{}\" to \"{}\"", oldName, newName).c_str());
         }
         printDebugMessage(L"Waiting on uwp app to send data.");
 
@@ -201,7 +194,6 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
     }
     else
     {
-        properties.push_back(pair("Result", to_string(result)));
         pair<DWORD, wstring> ex = getLastErrorDetails();
         properties.insert(properties.end(),
             {
@@ -218,11 +210,11 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
 
 void initializeAdminService()
 {
-    adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
-        format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminWriteEventNameStr).c_str());
+    adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminWriteEventNameStr).c_str());
+    adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminRenameEventNameStr).c_str());
 
-    adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE,
-        format(L"AppContainerNamedObjects\\{}\\{}", packageSid, AdminRenameEventNameStr).c_str());
+    writePipeName = format(pipeNameFormat, sessionId, packageSid, Package::Current().Id().FamilyName(), AdminWritePipeConnectionNameStr);
+    renamePipeName = format(pipeNameFormat, sessionId, packageSid, Package::Current().Id().FamilyName(), AdminRenamePipeConnectionNameStr);
 
     printDebugMessage(L"Successfully started Adminstrator Extension.");
     printDebugMessage(L"Waiting on uwp app to send data.");

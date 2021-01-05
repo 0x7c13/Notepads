@@ -4,6 +4,8 @@
 using namespace fmt;
 using namespace std;
 using namespace winrt;
+using namespace Windows::Foundation;
+using namespace Windows::Storage;
 
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
@@ -12,11 +14,18 @@ DWORD sessionId;
 hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
 extern HANDLE adminWriteEvent;
+extern HANDLE adminRenameEvent;
 extern HANDLE appExitJob;
+
+IInspectable readSettingsKey(hstring key)
+{
+    return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
+}
 
 INT releaseResources()
 {
     CloseHandle(adminWriteEvent);
+    CloseHandle(adminRenameEvent);
     CloseHandle(appExitJob);
     return 0;
 }

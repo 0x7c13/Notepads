@@ -189,6 +189,14 @@
             }
         }
 
+        /// <summary>
+        /// Rename system file.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
+        /// <param name="file">File to rename</param>
+        /// <param name="newName">New name</param>
         public static async Task<StorageFile> RenameFileAsAdmin(StorageFile file, string newName)
         {
             if (InteropServiceConnection == null && !(await Initialize())) return null;
@@ -228,16 +236,9 @@
 
                 // Wait for desktop extension to send response.
                 token = await pipeReader.ReadLineAsync();
-                try
-                {
-                    file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
-                    SharedStorageAccessManager.RemoveFile(token);
-                    return file;
-                }
-                catch
-                {
-                    throw new UnauthorizedAccessException();
-                }
+                file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                SharedStorageAccessManager.RemoveFile(token);
+                return file;
             }
         }
 
