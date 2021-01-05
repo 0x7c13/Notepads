@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
@@ -30,6 +31,8 @@
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
+        public static Mutex InstanceHandlerMutex { get; set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -41,6 +44,17 @@
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(SettingsKey.AppCenterSecret, services);
+
+            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+            if (isNew)
+            {
+                IsPrimaryInstance = true;
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
+            }
+            else
+            {
+                InstanceHandlerMutex.Close();
+            }
 
             LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 

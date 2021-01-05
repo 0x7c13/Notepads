@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Notepads.Services;
     using Notepads.Settings;
@@ -11,10 +10,6 @@
 
     public static class Program
     {
-        public static bool IsPrimaryInstance { get; set; }
-
-        public static Mutex InstanceHandlerMutex { get; set; }
-
         static void Main(string[] args)
         {
 #if DEBUG
@@ -31,17 +26,6 @@
             //    App.IsPrimaryInstance = true;
             //    Windows.UI.Xaml.Application.Start(p => new App());
             //}
-
-            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
-            if (isNew)
-            {
-                IsPrimaryInstance = true;
-                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
-            }
-            else
-            {
-                InstanceHandlerMutex.Close();
-            }
 
             if (activatedArgs is FileActivatedEventArgs)
             {
@@ -92,9 +76,7 @@
         private static void OpenNewInstance()
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
-            App.IsPrimaryInstance = IsPrimaryInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
-            IsPrimaryInstance = false;
         }
 
         private static void RedirectOrCreateNewInstance()
@@ -103,9 +85,7 @@
 
             if (instance.IsCurrentInstance)
             {
-                App.IsPrimaryInstance = IsPrimaryInstance;
                 Windows.UI.Xaml.Application.Start(p => new App());
-                IsPrimaryInstance = false;
             }
             else
             {

@@ -252,8 +252,9 @@
             try
             {
                 regexError = false;
+                content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
                 Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                    RegexOptions.Multiline | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 var match = regex.Match(content, Document.Selection.EndPosition);
 
@@ -287,8 +288,9 @@
             try
             {
                 regexError = false;
+                content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
                 Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.RightToLeft | RegexOptions.Compiled |
+                    RegexOptions.RightToLeft | RegexOptions.Multiline |
                     (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 var match = regex.Match(content, Document.Selection.StartPosition);
@@ -322,10 +324,11 @@
         {
             regexError = false;
             output = string.Empty;
+            content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
 
             try
             {
-                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Multiline | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 if (regex.IsMatch(content))
                 {
@@ -334,7 +337,7 @@
                         replaceText = ApplyTabAndLineEndingFix(replaceText);
                     }
 
-                    output = regex.Replace(content, replaceText);
+                    output = regex.Replace(content, replaceText).Replace(RegexDefaultLineEnding, RichEditBoxDefaultLineEnding);
                     return true;
                 }
             }
