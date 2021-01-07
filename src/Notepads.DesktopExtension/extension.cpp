@@ -68,7 +68,7 @@ fire_and_forget launchElevatedProcess()
     AppCenter::trackEvent("OnAdminstratorPrivilageRequested", properties);
 }
 
-void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+VOID onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
 {
     // Get a deferral because we use an awaitable API below to respond to the message
     // and we don't want this call to get canceled while we are waiting.
@@ -87,7 +87,7 @@ void onConnectionServiceRequestRecieved(AppServiceConnection sender, AppServiceR
     messageDeferral.Complete();
 }
 
-void onConnectionServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+VOID onConnectionServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
 {
     exitApp();
 }

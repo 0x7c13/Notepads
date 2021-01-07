@@ -9,7 +9,7 @@ using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::DataTransfer;
 
 constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
-constexpr LPCTSTR pipeNameFormat = L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}\\{}";
+constexpr LPCTSTR pipeNameFormat = L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}";
 constexpr LPCTSTR namedObjectFormat = L"AppContainerNamedObjects\\{}\\{}";
 
 extern DWORD sessionId;
@@ -59,7 +59,6 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 
         INT dataArrayLength = stoi(dataArrayLengthStr);
         wstring memoryMapName = format(namedObjectFormat, packageSid, memoryMapId);
-
         HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
         if (hMemory)
         {
@@ -85,7 +84,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
                     CloseHandle(hFile);
                 }
 
-                CloseHandle(mapView);
+                UnmapViewOfFile(mapView);
             }
 
             CloseHandle(hMemory);
@@ -208,13 +207,14 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
     return 0;
 }
 
-void initializeAdminService()
+VOID initializeAdminService()
 {
     adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminWriteEventNameStr).c_str());
     adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminRenameEventNameStr).c_str());
 
-    writePipeName = format(pipeNameFormat, sessionId, packageSid, Package::Current().Id().FamilyName(), AdminWritePipeConnectionNameStr);
-    renamePipeName = format(pipeNameFormat, sessionId, packageSid, Package::Current().Id().FamilyName(), AdminRenamePipeConnectionNameStr);
+    auto packageFamilyName = Package::Current().Id().FamilyName();
+    writePipeName = format(pipeNameFormat, sessionId, packageSid, AdminWritePipeConnectionNameStr);
+    renamePipeName = format(pipeNameFormat, sessionId, packageSid, AdminRenamePipeConnectionNameStr);
 
     printDebugMessage(L"Successfully started Adminstrator Extension.");
     printDebugMessage(L"Waiting on uwp app to send data.");

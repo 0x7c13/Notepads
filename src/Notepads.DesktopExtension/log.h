@@ -98,7 +98,7 @@ namespace AppCenter
 		}
 
 		template <typename Writer>
-		void Serialize(Writer& writer) const
+		VOID Serialize(Writer& writer) const
 		{
 			writer.StartObject();
 
@@ -183,7 +183,7 @@ namespace AppCenter
 		Exception* _exception = NULL;
 		vector<pair<const CHAR*, string>> _properties;
 
-		void InitializeLog()
+		VOID InitializeLog()
 		{
 			switch (_type)
 			{

@@ -83,7 +83,7 @@ namespace AppCenter
 		}
 
 		template <typename Writer>
-		void Serialize(Writer& writer) const
+		VOID Serialize(Writer& writer) const
 		{
 			writer.StartObject();
 

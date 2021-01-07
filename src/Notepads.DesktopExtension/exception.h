@@ -25,7 +25,7 @@ namespace AppCenter
 		}
 
 		template <typename Writer>
-		void Serialize(Writer& writer) const
+		VOID Serialize(Writer& writer) const
 		{
 			if (_lineNumber <= 0 && _fileName.empty()) return;
 
@@ -77,7 +77,7 @@ namespace AppCenter
 		}
 
 		template <typename Writer>
-		void Serialize(Writer& writer) const
+		VOID Serialize(Writer& writer) const
 		{
 			writer.StartObject();
 

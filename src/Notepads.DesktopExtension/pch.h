@@ -35,10 +35,10 @@ constexpr LPCTSTR CreateElevetedExtensionCommandStr = L"CreateElevetedExtension"
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 bool isElevatedProcess();
-void setExceptionHandling();
-void exitApp();
+VOID setExceptionHandling();
+VOID exitApp();
 
-void printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime = 0);
+VOID printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime = 0);
 std::string getTimeStamp();
 std::string getTimeStamp(const CHAR* format);
 std::string to_string(winrt::Windows::System::ProcessorArchitecture arch);
@@ -47,7 +47,7 @@ std::string base64_encode(const std::string& in);
 winrt::fire_and_forget initializeInteropService();
 winrt::fire_and_forget launchElevatedProcess();
 
-void initializeAdminService();
+VOID initializeAdminService();
 winrt::Windows::Foundation::IInspectable readSettingsKey(winrt::hstring key);
 
 std::pair<DWORD, std::wstring> getLastErrorDetails();

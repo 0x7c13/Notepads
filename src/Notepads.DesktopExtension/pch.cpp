@@ -16,7 +16,7 @@ constexpr INT MAX_DATETIME_STR = 100;
 
 StorageFile logFile = NULL;
 
-void printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime) {
+VOID printDebugMessage([[maybe_unused]] LPCTSTR message, [[maybe_unused]] DWORD sleepTime) {
 #ifdef _DEBUG
 	wcout << message << endl;
 	Sleep(sleepTime);

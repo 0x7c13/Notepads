@@ -18,7 +18,7 @@ namespace AppCenter
 		static struct curl_slist* headerList = NULL;
 	}
 
-	void start();
-	void trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace);
-	void trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid = "");
+	VOID start();
+	VOID trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace);
+	VOID trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid = "");
 }

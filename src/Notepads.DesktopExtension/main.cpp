@@ -30,24 +30,26 @@ INT releaseResources()
     return 0;
 }
 
-void exitApp()
+VOID exitApp()
 {
     exit(0);
 }
 
-void onUnhandledException()
+VOID onUnhandledException()
 {
     logLastError(true).get();
+    Sleep(5000);
     exitApp();
 }
 
-void onUnexpectedException()
+VOID onUnexpectedException()
 {
     logLastError(false).get();
+    Sleep(5000);
     exitApp();
 }
 
-void setExceptionHandling()
+VOID setExceptionHandling()
 {
     set_terminate(onUnhandledException);
     set_unexpected(onUnexpectedException);
@@ -143,6 +145,11 @@ INT main()
         if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
     }
 
+    /*INT desiredVal = 0;
+    HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, DesktopExtensionLifetimeObjNameStr).c_str());
+    LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, 4);
+    volatile VOID* address = static_cast<volatile VOID*>(mapView);
+    if (WaitOnAddress(mapView, &desiredVal, 4, INFINITE)) cout << "wait completed" << endl;*/
     wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}",
         sessionId, packageSid, DesktopExtensionLifetimeObjNameStr);
     while (WaitNamedPipe(pipeName.c_str(), 2000) || GetLastError() == ERROR_SEM_TIMEOUT)

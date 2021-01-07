@@ -18,7 +18,7 @@ using namespace Windows::Storage;
 using namespace Windows::System;
 using namespace Windows::System::Profile;
 
-void AppCenter::start()
+VOID AppCenter::start()
 {
 	if (!AppCenterSecret) return;
 
@@ -30,7 +30,7 @@ void AppCenter::start()
 	headerList = curl_slist_append(headerList, format("install-id: {}", to_string(installId)).c_str());
 }
 
-void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace)
+VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace)
 {
 	if (!headerList) return;
 
@@ -111,7 +111,7 @@ void AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 	curl_easy_cleanup(curl);
 }
 
-void AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid)
+VOID AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, string>>& properties, const string& sid)
 {
 	if (!headerList) return;
 

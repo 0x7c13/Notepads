@@ -46,6 +46,7 @@
 
         public static AppServiceConnection InteropServiceConnection = null;
         public static NamedPipeServerStream ExtensionLifetimeObject = null;
+        //public static MemoryMappedFile ExtensionLifetimeObject = null;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static EventWaitHandle _adminWriteEvent = null;
@@ -61,6 +62,19 @@
                     $"Local\\{SettingsKey.DesktopExtensionLifetimeObjNameStr}",
                     PipeDirection.In,
                     NamedPipeServerStream.MaxAllowedServerInstances);
+                /*try
+                {
+                    ExtensionLifetimeObject = MemoryMappedFile.OpenExisting(SettingsKey.DesktopExtensionLifetimeObjNameStr, MemoryMappedFileRights.ReadWrite);
+                }
+                catch (FileNotFoundException)
+                {
+                    ExtensionLifetimeObject = MemoryMappedFile.CreateOrOpen(SettingsKey.DesktopExtensionLifetimeObjNameStr, 4, MemoryMappedFileAccess.ReadWrite);
+                    using (var writer = new BinaryWriter(ExtensionLifetimeObject.CreateViewStream()))
+                    {
+                        writer.Write(1);
+                        writer.Flush();
+                    }
+                }*/
             }
 
             if (_adminWriteEvent == null)
@@ -142,7 +156,7 @@
             if (InteropServiceConnection == null && !(await Initialize())) return;
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream(
-                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminWritePipeConnectionNameStr}",
+                $"Local\\{SettingsKey.AdminWritePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
@@ -204,7 +218,7 @@
             var token = SharedStorageAccessManager.AddFile(file);
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream(
-                $"Local\\{Package.Current.Id.FamilyName}\\{SettingsKey.AdminRenamePipeConnectionNameStr}",
+                $"Local\\{SettingsKey.AdminRenamePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,

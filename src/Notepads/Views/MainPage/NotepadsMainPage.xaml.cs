@@ -472,14 +472,6 @@
             }
         }
 
-        private async void HideSettingsPane_OnSettingsChanged(object sender, bool hideArgs)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
-            {
-                RootSplitView.IsPaneOpen = !hideArgs;
-            });
-        }
-
         #endregion
 
         #region NotepadsCore Events
