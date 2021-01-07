@@ -293,5 +293,29 @@
             }
             return false;
         }
+
+        public async Task CreateAndOpenFile()
+        {
+            if (!(FileSystemUtility.GetLastErrorFileOpenPath() is string lastErrorFileOpenPath) || string.IsNullOrEmpty(lastErrorFileOpenPath)) return;
+
+            bool createFile = false;
+            var createNewFileReminderDialog = new FileCreateDialog(lastErrorFileOpenPath, () =>
+            {
+                createFile = true;
+            });
+
+            await DialogManager.OpenDialogAsync(createNewFileReminderDialog, awaitPreviousDialog: true);
+
+            var file = await FileSystemUtility.CreateFile(createFile ? lastErrorFileOpenPath : string.Empty);
+
+            if (file != null)
+            {
+                await OpenFile(file);
+            }
+            else if (createFile)
+            {
+                NotificationCenter.Instance.PostNotification(string.Format(_resourceLoader.GetString("GetFileOpenCreateNewFileReminderDialog_NotificationMsg_FileCreateError"), lastErrorFileOpenPath), 1500);
+            }
+        }
     }
 }

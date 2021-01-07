@@ -33,6 +33,8 @@
 
         private const string WslRootPath = "\\\\wsl$\\";
 
+        private static string _lastErrorFileOpenPath = string.Empty;
+
         // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
         private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
 
@@ -306,8 +308,10 @@
             {
                 return await StorageFile.GetFileFromPathAsync(filePath);
             }
-            catch
+            catch (Exception ex)
             {
+                if (ex is FileNotFoundException) _lastErrorFileOpenPath = filePath;
+
                 return null;
             }
         }
@@ -632,6 +636,27 @@
         public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
             return await folder.CreateFileAsync(fileName, option);
+        }
+
+        public static async Task<StorageFile> CreateFile(string filePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    var pos = filePath.IndexOf(Path.DirectorySeparatorChar, 2);
+                    return await CreateFile(await StorageFolder.GetFolderFromPathAsync(filePath.Substring(0, pos)), filePath.Substring(pos + 1));
+                }
+            }
+            catch (Exception) { }
+
+            _lastErrorFileOpenPath = string.Empty;
+            return null;
+        }
+
+        public static string GetLastErrorFileOpenPath()
+        {
+            return _lastErrorFileOpenPath;
         }
 
         public static async Task<bool> FileExists(StorageFile file)

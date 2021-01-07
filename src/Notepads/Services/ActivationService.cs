@@ -4,6 +4,7 @@
     using Notepads.Utilities;
     using Notepads.Views.MainPage;
     using Windows.ApplicationModel.Activation;
+    using Windows.ApplicationModel.Resources;
     using Windows.UI.Xaml.Controls;
 
     public static class ActivationService
@@ -97,6 +98,10 @@
                 if (file != null)
                 {
                     await mainPage.OpenFile(file);
+                }
+                else
+                {
+                    await mainPage.CreateAndOpenFile();
                 }
             }
         }

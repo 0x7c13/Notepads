@@ -224,9 +224,9 @@
                 if (file != null && await OpenFile(file))
                 {
                     loadedCount++;
+                    _appLaunchCmdDir = null;
+                    _appLaunchCmdArgs = null;
                 }
-                _appLaunchCmdDir = null;
-                _appLaunchCmdArgs = null;
             }
             else if (_appLaunchUri != null)
             {
@@ -273,6 +273,17 @@
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            }
+            Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
+            Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            Application.Current.EnteredBackground -= App_EnteredBackground;
+            Application.Current.EnteredBackground += App_EnteredBackground;
+
+            if (_appLaunchCmdDir != null)
+            {
+                await CreateAndOpenFile();
+                _appLaunchCmdDir = null;
+                _appLaunchCmdArgs = null;
             }
         }
 
