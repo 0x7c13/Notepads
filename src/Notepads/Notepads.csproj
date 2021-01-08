@@ -447,9 +447,9 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <PropertyGroup Condition="'$(Configuration)' == 'Production'">
-    <PreBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -target PreBuild</PreBuildEvent>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -target PostBuild</PostBuildEvent>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <PreBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -config $(Configuration) -target PreBuild</PreBuildEvent>
+    <PostBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -config $(Configuration) -target PostBuild</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
