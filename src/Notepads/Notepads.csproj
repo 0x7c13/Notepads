@@ -17,7 +17,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <GenerateAppInstallerFile>true</GenerateAppInstallerFile>
     <AppxBundle>Always</AppxBundle>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -447,10 +447,15 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <PreBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -config $(Configuration) -target PreBuild</PreBuildEvent>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir) -config $(Configuration) -target PostBuild</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <Exec Command="powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_manifest_file %(AppxManifest.FullPath) -config $(Configuration)" ConsoleToMsBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
+    </Exec>
+    <ItemGroup>
+      <AppxManifest Remove="%(AppxManifest.Identity)" />
+      <AppxManifest Include="$(GeneratedAppxManifest)" />
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
