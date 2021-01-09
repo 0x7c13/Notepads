@@ -98,7 +98,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(ProjectDir)build.ps1 -project_dir $(ProjectDir)</Command>
+      <Command>powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -project_dir $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
