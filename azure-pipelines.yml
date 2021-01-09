@@ -19,9 +19,9 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- task: MSBuild@1
+- task: VSBuild@1
   inputs:
-    platform: 'x86'
+    platform: 'x64'
     solution: '**/*.wapproj'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/t:build;_GenerateAppxPackage
