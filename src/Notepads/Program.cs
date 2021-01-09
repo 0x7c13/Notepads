@@ -10,8 +10,6 @@
 
     public static class Program
     {
-        public static bool IsFirstInstance { get; set; }
-
         static void Main(string[] args)
         {
 #if DEBUG
@@ -25,17 +23,9 @@
             //    // No activated event args, so this is not an activation via the multi-instance ID
             //    // Just create a new instance and let App OnActivated resolve the launch
             //    App.IsGameBarWidget = true;
-            //    App.IsFirstInstance = true;
+            //    App.IsPrimaryInstance = true;
             //    Windows.UI.Xaml.Application.Start(p => new App());
             //}
-
-            var instances = AppInstance.GetInstances();
-
-            if (instances.Count == 0)
-            {
-                IsFirstInstance = true;
-                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
-            }
 
             if (activatedArgs is FileActivatedEventArgs)
             {
@@ -86,9 +76,7 @@
         private static void OpenNewInstance()
         {
             AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
-            App.IsFirstInstance = IsFirstInstance;
             Windows.UI.Xaml.Application.Start(p => new App());
-            IsFirstInstance = false;
         }
 
         private static void RedirectOrCreateNewInstance()
@@ -97,9 +85,7 @@
 
             if (instance.IsCurrentInstance)
             {
-                App.IsFirstInstance = IsFirstInstance;
                 Windows.UI.Xaml.Application.Start(p => new App());
-                IsFirstInstance = false;
             }
             else
             {
