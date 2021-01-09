@@ -26,10 +26,10 @@
 
         public static ElementTheme ThemeMode
         {
-            get => _themeMode; 
+            get => _themeMode;
             set
             {
-                if(value!=_themeMode)
+                if (value != _themeMode)
                 {
                     _themeMode = value;
                     OnThemeChanged?.Invoke(null, value);
@@ -92,18 +92,18 @@
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(bool shouldInvokeChangedEvent = false)
         {
-            InitializeThemeMode();
+            InitializeThemeMode(shouldInvokeChangedEvent);
 
-            InitializeAppAccentColor();
+            InitializeAppAccentColor(shouldInvokeChangedEvent);
 
-            InitializeCustomAccentColor();
+            InitializeCustomAccentColor(shouldInvokeChangedEvent);
 
-            InitializeAppBackgroundPanelTintOpacity();
+            InitializeAppBackgroundPanelTintOpacity(shouldInvokeChangedEvent);
         }
 
-        private static void InitializeAppAccentColor()
+        public static void InitializeAppAccentColor(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.UseWindowsAccentColorBool) is bool useWindowsAccentColor)
             {
@@ -125,9 +125,11 @@
                     _appAccentColor = accentColorHexStr.ToColor();
                 }
             }
+
+            if (invokeChangedEvent) OnAccentColorChanged?.Invoke(null, _appAccentColor);
         }
 
-        private static void InitializeCustomAccentColor()
+        public static void InitializeCustomAccentColor(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
             {
@@ -147,7 +149,7 @@
             }
         }
 
-        private static void InitializeAppBackgroundPanelTintOpacity()
+        public static void InitializeAppBackgroundPanelTintOpacity(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.AppBackgroundTintOpacityDouble) is double tintOpacity)
             {
@@ -157,9 +159,11 @@
             {
                 _appBackgroundPanelTintOpacity = 0.75;
             }
+
+            if (invokeChangedEvent) OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
         }
 
-        private static void InitializeThemeMode()
+        public static void InitializeThemeMode(bool invokeChangedEvent = false)
         {
             ThemeListener.ThemeChanged += ThemeListener_ThemeChanged;
 
@@ -174,6 +178,8 @@
             {
                 _themeMode = ElementTheme.Default;
             }
+
+            if (invokeChangedEvent) OnThemeChanged?.Invoke(null, ThemeMode);
         }
 
         private static void ThemeListener_ThemeChanged(ThemeListener sender)

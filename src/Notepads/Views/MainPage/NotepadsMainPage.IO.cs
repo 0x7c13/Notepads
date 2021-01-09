@@ -174,7 +174,7 @@
                     AdminOperationType.Save, file.Path,
                     async () =>
                     {
-                        await DesktopExtensionService.CreateElevetedExtension();
+                        await DesktopExtensionService.LaunchElevetedProcess();
                     },
                     () =>
                     {

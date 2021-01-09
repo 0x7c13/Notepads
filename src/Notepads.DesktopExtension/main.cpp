@@ -15,7 +15,6 @@ hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L""
 
 extern HANDLE adminWriteEvent;
 extern HANDLE adminRenameEvent;
-extern HANDLE appExitJob;
 
 IInspectable readSettingsKey(hstring key)
 {
@@ -26,7 +25,6 @@ INT releaseResources()
 {
     CloseHandle(adminWriteEvent);
     CloseHandle(adminRenameEvent);
-    CloseHandle(appExitJob);
     return 0;
 }
 
@@ -55,18 +53,50 @@ VOID setExceptionHandling()
     set_unexpected(onUnexpectedException);
 }
 
-bool isElevetedProcessLaunchRequested()
+VOID launchElevatedProcess()
 {
-    auto result = false;
+    TCHAR fileName[MAX_PATH];
+    GetModuleFileName(NULL, fileName, MAX_PATH);
 
-    INT argCount;
-    LPTSTR* argList = CommandLineToArgvW(GetCommandLine(), &argCount);
-    if (argCount > 3 && wcscmp(argList[3], L"/admin") == 0)
+    SHELLEXECUTEINFO shExInfo
     {
-        result = true;
+        .cbSize = sizeof(shExInfo),
+        .fMask = SEE_MASK_NOCLOSEPROCESS,
+        .hwnd = 0,
+        .lpVerb = L"runas",
+        .lpFile = fileName,
+        .lpParameters = L"",
+        .lpDirectory = 0,
+        .nShow = SW_SHOW,
+        .hInstApp = 0
+    };
+
+    vector<pair<const CHAR*, string>> properties;
+    if (ShellExecuteEx(&shExInfo))
+    {
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessSuccessStr));
+
+        printDebugMessage(L"Adminstrator Extension has been launched.");
+        properties.push_back(pair("Accepted", "True"));
+    }
+    else
+    {
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessSuccessStr));
+
+        printDebugMessage(L"Launching of Adminstrator Extension was cancelled.");
+        pair<DWORD, wstring> ex = getLastErrorDetails();
+        properties.insert(properties.end(),
+            {
+                pair("Denied", "True"),
+                pair("Error Code", to_string(ex.first)),
+                pair("Error Message", to_string(ex.second))
+            });
     }
 
-    return result;
+    ApplicationData::Current().SignalDataChanged();
+    AppCenter::trackEvent("OnAdminstratorPrivilageRequested", properties);
 }
 
 bool isFirstInstance(LPCTSTR mutexName)
@@ -141,20 +171,17 @@ INT main()
     {
         if (!isFirstInstance(DesktopExtensionMutexName)) return 0;
 
-        initializeInteropService();
-        if (isElevetedProcessLaunchRequested()) launchElevatedProcess();
+        launchElevatedProcess();
+        return 0;
     }
 
-    /*INT desiredVal = 0;
-    HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, DesktopExtensionLifetimeObjNameStr).c_str());
-    LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, 4);
-    volatile VOID* address = static_cast<volatile VOID*>(mapView);
-    if (WaitOnAddress(mapView, &desiredVal, 4, INFINITE)) cout << "wait completed" << endl;*/
-    wstring pipeName = format(L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}",
-        sessionId, packageSid, DesktopExtensionLifetimeObjNameStr);
-    while (WaitNamedPipe(pipeName.c_str(), 2000) || GetLastError() == ERROR_SEM_TIMEOUT)
+    LifeTimeCheck:
+    HANDLE lifeTimeObj = OpenMutex(SYNCHRONIZE, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, DesktopExtensionLifetimeObjNameStr).c_str());
+    if (lifeTimeObj)
     {
-        WaitNamedPipe(pipeName.c_str(), NMPWAIT_WAIT_FOREVER);
+        CloseHandle(lifeTimeObj);
+        Sleep(1000);
+        goto LifeTimeCheck;
     }
     exit(0);
 }

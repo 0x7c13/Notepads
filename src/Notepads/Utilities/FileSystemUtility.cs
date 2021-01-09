@@ -579,10 +579,8 @@
                     }
                     catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
                     {
-                        if (!DesktopExtensionService.ShouldUseDesktopExtension)
-                        {
-                            throw ex;
-                        }
+                        if (!DesktopExtensionService.ShouldUseDesktopExtension) throw ex;
+
                         await DesktopExtensionService.SaveFileAsAdmin(file.Path, result);
                     }
                 }

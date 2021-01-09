@@ -27,7 +27,6 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
-    using Windows.ApplicationModel;
 
     public sealed partial class NotepadsMainPage : Page
     {
@@ -270,22 +269,19 @@
                 // To work around this do not use the EnteredBackground event when running as a widget.
                 // Microsoft is tracking this issue as VSO#25735260
                 Application.Current.EnteredBackground -= App_EnteredBackground;
-                Application.Current.LeavingBackground -= App_LeavingBackground;
                 Application.Current.EnteredBackground += App_EnteredBackground;
-                Application.Current.LeavingBackground += App_LeavingBackground;
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
 
-            await DesktopExtensionService.Initialize();
+            InterInstanceSyncService.Initialize(this);
+            DesktopExtensionService.Initialize();
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
         {
             var deferral = e.GetDeferral();
-
-            DesktopExtensionService.InteropServiceConnection?.Dispose();
 
             if (AppSettingsService.IsSessionSnapshotEnabled)
             {
@@ -293,11 +289,6 @@
             }
 
             deferral.Complete();
-        }
-
-        private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            await DesktopExtensionService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)
@@ -444,6 +435,11 @@
             {
                 editorFlyout.Hide();
             }
+        }
+
+        public void CloseSettingsPane()
+        {
+            RootSplitView.IsPaneOpen = false;
         }
 
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)

@@ -5,7 +5,6 @@
 #include "windows.h"
 #include "shellapi.h"
 #include "winrt/Windows.ApplicationModel.h"
-#include "winrt/Windows.ApplicationModel.AppService.h"
 #include "winrt/Windows.ApplicationModel.DataTransfer.h"
 #include "winrt/Windows.Foundation.h"
 #include "winrt/Windows.Foundation.Collections.h"
@@ -21,17 +20,16 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 constexpr LPCTSTR AppCenterSecret = NULL;
 constexpr LPCTSTR AppCenterInstallIdStr = L"AppCenterInstallIdStr";
-constexpr LPCTSTR InteropServiceName = L"DesktopExtensionServiceConnection";
-constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
+constexpr LPCTSTR LastChangedSettingsKeyStr = L"LastChangedSettingsKeyStr";
+constexpr LPCTSTR LastChangedSettingsAppInstanceIdStr = L"LastChangedSettingsAppInstanceIdStr";
+constexpr LPCTSTR LaunchElevetedProcessSuccessStr = L"LaunchElevetedProcessSuccess";
+constexpr LPCTSTR LaunchElevetedProcessFailedStr = L"LaunchElevetedProcessFailed";
 constexpr LPCTSTR DesktopExtensionLifetimeObjNameStr = L"DesktopExtensionLifetimeObj";
+constexpr LPCTSTR PackageSidStr = L"PackageSidStr";
 constexpr LPCTSTR AdminWriteEventNameStr = L"NotepadsAdminWriteEvent";
 constexpr LPCTSTR AdminWritePipeConnectionNameStr = L"NotepadsAdminWritePipe";
 constexpr LPCTSTR AdminRenameEventNameStr = L"NotepadsAdminRenameEvent";
 constexpr LPCTSTR AdminRenamePipeConnectionNameStr = L"NotepadsAdminRenamePipe";
-constexpr LPCTSTR InteropCommandLabel = L"Command";
-constexpr LPCTSTR InteropCommandAdminCreatedLabel = L"AdminCreated";
-constexpr LPCTSTR RegisterExtensionCommandStr = L"RegisterExtension";
-constexpr LPCTSTR CreateElevetedExtensionCommandStr = L"CreateElevetedExtension";
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 bool isElevatedProcess();
@@ -43,9 +41,6 @@ std::string getTimeStamp();
 std::string getTimeStamp(const CHAR* format);
 std::string to_string(winrt::Windows::System::ProcessorArchitecture arch);
 std::string base64_encode(const std::string& in);
-
-winrt::fire_and_forget initializeInteropService();
-winrt::fire_and_forget launchElevatedProcess();
 
 VOID initializeAdminService();
 winrt::Windows::Foundation::IInspectable readSettingsKey(winrt::hstring key);

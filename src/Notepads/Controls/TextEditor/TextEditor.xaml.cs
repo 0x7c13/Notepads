@@ -308,8 +308,10 @@
                     await EditingFile.RenameAsync(newFileName);
                     result = true;
                 }
-                catch (UnauthorizedAccessException)
+                catch (UnauthorizedAccessException ex)
                 {
+                    if (!DesktopExtensionService.ShouldUseDesktopExtension) throw ex;
+
                     var file = await DesktopExtensionService.RenameFileAsAdmin(EditingFile, newFileName);
                     if (file != null)
                     {

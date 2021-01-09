@@ -1,14 +1,10 @@
 ﻿namespace Notepads.Services
 {
     using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Controls.Dialog;
-    using Notepads.Extensions;
     using Notepads.Settings;
     using Notepads.Utilities;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.IO.MemoryMappedFiles;
     using System.IO.Pipes;
@@ -16,11 +12,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
-    using Windows.ApplicationModel.AppService;
-    using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
-    using Windows.Foundation.Collections;
     using Windows.Foundation.Metadata;
     using Windows.Security.Authentication.Web;
     using Windows.Storage;
@@ -41,40 +34,24 @@
 
     public static class DesktopExtensionService
     {
-        public static readonly bool ShouldUseDesktopExtension = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
+        public static readonly bool ShouldUseDesktopExtension = 
+            ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
-        public static AppServiceConnection InteropServiceConnection = null;
-        public static NamedPipeServerStream ExtensionLifetimeObject = null;
-        //public static MemoryMappedFile ExtensionLifetimeObject = null;
+        public static Mutex ExtensionLifetimeObject = null;
+
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         private static EventWaitHandle _adminWriteEvent = null;
         private static EventWaitHandle _adminRenameEvent = null;
 
-        public static async Task<bool> Initialize()
+        public static void Initialize()
         {
-            if (!ShouldUseDesktopExtension) return false;
+            if (!ShouldUseDesktopExtension) return;
 
             if (ExtensionLifetimeObject == null)
             {
-                ExtensionLifetimeObject = new NamedPipeServerStream(
-                    $"Local\\{SettingsKey.DesktopExtensionLifetimeObjNameStr}",
-                    PipeDirection.In,
-                    NamedPipeServerStream.MaxAllowedServerInstances);
-                /*try
-                {
-                    ExtensionLifetimeObject = MemoryMappedFile.OpenExisting(SettingsKey.DesktopExtensionLifetimeObjNameStr, MemoryMappedFileRights.ReadWrite);
-                }
-                catch (FileNotFoundException)
-                {
-                    ExtensionLifetimeObject = MemoryMappedFile.CreateOrOpen(SettingsKey.DesktopExtensionLifetimeObjNameStr, 4, MemoryMappedFileAccess.ReadWrite);
-                    using (var writer = new BinaryWriter(ExtensionLifetimeObject.CreateViewStream()))
-                    {
-                        writer.Write(1);
-                        writer.Flush();
-                    }
-                }*/
+                ExtensionLifetimeObject = new Mutex(false, SettingsKey.DesktopExtensionLifetimeObjNameStr);
             }
 
             if (_adminWriteEvent == null)
@@ -86,61 +63,40 @@
             {
                 _adminRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminRenameEventNameStr);
             }
+        }
 
-            InteropServiceConnection = new AppServiceConnection()
-            {
-                AppServiceName = SettingsKey.InteropServiceName,
-                PackageFamilyName = Package.Current.Id.FamilyName
-            };
-
-            InteropServiceConnection.RequestReceived += InteropServiceConnection_RequestReceived;
-            InteropServiceConnection.ServiceClosed += InteropServiceConnection_ServiceClosed;
-
-            AppServiceConnectionStatus status = await InteropServiceConnection.OpenAsync();
-            if (status != AppServiceConnectionStatus.Success)
-            {
-                Analytics.TrackEvent("OnConnectionToAppServiceFailed", new Dictionary<string, string>
-                {
-                    { "ConnectionStatus", status.ToString() },
-                    { "Culture", SystemInformation.Culture.EnglishName },
-                    { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                    { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                    { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                    { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() }
-                });
-
-                return false;
-            }
+        /// <summary>
+        /// Launch desktop extension with elevated privilages.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
+        public static async Task LaunchElevetedProcess()
+        {
+            if (!ShouldUseDesktopExtension) return;
 
             ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
             ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-
-            return true;
         }
 
-        private static async void InteropServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        /// <summary>
+        /// Notify user whether launching of eleveted process succeeded.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
+        /// <param name="isLaunched">Is eleveted process launched.</param>
+        public static void OnElevetedProcessLaunchRequested(bool isLaunched)
         {
-            var message = args.Request.Message;
-            if (!message.ContainsKey(SettingsKey.InteropCommandLabel) ||
-                !SettingsKey.CreateElevetedExtensionCommandStr.Equals(message[SettingsKey.InteropCommandLabel])) return;
-
-            await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
+            if (isLaunched)
             {
-                if (message.ContainsKey(SettingsKey.InteropCommandAdminCreatedLabel) && (bool)message[SettingsKey.InteropCommandAdminCreatedLabel])
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
-                }
-                else
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreationFailed"), 1500);
-                }
-            });
-        }
-
-        private static void InteropServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
-        {
-            return;
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
+            }
+            else
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreationFailed"), 1500);
+            }
         }
 
         /// <summary>
@@ -153,7 +109,7 @@
         /// <param name="data">Data to write.</param>
         public static async Task SaveFileAsAdmin(string filePath, byte[] data)
         {
-            if (InteropServiceConnection == null && !(await Initialize())) return;
+            if (!ShouldUseDesktopExtension) return;
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream(
                 $"Local\\{SettingsKey.AdminWritePipeConnectionNameStr}",
@@ -164,7 +120,7 @@
             {
                 _adminWriteEvent.Set();
                 // Wait for 250 ms for desktop extension to accept request.
-                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
+                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(100))
                 {
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
@@ -213,9 +169,7 @@
         /// <param name="newName">New name</param>
         public static async Task<StorageFile> RenameFileAsAdmin(StorageFile file, string newName)
         {
-            if (InteropServiceConnection == null && !(await Initialize())) return null;
-
-            var token = SharedStorageAccessManager.AddFile(file);
+            if (!ShouldUseDesktopExtension) return null;
 
             using (var adminConnectionPipeStream = new NamedPipeServerStream(
                 $"Local\\{SettingsKey.AdminRenamePipeConnectionNameStr}",
@@ -226,7 +180,7 @@
             {
                 _adminRenameEvent.Set();
                 // Wait for 250 ms for desktop extension to accept request.
-                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(250))
+                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(100))
                 {
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
@@ -234,7 +188,7 @@
                     var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
                         AdminOperationType.Rename,
                         file.Path,
-                        async () => { await DesktopExtensionService.CreateElevetedExtension(); },
+                        async () => { await DesktopExtensionService.LaunchElevetedProcess(); },
                         null);
 
                     var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
@@ -245,6 +199,7 @@
                 var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
                 var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
+                var token = SharedStorageAccessManager.AddFile(file);
                 await pipeWriter.WriteAsync($"{token}|{newName}");
                 await pipeWriter.FlushAsync();
 
@@ -253,29 +208,6 @@
                 file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
                 SharedStorageAccessManager.RemoveFile(token);
                 return file;
-            }
-        }
-
-        /// <summary>
-        /// Launch desktop extension with elevated privilages.
-        /// </summary>
-        /// <remarks>
-        /// Only available for legacy Windows 10 desktop.
-        /// </remarks>
-        public static async Task CreateElevetedExtension()
-        {
-            if (InteropServiceConnection == null && !(await Initialize())) return;
-
-            var message = new ValueSet { { SettingsKey.InteropCommandLabel, SettingsKey.CreateElevetedExtensionCommandStr } };
-            var response = await InteropServiceConnection.SendMessageAsync(message);
-            message = response.Message;
-
-            if (response.Status != AppServiceResponseStatus.Success ||
-                (message?.ContainsKey(SettingsKey.InteropCommandFailedLabel) ?? false &&
-                (bool)message[SettingsKey.InteropCommandFailedLabel]))
-            {
-                // Pass the group id that describes the correct parameter for prompting admin process launch
-                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("LaunchAdmin");
             }
         }
     }

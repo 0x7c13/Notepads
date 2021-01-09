@@ -20,14 +20,14 @@
 
             switch (ThemeSettingsService.ThemeMode)
             {
-                case ElementTheme.Default:
-                    ThemeModeDefaultButton.IsChecked = true;
-                    break;
                 case ElementTheme.Light:
                     ThemeModeLightButton.IsChecked = true;
                     break;
                 case ElementTheme.Dark:
                     ThemeModeDarkButton.IsChecked = true;
+                    break;
+                default:
+                    ThemeModeDefaultButton.IsChecked = true;
                     break;
             }
 
@@ -136,6 +136,7 @@
         {
             if (AccentColorPicker.IsEnabled)
             {
+                if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
                 ThemeSettingsService.AppAccentColor = args.NewColor;
                 if (!AccentColorToggle.IsOn)
                 {

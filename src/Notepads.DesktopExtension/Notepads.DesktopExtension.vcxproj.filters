@@ -27,9 +27,6 @@
     <ClCompile Include="elevated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="extension.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="appcenter.cpp">
       <Filter>AppCenter</Filter>
     </ClCompile>

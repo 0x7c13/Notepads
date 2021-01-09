@@ -161,6 +161,7 @@
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Services\DesktopExtensionService.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="Services\InterInstanceSyncService.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />
     <Compile Include="Utilities\LanguageUtility.cs" />
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
@@ -671,10 +672,6 @@
     <ProjectReference Include="..\Notepads.Controls\Notepads.Controls.csproj">
       <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
       <Name>Notepads.Controls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Notepads.Services\Notepads.Services.csproj">
-      <Project>{29dcaa68-1b6b-4290-8c05-691f52645d55}</Project>
-      <Name>Notepads.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

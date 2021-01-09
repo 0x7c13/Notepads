@@ -2,7 +2,6 @@
 {
     internal static class SettingsKey
     {
-#if DISABLE_XAML_GENERATED_MAIN
         // App related
         internal const string AppVersionStr = "AppVersionStr";
         internal const string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
@@ -39,20 +38,17 @@
         // Interop related
         // These values depend upon constant fields described in ..\Notepads.DesktopExtension\pch.h.
         // Changing value in one place require changing variable with similar name in another.
+        internal const string AppCenterSecret = null;
         internal const string AppCenterInstallIdStr = "AppCenterInstallIdStr";
-        internal const string InteropServiceName = "DesktopExtensionServiceConnection"; // Keep this same as AppSeviceName value in manifest
-        internal const string PackageSidStr = "PackageSidStr";
+        internal const string LastChangedSettingsKeyStr = "LastChangedSettingsKeyStr";
+        internal const string LastChangedSettingsAppInstanceIdStr = "LastChangedSettingsAppInstanceIdStr";
+        internal const string LaunchElevetedProcessSuccessStr = "LaunchElevetedProcessSuccess";
+        internal const string LaunchElevetedProcessFailedStr = "LaunchElevetedProcessFailed";
         internal const string DesktopExtensionLifetimeObjNameStr = "DesktopExtensionLifetimeObj";
+        internal const string PackageSidStr = "PackageSidStr";
         internal const string AdminWriteEventNameStr = "NotepadsAdminWriteEvent";
         internal const string AdminWritePipeConnectionNameStr = "NotepadsAdminWritePipe";
         internal const string AdminRenameEventNameStr = "NotepadsAdminRenameEvent";
         internal const string AdminRenamePipeConnectionNameStr = "NotepadsAdminRenamePipe";
-        internal const string InteropCommandAdminCreatedLabel = "AdminCreated";
-#endif
-        internal const string AppCenterSecret = null;
-        internal const string InteropCommandLabel = "Command";
-        internal const string InteropCommandFailedLabel = "Failed";
-        internal const string RegisterExtensionCommandStr = "RegisterExtension";
-        internal const string CreateElevetedExtensionCommandStr = "CreateElevetedExtension";
     }
 }
