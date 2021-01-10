@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -122,7 +122,7 @@
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>LE LOGICIEL EST FOURNI "EN L'ETAT", SANS AUCUNES GARANTIES, EXPRESSE OU IMPLICITE, Y COMPRIS DE MANIÈRE NON LIMITÉE À LA GARANTIE DE QUALITÉ MARCHANDE, D'ADÉQUATION À UN USAGE PARTICULIER ET DE NON-INFRACTION. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DE COPYRIGHT NE PEUVENT ÊTRE TENUS RESPONSABLES DE TOUTES RÉCLAMATIONS, DE DOMMAGES OU D'AUTRES RESPONSABILITÉS, QUE CELA SOIT UNE ACTION DE CONTRAT, DE LORT OU AUTRE, REALISANT OU LIÉE AU LOGICIEL OU À L'UTILISATION OU AUTRE LOGICIEL.</value>
+    <value>Le logiciel est fourni "tel quel", sans garantie d'aucune sorte, explicite ou implicite, incluant mais sans s'y limiter, les garanties de qualité marchande, d'adéquation à un usage particulier et de non-contrefaçon. En aucun cas, les auteurs ou les détenteurs de droits d'auteur ne peuvent être tenus responsables d'une quelconque réclamation, d'un quelconque dommage ou de toute autre responsabilité, que ce soit dans le cadre d'une action contractuelle, délictuelle ou autre, découlant du logiciel, de son utilisation ou d'autres transactions dans le logiciel, ou en relation avec ceux-ci.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
@@ -130,23 +130,23 @@
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Editeur de texte gratuit et open source designé et implémenté par Jackie (Jiaqi) Liu</value>
+    <value>Éditeur de texte gratuit et open source conçu et réalisé par Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Pour contacter les auteurs:</value>
+    <value>Pour contacter les auteurs :</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Pour les rapports de problèmes et les demandes de fonctionnalités:</value>
+    <value>Pour les rapports de problèmes et les demandes de fonctionnalités :</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Code source est disponible sur Github:</value>
+    <value>Code source est disponible sur GitHub :</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Pour plus d'infos, visitez notre site:</value>
+    <value>Pour plus d'infos, visitez notre site :</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
@@ -154,7 +154,7 @@
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>A propos</value>
+    <value>À propos</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Opacité de la teinte de fond acrylique. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
+    <value>Opacité de la teinte de fond acrylique. Notez que l'effet acrylique sera désactivé lorsque le mode d'économie de la batterie est activé ou si vous désactivez les effets de transparence dans les paramètres de Windows.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -214,11 +214,11 @@
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Page de code Windows)</value>
+    <value>ANSI (Windows code page)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Le décodage de secours sera utilisé si le codage du fichier ne peut pas être reconnu.</value>
+    <value>Le décodage de secours sera utilisé si l'encodage du fichier ne peut pas être reconnu.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
@@ -238,7 +238,7 @@
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Police par défaut &amp; Taille</value>
+    <value>Police &amp; taille par défaut</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
@@ -250,19 +250,19 @@
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Défaut (\t)</value>
+    <value>Par défaut (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Paramètres du comportement de la touche de tabulation, ne s'appliquent qu'aux nouveaux onglets insérés par l'utilisateur.</value>
+    <value>Paramètre du comportement de la touche de tabulation. Ne s'applique qu'aux nouveaux onglets insérés par l'utilisateur.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Espaces</value>
+    <value>8 espaces</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Espaces</value>
+    <value>4 espaces</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
@@ -270,23 +270,23 @@
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Espaces</value>
+    <value>2 espaces</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Habillage de texte</value>
+    <value>Habillage du texte</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Mots enveloppés</value>
+    <value>Retour automatique à la ligne</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Mots enveloppés</value>
+    <value>Retour automatique à la ligne</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Texte &amp; Editeur</value>
+    <value>Texte &amp; éditeur</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
@@ -294,15 +294,15 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Une fois activé, Notepads mémorisera la session en cours pour le prochain lancement et effectuera une sauvegarde périodique de capture instantanée de session pour éviter toute perte de données accidentelle liée à des modifications non validées. Notepads NE vous rappelleras PAS d'enregistrer votre travail à la fermeture de l'application si cette fonctionnalité est activée. N'oubliez pas non plus que l'instantané de session ne fonctionne que dans la première instance ou dans l'instance principale de Notepads.</value>
+    <value>Une fois activé, Notepads mémorisera la session en cours pour le prochain lancement et effectuera une sauvegarde périodique de la session pour éviter toute perte de données accidentelle liée à des modifications non validées. Notepads NE vous rappellera PAS d'enregistrer votre travail à la fermeture de l'application si cette fonctionnalité est activée. N'oubliez pas non plus que l'instantané de session ne fonctionne que dans la première fenêtre ou dans la fenêtre principale de Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Activer la sauvegarde &amp; restauration de session</value>
+    <value>Activer la sauvegarde &amp; la restauration de session</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Activer la sauvegarde &amp; restauration de session</value>
+    <value>Activer la sauvegarde &amp; la restauration de session</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
@@ -310,11 +310,11 @@
     <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Mettez en surbrillance les mots mal orthographiés</value>
+    <value>Souligner les mots mal orthographiés</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Mettez en surbrillance les fautes</value>
+    <value>Souligner les mots mal orthographiés</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
@@ -322,7 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Une fois activé, Notepads ouvrira toujours le fichier dans une nouvelle fenêtre au lieu de créer un nouvel onglet.</value>
+    <value>Une fois activé, Notepads ouvrira toujours les fichiers dans une nouvelle fenêtre au lieu de créer un nouvel onglet.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
@@ -334,7 +334,7 @@
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Lancer les préférences</value>
+    <value>Préférences de lancement</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
@@ -350,11 +350,11 @@
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Entrez une URL de format https://www.example.com/search?q={0}</value>
+    <value>*Entrez une URL au format suivant : https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Les paramètres du moteur de recherche par défaut sont choisis lorsqu'une recherche Web est effectuée.</value>
+    <value>Le moteur de recherche par défaut est utilisé lorsqu'une recherche Web est effectuée.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
@@ -366,31 +366,59 @@
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Display</value>
+    <value>Affichage</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Afficher la bordure autour de la ligne actuelle.</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Display line numbers in the document.</value>
+    <value>Afficher les numéros de ligne dans le document.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Afficher les numéros de ligne</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Afficher les numéros de ligne</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Style</value>
+    <value>Style de police par défaut</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Weight</value>
+    <value>Épaisseur de police par défaut</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>Choisir une langue personalisée pour remplacer la langue par défaut du système. Le redémarrage de Notepads est nécessaire pour prendre en compte cette modification.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
+    <value>*Redémarrer Notepads pour prendre en compte les modifications.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Préférences linguistiques</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>Une fois activé, Notepads supprimera les espaces, tabulations et lignes vides en début et fin avant l'envoi au presse-papier.</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>Activer la copie intelligente</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>Activer la copie intelligente</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>Paramètres de la copie intelligente</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>Langue du système</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>

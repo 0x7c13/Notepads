@@ -2,8 +2,6 @@
 {
     using Notepads.Extensions;
     using Notepads.Services;
-    using Notepads.Settings;
-    using Notepads.Utilities;
     using Windows.System.Power;
     using Windows.UI;
     using Windows.UI.ViewManagement;
@@ -22,14 +20,14 @@
 
             switch (ThemeSettingsService.ThemeMode)
             {
-                case ElementTheme.Default:
-                    ThemeModeDefaultButton.IsChecked = true;
-                    break;
                 case ElementTheme.Light:
                     ThemeModeLightButton.IsChecked = true;
                     break;
                 case ElementTheme.Dark:
                     ThemeModeDarkButton.IsChecked = true;
+                    break;
+                default:
+                    ThemeModeDefaultButton.IsChecked = true;
                     break;
             }
 
@@ -131,7 +129,6 @@
                         ThemeSettingsService.ThemeMode = ElementTheme.Default;
                         break;
                 }
-                InteropService.SyncSettings(SettingsKey.RequestedThemeStr, ThemeSettingsService.ThemeMode);
             }
         }
 
@@ -139,20 +136,18 @@
         {
             if (AccentColorPicker.IsEnabled)
             {
+                if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
                 ThemeSettingsService.AppAccentColor = args.NewColor;
                 if (!AccentColorToggle.IsOn)
                 {
                     ThemeSettingsService.CustomAccentColor = args.NewColor;
-                    InteropService.SyncSettings(SettingsKey.CustomAccentColorHexStr, ThemeSettingsService.CustomAccentColor);
                 }
-                InteropService.SyncSettings(SettingsKey.AppAccentColorHexStr, ThemeSettingsService.AppAccentColor);
             }
         }
 
         private void BackgroundTintOpacitySlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             ThemeSettingsService.AppBackgroundPanelTintOpacity = e.NewValue / 100;
-            InteropService.SyncSettings(SettingsKey.AppBackgroundTintOpacityDouble, ThemeSettingsService.AppBackgroundPanelTintOpacity);
         }
 
         private void WindowsAccentColorToggle_OnToggled(object sender, RoutedEventArgs e)
@@ -160,7 +155,6 @@
             AccentColorPicker.IsEnabled = !AccentColorToggle.IsOn;
             ThemeSettingsService.UseWindowsAccentColor = AccentColorToggle.IsOn;
             AccentColorPicker.Color = AccentColorToggle.IsOn ? ThemeSettingsService.AppAccentColor : ThemeSettingsService.CustomAccentColor;
-            InteropService.SyncSettings(SettingsKey.UseWindowsAccentColorBool, ThemeSettingsService.UseWindowsAccentColor);
         }
     }
 }

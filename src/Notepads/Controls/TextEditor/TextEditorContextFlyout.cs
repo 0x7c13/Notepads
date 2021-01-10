@@ -24,6 +24,9 @@
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
+        private MenuFlyout _proofingFlyout;
+        private readonly MenuFlyoutSeparator _proofingSeparator = new MenuFlyoutSeparator();
+
         private readonly ITextEditor _textEditor;
         private readonly TextEditorCore _textEditorCore;
 
@@ -47,15 +50,28 @@
             Items.Add(Share);
 
             Opening += TextEditorContextFlyout_Opening;
+            Closed += TextEditorContextFlyout_Closed;
         }
 
         public void Dispose()
         {
             Opening -= TextEditorContextFlyout_Opening;
+            Closed -= TextEditorContextFlyout_Closed;
         }
 
         private void TextEditorContextFlyout_Opening(object sender, object e)
         {
+            if (_textEditorCore.IsSpellCheckEnabled &&
+                _textEditorCore.ProofingMenuFlyout is MenuFlyout proofingFlyout &&
+                proofingFlyout.Items?.Count > 0)
+            {
+                BuildProofingSubItems(proofingFlyout);
+            }
+            else
+            {
+                _proofingSeparator.Visibility = Visibility.Collapsed;
+            }
+
             if (_textEditorCore.Document.Selection.Type == SelectionType.InsertionPoint ||
                 _textEditorCore.Document.Selection.Type == SelectionType.None)
             {
@@ -79,10 +95,39 @@
             }
         }
 
+        private void BuildProofingSubItems(MenuFlyout proofingFlyout)
+        {
+            _proofingFlyout = proofingFlyout;
+
+            foreach (var item in _proofingFlyout.Items)
+            {
+                Items.Insert(_proofingFlyout.Items.IndexOf(item), item);
+            }
+
+            if (!Items.Contains(_proofingSeparator))
+            {
+                Items.Insert(_proofingFlyout.Items.Count, _proofingSeparator);
+            }
+
+            if (_proofingSeparator.Visibility == Visibility.Collapsed)
+            {
+                _proofingSeparator.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void TextEditorContextFlyout_Closed(object sender, object e)
+        {
+            if (_proofingFlyout?.Items?.Count > 0)
+            {
+                foreach (var item in _proofingFlyout.Items)
+                {
+                    Items.Remove(item);
+                }
+            }
+        }
+
         public void PrepareForInsertionMode()
         {
-            Cut.Visibility = Visibility.Collapsed;
-            Copy.Visibility = Visibility.Collapsed;
             RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Collapsed;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText");
@@ -90,8 +135,6 @@
 
         public void PrepareForSelectionMode()
         {
-            Cut.Visibility = Visibility.Visible;
-            Copy.Visibility = Visibility.Visible;
             RightToLeftReadingOrder.Visibility = !string.IsNullOrEmpty(_textEditor.GetText()) ? Visibility.Visible : Visibility.Collapsed;
             WebSearch.Visibility = Visibility.Visible;
             Share.Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareSelectedButtonDisplayText");
@@ -129,7 +172,7 @@
                         Key = VirtualKey.C,
                         IsEnabled = false,
                     });
-                    _copy.Click += (sender, args) => _textEditor.CopySelectedTextToWindowsClipboard(null);
+                    _copy.Click += (sender, args) => _textEditor.CopyTextToWindowsClipboard(null);
                 }
                 return _copy;
             }
@@ -342,7 +385,10 @@
                 });
                 _previewToggle.Click += (sender, args) =>
                 {
-                    _textEditor.ShowHideContentPreview();
+                    if (FileTypeUtility.IsPreviewSupported(_textEditor.FileType))
+                    {
+                        _textEditor.ShowHideContentPreview();
+                    }
                 };
                 return _previewToggle;
             }

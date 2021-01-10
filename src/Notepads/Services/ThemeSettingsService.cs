@@ -26,14 +26,14 @@
 
         public static ElementTheme ThemeMode
         {
-            get => _themeMode; 
+            get => _themeMode;
             set
             {
-                if(value!=_themeMode)
+                if (value != _themeMode)
                 {
                     _themeMode = value;
                     OnThemeChanged?.Invoke(null, value);
-                    if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, value.ToString());
+                    ApplicationSettingsStore.Write(SettingsKey.RequestedThemeStr, value.ToString());
                 }
             }
         }
@@ -50,7 +50,7 @@
                 {
                     AppAccentColor = UISettings.GetColorValue(UIColorType.Accent);
                 }
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor);
+                ApplicationSettingsStore.Write(SettingsKey.UseWindowsAccentColorBool, _useWindowsAccentColor);
             }
         }
 
@@ -63,7 +63,7 @@
             {
                 _appBackgroundPanelTintOpacity = value;
                 OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value);
+                ApplicationSettingsStore.Write(SettingsKey.AppBackgroundTintOpacityDouble, value);
             }
         }
 
@@ -76,7 +76,7 @@
             {
                 _appAccentColor = value;
                 OnAccentColorChanged?.Invoke(null, _appAccentColor);
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex());
+                ApplicationSettingsStore.Write(SettingsKey.AppAccentColorHexStr, value.ToHex());
             }
         }
 
@@ -88,22 +88,22 @@
             set
             {
                 _customAccentColor = value;
-                if (InteropService.EnableSettingsLogging) ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex());
+                ApplicationSettingsStore.Write(SettingsKey.CustomAccentColorHexStr, value.ToHex());
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(bool shouldInvokeChangedEvent = false)
         {
-            InitializeThemeMode();
+            InitializeThemeMode(shouldInvokeChangedEvent);
 
-            InitializeAppAccentColor();
+            InitializeAppAccentColor(shouldInvokeChangedEvent);
 
-            InitializeCustomAccentColor();
+            InitializeCustomAccentColor(shouldInvokeChangedEvent);
 
-            InitializeAppBackgroundPanelTintOpacity();
+            InitializeAppBackgroundPanelTintOpacity(shouldInvokeChangedEvent);
         }
 
-        private static void InitializeAppAccentColor()
+        public static void InitializeAppAccentColor(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.UseWindowsAccentColorBool) is bool useWindowsAccentColor)
             {
@@ -125,9 +125,11 @@
                     _appAccentColor = accentColorHexStr.ToColor();
                 }
             }
+
+            if (invokeChangedEvent) OnAccentColorChanged?.Invoke(null, _appAccentColor);
         }
 
-        private static void InitializeCustomAccentColor()
+        public static void InitializeCustomAccentColor(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.CustomAccentColorHexStr) is string customAccentColorHexStr)
             {
@@ -147,7 +149,7 @@
             }
         }
 
-        private static void InitializeAppBackgroundPanelTintOpacity()
+        public static void InitializeAppBackgroundPanelTintOpacity(bool invokeChangedEvent = false)
         {
             if (ApplicationSettingsStore.Read(SettingsKey.AppBackgroundTintOpacityDouble) is double tintOpacity)
             {
@@ -157,9 +159,11 @@
             {
                 _appBackgroundPanelTintOpacity = 0.75;
             }
+
+            if (invokeChangedEvent) OnBackgroundChanged?.Invoke(null, GetAppBackgroundBrush(ThemeMode));
         }
 
-        private static void InitializeThemeMode()
+        public static void InitializeThemeMode(bool invokeChangedEvent = false)
         {
             ThemeListener.ThemeChanged += ThemeListener_ThemeChanged;
 
@@ -174,6 +178,8 @@
             {
                 _themeMode = ElementTheme.Default;
             }
+
+            if (invokeChangedEvent) OnThemeChanged?.Invoke(null, ThemeMode);
         }
 
         private static void ThemeListener_ThemeChanged(ThemeListener sender)
@@ -202,9 +208,14 @@
 
             // Set ContentDialog background dimming color
             var themeMode = ThemeMode;
-            if (themeMode == ElementTheme.Default) themeMode = Application.Current.RequestedTheme.ToElementTheme();
+            themeMode = GetActualTheme(themeMode);
             ((SolidColorBrush)Application.Current.Resources["SystemControlPageBackgroundMediumAltMediumBrush"]).Color =
                 themeMode == ElementTheme.Dark ? Color.FromArgb(153, 0, 0, 0) : Color.FromArgb(153, 255, 255, 255);
+
+            if (DialogManager.ActiveDialog != null)
+            {
+                DialogManager.ActiveDialog.RequestedTheme = ThemeMode;
+            }
 
             // Set accent color
             UpdateSystemAccentColorAndBrushes(AppAccentColor);
@@ -228,12 +239,20 @@
             }
         }
 
+        public static ElementTheme GetActualTheme(ElementTheme theme)
+        {
+            if (theme == ElementTheme.Default)
+                return Application.Current.RequestedTheme.ToElementTheme();
+            else
+                return theme;
+        }
+
         private static Brush GetAppBackgroundBrush(ElementTheme theme)
         {
-            var darkModeBaseColor = Color.FromArgb(255, 50, 50, 50);
+            var darkModeBaseColor = Color.FromArgb(255, 46, 46, 46);
             var lightModeBaseColor = Color.FromArgb(255, 240, 240, 240);
 
-            if (theme == ElementTheme.Default) theme = Application.Current.RequestedTheme.ToElementTheme();
+            theme = GetActualTheme(theme);
             var baseColor = theme == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
 
             if (AppBackgroundPanelTintOpacity > 0.99f ||
@@ -256,7 +275,7 @@
 
         public static void ApplyThemeForTitleBarButtons(ApplicationViewTitleBar titleBar, ElementTheme theme)
         {
-            if (theme == ElementTheme.Default) theme = Application.Current.RequestedTheme.ToElementTheme();
+            theme = GetActualTheme(theme);
             if (theme == ElementTheme.Dark)
             {
                 // Set active window colors

@@ -27,7 +27,6 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
-    using Windows.ApplicationModel;
 
     public sealed partial class NotepadsMainPage : Page
     {
@@ -41,9 +40,6 @@
 
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
-
-        private const int TitleBarReservedAreaDefaultWidth = 180;
-        private const int TitleBarReservedAreaCompactOverlayWidth = 100;
 
         private INotepadsCore _notepadsCore;
 
@@ -61,6 +57,7 @@
                     _notepadsCore.TextEditorClosing += OnTextEditorClosing;
                     _notepadsCore.TextEditorSaved += OnTextEditorSaved;
                     _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
                     _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
                     _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
                     _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
@@ -159,7 +156,8 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F11, (args) => { EnterExitFullScreenMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F12, (args) => { EnterExitCompactOverlayMode(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsFirstInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsPrimaryInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, async (args) => { await RenameFileAsync(NotepadsCore.GetSelectedTextEditor()); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.L, async (args) => { await OpenFile(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); })
             });
         }
@@ -247,7 +245,7 @@
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
 
-                if (!App.IsFirstInstance)
+                if (!App.IsPrimaryInstance)
                 {
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
                 }
@@ -271,21 +269,14 @@
                 // To work around this do not use the EnteredBackground event when running as a widget.
                 // Microsoft is tracking this issue as VSO#25735260
                 Application.Current.EnteredBackground -= App_EnteredBackground;
-                Application.Current.LeavingBackground -= App_LeavingBackground;
                 Application.Current.EnteredBackground += App_EnteredBackground;
-                Application.Current.LeavingBackground += App_LeavingBackground;
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
 
-            InteropService.Initialize();
-            InteropService.HideSettingsPane += HideSettingsPane_OnSettingsChanged;
-            InteropService.UpdateRecentList += async (_, updateForOtherInstaneArgs) => await Dispatcher.CallOnUIThreadAsync(async () =>
-            {
-                await BuildOpenRecentButtonSubItems(updateForOtherInstaneArgs);
-            });
-            SettingsDelegate.Dispatcher = Dispatcher;
+            InterInstanceSyncService.Initialize(this);
+            DesktopExtensionService.Initialize();
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -297,16 +288,7 @@
                 await SessionManager.SaveSessionAsync();
             }
 
-            InteropService.InteropServiceConnection.Dispose();
             deferral.Complete();
-        }
-
-        private async void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            ThemeSettingsService.UpdateAllSettings();
-            AppSettingsService.UpdateAllSettings();
-            await BuildOpenRecentButtonSubItems(false);
-            InteropService.Initialize();
         }
 
         public void ExecuteProtocol(Uri uri)
@@ -370,17 +352,23 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                App.InstanceHandlerMutex?.Dispose();
+                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
+                App.InstanceHandlerMutex?.Dispose();
+                DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                 deferral.Complete();
                 return;
             }
 
-            var appCloseSaveReminderDialog = NotepadsDialogFactory.GetAppCloseSaveReminderDialog(
+            HideAllOpenFlyouts();
+
+            var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
                 async () =>
                 {
                     var count = NotepadsCore.GetNumberOfOpenedTextEditors();
@@ -404,11 +392,18 @@
                         e.Handled = true;
                         await BuildOpenRecentButtonSubItems();
                     }
+                    else
+                    {
+                        App.InstanceHandlerMutex?.Dispose();
+                        DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
+                    }
 
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
+                    App.InstanceHandlerMutex?.Dispose();
+                    DesktopExtensionService.ExtensionLifetimeObject?.Dispose();
                     deferral.Complete();
                 },
                 cancelAction: () =>
@@ -429,6 +424,22 @@
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
+        }
+
+        private void HideAllOpenFlyouts()
+        {
+            // Hide TextEditor ContextFlyout if it is showing
+            // Why we need to do this? Take a look here: https://github.com/microsoft/microsoft-ui-xaml/issues/2461
+            var editorFlyout = NotepadsCore.GetSelectedTextEditor()?.GetContextFlyout();
+            if (editorFlyout != null && editorFlyout.IsOpen)
+            {
+                editorFlyout.Hide();
+            }
+        }
+
+        public void CloseSettingsPane()
+        {
+            RootSplitView.IsPaneOpen = false;
         }
 
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)
@@ -457,14 +468,6 @@
             }
         }
 
-        private async void HideSettingsPane_OnSettingsChanged(object sender, bool hideArgs)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
-            {
-                RootSplitView.IsPaneOpen = !hideArgs;
-            });
-        }
-
         #endregion
 
         #region NotepadsCore Events
@@ -474,7 +477,6 @@
             if (NotepadsCore.GetSelectedTextEditor() == textEditor)
             {
                 SetupStatusBar(textEditor);
-                UpdateApplicationTitle(textEditor);
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
         }
@@ -547,7 +549,7 @@
             {
                 var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
 
-                var setCloseSaveReminderDialog = NotepadsDialogFactory.GetSetCloseSaveReminderDialog(file,
+                var setCloseSaveReminderDialog = new SetCloseSaveReminderDialog(file,
                     saveAction: async () =>
                     {
                         if (NotepadsCore.GetAllTextEditors().Contains(textEditor) && await Save(textEditor, saveAs: false))

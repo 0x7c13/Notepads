@@ -11,7 +11,7 @@
     <AssemblyName>Notepads</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -23,7 +23,8 @@
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64|arm</AppxBundlePlatforms>
+    <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +59,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
     <OutputPath>bin\ARM64\Release\</OutputPath>
@@ -67,6 +67,29 @@
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -108,11 +131,13 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
-    <Compile Include="Connected Services\AdminService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\Dialog\LaunchElevatedExtensionDialog.cs" />
+    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
+    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
+    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
+    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -132,10 +157,13 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
+    <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
-    <Compile Include="Services\InteropService.cs" />
-    <Compile Include="Settings\SettingsDelegate.cs" />
+    <Compile Include="Services\DesktopExtensionService.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="Services\InterInstanceSyncService.cs" />
+    <Compile Include="Utilities\FutureAccessListUtility.cs" />
+    <Compile Include="Utilities\LanguageUtility.cs" />
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -186,7 +214,7 @@
     <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
     <Compile Include="Views\MainPage\NotepadsMainPage.Notification.cs" />
     <Compile Include="Views\MainPage\NotepadsMainPage.Theme.cs" />
-    <Compile Include="Services\FileTypeService.cs" />
+    <Compile Include="Services\FileExtensionProvider.cs" />
     <Compile Include="Services\JumpListService.cs" />
     <Compile Include="Views\MainPage\NotepadsMainPage.IO.cs" />
     <Compile Include="Views\MainPage\NotepadsMainPage.StatusBar.cs" />
@@ -206,7 +234,6 @@
     </Compile>
     <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Controls\Dialog\NotepadsDialogFactory.cs" />
     <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\SettingsKey.cs" />
@@ -324,6 +351,11 @@
     <Content Include="Assets\LargeTile.scale-150.png" />
     <Content Include="Assets\LargeTile.scale-200.png" />
     <Content Include="Assets\LargeTile.scale-400.png" />
+    <Content Include="Assets\LargeTile.scale-100_altform-colorful_theme-light.png" />
+    <Content Include="Assets\LargeTile.scale-125_altform-colorful_theme-light.png" />
+    <Content Include="Assets\LargeTile.scale-150_altform-colorful_theme-light.png" />
+    <Content Include="Assets\LargeTile.scale-200_altform-colorful_theme-light.png" />
+    <Content Include="Assets\LargeTile.scale-400_altform-colorful_theme-light.png" />
     <Content Include="Assets\FileIcons\md.targetsize-512.png" />
     <Content Include="Assets\FileIcons\md.png" />
     <Content Include="Assets\FileIcons\md.targetsize-16.png" />
@@ -366,14 +398,25 @@
     <Content Include="Assets\SmallTile.scale-150.png" />
     <Content Include="Assets\SmallTile.scale-200.png" />
     <Content Include="Assets\SmallTile.scale-400.png" />
+    <Content Include="Assets\SmallTile.scale-100_altform-colorful_theme-light.png" />
+    <Content Include="Assets\SmallTile.scale-125_altform-colorful_theme-light.png" />
+    <Content Include="Assets\SmallTile.scale-150_altform-colorful_theme-light.png" />
+    <Content Include="Assets\SmallTile.scale-200_altform-colorful_theme-light.png" />
+    <Content Include="Assets\SmallTile.scale-400_altform-colorful_theme-light.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-400.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-150.png" />
     <Content Include="Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Square150x150Logo.scale-125_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Square150x150Logo.scale-150_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Square150x150Logo.scale-400_altform-colorful_theme-light.png" />
     <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
     <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
     <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
@@ -410,7 +453,13 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-125_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-150_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200_altform-colorful_theme-light.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-400_altform-colorful_theme-light.png" />
     <Content Include="Assets\FileIcons\xml.targetsize-512.png" />
     <Content Include="Assets\FileIcons\xml.png" />
     <Content Include="Assets\FileIcons\xml.targetsize-16.png" />
@@ -421,20 +470,11 @@
     <Content Include="Assets\FileIcons\yml.targetsize-16.png" />
     <Content Include="Assets\FileIcons\yml.targetsize-32.png" />
     <Content Include="Assets\FileIcons\yml.targetsize-48.png" />
-    <None Include="Connected Services\AdminService\AdminService.disco" />
-    <None Include="Connected Services\AdminService\configuration91.svcinfo" />
-    <None Include="Connected Services\AdminService\configuration.svcinfo" />
-    <None Include="Connected Services\AdminService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\FileIcons\ass.targetsize-16.png" />
     <Content Include="Assets\FileIcons\ass.targetsize-32.png" />
     <Content Include="Assets\FileIcons\ass.targetsize-48.png" />
@@ -487,6 +527,7 @@
     <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -600,19 +641,22 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.6.1</Version>
+      <Version>1.6.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.2.1</Version>
+      <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.2.1</Version>
+      <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.10</Version>
+      <Version>6.2.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>6.0.0</Version>
+      <Version>6.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.Registry">
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
@@ -629,15 +673,9 @@
       <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
       <Name>Notepads.Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Notepads.Services\Notepads.Services.csproj">
-      <Project>{29dcaa68-1b6b-4290-8c05-691f52645d55}</Project>
-      <Name>Notepads.Services</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en-US\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\es-ES\Resources.resw" />
@@ -844,25 +882,9 @@
     <PRIResource Include="Strings\zh-TW\Manifest.resw" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\AdminService\AdminService.wsdl" />
-    <None Include="Connected Services\AdminService\AdminService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\AdminService\AdminService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\AdminService\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -62,48 +62,6 @@
             { 850,     "Western European DOS (ibm850)" }
         };
 
-        // Previously used Encoding names by Notepads
-        // Containing misspelled Encoding names as well as old names
-        // This list will eventually be removed in future version
-        private static readonly Dictionary<int, string> DeprecatedANSIEncodings = new Dictionary<int, string>()
-        {
-            { 1252,    "Western (Windows 1252)" },
-            { 28591,   "Western (ISO 8859-1)" },
-            { 28593,   "Western (ISO 8859-3)" },
-            { 28605,   "Western (ISO 8859-15)" },
-            { 10000,   "Western (Mac Roman)" },
-            { 437,     "DOS (CP 437)" },
-            { 1256,    "Arabic (Windows 1256)" },
-            { 28596,   "Arabic (ISO 8859-6)" },
-            { 1257,    "Baltic (Windows 1257)" },
-            { 28594,   "Baltic (ISO 8859-4)" },
-            { 1250,    "Central European (Windows 1250)" },
-            { 28592,   "Central European (ISO 8859-2)" },
-            { 852,     "Central European (CP 852)" },
-            { 1251,    "Cyrillic (Windows 1251)" },
-            { 866,     "Cyrillic (CP 866)" },
-            { 28595,   "Cyrillic (ISO 8859-5)" },
-            { 20866,   "Cyrillic (K018-R)" },
-            { 21866,   "Cyrillic (K018-U)" },
-            { 28603,   "Estonian (ISO 8859-13)" },
-            { 1253,    "Greek (Windows 1253)" },
-            { 28597,   "Greek (ISO 8859-7)" },
-            { 1255,    "Hebrew (Windows 1255)" },
-            { 28598,   "Hebrew (ISO 8859-8)" },
-            { 932,     "Japanese (Shift JIS)" },
-            { 51932,   "Japanese (EUC-JP)" },
-            { 51949,   "Korean (EUC-KR)" },
-            { 865,     "Nordic DOS (CP 865)" },
-            { 936,     "Simplified Chinese (GB 2312)" },
-            { 54936,   "Simplified Chinese (6818030)" },
-            { 874,     "Thai (Windows 874)" },
-            { 1254,    "Turkish (Windows 1254)" },
-            { 28599,   "Turkish (ISO 8859-9)" },
-            { 950,     "Traditional Chinese (Big5)" },
-            { 1258,    "Vietnamese (Windows 1258)" },
-            { 850,     "Western European DOS (CP 850)" }
-        };
-
         public static string GetEncodingName(Encoding encoding)
         {
             string encodingName;
@@ -243,16 +201,6 @@
             {
                 if (string.Equals(encodingName, name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return Encoding.GetEncoding(codePage);
-                }
-            }
-
-            // Hot-fix for legacy/deprecated names used in previous version of Notepads
-            foreach (var (codePage, encodingName) in DeprecatedANSIEncodings)
-            {
-                if (string.Equals(encodingName, name, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Analytics.TrackEvent("GetEncodingByName_FoundDeprecatedEncodingName");
                     return Encoding.GetEncoding(codePage);
                 }
             }

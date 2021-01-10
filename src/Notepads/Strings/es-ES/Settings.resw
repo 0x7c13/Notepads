@@ -186,7 +186,7 @@
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Opacidad del tono acrílico de fondo. Please note that Acrylic effect will be disabled when battery saver mode is on or if you turn off transparency effects in Windows Settings.</value>
+    <value>Opacidad del tono acrílico de fondo. Tenga en cuenta que el efecto acrílico se desactivará si el modo de ahorro de batería está activado o si se desactivan los efectos de transparencia en la configuración de Windows.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
@@ -369,28 +369,56 @@
     <value>Display</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve">
-    <value>Mostrar borde alrededor de la línea actual.</value>
-    <comment>TextAndEditorPage LineHighlighterSettings Description display text.</comment>
-  </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Display line numbers in the document.</value>
+    <value>Mostrar números de línea en el documento.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Mostrar números de línea</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Display line numbers</value>
+    <value>Mostrar números de línea</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Style</value>
+    <value>Estilo de Fuente Predeterminado</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Default Font Weight</value>
+    <value>Peso de Fuente Predeterminado</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>Elija un idioma personalizado para sobreescribir el idioma predeterminado del sistema utilizado en Notepads. Es necesario reiniciar para completar los cambios.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
+    <value>*Es necesario reiniciar Notepads para completar los cambios.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Preferencias de Lenguaje</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>Una vez habilitado, Notepads recortará inteligentemente los espacios en blanco iniciales y finales, las tabulaciones y las líneas en blanco antes de copiar el texto seleccionado en el portapapeles.</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>Habilitar Copia Inteligente</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>Habilitar Copia Inteligente</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>Configuración de Copia Inteligente</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>Valor predeterminado del sistema</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>

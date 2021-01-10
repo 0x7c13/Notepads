@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+    <!--
+    To customize common C++/WinRT project properties: 
+    * right-click the project node
+    * expand the Common Properties item
+    * select the C++/WinRT property page
+
+    For more advanced scenarios, and complete documentation, please see:
+    https://github.com/Microsoft/cppwinrt/tree/master/nuget 
+    -->
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgRepo>https://github.com/microsoft/vcpkg</VcpkgRepo>
+    <!--Update this value to latest commit to update vcpkg and dependencies-->
+    <VcpkgCommitHash>a14a6bcb27287e3ec138dba1b948a0cdbc337a3a</VcpkgCommitHash>
+    <!--###################################################################-->
+    <VcpkgOSTarget>windows</VcpkgOSTarget>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+</Project>

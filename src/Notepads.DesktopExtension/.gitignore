@@ -1,0 +1,7 @@
+# vcpkg generated files #
+#########################
+**/vcpkg_installed/
+
+# AppCenter version file #
+##########################
+appcenter-sdk-version.txt

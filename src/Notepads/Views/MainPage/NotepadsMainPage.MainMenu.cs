@@ -11,6 +11,7 @@
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Media;
     using Notepads.Services;
+    using Notepads.Settings;
 
     public sealed partial class NotepadsMainPage
     {
@@ -32,7 +33,7 @@
             MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            if (!App.IsFirstInstance)
+            if (!App.IsPrimaryInstance)
             {
                 MainMenuButton.Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
             }
@@ -105,7 +106,7 @@
             MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
         }
 
-        private async Task BuildOpenRecentButtonSubItems(bool updateForOtherInstane = true)
+        public async Task BuildOpenRecentButtonSubItems(bool invokeAfterChanged = true)
         {
             var openRecentSubItem = new MenuFlyoutSubItem
             {
@@ -168,7 +169,7 @@
                 MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
             }
 
-            if (updateForOtherInstane) InteropService.SyncRecentList();
+            if (invokeAfterChanged) ApplicationSettingsStore.SignalDataChanged(InterInstanceSyncService.RecentFilesListKey);
         }
     }
 }

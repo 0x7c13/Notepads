@@ -5,23 +5,81 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
-    using Windows.Storage.AccessCache;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
-    using Windows.Foundation.Metadata;
+
+    public enum InvalidFilenameError
+    {
+        None = 0,
+        EmptyOrAllWhitespace,
+        ContainsLeadingSpaces,
+        ContainsTrailingSpaces,
+        ContainsInvalidCharacters,
+        InvalidOrNotAllowed,
+        TooLong,
+    }
 
     public static class FileSystemUtility
     {
         private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
 
         private const string WslRootPath = "\\\\wsl$\\";
+
+        // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
+        private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
+
+        public static bool IsFilenameValid(string filename, out InvalidFilenameError error)
+        {
+            if (filename.Length > 255)
+            {
+                error = InvalidFilenameError.TooLong;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                error = InvalidFilenameError.EmptyOrAllWhitespace;
+                return false;
+            }
+
+            // Although shell supports file with leading spaces, explorer and file picker does not
+            // So we treat it as invalid file name as well
+            if (filename.StartsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsLeadingSpaces;
+                return false;
+            }
+
+            if (filename.EndsWith(" "))
+            {
+                error = InvalidFilenameError.ContainsTrailingSpaces;
+                return false;
+            }
+
+            var illegalChars = Path.GetInvalidFileNameChars();
+            if (filename.Any(c => illegalChars.Contains(c)))
+            {
+                error = InvalidFilenameError.ContainsInvalidCharacters;
+                return false;
+            }
+
+            if (filename.EndsWith(".") || !ValidWindowsFileNames.IsMatch(filename))
+            {
+                error = InvalidFilenameError.InvalidOrNotAllowed;
+                return false;
+            }
+
+            error = InvalidFilenameError.None;
+            return true;
+        }
 
         public static bool IsFullPath(string path)
         {
@@ -60,6 +118,7 @@
 
             try
             {
+                args = ReplaceEnvironmentVariables(args);
                 path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
             }
             catch (Exception ex)
@@ -75,6 +134,43 @@
             LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
             return await GetFile(path);
+        }
+
+        private static string ReplaceEnvironmentVariables(string args)
+        {
+            if (args.Contains("%homepath%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%homepath%",
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%localappdata%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%localappdata%",
+                    UserDataPaths.GetDefault().LocalAppData,
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%temp%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%temp%",
+                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
+                    "TEMP",
+                    Environment.GetEnvironmentVariable("temp")),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (args.Contains("%tmp%", StringComparison.OrdinalIgnoreCase))
+            {
+                args = args.Replace("%tmp%",
+                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
+                    "TEMP",
+                    Environment.GetEnvironmentVariable("tmp")),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+
+            return Environment.ExpandEnvironmentVariables(args);
         }
 
         public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
@@ -191,7 +287,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> FileIsWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(StorageFile file)
         {
             try
             {
@@ -470,7 +566,7 @@
 
             try
             {
-                if (IsFileReadOnly(file) || !await FileIsWritable(file))
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
                 {
                     // For file(s) dragged into Notepads, they are read-only
                     // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
@@ -481,13 +577,11 @@
                     {
                         await PathIO.WriteBytesAsync(file.Path, result);
                     }
-                    catch (UnauthorizedAccessException ex) // Try to save as admin if dektop extension supported
+                    catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
                     {
-                        if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
-                        {
-                            throw ex;
-                        }
-                        await InteropService.SaveFileAsAdmin(file.Path, result);
+                        if (!DesktopExtensionService.ShouldUseDesktopExtension) throw ex;
+
+                        await DesktopExtensionService.SaveFileAsAdmin(file.Path, result);
                     }
                 }
                 else // Use StorageFile API to save 
@@ -564,57 +658,6 @@
             {
                 LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to check if file [{file.Path}] exists: {ex.Message}", consoleOnly: true);
                 return true;
-            }
-        }
-
-        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
-        {
-            try
-            {
-                if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
-                {
-                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get file from future access list: {ex.Message}");
-            }
-            return null;
-        }
-
-        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
-        {
-            try
-            {
-                if (await FileExists(file))
-                {
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
-                    new Dictionary<string, string>()
-                    {
-                        { "ItemCount", GetFutureAccessListItemCount().ToString() },
-                        { "Exception", ex.Message }
-                    });
-            }
-            return false;
-        }
-
-        public static int GetFutureAccessListItemCount()
-        {
-            try
-            {
-                return StorageApplicationPermissions.FutureAccessList.Entries.Count;
-            }
-            catch
-            {
-                return -1;
             }
         }
     }

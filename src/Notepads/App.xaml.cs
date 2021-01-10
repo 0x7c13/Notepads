@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
@@ -27,10 +28,10 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsFirstInstance = false;
+        public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
-        private const string AppCenterSecret = null;
+        public static Mutex InstanceHandlerMutex { get; set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -42,15 +43,27 @@
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(AppCenterSecret, services);
+            AppCenter.Start(SettingsKey.AppCenterSecret, services);
 
-            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsFirstInstance: {IsFirstInstance} IsGameBarWidget: {IsGameBarWidget}.");
+            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+            if (isNew)
+            {
+                IsPrimaryInstance = true;
+                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
+            }
+            else
+            {
+                InstanceHandlerMutex.Close();
+            }
+
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
             InitializeComponent();
 
             Suspending += OnSuspending;
+            LeavingBackground += OnLeavingBackground;
         }
 
         /// <summary>
@@ -97,6 +110,19 @@
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
                 { "ShowStatusBar", AppSettingsService.ShowStatusBar.ToString() },
+                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
+                { "IsGameBarWidget", IsGameBarWidget.ToString() },
+                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
+                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "IsSmartCopyEnabled", AppSettingsService.IsSmartCopyEnabled.ToString() }
+            };
+
+            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+
+            var appLaunchEditorSettings = new Dictionary<string, string>()
+            {
                 { "EditorDefaultLineEnding", AppSettingsService.EditorDefaultLineEnding.ToString() },
                 { "EditorDefaultEncoding", EncodingUtility.GetEncodingName(AppSettingsService.EditorDefaultEncoding) },
                 { "EditorDefaultTabIndents", AppSettingsService.EditorDefaultTabIndents.ToString() },
@@ -105,18 +131,13 @@
                 { "EditorFontSize", AppSettingsService.EditorFontSize.ToString() },
                 { "EditorFontStyle", AppSettingsService.EditorFontStyle.ToString() },
                 { "EditorFontWeight", AppSettingsService.EditorFontWeight.Weight.ToString() },
-                { "IsSessionSnapshotEnabled", AppSettingsService.IsSessionSnapshotEnabled.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
-                { "IsGameBarWidget", IsGameBarWidget.ToString() },
-                { "AlwaysOpenNewWindow", AppSettingsService.AlwaysOpenNewWindow.ToString() },
-                { "IsHighlightMisspelledWordsEnabled", AppSettingsService.IsHighlightMisspelledWordsEnabled.ToString() },
+                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() },
                 { "DisplayLineHighlighter", AppSettingsService.EditorDisplayLineHighlighter.ToString() },
                 { "DisplayLineNumbers", AppSettingsService.EditorDisplayLineNumbers.ToString() },
-                { "EditorDefaultSearchEngine", AppSettingsService.EditorDefaultSearchEngine.ToString() }
             };
 
-            LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
-            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+            LoggingService.LogInfo($"[{nameof(App)}] Editor settings: \n{string.Join("\n", appLaunchEditorSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
+            Analytics.TrackEvent("AppLaunch_Editor_Settings", appLaunchEditorSettings);
 
             try
             {
@@ -190,10 +211,22 @@
             }
             catch (Exception)
             {
-                // ignore
+                // Best efforts
             }
 
             deferral.Complete();
+        }
+
+        /// <summary>
+        /// Occurs when the app moves to foreground from background.
+        /// Pending changes to the UI is made before app comes to focus.
+        /// </summary>
+        /// <param name="sender">The source of the leaving background request.</param>
+        /// <param name="e">Details about the leaving background request.</param>
+        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            ThemeSettingsService.Initialize(true);
+            AppSettingsService.Initialize(true);
         }
 
         // Occurs when an exception is not handled on the UI thread.
@@ -210,7 +243,7 @@
                 { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                { "IsShadowWindow", (!IsFirstInstance && !IsGameBarWidget).ToString() },
+                { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 
@@ -218,7 +251,8 @@
                 $"Exception: {e.Exception}, " +
                 $"Message: {e.Message}, " +
                 $"InnerException: {e.Exception?.InnerException}, " +
-                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}, " +
+                $"IsDesktopExtension: {false}",
                 "UnhandledException");
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);

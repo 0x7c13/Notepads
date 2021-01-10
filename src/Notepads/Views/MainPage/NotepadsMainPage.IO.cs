@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Storage;
@@ -11,7 +12,7 @@
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
-    using System.IO;
+    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage
     {
@@ -21,17 +22,11 @@
 
             try
             {
-                var fileOpenPicker = FilePickerFactory.GetFileOpenPicker();
-                foreach (var type in FileTypeService.AllSupportedFileExtensions)
-                {
-                    fileOpenPicker.FileTypeFilter.Add(type);
-                }
-
-                files = await fileOpenPicker.PickMultipleFilesAsync();
+                files = await FilePickerFactory.GetFileOpenPicker().PickMultipleFilesAsync();
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(filePath: null, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(filePath: null, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
@@ -74,17 +69,47 @@
                 {
                     await BuildOpenRecentButtonSubItems();
                 }
+
+                TrackFileExtensionIfNotSupported(file);
+
                 return true;
             }
             catch (Exception ex)
             {
-                var fileOpenErrorDialog = NotepadsDialogFactory.GetFileOpenErrorDialog(file.Path, ex.Message);
+                var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
                 return false;
+            }
+        }
+
+        // Here we track the file extension opened by user but not supported by Notepads.
+        // This information will be used to on-board new extension support for future release.
+        // Because UWP does not allow user to associate arbitrary file extension with the app.
+        // File name will not and should not be tracked.
+        private void TrackFileExtensionIfNotSupported(StorageFile file)
+        {
+            try
+            {
+                var extension = FileTypeUtility.GetFileExtension(file.Name).ToLower();
+                if (!FileExtensionProvider.AllSupportedFileExtensions.Contains(extension))
+                {
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        extension = "<NoExtension>";
+                    }
+                    Analytics.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
+                    {
+                        { "Extension", extension },
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                // ignore
             }
         }
 
@@ -112,7 +137,7 @@
         private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor, true).PickSaveFileAsync();
+            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
             NotepadsCore.FocusOnTextEditor(textEditor);
             return file;
         }
@@ -125,6 +150,46 @@
             {
                 await BuildOpenRecentButtonSubItems();
             }
+        }
+
+        private async Task<bool> TrySaveFile(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        {
+            var isSaveSuccess = true;
+
+            try
+            {
+                await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+            }
+            catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+            {
+                isSaveSuccess = false;
+            }
+            catch (FileNotFoundException) // Happens when the file not found or storage media is removed
+            {
+                isSaveSuccess = false;
+            }
+            catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
+            {
+                var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
+                    AdminOperationType.Save, file.Path,
+                    async () =>
+                    {
+                        await DesktopExtensionService.LaunchElevetedProcess();
+                    },
+                    () =>
+                    {
+                        isSaveSuccess = false;
+                    });
+
+                var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
+
+                if (dialogResult == null || launchElevatedExtensionDialog.IsAborted)
+                {
+                    isSaveSuccess = false;
+                }
+            }
+
+            return isSaveSuccess;
         }
 
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
@@ -150,47 +215,7 @@
                     file = textEditor.EditingFile;
                 }
 
-                bool promptSaveAs = false;
-                try
-                {
-                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
-                }
-                catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
-                {
-                    promptSaveAs = true;
-                }
-                catch (FileNotFoundException) // Happens when the file not found or storage media is removed
-                {
-                    promptSaveAs = true;
-                }
-                catch (Exception ex) // Happens when the file we are saving is read-only, ask user for permission to write
-                {
-                    if (ex == InteropService.AdminstratorAccessException)
-                    {
-                        var createElevatedExtensionDialog = NotepadsDialogFactory.GetCreateElevatedExtensionDialog(
-                        async () =>
-                        {
-                            await InteropService.CreateElevetedExtension();
-                        },
-                        () =>
-                        {
-                            promptSaveAs = true;
-                        });
-
-                        var dialogResult = await DialogManager.OpenDialogAsync(createElevatedExtensionDialog, awaitPreviousDialog: false);
-
-                        if (dialogResult == null || createElevatedExtensionDialog.IsAborted)
-                        {
-                            promptSaveAs = true;
-                        }
-                    }
-                    else
-                    {
-                        promptSaveAs = true;
-                    }
-                }
-
-                if (promptSaveAs)
+                if (!await TrySaveFile(textEditor, file, rebuildOpenRecentItems))
                 {
                     file = await OpenFileUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
@@ -203,7 +228,7 @@
             }
             catch (Exception ex)
             {
-                var fileSaveErrorDialog = NotepadsDialogFactory.GetFileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
+                var fileSaveErrorDialog = new FileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
                 await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
                 if (!fileSaveErrorDialog.IsAborted)
                 {
@@ -228,6 +253,33 @@
             }
 
             return success;
+        }
+
+        private async Task RenameFileAsync(ITextEditor textEditor)
+        {
+            if (textEditor == null) return;
+
+            if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            if (textEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(textEditor.EditingFile)) return;
+
+            var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+                fileExists: textEditor.EditingFile != null,
+                confirmedAction: async (newFilename) =>
+                {
+                    try
+                    {
+                        await textEditor.RenameAsync(newFilename);
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
+                    catch (Exception ex)
+                    {
+                        var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                        NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                    }
+                });
+
+            await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         }
 
         public async Task Print(ITextEditor textEditor)

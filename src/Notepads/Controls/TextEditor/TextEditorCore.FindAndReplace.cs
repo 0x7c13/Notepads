@@ -113,13 +113,16 @@
             else
             {
                 var searchIndex = Document.Selection.StartPosition - 1;
-                if (!stopAtBof && searchIndex < 0)
+                if (searchIndex < 0)
                 {
-                    searchIndex = document.Length - 1;
-                }
-                else if (stopAtBof)
-                {
-                    return false;
+                    if (stopAtBof)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        searchIndex = document.Length - 1;
+                    }
                 }
 
                 StringComparison comparison = searchContext.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
@@ -158,20 +161,39 @@
 
         public bool TryFindNextAndReplace(SearchContext searchContext, string replaceText, out bool regexError)
         {
-            if (TryFindNextAndSelect(searchContext, stopAtEof: true, out var error))
-            {
-                regexError = error;
+            Document.Selection.EndPosition = Document.Selection.StartPosition;
 
+            if (TryFindNextAndSelect(searchContext, stopAtEof: true, out regexError))
+            {
                 if (searchContext.UseRegex)
                 {
                     replaceText = ApplyTabAndLineEndingFix(replaceText);
                 }
 
                 Document.Selection.SetText(TextSetOptions.None, replaceText);
+                TryFindNextAndSelect(searchContext, stopAtEof: true, out _);
                 return true;
             }
 
-            regexError = error;
+            return false;
+        }
+
+        public bool TryFindPreviousAndReplace(SearchContext searchContext, string replaceText, out bool regexError)
+        {
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
+
+            if (TryFindPreviousAndSelect(searchContext, stopAtBof: true, out regexError))
+            {
+                if (searchContext.UseRegex)
+                {
+                    replaceText = ApplyTabAndLineEndingFix(replaceText);
+                }
+
+                Document.Selection.SetText(TextSetOptions.None, replaceText);
+                TryFindPreviousAndSelect(searchContext, stopAtBof: true, out _);
+                return true;
+            }
+
             return false;
         }
 
@@ -230,8 +252,9 @@
             try
             {
                 regexError = false;
+                content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
                 Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                    RegexOptions.Multiline | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 var match = regex.Match(content, Document.Selection.EndPosition);
 
@@ -265,8 +288,9 @@
             try
             {
                 regexError = false;
+                content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
                 Regex regex = new Regex(searchContext.SearchText,
-                    RegexOptions.RightToLeft | RegexOptions.Compiled |
+                    RegexOptions.RightToLeft | RegexOptions.Multiline |
                     (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 var match = regex.Match(content, Document.Selection.StartPosition);
@@ -300,10 +324,11 @@
         {
             regexError = false;
             output = string.Empty;
+            content = content.Replace(RichEditBoxDefaultLineEnding, RegexDefaultLineEnding);
 
             try
             {
-                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Compiled | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+                Regex regex = new Regex(searchContext.SearchText, RegexOptions.Multiline | (searchContext.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 
                 if (regex.IsMatch(content))
                 {
@@ -312,7 +337,7 @@
                         replaceText = ApplyTabAndLineEndingFix(replaceText);
                     }
 
-                    output = regex.Replace(content, replaceText);
+                    output = regex.Replace(content, replaceText).Replace(RegexDefaultLineEnding, RichEditBoxDefaultLineEnding);
                     return true;
                 }
             }
