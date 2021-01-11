@@ -98,8 +98,9 @@
                 {
                     NotificationCenter.Instance.PostNotification(Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message, 1500);
                 }
-                
-                UpdateAttributesInfo();
+
+                FileAttributeChanged?.Invoke(this, null);
+                CheckAndUpdateAttributesInfo();
             }
         }
 
@@ -130,7 +131,7 @@
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
 
-            UpdateAttributesInfo();
+            CheckAndUpdateAttributesInfo();
 
             // Hide content preview if current file type is not supported for previewing
             if (!FileTypeUtility.IsPreviewSupported(FileType))
@@ -142,7 +143,7 @@
             }
         }
 
-        private void UpdateAttributesInfo()
+        private void CheckAndUpdateAttributesInfo()
         {
             if (EditingFile != null)
             {
@@ -157,13 +158,18 @@
                             Win32FileSystemUtility.GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard,
                             fileInformationBuff))
                         {
-                            _fileAttributes = (Win32FileSystemUtility.File_Attributes)fileInformation.dwFileAttributes;
+                            if ((uint)_fileAttributes != fileInformation.dwFileAttributes)
+                            {
+                                _fileAttributes = (Win32FileSystemUtility.File_Attributes)fileInformation.dwFileAttributes;
+                                Dispatcher.CallOnUIThreadAsync(() =>
+                                {
+                                    FileAttributeChanged?.Invoke(this, null);
+                                }).Wait(0);
+                            }
                         }
                     }
                 }
             }
-
-            FileAttributeChanged?.Invoke(this, null);
         }
 
         private bool _isModified;
@@ -411,7 +417,7 @@
         {
             Loaded?.Invoke(this, e);
 
-            UpdateAttributesInfo();
+            CheckAndUpdateAttributesInfo();
 
             StartCheckingFileStatusPeriodically();
 
@@ -441,6 +447,7 @@
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
+                        CheckAndUpdateAttributesInfo();
                         await CheckAndUpdateFileStatus(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }

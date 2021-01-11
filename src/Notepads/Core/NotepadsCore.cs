@@ -595,8 +595,10 @@
 
         private void TextEditor_OnFileAttributeChanged(object sender, EventArgs e)
         {
-            if (!(sender is FrameworkElement element) || !(element.Parent is SetsViewItem item) || !(sender is ITextEditor textEditor)) return;
+            if (!(sender is ITextEditor textEditor)) return;
 
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
             item.Icon.Foreground = textEditor.IsReadOnly
                 ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
                 : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
