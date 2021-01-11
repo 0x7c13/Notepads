@@ -857,7 +857,9 @@
             try
             {
                 DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                var isTextSelected = TextEditorCore.Document.Selection.Length > 0;
+
+                // Selection.Length can be negative when user selecting text from right to left
+                var isTextSelected = TextEditorCore.Document.Selection.Length != 0;
                 var cursorPosition = TextEditorCore.Document.Selection.StartPosition;
 
                 if (!isTextSelected)

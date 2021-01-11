@@ -349,12 +349,14 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
+                App.InstanceHandlerMutex?.Dispose();
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
+                App.InstanceHandlerMutex?.Dispose();
                 deferral.Complete();
                 return;
             }
@@ -385,11 +387,16 @@
                         e.Handled = true;
                         await BuildOpenRecentButtonSubItems();
                     }
+                    else
+                    {
+                        App.InstanceHandlerMutex?.Dispose();
+                    }
 
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
+                    App.InstanceHandlerMutex?.Dispose();
                     deferral.Complete();
                 },
                 cancelAction: () =>
