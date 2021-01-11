@@ -35,6 +35,7 @@
         public event EventHandler<ScrollViewerViewChangingEventArgs> ScrollViewerViewChanging;
 
         private const char RichEditBoxDefaultLineEnding = '\r';
+        private const char RegexDefaultLineEnding = '\n';
 
         private bool _isDocumentLinesCachePendingUpdate = true;
         private string[] _documentLinesCache; // internal copy of the active document text in array format
