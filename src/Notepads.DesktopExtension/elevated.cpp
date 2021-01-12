@@ -12,8 +12,8 @@ constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
 constexpr LPCTSTR pipeNameFormat = L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}";
 constexpr LPCTSTR namedObjectFormat = L"AppContainerNamedObjects\\{}\\{}";
 
-extern DWORD sessionId;
-extern hstring packageSid;
+DWORD sessionId;
+hstring packageSid;
 
 HANDLE adminWriteEvent = NULL;
 HANDLE adminRenameEvent = NULL;
@@ -209,6 +209,9 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
 
 VOID initializeAdminService()
 {
+    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+    packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
+
     adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminWriteEventNameStr).c_str());
     adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminRenameEventNameStr).c_str());
 

@@ -56,7 +56,7 @@
     <AppxBundlePlatforms>x86|x64|arm64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <ItemGroup>
-    <AppxManifest Include="..\Notepads\Package.appxmanifest" Link="Package.appxmanifest">
+    <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>

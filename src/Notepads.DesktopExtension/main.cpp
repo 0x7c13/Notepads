@@ -1,18 +1,20 @@
 ﻿#include "pch.h"
 #include "appcenter.h"
+#include "shlobj_core.h"
 
 using namespace fmt;
 using namespace std;
 using namespace winrt;
+using namespace Windows::ApplicationModel;
 using namespace Windows::Foundation;
 using namespace Windows::Storage;
 
 constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
 constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
 
-DWORD sessionId;
-hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
+wstring adminParams;
 
+extern hstring packageSid;
 extern HANDLE adminWriteEvent;
 extern HANDLE adminRenameEvent;
 
@@ -65,7 +67,7 @@ VOID launchElevatedProcess()
         .hwnd = 0,
         .lpVerb = L"runas",
         .lpFile = fileName,
-        .lpParameters = L"",
+        .lpParameters = adminParams.c_str(),
         .lpDirectory = 0,
         .nShow = SW_SHOW,
         .hInstApp = 0
@@ -146,6 +148,65 @@ bool isElevatedProcess()
     return result;
 }
 
+bool isFileLaunchRequested()
+{
+    bool isFileLaunchRequested = true;
+    LPWSTR* szArglist = NULL;
+    int nArgs;
+
+    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+    if (szArglist)
+    {
+        // Assumed first entry is for uwp app
+        auto aumid = Package::Current().GetAppListEntries().GetAt(0).AppUserModelId();
+        wstring praid(aumid);
+        praid.erase(0, praid.find(L"!") + 1);
+        if (nArgs > 2 && wcscmp(szArglist[1], L"/InvokerPRAID:") == 0 && wcscmp(szArglist[2], praid.c_str()) == 0)
+        {
+            adminParams = format(L"{} {}", szArglist[1], szArglist[2]);
+            isFileLaunchRequested = false;
+        }
+        else
+        {
+            int ct = nArgs - 1;
+            int cpidl;
+            HRESULT hr = E_OUTOFMEMORY;
+            com_ptr< IShellItemArray> ppsia = NULL;
+            PIDLIST_ABSOLUTE* rgpidl = new(std::nothrow) PIDLIST_ABSOLUTE[ct];
+            if (rgpidl)
+            {
+                hr = S_OK;
+                for (cpidl = 0; SUCCEEDED(hr) && cpidl < ct; cpidl++)
+                {
+                    hr = SHParseDisplayName(szArglist[cpidl + 1], nullptr, &rgpidl[cpidl], 0, nullptr);
+                }
+
+                if (cpidl > 0 && SUCCEEDED(SHCreateShellItemArrayFromIDLists(cpidl, rgpidl, ppsia.put())))
+                {
+                    com_ptr<IApplicationActivationManager> appActivationMgr = NULL;
+                    if (SUCCEEDED(CoCreateInstance(CLSID_ApplicationActivationManager, NULL, CLSCTX_LOCAL_SERVER, __uuidof(appActivationMgr), appActivationMgr.put_void())))
+                    {
+                        DWORD pid = 0;
+                        appActivationMgr->ActivateForFile(aumid.c_str(), ppsia.get(), NULL, &pid);
+                        printDebugMessage(format(L"Launched files with process id: {}", pid).c_str(), 5000);
+                    }
+                    appActivationMgr.~com_ptr();
+                }
+
+                for (int i = 0; i < cpidl; i++)
+                {
+                    CoTaskMemFree(rgpidl[i]);
+                }
+            }
+            ppsia.~com_ptr();
+            delete[] rgpidl;
+        }
+    }
+    LocalFree(szArglist);
+
+    return isFileLaunchRequested;
+}
+
 #ifndef _DEBUG
 INT APIENTRY wWinMain(_In_ HINSTANCE /* hInstance */, _In_opt_ HINSTANCE /* hPrevInstance */, _In_ LPWSTR /* lpCmdLine */, _In_ INT /* nCmdShow */)
 #else
@@ -156,9 +217,13 @@ INT main()
     SetErrorMode(SEM_NOGPFAULTERRORBOX);
     _onexit(releaseResources);
 
-    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-
     init_apartment();
+    if (isFileLaunchRequested())
+    {
+        uninit_apartment();
+        return 0;
+    }
+
     AppCenter::start();
 
     if (isElevatedProcess())
@@ -172,6 +237,8 @@ INT main()
         if (!isFirstInstance(DesktopExtensionMutexName)) return 0;
 
         launchElevatedProcess();
+        AppCenter::exit();
+        uninit_apartment();
         return 0;
     }
 
@@ -183,5 +250,7 @@ INT main()
         Sleep(1000);
         goto LifeTimeCheck;
     }
+    AppCenter::exit();
+    uninit_apartment();
     exit(0);
 }

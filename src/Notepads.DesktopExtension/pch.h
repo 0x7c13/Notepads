@@ -1,10 +1,13 @@
 ﻿#pragma once
 #pragma comment(lib, "shell32")
+#define STRICT
+#define STRICT_TYPED_ITEMIDS
 #include "iostream"
 #include "sstream"
 #include "windows.h"
 #include "shellapi.h"
 #include "winrt/Windows.ApplicationModel.h"
+#include "winrt/Windows.ApplicationModel.Core.h"
 #include "winrt/Windows.ApplicationModel.DataTransfer.h"
 #include "winrt/Windows.Foundation.h"
 #include "winrt/Windows.Foundation.Collections.h"

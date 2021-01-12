@@ -19,7 +19,7 @@ namespace AppCenter
 	{
 		static const string logTypes[] = { "managedError", "errorAttachment", "event" };
 		static string launchTimeStamp = getTimeStamp();
-		static Device deviceInfo = Device();
+		static Device* deviceInfo = NULL;
 	}
 
 	class Log
@@ -149,7 +149,7 @@ namespace AppCenter
 
 			// Write device specific data
 			writer.String("device");
-			deviceInfo.Serialize(writer);
+			deviceInfo->Serialize(writer);
 
 			// Write custom properties if available
 			if (!_properties.empty())
