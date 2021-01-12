@@ -1,0 +1,49 @@
+name: CodeQL Analysis
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  analyze:
+    name: codeql-analysis
+    runs-on: windows-latest
+    env:
+      Solution_Name: src\Notepads.sln
+      Project_Path: src\Notepads\Notepads.csproj        
+
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+
+      # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Restore the application
+        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+        env:
+          Configuration: Release
+
+      - name: Initialize CodeQL
+        id: init_codeql
+        uses: github/codeql-action/init@v1
+        with:
+          languages: csharp
+          queries: security-and-quality
+
+      - name: Build
+        run: |
+          msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
+        env:
+          Appx_Bundle: Always
+          Appx_Bundle_Platforms: x86|x64
+          Appx_Package_Build_Mode: StoreUpload
+          Configuration: release
+
+      - name: Perform CodeQL Analysis
+        id: analyze_codeql
+        uses: github/codeql-action/analyze@v1
