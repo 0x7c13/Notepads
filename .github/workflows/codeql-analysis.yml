@@ -19,6 +19,13 @@ jobs:
         id: checkout_repo
         uses: actions/checkout@v2
 
+      - name: configure Pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+            minimum-size: 8GB
+            maximum-size: 32GB
+            disk-root: "D:"
+
       # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
@@ -26,7 +33,7 @@ jobs:
       - name: Restore the application
         run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
         env:
-          Configuration: Release
+          Configuration: Debug
 
       - name: Initialize CodeQL
         id: init_codeql
@@ -42,7 +49,7 @@ jobs:
           Appx_Bundle: Always
           Appx_Bundle_Platforms: x86|x64
           Appx_Package_Build_Mode: StoreUpload
-          Configuration: release
+          Configuration: Debug
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
