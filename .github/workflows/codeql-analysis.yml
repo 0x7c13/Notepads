@@ -33,7 +33,7 @@ jobs:
       - name: Restore the application
         run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
         env:
-          Configuration: Debug
+          Configuration: Release
 
       - name: Initialize CodeQL
         id: init_codeql
@@ -49,7 +49,7 @@ jobs:
           Appx_Bundle: Always
           Appx_Bundle_Platforms: x86|x64
           Appx_Package_Build_Mode: StoreUpload
-          Configuration: Debug
+          Configuration: Release
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
