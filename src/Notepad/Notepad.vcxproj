@@ -128,10 +128,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CppWinRT">
-      <Version>2.0.201217.4</Version>
-      <TargetFramework>native</TargetFramework>
-    </PackageReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
