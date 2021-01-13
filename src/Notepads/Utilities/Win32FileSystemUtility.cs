@@ -1,16 +1,18 @@
 ﻿namespace Notepads.Utilities
 {
+    using Microsoft.Win32.SafeHandles;
     using System.Runtime.InteropServices;
 
     public static class Win32FileSystemUtility
     {
-        [DllImport("api-ms-win-core-file-fromapp-l1-1-0.dll", CharSet = CharSet.Auto,
+        [DllImport("api-ms-win-core-file-l2-1-0.dll", CharSet = CharSet.Auto,
         CallingConvention = CallingConvention.StdCall,
         SetLastError = true)]
-        public unsafe static extern bool GetFileAttributesExFromApp(
-            string lpFileName,
-            GET_FILEEX_INFO_LEVELS fInfoLevelId,
-            byte* lpFileInformation
+        public unsafe static extern bool GetFileInformationByHandleEx(
+            SafeFileHandle hFile,
+            FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+            byte* lpFileInformation,
+            uint dwBufferSize
         );
 
         [DllImport("api-ms-win-core-file-fromapp-l1-1-0.dll", CharSet = CharSet.Auto,
@@ -21,20 +23,50 @@
             uint dwFileAttributes
         );
 
-        public enum GET_FILEEX_INFO_LEVELS
+        [DllImport("api-ms-win-core-file-l2-1-0.dll", CharSet = CharSet.Auto,
+        CallingConvention = CallingConvention.StdCall,
+        SetLastError = true)]
+        public unsafe static extern bool SetFileInformationByHandle(
+            SafeFileHandle hFile,
+            FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+            byte* lpFileInformation,
+            uint dwBufferSize
+        );
+
+        public enum FILE_INFO_BY_HANDLE_CLASS
         {
-            GetFileExInfoStandard,
-            GetFileExMaxInfoLevel
+            FileBasicInfo,
+            FileStandardInfo,
+            FileNameInfo,
+            FileRenameInfo,
+            FileDispositionInfo,
+            FileAllocationInfo,
+            FileEndOfFileInfo,
+            FileStreamInfo,
+            FileCompressionInfo,
+            FileAttributeTagInfo,
+            FileIdBothDirectoryInfo,
+            FileIdBothDirectoryRestartInfo,
+            FileIoPriorityHintInfo,
+            FileRemoteProtocolInfo,
+            FileFullDirectoryInfo,
+            FileFullDirectoryRestartInfo,
+            FileStorageInfo,
+            FileAlignmentInfo,
+            FileIdInfo,
+            FileIdExtdDirectoryInfo,
+            FileIdExtdDirectoryRestartInfo,
+            FileDispositionInfoEx,
+            FileRenameInfoEx,
+            FileCaseSensitiveInfo,
+            FileNormalizedNameInfo,
+            MaximumFileInfoByHandleClass
         }
 
-        public unsafe struct WIN32_FILE_ATTRIBUTE_DATA
+        public unsafe struct FILE_ATTRIBUTE_TAG_INFO
         {
-            public uint dwFileAttributes;
-            FILETIME ftCreationTime;
-            FILETIME ftLastAccessTime;
-            FILETIME ftLastWriteTime;
-            public uint nFileSizeHigh;
-            public uint nFileSizeLow;
+            public uint FileAttributes;
+            public uint ReparseTag;
         }
 
         public enum File_Attributes : uint
@@ -64,12 +96,6 @@
             OpenReparsePoint = 0x00200000,
             OpenNoRecall = 0x00100000,
             FirstPipeInstance = 0x00080000
-        }
-
-        public unsafe struct FILETIME
-        {
-            public uint dwLowDateTime;
-            public uint dwHighDateTime;
         }
     }
 }
