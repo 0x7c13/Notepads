@@ -10,6 +10,9 @@ jobs:
   analyze:
     name: codeql-analysis
     runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads\Notepads.csproj        
@@ -33,13 +36,12 @@ jobs:
       - name: Restore the application
         run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
         env:
-          Configuration: Release
+          Configuration: ${{ matrix.configuration }}
 
       - name: Initialize CodeQL
         id: init_codeql
         uses: github/codeql-action/init@v1
         with:
-          languages: csharp
           queries: security-and-quality
 
       - name: Build
@@ -49,7 +51,7 @@ jobs:
           Appx_Bundle: Always
           Appx_Bundle_Platforms: x86|x64
           Appx_Package_Build_Mode: StoreUpload
-          Configuration: Release
+          Configuration: ${{ matrix.configuration }}
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
