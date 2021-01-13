@@ -503,6 +503,7 @@
     <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
     <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
     <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+    <Content Include="Resource\Text Document.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
