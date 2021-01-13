@@ -63,6 +63,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Notepads\Notepads.csproj" />
     <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj" />
+    <ProjectReference Include="..\Notepad\Notepad.vcxproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

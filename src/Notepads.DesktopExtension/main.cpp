@@ -152,8 +152,7 @@ bool isFileLaunchRequested()
 {
     bool isFileLaunchRequested = true;
     LPWSTR* szArglist = NULL;
-    int nArgs;
-
+    INT nArgs;
     szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
     if (szArglist)
     {
@@ -168,14 +167,14 @@ bool isFileLaunchRequested()
         }
         else
         {
-            int ct = nArgs - 1;
-            int cpidl;
+            INT ct = nArgs - 1;
             HRESULT hr = E_OUTOFMEMORY;
             com_ptr< IShellItemArray> ppsia = NULL;
             PIDLIST_ABSOLUTE* rgpidl = new(std::nothrow) PIDLIST_ABSOLUTE[ct];
             if (rgpidl)
             {
                 hr = S_OK;
+                INT cpidl;
                 for (cpidl = 0; SUCCEEDED(hr) && cpidl < ct; cpidl++)
                 {
                     hr = SHParseDisplayName(szArglist[cpidl + 1], nullptr, &rgpidl[cpidl], 0, nullptr);
@@ -193,15 +192,17 @@ bool isFileLaunchRequested()
                     appActivationMgr.~com_ptr();
                 }
 
-                for (int i = 0; i < cpidl; i++)
+                for (INT i = 0; i < cpidl; i++)
                 {
                     CoTaskMemFree(rgpidl[i]);
                 }
             }
+
             ppsia.~com_ptr();
             delete[] rgpidl;
         }
     }
+
     LocalFree(szArglist);
 
     return isFileLaunchRequested;
