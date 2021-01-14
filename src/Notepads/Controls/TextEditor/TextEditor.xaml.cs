@@ -96,60 +96,16 @@
                     _fileAttributes &= ~System.IO.FileAttributes.ReadOnly;
                 }
 
-                var isSuccess = false;
-                var isHandleReadOnly = FileSystemUtility.IsFileReadOnly(EditingFile);
-                if (!Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes))
-                {
-                    unsafe
-                    {
-                        var size = Marshal.SizeOf<Win32FileSystemUtility.FILE_ATTRIBUTE_TAG_INFO>();
-                        var buff = new byte[size];
-                        fixed (byte* fileInformationBuff = buff)
-                        {
-                            ref var fileInformation = ref Unsafe.As<byte, Win32FileSystemUtility.FILE_ATTRIBUTE_TAG_INFO>(ref buff[0]);
-                            SafeFileHandle hFile = null;
+                var message = Win32FileSystemUtility.SetFileAttributes(EditingFile, _fileAttributes);
 
-                            try
-                            {
-                                hFile = EditingFile.CreateSafeFileHandle();
-
-                                if (Win32FileSystemUtility.GetFileInformationByHandleEx(hFile,
-                                        Win32FileSystemUtility.FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo,
-                                        fileInformationBuff, (uint)size))
-                                {
-                                    fileInformation.FileAttributes = (uint)_fileAttributes;
-                                    if (Win32FileSystemUtility.SetFileInformationByHandle(hFile,
-                                        Win32FileSystemUtility.FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo,
-                                        fileInformationBuff, (uint)size))
-                                    {
-                                        isSuccess = true;
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                NotificationCenter.Instance.PostNotification(ex.Message, 1500);
-                            }
-                            finally
-                            {
-                                hFile?.Dispose();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    isSuccess = true;
-                }
-
-                if (isSuccess)
+                if (string.IsNullOrEmpty(message))
                 {
                     FileAttributeChanged?.Invoke(this, null);
                     CheckAndUpdateAttributesInfo();
                 }
                 else
                 {
-                    NotificationCenter.Instance.PostNotification(Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message, 1500);
+                    NotificationCenter.Instance.PostNotification(message, 1500);
                 }
             }
         }
@@ -197,43 +153,14 @@
         {
             if (EditingFile != null  && FileModificationState != FileModificationState.RenamedMovedOrDeleted)
             {
-                unsafe
+                var fileAttributes = Win32FileSystemUtility.GetFileAttributes(EditingFile);
+                if (_fileAttributes != fileAttributes)
                 {
-                    var size = Marshal.SizeOf<Win32FileSystemUtility.FILE_ATTRIBUTE_TAG_INFO>();
-                    var buff = new byte[size];
-                    fixed (byte* fileInformationBuff = buff)
+                    _fileAttributes = fileAttributes;
+                    Dispatcher.CallOnUIThreadAsync(() =>
                     {
-                        ref var fileInformation = ref Unsafe.As<byte, Win32FileSystemUtility.FILE_ATTRIBUTE_TAG_INFO>(ref buff[0]);
-                        SafeFileHandle hFile = null;
-
-                        try
-                        {
-                            hFile = EditingFile.CreateSafeFileHandle(FileAccess.Read);
-                            if (Win32FileSystemUtility.GetFileInformationByHandleEx(hFile,
-                                Win32FileSystemUtility.FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo,
-                                fileInformationBuff, (uint)size)  &&
-                                (uint)_fileAttributes != fileInformation.FileAttributes)
-                            {
-                                _fileAttributes = (System.IO.FileAttributes)fileInformation.FileAttributes;
-                                Dispatcher.CallOnUIThreadAsync(() =>
-                                {
-                                    FileAttributeChanged?.Invoke(this, null);
-                                }).Wait(0);
-                            }
-                            else
-                            {
-                                _fileAttributes = 0;
-                            }
-                        }
-                        catch
-                        {
-                            _fileAttributes = 0;
-                        }
-                        finally
-                        {
-                            hFile?.Dispose();
-                        }
-                    }
+                        FileAttributeChanged?.Invoke(this, null);
+                    }).Wait(0);
                 }
             }
         }
