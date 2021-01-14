@@ -513,8 +513,8 @@
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        CheckAndUpdateAttributesInfo();
                         await CheckAndUpdateFileStatus(cancellationToken);
+                        CheckAndUpdateAttributesInfo();
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
