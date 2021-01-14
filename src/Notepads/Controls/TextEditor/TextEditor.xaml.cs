@@ -78,27 +78,27 @@
 
         public string EditingFilePath { get; private set; }
 
-        private Win32FileSystemUtility.File_Attributes _fileAttributes;
+        private System.IO.FileAttributes _fileAttributes;
 
         public bool IsReadOnly
         {
-            get => _fileAttributes.HasFlag(Win32FileSystemUtility.File_Attributes.Readonly);
+            get => _fileAttributes.HasFlag(System.IO.FileAttributes.ReadOnly);
             set
             {
                 if (EditingFile == null) return;
 
                 if (value)
                 {
-                    _fileAttributes |= Win32FileSystemUtility.File_Attributes.Readonly;
+                    _fileAttributes |= System.IO.FileAttributes.ReadOnly;
                 }
                 else
                 {
-                    _fileAttributes &= ~Win32FileSystemUtility.File_Attributes.Readonly;
+                    _fileAttributes &= ~System.IO.FileAttributes.ReadOnly;
                 }
 
                 var isSuccess = false;
                 var isHandleReadOnly = FileSystemUtility.IsFileReadOnly(EditingFile);
-                if (!Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes) && !isHandleReadOnly)
+                if (!Win32FileSystemUtility.SetFileAttributesFromApp(EditingFilePath, (uint)_fileAttributes))
                 {
                     unsafe
                     {
@@ -137,7 +137,7 @@
                         }
                     }
                 }
-                else if (!isHandleReadOnly)
+                else
                 {
                     isSuccess = true;
                 }
@@ -214,7 +214,7 @@
                                 fileInformationBuff, (uint)size)  &&
                                 (uint)_fileAttributes != fileInformation.FileAttributes)
                             {
-                                _fileAttributes = (Win32FileSystemUtility.File_Attributes)fileInformation.FileAttributes;
+                                _fileAttributes = (System.IO.FileAttributes)fileInformation.FileAttributes;
                                 Dispatcher.CallOnUIThreadAsync(() =>
                                 {
                                     FileAttributeChanged?.Invoke(this, null);
