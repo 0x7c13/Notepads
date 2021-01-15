@@ -1,10 +1,14 @@
 ﻿namespace Notepads.Utilities
 {
+    using System;
+    using System.Collections.Generic;
     using System.IO;
-    using Microsoft.Win32.SafeHandles;
     using System.Runtime.InteropServices;
     using System.Runtime.CompilerServices;
-    using System;
+    using Microsoft.AppCenter.Crashes;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.Toolkit.Uwp.Helpers;
+    using Microsoft.Win32.SafeHandles;
 
     public static class Win32FileSystemUtility
     {
@@ -103,6 +107,54 @@
                         {
                             fileAttributes = (FileAttributes)fileInformation.FileAttributes;
                         }
+                        else
+                        {
+                            var e = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+
+                            var diagnosticInfo = new Dictionary<string, string>()
+                            {
+                                { "Message", e.Message },
+                                { "Exception", e.ToString() },
+                                { "Culture", SystemInformation.Culture.EnglishName },
+                                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                                { "FileType", Path.GetExtension(file.Path) }
+                            };
+
+                            var attachment = ErrorAttachmentLog.AttachmentWithText(
+                                $"Exception: {e}, " +
+                                $"Message: {e.Message}, " +
+                                $"InnerException: {e.InnerException}, " +
+                                $"InnerExceptionMessage: {e.InnerException?.Message}",
+                                "FileAttribuesFetchException");
+
+                            Analytics.TrackEvent("OnFileAttribuesFetchException", diagnosticInfo);
+                            Crashes.TrackError(e, diagnosticInfo, attachment);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        var diagnosticInfo = new Dictionary<string, string>()
+                        {
+                            { "Message", e.Message },
+                            { "Exception", e.ToString() },
+                            { "Culture", SystemInformation.Culture.EnglishName },
+                            { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                            { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                            { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                            { "FileType", Path.GetExtension(file.Path) }
+                        };
+
+                        var attachment = ErrorAttachmentLog.AttachmentWithText(
+                            $"Exception: {e}, " +
+                            $"Message: {e.Message}, " +
+                            $"InnerException: {e.InnerException}, " +
+                            $"InnerExceptionMessage: {e.InnerException?.Message}",
+                            "FileAttribuesFetchException");
+
+                        Analytics.TrackEvent("OnFileAttribuesFetchException", diagnosticInfo);
+                        Crashes.TrackError(e, diagnosticInfo, attachment);
                     }
                     finally
                     {
@@ -115,7 +167,7 @@
 
         public static string SetFileAttributes(this Windows.Storage.IStorageFile file, FileAttributes fileAttributes)
         {
-            string message = null;
+            Exception ex = null;
             if (!SetFileAttributesFromApp(file.Path, (uint)fileAttributes))
             {
                 unsafe
@@ -136,17 +188,17 @@
                                 fileInformation.FileAttributes = (uint)fileAttributes;
                                 if (!SetFileInformationByHandle(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                                 {
-                                    message = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message;
+                                    ex = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
                                 }
                             }
                             else
                             {
-                                message = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message;
+                                ex = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception e)
                         {
-                            message = ex.Message;
+                            ex = e;
                         }
                         finally
                         {
@@ -155,7 +207,32 @@
                     }
                 }
             }
-            return message;
+
+            if (ex != null)
+            {
+                var diagnosticInfo = new Dictionary<string, string>()
+                {
+                    { "Message", ex.Message },
+                    { "Exception", ex.ToString() },
+                    { "Culture", SystemInformation.Culture.EnglishName },
+                    { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                    { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                    { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                    { "FileType", Path.GetExtension(file.Path) }
+                };
+
+                var attachment = ErrorAttachmentLog.AttachmentWithText(
+                    $"Exception: {ex}, " +
+                    $"Message: {ex.Message}, " +
+                    $"InnerException: {ex.InnerException}, " +
+                    $"InnerExceptionMessage: {ex.InnerException?.Message}",
+                    "FileAttribuesSetException");
+
+                Analytics.TrackEvent("OnFileAttribuesSetException", diagnosticInfo);
+                Crashes.TrackError(ex, diagnosticInfo, attachment);
+            }
+
+            return ex?.Message;
         }
     }
 }
