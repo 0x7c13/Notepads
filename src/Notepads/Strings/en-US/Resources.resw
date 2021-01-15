@@ -725,7 +725,7 @@
     <value>Notepads needs Adminstrative Privilage to rename file "{0}"</value>
     <comment>LaunchElevatedExtensionDialog: Rename Failed "Content" display text.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_RenameFailed_Title1" xml:space="preserve">
+  <data name="LaunchElevatedExtensionDialog_RenameFailed_Title" xml:space="preserve">
     <value>Rename Failed</value>
     <comment>LaunchElevatedExtensionDialog: Rename Failed "Title" display text.</comment>
   </data>
