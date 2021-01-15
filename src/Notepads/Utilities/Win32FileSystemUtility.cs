@@ -67,10 +67,21 @@
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct FILE_ATTRIBUTE_TAG_INFO
+        public unsafe struct FILE_BASIC_INFO
         {
+            public LARGE_INTEGER CreationTime;
+            public LARGE_INTEGER LastAccessTime;
+            public LARGE_INTEGER LastWriteTime;
+            public LARGE_INTEGER ChangeTime;
             public uint FileAttributes;
-            public uint ReparseTag;
+        }
+
+        [StructLayout(LayoutKind.Explicit, Size = 8)]
+        public unsafe struct LARGE_INTEGER
+        {
+            [FieldOffset(0)] public Int64 QuadPart;
+            [FieldOffset(0)] public UInt32 LowPart;
+            [FieldOffset(4)] public Int32 HighPart;
         }
 
         public static FileAttributes GetFileAttributes(this Windows.Storage.IStorageFile file)
@@ -78,17 +89,17 @@
             FileAttributes fileAttributes = 0;
             unsafe
             {
-                var size = Marshal.SizeOf<FILE_ATTRIBUTE_TAG_INFO>();
+                var size = Marshal.SizeOf<FILE_BASIC_INFO>();
                 var buff = new byte[size];
                 fixed (byte* fileInformationBuff = buff)
                 {
-                    ref var fileInformation = ref Unsafe.As<byte, FILE_ATTRIBUTE_TAG_INFO>(ref buff[0]);
+                    ref var fileInformation = ref Unsafe.As<byte, FILE_BASIC_INFO>(ref buff[0]);
                     SafeFileHandle hFile = null;
 
                     try
                     {
                         hFile = file.CreateSafeFileHandle(FileAccess.Read);
-                        if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo, fileInformationBuff, (uint)size))
+                        if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                         {
                             fileAttributes = (FileAttributes)fileInformation.FileAttributes;
                         }
@@ -109,21 +120,21 @@
             {
                 unsafe
                 {
-                    var size = Marshal.SizeOf<FILE_ATTRIBUTE_TAG_INFO>();
+                    var size = Marshal.SizeOf<FILE_BASIC_INFO>();
                     var buff = new byte[size];
                     fixed (byte* fileInformationBuff = buff)
                     {
-                        ref var fileInformation = ref Unsafe.As<byte, FILE_ATTRIBUTE_TAG_INFO>(ref buff[0]);
+                        ref var fileInformation = ref Unsafe.As<byte, FILE_BASIC_INFO>(ref buff[0]);
                         SafeFileHandle hFile = null;
 
                         try
                         {
                             hFile = file.CreateSafeFileHandle();
 
-                            if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo, fileInformationBuff, (uint)size))
+                            if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                             {
                                 fileInformation.FileAttributes = (uint)fileAttributes;
-                                if (!SetFileInformationByHandle(hFile, FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo, fileInformationBuff, (uint)size))
+                                if (!SetFileInformationByHandle(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                                 {
                                     message = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()).Message;
                                 }
