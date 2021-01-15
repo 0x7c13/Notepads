@@ -73,7 +73,7 @@
             public uint ReparseTag;
         }
 
-        public static FileAttributes GetFileAttributes(Windows.Storage.IStorageFile file)
+        public static FileAttributes GetFileAttributes(this Windows.Storage.IStorageFile file)
         {
             FileAttributes fileAttributes = 0;
             unsafe
@@ -90,7 +90,7 @@
                         hFile = file.CreateSafeFileHandle(FileAccess.Read);
                         if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileAttributeTagInfo, fileInformationBuff, (uint)size))
                         {
-                            fileAttributes = (System.IO.FileAttributes)fileInformation.FileAttributes;
+                            fileAttributes = (FileAttributes)fileInformation.FileAttributes;
                         }
                     }
                     finally
@@ -102,7 +102,7 @@
             return fileAttributes;
         }
 
-        public static string SetFileAttributes(Windows.Storage.IStorageFile file, FileAttributes fileAttributes)
+        public static string SetFileAttributes(this Windows.Storage.IStorageFile file, FileAttributes fileAttributes)
         {
             string message = null;
             if (!SetFileAttributesFromApp(file.Path, (uint)fileAttributes))

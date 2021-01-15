@@ -96,7 +96,7 @@
                     _fileAttributes &= ~System.IO.FileAttributes.ReadOnly;
                 }
 
-                var message = Win32FileSystemUtility.SetFileAttributes(EditingFile, _fileAttributes);
+                var message = EditingFile.SetFileAttributes(_fileAttributes);
 
                 if (string.IsNullOrEmpty(message))
                 {
@@ -153,7 +153,7 @@
         {
             if (EditingFile != null  && FileModificationState != FileModificationState.RenamedMovedOrDeleted)
             {
-                var fileAttributes = Win32FileSystemUtility.GetFileAttributes(EditingFile);
+                var fileAttributes = EditingFile.GetFileAttributes();
                 if (_fileAttributes != fileAttributes)
                 {
                     _fileAttributes = fileAttributes;
