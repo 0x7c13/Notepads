@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,6 +130,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AssemblyInfo.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
