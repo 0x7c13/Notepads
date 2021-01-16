@@ -21,9 +21,17 @@ VOID AppCenter::start()
 	hstring installId = unbox_value_or<hstring>(readSettingsKey(AppCenterInstallIdStr), L"");
 	if (installId.empty()) return;
 
-	headerList = curl_slist_append(headerList, "Content-Type: application/json");
-	headerList = curl_slist_append(headerList, format("app-secret: {}", to_string(AppCenterSecret)).c_str());
-	headerList = curl_slist_append(headerList, format("install-id: {}", to_string(installId)).c_str());
+	if (!headerList)
+	{
+		headerList = curl_slist_append(headerList, "Content-Type: application/json");
+		headerList = curl_slist_append(headerList, format("app-secret: {}", to_string(AppCenterSecret)).c_str());
+		headerList = curl_slist_append(headerList, format("install-id: {}", to_string(installId)).c_str());
+	}
+
+	if (!deviceInfo)
+	{
+		deviceInfo = new Device();
+	}
 }
 
 VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message, const stacktrace& stackTrace)
@@ -49,7 +57,7 @@ VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 		pair("AvailableMemory", to_string((FLOAT)MemoryManager::AppMemoryUsageLimit() / 1024 / 1024)),
 		pair("FirstUseTimeUTC", getTimeStamp("%m/%d/%Y %T")),
 		pair("OSArchitecture", to_string(Package::Current().Id().Architecture())),
-		pair("OSVersion", deviceInfo.getOsVersion()),
+		pair("OSVersion", deviceInfo->getOsVersion()),
 		pair("IsDesktopExtension", "True"),
 		pair("IsElevated", isElevated)
 	};
@@ -139,4 +147,10 @@ VOID AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, st
 		}
 	}
 	curl_easy_cleanup(curl);
+}
+
+VOID AppCenter::exit()
+{
+	if (headerList) LocalFree(headerList);
+	if (deviceInfo) LocalFree(deviceInfo);
 }

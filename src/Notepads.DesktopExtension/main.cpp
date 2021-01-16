@@ -25,6 +25,8 @@ INT releaseResources()
 {
     CloseHandle(adminWriteEvent);
     CloseHandle(adminRenameEvent);
+    AppCenter::exit();
+    uninit_apartment();
     return 0;
 }
 
@@ -36,14 +38,12 @@ VOID exitApp()
 VOID onUnhandledException()
 {
     logLastError(true).get();
-    Sleep(5000);
     exitApp();
 }
 
 VOID onUnexpectedException()
 {
     logLastError(false).get();
-    Sleep(5000);
     exitApp();
 }
 
@@ -183,5 +183,5 @@ INT main()
         Sleep(1000);
         goto LifeTimeCheck;
     }
-    exit(0);
+    return 0;
 }
