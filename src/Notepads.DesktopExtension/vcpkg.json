@@ -1,10 +1,11 @@
 {
   "name": "notepads-desktopextension",
   "version-string": "1.0.0.0",
+  "$builtin-baseline": "b60f003ccf5fe8613d029f49f835c8929a66eb61",
   "dependencies": [
     {
       "name": "boost-stacktrace",
-      "$version": "1.74.0"
+      "$version": "1.75.0"
     },
     {
       "name": "curl",
@@ -19,6 +20,5 @@
       "name": "rapidjson",
       "$version-date": "2020-09-14"
     }
-  ],
-  "$x-default-baseline": "a14a6bcb27287e3ec138dba1b948a0cdbc337a3a"
+  ]
 }

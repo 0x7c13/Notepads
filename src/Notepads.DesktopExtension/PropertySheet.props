@@ -14,7 +14,7 @@
   <PropertyGroup Label="Vcpkg">
     <VcpkgRepo>https://github.com/microsoft/vcpkg</VcpkgRepo>
     <!--Update this value to latest commit to update vcpkg and dependencies-->
-    <VcpkgCommitHash>a14a6bcb27287e3ec138dba1b948a0cdbc337a3a</VcpkgCommitHash>
+    <VcpkgCommitHash>b60f003ccf5fe8613d029f49f835c8929a66eb61</VcpkgCommitHash>
     <!--###################################################################-->
     <VcpkgOSTarget>windows</VcpkgOSTarget>
   </PropertyGroup>

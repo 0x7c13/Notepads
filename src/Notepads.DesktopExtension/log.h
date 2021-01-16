@@ -7,17 +7,19 @@ namespace AppCenter
 {
 	using namespace rapidjson;
 	using namespace std;
+	using namespace Windows::Foundation;
 
 	enum LogType
 	{
 		managedError,
+		handledError,
 		errorAttachment,
 		event
 	};
 
 	namespace
 	{
-		static const string logTypes[] = { "managedError", "errorAttachment", "event" };
+		static const string logTypes[] = { "managedError", "handledError", "errorAttachment", "event" };
 		static string launchTimeStamp = getTimeStamp();
 		static Device deviceInfo = Device();
 	}
@@ -25,16 +27,20 @@ namespace AppCenter
 	class Log
 	{
 	public:
-		#pragma region  Constructors for error report
+		#pragma region  Constructors for managed error report
 
-		Log(LogType type, const string& id, const string& sid, bool isFatal, Exception* exception) :
-			_type(type), _id(id), _sid(sid), _fatal(isFatal), _exception(exception)
+		Log(LogType type, bool isFatal, Exception* exception) :
+			_type(type), _fatal(isFatal), _exception(exception)
 		{
 			InitializeLog();
 		}
 
-		Log(LogType type, const string& id, const string& sid, bool isFatal, Exception* exception, const vector<pair<const CHAR*, string>>& properties) :
-			_type(type), _id(id), _sid(sid), _fatal(isFatal), _exception(exception), _properties(properties)
+		#pragma endregion
+
+		#pragma region  Constructors for handled error report
+
+		Log(LogType type, bool isFatal, Exception* exception, const vector<pair<const CHAR*, string>>& properties) :
+			_type(type), _fatal(isFatal), _exception(exception), _properties(properties)
 		{
 			InitializeLog();
 		}
@@ -43,8 +49,8 @@ namespace AppCenter
 
 		#pragma region  Constructor for error attachment
 
-		Log(LogType type, const string& id, const string& errorId, const string& data) :
-			_type(type), _id(id), _errorId(errorId), _data(data)
+		Log(LogType type, const string& errorId, const string& data) :
+			_type(type), _errorId(errorId), _data(data)
 		{
 			InitializeLog();
 		}
@@ -53,8 +59,8 @@ namespace AppCenter
 
 		#pragma region  Constructor for event report
 
-		Log(LogType type, const string& id, const string& sid, const string& name, const vector<pair<const CHAR*, string>>& properties) :
-			_type(type), _id(id), _sid(sid), _name(name), _properties(properties)
+		Log(LogType type, const string& sid, const string& name, const vector<pair<const CHAR*, string>>& properties) :
+			_type(type), _sid(sid), _name(name), _properties(properties)
 		{
 			InitializeLog();
 		}
@@ -62,12 +68,12 @@ namespace AppCenter
 		#pragma endregion
 
 		Log(const Log& log) :
-			_type(log._type), _name(log._name), _timestamp(log._timestamp), _processId(log._processId), _id(log._id), _sid(log._sid), _fatal(log._fatal),
-			_processName(log._processName), _errorThreadId(log._errorThreadId), _data(log._data), _errorId(log._errorId),
+			_type(log._type), _contentType(log._contentType), _name(log._name), _timestamp(log._timestamp),
+			_processId(log._processId), _id(log._id), _sid(log._sid), _fatal(log._fatal), _processName(log._processName),
+			_errorThreadId(log._errorThreadId), _data(log._data), _errorId(log._errorId),
 			_exception(NULL), _properties(log._properties)
 		{
 			_exception = (log._exception == 0) ? 0 : new Exception(*log._exception);
-			InitializeLog();
 		}
 
 		~Log()
@@ -120,6 +126,7 @@ namespace AppCenter
 			switch (_type)
 			{
 			case LogType::managedError:
+			case LogType::handledError:
 				writer.String("processId");
 				writer.Uint(_processId);
 				writer.String("fatal");
@@ -167,6 +174,9 @@ namespace AppCenter
 			writer.EndObject();
 		}
 
+		inline const string& Id() { return _id; }
+		inline const string& Sid() { return _sid; }
+
 	private:
 		LogType _type;
 		string _contentType = "text/plain";
@@ -185,9 +195,15 @@ namespace AppCenter
 
 		VOID InitializeLog()
 		{
+			_id = to_string(to_hstring(GuidHelper::CreateNewGuid()));
+			_id.erase(0, _id.find_first_not_of('{')).erase(_id.find_last_not_of('}') + 1);
+
 			switch (_type)
 			{
 			case LogType::managedError:
+			case LogType::handledError:
+				_sid = to_string(to_hstring(GuidHelper::CreateNewGuid()));
+				_sid.erase(0, _sid.find_first_not_of('{')).erase(_sid.find_last_not_of('}') + 1);
 				_processId = GetCurrentProcessId();
 				_errorThreadId = GetCurrentThreadId();
 				break;

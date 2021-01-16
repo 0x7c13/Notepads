@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
 
+#define IGNORED_FRAME_COUNT 6
+
 namespace AppCenter
 {
 	using namespace boost::stacktrace;
@@ -57,10 +59,7 @@ namespace AppCenter
 
 		Exception(const string& message, const stacktrace& stackTrace) : _message(message)
 		{
-			for (frame frame : stackTrace.as_vector())
-			{
-				_frames.push_back(Frame(frame));
-			}
+			_frames.assign(stackTrace.as_vector().begin() + IGNORED_FRAME_COUNT, stackTrace.as_vector().end());
 		}
 
 		~Exception() {}

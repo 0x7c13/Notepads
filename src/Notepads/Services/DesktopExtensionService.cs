@@ -125,6 +125,7 @@
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
                     _adminWriteEvent.Reset();
+                    adminConnectionPipeStream?.Dispose();
                     throw new AdminstratorAccessException();
                 }
 
@@ -146,13 +147,11 @@
                     await pipeWriter.FlushAsync();
 
                     // Wait for desktop extension to send response.
-                    if ("Success".Equals(await pipeReader.ReadLineAsync()))
-                    {
-                        return;
-                    }
-                    else
+                    if (!"Success".Equals(await pipeReader.ReadLineAsync()))
                     {
                         // Promt user to "Save As" if extension failed to save data.
+                        mmf?.Dispose();
+                        adminConnectionPipeStream?.Dispose();
                         throw new UnauthorizedAccessException();
                     }
                 }
@@ -185,6 +184,8 @@
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
                     _adminRenameEvent.Reset();
+                    file = null;
+
                     var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
                         AdminOperationType.Rename,
                         file.Path,
@@ -192,23 +193,24 @@
                         null);
 
                     var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
-
-                    return null;
                 }
+                else
+                {
+                    var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                    var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
-                var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
-                var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                    var token = SharedStorageAccessManager.AddFile(file);
+                    await pipeWriter.WriteAsync($"{token}|{newName}");
+                    await pipeWriter.FlushAsync();
 
-                var token = SharedStorageAccessManager.AddFile(file);
-                await pipeWriter.WriteAsync($"{token}|{newName}");
-                await pipeWriter.FlushAsync();
-
-                // Wait for desktop extension to send response.
-                token = await pipeReader.ReadLineAsync();
-                file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
-                SharedStorageAccessManager.RemoveFile(token);
-                return file;
+                    // Wait for desktop extension to send response.
+                    token = await pipeReader.ReadLineAsync();
+                    file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                    SharedStorageAccessManager.RemoveFile(token);
+                }
             }
+
+            return file;
         }
     }
 }

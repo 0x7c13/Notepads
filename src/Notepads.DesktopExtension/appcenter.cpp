@@ -12,11 +12,7 @@ using namespace std;
 using namespace winrt;
 using namespace AppCenter;
 using namespace Windows::ApplicationModel;
-using namespace Windows::Foundation;
-using namespace Windows::Security::ExchangeActiveSyncProvisioning;
-using namespace Windows::Storage;
 using namespace Windows::System;
-using namespace Windows::System::Profile;
 
 VOID AppCenter::start()
 {
@@ -34,15 +30,6 @@ VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 {
 	if (!headerList) return;
 
-	string crashReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
-	crashReportId.erase(0, crashReportId.find_first_not_of('{')).erase(crashReportId.find_last_not_of('}') + 1);
-	string crashReportSid = to_string(to_hstring(GuidHelper::CreateNewGuid()));
-	crashReportSid.erase(0, crashReportSid.find_first_not_of('{')).erase(crashReportSid.find_last_not_of('}') + 1);
-	string errorAttachmentId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
-	errorAttachmentId.erase(0, errorAttachmentId.find_first_not_of('{')).erase(errorAttachmentId.find_last_not_of('}') + 1);
-	string eventReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
-	eventReportId.erase(0, eventReportId.find_first_not_of('{')).erase(eventReportId.find_last_not_of('}') + 1);
-
 	TCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
 	LCIDToLocaleName(GetThreadLocale(), locale, LOCALE_NAME_MAX_LENGTH, 0);
 	TCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
@@ -50,6 +37,9 @@ VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 
 	string isElevated = isElevatedProcess() ? "True" : "False";
 	string eventType = isFatal ? "OnWin32UnhandledException" : "OnWin32UnexpectedException";
+
+	string attachmentData = base64_encode(format("Exception: Win32Exception code no. {}\nMessage: {}\nIsDesktopExtension: True, IsElevated: {}",
+												errorCode, message, isElevated));
 
 	vector<pair<const CHAR*, string>> properties
 	{
@@ -63,16 +53,18 @@ VOID AppCenter::trackError(bool isFatal, DWORD errorCode, const string& message,
 		pair("IsDesktopExtension", "True"),
 		pair("IsElevated", isElevated)
 	};
-	
 
 	vector<Log> errorReportSet
 	{
-		Log(LogType::managedError, crashReportId, crashReportSid, isFatal, new Exception(message, stackTrace), properties),
-		Log(LogType::errorAttachment, errorAttachmentId, crashReportId, base64_encode(
-			format("Exception: Win32Exception code no. {}, Message: {}, IsDesktopExtension: True, IsElevated: {}",
-				errorCode, message, isElevated))),
-		Log(LogType::event, eventReportId, crashReportSid, eventType, properties)
+		Log(LogType::managedError, isFatal, new Exception(message, stackTrace)),
+		Log(LogType::handledError, isFatal, new Exception(message), properties)
 	};
+	errorReportSet.insert(errorReportSet.end(),
+		{
+			Log(LogType::errorAttachment, errorReportSet[0].Id(), attachmentData),
+			Log(LogType::errorAttachment, errorReportSet[1].Id(), attachmentData),
+			Log(LogType::event, errorReportSet[0].Sid(), eventType, properties)
+		});
 
 	StringBuffer errorReport;
 #ifdef  _DEBUG
@@ -115,9 +107,6 @@ VOID AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, st
 {
 	if (!headerList) return;
 
-	string eventReportId = to_string(to_hstring(GuidHelper::CreateNewGuid()));
-	eventReportId.erase(0, eventReportId.find_first_not_of('{')).erase(eventReportId.find_last_not_of('}') + 1);
-
 	StringBuffer eventReport;
 #ifdef  _DEBUG
 	PrettyWriter<StringBuffer> writer(eventReport);
@@ -128,7 +117,7 @@ VOID AppCenter::trackEvent(const string& name, const vector<pair<const CHAR*, st
 	writer.StartObject();
 	writer.String("logs");
 	writer.StartArray();
-	Log(LogType::event, eventReportId, sid, name, properties).Serialize(writer);
+	Log(LogType::event, sid, name, properties).Serialize(writer);
 	writer.EndArray();
 	writer.EndObject();
 
