@@ -18,7 +18,7 @@
     using Windows.Security.Authentication.Web;
     using Windows.Storage;
 
-    public enum AdminOperationType
+    public enum ElevatedOperationType
     {
         Save,
         Rename
@@ -38,30 +38,98 @@
             ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) &&
             !new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
-        public static Mutex ExtensionLifetimeObject = null;
-
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        private static EventWaitHandle _adminWriteEvent = null;
-        private static EventWaitHandle _adminRenameEvent = null;
+        private static Mutex ExtensionProcessLifetimeObject = null;
+        private static Mutex ElevatedProcessLifetimeObject = null;
 
-        public static void Initialize()
+        private static EventWaitHandle _extensionUnblockEvent = null;
+        private static EventWaitHandle _elevatedWriteEvent = null;
+        private static EventWaitHandle _elevatedRenameEvent = null;
+
+        /// <summary>
+        /// Initializes desktop processes.
+        /// </summary>
+        public static async void Initialize()
         {
             if (!ShouldUseDesktopExtension) return;
 
-            if (ExtensionLifetimeObject == null)
+            if (ExtensionProcessLifetimeObject == null)
             {
-                ExtensionLifetimeObject = new Mutex(false, SettingsKey.DesktopExtensionLifetimeObjNameStr);
+                ExtensionProcessLifetimeObject = new Mutex(false, SettingsKey.ExtensionProcessLifetimeObjNameStr);
             }
 
-            if (_adminWriteEvent == null)
+            if (ElevatedProcessLifetimeObject == null)
             {
-                _adminWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminWriteEventNameStr);
+                ElevatedProcessLifetimeObject = new Mutex(false, SettingsKey.ElevatedProcessLifetimeObjNameStr);
             }
 
-            if (_adminRenameEvent == null)
+            if (_extensionUnblockEvent == null)
             {
-                _adminRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.AdminRenameEventNameStr);
+                _extensionUnblockEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ExtensionUnblockEventNameStr);
+            }
+
+            if (_elevatedWriteEvent == null)
+            {
+                _elevatedWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ElevatedWriteEventNameStr);
+            }
+
+            if (_elevatedRenameEvent == null)
+            {
+                _elevatedRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ElevatedRenameEventNameStr);
+            }
+
+            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
+            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
+
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
+
+        /// <summary>
+        /// Releases resources and closes desktop processes.
+        /// </summary>
+        public static void Dispose()
+        {
+            _extensionUnblockEvent?.Dispose();
+            _elevatedWriteEvent?.Dispose();
+            _elevatedRenameEvent?.Dispose();
+            ExtensionProcessLifetimeObject?.Dispose();
+            ElevatedProcessLifetimeObject?.Dispose();
+        }
+
+        /// <summary>
+        /// Unblock UWP edited file with desktop component.
+        /// </summary>
+        /// <remarks>
+        /// Only available for legacy Windows 10 desktop.
+        /// </remarks>
+        public static async void UnblockFile(string filePath)
+        {
+            if (!ShouldUseDesktopExtension) return;
+
+            using (var pipeStream = new NamedPipeServerStream(
+                $"Local\\{SettingsKey.ExtensionUnblockPipeConnectionNameStr}",
+                PipeDirection.Out,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous))
+            {
+                _extensionUnblockEvent.Set();
+                // Wait for 100 ms for desktop extension to accept request.
+                if (!pipeStream.WaitForConnectionAsync().Wait(100))
+                {
+                    // If the connection fails, desktop extension is not launched.
+                    // In that case, launch desktop extension.
+                    _extensionUnblockEvent.Reset();
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+                }
+                else
+                {
+                    var pipeWriter = new StreamWriter(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+
+                    await pipeWriter.WriteAsync(filePath);
+                    await pipeWriter.FlushAsync();
+                }
             }
         }
 
@@ -75,9 +143,8 @@
         {
             if (!ShouldUseDesktopExtension) return;
 
-            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
-            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            // Pass the group id that describes the correct parameter for prompting elevated process launch
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("Elevate");
         }
 
         /// <summary>
@@ -91,11 +158,11 @@
         {
             if (isLaunched)
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreated"), 1500);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ElevatedProcessLaunched"), 1500);
             }
             else
             {
-                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_AdminExtensionCreationFailed"), 1500);
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_ElevatedProcessLaunchFailed"), 1500);
             }
         }
 
@@ -111,26 +178,26 @@
         {
             if (!ShouldUseDesktopExtension) return;
 
-            using (var adminConnectionPipeStream = new NamedPipeServerStream(
-                $"Local\\{SettingsKey.AdminWritePipeConnectionNameStr}",
+            using (var pipeStream = new NamedPipeServerStream(
+                $"Local\\{SettingsKey.ElevatedWritePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous))
             {
-                _adminWriteEvent.Set();
-                // Wait for 250 ms for desktop extension to accept request.
-                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(100))
+                _elevatedWriteEvent.Set();
+                // Wait for 100 ms for desktop extension to accept request.
+                if (!pipeStream.WaitForConnectionAsync().Wait(100))
                 {
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
-                    _adminWriteEvent.Reset();
-                    adminConnectionPipeStream?.Dispose();
+                    _elevatedWriteEvent.Reset();
+                    pipeStream?.Dispose();
                     throw new AdminstratorAccessException();
                 }
 
-                var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
-                var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                var pipeReader = new StreamReader(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                var pipeWriter = new StreamWriter(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
                 var mapName = filePath.Replace(Path.DirectorySeparatorChar, '-');
 
@@ -151,7 +218,7 @@
                     {
                         // Promt user to "Save As" if extension failed to save data.
                         mmf?.Dispose();
-                        adminConnectionPipeStream?.Dispose();
+                        pipeStream?.Dispose();
                         throw new UnauthorizedAccessException();
                     }
                 }
@@ -170,34 +237,34 @@
         {
             if (!ShouldUseDesktopExtension) return null;
 
-            using (var adminConnectionPipeStream = new NamedPipeServerStream(
-                $"Local\\{SettingsKey.AdminRenamePipeConnectionNameStr}",
+            using (var pipeStream = new NamedPipeServerStream(
+                $"Local\\{SettingsKey.ElevatedRenamePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous))
             {
-                _adminRenameEvent.Set();
-                // Wait for 250 ms for desktop extension to accept request.
-                if (!adminConnectionPipeStream.WaitForConnectionAsync().Wait(100))
+                _elevatedRenameEvent.Set();
+                // Wait for 100 ms for desktop extension to accept request.
+                if (!pipeStream.WaitForConnectionAsync().Wait(100))
                 {
                     // If the connection fails, desktop extension is not launched with elevated privilages.
                     // In that case, prompt user to launch desktop extension with elevated privilages.
-                    _adminRenameEvent.Reset();
-                    file = null;
+                    _elevatedRenameEvent.Reset();
 
-                    var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
-                        AdminOperationType.Rename,
+                    var launchElevatedProcessDialog = new LaunchElevatedProcessDialog(
+                        ElevatedOperationType.Rename,
                         file.Path,
-                        async () => { await DesktopExtensionService.LaunchElevetedProcess(); },
+                        async () => { await LaunchElevetedProcess(); },
                         null);
 
-                    var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
+                    await DialogManager.OpenDialogAsync(launchElevatedProcessDialog, awaitPreviousDialog: false);
+                    file = null;
                 }
                 else
                 {
-                    var pipeReader = new StreamReader(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
-                    var pipeWriter = new StreamWriter(adminConnectionPipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                    var pipeReader = new StreamReader(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
+                    var pipeWriter = new StreamWriter(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
                     var token = SharedStorageAccessManager.AddFile(file);
                     await pipeWriter.WriteAsync($"{token}|{newName}");

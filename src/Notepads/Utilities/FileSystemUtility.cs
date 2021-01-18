@@ -576,6 +576,7 @@
                     try
                     {
                         await PathIO.WriteBytesAsync(file.Path, result);
+                        DesktopExtensionService.UnblockFile(file.Path);
                     }
                     catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
                     {
@@ -594,6 +595,7 @@
                         await writer.FlushAsync();
                         stream.SetLength(stream.Position); // Truncate
                     }
+                    DesktopExtensionService.UnblockFile(file.Path);
                 }
             }
             finally

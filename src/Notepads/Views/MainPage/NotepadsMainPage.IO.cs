@@ -170,8 +170,8 @@
             }
             catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
             {
-                var launchElevatedExtensionDialog = new LaunchElevatedExtensionDialog(
-                    AdminOperationType.Save, file.Path,
+                var launchElevatedProcessDialog = new LaunchElevatedProcessDialog(
+                    ElevatedOperationType.Save, file.Path,
                     async () =>
                     {
                         await DesktopExtensionService.LaunchElevetedProcess();
@@ -181,9 +181,9 @@
                         isSaveSuccess = false;
                     });
 
-                var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedExtensionDialog, awaitPreviousDialog: false);
+                var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedProcessDialog, awaitPreviousDialog: false);
 
-                if (dialogResult == null || launchElevatedExtensionDialog.IsAborted)
+                if (dialogResult == null || launchElevatedProcessDialog.IsAborted)
                 {
                     isSaveSuccess = false;
                 }

@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "appcenter.h"
 
+#define MAX_TIME_STR 20
+#define MAX_DATE_STR 20
+#define MAX_DATETIME_STR 100
+
 using namespace boost::stacktrace;
 using namespace boost::stacktrace::detail;
 using namespace fmt;
@@ -9,10 +13,6 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Storage;
 using namespace Windows::System;
-
-constexpr INT MAX_TIME_STR = 20;
-constexpr INT MAX_DATE_STR = 20;
-constexpr INT MAX_DATETIME_STR = 100;
 
 StorageFile logFile = NULL;
 

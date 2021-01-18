@@ -12,11 +12,17 @@ using namespace std;
 using namespace winrt;
 using namespace AppCenter;
 using namespace Windows::ApplicationModel;
+using namespace Windows::Storage;
 using namespace Windows::System;
+
+IInspectable readSettingsKey(hstring key)
+{
+	return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
+}
 
 VOID AppCenter::start()
 {
-	if (!AppCenterSecret) return;
+	if (!AppCenterSecret || wcslen(AppCenterSecret) == 0) return;
 
 	hstring installId = unbox_value_or<hstring>(readSettingsKey(AppCenterInstallIdStr), L"");
 	if (installId.empty()) return;

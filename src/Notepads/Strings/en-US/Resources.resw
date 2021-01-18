@@ -693,40 +693,40 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_SaveFailed_CloseButtonText" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_SaveFailed_CloseButtonText" xml:space="preserve">
     <value>Save As</value>
-    <comment>LaunchElevatedExtensionDialog: Save Failed CloseButtonText.</comment>
+    <comment>LaunchElevatedProcessDialog: Save Failed CloseButtonText.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_SaveFailed_Content" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_SaveFailed_Content" xml:space="preserve">
     <value>Notepads needs Adminstrative Privilage to modify file "{0}"</value>
-    <comment>LaunchElevatedExtensionDialog: Save Failed "Content" display text.</comment>
+    <comment>LaunchElevatedProcessDialog: Save Failed "Content" display text.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_SaveFailed_Title" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_SaveFailed_Title" xml:space="preserve">
     <value>Save Failed</value>
-    <comment>LaunchElevatedExtensionDialog: Save Failed "Title" display text.</comment>
+    <comment>LaunchElevatedProcessDialog: Save Failed "Title" display text.</comment>
   </data>
-  <data name="TextEditor_NotificationMsg_AdminExtensionCreated" xml:space="preserve">
+  <data name="TextEditor_NotificationMsg_ElevatedProcessLaunched" xml:space="preserve">
     <value>Now system files can be directly modified</value>
-    <comment>TextEditor: Notification message when launching of admin process is successful.</comment>
+    <comment>TextEditor: Notification message when launching of elevated process is successful.</comment>
   </data>
-  <data name="TextEditor_NotificationMsg_AdminExtensionCreationFailed" xml:space="preserve">
-    <value>Failed to start admin process</value>
-    <comment>TextEditor: Notification message when launching of admin process is failed.</comment>
+  <data name="TextEditor_NotificationMsg_ElevatedProcessLaunchFailed" xml:space="preserve">
+    <value>Failed to start elevated process</value>
+    <comment>TextEditor: Notification message when launching of elevated process is failed.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_PrimaryButtonText" xml:space="preserve">
     <value>Give Access</value>
-    <comment>LaunchElevatedExtensionDialog: PrimaryButtonText.</comment>
+    <comment>LaunchElevatedProcessDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_RenameFailed_CloseButtonText" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_RenameFailed_CloseButtonText" xml:space="preserve">
     <value>Cancel</value>
-    <comment>LaunchElevatedExtensionDialog: Rename Failed CloseButtonText.</comment>
+    <comment>LaunchElevatedProcessDialog: Rename Failed CloseButtonText.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_RenameFailed_Content" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_RenameFailed_Content" xml:space="preserve">
     <value>Notepads needs Adminstrative Privilage to rename file "{0}"</value>
-    <comment>LaunchElevatedExtensionDialog: Rename Failed "Content" display text.</comment>
+    <comment>LaunchElevatedProcessDialog: Rename Failed "Content" display text.</comment>
   </data>
-  <data name="LaunchElevatedExtensionDialog_RenameFailed_Title" xml:space="preserve">
+  <data name="LaunchElevatedProcessDialog_RenameFailed_Title" xml:space="preserve">
     <value>Rename Failed</value>
-    <comment>LaunchElevatedExtensionDialog: Rename Failed "Title" display text.</comment>
+    <comment>LaunchElevatedProcessDialog: Rename Failed "Title" display text.</comment>
   </data>
 </root>

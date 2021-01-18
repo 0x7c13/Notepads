@@ -30,6 +30,9 @@
     <ClCompile Include="appcenter.cpp">
       <Filter>AppCenter</Filter>
     </ClCompile>
+    <ClCompile Include="extension.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

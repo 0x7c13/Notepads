@@ -39,16 +39,19 @@
         // These values depend upon constant fields described in ..\Notepads.DesktopExtension\pch.h.
         // Changing value in one place require changing variable with similar name in another.
         internal const string AppCenterSecret = null;
+        internal const string PackageSidStr = "PackageSidStr";
         internal const string AppCenterInstallIdStr = "AppCenterInstallIdStr";
         internal const string LastChangedSettingsKeyStr = "LastChangedSettingsKeyStr";
         internal const string LastChangedSettingsAppInstanceIdStr = "LastChangedSettingsAppInstanceIdStr";
         internal const string LaunchElevetedProcessSuccessStr = "LaunchElevetedProcessSuccess";
         internal const string LaunchElevetedProcessFailedStr = "LaunchElevetedProcessFailed";
-        internal const string DesktopExtensionLifetimeObjNameStr = "DesktopExtensionLifetimeObj";
-        internal const string PackageSidStr = "PackageSidStr";
-        internal const string AdminWriteEventNameStr = "NotepadsAdminWriteEvent";
-        internal const string AdminWritePipeConnectionNameStr = "NotepadsAdminWritePipe";
-        internal const string AdminRenameEventNameStr = "NotepadsAdminRenameEvent";
-        internal const string AdminRenamePipeConnectionNameStr = "NotepadsAdminRenamePipe";
+        internal const string ExtensionProcessLifetimeObjNameStr = "ExtensionProcessLifetimeObj";
+        internal const string ElevatedProcessLifetimeObjNameStr = "ElevatedProcessLifetimeObj";
+        internal const string ExtensionUnblockEventNameStr = "NotepadsExtensionUnblockEvent";
+        internal const string ElevatedWriteEventNameStr = "NotepadsElevatedWriteEvent";
+        internal const string ElevatedRenameEventNameStr = "NotepadsElevatedRenameEvent";
+        internal const string ExtensionUnblockPipeConnectionNameStr = "NotepadsExtensionUnblockPipe";
+        internal const string ElevatedWritePipeConnectionNameStr = "NotepadsElevatedWritePipe";
+        internal const string ElevatedRenamePipeConnectionNameStr = "NotepadsElevatedRenamePipe";
     }
 }

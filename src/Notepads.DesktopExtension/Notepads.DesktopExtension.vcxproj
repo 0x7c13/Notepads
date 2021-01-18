@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="appcenter.cpp" />
     <ClCompile Include="elevated.cpp" />
+    <ClCompile Include="extension.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

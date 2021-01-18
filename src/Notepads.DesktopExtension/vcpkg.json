@@ -1,7 +1,7 @@
 {
   "name": "notepads-desktopextension",
   "version-string": "1.0.0.0",
-  "$builtin-baseline": "b60f003ccf5fe8613d029f49f835c8929a66eb61",
+  "$builtin-baseline": "0c94afc7883faee9f188c36232d628ffa94cf27f",
   "dependencies": [
     {
       "name": "boost-stacktrace",

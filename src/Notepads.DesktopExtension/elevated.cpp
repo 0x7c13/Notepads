@@ -8,15 +8,11 @@ using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::DataTransfer;
 
-constexpr INT PIPE_READ_BUFFER = 2 * MAX_PATH + 10;
-constexpr LPCTSTR pipeNameFormat = L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}";
-constexpr LPCTSTR namedObjectFormat = L"AppContainerNamedObjects\\{}\\{}";
-
 extern DWORD sessionId;
 extern hstring packageSid;
 
-HANDLE adminWriteEvent = NULL;
-HANDLE adminRenameEvent = NULL;
+HANDLE elevatedWriteEvent = NULL;
+HANDLE elevatedRenameEvent = NULL;
 
 wstring writePipeName;
 wstring renamePipeName;
@@ -29,7 +25,9 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     LPCTSTR result = L"Failed";
 
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(adminWriteEvent, INFINITE) && ResetEvent(adminWriteEvent) && WaitNamedPipe(writePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    if (!WaitForSingleObject(elevatedWriteEvent, INFINITE) &&
+        ResetEvent(elevatedWriteEvent) &&
+        WaitNamedPipe(writePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
     {
         hPipe = CreateFile(writePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     }
@@ -58,7 +56,7 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
         getline(pipeData, dataArrayLengthStr);
 
         INT dataArrayLength = stoi(dataArrayLengthStr);
-        wstring memoryMapName = format(namedObjectFormat, packageSid, memoryMapId);
+        wstring memoryMapName = format(NAMED_OBJECT_FORMAT, packageSid, memoryMapId);
         HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
         if (hMemory)
         {
@@ -136,7 +134,9 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
     LPCTSTR result = L"Failed";
 
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(adminRenameEvent, INFINITE) && ResetEvent(adminRenameEvent) && WaitNamedPipe(renamePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    if (!WaitForSingleObject(elevatedRenameEvent, INFINITE) &&
+        ResetEvent(elevatedRenameEvent) &&
+        WaitNamedPipe(renamePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
     {
         hPipe = CreateFile(renamePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     }
@@ -207,18 +207,31 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
     return 0;
 }
 
-VOID initializeAdminService()
+VOID initializeElevatedService()
 {
-    adminWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminWriteEventNameStr).c_str());
-    adminRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(namedObjectFormat, packageSid, AdminRenameEventNameStr).c_str());
+    if (!isFirstInstance(ElevatedMutexName)) return;
 
-    auto packageFamilyName = Package::Current().Id().FamilyName();
-    writePipeName = format(pipeNameFormat, sessionId, packageSid, AdminWritePipeConnectionNameStr);
-    renamePipeName = format(pipeNameFormat, sessionId, packageSid, AdminRenamePipeConnectionNameStr);
+    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+    packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
 
-    printDebugMessage(L"Successfully started Adminstrator Extension.");
+    elevatedWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, packageSid, ElevatedWriteEventNameStr).c_str());
+    elevatedRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, packageSid, ElevatedRenameEventNameStr).c_str());
+
+    writePipeName = format(PIPE_NAME_FORMAT, sessionId, packageSid, ElevatedWritePipeConnectionNameStr);
+    renamePipeName = format(PIPE_NAME_FORMAT, sessionId, packageSid, ElevatedRenamePipeConnectionNameStr);
+
+    printDebugMessage(L"Successfully started Elevated Process.");
     printDebugMessage(L"Waiting on uwp app to send data.");
 
     CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
     CreateThread(NULL, 0, renameFileFromPipeData, NULL, 0, NULL);
+
+LifeTimeCheck:
+    HANDLE lifeTimeObj = OpenMutex(SYNCHRONIZE, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, ElevatedProcessLifetimeObjNameStr).c_str());
+    if (lifeTimeObj)
+    {
+        CloseHandle(lifeTimeObj);
+        Sleep(1000);
+        goto LifeTimeCheck;
+    }
 }

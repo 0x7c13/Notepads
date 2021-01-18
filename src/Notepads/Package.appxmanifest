@@ -71,7 +71,12 @@
             <uap5:ExecutionAlias Alias="Notepads.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads32.exe" />
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads32.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="Launch" Parameters="/user" />
+            <desktop:ParameterGroup GroupId="Elevate" Parameters="/admin" />
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="text">
             <uap:SupportedFileTypes>

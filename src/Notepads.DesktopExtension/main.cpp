@@ -1,30 +1,17 @@
 ﻿#include "pch.h"
 #include "appcenter.h"
 
-using namespace fmt;
-using namespace std;
 using namespace winrt;
-using namespace Windows::Foundation;
-using namespace Windows::Storage;
 
-constexpr LPCTSTR DesktopExtensionMutexName = L"DesktopExtensionMutexName";
-constexpr LPCTSTR AdminExtensionMutexName = L"AdminExtensionMutexName";
-
-DWORD sessionId;
-hstring packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
-
-extern HANDLE adminWriteEvent;
-extern HANDLE adminRenameEvent;
-
-IInspectable readSettingsKey(hstring key)
-{
-    return ApplicationData::Current().LocalSettings().Values().TryLookup(key);
-}
+extern HANDLE extensionUnblockEvent;
+extern HANDLE elevatedWriteEvent;
+extern HANDLE elevatedRenameEvent;
 
 INT releaseResources()
 {
-    CloseHandle(adminWriteEvent);
-    CloseHandle(adminRenameEvent);
+    CloseHandle(extensionUnblockEvent);
+    CloseHandle(elevatedWriteEvent);
+    CloseHandle(elevatedRenameEvent);
     AppCenter::exit();
     uninit_apartment();
     return 0;
@@ -53,52 +40,6 @@ VOID setExceptionHandling()
     set_unexpected(onUnexpectedException);
 }
 
-VOID launchElevatedProcess()
-{
-    TCHAR fileName[MAX_PATH];
-    GetModuleFileName(NULL, fileName, MAX_PATH);
-
-    SHELLEXECUTEINFO shExInfo
-    {
-        .cbSize = sizeof(shExInfo),
-        .fMask = SEE_MASK_NOCLOSEPROCESS,
-        .hwnd = 0,
-        .lpVerb = L"runas",
-        .lpFile = fileName,
-        .lpParameters = L"",
-        .lpDirectory = 0,
-        .nShow = SW_SHOW,
-        .hInstApp = 0
-    };
-
-    vector<pair<const CHAR*, string>> properties;
-    if (ShellExecuteEx(&shExInfo))
-    {
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessSuccessStr));
-
-        printDebugMessage(L"Adminstrator Extension has been launched.");
-        properties.push_back(pair("Accepted", "True"));
-    }
-    else
-    {
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessSuccessStr));
-
-        printDebugMessage(L"Launching of Adminstrator Extension was cancelled.");
-        pair<DWORD, wstring> ex = getLastErrorDetails();
-        properties.insert(properties.end(),
-            {
-                pair("Denied", "True"),
-                pair("Error Code", to_string(ex.first)),
-                pair("Error Message", to_string(ex.second))
-            });
-    }
-
-    ApplicationData::Current().SignalDataChanged();
-    AppCenter::trackEvent("OnAdminstratorPrivilageRequested", properties);
-}
-
 bool isFirstInstance(LPCTSTR mutexName)
 {
     auto result = true;
@@ -109,7 +50,7 @@ bool isFirstInstance(LPCTSTR mutexName)
         CreateMutex(NULL, FALSE, mutexName);
 
 #ifdef _DEBUG
-        initializeLogging(wcscmp(mutexName, DesktopExtensionMutexName) == 0 ? L"-extension.log" : L"-elevated-extension.log");
+        initializeLogging(wcscmp(mutexName, ExtensionMutexName) == 0 ? L"-extension.log" : L"-elevated-extension.log");
 #endif
     }
     else
@@ -156,32 +97,15 @@ INT main()
     SetErrorMode(SEM_NOGPFAULTERRORBOX);
     _onexit(releaseResources);
 
-    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-
     init_apartment();
     AppCenter::start();
 
     if (isElevatedProcess())
     {
-        if (!isFirstInstance(AdminExtensionMutexName)) return 0;
-
-        initializeAdminService();
+        initializeElevatedService();
     }
     else
     {
-        if (!isFirstInstance(DesktopExtensionMutexName)) return 0;
-
-        launchElevatedProcess();
-        return 0;
+        initializeExtensionService();
     }
-
-    LifeTimeCheck:
-    HANDLE lifeTimeObj = OpenMutex(SYNCHRONIZE, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, DesktopExtensionLifetimeObjNameStr).c_str());
-    if (lifeTimeObj)
-    {
-        CloseHandle(lifeTimeObj);
-        Sleep(1000);
-        goto LifeTimeCheck;
-    }
-    return 0;
 }
