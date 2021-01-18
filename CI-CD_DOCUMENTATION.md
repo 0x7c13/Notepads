@@ -47,3 +47,25 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 NOTE: **screenshots are only exemplary**
 
 <br>
+
+## *. CodeQL
+
+CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL requires no setup, because it comes fully pre-configured by us. 
+
+To activate it and see its results, only a push commit or a merge of a PR to the default branch of your repository, is required. 
+
+We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically test the code.
+
+- you can see the results here at **Security** tab -> **Code scanning alerts** -> **CodeQL**:
+
+![CodeQL_results](/ScreenShots/CI-CD_DOCUMENTATION/CodeQL_results.png)
+
+- on the page of each result, you can see an explanation of what the problem is and also one or more solutions:
+
+![CodeQL_alert_page](/ScreenShots/CI-CD_DOCUMENTATION/CodeQL_alert_page.png)
+
+NOTE: **screenshots are only exemplary**
+
+#
+
+Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
