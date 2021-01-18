@@ -2,6 +2,24 @@
 
 * after merging the PR, the first run of the main workflow will not complete successfully, because it requires specific setup explained in this documentation
 
+## *. Run workflow manually
+
+Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the main workflow "Notepads CI/CD Pipeline".
+
+  1. Go to GitHub project -> "Actions" tab
+
+  2. From the "Workflows" list on the left, click on "Notepads CI/CD Pipeline"
+
+  3. On the right, next to the "This workflow has a workflow_dispatch event trigger" label, click on the "Run workflow" dropdown, make sure the **master** branch is selected in the "Use workflow from" dropdown and click the "Run workflow" button
+
+![Actions_workflow_dispatch](/ScreenShots/CI-CD_DOCUMENTATION/Actions_workflow_dispatch.png)
+
+  4. Once the workflow run has completed successfully, move on to the next step of the documentation
+
+NOTE: **screenshots are only exemplary**
+
+<br>
+
 ## *. Set up Dependabot
 
 Dependabot is a GitHub native security tool that goes through the dependencies in your project and creates alerts, and PRs with updates when a new and/or non-vulnerable version is found.
