@@ -4,6 +4,7 @@
 #include "sstream"
 #include "windows.h"
 #include "shellapi.h"
+#include "shlobj_core.h"
 #include "winrt/Windows.ApplicationModel.h"
 #include "winrt/Windows.ApplicationModel.Core.h"
 #include "winrt/Windows.ApplicationModel.DataTransfer.h"

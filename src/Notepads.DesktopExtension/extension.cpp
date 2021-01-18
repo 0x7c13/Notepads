@@ -42,15 +42,29 @@ DWORD WINAPI unblockFileFromPipeData(LPVOID /* param */)
             }
         } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
-        wstring filePath(pipeData.str());
-        if (DeleteFile(format(L"{}:Zone.Identifier", filePath).c_str()))
+        hstring filePath(pipeData.str());
+        com_ptr<IPersistFile> pFile;
+        if (SUCCEEDED(CoCreateInstance(CLSID_PersistentZoneIdentifier, 0, CLSCTX_ALL, __uuidof(pFile), pFile.put_void())) &&
+            SUCCEEDED(pFile->Load(filePath.c_str(), STGM_READWRITE)))
         {
-            printDebugMessage(format(L"Successfully unblocked file \"{}\"", filePath).c_str());
+            LPTSTR lastWriterPackageFamilyName;
+            if (SUCCEEDED(pFile.as<IZoneIdentifier2>()->GetLastWriterPackageFamilyName(&lastWriterPackageFamilyName)) &&
+                Package::Current().Id().FamilyName() == lastWriterPackageFamilyName &&
+                SUCCEEDED(pFile.as<IZoneIdentifier>()->Remove()) &&
+                SUCCEEDED(pFile->Save(filePath.c_str(), TRUE)))
+            {
+                printDebugMessage(format(L"Successfully unblocked file \"{}\"", filePath).c_str());
+            }
+            else
+            {
+                printDebugMessage(format(L"Failed to unblock file \"{}\"", filePath).c_str());
+            }
         }
         else
         {
             printDebugMessage(format(L"Failed to unblock file \"{}\"", filePath).c_str());
         }
+        pFile.~com_ptr();
 
         CloseHandle(hPipe);
         printDebugMessage(L"Waiting on uwp app to send data.");
