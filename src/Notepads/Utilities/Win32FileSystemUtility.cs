@@ -102,7 +102,7 @@
 
                     try
                     {
-                        hFile = file.CreateSafeFileHandle(FileAccess.Read);
+                        hFile = file.CreateSafeFileHandle(FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
                         if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                         {
                             fileAttributes = (FileAttributes)fileInformation.FileAttributes;
@@ -181,7 +181,7 @@
 
                         try
                         {
-                            hFile = file.CreateSafeFileHandle();
+                            hFile = file.CreateSafeFileHandle(FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
                             if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
                             {
