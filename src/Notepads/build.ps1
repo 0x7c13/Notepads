@@ -1,9 +1,10 @@
 param (
-  [string]$project_manifest_file = $(throw "-project_manifest_file=<path to project manifest> is required"),
+  [string]$manifest_file = $(throw "-manifest_file=<path to manifest> is required"),
+  [string]$output_path = $(throw "-output_path=<path to output directory> is required"),
   [string]$config = "Debug"
 )
 
-[xml]$manifest = Get-Content $project_manifest_file
+[xml]$manifest = Get-Content $manifest_file
 
 if ($config -eq "Debug" -Or $config -eq "Release") {
     $manifest.Package.Identity.Name="Notepads-Dev"
@@ -15,6 +16,6 @@ if ($config -eq "Debug" -Or $config -eq "Release") {
     $manifest.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Alias="Notepads.exe"
 }
 
-$generated_manifest_file = "$([System.IO.Path]::GetDirectoryName($project_manifest_file))\obj\Package.appxmanifest"
+$generated_manifest_file = "$($output_path.TrimEnd("\"))\Package.appxmanifest"
 $manifest.Save($generated_manifest_file)
 $generated_manifest_file
