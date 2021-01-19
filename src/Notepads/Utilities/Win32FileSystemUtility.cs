@@ -9,9 +9,16 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Win32.SafeHandles;
+    using Notepads.Extensions;
+    using Windows.ApplicationModel.Core;
+    using Notepads.Services;
 
     public static class Win32FileSystemUtility
     {
+        public static event EventHandler<Windows.Storage.StorageFile> FileAttributeChanged;
+
+        private const string FileAttributeProperty = "System.FileAttributes";
+
         [DllImport("api-ms-win-core-file-l2-1-0.dll", CharSet = CharSet.Auto,
         CallingConvention = CallingConvention.StdCall,
         SetLastError = true)]
@@ -28,16 +35,6 @@
         public static extern bool SetFileAttributesFromApp(
             string lpFileName,
             uint dwFileAttributes
-        );
-
-        [DllImport("api-ms-win-core-file-l2-1-0.dll", CharSet = CharSet.Auto,
-        CallingConvention = CallingConvention.StdCall,
-        SetLastError = true)]
-        public unsafe static extern bool SetFileInformationByHandle(
-            SafeFileHandle hFile,
-            FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
-            byte* lpFileInformation,
-            uint dwBufferSize
         );
 
         public enum FILE_INFO_BY_HANDLE_CLASS
@@ -88,7 +85,7 @@
             [FieldOffset(4)] public Int32 HighPart;
         }
 
-        public static FileAttributes GetFileAttributes(this Windows.Storage.IStorageFile file)
+        public static FileAttributes GetFileAttributes(this Windows.Storage.IStorageFile file, bool logError = false)
         {
             FileAttributes fileAttributes = 0;
             unsafe
@@ -109,8 +106,13 @@
                         }
                         else
                         {
-                            var e = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
-
+                            if (logError) throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (logError)
+                        {
                             var diagnosticInfo = new Dictionary<string, string>()
                             {
                                 { "Message", e.Message },
@@ -119,7 +121,7 @@
                                 { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
                                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                                 { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                                { "FileType", Path.GetExtension(file.Path) }
+                                { "FileType", file.FileType }
                             };
 
                             var attachment = ErrorAttachmentLog.AttachmentWithText(
@@ -133,29 +135,6 @@
                             Crashes.TrackError(e, diagnosticInfo, attachment);
                         }
                     }
-                    catch (Exception e)
-                    {
-                        var diagnosticInfo = new Dictionary<string, string>()
-                        {
-                            { "Message", e.Message },
-                            { "Exception", e.ToString() },
-                            { "Culture", SystemInformation.Culture.EnglishName },
-                            { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                            { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                            { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                            { "FileType", Path.GetExtension(file.Path) }
-                        };
-
-                        var attachment = ErrorAttachmentLog.AttachmentWithText(
-                            $"Exception: {e}, " +
-                            $"Message: {e.Message}, " +
-                            $"InnerException: {e.InnerException}, " +
-                            $"InnerExceptionMessage: {e.InnerException?.Message}",
-                            "FileAttribuesFetchException");
-
-                        Analytics.TrackEvent("OnFileAttribuesFetchException", diagnosticInfo);
-                        Crashes.TrackError(e, diagnosticInfo, attachment);
-                    }
                     finally
                     {
                         hFile?.Dispose();
@@ -165,74 +144,54 @@
             return fileAttributes;
         }
 
-        public static string SetFileAttributes(this Windows.Storage.IStorageFile file, FileAttributes fileAttributes)
+        public static async void SetFileAttributes(this Windows.Storage.StorageFile file, FileAttributes fileAttributes)
         {
-            Exception ex = null;
-            if (!SetFileAttributesFromApp(file.Path, (uint)fileAttributes))
+            try
             {
-                unsafe
+                await file.Properties.SavePropertiesAsync(new List<KeyValuePair<string, object>>
                 {
-                    var size = Marshal.SizeOf<FILE_BASIC_INFO>();
-                    var buff = new byte[size];
-                    fixed (byte* fileInformationBuff = buff)
+                    new KeyValuePair<string, object>(FileAttributeProperty, (uint)fileAttributes) 
+                });
+
+                FileAttributeChanged?.Invoke(null, file);
+            }
+            catch (Exception e)
+            {
+                if (!SetFileAttributesFromApp(file.Path, (uint)fileAttributes))
+                {
+                    e = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(
+                        () =>
+                        {
+                            NotificationCenter.Instance.PostNotification(e.Message, 1500);
+                        });
+
+                    var diagnosticInfo = new Dictionary<string, string>()
                     {
-                        ref var fileInformation = ref Unsafe.As<byte, FILE_BASIC_INFO>(ref buff[0]);
-                        SafeFileHandle hFile = null;
+                        { "Message", e.Message },
+                        { "Exception", e.ToString() },
+                        { "Culture", SystemInformation.Culture.EnglishName },
+                        { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
+                        { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
+                        { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                        { "FileType", file.FileType }
+                    };
 
-                        try
-                        {
-                            hFile = file.CreateSafeFileHandle(FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                    var attachment = ErrorAttachmentLog.AttachmentWithText(
+                        $"Exception: {e}, " +
+                        $"Message: {e.Message}, " +
+                        $"InnerException: {e.InnerException}, " +
+                        $"InnerExceptionMessage: {e.InnerException?.Message}",
+                        "FileAttribuesSetException");
 
-                            if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
-                            {
-                                fileInformation.FileAttributes = (uint)fileAttributes;
-                                if (!SetFileInformationByHandle(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
-                                {
-                                    ex = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
-                                }
-                            }
-                            else
-                            {
-                                ex = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            ex = e;
-                        }
-                        finally
-                        {
-                            hFile?.Dispose();
-                        }
-                    }
+                    Analytics.TrackEvent("OnFileAttribuesSetException", diagnosticInfo);
+                    Crashes.TrackError(e, diagnosticInfo, attachment);
+                }
+                else
+                {
+                    FileAttributeChanged?.Invoke(null, file);
                 }
             }
-
-            if (ex != null)
-            {
-                var diagnosticInfo = new Dictionary<string, string>()
-                {
-                    { "Message", ex.Message },
-                    { "Exception", ex.ToString() },
-                    { "Culture", SystemInformation.Culture.EnglishName },
-                    { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                    { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                    { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
-                    { "FileType", Path.GetExtension(file.Path) }
-                };
-
-                var attachment = ErrorAttachmentLog.AttachmentWithText(
-                    $"Exception: {ex}, " +
-                    $"Message: {ex.Message}, " +
-                    $"InnerException: {ex.InnerException}, " +
-                    $"InnerExceptionMessage: {ex.InnerException?.Message}",
-                    "FileAttribuesSetException");
-
-                Analytics.TrackEvent("OnFileAttribuesSetException", diagnosticInfo);
-                Crashes.TrackError(ex, diagnosticInfo, attachment);
-            }
-
-            return ex?.Message;
         }
     }
 }

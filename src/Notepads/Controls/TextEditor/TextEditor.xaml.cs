@@ -2,14 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
-    using Microsoft.Win32.SafeHandles;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.GoTo;
@@ -96,17 +92,7 @@
                     _fileAttributes &= ~System.IO.FileAttributes.ReadOnly;
                 }
 
-                var message = EditingFile.SetFileAttributes(_fileAttributes);
-
-                if (string.IsNullOrEmpty(message))
-                {
-                    FileAttributeChanged?.Invoke(this, null);
-                    CheckAndUpdateAttributesInfo();
-                }
-                else
-                {
-                    NotificationCenter.Instance.PostNotification(message, 1500);
-                }
+                EditingFile.SetFileAttributes(_fileAttributes);
             }
         }
 
@@ -153,7 +139,8 @@
         {
             if (EditingFile != null  && FileModificationState != FileModificationState.RenamedMovedOrDeleted)
             {
-                var fileAttributes = EditingFile.GetFileAttributes();
+                var fileAttributes = EditingFile.GetFileAttributes(!_isAttributeCheckedOnce);
+                _isAttributeCheckedOnce = true;
                 if (_fileAttributes != fileAttributes)
                 {
                     _fileAttributes = fileAttributes;
@@ -196,6 +183,8 @@
         private bool _loaded;
 
         private FileModificationState _fileModificationState;
+
+        private bool _isAttributeCheckedOnce = false;
 
         private bool _isContentPreviewPanelOpened;
 
@@ -263,6 +252,8 @@
             base.KeyDown += TextEditor_KeyDown;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
+
+            Win32FileSystemUtility.FileAttributeChanged += Win32FileSystemUtility_OnFileAttributeChanged;
         }
 
         private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -1178,6 +1169,15 @@
         {
             GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
+        }
+
+        private void Win32FileSystemUtility_OnFileAttributeChanged(object sender, StorageFile file)
+        {
+            if (file != null && file == EditingFile)
+            {
+                FileAttributeChanged?.Invoke(this, null);
+                CheckAndUpdateAttributesInfo();
+            }
         }
     }
 }
