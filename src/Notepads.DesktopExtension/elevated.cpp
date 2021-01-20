@@ -6,7 +6,7 @@ using namespace fmt;
 using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
-using namespace Windows::ApplicationModel::DataTransfer;
+using namespace Windows::Storage::AccessCache;
 
 extern DWORD sessionId;
 extern hstring packageSid;
@@ -162,11 +162,11 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
         getline(pipeData, fileToken, L'|');
         getline(pipeData, newName, L'|');
 
-        auto file = SharedStorageAccessManager::RedeemTokenForFileAsync(fileToken).get();
-        SharedStorageAccessManager::RemoveFile(fileToken);
+        auto file = StorageApplicationPermissions::FutureAccessList().GetFileAsync(fileToken).get();
+        StorageApplicationPermissions::FutureAccessList().Remove(fileToken);
         auto oldName = file.Path();
         file.RenameAsync(newName).get();
-        result = SharedStorageAccessManager::AddFile(file).c_str();
+        result = StorageApplicationPermissions::FutureAccessList().Add(file).c_str();
 
         if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
         CloseHandle(hPipe);

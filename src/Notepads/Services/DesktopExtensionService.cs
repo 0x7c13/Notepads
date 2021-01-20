@@ -12,11 +12,11 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
-    using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Resources;
     using Windows.Foundation.Metadata;
     using Windows.Security.Authentication.Web;
     using Windows.Storage;
+    using Windows.Storage.AccessCache;
 
     public enum ElevatedOperationType
     {
@@ -266,14 +266,14 @@
                     var pipeReader = new StreamReader(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
                     var pipeWriter = new StreamWriter(pipeStream, new System.Text.UnicodeEncoding(!BitConverter.IsLittleEndian, false));
 
-                    var token = SharedStorageAccessManager.AddFile(file);
+                    var token = StorageApplicationPermissions.FutureAccessList.Add(file);
                     await pipeWriter.WriteAsync($"{token}|{newName}");
                     await pipeWriter.FlushAsync();
 
                     // Wait for desktop extension to send response.
                     token = await pipeReader.ReadLineAsync();
-                    file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
-                    SharedStorageAccessManager.RemoveFile(token);
+                    file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                    StorageApplicationPermissions.FutureAccessList.Remove(token);
                 }
             }
 
