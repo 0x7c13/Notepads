@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Install jq
         id: install_jq
-        uses: sergeysova@jq-action@v2
+        uses: r26d/jq-action@master
 
       - name: Check jq
         run: jq --version
