@@ -84,6 +84,73 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 NOTE: **screenshots are only exemplary**
 
+## *. How to create a release
+
+The "Release sequence" encompasses creating a release in your GitHub repo and adding the necessary files to it.
+
+Files added are:
+- Deployment package (msixbundle)
+- Source code (zip)
+- Source code (tar.gz)
+
+Note: **not every commit to your master branch creates a release**
+
+Follow these instructions for any commit (push or PR merge) to your master branch, you would like to create a release.
+
+Whenever you would like to trigger the "Create release" sequence, you would need one of three keywords at the start of your commit title. Each of the three keywords corresponds to a number in your release version i.e. v1.2.3. The release versioning uses the ["Conventional Commits" specification](https://www.conventionalcommits.org/en/v1.0.0/):
+
+* "fix: ..." - this keyword corresponds to the last number v1.2.**3**, also known as PATCH;
+* "feat: ..." - this keyword corresponds to the middle number v1.**2**.3, also known as MINOR;
+* "perf: ..." - this keyword corresponds to the first number v**1**.2.3, also known as MAJOR. In addition, to trigger a MAJOR release, you would need to write "BREAKING CHANGE: ..." in the description of the commit, with an empty line above it to indicate it is in the "**footer**" portion of the description;
+
+Note: when making a MAJOR release by committing through a terminal, use the multiple line syntax to add the commit title on one line and then adding an empty line, and then adding the "BREAKING CHANGE: " label
+
+### EXAMPLES
+
+Example(fix/PATCH): <br>
+`
+git commit -a -m "fix: this is a PATCH release triggering commit"
+`
+<br>
+`
+git push origin master
+`
+<br>
+Result: v1.2.3 -> **v1.2.4**
+<br>
+<br>
+<br>
+Example(feat/MINOR): <br>
+`
+git commit -a -m "feat: this is a MINOR release triggering commit"
+`
+<br>
+`
+git push origin master
+`
+<br>
+Result: v1.2.3 -> **v1.3.0**
+<br>
+<br>
+<br>
+Example(perf/MAJOR): <br>
+``
+git commit -a -m "perf: this is a MAJOR release triggering commit `
+``
+<br> 
+&gt;&gt; <br> 
+&gt;&gt; ` BREAKING CHANGE: this is the breaking change"
+`
+<br>
+`
+git push origin master
+`
+<br>
+Result: v1.2.3 -> **v2.0.0**
+<br>
+<br>
+Note: in the MAJOR release example, the PowerShell multiline syntax ` (backtick) is used. After writing a backtick, a press of the Enter key should open a new line.
+
 #
 
 Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
