@@ -3,7 +3,8 @@ name: Code scanning alerts bulk dismissal
 on: [push, workflow_dispatch]
 
 jobs:
-  create-project: 
+  dismiss-alerts: 
+    name: Dismiss alerts
     runs-on: ubuntu-latest
     env:
       # Settings
@@ -15,26 +16,25 @@ jobs:
       - name: Install jq
         id: install_jq
         uses: r26d/jq-action@master
+        with:
+          cmd: jq -n env
 
-      - name: Check jq
-        run: jq --version
+      - name: Run automation
+        id: run_automation
+        shell: bash
+        run: |
+          RESULT=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open | jq '.[].number')
 
-      # - name: Run automation
-      #   id: run_automation
-      #   shell: bash
-      #   run: |
-      #     RESULT=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open | jq '.[].number')
+          while [ -n "$RESULT" ]
+          do
+            for index in $RESULT
+            do
+              ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
 
-      #     while [ -n "$RESULT" ]
-      #     do
-      #       for index in $RESULT
-      #       do
-      #         ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
+              curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
+            done
 
-      #         curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
-      #       done
-
-      #       RESULT=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open | jq '.[].number')
-      #     done
+            RESULT=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open | jq '.[].number')
+          done
 
 # Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
