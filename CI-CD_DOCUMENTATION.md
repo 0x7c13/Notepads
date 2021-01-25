@@ -141,13 +141,15 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ![CSA_execute_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_2.png)
 
-3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed, which after some time, would result in **all** currently open code scanning alerts be dismissed
+3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts be dismissed
 
 ![CSA_execute_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_3.png)
 
 ![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_4.png)
 
 ![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_5.png)
+
+NOTE: "closed" refers to "dismissed" alerts
 
 NOTE: **screenshots are only exemplary**
 
