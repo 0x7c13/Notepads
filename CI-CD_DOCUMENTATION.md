@@ -105,19 +105,29 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ![CSA_url_repo](/ScreenShots/CI-CD_DOCUMENTATION/CSA_url_repo.png)
 
-- CSA_ACCESS_TOKEN - add a PAT with "security_events" permission. To do that, in a new tab open GitHub. At the top right corner, click on your profile picture and click on **Settings** from the dropdown. Go to Developer Settings -> Personal access tokens. Click the **Generate new token** button and enter password if prompted. Name the token "CSA_ACCESS_TOKEN" and from the permissions list, choose only "security_events", and at the bottom click on the **Generate token** button. Copy the token value and paste it in the secret "CSA_ACCESS_TOKEN", you created in the previous tab.
+- CSA_ACCESS_TOKEN - add a PAT with "security_events" permission.
 
-![CSA_new_pat_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
+	1. In a new tab open GitHub, at the top right corner, click on your profile picture and click on **Settings** from the dropdown.
 
-![CSA_new_pat_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
+		![CSA_new_pat_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
 
-![CSA_new_pat_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
+	2. Go to Developer Settings -> Personal access tokens.
 
-![CSA_new_pat_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
+		![CSA_new_pat_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
 
-![CSA_new_pat_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
+		![CSA_new_pat_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
 
-![CSA_new_pat_6](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
+	3. Click the **Generate new token** button and enter password if prompted.
+
+		![CSA_new_pat_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
+
+	4. Name the token "CSA_ACCESS_TOKEN". From the permissions list, choose only "security_events", and at the bottom click on the **Generate token** button.
+
+		![CSA_new_pat_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
+
+	5. Copy the token value and paste it in the secret "CSA_ACCESS_TOKEN", you created in the previous tab.
+
+		![CSA_new_pat_6](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
 
 - DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one, out of the three available options: "false positive", "won't fix" or "used in tests". (copy the option value **without** the quotes)
 
