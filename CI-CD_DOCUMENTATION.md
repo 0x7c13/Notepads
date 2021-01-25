@@ -72,7 +72,7 @@ CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL re
 
 To activate it and see its results, only a push commit or a merge of a PR to the default branch of your repository, is required. 
 
-We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically test the code.
+We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically tests the code.
 
 - you can see the results here at **Security** tab -> **Code scanning alerts** -> **CodeQL**:
 
