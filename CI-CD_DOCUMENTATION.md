@@ -147,7 +147,7 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_4.png)
 
-![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_5.png)
+![CSA_execute_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_5.png)
 
 NOTE: "closed" refers to "dismissed" alerts
 
