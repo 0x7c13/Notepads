@@ -17,7 +17,7 @@ jobs:
     steps:
 
     - name: Set up JDK 11
-      id: Setup_JDK 
+      id: Setup_JDK
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
@@ -28,7 +28,7 @@ jobs:
     - if: github.event_name == 'push'
       name: Cache SonarCloud packages
       id: cache_sonar_packages
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~\sonar\cache
         key: ${{ runner.os }}-sonar
@@ -37,7 +37,7 @@ jobs:
     - if: github.event_name == 'push'
       name: Cache SonarCloud scanner
       id: cache_sonar_scanner
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: .\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
