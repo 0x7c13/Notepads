@@ -72,7 +72,7 @@ CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL re
 
 To activate it and see its results, only a push commit or a merge of a PR to the default branch of your repository, is required. 
 
-We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically test the code.
+We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically tests the code.
 
 - you can see the results here at **Security** tab -> **Code scanning alerts** -> **CodeQL**:
 
@@ -82,7 +82,78 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ![CodeQL_alert_page](/ScreenShots/CI-CD_DOCUMENTATION/CodeQL_alert_page.png)
 
+### Code scanning alerts bulk dismissal
+##### - currently, GitHub allows for only 25 code scanning alerts to be dismissed at a time. Sometimes, you might have hundreds you would like to dismiss, so you will have to click many times and wait for a long time to dismiss them. Via the "csa-bulk-dismissal.yml", you would be able to that with one click.
+
+#### 1. Setup
+
+1. In your repo, go to the Settings tab -> Secrets 
+
+![CSA_secrets](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secrets.png)
+
+2. Add the following secrets with the name and the corresponding value, by at the upper right of the section, clicking on the **New repository secret** button :
+
+![CSA_new_secret](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_secret.png)
+
+![CSA_secret_add](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secret_add.png)
+
+- REPO_OWNER_VAR (secret name) - add repo owner's name, verbatim from GitHub URL (secret value)
+
+![CSA_url_owner](/ScreenShots/CI-CD_DOCUMENTATION/CSA_url_owner.png)
+
+- REPO_NAME_VAR - add repo's name, verbatim from GitHub URL
+
+![CSA_url_repo](/ScreenShots/CI-CD_DOCUMENTATION/CSA_url_repo.png)
+
+- CSA_ACCESS_TOKEN - add a PAT with "security_events" permission.
+
+	1. In a new tab open GitHub, at the top right corner, click on your profile picture and click on **Settings** from the dropdown.
+
+		![CSA_new_pat_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
+
+	2. Go to Developer Settings -> Personal access tokens.
+
+		![CSA_new_pat_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
+
+		![CSA_new_pat_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
+
+	3. Click the **Generate new token** button and enter password if prompted.
+
+		![CSA_new_pat_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
+
+	4. Name the token "CSA_ACCESS_TOKEN". From the permissions list, choose only "security_events", and at the bottom click on the **Generate token** button.
+
+		![CSA_new_pat_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
+
+	5. Copy the token value and paste it in the secret "CSA_ACCESS_TOKEN", you created in the previous tab.
+
+		![CSA_new_pat_6](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
+
+- DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one, out of the three available options: "false positive", "won't fix" or "used in tests". (copy the option value **without** the quotes)
+
+#### 2. Execution
+
+1. In your repo, click on the Actions tab and on the left, in the Workflows list, click on the "Code scanning alerts bulk dismissal"
+
+![CSA_execute_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_1.png)
+
+2. On the right, click on the "Run workflow" dropdown. Under "Use workflow from" choose your default branch (usually main/master) and click on the **Run workflow** button
+
+![CSA_execute_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_2.png)
+
+3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts be dismissed
+
+![CSA_execute_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_3.png)
+
+![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_4.png)
+
+![CSA_execute_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_5.png)
+
+NOTE: "closed" refers to "dismissed" alerts
+
 NOTE: **screenshots are only exemplary**
+
+<br>
 
 ## *. How to create a release
 
