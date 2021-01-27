@@ -157,6 +157,8 @@ NOTE: **screenshots are only exemplary**
 ## Set up SonarCloud
 ### SonarCloud is a cloud-based code quality and security service.
 
+#### Create your SonarCloud project.
+
 1. Go to https://sonarcloud.io/
 
 2. Click the "Log in" button and create a new account or connect with GitHub account (recommended).
@@ -165,7 +167,7 @@ NOTE: **screenshots are only exemplary**
 
 4. From the dropdown select "Create new Organization".
 
-5. Click the button "Choose an organization on Github".
+5. Click the "Choose an organization on Github" button.
 
 6. Select an account for your organization setup.
 
@@ -175,42 +177,44 @@ NOTE: **screenshots are only exemplary**
 
 9. Select the Free plan then click the "Create Organization" button to finalize the creation of your Organization.
 
-10. From the dropdown select "Analyze new project".
+#### Configure SonarCloud project.
 
-11. Select the "Bogus" project and click "Set Up" button at the top right corner.
+1. From the dropdown select "Analyze new project".
 
-12. Under the "Choose another analysis method" sign click the "With Github Actions" sign.
+2. Select your project and click "Set Up" button at the top right corner.
 
-13. Copy the Name of the token and the Value and use them on step "16".
+3. Under the "Choose another analysis method" sign click the "With Github Actions" sign.
 
-14. To Create a secret on GitHub click the fast forward button Settings>Secrets .
+4. Copy the Name of the token and the Value and use them on step "16".
 
-15. Then click "New Repository secret"
+5. To Create a secret on GitHub click the fast forward button Settings>Secrets .
 
-16. Enter the "Name" and the "Value" and click Add Secret.
+6. Then click "New Repository secret"
 
-17. Next you have to go to https://github.com/settings/tokens and click " Personal access tokens".
+7. Enter the "Name" and the "Value" and click Add Secret.
 
-18. Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**.
+8. Go to https://github.com/settings/tokens and click " Personal access tokens".
 
-19. Then scroll down and select **Generate token**.
+9. Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**.
 
-20. Now coppy the token and create another Secret.
+10. Scroll down and select **Generate token**.
 
-21. Set the name token **SONAR_GITHUB_TOKEN** and paste the value from the generated token.
+11. Coppy the token and create another Secret.
 
-22. No further steps are required for this setup.
+12. Set the name of the token **SONAR_GITHUB_TOKEN** and paste the value from the generated token.
 
-23. Run manually your workflow one time to deliver the code to SonarCloud.
+13. Run manually your workflow one time to deliver the code to SonarCloud.
+   
+   NOTE: Make sure first run is completed successfully before proceeding!
 
-24. In order to set a "Quality gate" follow the next steps.
+#### Set Quality Gate.
 
-25. After the run go to the Project page.
+25. Go to the Project page.
 
-26. Click on the button "Set new code definition" and select "Previous version".
+26. Click the "Set new code definition" button and select "Previous version".
 
 27. Manually run the workflow and there you have set a Quality gate.
 
 
 
-Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
+Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
