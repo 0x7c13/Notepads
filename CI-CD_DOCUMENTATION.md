@@ -159,61 +159,61 @@ NOTE: **screenshots are only exemplary**
 
 #### Create your SonarCloud project.
 
-1. Go to https://sonarcloud.io/
+- Go to https://sonarcloud.io/
 
-2. Click the "Log in" button and create a new account or connect with GitHub account (recommended).
+- Click the "Log in" button and create a new account or connect with GitHub account (recommended).
 
-3. At the top right corner click the "+" sign.
+- At the top right corner click the "+" sign.
 
-4. From the dropdown select "Create new Organization".
+- From the dropdown select "Create new Organization".
 
-5. Click the "Choose an organization on Github" button.
+- Click the "Choose an organization on Github" button.
 
-6. Select an account for your organization setup.
+- Select an account for your organization setup.
 
-7. On Repository Access select "Only select repositories" and select your project and click the "Save" button.
+- On Repository Access select "Only select repositories" and select your project and click the "Save" button.
 
-8. On the "Create organization page" don't change your Key and click "Continue".
+- On the "Create organization page" don't change your Key and click "Continue".
 
-9. Select the Free plan then click the "Create Organization" button to finalize the creation of your Organization.
+- Select the Free plan then click the "Create Organization" button to finalize the creation of your Organization.
 
 #### Configure SonarCloud project.
 
-1. From the dropdown select "Analyze new project".
+- From the dropdown select "Analyze new project".
 
-2. Select your project and click "Set Up" button at the top right corner.
+- Select your project and click "Set Up" button at the top right corner.
 
-3. Under the "Choose another analysis method" sign click the "With Github Actions" sign.
+- Under the "Choose another analysis method" sign click the "With Github Actions" sign.
 
-4. Copy the Name of the token and the Value and use them on step "16".
+- Copy the Name of the token and the Value and use them on step "16".
 
-5. To Create a secret on GitHub click the fast forward button Settings>Secrets .
+- To Create a secret on GitHub click the fast forward button Settings>Secrets .
 
-6. Then click "New Repository secret"
+- Then click "New Repository secret"
 
-7. Enter the "Name" and the "Value" and click Add Secret.
+- Enter the "Name" and the "Value" and click Add Secret.
 
-8. Go to https://github.com/settings/tokens and click " Personal access tokens".
+- Go to https://github.com/settings/tokens and click " Personal access tokens".
 
-9. Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**.
+- Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**.
 
-10. Scroll down and select **Generate token**.
+- Scroll down and select **Generate token**.
 
-11. Coppy the token and create another Secret.
+- Coppy the token and create another Secret.
 
-12. Set the name of the token **SONAR_GITHUB_TOKEN** and paste the value from the generated token.
+- Set the name of the token **SONAR_GITHUB_TOKEN** and paste the value from the generated token.
 
-13. Run manually your workflow one time to deliver the code to SonarCloud.
+- Run manually your workflow one time to deliver the code to SonarCloud.
    
    NOTE: Make sure first run is completed successfully before proceeding!
 
 #### Set Quality Gate.
 
-25. Go to the Project page.
+- Go to the Project page.
 
-26. Click the "Set new code definition" button and select "Previous version".
+- Click the "Set new code definition" button and select "Previous version".
 
-27. Manually run the workflow and there you have set a Quality gate.
+- Manually run the workflow and there you have set a Quality gate.
 
 
 
