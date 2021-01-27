@@ -37,4 +37,4 @@ jobs:
             RESULT=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open | jq '.[].number')
           done
 
-# Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

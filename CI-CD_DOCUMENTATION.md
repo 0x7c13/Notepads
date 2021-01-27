@@ -155,4 +155,4 @@ NOTE: **screenshots are only exemplary**
 
 #
 
-Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
+Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
