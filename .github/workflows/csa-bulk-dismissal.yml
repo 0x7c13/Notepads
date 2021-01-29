@@ -48,9 +48,17 @@ jobs:
             REQUIRED_STR=$ALERT_DESCRIPTION
 
             if [ "$ALERT_DESC" == "$REQUIRED_STR" ]; then
+              printf --- --- ---
+              echo Alert \#$index is $REQUIRED_STR
+              printf --- --- ---
+
               ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
 
               curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
+            else
+              printf --- --- ---
+              echo Alert \#$index is not $REQUIRED_STR
+              printf --- --- ---
             fi
           done
 
