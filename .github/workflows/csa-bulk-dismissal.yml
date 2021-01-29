@@ -44,6 +44,9 @@ jobs:
             ALERT_DESC=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index" | jq .rule.description)
             REQUIRED_STR="$ALERT_DESCRIPTION"
 
+            echo $ALERT_DESC
+            echo $REQUIRED_STR
+
             if [ "$ALERT_DESC" == "$REQUIRED_STR" ]; then
               ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
 
