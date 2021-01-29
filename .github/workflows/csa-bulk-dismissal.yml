@@ -13,7 +13,7 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.CSA_ACCESS_TOKEN }} # requires security_events read/write permissions
       DISMISS_REASON: ${{ secrets.DISMISS_REASON_VAR }} # "false positive", "won't fix" or "used in tests". 
       ALERTS_PER_PAGE: 100
-      ALERT_DESCRIPTION: '"Calls to unmanaged code"'
+      ALERT_DESCRIPTION: ${{ secrets.ALERT_DESCRIPTION }}
     steps:
       - name: Install jq
         id: install_jq
