@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']
+        ALERT_DESC: ${{ secrets.ALERT_DESCRIPTION_ARRAY }}
     env:
       # Settings
       OWNER: ${{ secrets.REPO_OWNER_VAR }} # verbatim from URL
