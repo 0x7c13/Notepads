@@ -2,6 +2,70 @@
 
 * after merging the PR, the first run of the main workflow will not complete successfully, because it requires specific setup explained in this documentation
 
+#
+## Set up SonarCloud
+### SonarCloud is a cloud-based code quality and security service
+
+#### Create your SonarCloud project
+
+- Go to https://sonarcloud.io/
+
+- Click the "Log in" button and create a new account or connect with GitHub account (recommended)
+
+- At the top right corner click the "+" sign
+
+- From the dropdown select "Create new Organization"
+
+- Click the "Choose an organization on Github" button
+
+- Select an account for your organization setup
+
+- On Repository Access select "Only select repositories" and select your project and click the "Save" button
+
+- On the "Create organization page" don't change your Key and click "Continue"
+
+- Select the Free plan then click the "Create Organization" button to finalize the creation of your Organization
+
+#### Configure SonarCloud project
+
+- From the dropdown select "Analyze new project"
+
+- Select your project and click "Set Up" button at the top right corner
+
+- Under the "Choose another analysis method" sign click the "With Github Actions" sign
+
+- Copy the Name of the token and the Value and use them on step "16"
+
+- To Create a secret on GitHub click the fast forward button Settings>Secrets 
+
+- Then click "New Repository secret"
+
+- Enter the "Name" and the "Value" and click Add Secret
+
+- Go to https://github.com/settings/tokens and click " Personal access tokens"
+
+- Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**
+
+- Scroll down and select **Generate token**
+
+- Coppy the token and create another Secret
+
+- Set the name of the token **SONAR_GITHUB_TOKEN** and paste the value from the generated token
+
+- Run manually your workflow one time to deliver the code to SonarCloud
+   
+   NOTE: Make sure first run is completed successfully before proceeding
+
+#### Set Quality Gate
+
+- Go to the Project page
+
+- Click the "Set new code definition" button and select "Previous version"
+
+- Manually run the workflow and there you have set a Quality gate
+
+<br>
+
 ## *. Run workflow manually
 
 Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the main workflow "Notepads CI/CD Pipeline".
@@ -153,6 +217,5 @@ NOTE: "closed" refers to "dismissed" alerts
 
 NOTE: **screenshots are only exemplary**
 
-#
 
-Built with ❤ by [Pipeline Foundation](http://pipeline.foundation)
+Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

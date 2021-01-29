@@ -17,3 +17,5 @@ updates:
     directory: "/src/Notepads.Controls"
     schedule:
       interval: "daily"
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
