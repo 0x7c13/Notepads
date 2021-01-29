@@ -28,16 +28,16 @@ jobs:
         id: run_automation
         shell: bash
         run: |
-          i=1
-          LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$i&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+          page=1
+          LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
 
           while [ -n "$LIST_OF_ALERTS" ]
           do
             echo -n $LIST_OF_ALERTS" " >> "data.json"
 
-            ((i=i+1))
+            ((page=page+1))
 
-            LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$i&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+            LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
           done
 
           LIST_OF_INDEXES=$(cat data.json)
@@ -47,15 +47,10 @@ jobs:
             ALERT_DESC=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index" | jq .rule.description)
 
             if [ "$ALERT_DESC" == "$ALERT_DESCRIPTION" ]; then
-
               ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
 
               curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
-
-            else
-              echo Alert \#$index is not "$ALERT_DESCRIPTION"
             fi
-              
           done
 
           rm -f data.json
