@@ -20,7 +20,7 @@
 
 - Select an account for your organization setup
 
-- On Repository Access select "Only select repositories" and select your project and click the "Save" button
+- On Repository Access select "Only select repositories" and select the project and click the "Save" button
 
 - On the "Create organization page" don't change your Key and click "Continue"
 
@@ -30,7 +30,7 @@
 
 - From the dropdown select "Analyze new project"
 
-- Select your project and click "Set Up" button at the top right corner
+- Select the project and click "Set Up" button at the top right corner
 
 - Under the "Choose another analysis method" sign click the "With Github Actions" sign
 
@@ -86,9 +86,9 @@ NOTE: **screenshots are only exemplary**
 
 ## *. Set up Dependabot
 
-Dependabot is a GitHub native security tool that goes through the dependencies in your project and creates alerts, and PRs with updates when a new and/or non-vulnerable version is found.
+Dependabot is a GitHub native security tool that goes through the dependencies in the project and creates alerts, and PRs with updates when a new and/or non-vulnerable version is found.
 
-- for PRs with version updates, this pipeline comes pre-configured for all current dependency sources in your project, so at "Insights" tab -> "Dependency graph" -> "Dependabot", you should be able to see all tracked sources of dependencies, when they have been checked last and view a full log of the last check
+- for PRs with version updates, this pipeline comes pre-configured for all current dependency sources in the project, so at "Insights" tab -> "Dependency graph" -> "Dependabot", you should be able to see all tracked sources of dependencies, when they have been checked last and view a full log of the last check
 
 ![Dependabot_tab](/ScreenShots/CI-CD_DOCUMENTATION/Dependabot_tab.png)
 
@@ -103,7 +103,7 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 
 3. Click "Enable" for both "Dependabot alerts" and "Dependabot security updates"
 
-- By enabling "Dependabot alerts", you would be notified for any vulnerable dependencies in your project. At "Security" tab -> "Dependabot alerts", you can manage all alerts. By clicking on an alert, you would be able to see a detailed explanation of the vulnerability and a viable solution.
+- By enabling "Dependabot alerts", you would be notified for any vulnerable dependencies in the project. At "Security" tab -> "Dependabot alerts", you can manage all alerts. By clicking on an alert, you would be able to see a detailed explanation of the vulnerability and a viable solution.
 
 ![Dependabot_alerts_page](/ScreenShots/CI-CD_DOCUMENTATION/Dependabot_alerts_page.png)
 
