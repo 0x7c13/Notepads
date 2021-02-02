@@ -146,8 +146,10 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ![CodeQL_alert_page](/ScreenShots/CI-CD_DOCUMENTATION/CodeQL_alert_page.png)
 
-### Code scanning alerts bulk dismissal
+### Code scanning alerts bulk dismissal tool
 ##### - currently, GitHub allows for only 25 code scanning alerts to be dismissed at a time. Sometimes, you might have hundreds you would like to dismiss, so you will have to click many times and wait for a long time to dismiss them. Via the "csa-bulk-dismissal.yml", you would be able to that with one click.
+
+NOTE: This tool executes manual **only**. It won't execute on any other GitHub event like push commit, PR creation etc.
 
 #### 1. Setup
 
@@ -215,7 +217,25 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 NOTE: "closed" refers to "dismissed" alerts
 
-NOTE: **screenshots are only exemplary**
+#### 3. Customization
 
+The "ALERT_DESC" strategy matrix in the pipeline, allows for more precise filtering of alerts to bulk dismiss. It uses the description of the alert to determine if it has to be dismissed or not. We've added the following alert descriptions by default:
+
+- "Calls to unmanaged code"
+- "Unmanaged code"
+
+To add more descriptions, follow these steps:
+
+1. In your source code, open ".github/workflows/csa-bulk-dismissal.yml"
+
+2. On line 11, notice "ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']". This is the array of descriptions that the CSABD (Code scanning alerts bulk dismissal) tool uses to filter through the alerts:
+
+![CSA_custom_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_1.png)
+
+3. To add more descriptions use comma separation, followed by a single space and the description enclosed in double quotes, then enclosed in single quotes:
+
+![CSA_custom_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_2.png)
+
+#
 
 Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
