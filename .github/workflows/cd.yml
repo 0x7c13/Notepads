@@ -23,11 +23,10 @@ jobs:
 
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.0
+    - name: Setup MSBuild
+      id: setup_msbuild
+      uses: microsoft/setup-msbuild@v1
 
     - name: Restore the application
       id: restore_application
