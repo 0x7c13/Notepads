@@ -51,4 +51,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: MSIX Package
-        path: Notepads\Notepads.Package      
+        path: .\Notepads.Package      
