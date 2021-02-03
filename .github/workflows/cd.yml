@@ -41,9 +41,9 @@ jobs:
       run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:AppxPackageSigningEnabled=false 
       env:
         Appx_Bundle: Never
-        Appx_Bundle_Platforms: x86|x64
+        Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
         BuildMode: SideLoadOnly
-        Configuration: Release
+        Configuration: ${{ matrix.configuration }}
         TargetPlatform: ${{ matrix.targetplatform }}
 
     - name: Upload build artifacts
