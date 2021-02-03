@@ -13,6 +13,8 @@ jobs:
       Wpf_Project_Path: src/Notepads/Notepads.csproj
       Wap_Project_Directory: Notepads.Package
       Wap_Project_Name: Notepads.Package.wapproj
+      Solution_Name: src\Notepads.sln
+      Project_Path: src\Notepads\Notepads.csproj
     runs-on: windows-latest
     steps:
 
