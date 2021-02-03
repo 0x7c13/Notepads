@@ -1,6 +1,6 @@
 name: CodeQL Analysis
 
-on:
+#on:
   push:
   pull_request:
   schedule:
