@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
     env:
       SigningCertificate: GitHubActionsDemo.pfx
       Solution_Path: src/Notepads.sln
@@ -42,7 +42,7 @@ jobs:
       env:
         Appx_Bundle: Never
         BuildMode: SideLoadOnly
-        Configuration: ${{ matrix.configuration }}
+        Configuration: Release
         TargetPlatform: ${{ matrix.targetplatform }}
 
     - name: Upload build artifacts
