@@ -1,0 +1,52 @@
+name: Notepads CD Pipeline
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    env:
+      SigningCertificate: GitHubActionsDemo.pfx
+      Solution_Path: src/Notepads.sln
+      Wpf_Project_Path: src/Notepads/Notepads.csproj
+      Wap_Project_Directory: Notepads.Package
+      Wap_Project_Name: Notepads.Package.wapproj
+    runs-on: windows-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      id: actions_checkout
+      with:
+        fetch-depth: 50
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.0
+
+    - name: Restore the application
+      id: restore_application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    - name: Build the Windows Application Packaging Project (wapproj) 
+      id: build_app
+      run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:AppxPackageSigningEnabled=false 
+      env:
+        Appx_Bundle: Never
+        BuildMode: SideLoadOnly
+        Appx_Bundle_Platforms: x86|x64
+        Appx_Package_Build_Mode: StoreUpload
+        Configuration: ${{ matrix.configuration }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: MSIX Package
+        path: Notepads.Package\AppPackages\        
