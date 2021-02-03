@@ -45,6 +45,7 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
+        TargetPlatform: ${{ matrix.targetplatform }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v1
