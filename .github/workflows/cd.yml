@@ -47,8 +47,10 @@ jobs:
         Configuration: ${{ matrix.configuration }}
         TargetPlatform: ${{ matrix.targetplatform }}
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: MSIX Package
-        path: .\Notepads.Package      
+    - name: Run ls in main folder
+      run: gci
+    # - name: Upload build artifacts
+    #   uses: actions/upload-artifact@v1
+    #   with:
+    #     name: MSIX Package
+    #     path: .\Notepads.App      
