@@ -38,7 +38,7 @@ jobs:
 
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
-      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:AppxPackageSigningEnabled=false 
+      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
       env:
         Appx_Bundle: Never
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
