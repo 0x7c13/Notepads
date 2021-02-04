@@ -48,7 +48,7 @@ jobs:
         TargetPlatform: ${{ matrix.targetplatform }}
 
     - name: Run ls in main folder
-      run: gci
+      run: Get-ChildItem -Depth 1
     # - name: Upload build artifacts
     #   uses: actions/upload-artifact@v1
     #   with:
