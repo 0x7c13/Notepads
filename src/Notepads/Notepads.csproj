@@ -856,6 +856,15 @@
   <ItemGroup>
     <PRIResource Include="Strings\zh-TW\Manifest.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ar-YE\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ar-YE\Settings.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\ar-YE\Manifest.resw" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
