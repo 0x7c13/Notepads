@@ -38,15 +38,7 @@ jobs:
 
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
-      run: |
-        echo $env:Solution_Path
-        echo $env:TargetPlatform
-        echo $env:Configuration
-        echo $env:BuildMode
-        echo $env:AppxBundle
-        echo $env:SigningCertificate
-        echo $env:Appx_Bundle_Platforms
-        msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:AppxPackageSigningEnabled=false
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
@@ -57,8 +49,8 @@ jobs:
     - name: Run ls in main folder
       run: Get-ChildItem -Depth 20
    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v1
-      with:
-       name: MSIX Package
-       path: ${{ env.Wap_Project_Directory }}\AppPackages      
+    # - name: Upload build artifacts
+    #   uses: actions/upload-artifact@v1
+    #   with:
+    #    name: MSIX Package
+    #    path: ${{ env.Wap_Project_Directory }}\AppPackages      
