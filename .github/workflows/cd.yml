@@ -42,7 +42,7 @@ jobs:
       env:
         Appx_Bundle: Never
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
-        BuildMode: SideLoadOnly
+        BuildMode: StoreUpload
         Configuration: ${{ matrix.configuration }}
         TargetPlatform: ${{ matrix.targetplatform }}
 
