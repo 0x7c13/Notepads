@@ -25,6 +25,7 @@
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
+    <DevLabel>-dev</DevLabel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +43,19 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x86'">
+    <OutputPath>bin\x86\Production\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -73,6 +87,18 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|ARM64'">
+    <OutputPath>bin\ARM64\Production\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -87,6 +113,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x64'">
+    <OutputPath>bin\x64\Production\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
@@ -242,267 +280,20 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\appicon_b.png" />
-    <Content Include="Assets\appicon_bs.png" />
-    <Content Include="Assets\appicon_w.png" />
-    <Content Include="Assets\appicon_ws.png" />
-    <Content Include="Assets\FileIcons\asp.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\asp.png" />
-    <Content Include="Assets\FileIcons\asp.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\asp.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\asp.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\bash.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\bash.png" />
-    <Content Include="Assets\FileIcons\bash.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\bash.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\bash.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\c.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\c.png" />
-    <Content Include="Assets\FileIcons\c.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\c.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\c.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\cfg.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\cfg.png" />
-    <Content Include="Assets\FileIcons\cfg.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\cfg.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\cfg.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\cpp.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\cpp.png" />
-    <Content Include="Assets\FileIcons\cpp.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\cpp.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\cpp.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\cs.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\cs.png" />
-    <Content Include="Assets\FileIcons\cs.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\cs.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\cs.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\css.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\css.png" />
-    <Content Include="Assets\FileIcons\css.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\css.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\css.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\file.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\file.png" />
-    <Content Include="Assets\FileIcons\file.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\file.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\file.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\h.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\h.png" />
-    <Content Include="Assets\FileIcons\h.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\h.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\h.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\html.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\html.png" />
-    <Content Include="Assets\FileIcons\html.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\html.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\html.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\ini.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\ini.png" />
-    <Content Include="Assets\FileIcons\ini.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\ini.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\ini.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\java.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\java.png" />
-    <Content Include="Assets\FileIcons\java.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\java.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\java.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\js.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\js.png" />
-    <Content Include="Assets\FileIcons\js.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\js.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\js.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\json.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\json.png" />
-    <Content Include="Assets\FileIcons\json.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\json.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\json.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\jsp.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\jsp.png" />
-    <Content Include="Assets\FileIcons\jsp.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\jsp.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\jsp.targetsize-48.png" />
-    <Content Include="Assets\LargeTile.scale-100.png" />
-    <Content Include="Assets\LargeTile.scale-125.png" />
-    <Content Include="Assets\LargeTile.scale-150.png" />
-    <Content Include="Assets\LargeTile.scale-200.png" />
-    <Content Include="Assets\LargeTile.scale-400.png" />
-    <Content Include="Assets\LargeTile.scale-100_altform-colorful_theme-light.png" />
-    <Content Include="Assets\LargeTile.scale-125_altform-colorful_theme-light.png" />
-    <Content Include="Assets\LargeTile.scale-150_altform-colorful_theme-light.png" />
-    <Content Include="Assets\LargeTile.scale-200_altform-colorful_theme-light.png" />
-    <Content Include="Assets\LargeTile.scale-400_altform-colorful_theme-light.png" />
-    <Content Include="Assets\FileIcons\md.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\md.png" />
-    <Content Include="Assets\FileIcons\md.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\md.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\md.targetsize-48.png" />
-    <Content Include="Assets\noise_high.png" />
-    <Content Include="Assets\noise_low.png" />
-    <Content Include="Assets\no_noise.png" />
-    <Content Include="Assets\FileIcons\php.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\php.png" />
-    <Content Include="Assets\FileIcons\php.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\php.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\php.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\py.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\py.png" />
-    <Content Include="Assets\FileIcons\py.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\py.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\py.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\rb.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\rb.png" />
-    <Content Include="Assets\FileIcons\rb.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\rb.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\rb.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\rc.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\rc.png" />
-    <Content Include="Assets\FileIcons\rc.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\rc.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\rc.targetsize-48.png" />
-    <Content Include="Assets\search_bing.png" />
-    <Content Include="Assets\search_custom.png" />
-    <Content Include="Assets\search_duckduckgo.png" />
-    <Content Include="Assets\search_google.png" />
-    <Content Include="Assets\FileIcons\sh.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\sh.png" />
-    <Content Include="Assets\FileIcons\sh.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\sh.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\sh.targetsize-48.png" />
-    <Content Include="Assets\SmallTile.scale-100.png" />
-    <Content Include="Assets\SmallTile.scale-125.png" />
-    <Content Include="Assets\SmallTile.scale-150.png" />
-    <Content Include="Assets\SmallTile.scale-200.png" />
-    <Content Include="Assets\SmallTile.scale-400.png" />
-    <Content Include="Assets\SmallTile.scale-100_altform-colorful_theme-light.png" />
-    <Content Include="Assets\SmallTile.scale-125_altform-colorful_theme-light.png" />
-    <Content Include="Assets\SmallTile.scale-150_altform-colorful_theme-light.png" />
-    <Content Include="Assets\SmallTile.scale-200_altform-colorful_theme-light.png" />
-    <Content Include="Assets\SmallTile.scale-400_altform-colorful_theme-light.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-125.png" />
-    <Content Include="Assets\SplashScreen.scale-150.png" />
-    <Content Include="Assets\SplashScreen.scale-400.png" />
-    <Content Include="Assets\Square150x150Logo.scale-100.png" />
-    <Content Include="Assets\Square150x150Logo.scale-125.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-150.png" />
-    <Content Include="Assets\Square150x150Logo.scale-400.png" />
-    <Content Include="Assets\Square150x150Logo.scale-100_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Square150x150Logo.scale-125_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Square150x150Logo.scale-150_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Square150x150Logo.scale-400_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-    <Content Include="Assets\Square44x44Logo.scale-100.png" />
-    <Content Include="Assets\Square44x44Logo.scale-125.png" />
-    <Content Include="Assets\Square44x44Logo.scale-150.png" />
-    <Content Include="Assets\Square44x44Logo.scale-400.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-16_altform-lightunplated.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-lightunplated.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-256_altform-lightunplated.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-32_altform-lightunplated.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-48_altform-lightunplated.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-125.png" />
-    <Content Include="Assets\StoreLogo.scale-150.png" />
-    <Content Include="Assets\StoreLogo.scale-200.png" />
-    <Content Include="Assets\StoreLogo.scale-400.png" />
-    <Content Include="Assets\FileIcons\txt.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\txt.png" />
-    <Content Include="Assets\FileIcons\txt.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\txt.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\txt.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\vb.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\vb.png" />
-    <Content Include="Assets\FileIcons\vb.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\vb.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\vb.targetsize-48.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-100_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-125_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-150_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200_altform-colorful_theme-light.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-400_altform-colorful_theme-light.png" />
-    <Content Include="Assets\FileIcons\xml.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\xml.png" />
-    <Content Include="Assets\FileIcons\xml.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\xml.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\xml.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\yml.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\yml.png" />
-    <Content Include="Assets\FileIcons\yml.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\yml.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\yml.targetsize-48.png" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\FileIcons\ass.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\ass.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\ass.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\ass.png" />
-    <Content Include="Assets\FileIcons\ass.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\bib.png" />
-    <Content Include="Assets\FileIcons\bib.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\bib.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\bib.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\bib.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\log.png" />
-    <Content Include="Assets\FileIcons\log.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\log.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\log.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\log.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\perl.png" />
-    <Content Include="Assets\FileIcons\perl.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\perl.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\perl.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\perl.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\sql.png" />
-    <Content Include="Assets\FileIcons\sql.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\sql.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\sql.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\sql.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\srt.png" />
-    <Content Include="Assets\FileIcons\srt.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\srt.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\srt.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\srt.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\ssa.png" />
-    <Content Include="Assets\FileIcons\ssa.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\ssa.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\ssa.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\ssa.targetsize-512.png" />
-    <Content Include="Assets\FileIcons\vue.png" />
-    <Content Include="Assets\FileIcons\vue.targetsize-16.png" />
-    <Content Include="Assets\FileIcons\vue.targetsize-32.png" />
-    <Content Include="Assets\FileIcons\vue.targetsize-48.png" />
-    <Content Include="Assets\FileIcons\vue.targetsize-512.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-16.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-20.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-24.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-256.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-32.png" />
-    <Content Include="Assets\GameBar\Icons\icon.light.targetsize-44.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-16.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-20.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-24.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-256.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-32.png" />
-    <Content Include="Assets\GameBar\Icons\icon.targetsize-44.png" />
     <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <Content Include="Assets\**\*$(DevLabel).png">
+      <Link>$([System.String]::new('%(Identity)').Replace('$(DevLabel)',''))</Link>
+    </Content>
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\*noise*.png" />
+    <Content Include="Assets\search_*.png" />
+    <Content Include="Assets\FileIcons\*.png" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Production'">
+    <Content Include="Assets\**\*.png" Exclude="Assets\**\*$(DevLabel).png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -650,216 +441,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en-US\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\es-ES\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-CN\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hu-HU\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\tr-TR\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ru-RU\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ja-JP\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-DE\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-CH\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fi-FI\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\uk-UA\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\it-IT\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ko-KR\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\en-US\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-CN\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-CH\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-DE\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\es-ES\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fi-FI\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fr-FR\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hu-HU\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\it-IT\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ja-JP\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ru-RU\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\tr-TR\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\uk-UA\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\cs-CZ\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\cs-CZ\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pl-PL\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pl-PL\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-BR\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-BR\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ko-KR\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hi-IN\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hi-IN\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\or-IN\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\or-IN\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ka-GE\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ka-GE\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\bg-BG\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\bg-BG\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hr-HR\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hr-HR\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\en-US\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\bg-BG\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-CH\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\de-DE\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\es-ES\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fi-FI\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\fr-FR\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hi-IN\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hr-HR\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\hu-HU\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\it-IT\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ja-JP\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ka-GE\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ko-KR\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\or-IN\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pl-PL\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-BR\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\ru-RU\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\tr-TR\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\uk-UA\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-CN\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-TW\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-TW\Settings.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
+    <PRIResource Include="Strings\**\*.resw" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -manifest_file %(AppxManifest.FullPath) -output_path $(ProjectDir)$(BaseIntermediateOutputPath) -config $(Configuration)" ConsoleToMsBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
+    </Exec>
+    <ItemGroup>
+      <AppxManifest Remove="%(AppxManifest.Identity)" />
+      <AppxManifest Include="$(GeneratedAppxManifest)" />
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
