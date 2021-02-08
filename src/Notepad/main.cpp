@@ -27,7 +27,7 @@ INT main()
     
     LPWSTR* szArglist = NULL;
     INT nArgs;
-    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+    szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
     if (szArglist && nArgs > 1)
     {
         LPCTSTR verb = OPEN;
@@ -36,7 +36,7 @@ INT main()
 
         INT ct = nArgs - isOpenRequested ? 1 : 2;
         HRESULT hr = E_OUTOFMEMORY;
-        com_ptr< IShellItemArray> ppsia = NULL;
+        com_ptr<IShellItemArray> ppsia = NULL;
         PIDLIST_ABSOLUTE* rgpidl = new(std::nothrow) PIDLIST_ABSOLUTE[ct];
         if (rgpidl)
         {
