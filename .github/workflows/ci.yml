@@ -9,12 +9,8 @@ jobs:
         configuration: [Release]
         targetplatform: [x86,x64]
     env:
-      SigningCertificate: GitHubActionsDemo.pfx
       Solution_Path: src\Notepads.sln
-      Wpf_Project_Path: src\Notepads\Notepads.csproj
-      Wap_Project_Directory: Notepads.Package
-      Wap_Project_Name: Notepads.Package.wapproj
-      Project_Path: src\Notepads\Notepads.csproj
+
     runs-on: windows-latest
 
     steps:
@@ -50,7 +46,7 @@ jobs:
         /p:AppxPackageSigningEnabled=false `
         /p:AppxPackageDir="$GITHUB_WORKSPACE/Artifacts"
       env:
-        Appx_Bundle: Always
+        AppxBundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
         BuildMode: StoreUpload
         Configuration: ${{ matrix.configuration }}
