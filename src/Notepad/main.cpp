@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include "iostream"
 
-#ifndef _DEBUG
+#ifdef _PRODUCTION
 #define AUMID L"19282JackieLiu.Notepads-Beta_echhpq9pdbte8!App"
 #else
-#define AUMID L"Notepads_ezhh5fms182ha!App"
+#define AUMID L"Notepads-Dev_ezhh5fms182ha!App"
 #endif
 
 #define OPEN L"open"
