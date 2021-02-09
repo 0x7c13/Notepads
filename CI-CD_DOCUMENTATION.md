@@ -3,7 +3,7 @@
 * after merging the PR, the first run of the main workflow will not complete successfully, because it requires specific setup explained in this documentation
 
 #
-## Set up SonarCloud
+## 1. Set up SonarCloud
 ### SonarCloud is a cloud-based code quality and security service
 
 #### Create your SonarCloud project
@@ -66,7 +66,7 @@
 
 <br>
 
-## *. Run workflow manually
+## 2. Run workflow manually
 
 Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the main workflow "Notepads CI/CD Pipeline".
 
@@ -84,7 +84,7 @@ NOTE: **screenshots are only exemplary**
 
 <br>
 
-## *. Set up Dependabot
+## 3. Set up Dependabot
 
 Dependabot is a GitHub native security tool that goes through the dependencies in the project and creates alerts, and PRs with updates when a new and/or non-vulnerable version is found.
 
@@ -130,7 +130,7 @@ NOTE: **screenshots are only exemplary**
 
 <br>
 
-## *. CodeQL
+## 4. CodeQL
 
 CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL requires no setup, because it comes fully pre-configured by us. 
 
