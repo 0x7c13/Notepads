@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Debug, Release, Production]
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads\Notepads.csproj
