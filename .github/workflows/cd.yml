@@ -48,6 +48,7 @@ jobs:
         /p:AppxBundle=$env:AppxBundle 
         /p:AppxPackageSigningEnabled=false
         /p:AppxPackageDir="Artifacts"
+      shell: powershell
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
@@ -62,4 +63,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
        name: MSIX Package
-       path: ./Artifacts      
+       path: Artifacts/      
