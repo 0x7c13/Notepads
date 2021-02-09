@@ -2,6 +2,10 @@ name: Notepads CD Pipeline
 
 on: [push, pull_request, workflow_dispatch]
 
+defaults:
+  run: 
+   working-directory: web
+
 jobs:
   build:
     strategy:
@@ -49,8 +53,8 @@ jobs:
     - name: Run ls in main folder
       run: Get-ChildItem -Depth 20
    
-    # - name: Upload build artifacts
-    #   uses: actions/upload-artifact@v1
-    #   with:
-    #    name: MSIX Package
-    #    path: ${{ env.Wap_Project_Directory }}\AppPackages      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v1
+      with:
+       name: MSIX Package
+       path: web      
