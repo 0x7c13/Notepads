@@ -19,7 +19,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
- 
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+
+    - name: Setup MSBuild
+      id: setup_msbuild
+      uses: microsoft/setup-msbuild@v1
+
     - uses: actions/checkout@v2
       id: actions_checkout
       with:
@@ -67,17 +74,10 @@ jobs:
       shell: powershell
       run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v1
-
-    - name: Setup MSBuild
-      id: setup_msbuild
-      uses: microsoft/setup-msbuild@v1
-
     - name: Restore the application
       id: restore_application
       run: |
-        msbuild $env:Solution_Path `
+        msbuild $env:Solution_Name `
         /t:Restore `
         /p:Configuration=$env:Configuration 
       env:
@@ -86,7 +86,7 @@ jobs:
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
       run: |
-        msbuild $env:Solution_Path `
+        msbuild $env:Solution_Name `
         /p:Platform=$env:Target_Platform `
         /p:Configuration=$env:Configuration `
         /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
