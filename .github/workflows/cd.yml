@@ -31,12 +31,16 @@ jobs:
       id: setup_msbuild
       uses: microsoft/setup-msbuild@v1
 
+    - name: Execute Unit Tests
+      run: dotnet test $env:Test_Project_Path
+
     - name: Restore the application
       id: restore_application
       run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
       env:
         Configuration: ${{ matrix.configuration }}
-
+        RuntimeIdentifier: win-${{ matrix.targetplatform }}
+        
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
       run: |
