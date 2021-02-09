@@ -2,10 +2,6 @@ name: Notepads CD Pipeline
 
 on: [push, pull_request, workflow_dispatch]
 
-defaults:
-  run: 
-   working-directory: web
-
 jobs:
   build:
     strategy:
@@ -20,6 +16,7 @@ jobs:
       Wap_Project_Name: Notepads.Package.wapproj
       Project_Path: src\Notepads\Notepads.csproj
     runs-on: windows-latest
+
     steps:
 
     - uses: actions/checkout@v2
@@ -42,7 +39,15 @@ jobs:
 
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
-      run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:AppxPackageSigningEnabled=false
+      run: |
+        msbuild $env:Solution_Path 
+        /p:Platform=$env:TargetPlatform 
+        /p:Configuration=$env:Configuration
+        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms 
+        /p:UapAppxPackageBuildMode=$env:BuildMode 
+        /p:AppxBundle=$env:AppxBundle 
+        /p:AppxPackageSigningEnabled=false
+        /p:AppxPackageDir="Artifacts"
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
@@ -57,4 +62,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
        name: MSIX Package
-       path: web      
+       path: ./Artifacts      
