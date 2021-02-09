@@ -40,15 +40,14 @@ jobs:
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
       run: |
-        msbuild $env:Solution_Path 
-        /p:Platform=$env:TargetPlatform 
-        /p:Configuration=$env:Configuration
-        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms 
-        /p:UapAppxPackageBuildMode=$env:BuildMode 
-        /p:AppxBundle=$env:AppxBundle 
-        /p:AppxPackageSigningEnabled=false
+        msbuild $env:Solution_Path `
+        /p:Platform=$env:TargetPlatform `
+        /p:Configuration=$env:Configuration `
+        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
+        /p:UapAppxPackageBuildMode=$env:BuildMode `
+        /p:AppxBundle=$env:AppxBundle `
+        /p:AppxPackageSigningEnabled=false `
         /p:AppxPackageDir="Artifacts"
-      shell: powershell
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
