@@ -1,12 +1,13 @@
 name: Notepads CI/CD Pipeline
 
-#on: [push, pull_request, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
     strategy:
       matrix:
         configuration: [Debug, Release]
+        targetplatform: [x86,x64]        
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads\Notepads.csproj
@@ -66,25 +67,43 @@ jobs:
       shell: powershell
       run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
-    # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+
     - name: Setup MSBuild
       id: setup_msbuild
       uses: microsoft/setup-msbuild@v1
 
     - name: Restore the application
       id: restore_application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: |
+        msbuild $env:Solution_Path `
+        /t:Restore `
+        /p:Configuration=$env:Configuration ` 
+        /p:RuntimeIdentifier=$env:RuntimeIdentifier 
       env:
         Configuration: ${{ matrix.configuration }}
+        RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
-    - name: Build
+    - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
-      run: msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
+      run: |
+        msbuild $env:Solution_Path `
+        /p:Platform=$env:Target_Platform `
+        /p:Configuration=$env:Configuration `
+        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
+        /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
+        /p:AppxBundle=$env:Appx_Bundle `
+        /p:AppxPackageSigningEnabled=$env:Appx_Package_Signing_Enabled `
+        /p:AppxPackageDir=$env:Artifacts_Dir
       env:
-        Appx_Bundle: Always
-        Appx_Bundle_Platforms: x86|x64
-        Appx_Package_Build_Mode: StoreUpload
+        Target_Platform: ${{ matrix.targetplatform }}
         Configuration: ${{ matrix.configuration }}
+        Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
+        Uap_Appx_Package_Build_Mode: ${{ matrix.buildmode }}
+        Appx_Bundle: Always
+        Appx_Package_Signing_Enabled: false
+        Artifacts_Dir: ${{ github.workspace }}\Artifacts\${{ matrix.targetplatform }}\${{ matrix.buildmode }}
 
     - if: github.event_name != 'pull_request'
       name: Send SonarCloud results
@@ -95,4 +114,11 @@ jobs:
       shell: powershell
       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
+    - name: Upload build artifacts
+      continue-on-error: true
+      uses: actions/upload-artifact@v1
+      with:
+       name: MSIX Package
+       path: Artifacts/      
+       
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
