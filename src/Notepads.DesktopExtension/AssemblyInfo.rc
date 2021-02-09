@@ -67,12 +67,17 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
+#ifdef _PRODUCTION
             VALUE "FileDescription", "Notepads"
+            VALUE "ProductName", "Notepads"
+#else
+            VALUE "FileDescription", "Notepads-Dev"
+            VALUE "ProductName", "Notepads-Dev"
+#endif
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "Notepads.DesktopExtension"
             VALUE "LegalCopyright", "Copyright © 2020 Jackie Liu"
             VALUE "OriginalFilename", "Notepads.DesktopExtension"
-            VALUE "ProductName", "Notepads"
             VALUE "ProductVersion", "1.0.0.0"
         END
     END
