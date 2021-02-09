@@ -79,11 +79,9 @@ jobs:
       run: |
         msbuild $env:Solution_Path `
         /t:Restore `
-        /p:Configuration=$env:Configuration ` 
-        /p:RuntimeIdentifier=$env:RuntimeIdentifier 
+        /p:Configuration=$env:Configuration 
       env:
         Configuration: ${{ matrix.configuration }}
-        RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
     - name: Build the Windows Application Packaging Project (wapproj) 
       id: build_app
@@ -120,5 +118,5 @@ jobs:
       with:
        name: MSIX Package
        path: Artifacts/      
-       
+
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
