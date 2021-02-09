@@ -29,7 +29,11 @@ jobs:
 
     - name: Restore the application
       id: restore_application
-      run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
+      run: |
+        msbuild $env:Solution_Path `
+        /t:Restore `
+        /p:Configuration=$env:Configuration ` 
+        /p:RuntimeIdentifier=$env:RuntimeIdentifier `
       env:
         Configuration: ${{ matrix.configuration }}
         RuntimeIdentifier: win-${{ matrix.targetplatform }}
@@ -38,19 +42,21 @@ jobs:
       id: build_app
       run: |
         msbuild $env:Solution_Path `
-        /p:Platform=$env:TargetPlatform `
+        /p:Platform=$env:Target_Platform `
         /p:Configuration=$env:Configuration `
         /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
-        /p:UapAppxPackageBuildMode=$env:BuildMode `
-        /p:AppxBundle=$env:AppxBundle `
-        /p:AppxPackageSigningEnabled=false `
-        /p:AppxPackageDir="$GITHUB_WORKSPACE/Artifacts"
+        /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
+        /p:AppxBundle=$env:Appx_Bundle `
+        /p:AppxPackageSigningEnabled=$env:Appx_Package_Signing_Enabled `
+        /p:AppxPackageDir=$env:Artifacts_Dir
       env:
-        AppxBundle: Always
-        Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
-        BuildMode: StoreUpload
+        Target_Platform: ${{ matrix.targetplatform }}
         Configuration: ${{ matrix.configuration }}
-        TargetPlatform: ${{ matrix.targetplatform }}
+        Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
+        Uap_Appx_Package_Build_Mode: ${{ matrix.buildmode }}
+        Appx_Bundle: Always
+        Appx_Package_Signing_Enabled: false
+        Artifacts_Dir: ${{ github.workspace }}\Artifacts\${{ matrix.targetplatform }}\${{ matrix.buildmode }}
 
     - name: Run ls in main folder
       run: Get-ChildItem -Depth 20
@@ -59,4 +65,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
        name: MSIX Package
-       path: "$GITHUB_WORKSPACE/Artifacts"      
+       path: Artifacts/      
