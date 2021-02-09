@@ -47,7 +47,7 @@ jobs:
         /p:UapAppxPackageBuildMode=$env:BuildMode `
         /p:AppxBundle=$env:AppxBundle `
         /p:AppxPackageSigningEnabled=false `
-        /p:AppxPackageDir="Artifacts"
+        /p:AppxPackageDir="$GITHUB_WORKSPACE/Artifacts"
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
