@@ -6,8 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        configuration: [Debug, Release]
-        targetplatform: [x86,x64]        
+        configuration: [Debug, Release]    
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads\Notepads.csproj
@@ -77,31 +76,31 @@ jobs:
     - name: Restore the application
       id: restore_application
       run: |
-        msbuild $env:Solution_Name `
+        msbuild $env:Solution_Path `
         /t:Restore `
-        /p:Configuration=$env:Configuration 
+        /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
 
-    - name: Build the Windows Application Packaging Project (wapproj) 
+    - name: Build and generate bundles
       id: build_app
       run: |
-        msbuild $env:Solution_Name `
-        /p:Platform=$env:Target_Platform `
+        msbuild $env:Solution_Path `
+        /p:Platform=$env:Platform `
         /p:Configuration=$env:Configuration `
-        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
         /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
         /p:AppxBundle=$env:Appx_Bundle `
         /p:AppxPackageSigningEnabled=$env:Appx_Package_Signing_Enabled `
+        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
         /p:AppxPackageDir=$env:Artifacts_Dir
       env:
-        Target_Platform: ${{ matrix.targetplatform }}
+        Platform: x64
         Configuration: ${{ matrix.configuration }}
-        Appx_Bundle_Platforms: ${{ matrix.targetplatform }}
-        Uap_Appx_Package_Build_Mode: ${{ matrix.buildmode }}
+        Uap_Appx_Package_Build_Mode: StoreUpload
         Appx_Bundle: Always
         Appx_Package_Signing_Enabled: false
-        Artifacts_Dir: ${{ github.workspace }}\Artifacts\${{ matrix.targetplatform }}\${{ matrix.buildmode }}
+        Appx_Bundle_Platforms: x86|x64
+        Artifacts_Dir: ${{ github.workspace }}/Artifacts
 
     - if: github.event_name != 'pull_request'
       name: Send SonarCloud results
