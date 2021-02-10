@@ -23,6 +23,9 @@ Global
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		Production|ARM64 = Production|ARM64
+		Production|x64 = Production|x64
+		Production|x86 = Production|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{99274932-9E86-480C-8142-38525F80007D}.Debug|ARM64.ActiveCfg = Debug|ARM64
@@ -43,6 +46,15 @@ Global
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.ActiveCfg = Release|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.Build.0 = Release|x86
 		{99274932-9E86-480C-8142-38525F80007D}.Release|x86.Deploy.0 = Release|x86
+		{99274932-9E86-480C-8142-38525F80007D}.Production|ARM64.ActiveCfg = Production|ARM64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|ARM64.Build.0 = Production|ARM64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|ARM64.Deploy.0 = Production|ARM64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x64.ActiveCfg = Production|x64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x64.Build.0 = Production|x64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x64.Deploy.0 = Production|x64
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x86.ActiveCfg = Production|x86
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x86.Build.0 = Production|x86
+		{99274932-9E86-480C-8142-38525F80007D}.Production|x86.Deploy.0 = Production|x86
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|ARM64.Build.0 = Debug|ARM64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Debug|x64.ActiveCfg = Debug|x64
@@ -55,6 +67,12 @@ Global
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|x64.Build.0 = Release|x64
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|x86.ActiveCfg = Release|x86
 		{7AA5E631-B663-420E-A08F-002CD81DF855}.Release|x86.Build.0 = Release|x86
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|ARM64.ActiveCfg = Production|ARM64
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|ARM64.Build.0 = Production|ARM64
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|x64.ActiveCfg = Production|x64
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|x64.Build.0 = Production|x64
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|x86.ActiveCfg = Production|x86
+		{7AA5E631-B663-420E-A08F-002CD81DF855}.Production|x86.Build.0 = Production|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
