@@ -76,7 +76,7 @@ jobs:
     - name: Restore the application
       id: restore_application
       run: |
-        msbuild $env:Solution_Path `
+        msbuild $env:Solution_Name `
         /t:Restore `
         /p:Configuration=$env:Configuration
       env:
@@ -85,7 +85,7 @@ jobs:
     - name: Build and generate bundles
       id: build_app
       run: |
-        msbuild $env:Solution_Path `
+        msbuild $env:Solution_Name `
         /p:Platform=$env:Platform `
         /p:Configuration=$env:Configuration `
         /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
