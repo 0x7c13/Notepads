@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        configuration: [Debug, Release]    
+        configuration: [Debug, Release]
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads\Notepads.csproj
@@ -27,7 +27,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1
 
     - uses: actions/checkout@v2
-      id: actions_checkout
+      id: checkout_repo
       with:
         fetch-depth: 50
 
@@ -112,10 +112,10 @@ jobs:
       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Upload build artifacts
-      continue-on-error: true
+      id: upload_artifacts
       uses: actions/upload-artifact@v1
       with:
-       name: MSIX Package
+       name: Notepads Package
        path: Artifacts/      
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
