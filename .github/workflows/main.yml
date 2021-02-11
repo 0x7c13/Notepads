@@ -20,6 +20,7 @@ jobs:
         java-version: 1.11
 
     - name: Install .NET Core
+      id: install_dotnet_dependencies
       uses: actions/setup-dotnet@v1
 
     - name: Setup MSBuild
