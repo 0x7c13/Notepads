@@ -55,7 +55,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PropertySheet.props" />
     <None Include="vcpkg.json" />
     <None Include="appcenter-sdk-version.txt">
       <Filter>Resource Files</Filter>

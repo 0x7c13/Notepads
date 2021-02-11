@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="EnsureVcpkgBuild" DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
-    <CppWinRTOptimized>true</CppWinRTOptimized>
-    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
-    <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
-    <MinimalCoreWin>true</MinimalCoreWin>
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{0a3b698e-6add-4c9e-9741-08f8ae576b2e}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Notepads.DesktopExtension</RootNamespace>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <IntDir>$(BaseIntermediateOutputPath)$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>Notepads32</TargetName>
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <GeneratedFilesDir>$(BaseIntermediateOutputPath)Generated Files\</GeneratedFilesDir>
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>
@@ -101,12 +103,19 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="PropertySheet.props" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Label="Vcpkg">
+    <VcpkgRepo>https://github.com/microsoft/vcpkg</VcpkgRepo>
+    <!--
+    TODO: Enable version feature flag while vcpkg versions resolution feature is on beta,
+    once it becomes stable remove this from additional options and use msbuild integration
+    -->
+    <VcpkgAdditionalInstallOptions>--feature-flags=versions</VcpkgAdditionalInstallOptions>
+    <VcpkgEnabled>true</VcpkgEnabled>
+    <VcpkgConfiguration Condition="'$(Configuration)'=='Production'">Release</VcpkgConfiguration>
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgManifestInstall>true</VcpkgManifestInstall>
+    <VcpkgInstalledDir>$(ProjectDir)$(BaseIntermediateOutputPath)$(Platform)\</VcpkgInstalledDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -171,7 +180,6 @@
   <ItemGroup>
     <None Include="appcenter-sdk-version.txt" />
     <None Include="packages.config" />
-    <None Include="PropertySheet.props" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
@@ -184,11 +192,7 @@
   </ImportGroup>
   <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
     <Exec Command="git clone $(VcpkgRepo).git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg clean -d --force" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg reset --hard" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg checkout master" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg pull --ff-only" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg checkout $(VcpkgCommitHash)" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
     <PropertyGroup>
       <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from $(VcpkgRepo) and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
