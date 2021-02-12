@@ -119,4 +119,4 @@ jobs:
           name: Notepads build artifacts
           path: Artifacts/      
 
-  # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
