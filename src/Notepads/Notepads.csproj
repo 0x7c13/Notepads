@@ -481,6 +481,9 @@
     <PRIResource Include="Strings\**\*.resw" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="UpdateAppxManifest.targets" />
+  </ItemGroup>
+  <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
@@ -489,15 +492,7 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -manifest_file %(AppxManifest.FullPath) -output_path $(ProjectDir)$(BaseIntermediateOutputPath) -config $(Configuration)" ConsoleToMsBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
-    </Exec>
-    <ItemGroup>
-      <AppxManifest Remove="%(AppxManifest.Identity)" />
-      <AppxManifest Include="$(GeneratedAppxManifest)" />
-    </ItemGroup>
-  </Target>
+  <Import Project="UpdateAppxManifest.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

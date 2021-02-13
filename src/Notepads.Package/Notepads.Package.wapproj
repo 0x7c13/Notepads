@@ -81,13 +81,5 @@
     <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
-  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <Exec Command="powershell -ExecutionPolicy Unrestricted ..\Notepads\build.ps1 -manifest_file %(AppxManifest.FullPath) -output_path $(ProjectDir)$(BaseIntermediateOutputPath) -config $(Configuration)" ConsoleToMsBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
-    </Exec>
-    <ItemGroup>
-      <AppxManifest Remove="%(AppxManifest.Identity)" />
-      <AppxManifest Include="$(GeneratedAppxManifest)" />
-    </ItemGroup>
-  </Target>
+  <Import Project="..\Notepads\UpdateAppxManifest.targets" />
 </Project>
