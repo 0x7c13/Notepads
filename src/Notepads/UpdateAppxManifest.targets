@@ -6,8 +6,8 @@
       <Configuration ParameterType="System.String" />
     </ParameterGroup>
     <Task>
-      <Reference Include="System.Xml" />
       <Reference Include="System.IO" />
+      <Reference Include="System.Xml" />
       <Using Namespace="System.IO" />
       <Using Namespace="System.Xml" />
       <Code Type="Fragment" Language="cs">
