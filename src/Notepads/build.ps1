@@ -4,6 +4,8 @@ param (
   [string]$config = "Debug"
 )
 
+New-Item -ItemType Directory -Force -Path $output_path
+
 [xml]$manifest = Get-Content $manifest_file
 
 if ($config -eq "Debug" -Or $config -eq "Release") {

@@ -8,8 +8,6 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  extensionProject: 'src\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj'
-  vcpkgTarget: 'EnsureVcpkgBuild'
   buildPlatform: 'x86|x64|arm64'
   buildConfiguration: 'Production'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
@@ -20,13 +18,6 @@ steps:
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    platform: 'x64'
-    solution: '$(extensionProject)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:$(vcpkgTarget)'
 
 - task: VSBuild@1
   inputs:

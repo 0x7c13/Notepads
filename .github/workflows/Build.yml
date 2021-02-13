@@ -12,8 +12,6 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
-      Extension_Project_Path: src\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj
-      Vcpkg_Target: EnsureVcpkgBuild
 
     runs-on: windows-latest
     steps:
@@ -36,9 +34,6 @@ jobs:
 
     - name: Restore NuGet packages
       run: nuget restore $env:Solution_Name
-
-    - name: Setup Vcpkg
-      run: msbuild $env:Extension_Project_Path /t:$env:Vcpkg_Target /p:Configuration=$env:Configuration
 
     - name: Build
       run: |
