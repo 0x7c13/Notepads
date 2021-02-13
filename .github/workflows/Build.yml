@@ -38,7 +38,7 @@ jobs:
       run: nuget restore $env:Solution_Name
 
     - name: Setup Vcpkg
-      run: msbuild $env:Extension_Project_Path /t:Vcpkg_Target /p:Configuration=$env:Configuration
+      run: msbuild $env:Extension_Project_Path /t:$env:Vcpkg_Target /p:Configuration=$env:Configuration
 
     - name: Build
       run: |
