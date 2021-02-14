@@ -495,7 +495,7 @@
       <Content Include="%(Win32Items.RelativeDir)%(Win32Items.Filename).exe" Link="Resource\%(Win32Items.Filename).exe" />
     </ItemGroup>
   </Target>
-  <Target Name="UpdateAppxManifest" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+  <Target Name="UpdateAppxManifest" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
     <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -manifest_file %(AppxManifest.FullPath) -output_path $(ProjectDir)$(BaseIntermediateOutputPath) -config $(Configuration)" ConsoleToMsBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
     </Exec>
