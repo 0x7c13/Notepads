@@ -34,19 +34,22 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: xpath
+      - name: Install xPath
         shell: bash
+        run: sudo apt install libxml-xpath-perl 
 
-  #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-  #       name: Get assembly version from appxmanifest
-  #       id: get_assembly_version
-  #       shell: bash
-  #       run: |
-  #         cd src/Notepads/
-  #         VERSION_STR=$(grep -oE ' \Version\=\"([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\"' Package.appxmanifest)
-  #         VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
-  #         echo "::set-output name=version_num::$(echo $VERSION)"
-  #         echo "::set-output name=version_tag::$(echo v"$VERSION")"
+      # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+      - name: Get assembly version from appxmanifest
+        id: get_assembly_version
+        shell: bash
+        run: |
+          cd src/Notepads/
+          VERSION_STR=$(xpath -q -e '//Package/Identity/@Version' Package.appxmanifest)
+          VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
+          echo "::set-output name=version_num::$(echo $VERSION)"
+          echo "::set-output name=version_tag::$(echo v"$VERSION")"
+
+      - run: echo "${{ steps.get_assembly_version.outputs.version_tag }}"
 
   #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
   #       name: Get latest tag
