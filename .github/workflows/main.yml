@@ -39,7 +39,7 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: 'src\Notepads\Package.appxmanifest'
-          xpath: '//*/Package'
+          xpath: '//Package/Identity/@Version'
 
       - run: echo "$STR"
         shell: bash
