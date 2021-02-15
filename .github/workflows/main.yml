@@ -60,11 +60,11 @@ jobs:
       - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
         name: Add new tag to repo
         id: add_new_tag_to_repo
-        shell: bash
+        shell: powershell
         run: |
-          git config --global user.name $GIT_USER_NAME
-          git config --global user.email $GIT_USER_EMAIL
-          git tag -a -m "Description for this release" $NEW_VERSION_TAG
+          git config --global user.name $env:GIT_USER_NAME
+          git config --global user.email $env:GIT_USER_EMAIL
+          git tag -a -m "Description for this release" $env:NEW_VERSION_TAG
           git push --follow-tags
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
