@@ -34,8 +34,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-      - if: matrix.configuration == 'Release'
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
         name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: powershell
@@ -48,8 +47,7 @@ jobs:
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
 
-      # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-      - if: matrix.configuration == 'Release'
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
         name: Get latest tag
         id: get_latest_tag
         shell: powershell
@@ -59,8 +57,7 @@ jobs:
         env:
           GIT_URL: ${{ github.repository }}
           
-      # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
-      - if: steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: bash
