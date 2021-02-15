@@ -36,7 +36,7 @@ jobs:
 
       # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
       - if: matrix.configuration == 'Release'
-      - name: Get assembly version from appxmanifest
+        name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: powershell
         run: |
