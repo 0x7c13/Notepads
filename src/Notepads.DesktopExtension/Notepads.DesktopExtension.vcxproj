@@ -78,6 +78,9 @@
     <ClCompile>
       <PreprocessorDefinitions>_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -136,6 +139,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
@@ -190,7 +196,7 @@
     <Import Project="..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210211.2\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210211.2\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
-  <Target Name="EnsureVcpkgBuild" BeforeTargets="Restore">
+  <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
     <Exec Command="git clone $(VcpkgRepo).git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg pull --ff-only" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
     <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
