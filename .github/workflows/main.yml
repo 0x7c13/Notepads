@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ci:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         configuration: [ Debug, Release ]
@@ -38,7 +38,7 @@ jobs:
         id: getxml
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: '.\src\Notepads\Package.appxmanifest'
+          xml-file: 'src/Notepads/Package.appxmanifest'
           xpath: '//Package/Identity[@Version]'
 
       - run: echo "$STR"
