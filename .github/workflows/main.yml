@@ -39,9 +39,9 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: 'src\Notepads\Package.appxmanifest'
-          xpath: '/*'
+          xpath: '/*/Identity/@Version'
 
-      - run: echo $STR
+      - run: echo "$STR"
         shell: bash
         env: 
           STR: ${{ steps.getxml.outputs.info }}
