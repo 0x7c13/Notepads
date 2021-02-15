@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         configuration: [ Debug, Release ]
@@ -34,19 +34,23 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install xPath
-        run: sudo apt install libxml-xpath-perl 
-
       # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-      - name: Get assembly version from appxmanifest
-        id: get_assembly_version
-        shell: bash
+      #   name: Get assembly version from appxmanifest
+      #   id: get_assembly_version
+      #   shell: bash
+      #   run: |
+      #     cd src/Notepads/
+      #     VERSION_STR=$(xpath -q -e '//Package/Identity/@Version' Package.appxmanifest)
+      #     VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
+      #     echo "::set-output name=version_num::$(echo $VERSION)"
+      #     echo "::set-output name=version_tag::$(echo v"$VERSION")"
+
+      - name: Get version
+        shell: powershell
         run: |
-          cd src/Notepads/
-          VERSION_STR=$(xpath -q -e '//Package/Identity/@Version' Package.appxmanifest)
-          VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
-          echo "::set-output name=version_num::$(echo $VERSION)"
-          echo "::set-output name=version_tag::$(echo v"$VERSION")"
+          Select-Xml `
+          '${{ github.workspace }}/src/Notepads/Package.appxmanifest' `
+          '//Identity/@Version'
 
       - run: echo "${{ steps.get_assembly_version.outputs.version_tag }}"
 
