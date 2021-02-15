@@ -13,19 +13,19 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
     steps:
-      - name: Set up JDK 11
-        id: Setup_JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
+      # - name: Set up JDK 11
+      #   id: Setup_JDK
+      #   uses: actions/setup-java@v1
+      #   with:
+      #     java-version: 1.11
 
-      - name: Install .NET Core
-        id: install_dotnet_dependencies
-        uses: actions/setup-dotnet@v1
+      # - name: Install .NET Core
+      #   id: install_dotnet_dependencies
+      #   uses: actions/setup-dotnet@v1
 
-      - name: Setup MSBuild
-        id: setup_msbuild
-        uses: microsoft/setup-msbuild@v1
+      # - name: Setup MSBuild
+      #   id: setup_msbuild
+      #   uses: microsoft/setup-msbuild@v1
 
       - name: Checkout repository
         id: checkout_repo
@@ -34,166 +34,178 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-        name: Get assembly version from appxmanifest
-        id: get_assembly_version
-        shell: bash
-        run: |
-          cd src/Notepads/
-          VERSION_STR=$(grep -oE ' \Version\=\"([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\"' Package.appxmanifest)
-          VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
-          echo "::set-output name=version_num::$(echo $VERSION)"
-          echo "::set-output name=version_tag::$(echo v"$VERSION")"
+      - name: Get XML
+        id: getxml
+        uses: mavrosxristoforos/get-xml-info@1.0
+        with:
+          xml-file: 'src/Notepads/Package.appxmanifest'
+          xpath: '//Package'
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-        name: Get latest tag
-        id: get_latest_tag
+      - run: echo $STR
         shell: bash
-        run: |
-          LATEST_TAG=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
-          echo "::set-output name=tag::$(echo $LATEST_TAG)"
-        env:
-          GIT_URL: ${{ github.repository }}
+        env: 
+          STR: ${{ steps.getxml.outputs.info }}
+
+  #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+  #       name: Get assembly version from appxmanifest
+  #       id: get_assembly_version
+  #       shell: bash
+  #       run: |
+  #         cd src/Notepads/
+  #         VERSION_STR=$(grep -oE ' \Version\=\"([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\"' Package.appxmanifest)
+  #         VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
+  #         echo "::set-output name=version_num::$(echo $VERSION)"
+  #         echo "::set-output name=version_tag::$(echo v"$VERSION")"
+
+  #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+  #       name: Get latest tag
+  #       id: get_latest_tag
+  #       shell: bash
+  #       run: |
+  #         LATEST_TAG=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
+  #         echo "::set-output name=tag::$(echo $LATEST_TAG)"
+  #       env:
+  #         GIT_URL: ${{ github.repository }}
           
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
-        name: Add new tag to repo
-        id: add_new_tag_to_repo
-        shell: bash
-        run: |
-          git config --global user.name $GIT_USER_NAME
-          git config --global user.email $GIT_USER_EMAIL
-          git tag -a -m "Description for this release" $NEW_VERSION_TAG
-          git push --follow-tags
-        env:
-          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
-          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-          NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
+  #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
+  #       name: Add new tag to repo
+  #       id: add_new_tag_to_repo
+  #       shell: bash
+  #       run: |
+  #         git config --global user.name $GIT_USER_NAME
+  #         git config --global user.email $GIT_USER_EMAIL
+  #         git tag -a -m "Description for this release" $NEW_VERSION_TAG
+  #         git push --follow-tags
+  #       env:
+  #         GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+  #         GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+  #         NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: github.event_name != 'pull_request'
-        name: Cache SonarCloud packages
-        id: cache_sonar_packages
-        uses: actions/cache@v2
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+  #     - if: github.event_name != 'pull_request'
+  #       name: Cache SonarCloud packages
+  #       id: cache_sonar_packages
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~\sonar\cache
+  #         key: ${{ runner.os }}-sonar
+  #         restore-keys: ${{ runner.os }}-sonar
 
-      - if: github.event_name != 'pull_request'
-        name: Cache SonarCloud scanner
-        id: cache_sonar_scanner
-        uses: actions/cache@v2
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
+  #     - if: github.event_name != 'pull_request'
+  #       name: Cache SonarCloud scanner
+  #       id: cache_sonar_scanner
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: .\.sonar\scanner
+  #         key: ${{ runner.os }}-sonar-scanner
+  #         restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: github.event_name != 'pull_request' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
-        name: Install SonarCloud scanner
-        id: install_sonar_scanner
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+  #     - if: github.event_name != 'pull_request' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+  #       name: Install SonarCloud scanner
+  #       id: install_sonar_scanner
+  #       shell: powershell
+  #       run: |
+  #         New-Item -Path .\.sonar\scanner -ItemType Directory
+  #         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: github.event_name != 'pull_request'
-        name: Lowercase string generator
-        id: lowercase_string_gen
-        shell: powershell
-        run: |
-          $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
-          echo "::set-output name=owner_name::$LOWERCASE_OWNER"
+  #     - if: github.event_name != 'pull_request'
+  #       name: Lowercase string generator
+  #       id: lowercase_string_gen
+  #       shell: powershell
+  #       run: |
+  #         $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
+  #         echo "::set-output name=owner_name::$LOWERCASE_OWNER"
 
-      - if: github.event_name != 'pull_request'
-        name: Initialize SonarCloud scanner
-        id: init_sonar_scanner
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+  #     - if: github.event_name != 'pull_request'
+  #       name: Initialize SonarCloud scanner
+  #       id: init_sonar_scanner
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       shell: powershell
+  #       run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
-      - name: Restore the application
-        id: restore_application
-        run: |
-          msbuild $env:Solution_Name `
-          /t:Restore `
-          /p:Configuration=$env:Configuration
-        env:
-          Configuration: ${{ matrix.configuration }}
+  #     - name: Restore the application
+  #       id: restore_application
+  #       run: |
+  #         msbuild $env:Solution_Name `
+  #         /t:Restore `
+  #         /p:Configuration=$env:Configuration
+  #       env:
+  #         Configuration: ${{ matrix.configuration }}
 
-      - name: Build and generate bundles
-        id: build_app
-        run: |
-          msbuild $env:Solution_Name `
-          /p:Platform=$env:Platform `
-          /p:Configuration=$env:Configuration `
-          /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
-          /p:AppxBundle=$env:Appx_Bundle `
-          /p:AppxPackageSigningEnabled=$env:Appx_Package_Signing_Enabled `
-          /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
-          /p:AppxPackageDir=$env:Artifacts_Dir
-        env:
-          Platform: x64
-          Configuration: ${{ matrix.configuration }}
-          Uap_Appx_Package_Build_Mode: StoreUpload
-          Appx_Bundle: Always
-          Appx_Package_Signing_Enabled: false
-          Appx_Bundle_Platforms: x86|x64
-          Artifacts_Dir: ${{ github.workspace }}/Artifacts
+  #     - name: Build and generate bundles
+  #       id: build_app
+  #       run: |
+  #         msbuild $env:Solution_Name `
+  #         /p:Platform=$env:Platform `
+  #         /p:Configuration=$env:Configuration `
+  #         /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
+  #         /p:AppxBundle=$env:Appx_Bundle `
+  #         /p:AppxPackageSigningEnabled=$env:Appx_Package_Signing_Enabled `
+  #         /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms `
+  #         /p:AppxPackageDir=$env:Artifacts_Dir
+  #       env:
+  #         Platform: x64
+  #         Configuration: ${{ matrix.configuration }}
+  #         Uap_Appx_Package_Build_Mode: StoreUpload
+  #         Appx_Bundle: Always
+  #         Appx_Package_Signing_Enabled: false
+  #         Appx_Bundle_Platforms: x86|x64
+  #         Artifacts_Dir: ${{ github.workspace }}/Artifacts
 
-      - if: github.event_name != 'pull_request'
-        name: Send SonarCloud results
-        id: send_sonar_results
-        env:
-          GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  #     - if: github.event_name != 'pull_request'
+  #       name: Send SonarCloud results
+  #       id: send_sonar_results
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       shell: powershell
+  #       run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Upload build artifacts
-        id: upload_artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: Build artifacts
-          path: Artifacts/
+  #     - name: Upload build artifacts
+  #       id: upload_artifacts
+  #       uses: actions/upload-artifact@v1
+  #       with:
+  #         name: Build artifacts
+  #         path: Artifacts/
 
-  cd:
-    # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.ci.outputs.new_version != ''
-    needs: ci
-    runs-on: windows-latest
-    env:
-      NEW_VERSION: ${{ needs.ci.outputs.new_version }}
-      NEW_TAG: v${{ needs.ci.outputs.new_version }}
-    steps:
-      - name: Checkout repository
-        id: checkout_repo
-        uses: actions/checkout@v2
+  # cd:
+  #   # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.ci.outputs.new_version != ''
+  #   needs: ci
+  #   runs-on: windows-latest
+  #   env:
+  #     NEW_VERSION: ${{ needs.ci.outputs.new_version }}
+  #     NEW_TAG: v${{ needs.ci.outputs.new_version }}
+  #   steps:
+  #     - name: Checkout repository
+  #       id: checkout_repo
+  #       uses: actions/checkout@v2
 
-      - name: Download and extract MSIX package
-        id: dl_package_artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: Build artifacts
-          path: Artifacts/
+  #     - name: Download and extract MSIX package
+  #       id: dl_package_artifact
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: Build artifacts
+  #         path: Artifacts/
 
-      - name: Create and publish release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.NEW_TAG }}
-          release_name: Notepads ${{ env.NEW_TAG }}
+  #     - name: Create and publish release
+  #       id: create_release
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ env.NEW_TAG }}
+  #         release_name: Notepads ${{ env.NEW_TAG }}
 
-      - name: Upload msixbundle as release asset
-        id: upload_notepads_zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
-          asset_content_type: application/zip
+  #     - name: Upload msixbundle as release asset
+  #       id: upload_notepads_zip
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #         asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+  #         asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+  #         asset_content_type: application/zip
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
