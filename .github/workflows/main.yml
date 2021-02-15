@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ci:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         configuration: [ Debug, Release ]
@@ -35,7 +35,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install xPath
-        shell: bash
         run: sudo apt install libxml-xpath-perl 
 
       # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
