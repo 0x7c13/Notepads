@@ -35,24 +35,22 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
-      #   name: Get assembly version from appxmanifest
-      #   id: get_assembly_version
-      #   shell: bash
-      #   run: |
-      #     cd src/Notepads/
-      #     VERSION_STR=$(xpath -q -e '//Package/Identity/@Version' Package.appxmanifest)
-      #     VERSION=$(echo "$VERSION_STR" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)")
-      #     echo "::set-output name=version_num::$(echo $VERSION)"
-      #     echo "::set-output name=version_tag::$(echo v"$VERSION")"
-
-      - name: Get version
-        shell: powershell
+      - name: Get assembly version from appxmanifest
+        id: get_assembly_version
+        shell: bash
         run: |
           cd src/Notepads/
           $xml = [xml](Get-Content Package.appxmanifest)
-          $NUMM = $xml.Package.Identity | Select Version
-          $NUMM -match "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)"
-          echo $matches[0]
+          $ASSEMBLY_VERSION = $xml.Package.Identity | select Version
+          $ASSEMBLY_VERSION -match "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)"
+          $ASSEMBLY_VERSION_NUMBER = $matches[0]
+          echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
+          echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
+
+      - name: Echo variables
+        run: |
+          echo "${{ steps.get_assembly_version.outputs.version_num }}"
+          echo "${{ steps.get_assembly_version.outputs.version_tag }}"
 
   #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
   #       name: Get latest tag
