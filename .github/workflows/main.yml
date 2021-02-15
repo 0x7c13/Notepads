@@ -37,7 +37,7 @@ jobs:
       # - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
       - name: Get assembly version from appxmanifest
         id: get_assembly_version
-        shell: bash
+        shell: powershell
         run: |
           cd src/Notepads/
           $xml = [xml](Get-Content Package.appxmanifest)
