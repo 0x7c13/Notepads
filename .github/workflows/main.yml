@@ -48,11 +48,7 @@ jobs:
       - name: Get version
         shell: powershell
         run: |
-          Select-Xml `
-          '${{ github.workspace }}/src/Notepads/Package.appxmanifest' `
-          '//Identity/@Version'
-
-      - run: echo "${{ steps.get_assembly_version.outputs.version_tag }}"
+          Select-Xml -Xml '${{ github.workspace }}\src\Notepads\Package.appxmanifest' -XPath '//Identity/@Version'
 
   #     - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
   #       name: Get latest tag
