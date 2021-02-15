@@ -38,8 +38,8 @@ jobs:
         id: getxml
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: 'src\Notepads\xml.xml'
-          xpath: '//Package/Identity/@Version'
+          xml-file: 'src\Notepads\Package.appxmanifest'
+          xpath: '//Package/Identity[@Version]'
 
       - run: echo "$STR"
         shell: bash
