@@ -10,6 +10,8 @@ jobs:
         configuration: [ Debug, Release ]
     outputs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
+      new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
+      latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
     env:
       Solution_Name: src\Notepads.sln
     steps:
@@ -41,9 +43,7 @@ jobs:
         run: |
           cd src/Notepads/
           $xml = [xml](Get-Content Package.appxmanifest)
-          $ASSEMBLY_VERSION = $xml.Package.Identity | select Version
-          $ASSEMBLY_VERSION -match "([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)"
-          $ASSEMBLY_VERSION_NUMBER = $matches[0]
+          $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity | Select -ExpandProperty Version
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
 
@@ -64,7 +64,7 @@ jobs:
         run: |
           git config --global user.name $env:GIT_USER_NAME
           git config --global user.email $env:GIT_USER_EMAIL
-          git tag -a -m "Description for this release" $env:NEW_VERSION_TAG
+          git tag -a -m "New version" $env:NEW_VERSION_TAG
           git push --follow-tags
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
@@ -160,12 +160,12 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.ci.outputs.new_version != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
     needs: ci
     runs-on: windows-latest
     env:
       NEW_VERSION: ${{ needs.ci.outputs.new_version }}
-      NEW_TAG: v${{ needs.ci.outputs.new_version }}
+      NEW_TAG: ${{ needs.ci.outputs.new_version_tag }}
     steps:
       - name: Checkout repository
         id: checkout_repo
