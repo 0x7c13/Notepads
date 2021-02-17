@@ -71,47 +71,53 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: github.event_name != 'pull_request'
-        name: Cache SonarCloud packages
-        id: cache_sonar_packages
-        uses: actions/cache@v2
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+      # - if: github.event_name != 'pull_request'
+      #   name: Cache SonarCloud packages
+      #   id: cache_sonar_packages
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~\sonar\cache
+      #     key: ${{ runner.os }}-sonar
+      #     restore-keys: ${{ runner.os }}-sonar
 
-      - if: github.event_name != 'pull_request'
-        name: Cache SonarCloud scanner
-        id: cache_sonar_scanner
-        uses: actions/cache@v2
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
+      # - if: github.event_name != 'pull_request'
+      #   name: Cache SonarCloud scanner
+      #   id: cache_sonar_scanner
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: .\.sonar\scanner
+      #     key: ${{ runner.os }}-sonar-scanner
+      #     restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: github.event_name != 'pull_request' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
-        name: Install SonarCloud scanner
-        id: install_sonar_scanner
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      # - if: github.event_name != 'pull_request' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      #   name: Install SonarCloud scanner
+      #   id: install_sonar_scanner
+      #   shell: powershell
+      #   run: |
+      #     New-Item -Path .\.sonar\scanner -ItemType Directory
+      #     dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: github.event_name != 'pull_request'
-        name: Lowercase string generator
-        id: lowercase_string_gen
-        shell: powershell
-        run: |
-          $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
-          echo "::set-output name=owner_name::$LOWERCASE_OWNER"
+      # - if: github.event_name != 'pull_request'
+      #   name: Lowercase string generator
+      #   id: lowercase_string_gen
+      #   shell: powershell
+      #   run: |
+      #     $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
+      #     echo "::set-output name=owner_name::$LOWERCASE_OWNER"
 
-      - if: github.event_name != 'pull_request'
-        name: Initialize SonarCloud scanner
-        id: init_sonar_scanner
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+      # - if: github.event_name != 'pull_request'
+      #   name: Initialize SonarCloud scanner
+      #   id: init_sonar_scanner
+      #   shell: powershell
+      #   run: |
+      #     .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Create PFX certificate for AppxBundle
@@ -161,14 +167,14 @@ jobs:
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
           PackageCertificatePassword: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
 
-      - if: github.event_name != 'pull_request'
-        name: Send SonarCloud results
-        id: send_sonar_results
-        shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # - if: github.event_name != 'pull_request'
+      #   name: Send SonarCloud results
+      #   id: send_sonar_results
+      #   shell: powershell
+      #   run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload build artifacts
         id: upload_artifacts
