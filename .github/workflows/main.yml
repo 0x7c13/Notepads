@@ -110,7 +110,7 @@ jobs:
         id: init_sonar_scanner
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" /d:sonar.login="$env:SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"aleks-ivanov_Notepads" /o:"aleksivanovsinglet" /d:sonar.login="$env:SONAR_TOKEN" }}" /d:sonar.host.url="https://sonarcloud.io"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
