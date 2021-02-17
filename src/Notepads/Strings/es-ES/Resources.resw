@@ -693,4 +693,28 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>Comparar archivos...</value>
+    <comment>MainMenu: Texto de visualización del botón "Comparar".</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>Comparador de selector de archivos</value>
+    <comment>MainMenu: Texto de visualización del botón "Comparar".</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>1er archivo</value>
+    <comment>MainMenu: Texto de visualización del botón "Comparar".</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>2er archivo</value>
+    <comment>MainMenu: Texto de visualización del botón "Comparar".</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>Comparar</value>
+    <comment>MainMenu: Texto de visualización del botón "Comparar".</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>MainMenu: Texto de visualización del botón "Cancelar".</comment>
+  </data>
 </root>

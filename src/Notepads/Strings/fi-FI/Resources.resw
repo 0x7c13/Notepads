@@ -693,4 +693,28 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>Vertaa tiedostoja ...</value>
+    <comment>MainMenu: "Vertaa" -painikkeen näyttöteksti.</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>Tiedostonvalitsimen vertailija</value>
+    <comment>MainMenu: "Vertaa" -painikkeen näyttöteksti.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>1. tiedosto</value>
+    <comment>MainMenu: "Vertaa" -painikkeen näyttöteksti.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>2. tiedosto</value>
+    <comment>MainMenu: "Vertaa" -painikkeen näyttöteksti.</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>Vertailla</value>
+    <comment>MainMenu: "Vertaa" -painikkeen näyttöteksti.</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>Peruuttaa</value>
+    <comment>MainMenu: "Peruuta" -painikkeen teksti.</comment>
+  </data>
 </root>

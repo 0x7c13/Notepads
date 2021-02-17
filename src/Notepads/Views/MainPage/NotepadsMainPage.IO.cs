@@ -13,6 +13,7 @@
     using Notepads.Services;
     using Notepads.Utilities;
     using Microsoft.AppCenter.Analytics;
+    using Notepads.Controls.CompareFiles;
 
     public sealed partial class NotepadsMainPage
     {
@@ -150,6 +151,58 @@
             {
                 await BuildOpenRecentButtonSubItems();
             }
+        }
+
+        private async Task<string> GetFileTextAsync(StorageFile file)
+        {
+            string text = "";
+            using (var inputStream = await file.OpenReadAsync())
+            using (var classicStream = inputStream.AsStreamForRead())
+            using (var streamReader = new StreamReader(classicStream))
+            {
+                while (streamReader.Peek() >= 0)
+                {
+                    text += streamReader.ReadLine();
+                }
+            }
+            return text;
+        }
+        public async Task<bool> CompareFiles(bool showCompareWindow)
+        {
+            if (showCompareWindow)
+            {
+                await CompareArgs.ShowCompareWinUIAsync();
+
+                if (!CompareArgs.GetResult())
+                {
+                    IReadOnlyList<StorageFile> files = CompareArgs.GetFiles();
+
+                    if (files.Count > 0 && files != null)
+                    {
+                        try
+                        {
+                            if (files == null) return false;
+
+                            var editor1 = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), files[0]);
+                            NotepadsCore.OpenTextEditor(editor1, string.Empty);
+                            NotepadsCore.FocusOnSelectedTextEditor();
+                            TrackFileExtensionIfNotSupported(files[0]);
+
+                            var editor2 = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), files[1]);
+                            TrackFileExtensionIfNotSupported(files[1]);
+
+                            editor1.OpenSideBySideComparerViewer(editor1, editor2);
+
+                            return true;
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)

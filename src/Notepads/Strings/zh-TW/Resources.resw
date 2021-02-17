@@ -693,4 +693,28 @@
     <value>目前尚未支援「{0}」副檔名</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>比较文件...</value>
+    <comment>MainMenu: “比较”按钮显示文本。</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>文件选择器比较器</value>
+    <comment>MainMenu: “比较”按钮显示文本。</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>第一个文件</value>
+    <comment>MainMenu: “比较”按钮显示文本。</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>第二档</value>
+    <comment>MainMenu: “比较”按钮显示文本。</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>相比</value>
+    <comment>MainMenu: “比较”按钮显示文本。</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>取消</value>
+    <comment>MainMenu: “取消”按钮显示文本。</comment>
+  </data>
 </root>

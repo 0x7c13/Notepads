@@ -693,4 +693,28 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>파일 비교 ...</value>
+    <comment>MainMenu: "비교"버튼 표시 텍스트.</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>파일 선택기 비교기</value>
+    <comment>MainMenu: "비교"버튼 표시 텍스트.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>첫 번째 파일</value>
+    <comment>MainMenu: "비교"버튼 표시 텍스트.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>두 번째 파일</value>
+    <comment>MainMenu: "비교"버튼 표시 텍스트.</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>비교</value>
+    <comment>MainMenu: "비교"버튼 표시 텍스트.</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>취소</value>
+    <comment>MainMenu: "취소"버튼 표시 텍스트.</comment>
+  </data>
 </root>

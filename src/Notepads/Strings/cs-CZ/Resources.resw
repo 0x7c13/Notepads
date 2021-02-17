@@ -693,4 +693,28 @@
     <value>Souborová přípona "{0}" není v tento moment podporována</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>Porovnat soubory...</value>
+    <comment>MainMenu: Text na displeji tlačítka „Porovnat“.</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>Porovnávač výběru souborů</value>
+    <comment>MainMenu: Text na displeji tlačítka „Porovnat“.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>1. soubor</value>
+    <comment>MainMenu: Text na displeji tlačítka „Porovnat“.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>2. soubor</value>
+    <comment>MainMenu: Text na displeji tlačítka „Porovnat“.</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>Porovnat</value>
+    <comment>MainMenu: Text na displeji tlačítka „Porovnat“.</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>zrušení</value>
+    <comment>MainMenu: Text tlačítka „Zrušit“ zobrazí text.</comment>
+  </data>
 </root>

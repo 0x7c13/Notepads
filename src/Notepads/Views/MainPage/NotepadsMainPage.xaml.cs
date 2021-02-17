@@ -27,6 +27,7 @@
     using Windows.UI.Xaml.Navigation;
     using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
+    using Notepads.Controls.CompareFiles;
 
     public sealed partial class NotepadsMainPage : Page
     {

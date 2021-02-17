@@ -693,4 +693,28 @@
     <value>A(z) "{0}" fájlkiterjesztés jelenleg nem támogatott</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>Fájlok összehasonlítása...</value>
+    <comment>MainMenu: Az "Összehasonlítás" gomb megjeleníti a szöveget.</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>Fájlválasztó összehasonlító</value>
+    <comment>MainMenu: Az "Összehasonlítás" gomb megjeleníti a szöveget.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>1. fájl</value>
+    <comment>MainMenu: Az "Összehasonlítás" gomb megjeleníti a szöveget.</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>2. fájl</value>
+    <comment>MainMenu: Az "Összehasonlítás" gomb megjeleníti a szöveget.</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>Hasonlítsa össze</value>
+    <comment>MainMenu: Az "Összehasonlítás" gomb megjeleníti a szöveget.</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>Megszünteti</value>
+    <comment>MainMenu: A "Mégse" gomb megjeleníti a szöveget.</comment>
+  </data>
 </root>

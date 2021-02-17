@@ -693,4 +693,28 @@
     <value>Расширение файла "{0}" не поддерживается</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value>Сравнить файлы ...</value>
+    <comment>MainMenu: Отображаемый текст кнопки «Сравнить».</comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value>Средство сравнения выбора файлов</value>
+    <comment>MainMenu: Отображаемый текст кнопки «Сравнить».</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value>1-й файл</value>
+    <comment>MainMenu: Отображаемый текст кнопки «Сравнить».</comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value>2-й файл</value>
+    <comment>MainMenu: Отображаемый текст кнопки «Сравнить».</comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value>Сравнить</value>
+    <comment>MainMenu: Отображаемый текст кнопки «Сравнить».</comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+    <comment>MainMenu: Текст кнопки «Отмена» отображается.</comment>
+  </data>
 </root>

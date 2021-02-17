@@ -693,4 +693,28 @@
     <value>ଫାଇଲ ଏକ୍ସଟେନ୍ସନ୍ "{0}" ଏହି ମୁହୂର୍ତ୍ତରେ ସମର୍ଥିତ ନୁହେଁ</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
+  <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
+  <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
+  <data name="MainMenu_Button_Compare" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
+  <data name="MainMenu_Button_Cancel" xml:space="preserve">
+    <value></value>
+    <comment></comment>
+  </data>
 </root>

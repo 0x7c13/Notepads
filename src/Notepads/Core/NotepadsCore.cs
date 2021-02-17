@@ -111,7 +111,7 @@
             OpenTextEditor(newEditor);
         }
 
-        public void OpenTextEditor(ITextEditor textEditor, int atIndex = -1)
+        public void OpenTextEditor(ITextEditor textEditor, string headerComparer = null, int atIndex = -1)
         {
             SetsViewItem textEditorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
 
@@ -776,7 +776,7 @@
                     metaData.DateModifiedFileTime);
 
                 var newEditor = CreateTextEditor(Guid.NewGuid(), textFile, editingFile, metaData.FileNamePlaceholder, metaData.IsModified);
-                OpenTextEditor(newEditor, atIndex);
+                OpenTextEditor(newEditor, null, atIndex);
                 newEditor.ResetEditorState(metaData, pendingText);
 
                 if (metaData.IsContentPreviewPanelOpened)

@@ -147,12 +147,19 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
+    <Compile Include="Controls\CompareFiles\CompareArgs.cs" />
+    <Compile Include="Controls\CompareFiles\CompareFilesDialog.xaml.cs">
+      <DependentUpon>CompareFilesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
     <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
     <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
     <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
     <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
     <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\DiffViewer\SideBySideDiffComparer.xaml.cs">
+      <DependentUpon>SideBySideDiffComparer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -300,6 +307,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\CompareFiles\CompareFilesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DiffViewer\SideBySideDiffComparer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\FindAndReplace\FindAndReplaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

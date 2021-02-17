@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Notepads.Commands;
@@ -9,13 +10,14 @@
     using Notepads.Services;
     using Windows.System;
     using Windows.UI;
+    using Windows.UI.Composition;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-    public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer
+    public sealed partial class SideBySideDiffComparer : UserControl, ISideBySideDiffViewer
     {
         public event EventHandler OnCloseEvent;
 
@@ -28,7 +30,7 @@
 
         private readonly ScrollViewerSynchronizer _scrollSynchronizer;
 
-        public SideBySideDiffViewer()
+        public SideBySideDiffComparer()
         {
             InitializeComponent();
 
@@ -36,7 +38,6 @@
 
             _diffRenderer = new RichTextBlockDiffRenderer();
 
-            _keyboardCommandHandler = GetKeyboardCommandHandler();
             _mouseCommandHandler = GetMouseCommandHandler();
 
             LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
@@ -47,12 +48,16 @@
 
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
 
-            DismissButton.Click += DismissButton_OnClick;
             LayoutRoot.KeyDown += OnKeyDown;
             KeyDown += OnKeyDown;
             LeftTextBlock.KeyDown += OnKeyDown;
             RightTextBlock.KeyDown += OnKeyDown;
-            Loaded += SideBySideDiffViewer_Loaded;
+            Loaded += SideBySideDiffComparer_Loaded;
+        }
+
+        private void SideBySideDiffComparer_Loaded(object sender, RoutedEventArgs e)
+        {
+            Focus();
         }
 
         public void Dispose()
@@ -61,22 +66,16 @@
 
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
 
-            DismissButton.Click -= DismissButton_OnClick;
             LayoutRoot.KeyDown -= OnKeyDown;
             KeyDown -= OnKeyDown;
             LeftTextBlock.KeyDown -= OnKeyDown;
             RightTextBlock.KeyDown -= OnKeyDown;
-            Loaded -= SideBySideDiffViewer_Loaded;
+            Loaded -= SideBySideDiffComparer_Loaded;
 
             LeftTextBlockBorder.PointerWheelChanged -= LeftTextBlockBorder_PointerWheelChanged;
             RightTextBlockBorder.PointerWheelChanged -= RightTextBlockBorder_PointerWheelChanged;
 
             _scrollSynchronizer.Dispose();
-        }
-
-        private void SideBySideDiffViewer_Loaded(object sender, RoutedEventArgs e)
-        {
-            Focus();
         }
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
@@ -85,21 +84,6 @@
             {
                 LeftTextBlock.SelectionHighlightColor = new SolidColorBrush(color);
                 RightTextBlock.SelectionHighlightColor = new SolidColorBrush(color);
-            });
-        }
-
-        private KeyboardCommandHandler GetKeyboardCommandHandler()
-        {
-            return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
-            {
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) =>
-                {
-                    DismissButton_OnClick(this, new RoutedEventArgs());
-                }),
-                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) =>
-                {
-                    DismissButton_OnClick(this, new RoutedEventArgs());
-                }),
             });
         }
 
@@ -193,6 +177,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (leftHeader != null) DiffViewer_Header_LeftTextTittle.Text = leftHeader;
                                 LeftTextBlock.Blocks.Add(leftContext.Blocks[x]);
                             }
                         });
@@ -209,6 +194,7 @@
                             for (int x = start; x < end; x++)
                             {
                                 if (cancellationTokenSource.IsCancellationRequested) return;
+                                if (rightHeader != null) DiffViewer_Header_RightTextTittle.Text = rightHeader;
                                 RightTextBlock.Blocks.Add(rightContext.Blocks[x]);
                             }
                         });
@@ -281,63 +267,6 @@
             }, cancellationTokenSource.Token);
 
             _cancellationTokenSource = cancellationTokenSource;
-
-            //Task.Factory.StartNew(async () =>
-            //{
-            //    var count = rightCount > leftCount ? rightCount : leftCount;
-
-            //    for (int i = 0; i < count; i++)
-            //    {
-            //        if (i < leftCount)
-            //        {
-            //            var j = i;
-            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-            //            {
-            //                Thread.Sleep(20);
-            //                LeftTextBlock.Blocks.Add(leftContext.Blocks[j]);
-            //            });
-            //        }
-            //        if (i < rightCount)
-            //        {
-            //            var j = i;
-            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-            //            {
-            //                Thread.Sleep(20);
-            //                RightTextBlock.Blocks.Add(rightContext.Blocks[j]);
-            //            });
-            //        }
-            //    }
-            //});
-
-            //Task.Factory.StartNew(async () =>
-            //{
-            //    var leftCount = leftHighlighters.Count;
-            //    var rightCount = rightHighlighters.Count;
-
-            //    var count = rightCount > leftCount ? rightCount : leftCount;
-
-            //    for (int i = 0; i < count; i++)
-            //    {
-            //        if (i < leftCount)
-            //        {
-            //            var j = i;
-            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => LeftTextBlock.TextHighlighters.Add(leftHighlighters[j]));
-            //        }
-            //        if (i < rightCount)
-            //        {
-            //            var j = i;
-            //            await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-            //                () => RightTextBlock.TextHighlighters.Add(rightHighlighters[j]));
-            //        }
-            //    }
-            //});
-        }
-
-        private void DismissButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            StopRenderingAndClearCache();
-            OnCloseEvent?.Invoke(this, EventArgs.Empty);
         }
 
         private void LeftTextBlockBorder_PointerWheelChanged(object sender, PointerRoutedEventArgs e)

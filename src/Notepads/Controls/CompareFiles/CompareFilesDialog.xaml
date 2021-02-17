@@ -1,0 +1,31 @@
+﻿<ContentDialog
+    x:Class="Notepads.Controls.CompareFiles.CompareFilesDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads.Controls.CompareFiles"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:resources="using:System.Resources"
+    IsPrimaryButtonEnabled="False"
+    PrimaryButtonClick="ContentDialog_CompareButtonClick"
+    SecondaryButtonClick="ContentDialog_CancelButtonClick">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal"  Padding="0,0,0,0">
+                <TextBlock x:Uid="MainMenu_Button_LabelCompareFile1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" Name="lblTitleFile1"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"  Padding="10,10,10,20">
+                <TextBox HorizontalAlignment="Left" Height="30" Width="440" Name="FileNameTextBox1" IsEnabled="False" TextChanged="FileNameTextBox1_TextChanged"/>
+                <Button Name="BrowseButton1" FontFamily="Segoe MDL2 Assets" Content="&#xE7C5;" HorizontalAlignment="Left" Click="BrowseButton1_Click" Width="35" Height="35" RenderTransformOrigin="1.047,0.821" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"  Padding="0,0,0,0">
+                <TextBlock x:Uid="MainMenu_Button_LabelCompareFile2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" Name="lblTitleFile2"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Padding="10,10,10,20">
+                <TextBox HorizontalAlignment="Left" Height="30" Width="440" Name="FileNameTextBox2" IsEnabled="False" TextChanged="FileNameTextBox2_TextChanged"/>
+                <Button Name="BrowseButton2" FontFamily="Segoe MDL2 Assets" Content="&#xE7C5;" HorizontalAlignment="Left" Click="BrowseButton2_Click" Width="35" Height="35" RenderTransformOrigin="1.047,0.821" Margin="10,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ContentDialog>
