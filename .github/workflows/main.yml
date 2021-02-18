@@ -35,6 +35,11 @@ jobs:
           $GITHUB_REF: ${{ github.ref }}
           $BUILD_CONFIGURATION: ${{ matrix.configuration }}
 
+      - name: Check step_conditionals_handler output
+        run: |
+          echo "${{ steps.step_conditionals_handler.outputs.is_github_release }}"
+          echo "${{ steps.step_conditionals_handler.outputs.is_not_PR }}"
+
       - name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
