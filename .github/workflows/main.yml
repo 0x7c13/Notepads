@@ -40,7 +40,7 @@ jobs:
           echo "${{ steps.step_conditionals_handler.outputs.is_github_release }}"
           echo "${{ steps.step_conditionals_handler.outputs.is_not_PR }}"
 
-      - if: (false)
+      - if: ( False )
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -62,7 +62,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release
+      - if: ( steps.step_conditionals_handler.outputs.is_github_release )
         name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: powershell
@@ -73,7 +73,7 @@ jobs:
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release
+      - if: ( steps.step_conditionals_handler.outputs.is_github_release )
         name: Get latest tag
         id: get_latest_tag
         shell: powershell
@@ -83,7 +83,7 @@ jobs:
         env:
           GIT_URL: ${{ github.repository }}
           
-      - if: steps.step_conditionals_handler.outputs.is_github_release && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
+      - if: ( steps.step_conditionals_handler.outputs.is_github_release ) && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: powershell
@@ -97,7 +97,7 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR )
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -106,7 +106,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR )
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -115,7 +115,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR && steps.cache_sonar_scanner.outputs. )cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: powershell
@@ -123,7 +123,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR )
         name: Lowercase string generator
         id: lowercase_string_gen
         shell: powershell
@@ -131,7 +131,7 @@ jobs:
           $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
           echo "::set-output name=owner_name::$LOWERCASE_OWNER"
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR )
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: powershell
@@ -144,7 +144,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release
+      - if: ( steps.step_conditionals_handler.outputs.is_github_release )
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: powershell
@@ -204,7 +204,7 @@ jobs:
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
           PackageCertificatePassword: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR )
         name: Send SonarCloud results
         id: send_sonar_results
         shell: powershell
@@ -215,7 +215,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release
+      - if: ( steps.step_conditionals_handler.outputs.is_github_release )
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -225,7 +225,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_github_release && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    if: ( needs.ci.outputs.is_github_release ) && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
     needs: ci
     runs-on: windows-latest
     env:
