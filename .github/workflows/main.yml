@@ -118,7 +118,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Create PFX certificate for AppxBundle
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+        name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: powershell
         run: |
@@ -140,6 +141,20 @@ jobs:
         env:
           Configuration: ${{ matrix.configuration }}
 
+      - name: Determine if signing should be applaied to AppxBundle
+        id: determine_signing
+        shell: powershell
+        run: |
+          $PARAM = false
+          if ($env:GITHUB_EVENT_NAME -ceq 'push' && $env:GITHUB_REF -ceq 'refs/heads/master' && $env:BUILD_CONFIGURATION -ceq 'Release') {
+            $PARAM = true
+          }
+          echo "::set-output name=parameter::$(echo $PARAM)"
+        env:
+          $GITHUB_EVENT_NAME: ${{ github.event_name }}
+          $GITHUB_REF: ${{ github.ref }}
+          $BUILD_CONFIGURATION: ${{ matrix.configuration }}
+
       - name: Build and generate bundles
         id: build_app
         shell: powershell
@@ -159,7 +174,7 @@ jobs:
           Configuration: ${{ matrix.configuration }}
           Uap_Appx_Package_Build_Mode: StoreUpload
           Appx_Bundle: Always
-          Appx_Package_Signing_Enabled: true
+          Appx_Package_Signing_Enabled: ${{ steps.determine_signing.outputs.parameter }}
           Appx_Bundle_Platforms: x86|x64
           Artifacts_Dir: ${{ github.workspace }}\Artifacts
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
@@ -176,7 +191,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Upload build artifacts
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+        name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
         with:
