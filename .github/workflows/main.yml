@@ -38,7 +38,7 @@ jobs:
           echo "${{ steps.step_conditionals_handler.outputs.is_github_release }}"
           echo "${{ steps.step_conditionals_handler.outputs.is_not_PR }}"
 
-      - if: ( false )
+      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -223,7 +223,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: ( needs.ci.outputs.is_github_release ) && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    if: needs.ci.outputs.is_github_release == 'true' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
     needs: ci
     runs-on: windows-latest
     env:
