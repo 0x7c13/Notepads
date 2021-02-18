@@ -20,14 +20,16 @@ jobs:
         id: step_conditionals_handler
         shell: powershell
         run: |
-          echo "::set-output name=is_github_release::false"
-          echo "::set-output name=is_not_pr::true"
+          $IS_GITHUB_RELEASE = 'false'
+          $IS_NOT_PR = 'true'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
-            echo "::set-output name=is_github_release::true"
+            $IS_GITHUB_RELEASE = 'true'
           }
           if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
-            echo "::set-output name=is_not_pr::false"
+            $IS_NOT_PR = 'false'
           }
+          echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
+          echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
         env:
           $GITHUB_EVENT_NAME: ${{ github.event_name }}
           $GITHUB_REF: ${{ github.ref }}
