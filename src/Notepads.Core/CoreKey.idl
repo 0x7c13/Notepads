@@ -1,0 +1,22 @@
+namespace Notepads.Core
+{
+    [default_interface]
+    static runtimeclass CoreKey
+    {
+        static String AppCenterSecret { get; };
+        static String PackageSidStr { get; };
+        static String AppCenterInstallIdStr { get; };
+        static String LastChangedSettingsKeyStr { get; };
+        static String LastChangedSettingsAppInstanceIdStr { get; };
+        static String LaunchElevatedProcessSuccessStr { get; };
+        static String LaunchElevatedProcessFailedStr { get; };
+        static String ExtensionProcessLifetimeObjNameStr { get; };
+        static String ElevatedProcessLifetimeObjNameStr { get; };
+        static String ExtensionUnblockEventNameStr { get; };
+        static String ElevatedWriteEventNameStr { get; };
+        static String ElevatedRenameEventNameStr { get; };
+        static String ExtensionUnblockPipeConnectionNameStr { get; };
+        static String ElevatedWritePipeConnectionNameStr { get; };
+        static String ElevatedRenamePipeConnectionNameStr { get; };
+    }
+}

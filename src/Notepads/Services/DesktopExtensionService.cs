@@ -2,6 +2,7 @@
 {
     using Microsoft.AppCenter;
     using Notepads.Controls.Dialog;
+    using Notepads.Core;
     using Notepads.Settings;
     using Notepads.Utilities;
     using System;
@@ -56,31 +57,31 @@
 
             if (ExtensionProcessLifetimeObject == null)
             {
-                ExtensionProcessLifetimeObject = new Mutex(false, SettingsKey.ExtensionProcessLifetimeObjNameStr);
+                ExtensionProcessLifetimeObject = new Mutex(false, CoreKey.ExtensionProcessLifetimeObjNameStr);
             }
 
             if (ElevatedProcessLifetimeObject == null)
             {
-                ElevatedProcessLifetimeObject = new Mutex(false, SettingsKey.ElevatedProcessLifetimeObjNameStr);
+                ElevatedProcessLifetimeObject = new Mutex(false, CoreKey.ElevatedProcessLifetimeObjNameStr);
             }
 
             if (_extensionUnblockEvent == null)
             {
-                _extensionUnblockEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ExtensionUnblockEventNameStr);
+                _extensionUnblockEvent = new EventWaitHandle(false, EventResetMode.ManualReset, CoreKey.ExtensionUnblockEventNameStr);
             }
 
             if (_elevatedWriteEvent == null)
             {
-                _elevatedWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ElevatedWriteEventNameStr);
+                _elevatedWriteEvent = new EventWaitHandle(false, EventResetMode.ManualReset, CoreKey.ElevatedWriteEventNameStr);
             }
 
             if (_elevatedRenameEvent == null)
             {
-                _elevatedRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SettingsKey.ElevatedRenameEventNameStr);
+                _elevatedRenameEvent = new EventWaitHandle(false, EventResetMode.ManualReset, CoreKey.ElevatedRenameEventNameStr);
             }
 
-            ApplicationSettingsStore.Write(SettingsKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
-            ApplicationSettingsStore.Write(SettingsKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
+            ApplicationSettingsStore.Write(CoreKey.PackageSidStr, WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper());
+            ApplicationSettingsStore.Write(CoreKey.AppCenterInstallIdStr, (await AppCenter.GetInstallIdAsync())?.ToString());
 
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
@@ -108,7 +109,7 @@
             if (!ShouldUseDesktopExtension) return;
 
             using (var pipeStream = new NamedPipeServerStream(
-                $"Local\\{SettingsKey.ExtensionUnblockPipeConnectionNameStr}",
+                $"Local\\{CoreKey.ExtensionUnblockPipeConnectionNameStr}",
                 PipeDirection.Out,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
@@ -179,7 +180,7 @@
             if (!ShouldUseDesktopExtension) return;
 
             using (var pipeStream = new NamedPipeServerStream(
-                $"Local\\{SettingsKey.ElevatedWritePipeConnectionNameStr}",
+                $"Local\\{CoreKey.ElevatedWritePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,
@@ -238,7 +239,7 @@
             if (!ShouldUseDesktopExtension) return null;
 
             using (var pipeStream = new NamedPipeServerStream(
-                $"Local\\{SettingsKey.ElevatedRenamePipeConnectionNameStr}",
+                $"Local\\{CoreKey.ElevatedRenamePipeConnectionNameStr}",
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Message,

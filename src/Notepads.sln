@@ -19,6 +19,8 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Notepads.Package", "Notepad
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Notepads.DesktopExtension", "Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj", "{0A3B698E-6ADD-4C9E-9741-08F8AE576B2E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Notepads.Core", "Notepads.Core\Notepads.Core.vcxproj", "{022DC661-4FA2-4264-A869-5A560FB4CC92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -143,6 +145,30 @@ Global
 		{0A3B698E-6ADD-4C9E-9741-08F8AE576B2E}.Release|x64.Build.0 = Release|x64
 		{0A3B698E-6ADD-4C9E-9741-08F8AE576B2E}.Release|x86.ActiveCfg = Release|Win32
 		{0A3B698E-6ADD-4C9E-9741-08F8AE576B2E}.Release|x86.Build.0 = Release|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|ARM.ActiveCfg = Debug|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|ARM.Build.0 = Debug|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|ARM64.Build.0 = Debug|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|x64.ActiveCfg = Debug|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|x64.Build.0 = Debug|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|x86.ActiveCfg = Debug|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Debug|x86.Build.0 = Debug|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|ARM.ActiveCfg = Production|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|ARM.Build.0 = Production|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|ARM64.ActiveCfg = Production|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|ARM64.Build.0 = Production|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|x64.ActiveCfg = Production|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|x64.Build.0 = Production|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|x86.ActiveCfg = Production|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Production|x86.Build.0 = Production|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|ARM.ActiveCfg = Release|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|ARM.Build.0 = Release|ARM
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|ARM64.ActiveCfg = Release|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|ARM64.Build.0 = Release|ARM64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|x64.ActiveCfg = Release|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|x64.Build.0 = Release|x64
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|x86.ActiveCfg = Release|Win32
+		{022DC661-4FA2-4264-A869-5A560FB4CC92}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

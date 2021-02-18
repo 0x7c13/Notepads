@@ -14,6 +14,7 @@
 #include "winrt/Windows.Storage.AccessCache.h"
 #include "winrt/Windows.System.h"
 #include "winrt/Windows.System.Profile.h"
+#include "winrt/Notepads.Core.h"
 #include "boost/stacktrace.hpp"
 #include "fmt/core.h"
 
@@ -24,25 +25,21 @@
 #define PIPE_NAME_FORMAT L"\\\\.\\pipe\\Sessions\\{}\\AppContainerNamedObjects\\{}\\{}"
 #define NAMED_OBJECT_FORMAT L"AppContainerNamedObjects\\{}\\{}"
 
-// These values depend upon constant fields described in ..\Notepads\Settings\SettingsKey.cs.
-// Changing value in one place require changing variable with similar name in another.
-/////////////////////////////////////////////////////////////////////////////////////////////
-#define AppCenterSecret NULL
-#define PackageSidStr L"PackageSidStr"
-#define AppCenterInstallIdStr L"AppCenterInstallIdStr"
-#define LastChangedSettingsKeyStr L"LastChangedSettingsKeyStr"
-#define LastChangedSettingsAppInstanceIdStr L"LastChangedSettingsAppInstanceIdStr"
-#define LaunchElevetedProcessSuccessStr L"LaunchElevetedProcessSuccess"
-#define LaunchElevetedProcessFailedStr L"LaunchElevetedProcessFailed"
-#define ExtensionProcessLifetimeObjNameStr L"ExtensionProcessLifetimeObj"
-#define ElevatedProcessLifetimeObjNameStr L"ElevatedProcessLifetimeObj"
-#define ExtensionUnblockEventNameStr L"NotepadsExtensionUnblockEvent"
-#define ElevatedWriteEventNameStr L"NotepadsElevatedWriteEvent"
-#define ElevatedRenameEventNameStr L"NotepadsElevatedRenameEvent"
-#define ExtensionUnblockPipeConnectionNameStr L"NotepadsExtensionUnblockPipe"
-#define ElevatedWritePipeConnectionNameStr L"NotepadsElevatedWritePipe"
-#define ElevatedRenamePipeConnectionNameStr L"NotepadsElevatedRenamePipe"
-/////////////////////////////////////////////////////////////////////////////////////////////
+#define AppCenterSecret winrt::Notepads::Core::CoreKey::AppCenterSecret().c_str()
+#define PackageSidStr winrt::Notepads::Core::CoreKey::PackageSidStr().c_str()
+#define AppCenterInstallIdStr winrt::Notepads::Core::CoreKey::AppCenterInstallIdStr().c_str()
+#define LastChangedSettingsKeyStr winrt::Notepads::Core::CoreKey::LastChangedSettingsKeyStr().c_str()
+#define LastChangedSettingsAppInstanceIdStr winrt::Notepads::Core::CoreKey::LastChangedSettingsAppInstanceIdStr().c_str()
+#define LaunchElevatedProcessSuccessStr winrt::Notepads::Core::CoreKey::LaunchElevatedProcessSuccessStr().c_str()
+#define LaunchElevatedProcessFailedStr winrt::Notepads::Core::CoreKey::LaunchElevatedProcessFailedStr().c_str()
+#define ExtensionProcessLifetimeObjNameStr winrt::Notepads::Core::CoreKey::ExtensionProcessLifetimeObjNameStr().c_str()
+#define ElevatedProcessLifetimeObjNameStr winrt::Notepads::Core::CoreKey::ElevatedProcessLifetimeObjNameStr().c_str()
+#define ExtensionUnblockEventNameStr winrt::Notepads::Core::CoreKey::ExtensionUnblockEventNameStr().c_str()
+#define ElevatedWriteEventNameStr winrt::Notepads::Core::CoreKey::ElevatedWriteEventNameStr().c_str()
+#define ElevatedRenameEventNameStr winrt::Notepads::Core::CoreKey::ElevatedRenameEventNameStr().c_str()
+#define ExtensionUnblockPipeConnectionNameStr winrt::Notepads::Core::CoreKey::ExtensionUnblockPipeConnectionNameStr().c_str()
+#define ElevatedWritePipeConnectionNameStr winrt::Notepads::Core::CoreKey::ElevatedWritePipeConnectionNameStr().c_str()
+#define ElevatedRenamePipeConnectionNameStr winrt::Notepads::Core::CoreKey::ElevatedRenamePipeConnectionNameStr().c_str()
 
 VOID setExceptionHandling();
 bool isElevatedProcess();

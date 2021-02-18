@@ -9,6 +9,7 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Core;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -43,7 +44,7 @@
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(SettingsKey.AppCenterSecret, services);
+            AppCenter.Start(CoreKey.AppCenterSecret, services);
 
             InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)

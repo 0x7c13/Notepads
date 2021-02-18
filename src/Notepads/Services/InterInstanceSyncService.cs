@@ -1,5 +1,6 @@
 ﻿namespace Notepads.Services
 {
+    using Notepads.Core;
     using Notepads.Extensions;
     using Notepads.Settings;
     using Notepads.Views.MainPage;
@@ -37,8 +38,8 @@
             { SettingsKey.EditorDefaultSearchEngineStr, AppSettingsService.InitializeSearchEngineSettings },
             { SettingsKey.EditorEnableSmartCopyBool, AppSettingsService.InitializeSmartCopySettings },
             { SettingsKey.AlwaysOpenNewWindowBool, AppSettingsService.InitializeAppOpeningPreferencesSettings },
-            { SettingsKey.LaunchElevetedProcessFailedStr, DesktopExtensionService.OnElevetedProcessLaunchRequested },
-            { SettingsKey.LaunchElevetedProcessSuccessStr, DesktopExtensionService.OnElevetedProcessLaunchRequested },
+            { CoreKey.LaunchElevatedProcessFailedStr, DesktopExtensionService.OnElevetedProcessLaunchRequested },
+            { CoreKey.LaunchElevatedProcessSuccessStr, DesktopExtensionService.OnElevetedProcessLaunchRequested },
             { RecentFilesListKey, async (permission) => await _notepadsMainPage.BuildOpenRecentButtonSubItems(!permission) }
         };
 
@@ -50,25 +51,25 @@
 
         private static async void Application_OnDataChanged(ApplicationData sender, object args)
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.LastChangedSettingsAppInstanceIdStr) is string lastChangedSettingsAppInstanceIdStr &&
+            if (ApplicationSettingsStore.Read(CoreKey.LastChangedSettingsAppInstanceIdStr) is string lastChangedSettingsAppInstanceIdStr &&
                 lastChangedSettingsAppInstanceIdStr == App.Id.ToString())
             {
                 return;
             }
 
-            if (ApplicationSettingsStore.Read(SettingsKey.LastChangedSettingsKeyStr) is string lastChangedSettingsKeyStr &&
+            if (ApplicationSettingsStore.Read(CoreKey.LastChangedSettingsKeyStr) is string lastChangedSettingsKeyStr &&
                 SyncManager.ContainsKey(lastChangedSettingsKeyStr) && _notepadsMainPage != null)
             {
                 await DispatcherExtensions.CallOnUIThreadAsync(_notepadsMainPage.Dispatcher, () =>
                 {
                     if (lastChangedSettingsKeyStr != RecentFilesListKey &&
-                    lastChangedSettingsKeyStr != SettingsKey.LaunchElevetedProcessSuccessStr &&
-                    lastChangedSettingsKeyStr != SettingsKey.LaunchElevetedProcessFailedStr)
+                    lastChangedSettingsKeyStr != CoreKey.LaunchElevatedProcessSuccessStr &&
+                    lastChangedSettingsKeyStr != CoreKey.LaunchElevatedProcessFailedStr)
                     {
                         _notepadsMainPage.CloseSettingsPane();
                     }
 
-                    if (lastChangedSettingsKeyStr == SettingsKey.LaunchElevetedProcessFailedStr)
+                    if (lastChangedSettingsKeyStr == CoreKey.LaunchElevatedProcessFailedStr)
                     {
                         SyncManager[lastChangedSettingsKeyStr].Invoke(false);
                     }

@@ -1,6 +1,7 @@
 ﻿namespace Notepads.Settings
 {
     using System;
+    using Notepads.Core;
     using Notepads.Services;
     using Windows.Storage;
 
@@ -32,8 +33,8 @@
         {
             if (InterInstanceSyncService.SyncManager.ContainsKey(key))
             {
-                _localSettings.Values[SettingsKey.LastChangedSettingsKeyStr] = key;
-                _localSettings.Values[SettingsKey.LastChangedSettingsAppInstanceIdStr] = App.Id.ToString();
+                _localSettings.Values[CoreKey.LastChangedSettingsKeyStr] = key;
+                _localSettings.Values[CoreKey.LastChangedSettingsAppInstanceIdStr] = App.Id.ToString();
                 ApplicationData.Current.SignalDataChanged();
             }
         }

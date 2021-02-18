@@ -191,6 +191,11 @@
   <ItemGroup>
     <ResourceCompile Include="AssemblyInfo.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Notepads.Core\Notepads.Core.vcxproj">
+      <Project>{022dc661-4fa2-4264-a869-5a560fb4cc92}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />

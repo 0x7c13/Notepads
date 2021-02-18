@@ -99,7 +99,7 @@ VOID launchElevatedProcess()
     if (ShellExecuteEx(&shExInfo))
     {
         ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessSuccessStr));
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevatedProcessSuccessStr));
 
         printDebugMessage(L"Elevated Process has been launched.");
         properties.push_back(pair("Accepted", "True"));
@@ -107,7 +107,7 @@ VOID launchElevatedProcess()
     else
     {
         ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsAppInstanceIdStr, box_value(L""));
-        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevetedProcessFailedStr));
+        ApplicationData::Current().LocalSettings().Values().Insert(LastChangedSettingsKeyStr, box_value(LaunchElevatedProcessFailedStr));
 
         printDebugMessage(L"Launching of Elevated Process was cancelled.");
         pair<DWORD, wstring> ex = getLastErrorDetails();
