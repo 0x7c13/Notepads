@@ -14,7 +14,7 @@ jobs:
       latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
       is_github_release: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
     env:
-      Solution_Name: src\Notepads.sln
+      SOLUTION_NAME: src\Notepads.sln
     steps:
       - name: Steps' conditionals handler
         id: step_conditionals_handler
@@ -31,9 +31,9 @@ jobs:
           echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
           echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
         env:
-          $GITHUB_EVENT_NAME: ${{ github.event_name }}
-          $GITHUB_REF: ${{ github.ref }}
-          $BUILD_CONFIGURATION: ${{ matrix.configuration }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          BUILD_CONFIGURATION: ${{ matrix.configuration }}
 
       - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Set up JDK 11
@@ -156,29 +156,17 @@ jobs:
         id: restore_application
         shell: powershell
         run: |
-          msbuild $env:Solution_Name `
+          msbuild $env:SOLUTION_NAME `
           /t:Restore `
           /p:Configuration=$env:Configuration
         env:
           Configuration: ${{ matrix.configuration }}
 
-      - name: Determine if signing should be applied to AppxBundle
-        id: determine_signing
-        shell: powershell
-        run: |
-          [bool]$PARAM = $false
-          if ( $env:IS_GITHUB_RELEASE ) {
-            $PARAM = $true
-          }
-          echo "::set-output name=parameter::$(echo $PARAM)"
-        env:
-          $IS_GITHUB_RELEASE: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
-
       - name: Build and generate bundles
         id: build_app
         shell: powershell
         run: |
-          msbuild $env:Solution_Name `
+          msbuild $env:SOLUTION_NAME `
           /p:Platform=$env:Platform `
           /p:Configuration=$env:Configuration `
           /p:UapAppxPackageBuildMode=$env:Uap_Appx_Package_Build_Mode `
@@ -193,7 +181,7 @@ jobs:
           Configuration: ${{ matrix.configuration }}
           Uap_Appx_Package_Build_Mode: StoreUpload
           Appx_Bundle: Always
-          Appx_Package_Signing_Enabled: ${{ steps.determine_signing.outputs.parameter }}
+          Appx_Package_Signing_Enabled: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
           Appx_Bundle_Platforms: x86|x64
           Artifacts_Dir: ${{ github.workspace }}\Artifacts
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
