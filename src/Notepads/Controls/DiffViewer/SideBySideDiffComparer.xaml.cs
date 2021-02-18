@@ -279,7 +279,6 @@
             }, cancellationTokenSource.Token);
         }
 
-
         private void LeftTextBlockBorder_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             _mouseCommandHandler.Handle(e);
