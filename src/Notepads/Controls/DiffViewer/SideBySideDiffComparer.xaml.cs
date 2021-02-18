@@ -284,5 +284,10 @@
             // Always handle it so that right ScrollViewer won't pick up the event
             e.Handled = true;
         }
+
+        public void RenderDiff(string left, string right, ElementTheme theme)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

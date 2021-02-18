@@ -154,7 +154,7 @@
             RightTextBlock.Blocks.Clear();
         }
 
-        public void RenderDiff(string left, string right, ElementTheme theme, string leftHeader = null, string rightHeader = null)
+        public void RenderDiff(string left, string right, ElementTheme theme)
         {
             StopRenderingAndClearCache();
 
@@ -354,6 +354,11 @@
 
             // Always handle it so that right ScrollViewer won't pick up the event
             e.Handled = true;
+        }
+
+        public void RenderDiff(string left, string right, ElementTheme theme, string leftHeader = null, string rightHeader = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }
