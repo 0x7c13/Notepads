@@ -115,7 +115,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: ( steps.step_conditionals_handler.outputs.is_not_PR && steps.cache_sonar_scanner.outputs. )cache-hit != 'true'
+      - if: ( steps.step_conditionals_handler.outputs.is_not_PR ) && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: powershell
