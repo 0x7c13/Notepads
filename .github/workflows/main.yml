@@ -85,7 +85,7 @@ jobs:
         run: |
           git config --global user.name $env:GIT_USER_NAME
           git config --global user.email $env:GIT_USER_EMAIL
-          git tag -a -m "New version" $env:NEW_VERSION_TAG
+          git tag -a -m "${{ github.event.head_commit.message }}" $env:NEW_VERSION_TAG
           git push --follow-tags
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
