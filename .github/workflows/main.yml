@@ -141,13 +141,13 @@ jobs:
         env:
           Configuration: ${{ matrix.configuration }}
 
-      - name: Determine if signing should be applaied to AppxBundle
+      - name: Determine if signing should be applied to AppxBundle
         id: determine_signing
         shell: powershell
         run: |
-          $PARAM = false
+          [bool]$PARAM = $false
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
-            $PARAM = true
+            $PARAM = $true
           }
           echo "::set-output name=parameter::$(echo $PARAM)"
         env:
