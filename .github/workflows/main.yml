@@ -40,7 +40,7 @@ jobs:
           echo "${{ steps.step_conditionals_handler.outputs.is_github_release }}"
           echo "${{ steps.step_conditionals_handler.outputs.is_not_PR }}"
 
-      - if: ( False )
+      - if: ( false )
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
