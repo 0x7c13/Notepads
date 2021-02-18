@@ -154,6 +154,15 @@
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+            LoadContextBlocks(leftContext, rightContext, cancellationTokenSource, leftHeader, rightHeader);
+
+            LoadHighlighters(leftContext, rightContext, cancellationTokenSource, leftHighlighters, rightHighlighters);
+
+            _cancellationTokenSource = cancellationTokenSource;
+        }
+
+        public void LoadContextBlocks(RichTextBlockDiffContext leftContext, RichTextBlockDiffContext rightContext, CancellationTokenSource cancellationTokenSource, string leftHeader, string rightHeader)
+        {
             Task.Factory.StartNew(async () =>
             {
                 var leftCount = leftContext.Blocks.Count;
@@ -210,7 +219,10 @@
                     }
                 }
             }, cancellationTokenSource.Token);
+        }
 
+        public void LoadHighlighters(RichTextBlockDiffContext leftContext, RichTextBlockDiffContext rightContext, CancellationTokenSource cancellationTokenSource, IList<Windows.UI.Xaml.Documents.TextHighlighter> leftHighlighters, IList<Windows.UI.Xaml.Documents.TextHighlighter> rightHighlighters)
+        {
             Task.Factory.StartNew(async () =>
             {
                 var leftCount = leftHighlighters.Count;
@@ -265,9 +277,8 @@
                     }
                 }
             }, cancellationTokenSource.Token);
-
-            _cancellationTokenSource = cancellationTokenSource;
         }
+
 
         private void LeftTextBlockBorder_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
