@@ -28,8 +28,8 @@ jobs:
           if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
             $IS_NOT_PR = $false
           }
-          echo "::set-output name=is_github_release::$(echo "$IS_GITHUB_RELEASE")"
-          echo "::set-output name=is_not_PR::$(echo "$IS_NOT_PR")"
+          echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
+          echo "::set-output name=is_not_PR::$(echo $IS_NOT_PR)"
         env:
           $GITHUB_EVENT_NAME: ${{ github.event_name }}
           $GITHUB_REF: ${{ github.ref }}
