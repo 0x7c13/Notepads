@@ -146,7 +146,7 @@ jobs:
         shell: powershell
         run: |
           $PARAM = false
-          if ($env:GITHUB_EVENT_NAME -ceq 'push' && $env:GITHUB_REF -ceq 'refs/heads/master' && $env:BUILD_CONFIGURATION -ceq 'Release') {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
             $PARAM = true
           }
           echo "::set-output name=parameter::$(echo $PARAM)"
