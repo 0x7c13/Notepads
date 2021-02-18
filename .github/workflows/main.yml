@@ -12,9 +12,29 @@ jobs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
       latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
+      is_github_release: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
     env:
       Solution_Name: src\Notepads.sln
     steps:
+      - name: Steps' conditionals handler
+        id: step_conditionals_handler
+        shell: powershell
+        run: |
+          [bool]$IS_GITHUB_RELEASE = $false
+          [bool]$IS_NOT_PR = $true
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
+            $IS_GITHUB_RELEASE = $true
+          }
+          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+            $IS_NOT_PR = $false
+          }
+          echo "::set-output name=is_github_release::$(echo "$IS_GITHUB_RELEASE")"
+          echo "::set-output name=is_not_PR::$(echo "$IS_NOT_PR")"
+        env:
+          $GITHUB_EVENT_NAME: ${{ github.event_name }}
+          $GITHUB_REF: ${{ github.ref }}
+          $BUILD_CONFIGURATION: ${{ matrix.configuration }}
+
       - name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -36,7 +56,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+      - if: steps.step_conditionals_handler.outputs.is_github_release
         name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: powershell
@@ -47,7 +67,7 @@ jobs:
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+      - if: steps.step_conditionals_handler.outputs.is_github_release
         name: Get latest tag
         id: get_latest_tag
         shell: powershell
@@ -57,7 +77,7 @@ jobs:
         env:
           GIT_URL: ${{ github.repository }}
           
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag && matrix.configuration == 'Release'
+      - if: steps.step_conditionals_handler.outputs.is_github_release && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: powershell
@@ -71,7 +91,7 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: github.event_name != 'pull_request'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -80,7 +100,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: github.event_name != 'pull_request'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -89,7 +109,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: github.event_name != 'pull_request' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: powershell
@@ -97,7 +117,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: github.event_name != 'pull_request'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR
         name: Lowercase string generator
         id: lowercase_string_gen
         shell: powershell
@@ -105,7 +125,7 @@ jobs:
           $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
           echo "::set-output name=owner_name::$LOWERCASE_OWNER"
 
-      - if: github.event_name != 'pull_request'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: powershell
@@ -118,7 +138,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+      - if: steps.step_conditionals_handler.outputs.is_github_release
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: powershell
@@ -146,14 +166,12 @@ jobs:
         shell: powershell
         run: |
           [bool]$PARAM = $false
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
+          if ( $env:IS_GITHUB_RELEASE ) {
             $PARAM = $true
           }
           echo "::set-output name=parameter::$(echo $PARAM)"
         env:
-          $GITHUB_EVENT_NAME: ${{ github.event_name }}
-          $GITHUB_REF: ${{ github.ref }}
-          $BUILD_CONFIGURATION: ${{ matrix.configuration }}
+          $IS_GITHUB_RELEASE: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
 
       - name: Build and generate bundles
         id: build_app
@@ -180,7 +198,7 @@ jobs:
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
           PackageCertificatePassword: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
 
-      - if: github.event_name != 'pull_request'
+      - if: steps.step_conditionals_handler.outputs.is_not_PR
         name: Send SonarCloud results
         id: send_sonar_results
         shell: powershell
@@ -191,7 +209,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.configuration == 'Release'
+      - if: steps.step_conditionals_handler.outputs.is_github_release
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -201,7 +219,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    if: needs.ci.outputs.is_github_release && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
     needs: ci
     runs-on: windows-latest
     env:
