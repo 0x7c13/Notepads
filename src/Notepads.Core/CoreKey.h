@@ -27,8 +27,5 @@ namespace winrt::Notepads::Core::implementation
 
 namespace winrt::Notepads::Core::factory_implementation
 {
-    struct CoreKey : CoreKeyT<CoreKey, implementation::CoreKey>
-    {
-
-    };
+    struct CoreKey : CoreKeyT<CoreKey, implementation::CoreKey> { };
 }
