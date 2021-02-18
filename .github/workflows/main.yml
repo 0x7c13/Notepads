@@ -21,24 +21,19 @@ jobs:
         shell: powershell
         run: |
           echo "::set-output name=is_github_release::false"
-          echo "::set-output name=is_not_PR::true"
+          echo "::set-output name=is_not_pr::true"
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
             echo "::set-output name=is_github_release::true"
           }
           if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
-            echo "::set-output name=is_not_PR::false"
+            echo "::set-output name=is_not_pr::false"
           }
         env:
           $GITHUB_EVENT_NAME: ${{ github.event_name }}
           $GITHUB_REF: ${{ github.ref }}
           $BUILD_CONFIGURATION: ${{ matrix.configuration }}
 
-      - name: Check step_conditionals_handler output
-        run: |
-          echo "${{ steps.step_conditionals_handler.outputs.is_github_release }}"
-          echo "${{ steps.step_conditionals_handler.outputs.is_not_PR }}"
-
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -95,7 +90,7 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -104,7 +99,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -113,7 +108,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: powershell
@@ -121,7 +116,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Lowercase string generator
         id: lowercase_string_gen
         shell: powershell
@@ -129,7 +124,7 @@ jobs:
           $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
           echo "::set-output name=owner_name::$LOWERCASE_OWNER"
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: powershell
@@ -202,7 +197,7 @@ jobs:
           PackageCertificateKeyFile: ${{ github.workspace }}\cert.pfx
           PackageCertificatePassword: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_PR == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Send SonarCloud results
         id: send_sonar_results
         shell: powershell
