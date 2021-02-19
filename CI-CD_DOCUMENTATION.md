@@ -236,6 +236,64 @@ To add more descriptions, follow these steps:
 
 ![CSA_custom_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_2.png)
 
+<br>
+
+## 5. Automated GitHub release
+
+Automatically bumps up the GitHub tag in the repo, creates a GitHub release with the new tag and attaches the msixbundle to it
+
+#### Setup
+
+Add the following secrets by going to the repo **Settings** tab -> **Secrets**:
+
+1. **GIT_USER_NAME** 
+- used to add the identity required for creating a tag
+- copy and paste your GitHub username as the value of the secret
+
+2. **GIT_USER_EMAIL** 
+- used to add the identity required for creating a tag 
+- copy and paste your primary GitHub email as the value of the secret
+
+3. **PFX_TO_BASE64**
+- used to dynamically create the PFX file required for the signing of the **msixbundle**
+- use the following PowerShell code locally to turn your PFX file into Base64:
+
+```
+# read from PFX as binary
+$PFX_FILE = [IO.File]::ReadAllBytes('absolute_path_to_PFX')
+# convert to Base64 and write in txt
+[System.Convert]::ToBase64String($PFX_FILE) | Out-File 'absolute_path\cert.txt'
+```
+
+- copy the contents of the **cert.txt** and paste as the value of the secret
+
+4. **PACKAGE_CERTIFICATE_PWD**
+- used in the build of the project to authenticate the PFX
+- copy and paste the password of your PFX as the value of this secret
+
+NOTE: 
+- none of those values are visible in the logs of the pipeline, nor are available to anyone outside of the original repository e.g. forks, anonymous clones etc.
+- the dynamically created PFX file lives only for the duration of the pipeline execution
+
+#### Execution
+
+Follow these steps to trigger the automated GitHub release process:
+
+1. Bump up the **Package.Identity.Version** in the **Package.appxmanifest**
+
+2. Make a push commit to your master branch or if you've done the previous change in a feature branch, the merge of the PR to the master branch would act as the push commit
+
+If the setup was done correctly and there are no errors in the pipeline, when the pipeline successfully completes, there should be a new, properly tagged GitHub release with the msixbundle attached to it.
+
+NOTE: 
+- the tag itself is used as the required description of the newly created tag, which appears here:
+
+![Release_1](/ScreenShots/CI-CD_DOCUMENTATION/Release_1.png)
+
+- it is replaced by the release description
+
+![Release_2](/ScreenShots/CI-CD_DOCUMENTATION/Release_2.png)
+
 #
 
 Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
