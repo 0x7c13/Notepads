@@ -607,6 +607,71 @@
             }
         }
 
+        /// <summary>
+        /// Safely Save text to a file with requested encoding with transaction model
+        /// https://docs.microsoft.com/en-us/windows/uwp/files/best-practices-for-writing-to-files
+        /// Exception will be thrown if not succeeded
+        /// Exception should be caught and handled by caller
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static async Task SafeWriteToFile(string text, Encoding encoding, StorageFile file)
+        {
+            bool usedDeferUpdates = true;
+
+            try
+            {
+                // Prevent updates to the remote version of the file until we
+                // finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(file);
+            }
+            catch (Exception)
+            {
+                // If DeferUpdates fails, just ignore it and try to save the file anyway
+                usedDeferUpdates = false;
+            }
+
+            // Write to file
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            try
+            {
+                var content = encoding.GetBytes(text);
+                var result = encoding.GetPreamble().Concat(content).ToArray();
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
+                {
+                    // For file(s) dragged into Notepads, they are read-only
+                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
+                    await PathIO.WriteBytesAsync(file.Path, result);
+                }
+                else // Use FileIO API to save 
+                {
+                    await FileIO.WriteBytesAsync(file, result);
+                }
+            }
+            finally
+            {
+                if (usedDeferUpdates)
+                {
+                    // Let Windows know that we're finished changing the file so the
+                    // other app can update the remote version of the file.
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status != FileUpdateStatus.Complete)
+                    {
+                        // Track FileUpdateStatus here to better understand the failed scenarios
+                        // File name, path and content are not included to respect/protect user privacy
+                        Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
+                        {
+                            { "FileUpdateStatus", nameof(status) }
+                        });
+                    }
+                }
+            }
+        }
+
         internal static async Task DeleteFile(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
         {
             try

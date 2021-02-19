@@ -453,7 +453,7 @@
         {
             try
             {
-                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
+                await FileSystemUtility.SafeWriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
                 return true;
             }
             catch (Exception ex)
