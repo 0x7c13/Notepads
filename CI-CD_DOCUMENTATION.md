@@ -256,7 +256,7 @@ Add the following secrets by going to the repo **Settings** tab -> **Secrets**:
 
 3. **PFX_TO_BASE64**
 - used to dynamically create the PFX file required for the signing of the **msixbundle**
-- use the following Powershell code locally to turn your PFX file into Base64:
+- use the following PowerShell code locally to turn your PFX file into Base64:
 
 ```
 # read from PFX as binary
