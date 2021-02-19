@@ -240,7 +240,7 @@ To add more descriptions, follow these steps:
 
 ## 5. Automated GitHub release
 
-This feature automatically bumps up the GitHub tag in the repo, creates a GitHub release with the new tag and attaches the msixbundle to it
+Automatically bumps up the GitHub tag in the repo, creates a GitHub release with the new tag and attaches the msixbundle to it
 
 #### Setup
 
@@ -262,7 +262,7 @@ Add the following secrets by going to the repo **Settings** tab -> **Secrets**:
 # read from PFX as binary
 $PFX_FILE = [IO.File]::ReadAllBytes('absolute_path_to_PFX')
 # convert to Base64 and write in txt
-[System.Convert]::ToBase64String($PFX_FILE) | Out-File 'cert.txt'
+[System.Convert]::ToBase64String($PFX_FILE) | Out-File 'absolute_path\cert.txt'
 ```
 
 - copy the contents of the **cert.txt** and paste as the value of the secret
@@ -286,9 +286,11 @@ Follow these steps to trigger the automated GitHub release process:
 If the setup was done correctly and there are no errors in the pipeline, when the pipeline successfully completes, there should be a new, properly tagged GitHub release with the msixbundle attached to it.
 
 NOTE: 
-- the message of your last commit (head_commit) is used as the required description of the newly created tag, which appears here:
+- the tag itself is used as the required description of the newly created tag, which appears here:
 
 ![Release_1](/ScreenShots/CI-CD_DOCUMENTATION/Release_1.png)
+
+- it is replaced by the release description
 
 ![Release_2](/ScreenShots/CI-CD_DOCUMENTATION/Release_2.png)
 
