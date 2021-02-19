@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>Dosyaları Karşılaştır ...</value>
-    <comment>MainMenu: "Karşılaştır" düğmesi ekran metni.</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>Dosya Seçici Karşılaştırıcısı</value>
-    <comment>MainMenu: "Karşılaştır" düğmesi ekran metni.</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>1. Dosya</value>
-    <comment>MainMenu: "Karşılaştır" düğmesi ekran metni.</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2. Dosya</value>
-    <comment>MainMenu: "Karşılaştır" düğmesi ekran metni.</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>Karşılaştırmak</value>
-    <comment>MainMenu: "Karşılaştır" düğmesi ekran metni.</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>İptal etmek</value>
-    <comment>MainMenu: "İptal" düğmesi ekran metni.</comment>
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
   </data>
 </root>

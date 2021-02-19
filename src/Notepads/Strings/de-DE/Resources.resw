@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>Dateien vergleichen...</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Vergleichen".</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>Dateiauswahl-Vergleicher</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Vergleichen".</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>1. Datei</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Vergleichen".</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2. Datei</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Vergleichen".</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>Vergleichen Sie</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Vergleichen".</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>Stornieren</value>
-    <comment>MainMenu: Anzeigetext der Schaltfläche "Abbrechen".</comment>
-  </data>	
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
+  </data>
 </root>

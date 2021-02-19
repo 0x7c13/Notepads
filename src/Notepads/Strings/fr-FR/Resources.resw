@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>Comparer des fichiers ...</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Comparer".</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>Sélecteur de fichiers Comparer</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Comparer".</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>1er fichier</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Comparer".</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2er fichier</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Comparer".</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>Comparer</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Comparer".</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>Annuler</value>
-    <comment>MainMenu: Texte d'affichage du bouton "Annuler".</comment>
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
   </data>
 </root>

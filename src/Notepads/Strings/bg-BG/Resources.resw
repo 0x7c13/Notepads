@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>Сравнете файловете...</value>
-    <comment>MainMenu: Бутон "Сравнение" показва текст.</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>Файлов селектор за сравнение</value>
-    <comment>MainMenu: Бутон "Сравнение" показва текст.</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>1-во досие</value>
-    <comment>MainMenu: Бутон "Сравнение" показва текст.</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2-во досие</value>
-    <comment>MainMenu: Бутон "Сравнение" показва текст.</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>Сравнете</value>
-    <comment>MainMenu: Бутон "Сравнение" показва текст.</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>Отказ</value>
-    <comment>MainMenu: Бутон "Отказ" показва текст.</comment>
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
   </data>
 </root>

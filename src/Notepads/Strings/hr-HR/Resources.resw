@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>Usporedi datoteke...</value>
-    <comment>MainMenu: Tekst prikaza gumba "Usporedi".</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>Izbornik datoteka za usporedbu</value>
-    <comment>MainMenu: Tekst prikaza gumba "Usporedi".</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>1. datoteka</value>
-    <comment>MainMenu: Tekst prikaza gumba "Usporedi".</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2. datoteka</value>
-    <comment>MainMenu: Tekst prikaza gumba "Usporedi".</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>Usporedite</value>
-    <comment>MainMenu: Tekst prikaza gumba "Usporedi".</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>Otkazati</value>
-    <comment>MainMenu: Gumb "Otkaži" prikazuje tekst.</comment>
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
   </data>
 </root>

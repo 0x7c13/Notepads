@@ -694,27 +694,27 @@
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
-    <value>फाइलों की तुलना करें ...</value>
-    <comment>MainMenu: "तुलना" बटन प्रदर्शन पाठ।</comment>
+    <value>Compare Files...</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_CompareSelector" xml:space="preserve">
-    <value>फ़ाइल चयनकर्ता तुलना</value>
-    <comment>MainMenu: "तुलना" बटन प्रदर्शन पाठ।</comment>
+    <value>File Selector Comparer</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile1.Text" xml:space="preserve">
-    <value>पहली फ़ाइल</value>
-    <comment>MainMenu: "तुलना" बटन प्रदर्शन पाठ।</comment>
+    <value>1st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_LabelCompareFile2.Text" xml:space="preserve">
-    <value>2st फ़ाइल</value>
-    <comment>MainMenu: "तुलना" बटन प्रदर्शन पाठ।</comment>
+    <value>2st File</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Compare" xml:space="preserve">
-    <value>तुलना कीजिए</value>
-    <comment>MainMenu: "तुलना" बटन प्रदर्शन पाठ।</comment>
+    <value>Compare</value>
+    <comment>MainMenu: "Compare" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Cancel" xml:space="preserve">
-    <value>रद्द करना</value>
-    <comment>MainMenu: "रद्द करें" बटन प्रदर्शन पाठ।</comment>
+    <value>Cancel</value>
+    <comment>MainMenu: "Cancel" button display text.</comment>
   </data>
 </root>
