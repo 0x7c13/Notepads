@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -65,8 +66,15 @@
 
             var data = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
 
+            IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
+            IList<StorageFile> backupFiles = (await SessionUtility.GetAllBackupFilesAsync(_backupFolderName)).ToList();
+            var orphanedEditorCount = 0;
+
             if (data == null)
             {
+                recoveredEditor = await RecoverOrphanedTextEditors(backupFiles);
+                orphanedEditorCount = recoveredEditor.Count;
+                _notepadsCore.OpenTextEditors(recoveredEditor.ToArray());
                 return 0; // No session data found
             }
 
@@ -88,14 +96,15 @@
             }
             catch (Exception ex)
             {
+                recoveredEditor = await RecoverOrphanedTextEditors(backupFiles);
+                orphanedEditorCount = recoveredEditor.Count;
+                _notepadsCore.OpenTextEditors(recoveredEditor.ToArray());
+
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 await ClearSessionDataAsync();
                 return 0;
             }
-
-            IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
-            IList<StorageFile> backupFiles = (await SessionUtility.GetAllBackupFilesAsync(_backupFolderName)).ToList();
 
             foreach (var textEditorData in sessionData.TextEditors)
             {
@@ -129,7 +138,9 @@
 
             if (backupFiles?.Count > 0)
             {
-                recoveredEditor.Concat(await RecoverOrphanedTextEditors(backupFiles));
+                var orphanedEditors = await RecoverOrphanedTextEditors(backupFiles);
+                orphanedEditorCount = orphanedEditors.Count;
+                recoveredEditor.Concat(orphanedEditors);
             }
 
             _notepadsCore.OpenTextEditors(recoveredEditor.ToArray(), sessionData.SelectedTextEditor);
@@ -139,7 +150,7 @@
 
             LoggingService.LogInfo($"[{nameof(SessionManager)}] {_sessionDataCache.Count} tab(s) restored from last session.");
 
-            return _sessionDataCache.Count;
+            return _sessionDataCache.Count + orphanedEditorCount;
         }
 
         public async Task SaveSessionAsync(Action actionAfterSaving = null)
@@ -591,6 +602,11 @@
                         LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned backup file: {ex.Message}");
                     }
                 }
+            }
+
+            foreach (var filePth in Directory.GetFiles((await SessionUtility.GetBackupFolderAsync(_backupFolderName)).Path, "*.~TMP"))
+            {
+                File.Delete(filePth);
             }
         }
 
