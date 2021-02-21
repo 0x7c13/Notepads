@@ -16,6 +16,7 @@
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.AccessCache;
 
@@ -94,14 +95,15 @@
             }
 
             IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
+            IList<StorageFile> backupFiles = (await SessionUtility.GetAllBackupFilesAsync(_backupFolderName)).ToList();
 
             foreach (var textEditorData in sessionData.TextEditors)
             {
-                ITextEditor textEditor;
+                Tuple<ITextEditor, IList<StorageFile>> recoveredData;
 
                 try
                 {
-                    textEditor = await RecoverTextEditorAsync(textEditorData);
+                    recoveredData = await RecoverTextEditorAsync(textEditorData, backupFiles);
                 }
                 catch (Exception ex)
                 {
@@ -110,11 +112,24 @@
                     continue;
                 }
 
-                if (textEditor != null)
+                if (recoveredData != null)
                 {
-                    recoveredEditor.Add(textEditor);
-                    _sessionDataCache.TryAdd(textEditor.Id, textEditorData);
+                    if (recoveredData.Item1 != null)
+                    {
+                        recoveredEditor.Add(recoveredData.Item1);
+                        _sessionDataCache.TryAdd(recoveredData.Item1.Id, textEditorData);
+                    }
+                    
+                    if (recoveredData.Item2?.Count > 0)
+                    {
+                        recoveredData.Item2.All(file => backupFiles.Remove(file));
+                    }
                 }
+            }
+
+            if (backupFiles?.Count > 0)
+            {
+                recoveredEditor.Concat(await RecoverOrphanedTextEditors(backupFiles));
             }
 
             _notepadsCore.OpenTextEditors(recoveredEditor.ToArray(), sessionData.SelectedTextEditor);
@@ -387,25 +402,28 @@
             textEditor.FileReloaded -= RemoveTextEditorSessionData;
         }
 
-        private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
+        private async Task<Tuple<ITextEditor, IList<StorageFile>>> RecoverTextEditorAsync(
+            TextEditorSessionDataV1 editorSessionData,
+            IList<StorageFile> backupFiles)
         {
             StorageFile editingFile = null;
+            IList<StorageFile> recoveredFiles = new List<StorageFile>();
 
             if (editorSessionData.EditingFileFutureAccessToken != null)
             {
                 editingFile = await FutureAccessListUtility.GetFileFromFutureAccessList(editorSessionData.EditingFileFutureAccessToken);
             }
 
-            string lastSavedFile = editorSessionData.LastSavedBackupFilePath;
-            string pendingFile = editorSessionData.PendingBackupFilePath;
+            string lastSavedFilePath = editorSessionData.LastSavedBackupFilePath;
+            string pendingFilePath = editorSessionData.PendingBackupFilePath;
 
             ITextEditor textEditor;
 
-            if (editingFile == null && lastSavedFile == null && pendingFile == null)
+            if (editingFile == null && lastSavedFilePath == null && pendingFilePath == null)
             {
                 textEditor = null;
             }
-            else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
+            else if (editingFile != null && lastSavedFilePath == null && pendingFilePath == null) // File without pending changes
             {
                 var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
                 textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
@@ -416,11 +434,20 @@
                 string lastSavedText = string.Empty;
                 string pendingText = null;
 
-                if (lastSavedFile != null)
+                if (lastSavedFilePath != null)
                 {
-                    TextFile lastSavedTextFile = await FileSystemUtility.ReadFile(lastSavedFile, ignoreFileSizeLimit: true,
-                    EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding));
-                    lastSavedText = lastSavedTextFile.Content;
+                    var lastSavedFile = backupFiles.First(file => lastSavedFilePath.Equals(file.Path, StringComparison.OrdinalIgnoreCase));
+                    if (lastSavedFile == null)
+                    {
+                        lastSavedText = (await FileSystemUtility.ReadFile(lastSavedFilePath, ignoreFileSizeLimit: true,
+                            EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding))).Content;
+                    }
+                    else
+                    {
+                        recoveredFiles.Add(lastSavedFile);
+                        lastSavedText = (await FileSystemUtility.ReadFile(lastSavedFile, ignoreFileSizeLimit: true,
+                            EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding))).Content;
+                    }
                 }
 
                 var textFile = new TextFile(lastSavedText,
@@ -435,18 +462,98 @@
                     editorSessionData.StateMetaData.FileNamePlaceholder,
                     editorSessionData.StateMetaData.IsModified);
 
-                if (pendingFile != null)
+                if (pendingFilePath != null)
                 {
-                    TextFile pendingTextFile = await FileSystemUtility.ReadFile(pendingFile,
-                        ignoreFileSizeLimit: true,
-                        EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding));
-                    pendingText = pendingTextFile.Content;
+                    var pendingFile = backupFiles.First(file => pendingFilePath.Equals(file.Path, StringComparison.OrdinalIgnoreCase));
+                    if (pendingFile == null)
+                    {
+                        pendingText = (await FileSystemUtility.ReadFile(pendingFilePath, ignoreFileSizeLimit: true,
+                            EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding))).Content;
+                    }
+                    else
+                    {
+                        recoveredFiles.Add(pendingFile);
+                        pendingText = (await FileSystemUtility.ReadFile(pendingFile, ignoreFileSizeLimit: true,
+                            EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding))).Content;
+                    }
                 }
 
                 textEditor.ResetEditorState(editorSessionData.StateMetaData, pendingText);
             }
 
-            return textEditor;
+            return Tuple.Create(textEditor, recoveredFiles);
+        }
+
+        // Recover editos from backup files if they have failed to store metadata
+        private async Task<IList<ITextEditor>> RecoverOrphanedTextEditors(IList<StorageFile> backupFiles)
+        {
+            IList<ITextEditor> recoveredEditors = new List<ITextEditor>();
+            while (backupFiles.Count > 0)
+            {
+                var backupFile = backupFiles[0];
+                Guid editorId = Guid.NewGuid();
+                TextFile lastSavedTextFile = null;
+                TextFile pendingTextFile = null;
+                if (backupFile.Name.EndsWith("-LastSaved"))
+                {
+                    editorId = Guid.Parse(backupFile.Name.Replace("-LastSaved", ""));
+                    lastSavedTextFile = await FileSystemUtility.ReadFile(backupFile, ignoreFileSizeLimit: true);
+                    var pendingFile = backupFiles.First(file => file.Name.Equals(ToToken(editorId) + "-Pending"));
+                    pendingTextFile = await FileSystemUtility.ReadFile(pendingFile, ignoreFileSizeLimit: true);
+
+                    backupFiles.Remove(backupFile);
+                    backupFiles.Remove(pendingFile);
+                }
+                else if (backupFile.Name.EndsWith("-Pending"))
+                {
+                    editorId = Guid.Parse(backupFile.Name.Replace("-Pending", ""));
+                    var lastSavedFile = backupFiles.First(file => file.Name.Equals(ToToken(editorId) + "-LastSaved"));
+                    lastSavedTextFile = await FileSystemUtility.ReadFile(lastSavedFile, ignoreFileSizeLimit: true);
+                    pendingTextFile = await FileSystemUtility.ReadFile(backupFile, ignoreFileSizeLimit: true);
+
+                    backupFiles.Remove(backupFile);
+                    backupFiles.Remove(lastSavedFile);
+                }
+                else
+                {
+                    backupFiles.Remove(backupFile);
+                    continue;
+                }
+
+                if (pendingTextFile == null)
+                {
+                    // If there are no pending changes no need to recover
+                    continue;
+                }
+
+                ITextEditor textEditor = null;
+                var defaultName = ResourceLoader.GetForCurrentView().GetString("TextEditor_DefaultNewFileName");
+                var editingFile = await FutureAccessListUtility.GetFileFromFutureAccessList(ToToken(editorId));
+                var textFile = await FileSystemUtility.ReadFile(editingFile, ignoreFileSizeLimit: true);
+                if (lastSavedTextFile == null)
+                {
+                    textEditor = _notepadsCore.CreateTextEditor(editorId,
+                        textFile ?? pendingTextFile,
+                        editingFile,
+                        editingFile?.Name ?? defaultName,
+                        true);
+                }
+                else
+                {
+                    textEditor = _notepadsCore.CreateTextEditor(editorId,
+                        lastSavedTextFile,
+                        editingFile,
+                        editingFile?.Name ?? defaultName,
+                        true);
+                }
+
+                if (textEditor == null) continue;
+
+                textEditor.ResetEditorState(textEditor.GetTextEditorStateMetaData(), pendingTextFile.Content);
+                recoveredEditors.Add(textEditor);
+            }
+
+            return recoveredEditors;
         }
 
         private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)

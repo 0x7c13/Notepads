@@ -315,11 +315,13 @@
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
             StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
+            return await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
         public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
+            if (file == null) return null;
+
             var fileProperties = await file.GetBasicPropertiesAsync();
 
             if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
