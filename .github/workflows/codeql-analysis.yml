@@ -17,7 +17,6 @@ jobs:
       SOLUTION_NAME: src\Notepads.sln
       PROJECT_PATH: src\Notepads\Notepads.csproj
       CONFIGURATION: ${{ matrix.configuration }}
-
     steps:
       - name: Checkout repository
         id: checkout_repo
