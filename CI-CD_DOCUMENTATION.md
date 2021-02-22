@@ -1,12 +1,11 @@
 # Notepads CI/CD documentation
 
-* after merging the PR, the first run of the main workflow will not complete successfully, because it requires specific setup explained in this documentation
+* after merging the PR, the first run of the "Notepads CI/CD Pipeline" workflow will not complete successfully, because it requires specific setup explained in this documentation. The two other workflows "CodeQL Analysis" and "Build", should complete successfully.
 
-#
 ## 1. Set up SonarCloud
 ### SonarCloud is a cloud-based code quality and security service
 
-#### Create your SonarCloud project
+#### Create SonarCloud project
 
 - Go to https://sonarcloud.io/
 
@@ -16,61 +15,53 @@
 
 - From the dropdown select "Create new Organization"
 
-- Click the "Choose an organization on Github" button
+- Click the "Choose an organization on GitHub" button
 
-- Select an account for your organization setup
+- Select an account for the organization setup
 
 - On Repository Access select "Only select repositories" and select the project and click the "Save" button
 
-- On the "Create organization page" don't change your Key and click "Continue"
+- On the "Create organization page" don't change the Key and click "Continue"
 
-- Select the Free plan then click the "Create Organization" button to finalize the creation of your Organization
+- Select the Free plan then click the "Create Organization" button to finalize the creation of the Organization
 
 #### Configure SonarCloud project
 
-- From the dropdown select "Analyze new project"
+- At the top right corner click the "+" sign and select "Analyze new project"
 
-- Select the project and click "Set Up" button at the top right corner
+- Select the project and click the "Set Up" button in the box on the right
 
-- Under the "Choose another analysis method" sign click the "With Github Actions" sign
+- Under "Choose your analysis method" click "With GitHub Actions" and **keep the following page open**
 
-- Copy the Name of the token and the Value and use them on step "16"
+- In new tab, go to https://github.com/settings/tokens (Profile Settings -> Developer settings -> Personal access tokens)
 
-- To Create a secret on GitHub click the fast forward button Settings>Secrets 
+- Click on "Generate new token", set a name for the token, select **repo_deployment** and **read:packages** permissions, at the bottom of the page click on **Generate token** and copy the value of the generated token
 
-- Then click "New Repository secret"
+- In the project's GitHub repository, go to the **Settings** tab -> Secrets 
 
-- Enter the "Name" and the "Value" and click Add Secret
+- Click on **New Repository secret** and create a new secret with the name **SONAR_GITHUB_TOKEN** and the token you just copied as the value
 
-- Go to https://github.com/settings/tokens and click " Personal access tokens"
+- Create another secret with the two values from the SonarCloud page you kept open, which you can close after completing this step
 
-- Click on "Generate new token" set the name for the token and select **repo_deployment** and **read:packages**
+![SonarCloud_1](/ScreenShots/CI-CD_DOCUMENTATION/SonarCloud_1.png)
 
-- Scroll down and select **Generate token**
-
-- Coppy the token and create another Secret
-
-- Set the name of the token **SONAR_GITHUB_TOKEN** and paste the value from the generated token
-
-- Run manually your workflow one time to deliver the code to SonarCloud
-   
-   NOTE: Make sure first run is completed successfully before proceeding
+- [Run the "Notepads CI/CD Pipeline" workflow manually](#run-workflow-manually) 
 
 #### Set Quality Gate
 
-- Go to the Project page
+- After the "Notepads CI/CD Pipeline" workflow has executed successfully, go to https://sonarcloud.io/projects and click on the project
 
-- Click the "Set new code definition" button and select "Previous version"
+- In the alert bar above the results, click the "Set new code definition" button and select "Previous version" (notice the "New Code definition has been updated" alert at the top)
 
-- Manually run the workflow and there you have set a Quality gate
+- The Quality Gate will become active as soon as the next SonarCloud scan completes successfully
 
 <br>
 
 ## 2. Run workflow manually
 
-Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the main workflow "Notepads CI/CD Pipeline".
+Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the "Notepads CI/CD Pipeline" workflow.
 
-  1. Go to GitHub project -> "Actions" tab
+  1. Go to the project's GitHub repository and click on the **Actions** tab
 
   2. From the "Workflows" list on the left, click on "Notepads CI/CD Pipeline"
 
@@ -97,9 +88,9 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 ### Set up security alerts and updates
 ##### - GitHub, through Dependabot, also natively offers a security check for vulnerable dependencies
 
-1. Go to "Settings" tab of your repo
+1. Go to "Settings" tab of the repo
 
-2. Go to "Security&Analysis" section
+2. Go to "Security & analysis" section
 
 3. Click "Enable" for both "Dependabot alerts" and "Dependabot security updates"
 
@@ -116,7 +107,7 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 ### Set up Dependency graph
 ##### - The "Dependency graph" option should be enabled by default for all public repos, but in case it isn't:
 
-1. Go to "Settings" tab of your repo
+1. Go to "Settings" tab of the repo
 
 2. Go to "Security&Analysis" section
 
@@ -134,9 +125,9 @@ NOTE: **screenshots are only exemplary**
 
 CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL requires no setup, because it comes fully pre-configured by us. 
 
-To activate it and see its results, only a push commit or a merge of a PR to the default branch of your repository, is required. 
+To activate it and see its results, only a push commit or a merge of a PR to the default branch of the repository, is required. 
 
-We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically tests the code.
+We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically scans the code.
 
 - you can see the results here at **Security** tab -> **Code scanning alerts** -> **CodeQL**:
 
@@ -153,49 +144,19 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 #### 1. Setup
 
-1. In your repo, go to the Settings tab -> Secrets 
+1. In the repository, go to the **Settings** tab -> **Secrets** 
 
 ![CSA_secrets](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secrets.png)
 
-2. Add the following secrets with the name and the corresponding value, by at the upper right of the section, clicking on the **New repository secret** button :
+2. Add the following secrets with the name and the corresponding value, by at the upper right of the section, clicking on the **New repository secret** button:
 
 ![CSA_new_secret](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_secret.png)
 
 ![CSA_secret_add](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secret_add.png)
 
-- REPO_OWNER_VAR (secret name) - add repo owner's name, verbatim from GitHub URL (secret value)
+- CSA_ACCESS_TOKEN - create a [PAT with "security_events" permission only](#how-to-create-a-pat).
 
-![CSA_url_owner](/ScreenShots/CI-CD_DOCUMENTATION/CSA_url_owner.png)
-
-- REPO_NAME_VAR - add repo's name, verbatim from GitHub URL
-
-![CSA_url_repo](/ScreenShots/CI-CD_DOCUMENTATION/CSA_url_repo.png)
-
-- CSA_ACCESS_TOKEN - add a PAT with "security_events" permission.
-
-	1. In a new tab open GitHub, at the top right corner, click on your profile picture and click on **Settings** from the dropdown.
-
-		![CSA_new_pat_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
-
-	2. Go to Developer Settings -> Personal access tokens.
-
-		![CSA_new_pat_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
-
-		![CSA_new_pat_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
-
-	3. Click the **Generate new token** button and enter password if prompted.
-
-		![CSA_new_pat_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
-
-	4. Name the token "CSA_ACCESS_TOKEN". From the permissions list, choose only "security_events", and at the bottom click on the **Generate token** button.
-
-		![CSA_new_pat_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
-
-	5. Copy the token value and paste it in the secret "CSA_ACCESS_TOKEN", you created in the previous tab.
-
-		![CSA_new_pat_6](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
-
-- DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one, out of the three available options: "false positive", "won't fix" or "used in tests". (copy the option value **without** the quotes)
+- DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one as the value of this secret, out of the three available options: **false positive**, **won't fix** or **used in tests**.
 
 #### 2. Execution
 
@@ -207,7 +168,7 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 ![CSA_execute_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_2.png)
 
-3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts be dismissed
+3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts, with a certain description be dismissed
 
 ![CSA_execute_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_3.png)
 
@@ -293,6 +254,34 @@ NOTE:
 - it is replaced by the release description
 
 ![Release_2](/ScreenShots/CI-CD_DOCUMENTATION/Release_2.png)
+
+<br>
+
+## 6. How to create a PAT
+
+- In a new tab open GitHub, at the top right corner, click on your profile picture and click on **Settings** from the dropdown.
+
+	![CSA_new_pat_1](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
+
+- Go to Developer Settings -> Personal access tokens.
+
+	![CSA_new_pat_2](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
+
+	![CSA_new_pat_3](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
+
+- Click the **Generate new token** button and enter password if prompted.
+
+	![CSA_new_pat_4](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
+
+- Name the token, from the permissions list choose the ones needed and at the bottom click on the **Generate token** button.
+
+	![CSA_new_pat_5](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
+
+- Copy the token value and paste it wherever its needed 
+
+	![CSA_new_pat_6](/ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
+
+NOTE: once you close or refresh the page, you won't be able to copy the value of the PAT again!
 
 #
 
