@@ -312,6 +312,51 @@
             }
         }
 
+        public static async Task<TextFile> ReadLocalFile(string filePath, Encoding encoding = null)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            string text;
+            var bom = new byte[4];
+
+            using (var stream = File.OpenRead(filePath))
+            {
+                await stream.ReadAsync(bom, 0, 4); // Read BOM values
+                stream.Position = 0; // Reset stream position
+
+                var reader = CreateStreamReader(stream, bom, encoding);
+
+                async Task<string> PeekAndRead()
+                {
+                    if (encoding == null)
+                    {
+                        reader.Peek();
+                        encoding = reader.CurrentEncoding;
+                    }
+                    var str = await reader.ReadToEndAsync();
+                    reader.Close();
+                    return str;
+                }
+
+                try
+                {
+                    text = await PeekAndRead();
+                }
+                catch (DecoderFallbackException)
+                {
+                    stream.Position = 0; // Reset stream position
+                    encoding = GetFallBackEncoding();
+                    reader = new StreamReader(stream, encoding);
+                    text = await PeekAndRead();
+                }
+            }
+
+            encoding = FixUtf8Bom(encoding, bom);
+            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), File.GetLastWriteTime(filePath).ToFileTime());
+        }
+
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
             StorageFile file = await GetFile(filePath);

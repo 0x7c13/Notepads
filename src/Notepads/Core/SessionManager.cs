@@ -64,46 +64,18 @@
                 return 0; // Already loaded
             }
 
-            var data = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
-
             IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
-            IList<StorageFile> backupFiles = (await SessionUtility.GetAllBackupFilesAsync(_backupFolderName)).ToList();
+            var sessionData = await SessionUtility.GetSessionMetaDataAsync(_sessionMetaDataFileName);
+            var backupFiles = (await SessionUtility.GetAllBackupFilesAsync(_backupFolderName)).ToList();
             var orphanedEditorCount = 0;
 
-            if (data == null)
+            if (sessionData == null && backupFiles.Count > 0)
             {
                 recoveredEditor = await RecoverOrphanedTextEditors(backupFiles);
                 orphanedEditorCount = recoveredEditor.Count;
                 _notepadsCore.OpenTextEditors(recoveredEditor.ToArray());
-                return 0; // No session data found
-            }
-
-            NotepadsSessionDataV1 sessionData;
-
-            try
-            {
-                var json = JObject.Parse(data);
-                var version = (int)json["Version"];
-
-                if (version == 1)
-                {
-                    sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data);
-                }
-                else
-                {
-                    throw new Exception($"Invalid version found in session metadata: {version}");
-                }
-            }
-            catch (Exception ex)
-            {
-                recoveredEditor = await RecoverOrphanedTextEditors(backupFiles);
-                orphanedEditorCount = recoveredEditor.Count;
-                _notepadsCore.OpenTextEditors(recoveredEditor.ToArray());
-
-                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 await ClearSessionDataAsync();
-                return 0;
+                return orphanedEditorCount; // No session meta-data found, only recover from orphaned backup files
             }
 
             foreach (var textEditorData in sessionData.TextEditors)
@@ -531,10 +503,19 @@
                     continue;
                 }
 
+                var failedPendingFilePath = Path.Combine(SessionUtility.GetBackupFolderPath(_backupFolderName),
+                    ToToken(editorId) + "-Pending.~TMP");
                 if (pendingTextFile == null)
                 {
-                    // If there are no pending changes no need to recover
-                    continue;
+                    if (File.Exists(failedPendingFilePath))
+                    {
+                        pendingTextFile = await FileSystemUtility.ReadLocalFile(failedPendingFilePath);
+                    }
+                    else
+                    {
+                        // If there are no pending changes no need to recover
+                        continue;
+                    }
                 }
 
                 ITextEditor textEditor = null;
@@ -561,6 +542,13 @@
                 if (textEditor == null) continue;
 
                 textEditor.ResetEditorState(textEditor.GetTextEditorStateMetaData(), pendingTextFile.Content);
+
+                if (File.Exists(failedPendingFilePath))
+                {
+                    var failedPendingText = await File.ReadAllTextAsync(failedPendingFilePath);
+                    textEditor.ResetEditorState(textEditor.GetTextEditorStateMetaData(), failedPendingText);
+                }
+
                 recoveredEditors.Add(textEditor);
             }
 
@@ -604,7 +592,7 @@
                 }
             }
 
-            foreach (var filePth in Directory.GetFiles((await SessionUtility.GetBackupFolderAsync(_backupFolderName)).Path, "*.~TMP"))
+            foreach (var filePth in Directory.GetFiles(ApplicationData.Current.LocalFolder.Path, "*.~TMP", SearchOption.AllDirectories))
             {
                 File.Delete(filePth);
             }
