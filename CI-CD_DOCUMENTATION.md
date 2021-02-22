@@ -152,7 +152,7 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 ![CSA_secret_add](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secret_add.png)
 
-- CSA_ACCESS_TOKEN - create a [PAT with "security_events" permission only](#6-how-to-create-a-pat).
+- CSA_ACCESS_TOKEN - [create a PAT with "security_events" permission only](#6-how-to-create-a-pat).
 
 - DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one as the value of this secret, out of the three available options: **false positive**, **won't fix** or **used in tests**.
 
