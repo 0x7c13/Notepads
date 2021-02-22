@@ -33,9 +33,7 @@
 
 - Under "Choose your analysis method" click "With GitHub Actions" and **keep the following page open**
 
-- In new tab, go to https://github.com/settings/tokens (Profile Settings -> Developer settings -> Personal access tokens)
-
-- Click on "Generate new token", set a name for the token, select **repo_deployment** and **read:packages** permissions, at the bottom of the page click on **Generate token** and copy the value of the generated token
+- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#how-to-create-a-pat) and copy the value of the generated token
 
 - In the project's GitHub repository, go to the **Settings** tab -> Secrets 
 
