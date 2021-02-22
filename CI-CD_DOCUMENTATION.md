@@ -33,7 +33,7 @@
 
 - Under "Choose your analysis method" click "With GitHub Actions" and **keep the following page open**
 
-- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#How-to-create-a-PAT) and copy the value of the generated token
+- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#6-how-to-create-a-pat) and copy the value of the generated token
 
 - In the project's GitHub repository, go to the **Settings** tab -> Secrets 
 
@@ -43,7 +43,7 @@
 
 ![SonarCloud_1](/ScreenShots/CI-CD_DOCUMENTATION/SonarCloud_1.png)
 
-- [Run the "Notepads CI/CD Pipeline" workflow manually](#run-workflow-manually) 
+- [Run the "Notepads CI/CD Pipeline" workflow manually](#2-run-workflow-manually) 
 
 #### Set Quality Gate
 
@@ -152,7 +152,7 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 ![CSA_secret_add](/ScreenShots/CI-CD_DOCUMENTATION/CSA_secret_add.png)
 
-- CSA_ACCESS_TOKEN - create a [PAT with "security_events" permission only](#how-to-create-a-pat).
+- CSA_ACCESS_TOKEN - create a [PAT with "security_events" permission only](#6-how-to-create-a-pat).
 
 - DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one as the value of this secret, out of the three available options: **false positive**, **won't fix** or **used in tests**.
 
