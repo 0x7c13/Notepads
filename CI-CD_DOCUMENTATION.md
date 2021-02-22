@@ -33,7 +33,7 @@
 
 - Under "Choose your analysis method" click "With GitHub Actions" and **keep the following page open**
 
-- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#how-to-create-a-pat) and copy the value of the generated token
+- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#How-to-create-a-PAT) and copy the value of the generated token
 
 - In the project's GitHub repository, go to the **Settings** tab -> Secrets 
 
