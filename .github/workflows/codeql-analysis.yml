@@ -37,7 +37,7 @@ jobs:
 
       - name: Restore application
         id: restore_app
-        shell: powershell
+        shell: pwsh
         run: |
           msbuild $env:SOLUTION_NAME `
           /t:Restore `
@@ -51,7 +51,7 @@ jobs:
 
       - name: Build application
         id: build_app
-        shell: powershell
+        shell: pwsh
         run: |
           msbuild $env:PROJECT_PATH `
           /p:Configuration=$env:CONFIGURATION `
