@@ -12,11 +12,11 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [ Debug, Release ]
     env:
-      Solution_Name: src\Notepads.sln
-      Project_Path: src\Notepads\Notepads.csproj        
-
+      SOLUTION_NAME: src\Notepads.sln
+      PROJECT_PATH: src\Notepads\Notepads.csproj
+      CONFIGURATION: ${{ matrix.configuration }}
     steps:
       - name: Checkout repository
         id: checkout_repo
@@ -37,10 +37,11 @@ jobs:
 
       - name: Restore application
         id: restore_app
-        env:
-          Configuration: ${{ matrix.configuration }}
+        shell: powershell
         run: |
-          msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+          msbuild $env:SOLUTION_NAME `
+          /t:Restore `
+          /p:Configuration=$env:CONFIGURATION          
 
       - name: Initialize CodeQL
         id: init_codeql
@@ -50,13 +51,18 @@ jobs:
 
       - name: Build application
         id: build_app
-        env:
-          Appx_Bundle: Always
-          Appx_Bundle_Platforms: x86|x64
-          Appx_Package_Build_Mode: StoreUpload
-          Configuration: ${{ matrix.configuration }}
+        shell: powershell
         run: |
-          msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
+          msbuild $env:PROJECT_PATH `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:UapAppxPackageBuildMode=$env:APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxPackageSigningEnabled=false `
+          /p:AppxBundlePlatforms="$env:APPX_BUNDLE_PLATFORMS"
+        env:
+          APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_BUNDLE_PLATFORMS: x86|x64
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
