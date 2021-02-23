@@ -1,0 +1,247 @@
+name: Notepads CI/CD Pipeline
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  ci:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [ Debug, Release ]
+    outputs:
+      new_version: ${{ steps.get_assembly_version.outputs.version_num }}
+      new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
+      latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
+      is_github_release: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
+    env:
+      SOLUTION_NAME: src\Notepads.sln
+      CONFIGURATION: ${{ matrix.configuration }}
+    steps:
+      - name: Steps' conditionals handler
+        id: step_conditionals_handler
+        shell: pwsh
+        run: |
+          $IS_GITHUB_RELEASE = 'false'
+          $IS_NOT_PR = 'true'
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
+            $IS_GITHUB_RELEASE = 'true'
+          }
+          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+            $IS_NOT_PR = 'false'
+          }
+          echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
+          echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          BUILD_CONFIGURATION: ${{ matrix.configuration }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Set up JDK 11
+        id: Setup_JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - name: Install .NET Core
+        id: install_dotnet_dependencies
+        uses: actions/setup-dotnet@v1
+
+      - name: Setup MSBuild
+        id: setup_msbuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+        name: Get assembly version from appxmanifest
+        id: get_assembly_version
+        shell: pwsh
+        run: |
+          cd src/Notepads/
+          $xml = [xml](Get-Content Package.appxmanifest)
+          $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity | Select -ExpandProperty Version
+          echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
+          echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
+
+      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+        name: Get latest tag
+        id: get_latest_tag
+        shell: pwsh
+        run: |
+          $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
+          echo "::set-output name=tag::$(echo $LATEST_TAG)"
+        env:
+          GIT_URL: ${{ github.repository }}
+          
+      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
+        name: Add new tag to repo
+        id: add_new_tag_to_repo
+        shell: pwsh
+        run: |
+          git config --global user.name $env:GIT_USER_NAME
+          git config --global user.email $env:GIT_USER_EMAIL
+          git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
+          git push --follow-tags
+        env:
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Cache SonarCloud packages
+        id: cache_sonar_packages
+        uses: actions/cache@v2
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Cache SonarCloud scanner
+        id: cache_sonar_scanner
+        uses: actions/cache@v2
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+        name: Install SonarCloud scanner
+        id: install_sonar_scanner
+        shell: pwsh
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Lowercase string generator
+        id: lowercase_string_gen
+        shell: pwsh
+        run: |
+          $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
+          echo "::set-output name=owner_name::$LOWERCASE_OWNER"
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Initialize SonarCloud scanner
+        id: init_sonar_scanner
+        shell: pwsh
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+          /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
+          /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" `
+          /d:sonar.login="$env:SONAR_TOKEN" `
+          /d:sonar.host.url="https://sonarcloud.io"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+        name: Create PFX certificate for AppxBundle
+        id: create_pfx_cert
+        shell: pwsh
+        run: |
+          $BASE64_STR = $env:BASE64_STR
+          $TARGET_FILE = "$env:DEFAULT_DIR\cert.pfx"
+          $FROM_BASE64_STR = [Convert]::FromBase64String($BASE64_STR)
+          [IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
+        env:
+          BASE64_STR: ${{ secrets.PFX_TO_BASE64 }}
+          DEFAULT_DIR: ${{ github.workspace }}
+
+      - name: Restore the application
+        id: restore_application
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /t:Restore `
+          /p:Configuration=$env:CONFIGURATION
+
+      - name: Build and generate bundles
+        id: build_app
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxPackageSigningEnabled=$env:APPX_PACKAGE_SIGNING_ENABLED `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS `
+          /p:AppxPackageDir=$env:ARTIFACTS_DIR `
+          /p:PackageCertificateKeyFile=$env:PACKAGE_CERTIFICATE_KEYFILE `
+          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD
+        env:
+          PLATFORM: x64
+          UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
+          APPX_BUNDLE_PLATFORMS: x86|x64
+          ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
+          PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
+          PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Send SonarCloud results
+        id: send_sonar_results
+        shell: pwsh
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner end `
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+        name: Upload build artifacts
+        id: upload_artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: Build artifacts
+          path: Artifacts/
+
+  cd:
+    # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
+    if: needs.ci.outputs.is_github_release == 'true' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    needs: ci
+    runs-on: windows-latest
+    env:
+      NEW_VERSION: ${{ needs.ci.outputs.new_version }}
+      NEW_TAG: ${{ needs.ci.outputs.new_version_tag }}
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+
+      - name: Download and extract MSIX package
+        id: dl_package_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Build artifacts
+          path: Artifacts/
+
+      - name: Create and publish release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          release_name: Notepads ${{ env.NEW_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload msixbundle as release asset
+        id: upload_notepads_zip
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
