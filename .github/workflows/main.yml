@@ -238,7 +238,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_Production.msixbundle
           asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
           asset_content_type: application/zip
         env:
