@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        configuration: [ Debug, Release ]
+        configuration: [ Production ]
     env:
       SOLUTION_NAME: src\Notepads.sln
       PROJECT_PATH: src\Notepads\Notepads.csproj

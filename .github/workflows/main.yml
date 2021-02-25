@@ -7,12 +7,12 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        configuration: [ Debug, Release ]
+        configuration: [ Production ]
     outputs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
       latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
-      is_github_release: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
+      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
@@ -21,15 +21,15 @@ jobs:
         id: step_conditionals_handler
         shell: pwsh
         run: |
-          $IS_GITHUB_RELEASE = 'false'
+          $IS_PUSH_TO_MASTER = 'false'
           $IS_NOT_PR = 'true'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') ) {
-            $IS_GITHUB_RELEASE = 'true'
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+            $IS_PUSH_TO_MASTER = 'true'
           }
           if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
             $IS_NOT_PR = 'false'
           }
-          echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
+          echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
           echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
@@ -58,7 +58,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
         name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: pwsh
@@ -69,7 +69,7 @@ jobs:
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
         name: Get latest tag
         id: get_latest_tag
         shell: pwsh
@@ -79,7 +79,7 @@ jobs:
         env:
           GIT_URL: ${{ github.repository }}
           
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: pwsh
@@ -140,7 +140,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: pwsh
@@ -179,7 +179,7 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_github_release }}
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
           APPX_BUNDLE_PLATFORMS: x86|x64
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
@@ -196,7 +196,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -206,7 +206,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_github_release == 'true' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
     needs: ci
     runs-on: windows-latest
     env:
