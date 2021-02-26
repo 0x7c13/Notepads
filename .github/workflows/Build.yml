@@ -24,16 +24,16 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
-
+    # Add NuGet to the PATH: https://github.com/NuGet/setup-nuget
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
 
-    - name: Restore NuGet packages
-      run: nuget restore $env:Solution_Name
+    - name: Restore the application
+      run: |
+        msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+        nuget restore $env:Solution_Name
+      env:
+        Configuration: ${{ matrix.configuration }}
 
     - name: Build
       run: |
