@@ -23,7 +23,7 @@ jobs:
     # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-      
+
     # Add NuGet to the PATH: https://github.com/NuGet/setup-nuget
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
