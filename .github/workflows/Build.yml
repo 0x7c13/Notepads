@@ -37,7 +37,7 @@ jobs:
         nuget restore $env:Solution_Name
       env:
         Configuration: ${{ matrix.configuration }}
-        
+
     - name: 'Setup Vcpkg Binary Caching'
       shell: 'pwsh'
       run: |
