@@ -1,12 +1,16 @@
 {
   "name": "notepads-desktopextension",
   "version": "1.0.0.0",
-  "builtin-baseline": "e25b620cf90d9bb311f91b03916b75d8798afd44",
+  "builtin-baseline": "75522bb1f2e7d863078bcd06322348f053a9e33f",
   "dependencies": [
     "boost-stacktrace",
     "curl",
     "fmt",
-    "rapidjson"
+    "rapidjson",
+    {
+      "name": "boost-build",
+      "host": true
+    }
   ],
   "overrides": [
     {
