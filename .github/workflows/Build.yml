@@ -14,7 +14,7 @@ jobs:
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
       Vcpkg_Path: src\packages\vcpkg
       Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
-      VCPKG_BINARY_SOURCES: 'clear;nuget,$env:Vcpkg_Nuget_Package,readwrite'
+      VCPKG_BINARY_SOURCES: 'clear;nuget,${{ github.repository_owner }}-${{ github.event.repository.name }},readwrite'
 
     runs-on: windows-latest
     steps:
@@ -41,7 +41,7 @@ jobs:
     - name: 'Setup Vcpkg Binary Caching'
       shell: 'pwsh'
       run: |
-        $($env:Vcpkg_Path\vcpkg fetch nuget | select -last 1) sources add `
+        $(src\packages\vcpkg\vcpkg fetch nuget | select -last 1) sources add `
         -source "https://nuget.pkg.github.com/$env:OWNER/index.json" `
         -storepasswordincleartext `
         -name "$env:Vcpkg_Nuget_Package" `
