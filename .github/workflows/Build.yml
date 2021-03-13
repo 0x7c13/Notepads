@@ -12,6 +12,7 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
+      Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
 
     runs-on: windows-latest
     steps:
@@ -46,7 +47,6 @@ jobs:
         OWNER: ${{ github.repository_owner }}
         PAT: ${{ secrets.GITHUB_TOKEN }}
         Vcpkg_Path: src\packages\vcpkg
-        Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
 
     - name: Build
       shell: 'pwsh'
@@ -62,4 +62,4 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
-        VCPKG_BINARY_SOURCES: 'clear;nuget,${{ github.repository_owner }}-${{ github.event.repository.name }},readwrite'
+        VCPKG_BINARY_SOURCES: 'clear;nuget,${{ env.Vcpkg_Nuget_Package }},readwrite'
