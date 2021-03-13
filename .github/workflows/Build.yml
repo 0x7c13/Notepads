@@ -30,6 +30,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore the application
+      shell: 'pwsh'
       run: |
         msbuild $env:Solution_Name /t:Restore
         nuget restore $env:Solution_Name
@@ -37,16 +38,16 @@ jobs:
     - name: 'Setup Vcpkg Binary Caching'
       shell: 'pwsh'
       run: |
-        & $(src\packages\vcpkg\vcpkg fetch nuget | select -last 1) sources add `
-        -source "https://nuget.pkg.github.com/$env:OWNER/index.json" `
+        & $($env:Vcpkg_Path fetch nuget | select -last 1) sources add `
+        -source "https://nuget.pkg.github.com/$env:Owner/index.json" `
         -storepasswordincleartext `
         -name "$env:Vcpkg_Nuget_Package" `
-        -username "$env:OWNER" `
-        -password "$env:PAT"
+        -username "$env:Owner" `
+        -password "$env:Key"
       env:
-        OWNER: ${{ github.repository_owner }}
-        PAT: ${{ secrets.GITHUB_TOKEN }}
-        Vcpkg_Path: src\packages\vcpkg
+        Owner: ${{ github.repository_owner }}
+        Key: ${{ secrets.GITHUB_TOKEN }}
+        Vcpkg_Path: src\packages\vcpkg\vcpkg
 
     - name: Build
       shell: 'pwsh'
