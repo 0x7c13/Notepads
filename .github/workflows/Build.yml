@@ -41,7 +41,7 @@ jobs:
     - name: 'Setup Vcpkg Binary Caching'
       shell: 'pwsh'
       run: |
-        $(src\packages\vcpkg\vcpkg fetch nuget | select -last 1) sources add `
+        & $(src\packages\vcpkg\vcpkg fetch nuget | select -last 1) sources add `
         -source "https://nuget.pkg.github.com/$env:OWNER/index.json" `
         -storepasswordincleartext `
         -name "$env:Vcpkg_Nuget_Package" `
