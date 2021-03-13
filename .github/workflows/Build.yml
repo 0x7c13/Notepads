@@ -12,8 +12,6 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
-      Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
-      VCPKG_BINARY_SOURCES: 'clear;nuget,${{ github.repository_owner }}-${{ github.event.repository.name }},readwrite'
 
     runs-on: windows-latest
     steps:
@@ -32,10 +30,8 @@ jobs:
 
     - name: Restore the application
       run: |
-        msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+        msbuild $env:Solution_Name /t:Restore
         nuget restore $env:Solution_Name
-      env:
-        Configuration: ${{ matrix.configuration }}
 
     - name: 'Setup Vcpkg Binary Caching'
       shell: 'pwsh'
@@ -50,6 +46,7 @@ jobs:
         OWNER: ${{ github.repository_owner }}
         PAT: ${{ secrets.GITHUB_TOKEN }}
         Vcpkg_Path: src\packages\vcpkg
+        Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
 
     - name: Build
       shell: 'pwsh'
@@ -65,3 +62,4 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
+        VCPKG_BINARY_SOURCES: 'clear;nuget,${{ github.repository_owner }}-${{ github.event.repository.name }},readwrite'
