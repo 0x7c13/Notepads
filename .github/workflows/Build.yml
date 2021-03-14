@@ -45,7 +45,7 @@ jobs:
         -username "$env:Owner" `
         -password "$env:Key"
       env:
-        Owner: ${{ github.repository_owner }}
+        Owner: ${{ github.actor }}
         Key: ${{ secrets.GITHUB_TOKEN }}
         Vcpkg_Path: src\packages\vcpkg\vcpkg
 
