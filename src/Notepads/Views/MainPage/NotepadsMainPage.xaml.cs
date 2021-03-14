@@ -38,6 +38,7 @@
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
+        private bool _sessionRestoreComplete = false;
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
@@ -97,6 +98,7 @@
             InitializeKeyboardShortcuts();
 
             // Session backup and restore toggle
+            AppSettingsService.OnSessionBackupAndRestoreOptionForInstanceChanged += OnSessionBackupAndRestoreOptionForInstanceChanged;
             AppSettingsService.OnSessionBackupAndRestoreOptionChanged += OnSessionBackupAndRestoreOptionChanged;
 
             // Register for printing
@@ -116,7 +118,7 @@
             else
             {
                 Window.Current.SizeChanged += WindowSizeChanged;
-                Window.Current.VisibilityChanged += WindowVisibilityChangedEventHandler;
+                Window.Current.VisibilityChanged += WindowVisibilityChanged;
             }
         }
 
@@ -212,6 +214,7 @@
                     Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 }
             }
+            _sessionRestoreComplete = true;
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
@@ -245,9 +248,19 @@
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
 
-                if (!App.IsPrimaryInstance)
+                App.OnInstanceTypeChanged += (_, args) => IndicateInstanceType(args);
+                IndicateInstanceType(App.IsPrimaryInstance);
+                async void IndicateInstanceType(bool isPrimary)
                 {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
+                    if (!isPrimary)
+                    {
+                        await Dispatcher.CallOnUIThreadAsync(() =>
+                        {
+                            NotificationCenter.Instance.PostNotification(
+                                _resourceLoader.GetString("App_ShadowWindowIndicator_Description"),
+                                4000);
+                        });
+                    }
                 }
                 _loaded = true;
             }
@@ -317,8 +330,9 @@
             }
         }
 
-        private void WindowVisibilityChangedEventHandler(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
+        private void WindowVisibilityChanged(System.Object sender, Windows.UI.Core.VisibilityChangedEventArgs e)
         {
+            App.InitializeInstance();
             LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] Window Visibility Changed, Visible = {e.Visible}.", consoleOnly: true);
             // Perform operations that should take place when the application becomes visible rather than
             // when it is prelaunched, such as building a what's new feed
@@ -349,14 +363,14 @@
             {
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
-                App.InstanceHandlerMutex?.Dispose();
+                App.Dispose();
                 deferral.Complete();
                 return;
             }
 
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
-                App.InstanceHandlerMutex?.Dispose();
+                App.Dispose();
                 deferral.Complete();
                 return;
             }
@@ -389,14 +403,14 @@
                     }
                     else
                     {
-                        App.InstanceHandlerMutex?.Dispose();
+                        App.Dispose();
                     }
 
                     deferral.Complete();
                 },
                 discardAndExitAction: () =>
                 {
-                    App.InstanceHandlerMutex?.Dispose();
+                    App.Dispose();
                     deferral.Complete();
                 },
                 cancelAction: () =>
@@ -427,6 +441,23 @@
             if (editorFlyout != null && editorFlyout.IsOpen)
             {
                 editorFlyout.Hide();
+            }
+        }
+
+        private async void OnSessionBackupAndRestoreOptionForInstanceChanged(object sender, bool isSessionBackupAndRestoreEnabled)
+        {
+            // Execute only if session load is complete before instance type initialized
+            if (_sessionRestoreComplete)
+            {
+                if (isSessionBackupAndRestoreEnabled)
+                {
+                    await Dispatcher.CallOnUIThreadAsync(async () =>
+                    {
+                        await SessionManager.LoadLastSessionAsync();
+                    });
+                }
+
+                OnSessionBackupAndRestoreOptionChanged(sender, isSessionBackupAndRestoreEnabled);
             }
         }
 

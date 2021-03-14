@@ -20,6 +20,7 @@
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
+        public static event EventHandler<bool> OnSessionBackupAndRestoreOptionForInstanceChanged;
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
         public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
 
@@ -328,23 +329,44 @@
         private static void InitializeSessionSnapshotSettings()
         {
             // We should disable session snapshot feature on multi instances
-            if (!App.IsPrimaryInstance)
+            App.OnInstanceTypeChanged += (_, args) =>
             {
-                _isSessionSnapshotEnabled = false;
-            }
-            else if (App.IsGameBarWidget)
-            {
-                _isSessionSnapshotEnabled = true;
-            }
-            else
-            {
-                if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+                var wasSessionSnapshotEnabled = _isSessionSnapshotEnabled;
+                HandleSessionSnapshotSettings();
+                if (wasSessionSnapshotEnabled != _isSessionSnapshotEnabled)
                 {
-                    _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
+                    if (_isSessionSnapshotEnabled)
+                    {
+                        OnSessionBackupAndRestoreOptionForInstanceChanged?.Invoke(null, _isSessionSnapshotEnabled);
+                    }
+                    else
+                    {
+                        OnSessionBackupAndRestoreOptionChanged?.Invoke(null, _isSessionSnapshotEnabled);
+                    }
+                }
+            };
+
+            HandleSessionSnapshotSettings();
+            void HandleSessionSnapshotSettings()
+            {
+                if (!App.IsPrimaryInstance)
+                {
+                    _isSessionSnapshotEnabled = false;
+                }
+                else if (App.IsGameBarWidget)
+                {
+                    _isSessionSnapshotEnabled = true;
                 }
                 else
                 {
-                    _isSessionSnapshotEnabled = false;
+                    if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
+                    {
+                        _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
+                    }
+                    else
+                    {
+                        _isSessionSnapshotEnabled = false;
+                    }
                 }
             }
         }

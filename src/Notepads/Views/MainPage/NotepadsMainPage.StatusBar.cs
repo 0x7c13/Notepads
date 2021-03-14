@@ -39,6 +39,8 @@
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
             UpdateShadowWindowIndicator();
+
+            App.OnInstanceTypeChanged += (_, args) => UpdateShadowWindowIndicator();
         }
 
         public void ShowHideStatusBar(bool showStatusBar)

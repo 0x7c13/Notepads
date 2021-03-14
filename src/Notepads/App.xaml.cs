@@ -28,12 +28,26 @@
 
         public static Guid Id { get; } = Guid.NewGuid();
 
-        public static bool IsPrimaryInstance = false;
+        public static event EventHandler<bool> OnInstanceTypeChanged;
+        private static bool _isPrimaryInstance = false;
+        public static bool IsPrimaryInstance
+        {
+            get => _isPrimaryInstance;
+            set
+            {
+                if (value != _isPrimaryInstance)
+                {
+                    _isPrimaryInstance = value;
+                    OnInstanceTypeChanged?.Invoke(null, value);
+                }
+            }
+        }
+
         public static bool IsGameBarWidget = false;
 
         private const string AppCenterSecret = null;
 
-        public static Mutex InstanceHandlerMutex { get; set; }
+        private static Mutex InstanceHandlerMutex = null;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -46,19 +60,6 @@
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
             AppCenter.Start(AppCenterSecret, services);
-
-            InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
-            if (isNew)
-            {
-                IsPrimaryInstance = true;
-                ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
-            }
-            else
-            {
-                InstanceHandlerMutex.Close();
-            }
-
-            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {Id} IsPrimaryInstance: {IsPrimaryInstance} IsGameBarWidget: {IsGameBarWidget}.");
 
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, App.Id.ToString());
 
@@ -75,6 +76,7 @@
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             await ActivateAsync(e);
+            base.OnLaunched(e);
         }
 
         protected override async void OnFileActivated(FileActivatedEventArgs args)
@@ -91,6 +93,11 @@
 
         private async Task ActivateAsync(IActivatedEventArgs e)
         {
+            if (!(e is LaunchActivatedEventArgs args && args.PrelaunchActivated))
+            {
+                InitializeInstance();
+            }
+
             bool rootFrameCreated = false;
 
             if (!(Window.Current.Content is Frame rootFrame))
@@ -288,6 +295,33 @@
                 titleBar.ButtonBackgroundColor = Colors.Transparent;
                 titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
+        }
+
+        public static void InitializeInstance()
+        {
+            if (InstanceHandlerMutex == null)
+            {
+                InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
+                if (isNew)
+                {
+                    IsPrimaryInstance = true;
+                    ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
+                }
+                else
+                {
+                    InstanceHandlerMutex?.Close();
+                }
+
+                LoggingService.LogInfo(
+                    $"[{nameof(App)}] Started: Instance = {Id} " +
+                    $"IsPrimaryInstance: {IsPrimaryInstance} " +
+                    $"IsGameBarWidget: {IsGameBarWidget}.");
+            }
+        }
+
+        public static void Dispose()
+        {
+            InstanceHandlerMutex?.Dispose();
         }
 
         //private static void UpdateAppVersion()
