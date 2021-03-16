@@ -40,6 +40,25 @@
                             Text="{x:Bind AppVersion, Mode=OneTime}" />
                     </StackPanel>
                 </StackPanel>
+                <StackPanel Margin="0,15,0,0">
+                    <TextBlock x:Uid="/Settings/AboutPage_NotepadsDesktopActivationDescription" TextWrapping="WrapWholeWords"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,5,5,0"
+                                x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyPath"
+                                Click="DesktopActivationCopyPath_Clicked"/>
+                        <Button Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,5,5,0"
+                                x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyFile"
+                                Click="DesktopActivationCopyFile_Clicked"/>
+                    </Grid>
+                </StackPanel>
                 <RichTextBlock MaxWidth="600" Margin="0,15,0,0" IsTextSelectionEnabled="False">
                     <Paragraph>
                         <Run x:Uid="/Settings/AboutPage_NotepadsShortDescription"/>
