@@ -19,6 +19,7 @@
             </ResourceDictionary.ThemeDictionaries>-->
 
             <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>

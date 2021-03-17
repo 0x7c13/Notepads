@@ -6,7 +6,7 @@
 namespace Notepads.Controls.Markdown
 {
     using System;
-    using Microsoft.Toolkit.Uwp.UI.Extensions;
+    using Microsoft.Toolkit.Uwp.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Documents;
@@ -210,7 +210,7 @@ namespace Notepads.Controls.Markdown
                 return;
             }
 
-            var rootViewer = VisualTree.FindAscendant<ScrollViewer>(RootElement);
+            var rootViewer = RootElement.FindAscendant<ScrollViewer>();
             if (rootViewer != null)
             {
                 pointerWheelChanged?.Invoke(rootViewer, new object[] { e });
