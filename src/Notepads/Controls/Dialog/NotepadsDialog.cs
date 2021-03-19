@@ -17,7 +17,7 @@
 
         public NotepadsDialog()
         {
-            CornerRadius = (CornerRadius)Application.Current.Resources["ControlCornerRadius"];
+            CornerRadius = (CornerRadius)Application.Current.Resources["OverlayCornerRadius"];
             PrimaryButtonStyle = GetButtonStyle();
             SecondaryButtonStyle = GetButtonStyle();
             CloseButtonStyle = GetButtonStyle();
