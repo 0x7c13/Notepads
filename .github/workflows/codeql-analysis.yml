@@ -54,15 +54,17 @@ jobs:
         shell: pwsh
         run: |
           msbuild $env:PROJECT_PATH `
+          /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
           /p:UapAppxPackageBuildMode=$env:APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxPackageSigningEnabled=false `
           /p:AppxBundlePlatforms="$env:APPX_BUNDLE_PLATFORMS"
         env:
+          PLATFORM: x64
           APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_BUNDLE_PLATFORMS: x86|x64
+          APPX_BUNDLE_PLATFORMS: x64
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql

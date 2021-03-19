@@ -174,16 +174,18 @@ jobs:
           /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS `
           /p:AppxPackageDir=$env:ARTIFACTS_DIR `
           /p:PackageCertificateKeyFile=$env:PACKAGE_CERTIFICATE_KEYFILE `
-          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD
+          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD `
+          /p:AppCenterSecret=$env:APP_CENTER_SECRET
         env:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
           APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
-          APPX_BUNDLE_PLATFORMS: x86|x64
+          APPX_BUNDLE_PLATFORMS: x86|x64|ARM64
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
+          APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
       - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Send SonarCloud results
@@ -238,8 +240,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_Production.msixbundle
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64.msixbundle
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64_Production.msixbundle
+          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
