@@ -24,9 +24,6 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-    <!-- Remove `Language` identifier to embed all languages in package by default -->
-    <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
-    <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
     <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
     <DevLabel>-dev</DevLabel>
   </PropertyGroup>
@@ -446,49 +443,14 @@
   <ItemGroup>
     <PRIResource Include="Strings\**\*.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.targets" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <Target Name="BeforeBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -manifest_file %(AppxManifest.FullPath) -output_path $(ProjectDir)$(BaseIntermediateOutputPath) -config $(Configuration)" ConsoleToMsBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GeneratedAppxManifest" />
-    </Exec>
-    <ItemGroup>
-      <AppxManifest Remove="%(AppxManifest.Identity)" />
-      <AppxManifest Include="$(GeneratedAppxManifest)" />
-    </ItemGroup>
-  </Target>
-  <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <ResourceGroupPath ParameterType="System.String" Required="true" />
-      <AppxDefaultResourceQualifiers ParameterType="System.String" Output="true" />
-    </ParameterGroup>
-    <Task>
-      <Reference Include="System" />
-      <Reference Include="System.IO" />
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-          ResourceGroupPath = Path.GetFullPath(ResourceGroupPath);
-          AppxDefaultResourceQualifiers = "Language=" +
-                string.Join(
-                    ";",
-                    Array.ConvertAll<DirectoryInfo, string>(
-                        new DirectoryInfo(ResourceGroupPath).GetDirectories(),
-                        dir => dir.Name));
-        ]]>
-      </Code>
-    </Task>
-  </UsingTask>
-  <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
-  <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
-  <Target Name="SetAppxDefaultResourceQualifiers" BeforeTargets="BeforeBuild">
-    <GenerateAppxDefaultResourceQualifiers ResourceGroupPath="$(ProjectDir)Strings">
-      <Output TaskParameter="AppxDefaultResourceQualifiers" PropertyName="AppxDefaultResourceQualifiers" />
-    </GenerateAppxDefaultResourceQualifiers>
-  </Target>
+  <Import Project="Package.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
