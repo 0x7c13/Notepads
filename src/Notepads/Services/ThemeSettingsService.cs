@@ -4,8 +4,10 @@
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Brushes;
     using Notepads.Controls.Helpers;
+    using Notepads.Extensions;
     using Notepads.Settings;
     using Notepads.Utilities;
+    using Windows.ApplicationModel.Core;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -126,7 +128,7 @@
 
             UISettings.ColorValuesChanged += UiSettings_ColorValuesChanged;
 
-            _appAccentColor = UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            _appAccentColor = UISettings.GetColorValue(UIColorType.Accent);
 
             if (!UseWindowsAccentColor)
             {
@@ -149,11 +151,20 @@
             }
         }
 
-        private static void UiSettings_ColorValuesChanged(UISettings sender, object args)
+        private static async void UiSettings_ColorValuesChanged(UISettings sender, object args)
         {
             if (UseWindowsAccentColor)
             {
                 AppAccentColor = sender.GetColorValue(UIColorType.Accent);
+                await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(() =>
+                {
+                    Application.Current.Resources["SystemAccentColorLight1"] = sender.GetColorValue(UIColorType.AccentLight1);
+                    Application.Current.Resources["SystemAccentColorLight2"] = sender.GetColorValue(UIColorType.AccentLight2);
+                    Application.Current.Resources["SystemAccentColorLight3"] = sender.GetColorValue(UIColorType.AccentLight3);
+                    Application.Current.Resources["SystemAccentColorDark1"] = sender.GetColorValue(UIColorType.AccentDark1);
+                    Application.Current.Resources["SystemAccentColorDark2"] = sender.GetColorValue(UIColorType.AccentDark2);
+                    Application.Current.Resources["SystemAccentColorDark3"] = sender.GetColorValue(UIColorType.AccentDark3);
+                });
             }
         }
 
@@ -294,36 +305,36 @@
             if (theme == ElementTheme.Dark)
             {
                 // Set active window colors
-                titleBar.ButtonForegroundColor = Windows.UI.Colors.White;
-                titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
-                titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
+                titleBar.ButtonForegroundColor = Colors.White;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonHoverForegroundColor = Colors.White;
                 titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 90, 90, 90);
-                titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.White;
+                titleBar.ButtonPressedForegroundColor = Colors.White;
                 titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 120, 120, 120);
 
                 // Set inactive window colors
-                titleBar.InactiveForegroundColor = Windows.UI.Colors.Gray;
-                titleBar.InactiveBackgroundColor = Windows.UI.Colors.Transparent;
-                titleBar.ButtonInactiveForegroundColor = Windows.UI.Colors.Gray;
-                titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
+                titleBar.InactiveForegroundColor = Colors.Gray;
+                titleBar.InactiveBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveForegroundColor = Colors.Gray;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
                 titleBar.BackgroundColor = Color.FromArgb(255, 45, 45, 45);
             }
             else if (theme == ElementTheme.Light)
             {
                 // Set active window colors
-                titleBar.ButtonForegroundColor = Windows.UI.Colors.Black;
-                titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
-                titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.Black;
+                titleBar.ButtonForegroundColor = Colors.Black;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonHoverForegroundColor = Colors.Black;
                 titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 180, 180, 180);
-                titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.Black;
+                titleBar.ButtonPressedForegroundColor = Colors.Black;
                 titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 150, 150, 150);
 
                 // Set inactive window colors
-                titleBar.InactiveForegroundColor = Windows.UI.Colors.DimGray;
-                titleBar.InactiveBackgroundColor = Windows.UI.Colors.Transparent;
-                titleBar.ButtonInactiveForegroundColor = Windows.UI.Colors.DimGray;
-                titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
+                titleBar.InactiveForegroundColor = Colors.DimGray;
+                titleBar.InactiveBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveForegroundColor = Colors.DimGray;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
                 titleBar.BackgroundColor = Color.FromArgb(255, 210, 210, 210);
             }

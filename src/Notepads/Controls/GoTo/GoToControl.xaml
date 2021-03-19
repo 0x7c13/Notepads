@@ -29,6 +29,7 @@
                      TextAlignment="Left"
                      BorderThickness="0"
                      FontSize="15"
+                     CornerRadius="{ThemeResource ControlCornerRadius}"
                      BeforeTextChanging="GoToBar_BeforeTextChanging"
                      TextChanged="GoToBar_OnTextChanged"
                      KeyDown="GoToBar_OnKeyDown"

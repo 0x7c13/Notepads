@@ -138,11 +138,14 @@
             }
         }
 
-        private void AccentColorPicker_OnColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        private void AccentColorPicker_OnColorChanged(
+            Microsoft.UI.Xaml.Controls.ColorPicker sender,
+            Microsoft.UI.Xaml.Controls.ColorChangedEventArgs args)
         {
             if (AccentColorPicker.IsEnabled)
             {
                 ThemeSettingsService.AppAccentColor = args.NewColor;
+                
                 if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
             }
         }
