@@ -443,15 +443,6 @@
   <ItemGroup>
     <PRIResource Include="Strings\**\*.resw" />
   </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-PT\Manifest.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-PT\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\pt-PT\Settings.resw" />
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
