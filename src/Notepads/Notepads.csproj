@@ -459,6 +459,16 @@
       <AppxManifest Include="$(GeneratedAppxManifest)" />
     </ItemGroup>
   </Target>
+  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
+    <PropertyGroup>
+      <InputFile>App.xaml.cs</InputFile>
+    </PropertyGroup>
+    <WriteLinesToFile
+        File="$(InputFile)"
+        Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))"
+        Overwrite="true"
+        Encoding="Unicode"/>
+  </Target>
   <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <ResourceGroupPath ParameterType="System.String" Required="true" />
