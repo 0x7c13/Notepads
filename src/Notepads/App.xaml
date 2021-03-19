@@ -30,9 +30,9 @@
                 <ResourceDictionary Source="Resource/CustomSliderStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/CustomNavigationViewStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomMenuFlyoutItemStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/CustomFlyoutItemStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">

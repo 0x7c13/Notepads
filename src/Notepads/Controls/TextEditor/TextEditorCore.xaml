@@ -87,6 +87,7 @@
                                         Visibility="Collapsed"/>
                                 <Grid x:Name="LineHighlighter"
                                       Background="{ThemeResource SystemControlBackgroundListLowBrush}"
+                                      CornerRadius="{ThemeResource ControlCornerRadius}"
                                       Opacity="0.65"
                                       BorderThickness="0"
                                       Visibility="Collapsed"/>
