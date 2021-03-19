@@ -24,6 +24,9 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <!-- Remove `Language` identifier to embed all languages in package by default -->
+    <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+    <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
     <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
     <DevLabel>-dev</DevLabel>
   </PropertyGroup>
@@ -455,6 +458,36 @@
       <AppxManifest Remove="%(AppxManifest.Identity)" />
       <AppxManifest Include="$(GeneratedAppxManifest)" />
     </ItemGroup>
+  </Target>
+  <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ResourceGroupPath ParameterType="System.String" Required="true" />
+      <AppxDefaultResourceQualifiers ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Reference Include="System.IO" />
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          ResourceGroupPath = Path.GetFullPath(ResourceGroupPath);
+          AppxDefaultResourceQualifiers = "Language=" +
+                string.Join(
+                    ";",
+                    Array.ConvertAll<DirectoryInfo, string>(
+                        new DirectoryInfo(ResourceGroupPath).GetDirectories(),
+                        dir => dir.Name));
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
+  <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+  <Target Name="SetAppxDefaultResourceQualifiers" BeforeTargets="BeforeBuild">
+    <GenerateAppxDefaultResourceQualifiers ResourceGroupPath="$(ProjectDir)Strings">
+      <Output TaskParameter="AppxDefaultResourceQualifiers" PropertyName="AppxDefaultResourceQualifiers" />
+    </GenerateAppxDefaultResourceQualifiers>
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
