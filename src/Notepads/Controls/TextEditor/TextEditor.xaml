@@ -105,7 +105,8 @@
                                             VerticalOffset="10"
                                             HorizontalOffset="-22"
                                             FontWeight="Light"
-                                            BorderThickness="1"
+                                            BorderThickness="0"
+                                            CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="FindAndReplacePlaceholder_Closed">
                     <controls:InAppNotification.Content>
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
@@ -128,7 +129,8 @@
                                             VerticalOffset="0"
                                             HorizontalOffset="-22"
                                             FontWeight="Light"
-                                            BorderThickness="1"
+                                            BorderThickness="0"
+                                            CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="GoToPlaceholder_Closed">
                     <controls:InAppNotification.Content>
                         <goTo:GoToControl x:Name="GoToControl"

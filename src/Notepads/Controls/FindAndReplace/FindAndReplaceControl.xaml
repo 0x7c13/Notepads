@@ -10,7 +10,6 @@
     d:DesignWidth="250">
 
     <Grid x:Name="FindAndReplaceRootGrid" KeyDown="FindAndReplaceRootGrid_KeyDown">
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -75,19 +74,25 @@
                         FontFamily="Segoe MDL2 Assets">
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase"
+                                                  x:Name="MatchCaseToggle"
+                                                  Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="C"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="C" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord"
+                                                  x:Name="MatchWholeWordToggle"
+                                                  Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="W"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="W" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex" x:Name="UseRegexToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex"
+                                                  x:Name="UseRegexToggle"
+                                                  Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="E"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="E" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
                         </MenuFlyout>
@@ -111,11 +116,10 @@
                                                   TextChanged="ReplaceBar_OnTextChanged"
                                                   KeyDown="ReplaceBar_OnKeyDown"
                                                   GotFocus="ReplaceBar_GotFocus"
-                                                  LostFocus="ReplaceBar_LostFocus"/>
+                                                  LostFocus="ReplaceBar_LostFocus" />
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -134,7 +138,7 @@
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchBackwardButton_OnClick">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Shift" Key="F3"/>
+                    <KeyboardAccelerator Modifiers="Shift" Key="F3" />
                 </Button.KeyboardAccelerators>
             </Button>
 
@@ -150,7 +154,7 @@
                     FontFamily="Segoe MDL2 Assets"
                     Click="SearchForwardButton_OnClick">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F3"/>
+                    <KeyboardAccelerator Key="F3" />
                 </Button.KeyboardAccelerators>
             </Button>
 
@@ -163,12 +167,10 @@
                     Style="{StaticResource DismissButtonStyle}"
                     Content="&#xE894;" 
                     FontFamily="Segoe MDL2 Assets" 
-                    Click="DismissButton_OnClick" >
-            </Button>
+                    Click="DismissButton_OnClick" />
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">
-
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -187,7 +189,7 @@
                         FontFamily="Segoe MDL2 Assets"
                         Click="ReplaceButton_OnClick">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Menu" Key="R"/>
+                        <KeyboardAccelerator Modifiers="Menu" Key="R" />
                     </Button.KeyboardAccelerators>
                 </Button>
 
@@ -203,7 +205,7 @@
                         FontFamily="Segoe MDL2 Assets"
                         Click="ReplaceAllButton_OnClick">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter"/>
+                        <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter" />
                     </Button.KeyboardAccelerators>
                 </Button>
             </Grid>

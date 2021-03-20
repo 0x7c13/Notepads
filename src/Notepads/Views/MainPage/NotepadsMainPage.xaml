@@ -245,7 +245,8 @@
                                                 VerticalOffset="-20"
                                                 HorizontalOffset="0"
                                                 FontWeight="Light"
-                                                BorderThickness="1">
+                                                BorderThickness="0"
+                                                CornerRadius="{ThemeResource OverlayCornerRadius}">
                     </controls:InAppNotification>
                 </Grid>
             </SplitView.Content>
@@ -436,8 +437,7 @@
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                            IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped"
-                           >
+                           Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 

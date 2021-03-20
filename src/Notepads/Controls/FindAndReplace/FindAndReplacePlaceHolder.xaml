@@ -14,22 +14,26 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                             <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
                                                                   Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="20" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="20" />
                                             <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
                                                                   Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="1" />
-                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="0" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="1" />
+                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -52,20 +56,26 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="20" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  Value="20" />
                                         </DoubleAnimationUsingKeyFrames>
 
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}" Value="1" />
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="0" />
+                                            <EasingDoubleKeyFrame controls:InAppNotification.KeyFrameDuration="{Binding AnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -77,16 +87,21 @@
                               Margin="{TemplateBinding Margin}"
                               MaxWidth="{TemplateBinding MaxWidth}"
                               Visibility="{TemplateBinding Visibility}"
-                              Height="{TemplateBinding Height}">
+                              Height="{TemplateBinding Height}"
+                              CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid.RenderTransform>
                                 <CompositeTransform />
                             </Grid.RenderTransform>
 
-                            <controls:DropShadowPanel BlurRadius="10" ShadowOpacity="0.25"
-                                                      OffsetX="0" OffsetY="0"
-                                                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                <Grid Background="{TemplateBinding Background}" 
-                                      BorderBrush="{TemplateBinding BorderBrush}" 
+                            <controls:DropShadowPanel BlurRadius="10"
+                                                      ShadowOpacity="1"
+                                                      OffsetX="0"
+                                                      OffsetY="0"
+                                                      HorizontalContentAlignment="Stretch"
+                                                      VerticalContentAlignment="Stretch"
+                                                      IsMasked="True">
+                                <Grid Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
                                       Padding="{TemplateBinding Padding}">
                                     <Grid.ColumnDefinitions>

@@ -76,7 +76,8 @@
                               RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                               Margin="{TemplateBinding Margin}"
                               MaxWidth="{TemplateBinding MaxWidth}"
-                              Visibility="{TemplateBinding Visibility}">
+                              Visibility="{TemplateBinding Visibility}"
+                              CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid.RenderTransform>
                                 <CompositeTransform />
                             </Grid.RenderTransform>
