@@ -245,7 +245,7 @@
                                                 VerticalOffset="-20"
                                                 HorizontalOffset="0"
                                                 FontWeight="Light"
-                                                BorderThickness="0"
+                                                BorderThickness="1"
                                                 CornerRadius="{ThemeResource OverlayCornerRadius}">
                     </controls:InAppNotification>
                 </Grid>

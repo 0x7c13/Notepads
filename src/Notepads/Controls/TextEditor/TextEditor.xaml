@@ -105,7 +105,7 @@
                                             VerticalOffset="10"
                                             HorizontalOffset="-22"
                                             FontWeight="Light"
-                                            BorderThickness="0"
+                                            BorderThickness="1"
                                             CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="FindAndReplacePlaceholder_Closed">
                     <controls:InAppNotification.Content>
@@ -129,7 +129,7 @@
                                             VerticalOffset="0"
                                             HorizontalOffset="-22"
                                             FontWeight="Light"
-                                            BorderThickness="0"
+                                            BorderThickness="1"
                                             CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="GoToPlaceholder_Closed">
                     <controls:InAppNotification.Content>
