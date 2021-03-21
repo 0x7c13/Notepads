@@ -76,8 +76,7 @@
                               RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                               Margin="{TemplateBinding Margin}"
                               MaxWidth="{TemplateBinding MaxWidth}"
-                              Visibility="{TemplateBinding Visibility}"
-                              CornerRadius="{TemplateBinding CornerRadius}">
+                              Visibility="{TemplateBinding Visibility}">
                             <Grid.RenderTransform>
                                 <CompositeTransform />
                             </Grid.RenderTransform>
@@ -88,7 +87,8 @@
                                 <Grid Background="{TemplateBinding Background}" 
                                       BorderBrush="{TemplateBinding BorderBrush}" 
                                       BorderThickness="{TemplateBinding BorderThickness}"
-                                      Padding="{TemplateBinding Padding}">
+                                      Padding="{TemplateBinding Padding}"
+                                      CornerRadius="{TemplateBinding CornerRadius}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>

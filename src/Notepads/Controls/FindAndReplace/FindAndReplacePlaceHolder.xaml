@@ -87,14 +87,13 @@
                               Margin="{TemplateBinding Margin}"
                               MaxWidth="{TemplateBinding MaxWidth}"
                               Visibility="{TemplateBinding Visibility}"
-                              Height="{TemplateBinding Height}"
-                              CornerRadius="{TemplateBinding CornerRadius}">
+                              Height="{TemplateBinding Height}">
                             <Grid.RenderTransform>
                                 <CompositeTransform />
                             </Grid.RenderTransform>
 
                             <controls:DropShadowPanel BlurRadius="10"
-                                                      ShadowOpacity="1"
+                                                      ShadowOpacity="0.25"
                                                       OffsetX="0"
                                                       OffsetY="0"
                                                       HorizontalContentAlignment="Stretch"
@@ -103,7 +102,8 @@
                                 <Grid Background="{TemplateBinding Background}"
                                       BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
-                                      Padding="{TemplateBinding Padding}">
+                                      Padding="{TemplateBinding Padding}"
+                                      CornerRadius="{TemplateBinding CornerRadius}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
