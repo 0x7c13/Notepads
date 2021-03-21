@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Notepads.Controls"
-    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
+    xmlns:wctui="using:Microsoft.Toolkit.Uwp.UI"
+    xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
@@ -236,7 +237,7 @@
 
                     </controls:SetsView>
 
-                    <controls:InAppNotification x:Name="StatusNotification"
+                    <wctc:InAppNotification x:Name="StatusNotification"
                                                 x:Load="false"
                                                 Style="{StaticResource InAppNotificationNoDismissButton}"
                                                 Content=""
@@ -247,19 +248,19 @@
                                                 FontWeight="Light"
                                                 BorderThickness="1"
                                                 CornerRadius="{ThemeResource OverlayCornerRadius}">
-                    </controls:InAppNotification>
+                    </wctc:InAppNotification>
                 </Grid>
             </SplitView.Content>
             <SplitView.Pane>
                 <Border x:Name="RootBorder" Padding="12,0,0,0">
                     <Grid>
-                        <controls:DropShadowPanel BlurRadius="12"
+                        <wctc:DropShadowPanel BlurRadius="12"
                                                   Color="Black"
                                                   Opacity="0.3"
                                                   HorizontalContentAlignment="Stretch"
                                                   VerticalContentAlignment="Stretch">
                             <Rectangle Fill="White" />
-                        </controls:DropShadowPanel>
+                        </wctc:DropShadowPanel>
 
                         <Grid x:Name="PaneContentGrid" Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
                             <Frame x:Name="SettingsFrame"/>
@@ -296,7 +297,7 @@
                 <Grid x:Name="FileModificationStateIndicator"
                       Padding="8,5,6,5"
                       IsTapEnabled="True" 
-                      ui:FrameworkElementExtensions.Cursor="Hand"
+                      wctui:FrameworkElementExtensions.Cursor="Hand"
                       Tapped="StatusBarComponent_OnTapped">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -342,7 +343,7 @@
             </Grid>
             <Grid Column="1"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            Padding ="4,4,8,4"
                            IsTapEnabled="True"
@@ -415,7 +416,7 @@
             </Grid>
             <Grid Column="2"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -470,7 +471,7 @@
             <Grid Column="3"
                   x:Name="LineColumnIndicatorButton"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -495,7 +496,7 @@
             </Grid>
             <Grid Column="4"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -593,7 +594,7 @@
             </Grid>
             <Grid Column="5"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -631,7 +632,7 @@
             </Grid>
             <Grid Column="6"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -666,7 +667,7 @@
             </Grid>
             <Grid Column="7"
                   CornerRadius="{ThemeResource ControlCornerRadius}"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
+                  wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">

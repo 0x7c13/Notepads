@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Notepads.Controls"
+    xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -16,12 +16,12 @@
                       BorderThickness="0"
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
-            <controls:MarkdownTextBlock x:Name="MarkdownTextBlock"
-                                        Margin="0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        Header1Foreground="{StaticResource SystemControlForegroundAccentBrush}"
-                                        LinkForeground="{StaticResource SystemControlForegroundAccentBrush}"/>
+            <wctc:MarkdownTextBlock x:Name="MarkdownTextBlock"
+                                    Margin="0"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    Header1Foreground="{StaticResource SystemControlForegroundAccentBrush}"
+                                    LinkForeground="{StaticResource SystemControlForegroundAccentBrush}"/>
         </ScrollViewer>
     </Grid>
 </UserControl>

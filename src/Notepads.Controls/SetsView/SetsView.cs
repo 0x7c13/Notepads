@@ -7,6 +7,7 @@ namespace Notepads.Controls
     using System;
     using System.Linq;
     using Microsoft.Toolkit.Uwp.UI;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;

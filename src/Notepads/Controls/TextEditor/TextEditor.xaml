@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Notepads.Controls"
+    xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:textEditor="using:Notepads.Controls.TextEditor"
     xmlns:diffViewer="using:Notepads.Controls.DiffViewer"
     xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
@@ -39,7 +39,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <Style x:Key="CustomGridSplitterStyle" TargetType="controls:GridSplitter">
+            <Style x:Key="CustomGridSplitterStyle" TargetType="wctc:GridSplitter">
                 <Setter Property="IsTabStop" Value="True"/>
                 <Setter Property="UseSystemFocusVisuals" Value="True"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -51,7 +51,7 @@
                 <Setter Property="GripperForeground" Value="Transparent"/>
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="controls:GridSplitter">
+                        <ControlTemplate TargetType="wctc:GridSplitter">
                             <Grid x:Name="RootGrid" Background="Transparent">
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="GridSplitterStates">
@@ -93,7 +93,7 @@
                                            Style="{StaticResource TextEditorCore}" 
                                            Grid.Column="0"
                                            Padding="6 , 6, 10, 6"/>
-                <controls:InAppNotification x:Name="FindAndReplacePlaceholder"
+                <wctc:InAppNotification x:Name="FindAndReplacePlaceholder"
                                             x:Load="false"
                                             Padding="0"
                                             Margin="0"
@@ -108,16 +108,16 @@
                                             BorderThickness="1"
                                             CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="FindAndReplacePlaceholder_Closed">
-                    <controls:InAppNotification.Content>
+                    <wctc:InAppNotification.Content>
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                               Width="340"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
                                                               OnToggleReplaceModeButtonClicked="FindAndReplaceControl_OnToggleReplaceModeButtonClicked"
                                                               OnFindReplaceControlKeyDown="TextEditorCore_OnKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
-                    </controls:InAppNotification.Content>
-                </controls:InAppNotification>
-                <controls:InAppNotification x:Name="GoToPlaceholder"
+                    </wctc:InAppNotification.Content>
+                </wctc:InAppNotification>
+                <wctc:InAppNotification x:Name="GoToPlaceholder"
                                             x:Load="false"
                                             Padding="0"
                                             Margin="0"
@@ -132,16 +132,16 @@
                                             BorderThickness="1"
                                             CornerRadius="{ThemeResource OverlayCornerRadius}"
                                             Closed="GoToPlaceholder_Closed">
-                    <controls:InAppNotification.Content>
+                    <wctc:InAppNotification.Content>
                         <goTo:GoToControl x:Name="GoToControl"
                                           Width="260"
                                           OnDismissKeyDown="GoToControl_OnDismissKeyDown"
                                           OnGoToControlKeyDown="TextEditorCore_OnKeyDown"
                                           OnGoToButtonClicked="GoToControl_OnGoToButtonClicked"/>
-                    </controls:InAppNotification.Content>
-                </controls:InAppNotification>
+                    </wctc:InAppNotification.Content>
+                </wctc:InAppNotification>
             </Grid>
-            <controls:DropShadowPanel    
+            <wctc:DropShadowPanel    
                 Canvas.ZIndex="50"
                 Grid.Column="1"
                 ShadowOpacity="0.3"
@@ -149,10 +149,10 @@
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Left">
                 <Grid Width="2"/>
-                <controls:DropShadowPanel.Clip>
+                <wctc:DropShadowPanel.Clip>
                     <RectangleGeometry Rect="-12,0,12,12960"></RectangleGeometry>
-                </controls:DropShadowPanel.Clip>
-            </controls:DropShadowPanel>
+                </wctc:DropShadowPanel.Clip>
+            </wctc:DropShadowPanel>
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"
                               Canvas.ZIndex="100"
@@ -160,7 +160,7 @@
                               Background="{ThemeResource SplitViewBackgroundThemeBrush}"
                               AutomationProperties.AccessibilityView="Raw"
                               Grid.Column="1"/>
-            <controls:GridSplitter x:Name="GridSplitter"
+            <wctc:GridSplitter x:Name="GridSplitter"
                                    x:Load="False"
                                    Canvas.ZIndex="150"
                                    Style="{StaticResource CustomGridSplitterStyle}"
@@ -172,10 +172,10 @@
                                    ResizeBehavior="BasedOnAlignment"
                                    CursorBehavior="ChangeOnSplitterHover"
                                    Width="10">
-                <controls:GridSplitter.RenderTransform>
+                <wctc:GridSplitter.RenderTransform>
                     <TranslateTransform X="0" />
-                </controls:GridSplitter.RenderTransform>
-            </controls:GridSplitter>
+                </wctc:GridSplitter.RenderTransform>
+            </wctc:GridSplitter>
         </Grid>
         <diffViewer:SideBySideDiffViewer x:Name="SideBySideDiffViewer"
                                          x:Load="False"

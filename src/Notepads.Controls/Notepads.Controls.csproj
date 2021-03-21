@@ -169,103 +169,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DropShadowPanel\DropShadowPanel.cs" />
-    <Compile Include="DropShadowPanel\DropShadowPanel.Properties.cs" />
-    <Compile Include="GridSplitter\GridSplitter.cs" />
-    <Compile Include="GridSplitter\GridSplitter.Data.cs" />
-    <Compile Include="GridSplitter\GridSplitter.Events.cs" />
-    <Compile Include="GridSplitter\GridSplitter.Helper.cs" />
-    <Compile Include="GridSplitter\GridSplitter.Options.cs" />
-    <Compile Include="GridSplitter\GripperHoverWrapper.cs" />
-    <Compile Include="Helpers\DispatcherQueueHelper.cs" />
-    <Compile Include="Helpers\ThemeListener.cs" />
-    <Compile Include="InAppNotification\InAppNotification.AttachedProperties.cs" />
-    <Compile Include="InAppNotification\InAppNotification.Constants.cs" />
-    <Compile Include="InAppNotification\InAppNotification.cs" />
-    <Compile Include="InAppNotification\InAppNotification.Events.cs" />
-    <Compile Include="InAppNotification\InAppNotification.Properties.cs" />
-    <Compile Include="InAppNotification\InAppNotificationClosedEventArgs.cs" />
-    <Compile Include="InAppNotification\InAppNotificationClosingEventArgs.cs" />
-    <Compile Include="InAppNotification\InAppNotificationDismissKind.cs" />
-    <Compile Include="InAppNotification\InAppNotificationOpeningEventArgs.cs" />
-    <Compile Include="InAppNotification\NotificationOptions.cs" />
-    <Compile Include="InAppNotification\StackMode.cs" />
-    <Compile Include="MarkdownTextBlock\CodeBlockResolvingEventArgs.cs" />
-    <Compile Include="MarkdownTextBlock\ImageResolvingEventArgs.cs" />
-    <Compile Include="MarkdownTextBlock\LinkClickedEventArgs.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownRenderedEventArgs.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownTextBlock.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownTextBlock.Dimensions.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownTextBlock.Events.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownTextBlock.Methods.cs" />
-    <Compile Include="MarkdownTextBlock\MarkdownTextBlock.Properties.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\CodeBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\HeaderBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\HorizontalRuleBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\LinkReferenceBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\ListBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\List\ListItemBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\List\ListItemBuilder.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\List\ListItemPreamble.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\List\NestedListInfo.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\ParagraphBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\QuoteBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\TableBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Blocks\YamlHeaderBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Core\IParser.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Core\ParseHelpers.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Core\SchemaBase.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Core\StringValueAttribute.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\ColumnAlignment.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\HyperlinkType.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\InlineParseMethod.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\ListStyle.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\MarkdownBlockType.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Enums\MarkdownInlineType.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Helpers\Common.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Helpers\DebuggingReporter.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Helpers\InlineParseResult.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Helpers\InlineTripCharHelper.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Helpers\LineInfo.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\BoldItalicTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\BoldTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\CodeInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\CommentInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\EmojiInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\EmojiInline.EmojiCodes.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\HyperlinkInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\IInlineContainer.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\IInlineLeaf.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\ILinkElement.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\ImageInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\ItalicTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\LinkAnchorInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\MarkdownLinkInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\StrikethroughTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\SubscriptTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\SuperscriptTextInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Inlines\TextRunInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\MarkdownBlock.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\MarkdownDocument.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\MarkdownElement.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\MarkdownInline.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\ICodeBlockResolver.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\IImageResolver.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\ILinkRegister.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\InlineRenderContext.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\IRenderContext.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRenderer.Blocks.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRenderer.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRenderer.Dimensions.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRenderer.Inlines.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRenderer.Properties.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRendererBase.Blocks.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRendererBase.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownRendererBase.Inlines.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\MarkdownTable.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\RenderContext.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\RenderContextIncorrectException.cs" />
-    <Compile Include="MarkdownTextBlock\Markdown\Render\UIElementCollectionRenderContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetsView\SetSelectedEventArgs.cs" />
     <Compile Include="SetsView\SetClosingEventArgs.cs" />
@@ -286,7 +189,7 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>7.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
@@ -297,26 +200,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="DropShadowPanel\DropShadowPanel.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GridSplitter\GridSplitter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="InAppNotification\InAppNotification.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="InAppNotification\Styles\MSEdgeNotificationStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MarkdownTextBlock\MarkdownTextBlock.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="SetsView\SetsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

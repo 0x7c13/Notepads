@@ -2,8 +2,8 @@
 {
     using System;
     using Microsoft.Toolkit.Uwp.Helpers;
+    using Microsoft.Toolkit.Uwp.UI.Helpers;
     using Notepads.Brushes;
-    using Notepads.Controls.Helpers;
     using Notepads.Extensions;
     using Notepads.Settings;
     using Notepads.Utilities;

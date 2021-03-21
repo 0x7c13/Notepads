@@ -2,10 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///Notepads.Controls/DropShadowPanel/DropShadowPanel.xaml" />
-        <ResourceDictionary Source="ms-appx:///Notepads.Controls/GridSplitter/GridSplitter.xaml" />
-        <ResourceDictionary Source="ms-appx:///Notepads.Controls/InAppNotification/InAppNotification.xaml" />
         <ResourceDictionary Source="ms-appx:///Notepads.Controls/SetsView/SetsView.xaml" />
-        <ResourceDictionary Source="ms-appx:///Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
