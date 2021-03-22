@@ -509,4 +509,8 @@
     <value>XSL 文件</value>
     <comment>.xsl</comment>
   </data>
+  <data name="NewTextDocumentDisplayName" xml:space="preserve">
+    <value>文本文档</value>
+    <comment>New .txt file name</comment>
+  </data>
 </root>

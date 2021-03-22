@@ -1,0 +1,90 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Remove `Language` identifier to embed all languages in package by default -->
+    <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+    <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
+  </PropertyGroup>
+  
+  <UsingTask TaskName="UpdateNotepadsPackageManifest" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ManifestPath ParameterType="System.String" Required="true" Output="true" />
+      <OutDir ParameterType="System.String" />
+      <Configuration ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO" />
+      <Reference Include="System.Xml" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Xml" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          Directory.CreateDirectory(OutDir);
+          var appName = "Notepads" + (Configuration.Equals("Production") ? "" : "-Dev");
+          var manifest = new XmlDocument();
+          manifest.Load(ManifestPath);
+          ManifestPath = OutDir.TrimEnd('\\') + @"\Package.appxmanifest";
+          manifest["Package"]["Identity"].SetAttribute("Name", appName);
+          manifest["Package"]["Applications"]["Application"]["uap:VisualElements"].SetAttribute("DisplayName", appName);
+          manifest["Package"]["Applications"]["Application"]["Extensions"]
+            ["uap5:Extension"]["uap5:AppExecutionAlias"]["uap5:ExecutionAlias"].SetAttribute("Alias", appName + ".exe");
+          manifest.Save(ManifestPath);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  
+  <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ResourceGroupPath ParameterType="System.String" Required="true" />
+      <AppxDefaultResourceQualifiers ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Reference Include="System.IO" />
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          ResourceGroupPath = Path.GetFullPath(ResourceGroupPath);
+          AppxDefaultResourceQualifiers = "Language=" +
+                string.Join(
+                    ";",
+                    Array.ConvertAll<DirectoryInfo, string>(
+                        new DirectoryInfo(ResourceGroupPath).GetDirectories(),
+                        dir => dir.Name));
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="UpdateAppxManifest" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Production'">
+    <UpdateNotepadsPackageManifest ManifestPath="%(AppxManifest.FullPath)"
+                            OutDir="$(ProjectDir)$(BaseIntermediateOutputPath)"
+                            Configuration="$(Configuration)">
+      <Output TaskParameter="ManifestPath" PropertyName="GeneratedAppxManifest" />
+    </UpdateNotepadsPackageManifest>
+    <ItemGroup>
+      <AppxManifest Remove="%(AppxManifest.Identity)" />
+      <AppxManifest Include="$(GeneratedAppxManifest)" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
+    <PropertyGroup>
+      <InputFile>App.xaml.cs</InputFile>
+    </PropertyGroup>
+    <WriteLinesToFile
+        File="$(InputFile)"
+        Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))"
+        Overwrite="true"
+        Encoding="Unicode"/>
+  </Target>
+
+  <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
+  <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+  <Target Name="SetAppxDefaultResourceQualifiers" BeforeTargets="BeforeBuild">
+    <GenerateAppxDefaultResourceQualifiers ResourceGroupPath="$(ProjectDir)..\Notepads\Strings">
+      <Output TaskParameter="AppxDefaultResourceQualifiers" PropertyName="AppxDefaultResourceQualifiers" />
+    </GenerateAppxDefaultResourceQualifiers>
+  </Target>
+</Project>

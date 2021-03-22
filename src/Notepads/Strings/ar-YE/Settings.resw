@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
+    <value>التبعيات والمراجع</value>
+    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
+    <value>يتم توفير البرنامج "كما هو" ، دون أي ضمان من أي نوع ، صريحًا أو ضمنيًا ، بما في ذلك على سبيل المثال لا الحصر ضمانات القابلية للتسويق والملاءمة لغرض معين وعدم الانتهاك. لا يتحمل المؤلفون أو حاملو حقوق الطبع والنشر بأي حال من الأحوال المسؤولية عن أي مطالبة أو أضرار أو مسؤولية أخرى ، سواء كان ذلك في إطار عقد أو ضرر أو غير ذلك ، ينشأ عن أو خارج أو متصل بالبرنامج أو الاستخدام أو المعاملات الأخرى البرمجيات.</value>
+    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
+    <value>إخلاء المسئولية القانونية</value>
+    <comment>AboutPage Disclaimer Title display text.</comment>
+  </data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
+    <value>محرر نص مجاني ومفتوح المصدر من تصميم وتنفيذ Jackie (Jiaqi) Liu</value>
+    <comment>AboutPage NotepadsShortDescription display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
+    <value>للتواصل مع المؤلفين:</value>
+    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
+    <value>للتبليغ عن مشكلة و طلب ميزة:</value>
+    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
+    <value>الأكواد البرمجية متاحة على Github:</value>
+    <comment>AboutPage Notepads SourceCode Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
+    <value>للمزيد من المعلومات قم بزيارة موقعنا:</value>
+    <comment>AboutPage Notepads Website Title display text.</comment>
+  </data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+    <value>بيان سياسة الخصوصية</value>
+    <comment>AboutPage PrivacyStatementTitle display text.</comment>
+  </data>
+  <data name="AboutPage_Title.Content" xml:space="preserve">
+    <value>عن البرنامج</value>
+    <comment>AboutPage Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
+    <value>عرض شريط الحالة</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
+    <value>عرض شريط الحالة</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
+    <value>إعدادات شريط الحالة</value>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+    <value>خيارات متقدمة</value>
+    <comment>AdvancedPage Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
+    <value>اللون الأساسي</value>
+    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>استخدم لون Windows الأساسي</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>استخدم لون Windows الأساسي</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
+    <value>شفافية خلفية تأثير Acrylic. يرجى ملاحظة أن سوف يتم تعطيل تأثير Acrylic عندما تكون البطارية في وضع التوفير أو إذا قمت بتعطيل تأثيرات الشفافية في إعدادات Windows.</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
+    <value>شفافية الخلفية</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
+    <value>داكن</value>
+    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
+    <value>فاتح</value>
+    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
+    <value>نمط التصميم</value>
+    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
+    <value>استخدم نمط Windows</value>
+    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+    <value>التخصيص</value>
+    <comment>PersonalizationPage Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
+    <value>ANSI (Windows كود صفحة)</value>
+    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
+    <value>سيستخدم فك الترميز الإحتياطي عندما يتعذر تحديد نوع ترميز الملف.</value>
+    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
+    <value>فك الترميز الإحتياطي</value>
+    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
+    <value>UTF-8</value>
+    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
+    <value>تطبيق فقط على المستندات الجديدة.</value>
+    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
+    <value>الترميز الإفتراضي</value>
+    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
+    <value>الخط والحجم الإفتراضي</value>
+    <comment>TextAndEditorPage FontSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
+    <value>تطبق فقط على المستند الجديد.</value>
+    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
+    <value>نهاية السطر الإفتراضي</value>
+    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
+    <value>افتراضي (\t)</value>
+    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
+    <value>إعدادات مفتاح Tab تطبق فقط على الإدخالات الجديدة من قبل المستخدم.</value>
+    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
+    <value>8 مسافات</value>
+    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
+    <value>4 مسافات</value>
+    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
+    <value>سلوك مفتاح Tab</value>
+    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
+    <value>2 مسافات</value>
+    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
+    <value>التفاف النص</value>
+    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>التفاف الكلمة</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>التفاف الكلمة</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+    <value>النص والمحرر</value>
+    <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>سجلات التغييرات</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>عند التفعيل سيقوم Notepads بتذكر الجلسة الحالية لفتحها في المرة القائمة تلقائياً وسيقوم بعمل نسخ إحتياطية تلقائياً بشكل دوري لتفادي فقدان البيانات المفاجئ لما لم يتم حفظه. لن يقوم Notepads بتذكيرك لحفظ عملك عند إغلاق البرنامج إذا كانت هذه الميزة مفعلة. يرجى تذكر أن النسخ الإحتياطي للجلسات تعمل في أو أو النافذة الرئيسية في Notepads.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>تفعيل النسخ الإحتياطي</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>تفعيل النسخ الإحتياطي</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>إعدادات النسخ الإحتياطي</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>تعليم الأخطاء الإملائية</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>تعليم الأخطاء الإملائية</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>الإملاء</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>عند التفعيل سيقوم Notepads دائماً بفتح المستند في نافذة جديدة بدلاً من إنشاء تبويب جديد.</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>دائماً قم بفتح نافذة جديدة</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>دائماً قم بفتح نافذة جديدة</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>خيارات التشغيل</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>تعليم السطر الحالي</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>تعليم السطر الحالي</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>محرك البحث الخاص</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>* أدخل رابط بهذه الصيغة https://www.example.com/search?q={0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>إعدادات محرك البحث يتم إختيارها عندما ينتهي البحث في الإنترنت.</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>محرك البحث الإفتراضي</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>التخمين التلقائي للترميز (ينصح به)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>العرض</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>عرض أرقام الأسطر في المستند.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>عرض أرقام الأسطر</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>عرض أرقام الأسطر</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>نوع الخط الإفتراضي</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>وزن الخط الإفتراضي</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>اختر لغة واجهة Notepads بدلاً من اللغة الإفتراضية للنظام. إعادة التشغيل مطلوب لتطبيق التغييرات.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
+    <value>* قم بإعادة تشغيل Notepads لتطبيق التغييرات.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>خيارات اللغة</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>عند التفعيل سيقوم Notepads بشكل ذكي التخلص من المسافات الموجودة في بداية ونهاية النص و حروف Tabs والأسطر الفارغة قبل نسخ النص المحدد إلى الحافظة.</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>تفعيل النسخ الذكي</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>تفعيل النسخ الذكي</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>إعدادات النسخ الذكي</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>الإفتراضي في النظام</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
+  </data>
+</root>

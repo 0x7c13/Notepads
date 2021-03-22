@@ -9,8 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+    using System.Text.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
     using Notepads.Models;
@@ -73,12 +72,12 @@
 
             try
             {
-                var json = JObject.Parse(data);
-                var version = (int)json["Version"];
+                var json = JsonDocument.Parse(data);
+                var version = json.RootElement.GetProperty("Version").GetInt32();
 
                 if (version == 1)
                 {
-                    sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data);
+                    sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
                 }
                 else
                 {
@@ -185,7 +184,7 @@
 
             try
             {
-                string sessionJsonStr = JsonConvert.SerializeObject(sessionData, Formatting.Indented);
+                string sessionJsonStr = JsonSerializer.Serialize(sessionData, new JsonSerializerOptions { WriteIndented = true });
 
                 if (_lastSessionJsonStr == null || !string.Equals(_lastSessionJsonStr, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
