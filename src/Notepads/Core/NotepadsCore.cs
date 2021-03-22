@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
+    using System.Text.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Extensions;
     using Notepads.Models;
@@ -644,7 +644,7 @@
 
             try
             {
-                var data = JsonConvert.SerializeObject(editor.GetTextEditorStateMetaData());
+                var data = JsonSerializer.Serialize(editor.GetTextEditorStateMetaData());
 
                 var lastSavedText = editor.LastSavedSnapshot.Content;
                 var pendingText = editor.GetText();
@@ -704,7 +704,7 @@
 
                 if (!(dataObj is string data)) throw new Exception("Failed to drop editor set: NotepadsTextEditorMetaData is invalid (Not String).");
 
-                TextEditorStateMetaData metaData = JsonConvert.DeserializeObject<TextEditorStateMetaData>(data);
+                TextEditorStateMetaData metaData = JsonSerializer.Deserialize<TextEditorStateMetaData>(data);
 
                 if (args.DataView.Properties.TryGetValue(NotepadsTextEditorEditingFilePath,
                         out object editingFilePathObj) && editingFilePathObj is string editingFilePath)
