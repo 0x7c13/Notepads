@@ -3,6 +3,7 @@
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
          xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
          xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
          xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
          xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
          xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
@@ -74,7 +75,9 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="text">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="text/plain">.txt</uap:FileType>
+              <uap:FileType ContentType="text/plain"
+                            uap4:ShellNewDisplayName="ms-resource:Manifest/NewTextDocumentDisplayName"
+                            uap4:ShellNewFileName="Resource\Text Document.txt">.txt</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/TextFileDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true" />

@@ -81,5 +81,5 @@
     <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
-  <Import Project="..\Notepads\UpdateAppxManifest.targets" />
+  <Import Project="..\Notepads\Package.targets" />
 </Project>
