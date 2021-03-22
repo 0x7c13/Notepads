@@ -63,6 +63,9 @@
             <Style TargetType="TextBox">
                 <Setter Property="CornerRadius" Value="0" />
             </Style>
+            <Style TargetType="ToolTip">
+                <Setter Property="CornerRadius" Value="0" />
+            </Style>
             
         </ResourceDictionary>
     </Application.Resources>
