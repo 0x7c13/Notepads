@@ -38,7 +38,8 @@
                 SelectionStart = 0,
                 SelectionLength = filename.Contains(".") ? filename.LastIndexOf(".", StringComparison.Ordinal) : filename.Length,
                 Height = 35,
-                CornerRadius = (CornerRadius)Application.Current.Resources["ControlCornerRadius"]
+                // TODO: Uncomment to apply CornerRadius
+                //CornerRadius = (CornerRadius)Application.Current.Resources["ControlCornerRadius"]
             };
 
             _errorMessageTextBlock = new TextBlock()

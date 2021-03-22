@@ -19,6 +19,7 @@
         <TextBlock Grid.Column="0" x:Uid="GoTo_GoToBarLabel" Margin="5,0,8,3" FontSize="15" VerticalAlignment="Center" TextAlignment="Center"/>
 
         <Grid Grid.Column="1">
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <TextBox x:Name="GoToBar"
                      x:Uid="GoTo_GoToBar"
                      Style="{StaticResource TransparentTextBoxStyle}"
@@ -29,7 +30,7 @@
                      TextAlignment="Left"
                      BorderThickness="0"
                      FontSize="15"
-                     CornerRadius="{ThemeResource ControlCornerRadius}"
+                     CornerRadius="0"
                      BeforeTextChanging="GoToBar_BeforeTextChanging"
                      TextChanged="GoToBar_OnTextChanged"
                      KeyDown="GoToBar_OnKeyDown"

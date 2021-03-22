@@ -200,6 +200,8 @@
                                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                                 <Style TargetType="MenuFlyoutPresenter">
                                                     <Setter Property="BorderThickness" Value="0" />
+                                                    <!-- TODO: Remove CornerRadius property setter -->
+                                                    <Setter Property="CornerRadius" Value="0" />
                                                     <Setter Property="MaxWidth" Value="1200" />
                                                 </Style>
                                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -237,6 +239,7 @@
 
                     </controls:SetsView>
 
+                    <!-- TODO: Change CornerRadius to {ThemeResource OverlayCornerRadius}-->
                     <wctc:InAppNotification x:Name="StatusNotification"
                                                 x:Load="false"
                                                 Style="{StaticResource InAppNotificationNoDismissButton}"
@@ -247,7 +250,7 @@
                                                 HorizontalOffset="0"
                                                 FontWeight="Light"
                                                 BorderThickness="1"
-                                                CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                                CornerRadius="0">
                     </wctc:InAppNotification>
                 </Grid>
             </SplitView.Content>
@@ -292,8 +295,9 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="0"
-                  CornerRadius="{ThemeResource ControlCornerRadius}">
+                  CornerRadius="0">
                 <Grid x:Name="FileModificationStateIndicator"
                       Padding="8,5,6,5"
                       IsTapEnabled="True" 
@@ -334,6 +338,8 @@
                             </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
+                                    <!-- TODO: Remove CornerRadius property setter -->
+                                    <Setter Property="CornerRadius" Value="0" />
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -341,8 +347,9 @@
                     </Grid.ContextFlyout>
                 </Grid>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="1"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            Padding ="4,4,8,4"
@@ -407,6 +414,8 @@
                             </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
+                                    <!-- TODO: Remove CornerRadius property setter -->
+                                    <Setter Property="CornerRadius" Value="0" />
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -414,8 +423,9 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="2"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -461,6 +471,8 @@
 
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
+                                    <!-- TODO: Remove CornerRadius property setter -->
+                                    <Setter Property="CornerRadius" Value="0" />
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -468,9 +480,10 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="3"
                   x:Name="LineColumnIndicatorButton"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -494,8 +507,9 @@
                            Tapped="StatusBarComponent_OnTapped">
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="4"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -522,12 +536,13 @@
                         <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="-10,0,-10,0">
+                                    <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                                     <AppBarButton x:Name="ZoomOut" 
                                                   x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
                                                   LabelPosition="Collapsed"
                                                   VerticalAlignment="Center"
                                                   BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                                                  CornerRadius="0"
                                                   Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Minus" 
                                                   Click="FontZoomIndicatorFlyoutSelection_OnClick">
@@ -544,12 +559,13 @@
                                             VerticalAlignment="Center" Width="150"
                                             Margin="5"
                                             ValueChanged="FontZoomSlider_ValueChanged"/>
+                                    <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                                     <AppBarButton x:Name="ZoomIn"
                                                   x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
                                                   LabelPosition="Collapsed" 
                                                   VerticalAlignment="Center"
                                                   BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                                                  CornerRadius="0"
                                                   Width="40"
                                                   KeyboardAcceleratorTextOverride="Ctrl+Plus" 
                                                   Click="FontZoomIndicatorFlyoutSelection_OnClick">
@@ -569,10 +585,11 @@
                                     <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" VerticalAlignment="Center" FontSize="15"/>
                                     <TextBlock Text="%" VerticalAlignment="Center" FontSize="15"/>
                                 </StackPanel>
+                                <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                                 <AppBarButton x:Name="RestoreDefaultZoom"
                                               x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
                                               Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
-                                              CornerRadius="{ThemeResource ControlCornerRadius}"
+                                              CornerRadius="0"
                                               HorizontalAlignment="Stretch"
                                               VerticalAlignment="Center"
                                               Margin="-10,5,-10,-5"
@@ -592,8 +609,9 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="5"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -623,6 +641,8 @@
                             <MenuFlyoutItem Text="Unix (LF)" Tag="LF" Click="LineEndingSelection_OnClick"/>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
+                                    <!-- TODO: Remove CornerRadius property setter -->
+                                    <Setter Property="CornerRadius" Value="0" />
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -630,8 +650,9 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="6"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -658,6 +679,8 @@
                         <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
+                                    <!-- TODO: Remove CornerRadius property setter -->
+                                    <Setter Property="CornerRadius" Value="0" />
                                     <Setter Property="BorderThickness" Value="0" />
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
@@ -665,8 +688,9 @@
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <Grid Column="7"
-                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                  CornerRadius="0"
                   wctui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -686,8 +710,9 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
 
+                <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                 <Grid x:Name="ShadowWindowIndicator"
-                      CornerRadius="{ThemeResource ControlCornerRadius}"
+                      CornerRadius="0"
                       Visibility="Collapsed"
                       Padding="6,6,6,6"
                       IsTapEnabled="True"

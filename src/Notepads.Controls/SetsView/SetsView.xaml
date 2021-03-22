@@ -342,11 +342,13 @@
     <!--  Based on Style for ListViewItemExpanded Template - https://msdn.microsoft.com/en-us/library/windows/apps/mt299136.aspx  -->
     <ControlTemplate x:Key="SetsViewItemHeaderTemplate"
                      TargetType="local:SetsViewItem">
+        <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
         <Grid x:Name="LayoutRoot"
               wctui:FrameworkElementExtensions.AncestorType="local:SetsView"
               Background="{TemplateBinding Background}"
               BorderBrush="{TemplateBinding BorderBrush}"
               BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="0"
               Control.IsTemplateFocusTarget="True"
               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
               RenderTransformOrigin="0.5,0.5">

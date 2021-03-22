@@ -93,21 +93,22 @@
                                            Style="{StaticResource TextEditorCore}" 
                                            Grid.Column="0"
                                            Padding="6 , 6, 10, 6"/>
+                <!-- TODO: Change CornerRadius to {ThemeResource OverlayCornerRadius}-->
                 <wctc:InAppNotification x:Name="FindAndReplacePlaceholder"
-                                            x:Load="false"
-                                            Padding="0"
-                                            Margin="0"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top"
-                                            Style="{StaticResource FindAndReplacePlaceholder}"
-                                            ShowDismissButton="True"
-                                            AnimationDuration="0:0:0.050"
-                                            VerticalOffset="10"
-                                            HorizontalOffset="-22"
-                                            FontWeight="Light"
-                                            BorderThickness="1"
-                                            CornerRadius="{ThemeResource OverlayCornerRadius}"
-                                            Closed="FindAndReplacePlaceholder_Closed">
+                                        x:Load="false"
+                                        Padding="0"
+                                        Margin="0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Style="{StaticResource FindAndReplacePlaceholder}"
+                                        ShowDismissButton="True"
+                                        AnimationDuration="0:0:0.050"
+                                        VerticalOffset="10"
+                                        HorizontalOffset="-22"
+                                        FontWeight="Light"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        Closed="FindAndReplacePlaceholder_Closed">
                     <wctc:InAppNotification.Content>
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                               Width="340"
@@ -117,21 +118,22 @@
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>
                     </wctc:InAppNotification.Content>
                 </wctc:InAppNotification>
+                <!-- TODO: Change CornerRadius to {ThemeResource OverlayCornerRadius}-->
                 <wctc:InAppNotification x:Name="GoToPlaceholder"
-                                            x:Load="false"
-                                            Padding="0"
-                                            Margin="0"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top"
-                                            Style="{StaticResource FindAndReplacePlaceholder}"
-                                            ShowDismissButton="True"
-                                            AnimationDuration="0:0:0.050"
-                                            VerticalOffset="0"
-                                            HorizontalOffset="-22"
-                                            FontWeight="Light"
-                                            BorderThickness="1"
-                                            CornerRadius="{ThemeResource OverlayCornerRadius}"
-                                            Closed="GoToPlaceholder_Closed">
+                                        x:Load="false"
+                                        Padding="0"
+                                        Margin="0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Style="{StaticResource FindAndReplacePlaceholder}"
+                                        ShowDismissButton="True"
+                                        AnimationDuration="0:0:0.050"
+                                        VerticalOffset="0"
+                                        HorizontalOffset="-22"
+                                        FontWeight="Light"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        Closed="GoToPlaceholder_Closed">
                     <wctc:InAppNotification.Content>
                         <goTo:GoToControl x:Name="GoToControl"
                                           Width="260"
@@ -141,13 +143,12 @@
                     </wctc:InAppNotification.Content>
                 </wctc:InAppNotification>
             </Grid>
-            <wctc:DropShadowPanel    
-                Canvas.ZIndex="50"
-                Grid.Column="1"
-                ShadowOpacity="0.3"
-                BlurRadius="12"
-                VerticalAlignment="Stretch"
-                HorizontalAlignment="Left">
+            <wctc:DropShadowPanel Canvas.ZIndex="50"
+                                  Grid.Column="1"
+                                  ShadowOpacity="0.3"
+                                  BlurRadius="12"
+                                  VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Left">
                 <Grid Width="2"/>
                 <wctc:DropShadowPanel.Clip>
                     <RectangleGeometry Rect="-12,0,12,12960"></RectangleGeometry>
@@ -161,17 +162,17 @@
                               AutomationProperties.AccessibilityView="Raw"
                               Grid.Column="1"/>
             <wctc:GridSplitter x:Name="GridSplitter"
-                                   x:Load="False"
-                                   Canvas.ZIndex="150"
-                                   Style="{StaticResource CustomGridSplitterStyle}"
-                                   MinWidth="10"
-                                   GripperCursor="Default"
-                                   HorizontalAlignment="Left"
-                                   Grid.Column="1"
-                                   ResizeDirection="Auto"
-                                   ResizeBehavior="BasedOnAlignment"
-                                   CursorBehavior="ChangeOnSplitterHover"
-                                   Width="10">
+                               x:Load="False"
+                               Canvas.ZIndex="150"
+                               Style="{StaticResource CustomGridSplitterStyle}"
+                               MinWidth="10"
+                               GripperCursor="Default"
+                               HorizontalAlignment="Left"
+                               Grid.Column="1"
+                               ResizeDirection="Auto"
+                               ResizeBehavior="BasedOnAlignment"
+                               CursorBehavior="ChangeOnSplitterHover"
+                               Width="10">
                 <wctc:GridSplitter.RenderTransform>
                     <TranslateTransform X="0" />
                 </wctc:GridSplitter.RenderTransform>

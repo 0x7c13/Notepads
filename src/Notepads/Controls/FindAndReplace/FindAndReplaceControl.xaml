@@ -38,6 +38,7 @@
 
         <RelativePanel Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
 
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <findAndReplace:FindAndReplaceTextBox x:Name="FindBar"
                                                   x:Uid="FindAndReplace_FindBar"
                                                   Style="{StaticResource TransparentTextBoxStyle}"
@@ -51,7 +52,7 @@
                                                   TextAlignment="Left"
                                                   BorderThickness="0"
                                                   FontSize="15"
-                                                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                                                  CornerRadius="0"
                                                   TextChanged="FindBar_OnTextChanged"
                                                   KeyDown="FindBar_OnKeyDown"
                                                   GotFocus="FindBar_GotFocus"
@@ -102,6 +103,8 @@
         </RelativePanel>
 
         <Grid Grid.Row="1" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
+
+            <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
             <findAndReplace:FindAndReplaceTextBox x:Name="ReplaceBar"
                                                   x:Uid="FindAndReplace_ReplaceBar"
                                                   Style="{StaticResource TransparentTextBoxStyle}"
@@ -112,7 +115,7 @@
                                                   TextAlignment="Left"
                                                   BorderThickness="0"
                                                   FontSize="15"
-                                                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                                                  CornerRadius="0"
                                                   TextChanged="ReplaceBar_OnTextChanged"
                                                   KeyDown="ReplaceBar_OnKeyDown"
                                                   GotFocus="ReplaceBar_GotFocus"

@@ -20,12 +20,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
+                    <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                     <Grid x:Name="LayoutRoot"
                           MinWidth="{TemplateBinding MinWidth}"
                           Height="{TemplateBinding MinHeight}"
                           Margin="{TemplateBinding Padding}"
                           Background="{TemplateBinding Background}"
-                          CornerRadius="{ThemeResource ControlCornerRadius}"
+                          CornerRadius="0"
                           HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -141,7 +142,8 @@
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="TabNavigation" Value="Once"/>
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
+        <Setter Property="CornerRadius" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="muxc:NavigationViewItem">

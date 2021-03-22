@@ -85,9 +85,10 @@
                                 <Border x:Name="LineIndicator"
                                         BorderBrush="{StaticResource SystemControlForegroundAccentBrush}"
                                         Visibility="Collapsed"/>
+                                <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
                                 <Grid x:Name="LineHighlighter"
                                       Background="{ThemeResource SystemControlBackgroundListLowBrush}"
-                                      CornerRadius="{ThemeResource ControlCornerRadius}"
+                                      CornerRadius="0"
                                       Opacity="0.65"
                                       BorderThickness="0"
                                       Visibility="Collapsed"/>
