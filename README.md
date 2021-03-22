@@ -133,7 +133,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [ru-RU][Russian (Russia)]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
     * [fi-FI][Finnish (Finland)]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian (Ukraine)]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
-    * [it-IT][Italian (Italy)]: [Andrea Guarinoni](https://github.com/guari)
+    * [it-IT][Italian (Italy)]: [Andrea Guarinoni](https://github.com/guari), [Bunz](https://github.com/66Bunz)
     * [cs-CZ][Czech (Czech Republic)]: [Jan Rajnoha](https://github.com/JanRajnoha)
     * [pt-BR][Portuguese (Brazil)]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
     * [ko-KR][Korean (Korea)]: [Donghyeok Tak](https://github.com/tdh8316)

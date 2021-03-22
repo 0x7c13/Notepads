@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>依赖及参考</value>
+    <value>التبعيات والمراجع</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>该软件是"按原样"提供的，没有任何形式的明示或暗示，包括但不限于为特定目的和不侵权的适销性和适用性的保证担保。在任何情况下，作者或版权持有人，都无权要求任何索赔，或有关损害赔偿的其他责任。无论在本软件的使用上或其他买卖交易中， 是否涉及合同，侵权或其他行为。</value>
+    <value>يتم توفير البرنامج "كما هو" ، دون أي ضمان من أي نوع ، صريحًا أو ضمنيًا ، بما في ذلك على سبيل المثال لا الحصر ضمانات القابلية للتسويق والملاءمة لغرض معين وعدم الانتهاك. لا يتحمل المؤلفون أو حاملو حقوق الطبع والنشر بأي حال من الأحوال المسؤولية عن أي مطالبة أو أضرار أو مسؤولية أخرى ، سواء كان ذلك في إطار عقد أو ضرر أو غير ذلك ، ينشأ عن أو خارج أو متصل بالبرنامج أو الاستخدام أو المعاملات الأخرى البرمجيات.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>声明</value>
+    <value>إخلاء المسئولية القانونية</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>一款由柒才设计的简约轻量级文本编辑器</value>
+    <value>محرر نص مجاني ومفتوح المصدر من تصميم وتنفيذ Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>您也可以通过电子邮件联系作者：</value>
+    <value>للتواصل مع المؤلفين:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>如果您有什么问题或者建议，请点击：</value>
+    <value>للتبليغ عن مشكلة و طلب ميزة:</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>项目源代码已开源至Github：</value>
+    <value>الأكواد البرمجية متاحة على Github:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>更多信息，请访问Notepads官网：</value>
+    <value>للمزيد من المعلومات قم بزيارة موقعنا:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>隐私声明</value>
+    <value>بيان سياسة الخصوصية</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>关于</value>
+    <value>عن البرنامج</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>开启状态栏</value>
+    <value>عرض شريط الحالة</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>开启状态栏</value>
+    <value>عرض شريط الحالة</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>状态栏设置</value>
+    <value>إعدادات شريط الحالة</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>高级</value>
+    <value>خيارات متقدمة</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>主题颜色</value>
+    <value>اللون الأساسي</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>使用Windows颜色</value>
+    <value>استخدم لون Windows الأساسي</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>使用Windows颜色</value>
+    <value>استخدم لون Windows الأساسي</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>亚克力背景透明度设置。请注意，当系统处于节能模式中或者Windows设置中禁用了透明效果，您将无法更改此设置并且亚克力效果会被禁用。</value>
+    <value>شفافية خلفية تأثير Acrylic. يرجى ملاحظة أن سوف يتم تعطيل تأثير Acrylic عندما تكون البطارية في وضع التوفير أو إذا قمت بتعطيل تأثيرات الشفافية في إعدادات Windows.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>背景透明度</value>
+    <value>شفافية الخلفية</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>深色</value>
+    <value>داكن</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>浅色</value>
+    <value>فاتح</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>主题模式</value>
+    <value>نمط التصميم</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>使用我的Windows模式</value>
+    <value>استخدم نمط Windows</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>个性化</value>
+    <value>التخصيص</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows 当前默认代码页)</value>
+    <value>ANSI (Windows كود صفحة)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>如果文件开头不含有BOM(字节顺序标记)，Notepads将使用此编码作为默认读取编码。如果选择自动猜测识别编码，Notepads将会猜测文件编码并打开。</value>
+    <value>سيستخدم فك الترميز الإحتياطي عندما يتعذر تحديد نوع ترميز الملف.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>默认读取编码</value>
+    <value>فك الترميز الإحتياطي</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,195 +230,195 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>改变设置后只会影响新打开或者创建的文件。</value>
+    <value>تطبيق فقط على المستندات الجديدة.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>默认写入编码</value>
+    <value>الترميز الإفتراضي</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>默认字体和大小</value>
+    <value>الخط والحجم الإفتراضي</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>改变设置后只会影响新打开或者创建的文件。</value>
+    <value>تطبق فقط على المستند الجديد.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>默认换行符</value>
+    <value>نهاية السطر الإفتراضي</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>插入默认制表符 (\t)</value>
+    <value>افتراضي (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>改变制表符行为之后，只有新键入的制表符才会生效，已有制表符不会被替换。</value>
+    <value>إعدادات مفتاح Tab تطبق فقط على الإدخالات الجديدة من قبل المستخدم.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>插入八个空格</value>
+    <value>8 مسافات</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>插入四个空格</value>
+    <value>4 مسافات</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>制表符键(Tab)行为</value>
+    <value>سلوك مفتاح Tab</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>插入两个空格</value>
+    <value>2 مسافات</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>自动换行设置</value>
+    <value>التفاف النص</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>自动换行</value>
+    <value>التفاف الكلمة</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>自动换行</value>
+    <value>التفاف الكلمة</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>文本与编辑器</value>
+    <value>النص والمحرر</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>更新日志</value>
+    <value>سجلات التغييرات</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>开启此设置后，Notepads会定期保存当前应用状态并在下一次启动时自动恢复。当此设置打开后，关闭应用时Notepads将不会提醒你保存文件。另外请注意，快照备份在影子窗口中将会被禁用，此设置只会作用于第一个被打开的窗口。</value>
+    <value>عند التفعيل سيقوم Notepads بتذكر الجلسة الحالية لفتحها في المرة القائمة تلقائياً وسيقوم بعمل نسخ إحتياطية تلقائياً بشكل دوري لتفادي فقدان البيانات المفاجئ لما لم يتم حفظه. لن يقوم Notepads بتذكيرك لحفظ عملك عند إغلاق البرنامج إذا كانت هذه الميزة مفعلة. يرجى تذكر أن النسخ الإحتياطي للجلسات تعمل في أو أو النافذة الرئيسية في Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>开启快照备份与还原</value>
+    <value>تفعيل النسخ الإحتياطي</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>开启快照备份与还原</value>
+    <value>تفعيل النسخ الإحتياطي</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>快照备份设置</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+    <value>إعدادات النسخ الإحتياطي</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>高亮拼写错误 (英文)</value>
+    <value>تعليم الأخطاء الإملائية</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>高亮拼写错误 (英文)</value>
+    <value>تعليم الأخطاء الإملائية</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>拼写检查</value>
+    <value>الإملاء</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>选中此设置后，Notepads将会在新窗口中打开文件而不是在新标签栏中。</value>
+    <value>عند التفعيل سيقوم Notepads دائماً بفتح المستند في نافذة جديدة بدلاً من إنشاء تبويب جديد.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>永远在新窗口中打开文件</value>
+    <value>دائماً قم بفتح نافذة جديدة</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>永远在新窗口中打开文件</value>
+    <value>دائماً قم بفتح نافذة جديدة</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>启动偏好</value>
+    <value>خيارات التشغيل</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>高亮光标所在行</value>
+    <value>تعليم السطر الحالي</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>高亮光标所在行</value>
+    <value>تعليم السطر الحالي</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>自定义搜索</value>
+    <value>محرك البحث الخاص</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*示例:  https://www.example.com/search?q={0}</value>
+    <value>* أدخل رابط بهذه الصيغة https://www.example.com/search?q={0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>文本搜索默认所使用的搜索引擎。</value>
+    <value>إعدادات محرك البحث يتم إختيارها عندما ينتهي البحث في الإنترنت.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>默认搜索引擎</value>
+    <value>محرك البحث الإفتراضي</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>自动猜测编码 (推荐)</value>
+    <value>التخمين التلقائي للترميز (ينصح به)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>显示设置</value>
+    <value>العرض</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>在当前文本中显示行号栏。</value>
+    <value>عرض أرقام الأسطر في المستند.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>显示行号</value>
+    <value>عرض أرقام الأسطر</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>显示行号</value>
+    <value>عرض أرقام الأسطر</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>默认字体样式</value>
+    <value>نوع الخط الإفتراضي</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>默认字体粗细</value>
+    <value>وزن الخط الإفتراضي</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>选择Notepads应用显示语言，选择后需要重启应用才会生效。</value>
+    <value>اختر لغة واجهة Notepads بدلاً من اللغة الإفتراضية للنظام. إعادة التشغيل مطلوب لتطبيق التغييرات.</value>
     <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*需要重启应用后才会生效。</value>
+    <value>* قم بإعادة تشغيل Notepads لتطبيق التغييرات.</value>
     <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>语言设置</value>
+    <value>خيارات اللغة</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>开启后，当复制选中文字时（Ctrl+C），Notepads会智能的帮你剪裁起始和结尾处的多余空格，制表符以及空白行。</value>
+    <value>عند التفعيل سيقوم Notepads بشكل ذكي التخلص من المسافات الموجودة في بداية ونهاية النص و حروف Tabs والأسطر الفارغة قبل نسخ النص المحدد إلى الحافظة.</value>
     <comment>AdvancedPage SmartCopySettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
-    <value>开启智能复制功能</value>
+    <value>تفعيل النسخ الذكي</value>
     <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
-    <value>开启智能复制功能</value>
+    <value>تفعيل النسخ الذكي</value>
     <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>智能复制设置</value>
+    <value>إعدادات النسخ الذكي</value>
     <comment>AdvancedPage SmartCopySettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
-    <value>使用系统默认语言</value>
+    <value>الإفتراضي في النظام</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>
