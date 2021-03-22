@@ -573,7 +573,17 @@
                     // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
                     var content = encoding.GetBytes(text);
                     var result = encoding.GetPreamble().Concat(content).ToArray();
-                    await PathIO.WriteBytesAsync(file.Path, result);
+                    try
+                    {
+                        await PathIO.WriteBytesAsync(file.Path, result);
+                        DesktopExtensionService.UnblockFile(file.Path);
+                    }
+                    catch (UnauthorizedAccessException ex) // Try to save as admin if fullTrust api is supported
+                    {
+                        if (!DesktopExtensionService.ShouldUseDesktopExtension) throw ex;
+
+                        await DesktopExtensionService.SaveFileAsAdmin(file.Path, result);
+                    }
                 }
                 else // Use StorageFile API to save 
                 {
@@ -585,6 +595,7 @@
                         await writer.FlushAsync();
                         stream.SetLength(stream.Position); // Truncate
                     }
+                    DesktopExtensionService.UnblockFile(file.Path);
                 }
             }
             finally

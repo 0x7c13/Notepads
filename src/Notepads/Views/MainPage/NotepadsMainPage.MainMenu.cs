@@ -11,6 +11,7 @@
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Media;
     using Notepads.Services;
+    using Notepads.Settings;
 
     public sealed partial class NotepadsMainPage
     {
@@ -34,8 +35,7 @@
 
             if (!App.IsPrimaryInstance)
             {
-                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-                MenuSettingsButton.IsEnabled = false;
+                MainMenuButton.Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
             }
 
             if (App.IsGameBarWidget)
@@ -106,7 +106,7 @@
             MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
         }
 
-        private async Task BuildOpenRecentButtonSubItems()
+        public async Task BuildOpenRecentButtonSubItems(bool invokeAfterChanged = true)
         {
             var openRecentSubItem = new MenuFlyoutSubItem
             {
@@ -168,6 +168,8 @@
                 var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
                 MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
             }
+
+            if (invokeAfterChanged) ApplicationSettingsStore.SignalDataChanged(InterInstanceSyncService.RecentFilesListKey);
         }
     }
 }

@@ -1,0 +1,18 @@
+﻿#pragma once
+#include "winrt/base.h"
+
+#define APP_CENTER_SECRET L""
+#define PACKAGE_SID_STR L"PackageSidStr"
+#define APP_CENTER_INSTALL_ID_STR L"AppCenterInstallIdStr"
+#define LAST_CHANGED_SETTINGS_KEY_STR L"LastChangedSettingsKeyStr"
+#define LAST_CHANGED_SETTINGS_APP_INSTANCE_ID_STR L"LastChangedSettingsAppInstanceIdStr"
+#define LAUNCH_ELEVATED_PROCESS_SUCCESS_STR L"LaunchElevatedProcessSuccess"
+#define LAUNCH_ELEVATED_PROCESS_FAILED_STR L"LaunchElevatedProcessFailed"
+#define EXTENSION_PROCESS_LIFETIME_OBJ_NAME_STR L"ExtensionProcessLifetimeObj"
+#define ELEVATED_PROCESS_LIFETIME_OBJ_NAME_STR L"ElevatedProcessLifetimeObj"
+#define EXTENSION_UNBLOCK_EVENT_NAME_STR L"NotepadsExtensionUnblockEvent"
+#define ELEVATED_WRITE_EVENT_NAME_STR L"NotepadsElevatedWriteEvent"
+#define ELEVATED_RENAME_EVENT_NAME_STR L"NotepadsElevatedRenameEvent"
+#define EXTENSION_UNBLOCK_PIPE_CONNECTION_NAME_STR L"NotepadsExtensionUnblockPipe"
+#define ELEVATED_WRITE_PIPE_CONNECTION_NAME_STR L"NotepadsElevatedWritePipe"
+#define ELEVATED_RENAME_PIPE_CONNECTION_NAME_STR L"NotepadsElevatedRenamePipe"

@@ -9,6 +9,7 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Microsoft.Toolkit.Uwp.Helpers;
+    using Notepads.Core;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -31,8 +32,6 @@
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
-        private const string AppCenterSecret = null;
-
         public static Mutex InstanceHandlerMutex { get; set; }
 
         /// <summary>
@@ -45,7 +44,7 @@
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(AppCenterSecret, services);
+            AppCenter.Start(CoreKey.AppCenterSecret, services);
 
             InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)
@@ -65,6 +64,7 @@
             InitializeComponent();
 
             Suspending += OnSuspending;
+            LeavingBackground += OnLeavingBackground;
         }
 
         /// <summary>
@@ -107,7 +107,6 @@
             {
                 { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
                 { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
-                { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
                 { "AppBackgroundTintOpacity", $"{(int) (ThemeSettingsService.AppBackgroundPanelTintOpacity * 10.0) * 10}" },
@@ -219,6 +218,18 @@
             deferral.Complete();
         }
 
+        /// <summary>
+        /// Occurs when the app moves to foreground from background.
+        /// Pending changes to the UI is made before app comes to focus.
+        /// </summary>
+        /// <param name="sender">The source of the leaving background request.</param>
+        /// <param name="e">Details about the leaving background request.</param>
+        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            ThemeSettingsService.Initialize(true);
+            AppSettingsService.Initialize(true);
+        }
+
         // Occurs when an exception is not handled on the UI thread.
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
@@ -241,7 +252,8 @@
                 $"Exception: {e.Exception}, " +
                 $"Message: {e.Message}, " +
                 $"InnerException: {e.Exception?.InnerException}, " +
-                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
+                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}, " +
+                $"IsDesktopExtension: {false}",
                 "UnhandledException");
 
             Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);

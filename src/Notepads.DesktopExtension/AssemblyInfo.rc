@@ -1,0 +1,72 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+#ifdef _PRODUCTION
+            VALUE "FileDescription", "Notepads"
+            VALUE "ProductName", "Notepads"
+#else
+            VALUE "FileDescription", "Notepads-Dev"
+            VALUE "ProductName", "Notepads-Dev"
+#endif
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "Notepads.DesktopExtension"
+            VALUE "LegalCopyright", "Copyright © 2020 Jackie Liu"
+            VALUE "OriginalFilename", "Notepads.DesktopExtension"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Text File
+//
+
+APPCENTER_SDK_VERSION   TEXTFILE                  "appcenter-sdk-version.txt"
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////

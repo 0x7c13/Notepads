@@ -274,6 +274,9 @@
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
+
+            InterInstanceSyncService.Initialize(this);
+            DesktopExtensionService.Initialize();
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -350,6 +353,7 @@
                 // Save session before app exit
                 await SessionManager.SaveSessionAsync(() => { SessionManager.IsBackupEnabled = false; });
                 App.InstanceHandlerMutex?.Dispose();
+                DesktopExtensionService.Dispose();
                 deferral.Complete();
                 return;
             }
@@ -357,6 +361,7 @@
             if (!NotepadsCore.HaveUnsavedTextEditor())
             {
                 App.InstanceHandlerMutex?.Dispose();
+                DesktopExtensionService.Dispose();
                 deferral.Complete();
                 return;
             }
@@ -390,6 +395,7 @@
                     else
                     {
                         App.InstanceHandlerMutex?.Dispose();
+                        DesktopExtensionService.Dispose();
                     }
 
                     deferral.Complete();
@@ -397,6 +403,7 @@
                 discardAndExitAction: () =>
                 {
                     App.InstanceHandlerMutex?.Dispose();
+                    DesktopExtensionService.Dispose();
                     deferral.Complete();
                 },
                 cancelAction: () =>
@@ -428,6 +435,11 @@
             {
                 editorFlyout.Hide();
             }
+        }
+
+        public void CloseSettingsPane()
+        {
+            RootSplitView.IsPaneOpen = false;
         }
 
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)

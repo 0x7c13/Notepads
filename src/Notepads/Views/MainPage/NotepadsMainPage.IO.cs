@@ -152,6 +152,46 @@
             }
         }
 
+        private async Task<bool> TrySaveFile(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        {
+            var isSaveSuccess = true;
+
+            try
+            {
+                await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+            }
+            catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
+            {
+                isSaveSuccess = false;
+            }
+            catch (FileNotFoundException) // Happens when the file not found or storage media is removed
+            {
+                isSaveSuccess = false;
+            }
+            catch (AdminstratorAccessException) // Happens when the file we are saving is read-only, ask user for permission to write
+            {
+                var launchElevatedProcessDialog = new LaunchElevatedProcessDialog(
+                    ElevatedOperationType.Save, file.Path,
+                    async () =>
+                    {
+                        await DesktopExtensionService.LaunchElevetedProcess();
+                    },
+                    () =>
+                    {
+                        isSaveSuccess = false;
+                    });
+
+                var dialogResult = await DialogManager.OpenDialogAsync(launchElevatedProcessDialog, awaitPreviousDialog: false);
+
+                if (dialogResult == null || launchElevatedProcessDialog.IsAborted)
+                {
+                    isSaveSuccess = false;
+                }
+            }
+
+            return isSaveSuccess;
+        }
+
         private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
@@ -175,21 +215,7 @@
                     file = textEditor.EditingFile;
                 }
 
-                bool promptSaveAs = false;
-                try
-                {
-                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
-                }
-                catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
-                {
-                    promptSaveAs = true;
-                }
-                catch (FileNotFoundException) // Happens when the file not found or storage media is removed
-                {
-                    promptSaveAs = true;
-                }
-
-                if (promptSaveAs)
+                if (!await TrySaveFile(textEditor, file, rebuildOpenRecentItems))
                 {
                     file = await OpenFileUsingFileSavePicker(textEditor);
                     if (file == null) return false; // User cancelled
@@ -245,7 +271,6 @@
                     {
                         await textEditor.RenameAsync(newFilename);
                         NotepadsCore.FocusOnSelectedTextEditor();
-                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
                     }
                     catch (Exception ex)
                     {

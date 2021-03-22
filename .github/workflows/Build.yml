@@ -11,7 +11,8 @@ jobs:
         configuration: [Debug, Release, Production]
     env:
       Solution_Name: src\Notepads.sln
-      Project_Path: src\Notepads\Notepads.csproj
+      Project_Path: src\Notepads.Package\Notepads.Package.wapproj
+      Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
 
     runs-on: windows-latest
     steps:
@@ -24,16 +25,43 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
+    # Add NuGet to the PATH: https://github.com/NuGet/setup-nuget
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      shell: 'pwsh'
+      run: |
+        msbuild $env:Solution_Name /t:Restore
+        nuget restore $env:Solution_Name
+
+    - name: 'Setup Vcpkg Binary Caching'
+      shell: 'pwsh'
+      run: |
+        & $(& $env:Vcpkg_Path fetch nuget | select -last 1) sources add `
+        -source "https://nuget.pkg.github.com/$env:Owner/index.json" `
+        -storepasswordincleartext `
+        -name "$env:Vcpkg_Nuget_Package" `
+        -username "$env:Owner" `
+        -password "$env:Key"
       env:
-        Configuration: ${{ matrix.configuration }}
+        Owner: ${{ github.repository_owner }}
+        Key: ${{ secrets.GITHUB_TOKEN }}
+        Vcpkg_Path: src\packages\vcpkg\vcpkg
 
     - name: Build
+      shell: 'pwsh'
       run: |
-        msbuild $env:Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageSigningEnabled=false /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
+        msbuild $env:Project_Path `
+        /p:Configuration=$env:Configuration `
+        /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode `
+        /p:AppxBundle=$env:Appx_Bundle `
+        /p:AppxPackageSigningEnabled=false `
+        /p:AppxBundlePlatforms="$env:Appx_Bundle_Platforms"
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
+        VCPKG_BINARY_SOURCES: 'clear;nuget,${{ env.Vcpkg_Nuget_Package }},readwrite;interactive'
+        VCPKG_USE_NUGET_CACHE: 'true'

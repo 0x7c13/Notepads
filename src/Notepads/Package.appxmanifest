@@ -6,10 +6,11 @@
          xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
          xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
          xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
          xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
          xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
          xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-         IgnorableNamespaces="mp uap uap5 uap10 desktop4 iot2 rescap">
+         IgnorableNamespaces="mp uap uap5 uap10 desktop desktop4 iot2 rescap">
   
   <Identity Name="Notepads" Publisher="CN=jackil" Version="1.4.2.0" />
   <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
@@ -22,6 +23,7 @@
   
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
   </Dependencies>
   
   <Resources>
@@ -64,6 +66,12 @@
             <uap5:ExecutionAlias Alias="Notepads.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="Notepads32.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="Launch" Parameters="/user" />
+            <desktop:ParameterGroup GroupId="Elevate" Parameters="/admin" />
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="text">
             <uap:SupportedFileTypes>
@@ -1178,6 +1186,9 @@
   
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="codeGeneration" />
     <rescap:Capability Name="confirmAppClose" />
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="allowElevation" />
   </Capabilities>
 </Package>
