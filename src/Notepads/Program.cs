@@ -36,7 +36,6 @@
                     break;
                 case LaunchActivatedEventArgs launchActivatedEventArgs:
                     bool handled = false;
-
                     if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
                     {
                         protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);

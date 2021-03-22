@@ -29,6 +29,7 @@
         public static Guid Id { get; } = Guid.NewGuid();
 
         public static event EventHandler<bool> OnInstanceTypeChanged;
+
         private static bool _isPrimaryInstance = false;
         public static bool IsPrimaryInstance
         {
@@ -301,8 +302,9 @@
         {
             if (InstanceHandlerMutex == null)
             {
-                InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
-                if (isNew)
+                InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool createdNew);
+
+                if (createdNew)
                 {
                     IsPrimaryInstance = true;
                     ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);

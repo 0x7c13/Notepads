@@ -332,7 +332,9 @@
             App.OnInstanceTypeChanged += (_, args) =>
             {
                 var wasSessionSnapshotEnabled = _isSessionSnapshotEnabled;
-                HandleSessionSnapshotSettings();
+
+                _isSessionSnapshotEnabled = IsSessionSnapshotEnabledInternal();
+
                 if (wasSessionSnapshotEnabled != _isSessionSnapshotEnabled)
                 {
                     if (_isSessionSnapshotEnabled)
@@ -346,27 +348,28 @@
                 }
             };
 
-            HandleSessionSnapshotSettings();
-            void HandleSessionSnapshotSettings()
+            _isSessionSnapshotEnabled = IsSessionSnapshotEnabledInternal();
+        }
+
+        private static bool IsSessionSnapshotEnabledInternal()
+        {
+            if (!App.IsPrimaryInstance)
             {
-                if (!App.IsPrimaryInstance)
+                return false;
+            }
+            else if (App.IsGameBarWidget)
+            {
+                return true;
+            }
+            else
+            {
+                if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
                 {
-                    _isSessionSnapshotEnabled = false;
-                }
-                else if (App.IsGameBarWidget)
-                {
-                    _isSessionSnapshotEnabled = true;
+                    return enableSessionBackupAndRestore;
                 }
                 else
                 {
-                    if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
-                    {
-                        _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
-                    }
-                    else
-                    {
-                        _isSessionSnapshotEnabled = false;
-                    }
+                    return false;
                 }
             }
         }

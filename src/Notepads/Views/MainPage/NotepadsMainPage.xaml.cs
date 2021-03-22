@@ -38,7 +38,7 @@
 
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-        private bool _sessionRestoreComplete = false;
+        private bool _sessionRestoreCompleted = false;
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
@@ -214,7 +214,8 @@
                     Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 }
             }
-            _sessionRestoreComplete = true;
+
+            _sessionRestoreCompleted = true;
 
             if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
             {
@@ -248,20 +249,10 @@
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
 
-                App.OnInstanceTypeChanged += (_, args) => IndicateInstanceType(args);
-                IndicateInstanceType(App.IsPrimaryInstance);
-                async void IndicateInstanceType(bool isPrimary)
-                {
-                    if (!isPrimary)
-                    {
-                        await Dispatcher.CallOnUIThreadAsync(() =>
-                        {
-                            NotificationCenter.Instance.PostNotification(
-                                _resourceLoader.GetString("App_ShadowWindowIndicator_Description"),
-                                4000);
-                        });
-                    }
-                }
+                App.OnInstanceTypeChanged -= ShowShadowWindowIndicatorBasedOnInstanceType;
+                App.OnInstanceTypeChanged += ShowShadowWindowIndicatorBasedOnInstanceType;
+                ShowShadowWindowIndicatorBasedOnInstanceType(this, App.IsPrimaryInstance);
+
                 _loaded = true;
             }
 
@@ -286,6 +277,19 @@
 
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
+            }
+        }
+
+        private async void ShowShadowWindowIndicatorBasedOnInstanceType(object sender, bool isPrimaryInstance)
+        {
+            if (!isPrimaryInstance)
+            {
+                await Dispatcher.CallOnUIThreadAsync(() =>
+                {
+                    NotificationCenter.Instance.PostNotification(
+                        _resourceLoader.GetString("App_ShadowWindowIndicator_Description"),
+                        4000);
+                });
             }
         }
 
@@ -446,8 +450,8 @@
 
         private async void OnSessionBackupAndRestoreOptionForInstanceChanged(object sender, bool isSessionBackupAndRestoreEnabled)
         {
-            // Execute only if session load is complete before instance type initialized
-            if (_sessionRestoreComplete)
+            // Execute only if session restore is complete before instance type initialized
+            if (_sessionRestoreCompleted)
             {
                 if (isSessionBackupAndRestoreEnabled)
                 {
