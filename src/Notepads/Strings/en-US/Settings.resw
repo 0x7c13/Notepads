@@ -322,7 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Once enabled, Exiting last tab closes the window, Notepads will always open file in a new window instead of creating a new tab.</value>
+    <value>Once enabled, Exiting last tab closes the app, Notepads will always open file in a new window instead of creating a new tab.</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
@@ -334,7 +334,7 @@
     <comment>AdvancedPage AppLifecyclePreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>App Lifecycle Preferences</value>
+    <value>App Behavior Preferences</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
@@ -422,11 +422,11 @@
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_ExitingLastTabClosesWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Exiting last tab closes window</value>
+    <value>Exit app when closing last tab</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_ExitingLastTabClosesWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Exiting last tab closes window</value>
+    <value>Exit app when closing last tab</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
   </data>
 </root>
