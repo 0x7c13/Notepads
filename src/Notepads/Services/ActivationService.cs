@@ -10,28 +10,26 @@
     {
         public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e)
         {
-            if (e is ProtocolActivatedEventArgs protocolActivatedEventArgs)
+            switch (e)
             {
-                ProtocolActivated(rootFrame, protocolActivatedEventArgs);
-            }
-            else if (e is FileActivatedEventArgs fileActivatedEventArgs)
-            {
-                await FileActivated(rootFrame, fileActivatedEventArgs);
-            }
-            else if (e is CommandLineActivatedEventArgs commandLineActivatedEventArgs)
-            {
-                await CommandActivated(rootFrame, commandLineActivatedEventArgs);
-            }
-            else if (e is LaunchActivatedEventArgs launchActivatedEventArgs)
-            {
-                LaunchActivated(rootFrame, launchActivatedEventArgs);
-            }
-            else // For other types of activated events
-            {
-                if (rootFrame.Content == null)
-                {
-                    rootFrame.Navigate(typeof(NotepadsMainPage));
-                }
+                case ProtocolActivatedEventArgs protocolActivatedEventArgs:
+                    ProtocolActivated(rootFrame, protocolActivatedEventArgs);
+                    break;
+                case FileActivatedEventArgs fileActivatedEventArgs:
+                    await FileActivated(rootFrame, fileActivatedEventArgs);
+                    break;
+                case CommandLineActivatedEventArgs commandLineActivatedEventArgs:
+                    await CommandActivated(rootFrame, commandLineActivatedEventArgs);
+                    break;
+                case LaunchActivatedEventArgs launchActivatedEventArgs:
+                    LaunchActivated(rootFrame, launchActivatedEventArgs);
+                    break;
+                default: // For other types of activated events
+                    if (rootFrame.Content == null)
+                    {
+                        rootFrame.Navigate(typeof(NotepadsMainPage));
+                    }
+                    break;
             }
         }
 
