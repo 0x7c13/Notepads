@@ -322,7 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Once enabled, Exiting last tab closes the app, Notepads will always open file in a new window instead of creating a new tab.</value>
+    <value>Once enabled, Notepads will always open file in a new window instead of creating a new tab.</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_AppLifecyclePreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
