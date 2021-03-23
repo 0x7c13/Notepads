@@ -322,7 +322,9 @@
 
             InitializeSessionSnapshotSettings();
 
-            InitializeAppLifecyclePreferencesSettings();
+            InitializeAppOpeningPreferencesSettings();
+
+            InitializeAppClosingPreferencesSettings();
         }
 
         private static void InitializeStatusBarSettings()
@@ -569,7 +571,19 @@
             }
         }
 
-        private static void InitializeAppLifecyclePreferencesSettings()
+        private static void InitializeAppOpeningPreferencesSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
+            {
+                _alwaysOpenNewWindow = alwaysOpenNewWindow;
+            }
+            else
+            {
+                _alwaysOpenNewWindow = false;
+            }
+        }
+
+        private static void InitializeAppClosingPreferencesSettings()
         {
             if (ApplicationSettingsStore.Read(SettingsKey.ExitingLastTabClosesWindowBool) is bool exitingLastTabClosesWindow)
             {
@@ -578,15 +592,6 @@
             else
             {
                 _exitingLastTabClosesWindow = false;
-            }
-
-            if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindow)
-            {
-                _alwaysOpenNewWindow = alwaysOpenNewWindow;
-            }
-            else
-            {
-                _alwaysOpenNewWindow = false;
             }
         }
     }
