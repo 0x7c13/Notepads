@@ -32,11 +32,8 @@
             MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            if (!App.IsPrimaryInstance)
-            {
-                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-                MenuSettingsButton.IsEnabled = false;
-            }
+            App.OnInstanceTypeChanged += (sender, args) => CustomizeBasedOnInstanceType(args);
+            CustomizeBasedOnInstanceType(App.IsPrimaryInstance);
 
             if (App.IsGameBarWidget)
             {
@@ -59,6 +56,16 @@
             }
 
             MainMenuButtonFlyout.Opening += MainMenuButtonFlyout_Opening;
+        }
+
+        private void CustomizeBasedOnInstanceType(bool isPrimaryInstance)
+        {
+            // Apply UI changes for shadow instance
+            if (!isPrimaryInstance)
+            {
+                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+                MenuSettingsButton.IsEnabled = false;
+            }
         }
 
         private void MainMenuButtonFlyout_Opening(object sender, object e)
