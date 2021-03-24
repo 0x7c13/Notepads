@@ -273,7 +273,7 @@ NOTE:
 
 - Associate your [Microsoft Partner Center with the Azure AD tenant](https://docs.microsoft.com/en-us/windows/uwp/publish/associate-azure-ad-with-partner-center)
 
-- [Create a new app registration](https://docs.microsoft.com/en-us/powerapps/developer/data-platform/walkthrough-register-app-azure-active-directory#:~:text=In%20the%20Azure%20portal%2C%20select,be%20displayed%20to%20the%20users.) or use an existing one
+- [Create a new app registration](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml) or use an existing one from the list in your **portal.azure.com** -> **Azure Active Directory** -> **App registrations** section
 
 - Add the [Azure AD application to the Microsoft Partner Center](https://docs.microsoft.com/en-us/partner-center/service-principal) and give it "Manager" permissions
 
@@ -284,6 +284,8 @@ NOTE:
    - copy and paste the values shown in the screenshot below to the appropriate secret:
 
 ![Publish_to_store_1](ScreenShots/CI-CD_DOCUMENTATION/Publish_to_store_1.png)
+
+Note: screenshot is taken from **portal.azure.com** -> **Azure AD** -> **App registrations** -> **app-name** page
 
 2. **AZURE_AD_APPLICATION_SECRET**
 
