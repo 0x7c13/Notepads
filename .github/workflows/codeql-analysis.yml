@@ -1,0 +1,73 @@
+name: CodeQL Analysis
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  analyze:
+    name: codeql-analysis
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [ Production ]
+    env:
+      SOLUTION_NAME: src\Notepads.sln
+      PROJECT_PATH: src\Notepads\Notepads.csproj
+      CONFIGURATION: ${{ matrix.configuration }}
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+
+      # Due to the insufficient memory allocated by default, CodeQL sometimes requires more to be manually allocated
+      - name: Configure Pagefile
+        id: config_pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+            minimum-size: 8GB
+            maximum-size: 32GB
+            disk-root: "D:"
+
+      - name: Setup MSBuild
+        id: setup_msbuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Restore application
+        id: restore_app
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /t:Restore `
+          /p:Configuration=$env:CONFIGURATION          
+
+      - name: Initialize CodeQL
+        id: init_codeql
+        uses: github/codeql-action/init@v1
+        with:
+          queries: security-and-quality
+
+      - name: Build application
+        id: build_app
+        shell: pwsh
+        run: |
+          msbuild $env:PROJECT_PATH `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:UapAppxPackageBuildMode=$env:APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxPackageSigningEnabled=false `
+          /p:AppxBundlePlatforms="$env:APPX_BUNDLE_PLATFORMS"
+        env:
+          PLATFORM: x64
+          APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_BUNDLE_PLATFORMS: x64
+
+      - name: Perform CodeQL Analysis
+        id: analyze_codeql
+        uses: github/codeql-action/analyze@v1
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

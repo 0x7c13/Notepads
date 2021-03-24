@@ -11,8 +11,8 @@
          xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
          IgnorableNamespaces="mp uap uap5 uap10 desktop4 iot2 rescap">
   
-  <Identity Name="Notepads" Publisher="CN=jackil" Version="1.4.2.0" />
-  <mp:PhoneIdentity PhoneProductId="dde28e6c-0f89-4885-83bc-51d9580080a1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="19282JackieLiu.Notepads-Beta" Publisher="CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804" Version="1.4.3.0" />
+  <mp:PhoneIdentity PhoneProductId="df234254-de03-48f0-80a0-11b5082ec740" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   
   <Properties>
     <DisplayName>Notepads App</DisplayName>
