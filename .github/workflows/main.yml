@@ -248,7 +248,7 @@ jobs:
 
       - name: Publish to Windows Store
         id: publish_to_store
-        uses: isaacrlevin/windows-store-action@main
+        uses: isaacrlevin/windows-store-action@1.0
         with:
           tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
           client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
