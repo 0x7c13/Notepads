@@ -455,6 +455,16 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="Package.targets" />
+  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
+    <PropertyGroup>
+      <InputFile>App.xaml.cs</InputFile>
+    </PropertyGroup>
+    <WriteLinesToFile
+        File="$(InputFile)"
+        Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))"
+        Overwrite="true"
+        Encoding="Unicode"/>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

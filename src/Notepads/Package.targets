@@ -68,17 +68,6 @@
       <AppxManifest Include="$(GeneratedAppxManifest)" />
     </ItemGroup>
   </Target>
-  
-  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
-    <PropertyGroup>
-      <InputFile>App.xaml.cs</InputFile>
-    </PropertyGroup>
-    <WriteLinesToFile
-        File="$(InputFile)"
-        Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))"
-        Overwrite="true"
-        Encoding="Unicode"/>
-  </Target>
 
   <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
   <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->

@@ -150,7 +150,7 @@ jobs:
           $FROM_BASE64_STR = [Convert]::FromBase64String($BASE64_STR)
           [IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
         env:
-          BASE64_STR: ${{ secrets.PFX_TO_BASE64 }}
+          BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
           DEFAULT_DIR: ${{ github.workspace }}
 
       - name: Restore the application
@@ -245,5 +245,15 @@ jobs:
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Windows Store
+        id: publish_to_store
+        uses: isaacrlevin/windows-store-action@main
+        with:
+          tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+          app-id: ${{ secrets.STORE_APP_ID }}
+          package-path: "${{ github.workspace }}/Artifacts/"
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

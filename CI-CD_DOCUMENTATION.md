@@ -1,8 +1,9 @@
 # Notepads CI/CD documentation
 
-* after merging the PR, the first run of the "Notepads CI/CD Pipeline" workflow will not complete successfully, because it requires specific setup explained in this documentation. The two other workflows "CodeQL Analysis" and "Build", should complete successfully.
+- after merging the PR, the first run of the "Notepads CI/CD Pipeline" workflow will not complete successfully, because it requires specific setup explained in this documentation. The two other workflows "CodeQL Analysis" and "Build", should complete successfully.
 
 ## 1. Set up SonarCloud
+
 ### SonarCloud is a cloud-based code quality and security service
 
 #### Create SonarCloud project
@@ -33,9 +34,9 @@
 
 - Under "Choose your analysis method" click "With GitHub Actions" and **keep the following page open**
 
-- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#6-how-to-create-a-pat) and copy the value of the generated token
+- [Create a new PAT with **repo_deployment** and **read:packages** permissions](#7-how-to-create-a-pat) and copy the value of the generated token
 
-- In the project's GitHub repository, go to the **Settings** tab -> Secrets 
+- In the project's GitHub repository, go to the **Settings** tab -> Secrets
 
 - Click on **New Repository secret** and create a new secret with the name **SONAR_GITHUB_TOKEN** and the token you just copied as the value
 
@@ -43,7 +44,7 @@
 
 ![SonarCloud_1](ScreenShots/CI-CD_DOCUMENTATION/SonarCloud_1.png)
 
-- [Run the "Notepads CI/CD Pipeline" workflow manually](#2-run-workflow-manually) 
+- [Run the "Notepads CI/CD Pipeline" workflow manually](#2-run-workflow-manually)
 
 #### Set Quality Gate
 
@@ -59,15 +60,15 @@
 
 Once you've set up all the steps above correctly, you should be able to successfully complete a manual execution of the "Notepads CI/CD Pipeline" workflow.
 
-  1. Go to the project's GitHub repository and click on the **Actions** tab
+1. Go to the project's GitHub repository and click on the **Actions** tab
 
-  2. From the "Workflows" list on the left, click on "Notepads CI/CD Pipeline"
+2. From the "Workflows" list on the left, click on "Notepads CI/CD Pipeline"
 
-  3. On the right, next to the "This workflow has a workflow_dispatch event trigger" label, click on the "Run workflow" dropdown, make sure the default branch is selected (if not manually changed, should be main or master) in the "Use workflow from" dropdown and click the "Run workflow" button
+3. On the right, next to the "This workflow has a workflow_dispatch event trigger" label, click on the "Run workflow" dropdown, make sure the default branch is selected (if not manually changed, should be main or master) in the "Use workflow from" dropdown and click the "Run workflow" button
 
 ![Actions_workflow_dispatch](ScreenShots/CI-CD_DOCUMENTATION/Actions_workflow_dispatch.png)
 
-  4. Once the workflow run has completed successfully, move on to the next step of the documentation
+4. Once the workflow run has completed successfully, move on to the next step of the documentation
 
 NOTE: **screenshots are only exemplary**
 
@@ -84,6 +85,7 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 ![Dependabot_log_page](ScreenShots/CI-CD_DOCUMENTATION/Dependabot_log_page.png)
 
 ### Set up security alerts and updates
+
 ##### - GitHub, through Dependabot, also natively offers a security check for vulnerable dependencies
 
 1. Go to "Settings" tab of the repo
@@ -103,6 +105,7 @@ Dependabot is a GitHub native security tool that goes through the dependencies i
 ![Dependabot_PRs](ScreenShots/CI-CD_DOCUMENTATION/Dependabot_PRs.png)
 
 ### Set up Dependency graph
+
 ##### - The "Dependency graph" option should be enabled by default for all public repos, but in case it isn't:
 
 1. Go to "Settings" tab of the repo
@@ -121,9 +124,9 @@ NOTE: **screenshots are only exemplary**
 
 ## 4. CodeQL
 
-CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL requires no setup, because it comes fully pre-configured by us. 
+CodeQL is GitHub's own industry-leading semantic code analysis engine. CodeQL requires no setup, because it comes fully pre-configured by us.
 
-To activate it and see its results, only a push commit or a merge of a PR to the default branch of the repository, is required. 
+To activate it and see its results, only a push commit or a merge of a PR to the default branch of the repository, is required.
 
 We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it automatically scans the code.
 
@@ -136,13 +139,14 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 ![CodeQL_alert_page](ScreenShots/CI-CD_DOCUMENTATION/CodeQL_alert_page.png)
 
 ### Code scanning alerts bulk dismissal tool
+
 ##### - currently, GitHub allows for only 25 code scanning alerts to be dismissed at a time. Sometimes, you might have hundreds you would like to dismiss, so you will have to click many times and wait for a long time to dismiss them. Via the "csa-bulk-dismissal.yml", you would be able to that with one click.
 
 NOTE: This tool executes manual **only**. It won't execute on any other GitHub event like push commit, PR creation etc.
 
 #### 1. Setup
 
-1. In the repository, go to the **Settings** tab -> **Secrets** 
+1. In the repository, go to the **Settings** tab -> **Secrets**
 
 ![CSA_secrets](ScreenShots/CI-CD_DOCUMENTATION/CSA_secrets.png)
 
@@ -152,7 +156,7 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 ![CSA_secret_add](ScreenShots/CI-CD_DOCUMENTATION/CSA_secret_add.png)
 
-- CSA_ACCESS_TOKEN - [create a PAT with "security_events" permission only](#6-how-to-create-a-pat).
+- CSA_ACCESS_TOKEN - [create a PAT with "security_events" permission only](#7-how-to-create-a-pat).
 
 - DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one as the value of this secret, out of the three available options: **false positive**, **won't fix** or **used in tests**.
 
@@ -205,15 +209,18 @@ Automatically bumps up the GitHub tag in the repo, creates a GitHub release with
 
 Add the following secrets by going to the repo **Settings** tab -> **Secrets**:
 
-1. **GIT_USER_NAME** 
+1. **GIT_USER_NAME**
+
 - used to add the identity required for creating a tag
 - copy and paste your GitHub username as the value of the secret
 
-2. **GIT_USER_EMAIL** 
-- used to add the identity required for creating a tag 
+2. **GIT_USER_EMAIL**
+
+- used to add the identity required for creating a tag
 - copy and paste your primary GitHub email as the value of the secret
 
-3. **PFX_TO_BASE64**
+3. **PACKAGE_CERTIFICATE_BASE64**
+
 - used to dynamically create the PFX file required for the signing of the **msixbundle**
 - use the following PowerShell code locally to turn your PFX file into Base64:
 
@@ -227,10 +234,12 @@ $PFX_FILE = [IO.File]::ReadAllBytes('absolute_path_to_PFX')
 - copy the contents of the **cert.txt** and paste as the value of the secret
 
 4. **PACKAGE_CERTIFICATE_PWD**
+
 - used in the build of the project to authenticate the PFX
 - copy and paste the password of your PFX as the value of this secret
 
-NOTE: 
+NOTE:
+
 - none of those values are visible in the logs of the pipeline, nor are available to anyone outside of the original repository e.g. forks, anonymous clones etc.
 - the dynamically created PFX file lives only for the duration of the pipeline execution
 
@@ -244,7 +253,8 @@ Follow these steps to trigger the automated GitHub release process:
 
 If the setup was done correctly and there are no errors in the pipeline, when the pipeline successfully completes, there should be a new, properly tagged GitHub release with the msixbundle attached to it.
 
-NOTE: 
+NOTE:
+
 - the tag itself is used as the required description of the newly created tag, which appears here:
 
 ![Release_1](ScreenShots/CI-CD_DOCUMENTATION/Release_1.png)
@@ -255,29 +265,65 @@ NOTE:
 
 <br>
 
-## 6. How to create a PAT
+## 6. Setup automated publishing to the Windows Store
+
+#### - for the automation to work, at least one submission needs to be already created manually
+
+- [Create an Azure AD tenant](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-create-new-tenant) or use an existing one
+
+- Associate your [Microsoft Partner Center with the Azure AD tenant](https://docs.microsoft.com/en-us/windows/uwp/publish/associate-azure-ad-with-partner-center)
+
+- [Create a new app registration](https://docs.microsoft.com/en-us/powerapps/developer/data-platform/walkthrough-register-app-azure-active-directory#:~:text=In%20the%20Azure%20portal%2C%20select,be%20displayed%20to%20the%20users.) or use an existing one
+
+- Add the [Azure AD application to the Microsoft Partner Center](https://docs.microsoft.com/en-us/partner-center/service-principal) and give it "Manager" permissions
+
+- In the project's GitHub repo, create the following secrets:
+
+1. **AZURE_AD_TENANT_ID** and **AZURE_AD_APPLICATION_CLIENT_ID**
+
+   - copy and paste the values shown in the screenshot below to the appropriate secret:
+
+![Publish_to_store_1](ScreenShots/CI-CD_DOCUMENTATION/Publish_to_store_1.png)
+
+2. **AZURE_AD_APPLICATION_SECRET**
+
+   - copy and paste the value you get on the page following from **Account settings** -> **User management** -> **Azure AD applications** -> click on the added application:
+
+![Publish_to_store_2](ScreenShots/CI-CD_DOCUMENTATION/Publish_to_store_2.png)
+
+3. **STORE_APP_ID**
+
+   - copy and paste the highlighted code as the value of this secret:
+
+![Publish_to_store_3](ScreenShots/CI-CD_DOCUMENTATION/Publish_to_store_3.png)
+
+- If everything was setup correctly, on your next push commit to the `master` branch with a new `Identity.Version` in the `Package.appxmanifest`, a new submission in the Microsoft Partner Center with the new `*.msixupload` package should appear and be automatically submitted if all verifications pass
+
+<br>
+
+## 7. How to create a PAT
 
 - In a new tab open GitHub, at the top right corner, click on your profile picture and click on **Settings** from the dropdown.
 
-	![CSA_new_pat_1](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
+  ![CSA_new_pat_1](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_1.png)
 
 - Go to Developer Settings -> Personal access tokens.
 
-	![CSA_new_pat_2](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
+  ![CSA_new_pat_2](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_2.png)
 
-	![CSA_new_pat_3](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
+  ![CSA_new_pat_3](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_3.png)
 
 - Click the **Generate new token** button and enter password if prompted.
 
-	![CSA_new_pat_4](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
+  ![CSA_new_pat_4](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_4.png)
 
 - Name the token, from the permissions list choose the ones needed and at the bottom click on the **Generate token** button.
 
-	![CSA_new_pat_5](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
+  ![CSA_new_pat_5](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_5.png)
 
-- Copy the token value and paste it wherever its needed 
+- Copy the token value and paste it wherever its needed
 
-	![CSA_new_pat_6](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
+  ![CSA_new_pat_6](ScreenShots/CI-CD_DOCUMENTATION/CSA_new_pat_6.png)
 
 NOTE: once you close or refresh the page, you won't be able to copy the value of the PAT again!
 
