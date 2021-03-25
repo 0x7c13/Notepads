@@ -124,8 +124,8 @@ jobs:
         id: lowercase_string_gen
         shell: pwsh
         run: |
-          $LOWERCASE_OWNER = "${{ github.repository_owner }}".ToLower()
-          echo "::set-output name=owner_name::$LOWERCASE_OWNER"
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
+          echo "::set-output name=repository_name::$LOWERCASE_REPOSITORY_NAME"
 
       - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Initialize SonarCloud scanner
@@ -134,7 +134,7 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
-          /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" `
+          /o:"${{ steps.lowercase_string_gen.outputs.repository_name }}" `
           /d:sonar.login="$env:SONAR_TOKEN" `
           /d:sonar.host.url="https://sonarcloud.io"
         env:
