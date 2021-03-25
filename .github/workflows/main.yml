@@ -134,7 +134,7 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
-          /o:"${{ steps.lowercase_string_gen.outputs.owner_name }}" `
+          /o:"${{ github.event.repository.name }}" `
           /d:sonar.login="$env:SONAR_TOKEN" `
           /d:sonar.host.url="https://sonarcloud.io"
         env:
