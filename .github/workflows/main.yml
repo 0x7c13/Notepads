@@ -100,10 +100,10 @@ jobs:
         id: init_sonar_scanner
         shell: pwsh
         run: |
-          $LOWERCASE_REPOSITORY_OWNER = "${{ github.repository_owner }}".ToLower()        
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
-          /o:"$LOWERCASE_REPOSITORY_OWNER" `
+          /o:"$LOWERCASE_REPOSITORY_NAME" `
           /d:sonar.login="$env:SONAR_TOKEN" `
           /d:sonar.host.url="https://sonarcloud.io"
         env:
