@@ -52,18 +52,24 @@ jobs:
         run: |
           $IS_RELEASE_CANDIDATE = 'false'
           $RUN_ANALYSIS = 'true'
+          $APPX_BUNDLE_PLATFORMS = 'x86|x64|ARM64'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $IS_RELEASE_CANDIDATE = 'true'
           }
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $RUN_ANALYSIS = 'false'
           }
+          if ( $env:BUILD_CONFIGURATION -ceq $env:DEBUG_CONFIGURATION ) {
+            $APPX_BUNDLE_PLATFORMS = 'x86|x64'
+          }
           echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
           echo "::set-output name=run_analysis::$(echo $RUN_ANALYSIS)"
+          echo "::set-output name=appx_bundle_platforms::$(echo $APPX_BUNDLE_PLATFORMS)"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
           BUILD_CONFIGURATION: ${{ matrix.configuration }}
+          DEBUG_CONFIGURATION: Debug
           RELEASE_CONFIGURATION: Production
 
       - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
@@ -218,7 +224,7 @@ jobs:
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
           APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
-          APPX_BUNDLE_PLATFORMS: x86|x64|ARM64
+          APPX_BUNDLE_PLATFORMS: ${{ steps.step_conditionals_handler.outputs.appx_bundle_platforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
