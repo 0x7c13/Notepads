@@ -19,7 +19,7 @@ jobs:
   setup:
     runs-on: windows-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
       - name: Setup strategy matrix
         id: set_matrix
