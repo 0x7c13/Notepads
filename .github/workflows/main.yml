@@ -16,11 +16,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Setup strategy matrix
+        id: set_matrix
+        shell: pwsh
+        run: |
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
+            echo "::set-output name=matrix::{\"include\":[{\"configuration\":\"Debug\"},{\"configuration\":\"Release\"},{\"configuration\":\"Production\"}]}"
+          } else {
+            echo "::set-output name=matrix::{\"include\":[{\"configuration\":\"Production\"}]}"
+          }
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+
   ci:
+    needs: setup
     runs-on: windows-latest
     strategy:
-      matrix:
-        configuration: [ Debug, Release, Production ]
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     outputs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
