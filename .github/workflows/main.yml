@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        configuration: [ Production ]
+        configuration: [ Debug, Release, Production ]
     outputs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
@@ -23,10 +23,10 @@ jobs:
         run: |
           $IS_PUSH_TO_MASTER = 'false'
           $IS_NOT_PR = 'true'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $IS_PUSH_TO_MASTER = 'true'
           }
-          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $IS_NOT_PR = 'false'
           }
           echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
@@ -35,6 +35,7 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
           BUILD_CONFIGURATION: ${{ matrix.configuration }}
+          RELEASE_CONFIGURATION: Production
 
       - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
         name: Set up JDK 11
@@ -43,6 +44,7 @@ jobs:
         with:
           java-version: 1.11
 
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
       - name: Install .NET Core
         id: install_dotnet_dependencies
         uses: actions/setup-dotnet@v1
