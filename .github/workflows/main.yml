@@ -26,9 +26,9 @@ jobs:
         shell: pwsh
         run: |
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
-            echo "::set-output name=matrix::{\"include\":[{\"configuration\":\"Debug\"},{\"configuration\":\"Release\"},{\"configuration\":\"Production\"}]}"
+            echo "::set-output name=matrix::{""include"":[{""configuration"":""Debug""},{""configuration"":""Release""},{""configuration"":""Production""}]}"
           } else {
-            echo "::set-output name=matrix::{\"include\":[{\"configuration\":\"Production\"}]}"
+            echo "::set-output name=matrix::{""include"":[{""configuration"":""Production""}]}"
           }
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
@@ -247,7 +247,7 @@ jobs:
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
     if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.is_release_candidate == 'true'
-    needs: ci
+    needs: [ setup, ci ]
     runs-on: windows-latest
     env:
       NEW_VERSION: ${{ needs.ci.outputs.new_version }}
