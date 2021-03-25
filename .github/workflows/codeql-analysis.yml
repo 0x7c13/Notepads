@@ -2,7 +2,17 @@ name: CodeQL Analysis
 
 on:
   push:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
   pull_request:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
   schedule:
     - cron: '0 8 * * *'
 

@@ -1,6 +1,19 @@
 name: Notepads CI/CD Pipeline
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
+  pull_request:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
+  workflow_dispatch:
 
 jobs:
   ci:
@@ -11,7 +24,7 @@ jobs:
     outputs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
-      latest_tag: ${{ steps.get_latest_tag.outputs.tag }}
+      is_release_candidate: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
       is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
     env:
       SOLUTION_NAME: src\Notepads.sln
@@ -65,23 +78,31 @@ jobs:
         id: get_assembly_version
         shell: pwsh
         run: |
-          cd src/Notepads/
-          $xml = [xml](Get-Content Package.appxmanifest)
-          $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity | Select -ExpandProperty Version
+          $xml = [xml](Get-Content $env:APPX_MANIFEST_ROOT\Package.appxmanifest)
+          $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity.Version
           echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
           echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
+        env:
+          APPX_MANIFEST_ROOT: src\Notepads
 
       - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
-        name: Get latest tag
-        id: get_latest_tag
+        name: Check latest tag
+        id: check_latest_tag
         shell: pwsh
         run: |
+          $IS_RELEASE_CANDIDATE = 'false'
           $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
-          echo "::set-output name=tag::$(echo $LATEST_TAG)"
+          $LATEST_VERSION = [System.Version]::Parse($LATEST_TAG -replace 'v')
+          $NEW_VERSION = [System.Version]::Parse($env:NEW_VERSION_NUMBER)
+          if ($LATEST_VERSION.CompareTo($NEW_VERSION) -gt 0) {
+            $IS_RELEASE_CANDIDATE = 'true'
+          }
+          echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
         env:
           GIT_URL: ${{ github.repository }}
+          NEW_VERSION_NUMBER: ${{ steps.get_assembly_version.outputs.version_num }}
           
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.get_assembly_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.check_latest_tag.outputs.is_release_candidate == 'true'
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: pwsh
@@ -159,9 +180,7 @@ jobs:
         id: restore_application
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
-          /t:Restore `
-          /p:Configuration=$env:CONFIGURATION
+          msbuild $env:SOLUTION_NAME /t:Restore
 
       - name: Build and generate bundles
         id: build_app
@@ -195,7 +214,7 @@ jobs:
         shell: pwsh
         run: |
           .\.sonar\scanner\dotnet-sonarscanner end `
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.login="$env:SONAR_TOKEN"
         env:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -210,7 +229,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version_tag != needs.ci.outputs.latest_tag
+    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.is_release_candidate == 'true'
     needs: ci
     runs-on: windows-latest
     env:
