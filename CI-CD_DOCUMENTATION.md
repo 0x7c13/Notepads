@@ -201,25 +201,17 @@ To add more descriptions, follow these steps:
 
 <br>
 
-## 5. Automated GitHub release
+## 5. Automated versioning
 
-Automatically bumps up the GitHub tag in the repo, creates a GitHub release with the new tag and attaches the msixbundle to it
+Automatically bumps up the GitHub tag in the repo and executes the CD job
+
+Note: **not every commit to your master branch creates a release**
 
 #### Setup
 
 Add the following secrets by going to the repo **Settings** tab -> **Secrets**:
 
-1. **GIT_USER_NAME**
-
-- used to add the identity required for creating a tag
-- copy and paste your GitHub username as the value of the secret
-
-2. **GIT_USER_EMAIL**
-
-- used to add the identity required for creating a tag
-- copy and paste your primary GitHub email as the value of the secret
-
-3. **PACKAGE_CERTIFICATE_BASE64**
+1. **PACKAGE_CERTIFICATE_BASE64**
 
 - used to dynamically create the PFX file required for the signing of the **msixbundle**
 - use the following PowerShell code locally to turn your PFX file into Base64:
@@ -233,7 +225,7 @@ $PFX_FILE = [IO.File]::ReadAllBytes('absolute_path_to_PFX')
 
 - copy the contents of the **cert.txt** and paste as the value of the secret
 
-4. **PACKAGE_CERTIFICATE_PWD**
+2. **PACKAGE_CERTIFICATE_PWD**
 
 - used in the build of the project to authenticate the PFX
 - copy and paste the password of your PFX as the value of this secret
@@ -245,23 +237,49 @@ NOTE:
 
 #### Execution
 
-Follow these steps to trigger the automated GitHub release process:
+Follow these instructions for any commit (push or PR merge) to your master branch, you would like to execute the automated versioning.
 
-1. Bump up the **Package.Identity.Version** in the **Package.appxmanifest**
+You would need one of three keywords at the start of your commit title. Each of the three keywords corresponds to a number in your release version i.e. v1.2.3. The release versioning uses the ["Conventional Commits" specification](https://www.conventionalcommits.org/en/v1.0.0/):
 
-2. Make a push commit to your master branch or if you've done the previous change in a feature branch, the merge of the PR to the master branch would act as the push commit
+- "fix: ..." - this keyword corresponds to the last number v1.2.**3**, also known as PATCH;
+- "feat: ..." - this keyword corresponds to the middle number v1.**2**.3, also known as MINOR;
+- "perf: ..." - this keyword corresponds to the first number v**1**.2.3, also known as MAJOR. In addition, to trigger a MAJOR release, you would need to write "BREAKING CHANGE: ..." in the description of the commit, with an empty line above it to indicate it is in the <footer> portion of the description;
 
-If the setup was done correctly and there are no errors in the pipeline, when the pipeline successfully completes, there should be a new, properly tagged GitHub release with the msixbundle attached to it.
+Note: when making a MAJOR release by committing through a terminal, use the multiple line syntax to add the commit title on one line and then adding an empty line, and then adding the "BREAKING CHANGE: " label
+<br><br>
 
-NOTE:
+#### Examples
 
-- the tag itself is used as the required description of the newly created tag, which appears here:
-
-![Release_1](ScreenShots/CI-CD_DOCUMENTATION/Release_1.png)
-
-- it is replaced by the release description
-
-![Release_2](ScreenShots/CI-CD_DOCUMENTATION/Release_2.png)
+Example(fix/PATCH): <br>
+`git commit -a -m "fix: this is a PATCH release triggering commit"`
+<br>
+`git push origin master`
+<br>
+Result: v1.2.3 -> **v1.2.4**
+<br>
+<br>
+<br>
+Example(feat/MINOR): <br>
+`git commit -a -m "feat: this is a MINOR release triggering commit"`
+<br>
+`git push origin master`
+<br>
+Result: v1.2.3 -> **v1.3.0**
+<br>
+<br>
+<br>
+Example(perf/MAJOR): <br>
+`` git commit -a -m "perf: this is a MAJOR release triggering commit ` ``
+<br>
+&gt;&gt; <br>
+&gt;&gt; `BREAKING CHANGE: this is the breaking change"`
+<br>
+`git push origin master`
+<br>
+Result: v1.2.3 -> **v2.0.0**
+<br>
+<br>
+Note: in the MAJOR release example, the PowerShell multiline syntax ` (backtick) is used. After writing a backtick, a press of the Enter key should open a new line.
 
 <br>
 
