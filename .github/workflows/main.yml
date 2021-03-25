@@ -42,7 +42,6 @@ jobs:
       new_version: ${{ steps.get_assembly_version.outputs.version_num }}
       new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
       is_release_candidate: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
-      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
@@ -51,30 +50,30 @@ jobs:
         id: step_conditionals_handler
         shell: pwsh
         run: |
-          $IS_PUSH_TO_MASTER = 'false'
-          $IS_NOT_PR = 'true'
+          $IS_RELEASE_CANDIDATE = 'false'
+          $RUN_ANALYSIS = 'true'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
-            $IS_PUSH_TO_MASTER = 'true'
+            $IS_RELEASE_CANDIDATE = 'true'
           }
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
-            $IS_NOT_PR = 'false'
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
+            $RUN_ANALYSIS = 'false'
           }
-          echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
-          echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
+          echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
+          echo "::set-output name=run_analysis::$(echo $RUN_ANALYSIS)"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
           BUILD_CONFIGURATION: ${{ matrix.configuration }}
           RELEASE_CONFIGURATION: Production
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Install .NET Core
         id: install_dotnet_dependencies
         uses: actions/setup-dotnet@v1
@@ -90,7 +89,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
         name: Get assembly version from appxmanifest
         id: get_assembly_version
         shell: pwsh
@@ -102,7 +101,7 @@ jobs:
         env:
           APPX_MANIFEST_ROOT: src\Notepads
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
         name: Check latest tag
         id: check_latest_tag
         shell: pwsh
@@ -119,7 +118,7 @@ jobs:
           GIT_URL: ${{ github.repository }}
           NEW_VERSION_NUMBER: ${{ steps.get_assembly_version.outputs.version_num }}
           
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.check_latest_tag.outputs.is_release_candidate == 'true'
+      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: pwsh
@@ -133,7 +132,7 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -142,7 +141,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -151,7 +150,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: pwsh
@@ -159,7 +158,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Lowercase string generator
         id: lowercase_string_gen
         shell: pwsh
@@ -167,7 +166,7 @@ jobs:
           $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
           echo "::set-output name=repository_name::$LOWERCASE_REPOSITORY_NAME"
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: pwsh
@@ -180,7 +179,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: pwsh
@@ -218,14 +217,14 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
           APPX_BUNDLE_PLATFORMS: x86|x64|ARM64
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
           APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Send SonarCloud results
         id: send_sonar_results
         shell: pwsh
@@ -236,7 +235,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -246,7 +245,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.is_release_candidate == 'true'
+    if: needs.ci.outputs.is_release_candidate == 'true'
     needs: [ setup, ci ]
     runs-on: windows-latest
     env:
