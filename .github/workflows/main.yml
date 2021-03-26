@@ -119,7 +119,7 @@ jobs:
       #- if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
       - name: Bump GitHub tag
         id: tag_generator
-        uses: soumyamahunt/github-tag-action@github-action
+        uses: soumyamahunt/github-tag-action@other-ver-support
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
