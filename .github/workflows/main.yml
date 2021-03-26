@@ -39,12 +39,16 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     outputs:
-      new_version: ${{ steps.get_assembly_version.outputs.version_num }}
-      new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
-      is_release_candidate: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
+      #new_version: ${{ steps.get_assembly_version.outputs.version_num }}
+      #new_version_tag: ${{ steps.get_assembly_version.outputs.version_tag }}
+      #is_release_candidate: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
+      new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
+      new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
+      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_release_candidate }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
+      DEFAULT_DIR: ${{ github.workspace }}
     steps:
       - name: Steps' conditionals handler
         id: step_conditionals_handler
@@ -53,13 +57,13 @@ jobs:
           $IS_RELEASE_CANDIDATE = 'false'
           $RUN_ANALYSIS = 'true'
           $APPX_BUNDLE_PLATFORMS = 'x86|x64|ARM64'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $IS_RELEASE_CANDIDATE = 'true'
           }
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:BUILD_CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $RUN_ANALYSIS = 'false'
           }
-          if ( $env:BUILD_CONFIGURATION -ceq $env:DEBUG_CONFIGURATION ) {
+          if ( $env:CONFIGURATION -ceq $env:DEBUG_CONFIGURATION ) {
             $APPX_BUNDLE_PLATFORMS = 'x86|x64'
           }
           echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
@@ -68,7 +72,6 @@ jobs:
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
-          BUILD_CONFIGURATION: ${{ matrix.configuration }}
           DEBUG_CONFIGURATION: Debug
           RELEASE_CONFIGURATION: Production
 
@@ -78,11 +81,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
-
-      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
-        name: Install .NET Core
-        id: install_dotnet_dependencies
-        uses: actions/setup-dotnet@v1
 
       - name: Setup MSBuild
         id: setup_msbuild
@@ -96,47 +94,56 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
-        name: Get assembly version from appxmanifest
-        id: get_assembly_version
-        shell: pwsh
-        run: |
-          $xml = [xml](Get-Content $env:APPX_MANIFEST_ROOT\Package.appxmanifest)
-          $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity.Version
-          echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
-          echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
-        env:
-          APPX_MANIFEST_ROOT: src\Notepads
-
-      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
         name: Check latest tag
         id: check_latest_tag
         shell: pwsh
         run: |
-          $IS_RELEASE_CANDIDATE = 'false'
           $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
           $LATEST_VERSION = [System.Version]::Parse($LATEST_TAG -replace 'v')
-          $NEW_VERSION = [System.Version]::Parse($env:NEW_VERSION_NUMBER)
-          if ($LATEST_VERSION.CompareTo($NEW_VERSION) -gt 0) {
-            $IS_RELEASE_CANDIDATE = 'true'
-          }
-          echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
+          echo "::set-output name=semver::$(echo "$($LATEST_VERSION.Major).$($LATEST_VERSION.Minor).$($LATEST_VERSION.Build)")"
         env:
           GIT_URL: ${{ github.repository }}
-          NEW_VERSION_NUMBER: ${{ steps.get_assembly_version.outputs.version_num }}
-          
-      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
-        name: Add new tag to repo
-        id: add_new_tag_to_repo
+          #NEW_VERSION_NUMBER: ${{ steps.get_assembly_version.outputs.version_num }}
+
+      #- if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
+      #  name: Get assembly version from appxmanifest
+      #  id: get_assembly_version
+      #  shell: pwsh
+      #  run: |
+      #    $xml = [xml](Get-Content $env:APPX_MANIFEST_ROOT\Package.appxmanifest)
+      #    $ASSEMBLY_VERSION_NUMBER = $xml.Package.Identity.Version
+      #    echo "::set-output name=version_num::$(echo $ASSEMBLY_VERSION_NUMBER)"
+      #    echo "::set-output name=version_tag::$(echo v"$ASSEMBLY_VERSION_NUMBER")"
+      #  env:
+      #    APPX_MANIFEST_ROOT: src\Notepads
+      #- if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - name: Bump GitHub tag
+        id: tag_generator
+        uses: soumyamahunt/github-tag-action@github-action
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
+          default_bump: false
+          dry_run: true
+
+      - if: steps.tag_generator.outputs.new_version != ''
+        name: Update tags
+        id: update_tag
         shell: pwsh
         run: |
-          git config --global user.name $env:GIT_USER_NAME
-          git config --global user.email $env:GIT_USER_EMAIL
-          git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
-          git push --follow-tags
+          #git config --global user.name $env:GIT_USER_NAME
+          #git config --global user.email $env:GIT_USER_EMAIL
+          #git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
+          #git push --follow-tags
+          $xml = [xml](Get-Content $APPXMANIFEST_PATH)
+          $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION")
+          $xml.save($APPXMANIFEST_PATH)
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-          NEW_VERSION_TAG: ${{ steps.get_assembly_version.outputs.version_tag }}
+          APPXMANIFEST_PATH: src\Notepads\Package.appxmanifest
+          NEW_VERSION: "${{ steps.tag_generator.outputs.new_version }}.0"
+          NEW_VERSION_TAG: "v${{ steps.get_assembly_version.outputs.version_tag }}.0"
 
       - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Cache SonarCloud packages
@@ -165,27 +172,20 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
-        name: Lowercase string generator
-        id: lowercase_string_gen
-        shell: pwsh
-        run: |
-          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
-          echo "::set-output name=repository_name::$LOWERCASE_REPOSITORY_NAME"
-
-      - if: steps.step_conditionals_handler.outputs.run_analysis == 'true'
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: pwsh
         run: |
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
-          /o:"${{ steps.lowercase_string_gen.outputs.repository_name }}" `
+          /o:"$LOWERCASE_REPOSITORY_NAME" `
           /d:sonar.login="$env:SONAR_TOKEN" `
           /d:sonar.host.url="https://sonarcloud.io"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: pwsh
@@ -196,7 +196,6 @@ jobs:
           [IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
         env:
           BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
-          DEFAULT_DIR: ${{ github.workspace }}
 
       - name: Restore the application
         id: restore_application
@@ -223,7 +222,7 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.check_latest_tag.outputs.is_release_candidate }}
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_release_candidate }}
           APPX_BUNDLE_PLATFORMS: ${{ steps.step_conditionals_handler.outputs.appx_bundle_platforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
@@ -241,7 +240,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.check_latest_tag.outputs.is_release_candidate == 'true'
+      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -251,11 +250,12 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_release_candidate == 'true'
+    #if: needs.ci.outputs.is_release_candidate == 'true'
+    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version != ''
     needs: [ setup, ci ]
     runs-on: windows-latest
     env:
-      NEW_VERSION: ${{ needs.ci.outputs.new_version }}
+      NEW_ASSEMBLY_VERSION: ${{ needs.ci.outputs.new_version }}
       NEW_TAG: ${{ needs.ci.outputs.new_version_tag }}
     steps:
       - name: Checkout repository
@@ -283,8 +283,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64_Production.msixbundle
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_path: Artifacts/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_Production_Test/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64_Production.msixbundle
+          asset_name: Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64.msixbundle
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

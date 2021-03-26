@@ -280,6 +280,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
     <Content Include="Resource\Text Document.txt" />
@@ -459,11 +460,7 @@
     <PropertyGroup>
       <InputFile>App.xaml.cs</InputFile>
     </PropertyGroup>
-    <WriteLinesToFile
-        File="$(InputFile)"
-        Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))"
-        Overwrite="true"
-        Encoding="Unicode"/>
+    <WriteLinesToFile File="$(InputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))" Overwrite="true" Encoding="Unicode" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
