@@ -25,35 +25,39 @@ jobs:
         id: set_matrix
         shell: pwsh
         run: |
-          $CONFIG_MATRIX = '{
+          $MATRIX = '{
             "include": [
               {
                 "configuration": "Production",
+                "appxBundlePlatforms": "x64",
                 "debug": false,
                 "release": true
               }
             ]
           }'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
-            $CONFIG_MATRIX = '{
+            $MATRIX = '{
               "include": [
                 {
                   "configuration": "Debug",
+                  "appxBundlePlatforms": "x86|x64",
                   "debug": true,
                   "release": false
                 },{
                   "configuration": "Release",
+                  "appxBundlePlatforms": "x86|x64|ARM64",
                   "debug": false,
                   "release": false
                 },{
                   "configuration": "Production",
+                  "appxBundlePlatforms": "x86|x64|ARM64",
                   "debug": false,
                   "release": true
                 }
               ]
             }'
           }
-          echo "::set-output name=matrix::$($CONFIG_MATRIX -replace ' *\r*\n*', '')"
+          echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
 
@@ -78,23 +82,17 @@ jobs:
         run: |
           $IS_RELEASE_CANDIDATE = 'false'
           $RUN_SONARCLOUD_SCAN = 'true'
-          $APPX_BUNDLE_PLATFORMS = 'x86|x64|ARM64'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $IS_RELEASE_CANDIDATE = 'true'
           }
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
             $RUN_SONARCLOUD_SCAN = 'false'
           }
-          if ( $env:CONFIGURATION -ceq $env:DEBUG_CONFIGURATION ) {
-            $APPX_BUNDLE_PLATFORMS = 'x86|x64'
-          }
           echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
           echo "::set-output name=run_sonarcloud_scan::$(echo $RUN_SONARCLOUD_SCAN)"
-          echo "::set-output name=appx_bundle_platforms::$(echo $APPX_BUNDLE_PLATFORMS)"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
-          DEBUG_CONFIGURATION: Debug
           RELEASE_CONFIGURATION: Production
 
       - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
@@ -232,7 +230,7 @@ jobs:
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
           APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_release_candidate }}
-          APPX_BUNDLE_PLATFORMS: ${{ steps.step_conditionals_handler.outputs.appx_bundle_platforms }}
+          APPX_BUNDLE_PLATFORMS: ${{ matrix.appxBundlePlatforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
