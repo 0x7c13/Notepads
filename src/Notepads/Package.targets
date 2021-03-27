@@ -56,7 +56,7 @@
       </Code>
     </Task>
   </UsingTask>
-  
+
   <Target Name="UpdateAppxManifest" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Production'">
     <UpdateNotepadsPackageManifest ManifestPath="%(AppxManifest.FullPath)"
                             OutDir="$(ProjectDir)$(BaseIntermediateOutputPath)"
@@ -68,7 +68,7 @@
       <AppxManifest Include="$(GeneratedAppxManifest)" />
     </ItemGroup>
   </Target>
-  
+
   <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
   <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
   <Target Name="SetAppxDefaultResourceQualifiers" BeforeTargets="BeforeBuild">

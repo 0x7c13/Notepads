@@ -1,0 +1,58 @@
+name: Code scanning alerts bulk dismissal
+
+on: [workflow_dispatch]
+
+jobs:
+  dismiss-alerts: 
+    name: Dismiss alerts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']
+    env:
+      # Settings
+      OWNER: ${{ github.repository_owner }} # verbatim from URL
+      PROJECT_NAME: ${{ github.event.repository.name }} # verbatim from URL
+      ACCESS_TOKEN: ${{ secrets.CSA_ACCESS_TOKEN }} # requires security_events read/write permissions
+      DISMISS_REASON: ${{ secrets.DISMISS_REASON_VAR }} # "false positive", "won't fix" or "used in tests". 
+      ALERTS_PER_PAGE: 100
+      ALERT_DESCRIPTION: ${{ matrix.ALERT_DESC }}
+    steps:
+      - name: Install jq
+        id: install_jq
+        uses: r26d/jq-action@master
+        with:
+          cmd: jq -n env
+
+      - name: Run automation
+        id: run_automation
+        shell: bash
+        run: |
+          page=1
+          LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+
+          while [ -n "$LIST_OF_ALERTS" ]
+          do
+            echo -n $LIST_OF_ALERTS" " >> "data.json"
+
+            ((page=page+1))
+
+            LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+          done
+
+          LIST_OF_INDEXES=$(cat data.json)
+
+          for index in $LIST_OF_INDEXES
+          do
+            ALERT_DESC=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index" | jq .rule.description)
+
+            if [ "$ALERT_DESC" == "$ALERT_DESCRIPTION" ]; then
+              ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
+
+              curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
+            fi
+          done
+
+          rm -f data.json
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
