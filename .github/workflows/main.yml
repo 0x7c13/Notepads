@@ -25,37 +25,35 @@ jobs:
         id: set_matrix
         shell: pwsh
         run: |
+          $CONFIG_MATRIX = '{
+            "include": [
+              {
+                "configuration": "Production",
+                "debug": false,
+                "release": true
+              }
+            ]
+          }'
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
-            echo "::set-output name=matrix::
-              {
-                ""include"": [
-                  {
-                    ""configuration"": ""Debug"",
-                    ""debug"": "true",
-                    ""release"": "false"
-                  },{
-                    ""configuration"": ""Release"",
-                    ""debug"": "false",
-                    ""release"": "false"
-                  },{
-                    ""configuration"": ""Production"",
-                    ""debug"": "false",
-                    ""release"": "true"
-                  }
-                ]
-              }"
-          } else {
-            echo "::set-output name=matrix::
-              {
-                ""include"": [
-                  {
-                    ""configuration"": ""Production"",
-                    ""debug"": "false",
-                    ""release"": "true"
-                  }
-                ]
-              }"
+            $CONFIG_MATRIX = '{
+              "include": [
+                {
+                  "configuration": "Debug",
+                  "debug": true,
+                  "release": false
+                },{
+                  "configuration": "Release",
+                  "debug": false,
+                  "release": false
+                },{
+                  "configuration": "Production",
+                  "debug": false,
+                  "release": true
+                }
+              ]
+            }'
           }
+          echo "::set-output name=matrix::$($CONFIG_MATRIX -replace ' *\r*\n*', '')"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
 
