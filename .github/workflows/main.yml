@@ -1,0 +1,228 @@
+name: Notepads CI/CD Pipeline
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  ci:
+    runs-on: windows-latest
+    outputs:
+      new_version: ${{ steps.tag_generator.outputs.new_version }}
+      new_version_tag: ${{ steps.tag_generator.outputs.new_tag }}
+      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
+    env:
+      SOLUTION_NAME: src\Notepads.sln
+      CONFIGURATION: Production
+      DEFAULT_DIR: ${{ github.workspace }}
+    steps:
+      - name: Steps' conditionals handler
+        id: step_conditionals_handler
+        shell: pwsh
+        run: |
+          $IS_PUSH_TO_MASTER = 'false'
+          $IS_NOT_PR = 'true'
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+            $IS_PUSH_TO_MASTER = 'true'
+          }
+          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+            $IS_NOT_PR = 'false'
+          }
+          echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
+          echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Set up JDK 11
+        id: Setup_JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - name: Setup MSBuild
+        id: setup_msbuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+        name: Bump GitHub tag
+        id: tag_generator
+        uses: mathieudutour/github-tag-action@v5
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: false
+
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.tag_generator.outputs.new_version != ''
+        name: Update Package.appxmanifest version
+        id: update_appxmanifest
+        run: |
+          $APPXMANIFEST_PATH = 'src/Notepads/Package.appxmanifest'
+          $xml = [xml](Get-Content $APPXMANIFEST_PATH)
+          $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION.0")
+          $xml.save($APPXMANIFEST_PATH)
+        env:
+          NEW_VERSION: ${{ steps.tag_generator.outputs.new_version }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Cache SonarCloud packages
+        id: cache_sonar_packages
+        uses: actions/cache@v2
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Cache SonarCloud scanner
+        id: cache_sonar_scanner
+        uses: actions/cache@v2
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+        name: Install SonarCloud scanner
+        id: install_sonar_scanner
+        shell: pwsh
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Initialize SonarCloud scanner
+        id: init_sonar_scanner
+        shell: pwsh
+        run: |
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+          /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
+          /o:"$LOWERCASE_REPOSITORY_NAME" `
+          /d:sonar.login="$env:SONAR_TOKEN" `
+          /d:sonar.host.url="https://sonarcloud.io"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+        name: Create PFX certificate for AppxBundle
+        id: create_pfx_cert
+        shell: pwsh
+        run: |
+          $BASE64_STR = $env:BASE64_STR
+          $TARGET_FILE = "$env:DEFAULT_DIR\cert.pfx"
+          $FROM_BASE64_STR = [Convert]::FromBase64String($BASE64_STR)
+          [IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
+        env:
+          BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
+
+      - name: Restore the application
+        id: restore_application
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /t:Restore `
+          /p:Configuration=$env:CONFIGURATION
+
+      - name: Build and generate bundles
+        id: build_app
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
+          /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxPackageSigningEnabled=$env:APPX_PACKAGE_SIGNING_ENABLED `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS `
+          /p:AppxPackageDir=$env:ARTIFACTS_DIR `
+          /p:PackageCertificateKeyFile=$env:PACKAGE_CERTIFICATE_KEYFILE `
+          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD `
+          /p:AppCenterSecret=$env:APP_CENTER_SECRET
+        env:
+          PLATFORM: x64
+          UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
+          APPX_BUNDLE_PLATFORMS: x86|x64|ARM64
+          ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
+          PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
+          PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
+          APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
+
+      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+        name: Send SonarCloud results
+        id: send_sonar_results
+        shell: pwsh
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner end `
+          /d:sonar.login="$env:SONAR_TOKEN"
+        env:
+          GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+        name: Upload build artifacts
+        id: upload_artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: Build artifacts
+          path: Artifacts/
+
+  cd:
+    # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
+    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version != ''
+    needs: ci
+    runs-on: windows-latest
+    env:
+      NEW_ASSEMBLY_VERSION: "${{ needs.ci.outputs.new_version }}.0"
+      NEW_TAG: ${{ needs.ci.outputs.new_version_tag }}
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+
+      - name: Download and extract MSIX package
+        id: dl_package_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Build artifacts
+          path: Artifacts/
+
+      - name: Create and publish release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          release_name: Notepads ${{ env.NEW_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload msixbundle as release asset
+        id: upload_notepads_zip
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Artifacts/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_Production_Test/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64_Production.msixbundle
+          asset_name: Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Windows Store
+        id: publish_to_store
+        uses: isaacrlevin/windows-store-action@1.0
+        with:
+          tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+          app-id: ${{ secrets.STORE_APP_ID }}
+          package-path: "${{ github.workspace }}/Artifacts/"
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
