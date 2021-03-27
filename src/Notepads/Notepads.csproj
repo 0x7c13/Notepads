@@ -316,6 +316,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
     <Content Include="Resource\Text Document.txt" />
@@ -465,7 +466,7 @@
       <Version>2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>5.0.1</Version>
@@ -491,6 +492,12 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="Package.targets" />
+  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
+    <PropertyGroup>
+      <InputFile>App.xaml.cs</InputFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(InputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))" Overwrite="true" Encoding="Unicode" />
+  </Target>
   <Target Name="IncludeDesktopActivationComponent" BeforeTargets="BeforeBuild">
     <PropertyGroup>
       <Win32Platform>$(Platform)</Win32Platform>
