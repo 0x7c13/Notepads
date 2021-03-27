@@ -62,10 +62,10 @@ jobs:
             }'
             $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
             if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
-              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$RELEASE_CONFIGURATION" ) { $_.release = $true } }
+              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
             }
             if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
-              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$RELEASE_CONFIGURATION" ) { $_.runSonarCloudScan = $false } }
+              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.runSonarCloudScan = $false } }
             }
             $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
           }
