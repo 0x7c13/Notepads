@@ -26,9 +26,35 @@ jobs:
         shell: pwsh
         run: |
           if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
-            echo "::set-output name=matrix::{""include"":[{""configuration"":""Debug""},{""configuration"":""Release""},{""configuration"":""Production""}]}"
+            echo "::set-output name=matrix::
+              {
+                ""include"": [
+                  {
+                    ""configuration"": ""Debug"",
+                    ""debug"": "true",
+                    ""release"": "false"
+                  },{
+                    ""configuration"": ""Release"",
+                    ""debug"": "false",
+                    ""release"": "false"
+                  },{
+                    ""configuration"": ""Production"",
+                    ""debug"": "false",
+                    ""release"": "true"
+                  }
+                ]
+              }"
           } else {
-            echo "::set-output name=matrix::{""include"":[{""configuration"":""Production""}]}"
+            echo "::set-output name=matrix::
+              {
+                ""include"": [
+                  {
+                    ""configuration"": ""Production"",
+                    ""debug"": "false",
+                    ""release"": "true"
+                  }
+                ]
+              }"
           }
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
