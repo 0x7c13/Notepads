@@ -30,8 +30,9 @@ jobs:
               {
                 "configuration": "Production",
                 "appxBundlePlatforms": "x64",
+                "runSonarCloudScan": true,
                 "debug": false,
-                "release": true
+                "release": false
               }
             ]
           }'
@@ -41,25 +42,38 @@ jobs:
                 {
                   "configuration": "Debug",
                   "appxBundlePlatforms": "x86|x64",
+                  "runSonarCloudScan": false,
                   "debug": true,
                   "release": false
                 },{
                   "configuration": "Release",
                   "appxBundlePlatforms": "x86|x64|ARM64",
+                  "runSonarCloudScan": false,
                   "debug": false,
                   "release": false
                 },{
                   "configuration": "Production",
                   "appxBundlePlatforms": "x86|x64|ARM64",
+                  "runSonarCloudScan": true,
                   "debug": false,
-                  "release": true
+                  "release": false
                 }
               ]
             }'
+            $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
+            if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$RELEASE_CONFIGURATION" ) { $_.release = $true } }
+            }
+            if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$RELEASE_CONFIGURATION" ) { $_.runSonarCloudScan = $false } }
+            }
+            $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
           }
           echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          RELEASE_CONFIGURATION: Production
 
   ci:
     needs: setup
@@ -70,32 +84,13 @@ jobs:
       changelog: ${{ steps.tag_generator.outputs.changelog }}
       new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
       new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
-      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_release_candidate }}
+      is_release: ${{ matrix.release }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
       DEFAULT_DIR: ${{ github.workspace }}
     steps:
-      - name: Steps' conditionals handler
-        id: step_conditionals_handler
-        shell: pwsh
-        run: |
-          $IS_RELEASE_CANDIDATE = 'false'
-          $RUN_SONARCLOUD_SCAN = 'true'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
-            $IS_RELEASE_CANDIDATE = 'true'
-          }
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or !($env:CONFIGURATION -ceq $env:RELEASE_CONFIGURATION) ) {
-            $RUN_SONARCLOUD_SCAN = 'false'
-          }
-          echo "::set-output name=is_release_candidate::$(echo $IS_RELEASE_CANDIDATE)"
-          echo "::set-output name=run_sonarcloud_scan::$(echo $RUN_SONARCLOUD_SCAN)"
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_REF: ${{ github.ref }}
-          RELEASE_CONFIGURATION: Production
-
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
+      - if: matrix.runSonarCloudScan
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -113,7 +108,7 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
+      - if: matrix.release
         name: Check latest tag
         id: check_latest_tag
         shell: pwsh
@@ -124,7 +119,7 @@ jobs:
         env:
           GIT_REPOSITORY: ${{ github.repository }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: matrix.release && steps.check_latest_tag.outputs.semver != ''
         name: Bump GitHub tag
         id: tag_generator
         uses: soumyamahunt/github-tag-action@test-other-ver-support
@@ -134,7 +129,7 @@ jobs:
           default_bump: false
           dry_run: true
 
-      - if: steps.tag_generator.outputs.new_version != ''
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Update tag and manifest
         id: update
         shell: pwsh
@@ -153,7 +148,7 @@ jobs:
           NEW_VERSION: "${{ steps.tag_generator.outputs.new_version }}.0"
           NEW_VERSION_TAG: "v${{ steps.get_assembly_version.outputs.version_tag }}.0"
 
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
+      - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -162,7 +157,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
+      - if: matrix.runSonarCloudScan
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -171,7 +166,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: matrix.runSonarCloudScan && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: pwsh
@@ -179,7 +174,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
+      - if: matrix.runSonarCloudScan
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: pwsh
@@ -193,7 +188,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: pwsh
@@ -229,14 +224,14 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_release_candidate }}
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ matrix.release }}
           APPX_BUNDLE_PLATFORMS: ${{ matrix.appxBundlePlatforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
           APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
-      - if: steps.step_conditionals_handler.outputs.run_sonarcloud_scan == 'true'
+      - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
         id: send_sonar_results
         shell: pwsh
@@ -247,7 +242,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_release_candidate == 'true'
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -257,7 +252,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version != ''
+    if: needs.ci.outputs.is_release && needs.ci.outputs.new_version != ''
     needs: [ setup, ci ]
     runs-on: windows-latest
     env:
