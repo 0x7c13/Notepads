@@ -44,7 +44,7 @@ jobs:
         shell: pwsh
         run: |
           msbuild $env:SOLUTION_NAME /t:Restore
-          nuget restore $env:Solution_Name
+          nuget restore $env:SOLUTION_NAME
 
       - name: Initialize CodeQL
         id: init_codeql
