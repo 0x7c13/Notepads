@@ -71,7 +71,7 @@ Once you've set up all the steps above correctly, you should be able to successf
 
 ![Actions_workflow_dispatch](ScreenShots/CI-CD_DOCUMENTATION/Actions_workflow_dispatch.png)
 
-4. Once the workflow run has completed successfully, move on to the next step of the documentation
+5. Once the workflow run has completed successfully, move on to the next step of the documentation
 
 NOTE: **screenshots are only exemplary**
 
