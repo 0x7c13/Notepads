@@ -7,12 +7,16 @@ on:
     - 'ScreenShots/**'
     - '.whitesource'
     - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/main.yml'
   pull_request:
     paths-ignore:
     - '**.md'
     - 'ScreenShots/**'
     - '.whitesource'
     - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/main.yml'
   workflow_dispatch:
 
 jobs:
@@ -84,7 +88,7 @@ jobs:
       changelog: ${{ steps.tag_generator.outputs.changelog }}
       new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
       new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
-      is_release: matrix.release
+      is_release: ${{ matrix.release }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
@@ -269,7 +273,7 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_release && needs.ci.outputs.new_version != ''
+    if: needs.ci.outputs.is_release == 'true' && needs.ci.outputs.new_version != ''
     needs: [ setup, ci ]
     runs-on: windows-latest
     env:

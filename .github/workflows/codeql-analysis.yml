@@ -7,12 +7,16 @@ on:
     - 'ScreenShots/**'
     - '.whitesource'
     - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/codeql-analysis.yml'
   pull_request:
     paths-ignore:
     - '**.md'
     - 'ScreenShots/**'
     - '.whitesource'
     - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/codeql-analysis.yml'
   schedule:
     - cron: '0 8 * * *'
 
