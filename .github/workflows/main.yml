@@ -18,6 +18,11 @@ on:
     - '.github/**'
     - '!.github/workflows/main.yml'
   workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type of event to trigger (type "release" to trigger release)'
+        required: false
+        default: 'test'
 
 jobs:
   setup:
@@ -32,49 +37,42 @@ jobs:
           $MATRIX = '{
             "include": [
               {
+                "configuration": "Debug",
+                "appxBundlePlatforms": "x86|x64",
+                "runSonarCloudScan": false,
+                "debug": true,
+                "release": false
+              },{
+                "configuration": "Release",
+                "appxBundlePlatforms": "x86|x64|ARM64",
+                "runSonarCloudScan": false,
+                 "debug": false,
+                 "release": false
+              },{
                 "configuration": "Production",
-                "appxBundlePlatforms": "x64",
+                "appxBundlePlatforms": "x86|x64|ARM64",
                 "runSonarCloudScan": true,
                 "debug": false,
                 "release": false
               }
             ]
           }'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'push') ) {
-            $MATRIX = '{
-              "include": [
-                {
-                  "configuration": "Debug",
-                  "appxBundlePlatforms": "x86|x64",
-                  "runSonarCloudScan": false,
-                  "debug": true,
-                  "release": false
-                },{
-                  "configuration": "Release",
-                  "appxBundlePlatforms": "x86|x64|ARM64",
-                  "runSonarCloudScan": false,
-                  "debug": false,
-                  "release": false
-                },{
-                  "configuration": "Production",
-                  "appxBundlePlatforms": "x86|x64|ARM64",
-                  "runSonarCloudScan": true,
-                  "debug": false,
-                  "release": false
-                }
-              ]
-            }'
-            $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
-            if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
-              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
-            }
-            if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
-              $MATRIX_OBJ.include | % { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.runSonarCloudScan = $false } }
-            }
-            $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
+          $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
+          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+            $MATRIX_OBJ.include | Foreach-Object { $_.runSonarCloudScan = $false }
           }
+          if ( $env:GITHUB_EVENT_NAME -ceq 'workflow_dispatch' ) {
+            $MATRIX_OBJ.include = $MATRIX_OBJ.include | Where-Object { $_.configuration -ceq "$env:RELEASE_CONFIGURATION" }
+            if ( ($env:EVENT_TYPE -ceq 'release') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+              $MATRIX_OBJ.include | Foreach-Object { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
+            } else {
+              $MATRIX_OBJ.include | Foreach-Object { $_.appxBundlePlatforms = 'x64' }
+            }
+          }
+          $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
           echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
         env:
+          EVENT_TYPE: ${{ github.event.inputs.type }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
           RELEASE_CONFIGURATION: Production
@@ -130,7 +128,7 @@ jobs:
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
-          default_bump: false
+          default_bump: true
           dry_run: true
 
       - if: matrix.release && steps.tag_generator.outputs.new_version != ''
