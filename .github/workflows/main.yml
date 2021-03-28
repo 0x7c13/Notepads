@@ -231,6 +231,23 @@ jobs:
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
           APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
+      - if: matrix.debug && !contains( matrix.appxBundlePlatforms, 'arm64' )
+        name: Test ARM build in debug configuration
+        id: build_app_arm_debug
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
+        env:
+          PLATFORM: ARM64
+          UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_BUNDLE_PLATFORMS: ARM64
+
       - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
         id: send_sonar_results
