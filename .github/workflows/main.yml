@@ -84,7 +84,7 @@ jobs:
       changelog: ${{ steps.tag_generator.outputs.changelog }}
       new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
       new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
-      is_release: ${{ matrix.release }}
+      is_release: matrix.release
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
