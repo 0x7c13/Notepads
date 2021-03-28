@@ -43,6 +43,14 @@
                               Glyph="&#xE9E9;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
+            <NavigationViewItem 
+                Style="{StaticResource CustomNavigationViewItemStyle}"
+                x:Uid="/Settings/QuickButtonsPage_Title"
+                Tag="QuickIcons">
+                <NavigationViewItem.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEECA;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
             <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
                                 x:Uid="/Settings/AboutPage_Title"
                                 Tag="About" >

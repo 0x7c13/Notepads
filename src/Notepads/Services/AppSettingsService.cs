@@ -23,6 +23,50 @@
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionForInstanceChanged;
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
         public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
+        public static event EventHandler<bool> OnQuickButtonsChanged;
+
+        private static List<string> _topQuickButtons = new List<string>();
+
+        public static List<string> TopQuickButtons
+        {
+            get => _topQuickButtons;
+            set
+            {
+                var isAdd = _topQuickButtons.Count() < value.Count(); 
+
+                
+
+                _topQuickButtons = value.Distinct().ToList();
+                OnQuickButtonsChanged?.Invoke(null, isAdd);
+
+                ApplicationSettingsStore.Write(SettingsKey.QuickButtonsList, String.Join(",", _topQuickButtons));
+            }
+        }
+
+        public static void TopQuickButtonsAdd(string name, bool isAdd = true)
+        {
+            if (isAdd)
+            {
+                _topQuickButtons.Add(name);
+            }
+            else
+            {
+                _topQuickButtons.Remove(name);
+            }
+
+            OnQuickButtonsChanged?.Invoke(name, isAdd);
+
+            ApplicationSettingsStore.Write(SettingsKey.QuickButtonsList, String.Join(",", _topQuickButtons.Distinct()));
+        }
+
+        private static void InitializeQuickButtonsSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.QuickButtonsList) is string strButtons)
+            {
+                TopQuickButtons = strButtons.Split(',').ToList(); 
+            }
+        }
+
 
         private static string _editorFontFamily;
 
@@ -312,6 +356,8 @@
             InitializeSessionSnapshotSettings();
 
             InitializeAppOpeningPreferencesSettings();
+
+            InitializeQuickButtonsSettings();
         }
 
         private static void InitializeStatusBarSettings()

@@ -420,5 +420,36 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
     <value>System Default</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
+  </data> 
+  <data name="QuickButtonsPage_History.OffContent" xml:space="preserve">
+    <value>Quick button "History"</value>
   </data>
+  <data name="QuickButtonsPage_History.OnContent" xml:space="preserve">
+    <value>Quick button "History"</value>
+  </data>
+  <data name="QuickButtonsPage_PinTop.OffContent" xml:space="preserve">
+    <value>Quick button "Pin Top"</value>
+  </data>
+  <data name="QuickButtonsPage_PinTop.OnContent" xml:space="preserve">
+    <value>Quick button "Pin Top"</value>
+  </data>
+  <data name="QuickButtonsPage_Print.OffContent" xml:space="preserve">
+    <value>Quick button "Print"</value>
+  </data>
+  <data name="QuickButtonsPage_Print.OnContent" xml:space="preserve">
+    <value>Quick button "Print"</value>
+  </data>
+  <data name="QuickButtonsPage_Save.OffContent" xml:space="preserve">
+    <value>Quick button "Save"</value>
+  </data>
+  <data name="QuickButtonsPage_Save.OnContent" xml:space="preserve">
+    <value>Quick button "Save"</value>
+  </data>
+  <data name="QuickButtonsPage_Title" xml:space="preserve">
+    <value>Add buttons in header panel</value>
+  </data>
+  <data name="QuickButtonsPage_Title.Content" xml:space="preserve">
+    <value>Быстрые кнопки</value>
+    <comment></comment>
+  </data> 
 </root>

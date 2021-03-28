@@ -27,6 +27,9 @@
                 case "Advanced":
                     pageType = typeof(AdvancedSettingsPage);
                     break;
+                case "QuickIcons":
+                    pageType = typeof(QuickIconsSettingsPage);
+                    break;
                 case "About":
                     pageType = typeof(AboutPage);
                     break;

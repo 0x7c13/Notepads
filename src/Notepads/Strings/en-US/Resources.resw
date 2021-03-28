@@ -693,4 +693,40 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="QuickButton_History_Glyph" xml:space="preserve">
+    <value>57633</value>
+  </data>
+  <data name="QuickButton_PinTop_Glyph" xml:space="preserve">
+    <value>57665</value>
+  </data>
+  <data name="QuickButton_Print_Glyph" xml:space="preserve">
+    <value>59209</value>
+  </data>
+  <data name="QuickButton_Save_Glyph" xml:space="preserve">
+    <value>57605</value>
+  </data>
+  <data name="QuickButton_History_ToolTip" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="QuickButton_PinTop_ToolTip" xml:space="preserve">
+    <value>Pin top</value>
+  </data>
+  <data name="QuickButton_Print_ToolTip" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="QuickButton_Save_ToolTip" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="QuickButton_History_Symbol" xml:space="preserve">
+    <value>Clock</value>
+  </data>
+  <data name="QuickButton_PinTop_Symbol" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="QuickButton_Print_Symbol" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="QuickButton_Save_Symbol" xml:space="preserve">
+    <value>Save</value>
+  </data>
 </root>

@@ -693,4 +693,16 @@
     <value>Расширение файла "{0}" не поддерживается</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="QuickButton_History_ToolTip" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="QuickButton_PinTop_ToolTip" xml:space="preserve">
+    <value>Закрепить</value>
+  </data>
+  <data name="QuickButton_Print_ToolTip" xml:space="preserve">
+    <value>Печать</value>
+  </data>
+  <data name="QuickButton_Save_ToolTip" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
 </root>

@@ -421,4 +421,35 @@
     <value>Системный по умолчанию</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
+  <data name="QuickButtonsPage_History.OffContent" xml:space="preserve">
+    <value>Быстрая кнопка "История"</value>
+  </data>
+  <data name="QuickButtonsPage_History.OnContent" xml:space="preserve">
+    <value>Быстрая кнопка "История"</value>
+  </data>
+  <data name="QuickButtonsPage_PinTop.OffContent" xml:space="preserve">
+    <value>Быстрая кнопка "Закрепить"</value>
+  </data>
+  <data name="QuickButtonsPage_PinTop.OnContent" xml:space="preserve">
+    <value>Быстрая кнопка "Закрепить"</value>
+  </data>
+  <data name="QuickButtonsPage_Print.OffContent" xml:space="preserve">
+    <value>Быстрая кнопка "Печать"</value>
+  </data>
+  <data name="QuickButtonsPage_Print.OnContent" xml:space="preserve">
+    <value>Быстрая кнопка "Печать"</value>
+  </data>
+  <data name="QuickButtonsPage_Save.OffContent" xml:space="preserve">
+    <value>Быстрая кнопка "Сохранить"</value>
+  </data>
+  <data name="QuickButtonsPage_Save.OnContent" xml:space="preserve">
+    <value>Быстрая кнопка "Сохранить"</value>
+  </data>
+  <data name="QuickButtonsPage_Title" xml:space="preserve">
+    <value>Добавить кнопки в панель заголовка</value>
+  </data> 
+  <data name="QuickButtonsPage_Title.Content" xml:space="preserve">
+    <value>Быстрые кнопки</value>
+    <comment></comment>
+  </data> 
 </root>

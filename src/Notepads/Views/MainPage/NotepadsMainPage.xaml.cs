@@ -93,6 +93,7 @@
             InitializeNotificationCenter();
             InitializeThemeSettings();
             InitializeStatusBar();
+            InitializeQuickButtons();
             InitializeControls();
             InitializeMainMenu();
             InitializeKeyboardShortcuts();
@@ -129,6 +130,43 @@
             RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };
             NewSetButton.Click += delegate { NotepadsCore.OpenNewTextEditor(_defaultNewFileName); };
         }
+
+
+        private void InitializeQuickButtons()
+        {
+            AppSettingsService.TopQuickButtons.ForEach(f => this.UpdateQuickButtons(f, true)); 
+
+            Notepads.Services.AppSettingsService.OnQuickButtonsChanged += UpdateQuickButtons;
+        }
+
+        /* You need to move  this method to the utility helper class. */
+        public SymbolIcon getSymbolIcon(string symbolName)
+        {
+
+            var resoruseName = "QuickButton_" + symbolName + "_Symbol";
+
+            var symbol = _resourceLoader.GetString(resoruseName);
+
+            var ico = new Symbol();
+            Enum.TryParse<Symbol>(symbol, out ico);
+            //Symbol.Save                 ReceiptPrinter
+            //var ico = (Symbol)Enum.Parse(typeof(Symbol), symbol);
+
+            //QickButton_Print.Symbol
+            return new SymbolIcon() { Symbol = ico };
+        }
+
+        /* This methid not used */
+        /* You need to move  this method to the utility helper class. */
+        public FontIcon getFontIcon(string symbolName)
+        {
+            var resoruseName = "QuickButton_" + symbolName + "_Glyph";
+
+            var icoName = _resourceLoader.GetString(resoruseName);
+
+            return new FontIcon() { Glyph = Char.Parse("&#x" + icoName).ToString(), FontFamily = new Windows.UI.Xaml.Media.FontFamily("Segoe MDL2 Assets") }; // \x   //&#x  // String.Format("\\x{0}", icoName) +   // "\\x" + icoName
+        }
+
 
         private void InitializeKeyboardShortcuts()
         {
@@ -491,6 +529,62 @@
             }
         }
 
+        private void UpdateQuickButtons(object sender, bool isAdd = true)
+        {
+            if (sender is string name)
+            {
+                if (isAdd == true)
+                {
+                    var button = new Button();
+                    button.Name = name;
+                    button.Tag = name;
+
+                    /* You need to move getFontIcon() and getSymbolIcon() to the utility helper class. */
+                    //button.Content = getFontIcon(name);      // <-----------------
+                    button.Content = getSymbolIcon(name); // <----------------- 
+
+                    /* You need to specify a single style for the button in the header.
+                        * So that you do not need to specify the width and background of the button.
+                        * I don't know how to do it.*/
+                    button.BorderThickness = new Thickness(1);
+                    button.Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
+                    ToolTipService.SetToolTip(button, _resourceLoader.GetString("QuickButton_" + name + "_ToolTip"));
+
+                    /*
+                        * It would be convenient to subscribe clicks to events and call methods without specifying attribute parameters.
+                        * So that you can subscribe to buttons by simply specifying the button name for the name of the method being called, 
+                        * by calling foreach in LINQ for all the top buttons. So that you don't have to use the transition conditions.
+                        * */
+                    if (name == "Save")
+                    {
+                        MenuSaveButton.Click += async (send, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
+                    }
+                    if (name == "Pring")
+                    {
+                        MenuPrintButton.Click += async (send, args) => await Print(NotepadsCore.GetSelectedTextEditor());
+                    }
+                    if (name == "TopTip")
+                    {
+                        MenuCompactOverlayButton.Click += (send, args) => EnterExitCompactOverlayMode();
+                    }
+                    if (name == "History")
+                    {
+                        //MenuCompactOverlayButton.Click += (send, args) => EnterExitCompactOverlayMode();
+                    }
+
+                    QuickButtonsPanel.Children.Add(button);
+                }
+                else
+                {
+                    foreach (Button btn in QuickButtonsPanel.Children)
+                    {
+                        if (btn.Name == name)
+                            QuickButtonsPanel.Children.Remove(btn);
+                    }
+                }
+            }
+            //QuickButtonsPanel.Children
+        }
         #endregion
 
         #region NotepadsCore Events
