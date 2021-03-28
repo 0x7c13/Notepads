@@ -23,6 +23,8 @@ on:
         description: 'Type of event to trigger (type "release" to trigger release)'
         required: false
         default: 'test'
+  schedule:
+    - cron: '0 8 * * *'
 
 jobs:
   setup:
@@ -39,18 +41,21 @@ jobs:
               {
                 "configuration": "Debug",
                 "appxBundlePlatforms": "x86|x64",
+                "runCodeqlAnalysis": false,
                 "runSonarCloudScan": false,
                 "debug": true,
                 "release": false
               },{
                 "configuration": "Release",
                 "appxBundlePlatforms": "x86|x64|ARM64",
+                "runCodeqlAnalysis": false,
                 "runSonarCloudScan": false,
                  "debug": false,
                  "release": false
               },{
                 "configuration": "Production",
                 "appxBundlePlatforms": "x86|x64|ARM64",
+                "runCodeqlAnalysis": true,
                 "runSonarCloudScan": true,
                 "debug": false,
                 "release": false
@@ -58,15 +63,19 @@ jobs:
             ]
           }'
           $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
-          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
             $MATRIX_OBJ.include | Foreach-Object { $_.runSonarCloudScan = $false }
           }
-          if ( $env:GITHUB_EVENT_NAME -ceq 'workflow_dispatch' ) {
+          if ( !($env:GITHUB_EVENT_NAME -ceq 'push') -And !($env:GITHUB_EVENT_NAME -ceq 'pull_request') ) {
             $MATRIX_OBJ.include = $MATRIX_OBJ.include | Where-Object { $_.configuration -ceq "$env:RELEASE_CONFIGURATION" }
-            if ( ($env:EVENT_TYPE -ceq 'release') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+            if ( ($env:GITHUB_EVENT_NAME -ceq 'workflow_dispatch') -and ($env:EVENT_TYPE -ceq 'release') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+              $MATRIX_OBJ.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
               $MATRIX_OBJ.include | Foreach-Object { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
             } else {
               $MATRIX_OBJ.include | Foreach-Object { $_.appxBundlePlatforms = 'x64' }
+              if ( !($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
+                $MATRIX_OBJ.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
+              }
             }
           }
           $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
@@ -109,6 +118,16 @@ jobs:
         with:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Due to the insufficient memory allocated by default, CodeQL sometimes requires more to be manually allocated
+      - if: matrix.runCodeqlAnalysis
+        name: Configure Pagefile
+        id: config_pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+            minimum-size: 8GB
+            maximum-size: 32GB
+            disk-root: "D:"
 
       - if: matrix.release
         name: Check latest tag
@@ -207,6 +226,13 @@ jobs:
         run: |
           msbuild $env:SOLUTION_NAME /t:Restore
 
+      - if: matrix.runCodeqlAnalysis
+        name: Initialize CodeQL
+        id: init_codeql
+        uses: github/codeql-action/init@v1
+        with:
+          queries: security-and-quality
+
       - name: Build and generate bundles
         id: build_app
         shell: pwsh
@@ -249,6 +275,11 @@ jobs:
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
           APPX_BUNDLE_PLATFORMS: ARM64
+
+      - if: matrix.runCodeqlAnalysis
+        name: Perform CodeQL Analysis
+        id: analyze_codeql
+        uses: github/codeql-action/analyze@v1
 
       - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
