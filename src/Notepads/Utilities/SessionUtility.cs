@@ -12,7 +12,7 @@
     using System.IO;
     using Newtonsoft.Json.Linq;
     using Notepads.Core.SessionDataModels;
-    using Newtonsoft.Json;
+    using System.Text.Json;
 
     internal static class SessionUtility
     {
@@ -81,12 +81,12 @@
                         var data = await File.ReadAllTextAsync(tempMetaDataFilePath);
                         try
                         {
-                            var json = JObject.Parse(data);
-                            var version = (int)json["Version"];
+                            var json = JsonDocument.Parse(data);
+                            var version = json.RootElement.GetProperty("Version").GetInt32();
 
                             if (version == 1)
                             {
-                                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data);
+                                sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
                             }
                             else
                             {
@@ -113,7 +113,7 @@
 
                             if (version == 1)
                             {
-                                sessionData = JsonConvert.DeserializeObject<NotepadsSessionDataV1>(data);
+                                sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
                             }
                             else
                             {

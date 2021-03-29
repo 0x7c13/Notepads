@@ -10,8 +10,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AppCenter.Analytics;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+    using System.Text.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
     using Notepads.Models;
@@ -183,7 +182,7 @@
 
             try
             {
-                string sessionJsonStr = JsonConvert.SerializeObject(sessionData, Formatting.Indented);
+                string sessionJsonStr = JsonSerializer.Serialize(sessionData, new JsonSerializerOptions { WriteIndented = true });
 
                 if (_lastSessionJsonStr == null || !string.Equals(_lastSessionJsonStr, sessionJsonStr, StringComparison.OrdinalIgnoreCase))
                 {
