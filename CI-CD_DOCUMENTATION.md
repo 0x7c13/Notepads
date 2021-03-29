@@ -55,6 +55,7 @@
 - The Quality Gate will become active as soon as the next SonarCloud scan completes successfully
 
 <br>
+<a name="workflow_dispatch"></a>
 
 ## 2. Run workflow manually
 
@@ -66,9 +67,11 @@ Once you've set up all the steps above correctly, you should be able to successf
 
 3. On the right, next to the "This workflow has a workflow_dispatch event trigger" label, click on the "Run workflow" dropdown, make sure the default branch is selected (if not manually changed, should be main or master) in the "Use workflow from" dropdown and click the "Run workflow" button
 
+4. You can optionally fill the argument textbox with "release" to trigger [GitHub Release](#github_release) and [Store Upload](#store_upload)
+
 ![Actions_workflow_dispatch](ScreenShots/CI-CD_DOCUMENTATION/Actions_workflow_dispatch.png)
 
-4. Once the workflow run has completed successfully, move on to the next step of the documentation
+5. Once the workflow run has completed successfully, move on to the next step of the documentation
 
 NOTE: **screenshots are only exemplary**
 
@@ -200,12 +203,13 @@ To add more descriptions, follow these steps:
 ![CSA_custom_2](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_2.png)
 
 <br>
+<a name="github_release"></a>
 
-## 5. Automated versioning
+## 5. Automated GitHub release
 
-Automatically bumps up the GitHub tag in the repo and executes the CD job
+When triggered bumps up the GitHub tag in the repo and executes the CD job and produces release with changelogs
 
-Note: **not every commit to your master branch creates a release**
+Note: **not every commit to your master branch are included in changelog**
 
 #### Setup
 
@@ -237,7 +241,23 @@ NOTE:
 
 #### Execution
 
-Follow these instructions for any commit (push or PR merge) to your master branch, you would like to execute the automated versioning.
+[Once you've set up all the steps for manual execution of the "Notepads CI/CD Pipeline" workflow correctly](#workflow_dispatch), you should be able to successfully trigger release with the same workflow.
+
+1. Go to the project's GitHub repository and click on the **Actions** tab
+
+2. From the "Workflows" list on the left, click on "Notepads CI/CD Pipeline"
+
+3. On the right, next to the "This workflow has a workflow_dispatch event trigger" label, click on the "Run workflow" dropdown, make sure the default branch is selected (if not manually changed, should be main or master) in the "Use workflow from" dropdown, type "release" in the argument textbox (By default "test" is typed) and click the "Run workflow" button
+
+![Actions_workflow_dispatch](ScreenShots/CI-CD_DOCUMENTATION/Actions_workflow_dispatch.png)
+
+4. The workflow will produce release assets and calculate version, generate changelogs from valid commits since previous tag.
+
+NOTE: **screenshots are only exemplary**
+
+<br>
+
+#### - follow these instructions for any commit (push or PR merge) to your master branch, you would like to see in changelog and count towards version change.
 
 You would need one of three keywords at the start of your commit title. Each of the three keywords corresponds to a number in your release version i.e. v1.2.3. The release versioning uses the ["Conventional Commits" specification](https://www.conventionalcommits.org/en/v1.0.0/):
 
@@ -255,6 +275,9 @@ Example(fix/PATCH): <br>
 <br>
 `git push origin master`
 <br>
+<br>
+On triggering `Release`:
+<br>
 Result: v1.2.3 -> **v1.2.4**
 <br>
 <br>
@@ -263,6 +286,9 @@ Example(feat/MINOR): <br>
 `git commit -a -m "feat: this is a MINOR release triggering commit"`
 <br>
 `git push origin master`
+<br>
+<br>
+On triggering `Release`:
 <br>
 Result: v1.2.3 -> **v1.3.0**
 <br>
@@ -276,12 +302,16 @@ Example(perf/MAJOR): <br>
 <br>
 `git push origin master`
 <br>
+<br>
+On triggering `Release`:
+<br>
 Result: v1.2.3 -> **v2.0.0**
 <br>
 <br>
 Note: in the MAJOR release example, the PowerShell multiline syntax ` (backtick) is used. After writing a backtick, a press of the Enter key should open a new line.
 
 <br>
+<a name="store_upload"></a>
 
 ## 6. Setup automated publishing to the Windows Store
 
