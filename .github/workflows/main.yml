@@ -9,6 +9,12 @@ on:
     - 'azure-pipelines.yml'
     - '.github/**'
     - '!.github/workflows/main.yml'
+    branches-ignore:
+    # PRs made by bots trigger both 'push' and 'pull_request' event, ignore 'push' event in that case
+    - 'dependabot**'
+    - 'imgbot**'
+    tags-ignore:
+    - '**'
   pull_request:
     paths-ignore:
     - '**.md'
