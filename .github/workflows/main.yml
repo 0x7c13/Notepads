@@ -1,38 +1,107 @@
 name: Notepads CI/CD Pipeline
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/main.yml'
+  pull_request:
+    paths-ignore:
+    - '**.md'
+    - 'ScreenShots/**'
+    - '.whitesource'
+    - 'azure-pipelines.yml'
+    - '.github/**'
+    - '!.github/workflows/main.yml'
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type of event to trigger (type "release" to trigger release)'
+        required: false
+        default: 'test'
+  schedule:
+    - cron: '0 8 * * *'
 
 jobs:
-  ci:
+  setup:
     runs-on: windows-latest
     outputs:
-      new_version: ${{ steps.tag_generator.outputs.new_version }}
-      new_version_tag: ${{ steps.tag_generator.outputs.new_tag }}
-      is_push_to_master: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
-    env:
-      SOLUTION_NAME: src\Notepads.sln
-      CONFIGURATION: Production
-      DEFAULT_DIR: ${{ github.workspace }}
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
-      - name: Steps' conditionals handler
-        id: step_conditionals_handler
+      - name: Setup strategy matrix
+        id: set_matrix
         shell: pwsh
         run: |
-          $IS_PUSH_TO_MASTER = 'false'
-          $IS_NOT_PR = 'true'
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
-            $IS_PUSH_TO_MASTER = 'true'
+          $MATRIX = '{
+            "include": [
+              {
+                "configuration": "Debug",
+                "appxBundlePlatforms": "x86|x64",
+                "runCodeqlAnalysis": false,
+                "runSonarCloudScan": false,
+                "debug": true,
+                "release": false
+              },{
+                "configuration": "Release",
+                "appxBundlePlatforms": "x86|x64|ARM64",
+                "runCodeqlAnalysis": false,
+                "runSonarCloudScan": false,
+                 "debug": false,
+                 "release": false
+              },{
+                "configuration": "Production",
+                "appxBundlePlatforms": "x86|x64|ARM64",
+                "runCodeqlAnalysis": true,
+                "runSonarCloudScan": true,
+                "debug": false,
+                "release": false
+              }
+            ]
+          }'
+          $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
+            $MATRIX_OBJ.include | Foreach-Object { $_.runSonarCloudScan = $false }
           }
-          if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
-            $IS_NOT_PR = 'false'
+          if ( !($env:GITHUB_EVENT_NAME -ceq 'push') -And !($env:GITHUB_EVENT_NAME -ceq 'pull_request') ) {
+            $MATRIX_OBJ.include = $MATRIX_OBJ.include | Where-Object { $_.configuration -ceq "$env:RELEASE_CONFIGURATION" }
+            if ( ($env:GITHUB_EVENT_NAME -ceq 'workflow_dispatch') -and ($env:EVENT_TYPE -ceq 'release') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+              $MATRIX_OBJ.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
+              $MATRIX_OBJ.include | Foreach-Object { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
+            } else {
+              $MATRIX_OBJ.include | Foreach-Object { $_.appxBundlePlatforms = 'x64' }
+              if ( !($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
+                $MATRIX_OBJ.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
+              }
+            }
           }
-          echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
-          echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
+          $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32
+          echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
         env:
+          EVENT_TYPE: ${{ github.event.inputs.type }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
+          RELEASE_CONFIGURATION: Production
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+  ci:
+    needs: setup
+    runs-on: windows-latest
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
+    outputs:
+      changelog: ${{ steps.tag_generator.outputs.changelog }}
+      new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
+      new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
+      is_release: ${{ matrix.release }}
+    env:
+      SOLUTION_NAME: src\Notepads.sln
+      CONFIGURATION: ${{ matrix.configuration }}
+      DEFAULT_DIR: ${{ github.workspace }}
+    steps:
+      - if: matrix.runSonarCloudScan
         name: Set up JDK 11
         id: Setup_JDK
         uses: actions/setup-java@v1
@@ -50,26 +119,57 @@ jobs:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      # Due to the insufficient memory allocated by default, CodeQL sometimes requires more to be manually allocated
+      - if: matrix.runCodeqlAnalysis
+        name: Configure Pagefile
+        id: config_pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+            minimum-size: 8GB
+            maximum-size: 32GB
+            disk-root: "D:"
+
+      - if: matrix.release
+        name: Check latest tag
+        id: check_latest_tag
+        shell: pwsh
+        run: |
+          $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_REPOSITORY.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
+          $LATEST_VERSION = [System.Version]::Parse($LATEST_TAG -replace 'v')
+          echo "::set-output name=semver::$(echo "$($LATEST_VERSION.Major).$($LATEST_VERSION.Minor).$($LATEST_VERSION.Build)")"
+        env:
+          GIT_REPOSITORY: ${{ github.repository }}
+
+      - if: matrix.release && steps.check_latest_tag.outputs.semver != ''
         name: Bump GitHub tag
         id: tag_generator
-        uses: mathieudutour/github-tag-action@v5
+        uses: soumyamahunt/github-tag-action@test-other-ver-support
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: false
+          latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
+          default_bump: true
+          dry_run: true
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true' && steps.tag_generator.outputs.new_version != ''
-        name: Update Package.appxmanifest version
-        id: update_appxmanifest
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
+        name: Update tag and manifest
+        id: update
+        shell: pwsh
         run: |
-          $APPXMANIFEST_PATH = 'src/Notepads/Package.appxmanifest'
+          git config --global user.name $env:GIT_USER_NAME
+          git config --global user.email $env:GIT_USER_EMAIL
+          git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
+          git push --follow-tags
           $xml = [xml](Get-Content $APPXMANIFEST_PATH)
-          $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION.0")
+          $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION")
           $xml.save($APPXMANIFEST_PATH)
         env:
-          NEW_VERSION: ${{ steps.tag_generator.outputs.new_version }}
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          APPXMANIFEST_PATH: src\Notepads\Package.appxmanifest
+          NEW_VERSION: "${{ steps.tag_generator.outputs.new_version }}.0"
+          NEW_VERSION_TAG: "v${{ steps.get_assembly_version.outputs.version_tag }}.0"
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
         id: cache_sonar_packages
         uses: actions/cache@v2
@@ -78,7 +178,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: matrix.runSonarCloudScan
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
         uses: actions/cache@v2
@@ -87,7 +187,7 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true' && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
+      - if: matrix.runSonarCloudScan && steps.cache_sonar_scanner.outputs.cache-hit != 'true'
         name: Install SonarCloud scanner
         id: install_sonar_scanner
         shell: pwsh
@@ -95,7 +195,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: matrix.runSonarCloudScan
         name: Initialize SonarCloud scanner
         id: init_sonar_scanner
         shell: pwsh
@@ -109,15 +209,14 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Create PFX certificate for AppxBundle
         id: create_pfx_cert
         shell: pwsh
         run: |
-          $BASE64_STR = $env:BASE64_STR
           $TARGET_FILE = "$env:DEFAULT_DIR\cert.pfx"
-          $FROM_BASE64_STR = [Convert]::FromBase64String($BASE64_STR)
-          [IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
+          $FROM_BASE64_STR = [System.Convert]::FromBase64String("$env:BASE64_STR")
+          [System.IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
         env:
           BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
 
@@ -125,9 +224,14 @@ jobs:
         id: restore_application
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
-          /t:Restore `
-          /p:Configuration=$env:CONFIGURATION
+          msbuild $env:SOLUTION_NAME /t:Restore
+
+      - if: matrix.runCodeqlAnalysis
+        name: Initialize CodeQL
+        id: init_codeql
+        uses: github/codeql-action/init@v1
+        with:
+          queries: security-and-quality
 
       - name: Build and generate bundles
         id: build_app
@@ -149,14 +253,36 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ steps.step_conditionals_handler.outputs.is_push_to_master }}
-          APPX_BUNDLE_PLATFORMS: x86|x64|ARM64
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ matrix.release }}
+          APPX_BUNDLE_PLATFORMS: ${{ matrix.appxBundlePlatforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
           APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
-      - if: steps.step_conditionals_handler.outputs.is_not_pr == 'true'
+      - if: matrix.debug && !contains( matrix.appxBundlePlatforms, 'arm64' )
+        name: Test ARM build in debug configuration
+        id: build_app_arm_debug
+        shell: pwsh
+        run: |
+          msbuild $env:SOLUTION_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
+          /p:AppxBundle=$env:APPX_BUNDLE `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
+        env:
+          PLATFORM: ARM64
+          UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
+          APPX_BUNDLE: Always
+          APPX_BUNDLE_PLATFORMS: ARM64
+
+      - if: matrix.runCodeqlAnalysis
+        name: Perform CodeQL Analysis
+        id: analyze_codeql
+        uses: github/codeql-action/analyze@v1
+
+      - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
         id: send_sonar_results
         shell: pwsh
@@ -167,7 +293,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: steps.step_conditionals_handler.outputs.is_push_to_master == 'true'
+      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v1
@@ -177,12 +303,12 @@ jobs:
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_push_to_master == 'true' && needs.ci.outputs.new_version != ''
-    needs: ci
+    if: needs.ci.outputs.is_release == 'true' && needs.ci.outputs.new_version != ''
+    needs: [ setup, ci ]
     runs-on: windows-latest
     env:
-      NEW_ASSEMBLY_VERSION: "${{ needs.ci.outputs.new_version }}.0"
-      NEW_TAG: ${{ needs.ci.outputs.new_version_tag }}
+      NEW_VERSION: ${{ needs.ci.outputs.new_version }}
+      NEW_VERSION_TAG: ${{ needs.ci.outputs.new_version_tag }}
     steps:
       - name: Checkout repository
         id: checkout_repo
@@ -199,8 +325,9 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ env.NEW_TAG }}
-          release_name: Notepads ${{ env.NEW_TAG }}
+          tag_name: ${{ env.NEW_VERSION_TAG }}
+          release_name: Notepads ${{ env.NEW_VERSION_TAG }}
+          body: ${{ needs.ci.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -209,8 +336,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_Production_Test/Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64_Production.msixbundle
-          asset_name: Notepads_${{ env.NEW_ASSEMBLY_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64_Production.msixbundle
+          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
