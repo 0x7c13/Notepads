@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: 'github-action-deps: '
+      prefix: 'action-deps: '
 
   - package-ecosystem: "nuget"
     # location of package manifests
