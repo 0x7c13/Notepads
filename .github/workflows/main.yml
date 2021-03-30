@@ -301,7 +301,7 @@ jobs:
       - if: matrix.release && steps.tag_generator.outputs.new_version != ''
         name: Upload build artifacts
         id: upload_artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: Build artifacts
           path: Artifacts/
