@@ -1,6 +1,7 @@
 name: Code scanning alerts bulk dismissal
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       type:
