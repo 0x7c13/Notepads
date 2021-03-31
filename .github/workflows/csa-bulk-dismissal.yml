@@ -37,7 +37,7 @@ jobs:
               ]
             }'
           }
-          echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
+          echo "::set-output name=matrix::$($MATRIX -replace '\r*\n*', '')"
         env:
           FILTER_TYPE: ${{ github.event.inputs.type }}
   dismiss-alerts: 
