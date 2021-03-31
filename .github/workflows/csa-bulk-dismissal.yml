@@ -1,7 +1,6 @@
 name: Code scanning alerts bulk dismissal
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       type:
@@ -27,7 +26,7 @@ jobs:
                 }
               ]
             }'
-          } else if ( $env:FILTER_TYPE -ieq 'desc' ) {
+          } elseif ( $env:FILTER_TYPE -ieq 'desc' ) {
             $MATRIX = '{
               "include": [
                 {
