@@ -59,26 +59,21 @@ jobs:
         shell: pwsh
         run: |
           $page = 1
-          $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json).number
+          $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json)
           while ( $LIST_OF_ALERTS -ne $null ) {
-            $LIST_OF_INDEXES = $LIST_OF_INDEXES + $LIST_OF_ALERTS
-            $page = $page + 1
-            $page
-            $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json).number
-          }
-
-          foreach ( $index in $LIST_OF_INDEXES ) {
             if ( $env:FILTER_TYPE -ieq 'path' ) {
-              $ALERT = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/$index" | ConvertFrom-Json).most_recent_instance.location.path
+              $MATCHES = $MATCHES + $($LIST_OF_ALERTS | Where-Object { $_.most_recent_instance.location.path -like "$env:FILTER" })
             } else {
-              $ALERT = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/$index" | ConvertFrom-Json).rule.description
+              $MATCHES = $MATCHES + $($LIST_OF_ALERTS | Where-Object { $_.rule.description -like "$env:FILTER" })
             }
             
-            if ( $ALERT -like $env:FILTER ) {
-              $ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
+            $page = $page + 1
+            $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json)
+          }
 
-              curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$env:DISMISS_REASON"'"}'
-            }
+          $MATCHES.number | Foreach-Object {
+            $ALERT_URL = "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$_"
+            curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$env:DISMISS_REASON"'"}'
           }
         env:
           FILTER: ${{ matrix.filter }}
