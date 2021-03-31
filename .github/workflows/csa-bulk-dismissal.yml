@@ -1,14 +1,51 @@
 name: Code scanning alerts bulk dismissal
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type of filter to use ("path" for using path and "desc" for using description)'
+        required: true
+        default: 'path'
 
 jobs:
+  setup:
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.set_filter_matrix.outputs.matrix }}
+    steps:
+      - name: Setup filter matrix
+        id: set_filter_matrix
+        shell: pwsh
+        run: |
+          if ( $env:FILTER_TYPE -ieq 'path' ) {
+            $MATRIX = '{
+              "include": [
+                {
+                  "filter": "*/obj/*"
+                }
+              ]
+            }'
+          } else if ( $env:FILTER_TYPE -ieq 'desc' ) {
+            $MATRIX = '{
+              "include": [
+                {
+                  "filter": "Calls to unmanaged code"
+                },{
+                  "filter": "Unmanaged code"
+                }
+              ]
+            }'
+          }
+          echo "::set-output name=matrix::$($MATRIX -replace ' *\r*\n*', '')"
+        env:
+          FILTER_TYPE: ${{ github.event.inputs.type }}
   dismiss-alerts: 
     name: Dismiss alerts
-    runs-on: ubuntu-latest
+    needs: setup
+    runs-on: windows-latest
     strategy:
-      matrix:
-        ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     env:
       # Settings
       OWNER: ${{ github.repository_owner }} # verbatim from URL
@@ -16,43 +53,35 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.CSA_ACCESS_TOKEN }} # requires security_events read/write permissions
       DISMISS_REASON: ${{ secrets.DISMISS_REASON_VAR }} # "false positive", "won't fix" or "used in tests". 
       ALERTS_PER_PAGE: 100
-      ALERT_DESCRIPTION: ${{ matrix.ALERT_DESC }}
     steps:
-      - name: Install jq
-        id: install_jq
-        uses: r26d/jq-action@master
-        with:
-          cmd: jq -n env
-
       - name: Run automation
         id: run_automation
-        shell: bash
+        shell: pwsh
         run: |
-          page=1
-          LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+          $page = 1
+          $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json).number
+          while ( $LIST_OF_ALERTS -ne $null ) {
+            $LIST_OF_INDEXES = $LIST_OF_INDEXES + $LIST_OF_ALERTS
+            $page = $page + 1
+            $page
+            $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json).number
+          }
 
-          while [ -n "$LIST_OF_ALERTS" ]
-          do
-            echo -n $LIST_OF_ALERTS" " >> "data.json"
+          foreach ( $index in $LIST_OF_INDEXES ) {
+            if ( $env:FILTER_TYPE -ieq 'path' ) {
+              $ALERT = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/$index" | ConvertFrom-Json).most_recent_instance.location.path
+            } else {
+              $ALERT = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/$index" | ConvertFrom-Json).rule.description
+            }
+            
+            if ( $ALERT -like $env:FILTER ) {
+              $ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
 
-            ((page=page+1))
-
-            LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
-          done
-
-          LIST_OF_INDEXES=$(cat data.json)
-
-          for index in $LIST_OF_INDEXES
-          do
-            ALERT_DESC=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index" | jq .rule.description)
-
-            if [ "$ALERT_DESC" == "$ALERT_DESCRIPTION" ]; then
-              ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
-
-              curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
-            fi
-          done
-
-          rm -f data.json
+              curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$env:DISMISS_REASON"'"}'
+            }
+          }
+        env:
+          FILTER: ${{ matrix.filter }}
+          FILTER_TYPE: ${{ github.event.inputs.type }}
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
