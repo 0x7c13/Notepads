@@ -58,22 +58,32 @@ jobs:
         id: run_automation
         shell: pwsh
         run: |
-          $page = 1
-          $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json)
-          while ( $LIST_OF_ALERTS -ne $null ) {
-            if ( $env:FILTER_TYPE -ieq 'path' ) {
-              $MATCHES = $MATCHES + $($LIST_OF_ALERTS | Where-Object { $_.most_recent_instance.location.path -like "$env:FILTER" })
-            } else {
-              $MATCHES = $MATCHES + $($LIST_OF_ALERTS | Where-Object { $_.rule.description -like "$env:FILTER" })
-            }
-            
-            $page = $page + 1
-            $LIST_OF_ALERTS = $(curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$env:ALERTS_PER_PAGE" | ConvertFrom-Json)
+          $HEADERS = @{
+            Authorization = 'Basic {0}' -f [System.Convert]::ToBase64String([char[]]"$($env:OWNER):$($env:ACCESS_TOKEN)")
+            'Accept' = 'application/vnd.github.v3+json'
           }
 
-          $MATCHES.number | Foreach-Object {
-            $ALERT_URL = "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$_"
-            curl.exe -u "$($env:OWNER):$($env:ACCESS_TOKEN)" -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$env:DISMISS_REASON"'"}'
+          $page = 1
+          $FETCH_URL = "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page={0}&per_page=$env:ALERTS_PER_PAGE"
+          $LIST_OF_ALERTS = Invoke-RestMethod -Method Get -Headers $HEADERS -Uri $($FETCH_URL -f $page)
+          while ( $LIST_OF_ALERTS -ne $null ) {
+            if ( $env:FILTER_TYPE -ieq 'path' ) {
+              $MATCHES += $($LIST_OF_ALERTS | Where-Object { $_.most_recent_instance.location.path -like "$env:FILTER" })
+            } else {
+              $MATCHES += $($LIST_OF_ALERTS | Where-Object { $_.rule.description -like "$env:FILTER" })
+            }
+            
+            $page += 1
+            $LIST_OF_ALERTS = Invoke-RestMethod -Method Get -Headers $HEADERS -Uri $($FETCH_URL -f $page)
+          }
+          
+          $ALERT_URL = "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/{0}"
+          $BODY = @{
+              state = 'dismissed'
+              dismissed_reason = "$env:DISMISS_REASON"
+          } | ConvertTo-Json
+          foreach ($index in $MATCHES.number) {
+            Invoke-RestMethod -Method Patch -Headers $HEADERS -Uri $($ALERT_URL -f $index) -Body $BODY
           }
         env:
           FILTER: ${{ matrix.filter }}
