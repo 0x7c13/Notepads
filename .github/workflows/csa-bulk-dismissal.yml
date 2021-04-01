@@ -77,10 +77,10 @@ jobs:
             $LIST_OF_ALERTS = Invoke-RestMethod -Method Get -Headers $HEADERS -Uri $($FETCH_URL -f $page)
           }
           
-          $ALERT_URL = "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/{0}"
+          $ALERT_URL = "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/{0}"
           $BODY = @{
-              state = 'dismissed'
-              dismissed_reason = "$env:DISMISS_REASON"
+            state = 'dismissed'
+            dismissed_reason = "$env:DISMISS_REASON"
           } | ConvertTo-Json
           foreach ($index in $MATCHES.number) {
             Invoke-RestMethod -Method Patch -Headers $HEADERS -Uri $($ALERT_URL -f $index) -Body $BODY
