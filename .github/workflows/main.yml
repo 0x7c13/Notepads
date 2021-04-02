@@ -328,23 +328,50 @@ jobs:
           name: Build artifacts
           path: Artifacts/
 
+      - name: Format changelog
+        id: format_changlog
+        shell: pwsh
+        run: |
+          echo "::set-output name=changelog::$($env:CHANGELOG -replace $($env:NEW_VERSION -replace '.0$',''),$env:NEW_VERSION)"
+        env:
+          CHANGELOG: ${{ needs.ci.outputs.changelog }}
+
       - name: Create and publish release
         id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_VERSION_TAG }}
           release_name: Notepads ${{ env.NEW_VERSION_TAG }}
-          body: ${{ needs.ci.outputs.changelog }}
+          body: ${{ steps.format_changlog.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create deployment payload
+        id: create_notepads_zip
+        shell: pwsh
+        run: |
+          Get-ChildItem -Filter *Production* -Recurse | Rename-Item -NewName { $_.name -replace "_Production|_Test",'' }
+          Compress-Archive -Path "Notepads_$($env:NEW_VERSION)\*" -DestinationPath "Notepads_$($env:NEW_VERSION)\Notepads_$($env:NEW_VERSION)_x86_x64_ARM64.zip"
+        working-directory: ./Artifacts
+
       - name: Upload msixbundle as release asset
+        id: upload_notepads_bundle
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload zip as release asset
         id: upload_notepads_zip
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}_Production_Test/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64_Production.msixbundle
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
+          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.zip
+          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
