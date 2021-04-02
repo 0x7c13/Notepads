@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'Type of filter to use ("path" for using path and "desc" for using description)'
+        description: Type of filter to use ("path" for using path and "desc" for using description)
         required: true
         default: 'path'
+      reason:
+        description: Reason for dismissal ("fp" for "false positive", "wf" for "won't fix" and "ut" for "used in tests")
+        required: true
+        default: 'wf'
 
 jobs:
   setup:
@@ -18,6 +22,21 @@ jobs:
         id: set_filter_matrix
         shell: pwsh
         run: |
+          switch ( $env:REASON ) {
+            fp {
+              $REASON = "false positive"
+            }
+            wf {
+              $REASON = "won't fix"
+            }
+            ut {
+              $REASON = "used in tests"
+            }
+            default {
+              throw "Invalid reason argument"
+            }
+          }
+
           if ( $env:FILTER_TYPE -ieq 'path' ) {
             $MATRIX = '{
               "include": [
@@ -36,10 +55,16 @@ jobs:
                 }
               ]
             }'
+          } else {
+              throw "Invalid filter type argument"
           }
-          echo "::set-output name=matrix::$($MATRIX -replace '\r*\n*', '')"
+          $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
+          $MATRIX_OBJ.include | Foreach-Object { $_ | Add-Member -Name 'reason' -Value "$REASON" -MemberType NoteProperty }
+          $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32 -Compress
+          echo "::set-output name=matrix::$(echo $MATRIX)"
         env:
           FILTER_TYPE: ${{ github.event.inputs.type }}
+          REASON: ${{ github.event.inputs.reason }}
   dismiss-alerts: 
     name: Dismiss alerts
     needs: setup
@@ -51,8 +76,10 @@ jobs:
       OWNER: ${{ github.repository_owner }} # verbatim from URL
       PROJECT_NAME: ${{ github.event.repository.name }} # verbatim from URL
       ACCESS_TOKEN: ${{ secrets.CSA_ACCESS_TOKEN }} # requires security_events read/write permissions
-      DISMISS_REASON: ${{ secrets.DISMISS_REASON_VAR }} # "false positive", "won't fix" or "used in tests". 
-      ALERTS_PER_PAGE: 100
+      DISMISS_REASON: ${{ matrix.reason }} # "false positive", "won't fix" or "used in tests". 
+      ALERTS_PER_PAGE: 100 # maximum is 100
+      FILTER: ${{ matrix.filter }}
+      FILTER_TYPE: ${{ github.event.inputs.type }}
     steps:
       - name: Run automation
         id: run_automation
@@ -60,7 +87,7 @@ jobs:
         run: |
           $HEADERS = @{
             Authorization = 'Basic {0}' -f [System.Convert]::ToBase64String([char[]]"$($env:OWNER):$($env:ACCESS_TOKEN)")
-            'Accept' = 'application/vnd.github.v3+json'
+            Accept = 'application/vnd.github.v3+json'
           }
 
           $page = 1
@@ -85,8 +112,5 @@ jobs:
           foreach ($index in $MATCHES.number) {
             Invoke-RestMethod -Method Patch -Headers $HEADERS -Uri $($ALERT_URL -f $index) -Body $BODY
           }
-        env:
-          FILTER: ${{ matrix.filter }}
-          FILTER_TYPE: ${{ github.event.inputs.type }}
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
