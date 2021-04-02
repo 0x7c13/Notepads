@@ -328,13 +328,21 @@ jobs:
           name: Build artifacts
           path: Artifacts/
 
+      - name: Format changelog
+        id: format_changlog
+        shell: pwsh
+        run: |
+          echo "::set-output name=changelog::$($env:CHANGELOG -replace $($env:NEW_VERSION -replace '.0$',''),$env:NEW_VERSION)"
+        env:
+          CHANGELOG: ${{ needs.ci.outputs.changelog }}
+
       - name: Create and publish release
         id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_VERSION_TAG }}
           release_name: Notepads ${{ env.NEW_VERSION_TAG }}
-          body: ${{ needs.ci.outputs.changelog }}
+          body: ${{ steps.format_changlog.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
