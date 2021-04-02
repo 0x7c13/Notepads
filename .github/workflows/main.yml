@@ -167,9 +167,9 @@ jobs:
           git config --global user.email $env:GIT_USER_EMAIL
           git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
           git push --follow-tags
-          $xml = [xml](Get-Content $APPXMANIFEST_PATH)
+          $xml = [xml](Get-Content $env:APPXMANIFEST_PATH)
           $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION")
-          $xml.save($APPXMANIFEST_PATH)
+          $xml.save($env:APPXMANIFEST_PATH)
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
