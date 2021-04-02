@@ -175,7 +175,7 @@ jobs:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           APPXMANIFEST_PATH: src\Notepads\Package.appxmanifest
           NEW_VERSION: "${{ steps.tag_generator.outputs.new_version }}.0"
-          NEW_VERSION_TAG: "v${{ steps.get_assembly_version.outputs.version_tag }}.0"
+          NEW_VERSION_TAG: "v${{ steps.tag_generator.outputs.new_version }}.0"
 
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
