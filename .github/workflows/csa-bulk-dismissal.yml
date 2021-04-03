@@ -38,30 +38,29 @@ jobs:
           }
 
           if ( $env:FILTER_TYPE -ieq 'path' ) {
-            $MATRIX = '{
-              "include": [
-                {
-                  "filter": "*/obj/*"
-                }
-              ]
-            }'
+            $MATRIX = @{
+              include = @(
+                @{
+                   filter = "*/obj/*"
+                 }
+              )
+            }
           } elseif ( $env:FILTER_TYPE -ieq 'desc' ) {
-            $MATRIX = '{
-              "include": [
-                {
-                  "filter": "Calls to unmanaged code"
-                },{
-                  "filter": "Unmanaged code"
-                }
-              ]
-            }'
+            $MATRIX = @{
+              include = @(
+                @{
+                   filter = "Calls to unmanaged code"
+                 },
+                @{
+                   filter = "Unmanaged code"
+                 }
+              )
+            }
           } else {
               throw "Invalid filter type argument"
           }
-          $MATRIX_OBJ = $MATRIX | ConvertFrom-Json
-          $MATRIX_OBJ.include | Foreach-Object { $_ | Add-Member -Name 'reason' -Value "$REASON" -MemberType NoteProperty }
-          $MATRIX = $MATRIX_OBJ | ConvertTo-Json -depth 32 -Compress
-          echo "::set-output name=matrix::$(echo $MATRIX)"
+          $MATRIX.include | Foreach-Object { $_.Add('reason',"$REASON") }
+          echo "::set-output name=matrix::$($MATRIX | ConvertTo-Json -depth 32 -Compress)"
         env:
           FILTER_TYPE: ${{ github.event.inputs.type }}
           REASON: ${{ github.event.inputs.reason }}
