@@ -35,7 +35,7 @@
 
   <Target Name="EnsureNuGetPackageBuildImportsUpdate" BeforeTargets="Restore">
     <ItemGroup>
-      <NugetPackageConfig Include="%(None.Identity)" Condition="'%(None.Filename)' == 'packages' And '%(None.Extension)' == '.config'" />
+      <NugetPackageConfig Include="%(None.Identity)" Condition="'%(None.Filename)%(None.Extension)' == 'packages.config'" />
     </ItemGroup>
     <UpdateNuGetPackageBuildImports PackageConfigPath="%(NugetPackageConfig.FullPath)" ProjectPath="$(MSBuildProjectFullPath)" />
   </Target>
