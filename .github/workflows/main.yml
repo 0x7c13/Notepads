@@ -120,6 +120,10 @@ jobs:
         id: setup_msbuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Setup NuGet
+        id: setup-nuget
+        uses: NuGet/setup-nuget@v1.0.5
+
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
@@ -232,8 +236,8 @@ jobs:
         id: restore_application
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME /t:Clean
           msbuild $env:SOLUTION_NAME /t:Restore
+          nuget restore $env:SOLUTION_NAME
 
       - if: matrix.runCodeqlAnalysis
         name: Initialize CodeQL
