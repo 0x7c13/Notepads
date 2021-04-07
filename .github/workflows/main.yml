@@ -338,7 +338,11 @@ jobs:
         id: format_changlog
         shell: pwsh
         run: |
-          echo "::set-output name=changelog::$($env:CHANGELOG -replace $($env:NEW_VERSION -replace '\.[0-9]+$',''),$env:NEW_VERSION)"
+          $CHANGELOG = $($env:CHANGELOG -replace $($env:NEW_VERSION -replace '\.[0-9]+$',''),$env:NEW_VERSION)
+          $CHANGELOG = $CHANGELOG -replace '%','%25'
+          $CHANGELOG = $CHANGELOG -replace '\r','%0D'
+          $CHANGELOG = $CHANGELOG -replace '\n','%0A'
+          echo "::set-output name=changelog::$(echo $CHANGELOG)"
         env:
           CHANGELOG: ${{ needs.ci.outputs.changelog }}
 
