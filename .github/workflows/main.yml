@@ -293,6 +293,7 @@ jobs:
         name: Perform CodeQL Analysis
         id: analyze_codeql
         uses: github/codeql-action/analyze@v1
+        continue-on-error: true
 
       - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
