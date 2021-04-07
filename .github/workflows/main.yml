@@ -232,6 +232,7 @@ jobs:
         id: restore_application
         shell: pwsh
         run: |
+          msbuild $env:SOLUTION_NAME /t:Clean
           msbuild $env:SOLUTION_NAME /t:Restore
 
       - if: matrix.runCodeqlAnalysis
