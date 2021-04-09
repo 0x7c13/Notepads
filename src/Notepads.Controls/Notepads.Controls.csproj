@@ -281,7 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ColorCode.UWP">
-      <Version>2.0.6</Version>
+      <Version>2.0.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>

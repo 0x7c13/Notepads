@@ -13,6 +13,20 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid x:Name="RootGrid" Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="InstanceStates">
+                <VisualState x:Name="PrimaryInstance" />
+                <VisualState x:Name="ShadowInstance">
+                    <VisualState.Setters>
+                        <Setter Target="MainMenuButton.Foreground"
+                                Value="{StaticResource SystemControlForegroundAccentBrush}" />
+                        <Setter Target="MenuSettingsButton.IsEnabled"
+                                Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.BackgroundTransition>
             <BrushTransition />
         </Grid.BackgroundTransition>
