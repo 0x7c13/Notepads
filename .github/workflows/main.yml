@@ -120,6 +120,10 @@ jobs:
         id: setup_msbuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Setup NuGet
+        id: setup-nuget
+        uses: NuGet/setup-nuget@v1.0.5
+
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
@@ -134,7 +138,7 @@ jobs:
         uses: al-cheb/configure-pagefile-action@v1.2
         with:
             minimum-size: 8GB
-            maximum-size: 32GB
+            maximum-size: 10GB
             disk-root: "D:"
 
       - if: matrix.release
@@ -233,6 +237,7 @@ jobs:
         shell: pwsh
         run: |
           msbuild $env:SOLUTION_NAME /t:Restore
+          nuget restore $env:SOLUTION_NAME
 
       - if: matrix.runCodeqlAnalysis
         name: Initialize CodeQL
@@ -288,6 +293,7 @@ jobs:
         name: Perform CodeQL Analysis
         id: analyze_codeql
         uses: github/codeql-action/analyze@v1
+        continue-on-error: true
 
       - if: matrix.runSonarCloudScan
         name: Send SonarCloud results
@@ -332,7 +338,11 @@ jobs:
         id: format_changlog
         shell: pwsh
         run: |
-          echo "::set-output name=changelog::$($env:CHANGELOG -replace $($env:NEW_VERSION -replace '.0$',''),$env:NEW_VERSION)"
+          $CHANGELOG = $($env:CHANGELOG -replace $($env:NEW_VERSION -replace '\.[0-9]+$',''),$env:NEW_VERSION)
+          $CHANGELOG = $CHANGELOG -replace '%','%25'
+          $CHANGELOG = $CHANGELOG -replace '\r','%0D'
+          $CHANGELOG = $CHANGELOG -replace '\n','%0A'
+          echo "::set-output name=changelog::$(echo $CHANGELOG)"
         env:
           CHANGELOG: ${{ needs.ci.outputs.changelog }}
 
@@ -376,14 +386,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to Windows Store
-        id: publish_to_store
-        uses: isaacrlevin/windows-store-action@1.0
-        with:
-          tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
-          client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
-          app-id: ${{ secrets.STORE_APP_ID }}
-          package-path: "${{ github.workspace }}/Artifacts/"
+#      - name: Publish to Windows Store
+#        id: publish_to_store
+#        uses: isaacrlevin/windows-store-action@1.0
+#        with:
+#          tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
+#          client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+#          client-secret: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+#          app-id: ${{ secrets.STORE_APP_ID }}
+#          package-path: "${{ github.workspace }}/Artifacts/"
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
