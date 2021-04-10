@@ -27,9 +27,10 @@ jobs:
         shell: pwsh
         run: |
           $FILTER_TYPE = $env:FILTER_TYPE
-          if ( !( $env:FILTER_TYPE -ieq 'desc' ) ) {
+          if ( !( $env:FILTER_TYPE -ieq 'path' ) -And !( $env:FILTER_TYPE -ieq 'desc' ) ) {
             $FILTER_TYPE = 'path'
           }
+
           switch ( $env:REASON ) {
             fp {
               $REASON = "false positive"
