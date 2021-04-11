@@ -25,7 +25,6 @@
         {
             ShowHideStatusBar(AppSettingsService.ShowStatusBar);
             AppSettingsService.OnStatusBarVisibilityChanged += OnStatusBarVisibilityChanged;
-            App.OnInstanceTypeChanged += (_, args) => UpdateShadowWindowIndicator();
         }
 
         private void SetupStatusBar(ITextEditor textEditor)
