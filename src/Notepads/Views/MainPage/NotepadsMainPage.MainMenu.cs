@@ -9,7 +9,7 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Media;
+    using Notepads.Extensions;
     using Notepads.Services;
 
     public sealed partial class NotepadsMainPage
@@ -32,11 +32,9 @@
             MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
-            if (!App.IsPrimaryInstance)
-            {
-                MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
-                MenuSettingsButton.IsEnabled = false;
-            }
+            App.OnInstanceTypeChanged += async (sender, args) => await Dispatcher.CallOnUIThreadAsync( 
+                () => CustomizeBasedOnInstanceType(args));
+            CustomizeBasedOnInstanceType(App.IsPrimaryInstance);
 
             if (App.IsGameBarWidget)
             {
@@ -59,6 +57,19 @@
             }
 
             MainMenuButtonFlyout.Opening += MainMenuButtonFlyout_Opening;
+        }
+
+        private void CustomizeBasedOnInstanceType(bool isPrimaryInstance)
+        {
+            // Apply UI changes for shadow instance
+            if (!isPrimaryInstance)
+            {
+                VisualStateManager.GoToState(this, "ShadowInstance", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "PrimaryInstance", true);
+            }
         }
 
         private void MainMenuButtonFlyout_Opening(object sender, object e)

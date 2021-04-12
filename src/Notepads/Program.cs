@@ -16,60 +16,51 @@
             Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
 #endif
 
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
-
-            //if (activatedArgs == null)
-            //{
-            //    // No activated event args, so this is not an activation via the multi-instance ID
-            //    // Just create a new instance and let App OnActivated resolve the launch
-            //    App.IsGameBarWidget = true;
-            //    App.IsPrimaryInstance = true;
-            //    Windows.UI.Xaml.Application.Start(p => new App());
-            //}
-
-            if (activatedArgs is FileActivatedEventArgs)
+            switch (AppInstance.GetActivatedEventArgs())
             {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is CommandLineActivatedEventArgs)
-            {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
-            {
-                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
-                if (protocol == NotepadsOperationProtocol.OpenNewInstance)
-                {
-                    OpenNewInstance();
-                }
-                else
-                {
+                case FileActivatedEventArgs _:
+                case CommandLineActivatedEventArgs _:
                     RedirectOrCreateNewInstance();
-                }
-            }
-            else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
-            {
-                bool handled = false;
-
-                if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
-                {
-                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
+                    break;
+                case ProtocolActivatedEventArgs protocolActivatedEventArgs:
+                    LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+                    var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
                     if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                     {
-                        handled = true;
                         OpenNewInstance();
                     }
-                }
+                    else
+                    {
+                        RedirectOrCreateNewInstance();
+                    }
+                    break;
+                case LaunchActivatedEventArgs launchActivatedEventArgs:
+                    bool handled = false;
+                    if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
+                    {
+                        protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
+                        if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+                        {
+                            handled = true;
+                            OpenNewInstance();
+                        }
+                    }
 
-                if (!handled)
-                {
+                    if (!handled)
+                    {
+                        RedirectOrCreateNewInstance();
+                    }
+                    break;
+                //case null:
+                //    // No activated event args, so this is not an activation via the multi-instance ID
+                //    // Just create a new instance and let App OnActivated resolve the launch
+                //    App.IsGameBarWidget = true;
+                //    App.IsPrimaryInstance = true;
+                //    Windows.UI.Xaml.Application.Start(p => new App());
+                //    break;
+                default:
                     RedirectOrCreateNewInstance();
-                }
-            }
-            else
-            {
-                RedirectOrCreateNewInstance();
+                    break;
             }
         }
 
@@ -105,13 +96,12 @@
         {
             var instances = AppInstance.GetInstances();
 
-            if (instances.Count == 0)
+            switch (instances.Count)
             {
-                return null;
-            }
-            else if (instances.Count == 1)
-            {
-                return instances.FirstOrDefault();
+                case 0:
+                    return null;
+                case 1:
+                    return instances.FirstOrDefault();
             }
 
             if (!(ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is string activeInstance))
