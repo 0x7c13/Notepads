@@ -466,10 +466,9 @@
                     await Dispatcher.CallOnUIThreadAsync(async () =>
                     {
                         await SessionManager.LoadLastSessionAsync();
+                        OnSessionBackupAndRestoreOptionChanged(sender, isSessionBackupAndRestoreEnabled);
                     });
                 }
-
-                OnSessionBackupAndRestoreOptionChanged(sender, isSessionBackupAndRestoreEnabled);
             }
         }
 
