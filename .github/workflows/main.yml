@@ -256,6 +256,7 @@ jobs:
         uses: github/codeql-action/init@v1
         with:
           queries: security-and-quality
+          languages: csharp
 
       - name: Build and generate bundles
         id: build_app
