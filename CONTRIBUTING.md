@@ -16,8 +16,10 @@ You can contribute to Notepads project by:
         1. Make sure you can build and run Notepads project on your machine so that you can test it after your work.
         2. Click [here](https://github.com/JasonStein/Notepads/discussions/818) and provide your information.
         3. Do your work and test it on your machine and check your work to make sure it is not breaking any existing layout.
-        4. Finish your work and create a PR (Example: https://github.com/JasonStein/Notepads/pull/30)
+        4. Finish your work and create a PR, prefix PR title with `lang: ` (Example: https://github.com/JasonStein/Notepads/pull/30)
         5. Let me know and I will merge it if it looks good to me.
+
+Note: This repository follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), format your pull request title according to specifications.
 
 # How to Build and Run Notepads from source:
 * Make sure your machine is running on Windows 10 1903+.

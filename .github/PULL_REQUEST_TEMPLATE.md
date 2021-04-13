@@ -11,7 +11,7 @@ What kind of change does this PR introduce?
 <!-- Prefix title with "feat: " -->
 
 <!-- - Translation -->
-<!-- Prefix title with "trans: " -->
+<!-- Prefix title with "lang: " -->
 
 <!-- - Documentation content changes -->
 <!-- Prefix title with "doc: " -->
@@ -20,6 +20,6 @@ What kind of change does this PR introduce?
 <!-- Prefix title with "ci: " -->
 
 <!-- - Other... Please describe: -->
-<!-- Prefix title with "other: " or custom label with the same format ("label: ") -->
+<!-- Prefix title with "other: " or custom label with conventional commit format: https://www.conventionalcommits.org/en/v1.0.0/ -->
 
 ## Other information

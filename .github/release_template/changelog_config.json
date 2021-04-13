@@ -1,0 +1,13 @@
+{
+  "conventionalCommitsParserOptions": {
+    "revertPattern": "/^(?:Revert|revert:)\\s\"?([\\s\\S]+?)\"?\\s*This reverts commit (\\w*)\\./i",
+    "issuePrefixes": [ "#", "OLDARCH-" ]
+  },
+  "handleBarsOptions": {
+    "setupFile": null,
+    "template": ".github/RELEASE_TEMPLATE/changelog_template.hbs",
+    "compileOptions": { "noEscape": true }
+  },
+  "breakingChangesPattern": "/^breaking\\s+change$/gim",
+  "hostname": "https://github.com"
+}
