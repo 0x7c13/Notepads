@@ -72,23 +72,27 @@ jobs:
             )
           }
 
-          if ( ($env:GITHUB_EVENT -eq 'schedule') -or ($env:FORK -eq 'true') ) {
+          if ( ( $env:GITHUB_EVENT -eq 'pull_request' ) `
+               -or ( $env:GITHUB_EVENT -eq 'schedule' ) `
+               -or ( $env:FORK -eq 'true' ) ) {
             $MATRIX.include | Foreach-Object { $_.runSonarCloudScan = $false }
           }
 
-          if ( ($env:GITHUB_EVENT -ne 'push') -and ($env:GITHUB_EVENT -ne 'pull_request') ) {
+          if ( ( $env:GITHUB_EVENT -ne 'push' ) `
+               -and ( $env:GITHUB_EVENT -ne 'pull_request' ) ) {
             $MATRIX.include = @($MATRIX.include | Where-Object { $_.configuration -eq "$env:RELEASE_CONFIGURATION" })
 
-            if ( ($env:GITHUB_EVENT -eq 'workflow_dispatch') -and ($env:GITHUB_REF -eq 'refs/heads/master') ) {
+            if ( ( $env:GITHUB_EVENT -eq 'workflow_dispatch' ) `
+                 -and ( $env:GITHUB_REF -eq 'refs/heads/master' ) ) {
               $FETCH_URL = "https://api.github.com/repos/$env:GIT_REPOSITORY/tags?per_page=1"
               $OLD_VER = [System.Version]::Parse($(Invoke-RestMethod -Method Get -Uri $FETCH_URL).name -replace 'v')
 
               [System.Int32[]]$VER_INPUT = $($env:EVENT_PARAM -replace '[a-zA-Z]| ').Split('.')
-              if ( ($VER_INPUT.Count -gt 1) -or ($VER_INPUT[0] -gt 0) ) {
+              if ( ( $VER_INPUT.Count -gt 1 ) -or ( $VER_INPUT[0] -gt 0 ) ) {
                 $NEW_VER = [System.Version]::new($VER_INPUT[0],`
-                                                 (if ($VER_INPUT.Count -ge 1) { $VER_INPUT[1] } else { 0 }),`
-                                                 (if ($VER_INPUT.Count -ge 2) { $VER_INPUT[2] } else { 0 }),`
-                                                 (if ($VER_INPUT.Count -ge 3) { $VER_INPUT[3] } else { 0 }))
+                                                (if ( $VER_INPUT.Count -ge 1 ) { $VER_INPUT[1] } else { 0 }),`
+                                                (if ( $VER_INPUT.Count -ge 2 ) { $VER_INPUT[2] } else { 0 }),`
+                                                (if ( $VER_INPUT.Count -ge 3 ) { $VER_INPUT[3] } else { 0 }))
               } elseif ( $env:EVENT_PARAM -match 'rel' ) {
                 if ( $env:EVENT_PARAM -match 'maj' ) {
                   $NEW_VER = [System.Version]::new($OLD_VER.Major + 1, $OLD_VER.Minor, $OLD_VER.Build, 0)
