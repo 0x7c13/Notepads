@@ -255,7 +255,7 @@ jobs:
         id: init_codeql
         uses: github/codeql-action/init@v1
         with:
-          matrix: ''
+          matrix: '{}'
           queries: security-and-quality
           languages: csharp
 
