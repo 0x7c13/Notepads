@@ -95,9 +95,9 @@ jobs:
                                                 (if ( $VER_INPUT.Count -ge 3 ) { $VER_INPUT[3] } else { 0 }))
               } elseif ( $env:PARAM -match 'rel' ) {
                 if ( $env:PARAM -match 'maj' ) {
-                  $NEW_VER = [System.Version]::new($OLD_VER.Major + 1, $OLD_VER.Minor, $OLD_VER.Build, 0)
+                  $NEW_VER = [System.Version]::new($OLD_VER.Major + 1, 0, 0, 0)
                 } elseif ( $env:PARAM -match 'min' ) {
-                  $NEW_VER = [System.Version]::new($OLD_VER.Major, $OLD_VER.Minor + 1, $OLD_VER.Build, 0)
+                  $NEW_VER = [System.Version]::new($OLD_VER.Major, $OLD_VER.Minor + 1, 0, 0)
                 } else {
                   $NEW_VER = [System.Version]::new($OLD_VER.Major, $OLD_VER.Minor, $OLD_VER.Build + 1, 0)
                 }
