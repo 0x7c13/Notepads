@@ -233,15 +233,26 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - if: matrix.newVersion != ''
-        name: Create PFX certificate for AppxBundle
-        id: create_pfx_cert
+        name: Create and validate PFX certificate for AppxBundle
+        id: create_validate_pfx_cert
         shell: pwsh
         run: |
           $TARGET_FILE = "$env:DEFAULT_DIR\cert.pfx"
-          $FROM_BASE64_STR = [System.Convert]::FromBase64String("$env:BASE64_STR")
+          $FROM_BASE64_STR = [System.Convert]::FromBase64String($env:BASE64_STR)
           [System.IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
+
+          $FILE_STREAM = [System.IO.File]::OpenRead($TARGET_FILE)
+          $FILE_STREAM.Position = 0
+          $SHA256 = [System.Security.Cryptography.SHA256]::Create()
+          $HASH_BUILDER = [System.Text.StringBuilder]::new()
+          $SHA256.ComputeHash($FILE_STREAM) | ForEach-Object { $HASH_BUILDER.Append($_.ToString("x2")) }
+          if ( $HASH_BUILDER.ToString() -cne $env:SHA256_HASH ) {
+            throw [System.Exception]::new("Created certificate hash $($HASH_BUILDER.ToString()) $(
+                                           )doesn't match provided hash $($env:SHA256_HASH)")
+          }
         env:
           BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
+          SHA256_HASH: ${{ secrets.PACKAGE_CERTIFICATE_SHA256 }}
 
       - name: Restore the application
         id: restore_application
