@@ -358,7 +358,7 @@ jobs:
 
       - name: Generate changelog
         id: generate_changlog
-        uses: soumyamahunt/universal-changelog-action@master
+        uses: mrchief/universal-changelog-action@v1.2.1
         with:
           previousReleaseTagNameOrSha: v${{ env.OLD_VERSION }}
           nextReleaseTagName: v${{ env.NEW_VERSION }}
