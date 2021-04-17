@@ -124,6 +124,10 @@ jobs:
         id: setup-nuget
         uses: NuGet/setup-nuget@v1.0.5
 
+      - name: Setup VSTest
+        id: setup-vstest
+        uses: darenm/Setup-VSTest@v1
+
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
@@ -329,7 +333,7 @@ jobs:
 
           $TEST_PATH = "$([System.IO.Path]::GetDirectoryName($env:TEST_PROJECT_NAME))$(
           )\bin\$($env:PLATFORM)\$($env:CONFIGURATION)\Notepads.UnitTest.build.appxrecipe"
-          vstest.console.exe $TEST_PATH  /framework:FrameworkUap10
+          vstest.console.exe $TEST_PATH /framework:FrameworkUap10
         env:
           PLATFORM: x64
           APPX_BUNDLE_PLATFORMS: x64
