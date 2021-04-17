@@ -1,6 +1,6 @@
 name: Notepads CI/CD Pipeline
 
-on: 
+on:
   push:
     paths-ignore:
     - '**.md'
@@ -156,7 +156,7 @@ jobs:
         name: Bump GitHub tag
         id: tag_generator
         uses: soumyamahunt/github-tag-action@test-other-ver-support
-        with: 
+        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
           default_bump: true
@@ -212,7 +212,7 @@ jobs:
         id: init_sonar_scanner
         shell: pwsh
         run: |
-          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
           /o:"$LOWERCASE_REPOSITORY_NAME" `
@@ -253,6 +253,7 @@ jobs:
           msbuild $env:SOLUTION_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxPackageSigningEnabled=$env:APPX_PACKAGE_SIGNING_ENABLED `
@@ -280,6 +281,7 @@ jobs:
           msbuild $env:SOLUTION_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS

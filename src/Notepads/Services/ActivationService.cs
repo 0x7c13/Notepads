@@ -90,7 +90,7 @@
             }
             else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
-                var file = await FileSystemUtility.OpenFileFromCommandLine(
+                var file = await CommandLineUtility.OpenFileFromCommandLine(
                     commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
                     commandLineActivatedEventArgs.Operation.Arguments);
 
