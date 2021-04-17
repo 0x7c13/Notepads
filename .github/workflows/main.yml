@@ -316,6 +316,25 @@ jobs:
           name: Build artifacts
           path: Artifacts/
 
+      - if: matrix.debug || matrix.release
+        name: Run Unit Tests
+        id: run_unittest
+        shell: pwsh
+        run: |
+          msbuild $env:TEST_PROJECT_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
+
+          $TEST_PATH = "$([System.IO.Path]::GetDirectoryName($env:TEST_PROJECT_NAME))$(
+          )\bin\$($env:PLATFORM)\$($env:CONFIGURATION)\Notepads.UnitTest.build.appxrecipe"
+          vstest.console.exe $TEST_PATH  /framework:FrameworkUap10
+        env:
+          PLATFORM: x64
+          APPX_BUNDLE_PLATFORMS: x64
+          TEST_PROJECT_NAME: src\Notepads.UnitTest\Notepads.UnitTest.csproj
+
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
     if: needs.ci.outputs.is_release == 'true' && needs.ci.outputs.new_version != ''

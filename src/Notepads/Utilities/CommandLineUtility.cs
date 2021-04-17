@@ -82,7 +82,7 @@
             _hasSetEnvironmentVariables = true;
         }
 
-        private static string GetAbsolutePathFromCommandLine(string dir, string args)
+        internal static string GetAbsolutePathFromCommandLine(string dir, string args)
         {
             if (string.IsNullOrEmpty(args)) return null;
 
@@ -95,7 +95,7 @@
             }
 
             // Replace all forward slash with platform supported directory separator
-            path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
+            path = path.Replace('/', Path.DirectorySeparatorChar);
 
             if (IsFullPath(path))
             {
@@ -132,7 +132,7 @@
         [DllImport("api-ms-win-shcore-obsolete-l1-1-0.dll", CharSet = CharSet.Auto,
         CallingConvention = CallingConvention.StdCall,
         SetLastError = true)]
-        public unsafe static extern IntPtr CommandLineToArgvW(
+        private unsafe static extern IntPtr CommandLineToArgvW(
             [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine,
             out int pNumArgs
         );
