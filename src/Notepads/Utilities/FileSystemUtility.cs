@@ -104,21 +104,21 @@
             }
         }
 
-        public static async Task<StorageFile> GetFile(string filePath)
+        public static async Task<Tuple<StorageFile, Exception>> GetFile(string filePath)
         {
             try
             {
-                return await StorageFile.GetFileFromPathAsync(filePath);
+                return new Tuple<StorageFile, Exception>(await StorageFile.GetFileFromPathAsync(filePath), null);
             }
-            catch
+            catch (Exception e)
             {
-                return null;
+                return new Tuple<StorageFile, Exception>(null, e);
             }
         }
 
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
-            StorageFile file = await GetFile(filePath);
+            StorageFile file = (await GetFile(filePath)).Item1;
             return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
@@ -415,7 +415,7 @@
         {
             try
             {
-                var file = await GetFile(filePath);
+                var file = (await GetFile(filePath)).Item1;
                 if (file != null)
                 {
                     await file.DeleteAsync(deleteOption);

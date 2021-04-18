@@ -7,6 +7,7 @@
     using Microsoft.Win32;
     using Notepads.Services;
     using Windows.Storage;
+    using Windows.System;
 
     public static class CommandLineUtility
     {
@@ -50,7 +51,14 @@
 
             LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
-            return await FileSystemUtility.GetFile(path);
+            var result = await FileSystemUtility.GetFile(path);
+            if (result.Item2 != null)
+            {
+                DispatcherQueue.GetForCurrentThread().TryEnqueue(
+                    () => NotificationCenter.Instance.PostNotification(result.Item2.Message, 1500)
+                );
+            }
+            return result.Item1;
         }
 
         private static void SetEnvironmentVariables()
