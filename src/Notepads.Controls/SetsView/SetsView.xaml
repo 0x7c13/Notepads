@@ -1,106 +1,86 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-                    xmlns:wctui="using:Microsoft.Toolkit.Uwp.UI"
-                    xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
-                    xmlns:local="using:Notepads.Controls">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:local="using:Notepads.Controls"
+    xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:wctui="using:Microsoft.Toolkit.Uwp.UI">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.25"
-                         Color="White"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.15"
-                         Color="White"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.25"
-                         Color="White"/>
-            <StaticResource x:Key="SetsViewItemHeaderBackground"
-                            ResourceKey="SystemControlTransparentBrush" />
-            <StaticResource x:Key="SetsViewSelectionIndicatorForeground"
-                            ResourceKey="SystemControlForegroundAccentBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForeground"
-                            ResourceKey="SystemControlForegroundBaseMediumBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected"
-                            ResourceKey="SystemControlForegroundBaseHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled"
-                            ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
-                            ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundSelected"
+                Opacity="0.25"
+                Color="White" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundPointerOver"
+                Opacity="0.15"
+                Color="White" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundPressed"
+                Opacity="0.25"
+                Color="White" />
+            <StaticResource x:Key="SetsViewItemHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+            <StaticResource x:Key="SetsViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected" ResourceKey="SystemControlForegroundBaseHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush" ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.55</x:Double>
-            <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
-                                   Color="Gray"
-                                   Opacity="0.3"
-                                   FallbackColor="Gray" />
+            <RevealBackgroundBrush
+                x:Key="SetsViewItemRevealBackgroundBrush"
+                FallbackColor="Gray"
+                Opacity="0.3"
+                Color="Gray" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.25"
-                         Color="Black"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.20"
-                         Color="Black"/>
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.25"
-                         Color="Black"/>
-            <StaticResource x:Key="SetsViewItemHeaderBackground"
-                            ResourceKey="SystemControlTransparentBrush" />
-            <StaticResource x:Key="SetsViewSelectionIndicatorForeground"
-                            ResourceKey="SystemControlForegroundAccentBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForeground"
-                            ResourceKey="SystemControlForegroundBaseMediumBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected"
-                            ResourceKey="SystemControlForegroundBaseHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled"
-                            ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
-                            ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundSelected"
+                Opacity="0.25"
+                Color="Black" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundPointerOver"
+                Opacity="0.20"
+                Color="Black" />
+            <SolidColorBrush
+                x:Key="SetsViewItemHeaderBackgroundPressed"
+                Opacity="0.25"
+                Color="Black" />
+            <StaticResource x:Key="SetsViewItemHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+            <StaticResource x:Key="SetsViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected" ResourceKey="SystemControlForegroundBaseHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush" ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.7</x:Double>
-            <RevealBackgroundBrush x:Key="SetsViewItemRevealBackgroundBrush"
-                                   Color="Transparent"
-                                   FallbackColor="Transparent" />
+            <RevealBackgroundBrush
+                x:Key="SetsViewItemRevealBackgroundBrush"
+                FallbackColor="Transparent"
+                Color="Transparent" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="SetsViewBackground"
-                             Color="{ThemeResource SystemChromeLowColor}" />
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                             Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                             Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                             Color="{ThemeResource SystemColorHighlightColor}" />
-            <StaticResource x:Key="SetsViewItemHeaderBackground"
-                            ResourceKey="SystemControlTransparentBrush" />
-            <StaticResource x:Key="SetsViewSelectionIndicatorForeground"
-                            ResourceKey="SystemControlForegroundAccentBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForeground"
-                            ResourceKey="SystemControlForegroundBaseMediumBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected"
-                            ResourceKey="SystemControlForegroundBaseHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver"
-                            ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled"
-                            ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush"
-                            ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
+            <SolidColorBrush x:Key="SetsViewBackground" Color="{ThemeResource SystemChromeLowColor}" />
+            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="SetsViewItemHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+            <StaticResource x:Key="SetsViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPressed" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundSelected" ResourceKey="SystemControlForegroundBaseHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundPointerOver" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+            <StaticResource x:Key="SetsViewItemHeaderRevealBorderBrush" ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
             <x:Double x:Key="SetsEdgeShadowOpacity">0.0</x:Double>
-            <SolidColorBrush x:Key="SetsViewItemRevealBackgroundBrush"
-                             Color="Transparent" />
+            <SolidColorBrush x:Key="SetsViewItemRevealBackgroundBrush" Color="Transparent" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -114,18 +94,19 @@
     <x:Double x:Key="SetsViewItemHeaderMaxWidth">NaN</x:Double>
     <x:Double x:Key="SetsViewItemHeaderCloseWidth">24</x:Double>
 
-    <converters:EmptyObjectToObjectConverter x:Key="NullVisibilityConverter"
-                                             EmptyValue="Collapsed"
-                                             NotEmptyValue="Visible" />
+    <converters:EmptyObjectToObjectConverter
+        x:Key="NullVisibilityConverter"
+        EmptyValue="Collapsed"
+        NotEmptyValue="Visible" />
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
     <!--  65 is the size of both scroll buttons + 1 for layout rounding.  -->
-    <converters:DoubleToVisibilityConverter x:Key="GreaterThanToleranceVisibilityConverter"
-                                            GreaterThan="65.0" />
+    <converters:DoubleToVisibilityConverter x:Key="GreaterThanToleranceVisibilityConverter" GreaterThan="65.0" />
 
-    <converters:BoolToObjectConverter x:Key="CloseCollapsingSizeConverter"
-                                      FalseValue="{StaticResource SetsViewItemHeaderCloseWidth}"
-                                      TrueValue="NaN" />
+    <converters:BoolToObjectConverter
+        x:Key="CloseCollapsingSizeConverter"
+        FalseValue="{StaticResource SetsViewItemHeaderCloseWidth}"
+        TrueValue="NaN" />
 
     <Style x:Key="TopEdgeShadowStyle" TargetType="wctc:DropShadowPanel">
         <Setter Property="BlurRadius" Value="10" />
@@ -186,8 +167,7 @@
         <Setter Property="Template" Value="{StaticResource SetsViewTemplate}" />
     </Style>
 
-    <ControlTemplate x:Key="SetsViewTemplate"
-                     TargetType="local:SetsView">
+    <ControlTemplate x:Key="SetsViewTemplate" TargetType="local:SetsView">
         <Grid x:Name="SetsViewContainer">
             <Grid.RowDefinitions>
                 <!--  0 Header  -->
@@ -203,155 +183,162 @@
                 <!--  0 SetsStartHeader  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  1 Sets  -->
-                <ColumnDefinition Width="Auto"
-                                  local:SetsView.ConstrainColumn="True"
-                                  local:SetsView.IgnoreColumn="True" />
+                <ColumnDefinition
+                    Width="Auto"
+                    local:SetsView.ConstrainColumn="True"
+                    local:SetsView.IgnoreColumn="True" />
                 <!--  2 Reserved: Overflow Drop-down  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  3 Auto Add Button  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  4 Padding  -->
-                <ColumnDefinition Width="*" 
-                                  local:SetsView.IgnoreColumn="True" />
+                <ColumnDefinition Width="*" local:SetsView.IgnoreColumn="True" />
                 <!--  5 SetsEndHeader  -->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ContentPresenter Grid.Row="0"
-                              Grid.ColumnSpan="6"
-                              Content="{TemplateBinding Header}"
-                              ContentTemplate="{TemplateBinding HeaderTemplate}" />
+            <ContentPresenter
+                Grid.Row="0"
+                Grid.ColumnSpan="6"
+                Content="{TemplateBinding Header}"
+                ContentTemplate="{TemplateBinding HeaderTemplate}" />
 
             <!--  Shadow under Start Header  -->
             <wctc:DropShadowPanel
-                Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
-                Grid.Column="0">
-                <Grid Height="1" Margin="0,0,0,-1"/>
+                Grid.Column="0"
+                Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1" Margin="0,0,0,-1" />
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                    <RectangleGeometry Rect="0,-12,1024,12" />
                 </wctc:DropShadowPanel.Clip>
             </wctc:DropShadowPanel>
 
-            <ContentPresenter Grid.Row="1"
-                              Grid.Column="0"
-                              Content="{TemplateBinding SetsStartHeader}"
-                              ContentTemplate="{TemplateBinding SetsStartHeaderTemplate}" />
+            <ContentPresenter
+                Grid.Row="1"
+                Grid.Column="0"
+                Content="{TemplateBinding SetsStartHeader}"
+                ContentTemplate="{TemplateBinding SetsStartHeaderTemplate}" />
 
-            <ScrollViewer x:Name="ScrollViewer"
-                          Grid.Row="1"
-                          Grid.Column="1"
-                          BorderThickness="0"
-                          AutomationProperties.AccessibilityView="Raw"
-                          BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
-                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                          HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                          IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                          IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                          IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
-                          IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                          IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
-                          Style="{StaticResource SetsViewScrollViewer}"
-                          TabNavigation="{TemplateBinding TabNavigation}"
-                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                          VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                          ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
-                <ItemsPresenter x:Name="SetsItemsPresenter"
-                                Padding="{TemplateBinding Padding}" />
+            <ScrollViewer
+                x:Name="ScrollViewer"
+                Grid.Row="1"
+                Grid.Column="1"
+                AutomationProperties.AccessibilityView="Raw"
+                BorderThickness="0"
+                BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                Style="{StaticResource SetsViewScrollViewer}"
+                TabNavigation="{TemplateBinding TabNavigation}"
+                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
+                <ItemsPresenter x:Name="SetsItemsPresenter" Padding="{TemplateBinding Padding}" />
             </ScrollViewer>
 
             <!--  Shadow under Add Button  -->
-            <wctc:DropShadowPanel    
-                Style="{StaticResource BottomEdgeShadowStyle}"
+            <wctc:DropShadowPanel
                 Grid.Row="1"
-                Grid.Column="3">
-                <Grid Height="1" Margin="-1,0,0,-1"/>
+                Grid.Column="3"
+                Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1" Margin="-1,0,0,-1" />
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                    <RectangleGeometry Rect="0,-12,1024,12" />
                 </wctc:DropShadowPanel.Clip>
             </wctc:DropShadowPanel>
 
-            <ContentPresenter Grid.Row="1"
-                              Grid.Column="3"
-                              HorizontalAlignment="Left"
-                              Content="{TemplateBinding SetsActionHeader}"
-                              ContentTemplate="{TemplateBinding SetsActionHeaderTemplate}" />
-
-            <!--  Shadow under Padding area (23040 = 3 x 8k resolution in width just in case) -->
-            <wctc:DropShadowPanel    
-                Style="{StaticResource BottomEdgeShadowStyle}"
+            <ContentPresenter
                 Grid.Row="1"
-                Grid.Column="4">
-                <Grid Height="1" Margin="0,0,0,-1"/>
+                Grid.Column="3"
+                HorizontalAlignment="Left"
+                Content="{TemplateBinding SetsActionHeader}"
+                ContentTemplate="{TemplateBinding SetsActionHeaderTemplate}" />
+
+            <!--  Shadow under Padding area (23040 = 3 x 8k resolution in width just in case)  -->
+            <wctc:DropShadowPanel
+                Grid.Row="1"
+                Grid.Column="4"
+                Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1" Margin="0,0,0,-1" />
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="0,-12,23040,12"></RectangleGeometry>
+                    <RectangleGeometry Rect="0,-12,23040,12" />
                 </wctc:DropShadowPanel.Clip>
             </wctc:DropShadowPanel>
 
-            <ContentPresenter Grid.Row="1"
-                              Grid.Column="4"
-                              HorizontalAlignment="Stretch"
-                              Content="{TemplateBinding SetsPaddingHeader}"
-                              ContentTemplate="{TemplateBinding SetsPaddingHeaderTemplate}" />
+            <ContentPresenter
+                Grid.Row="1"
+                Grid.Column="4"
+                HorizontalAlignment="Stretch"
+                Content="{TemplateBinding SetsPaddingHeader}"
+                ContentTemplate="{TemplateBinding SetsPaddingHeaderTemplate}" />
 
             <!--  Shadow under SetsEndHeader  -->
             <wctc:DropShadowPanel
-                Style="{StaticResource BottomEdgeShadowStyle}"
                 Grid.Row="1"
-                Grid.Column="5">
-                <Grid Height="1" Margin="0,0,0,-1"/>
+                Grid.Column="5"
+                Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1" Margin="0,0,0,-1" />
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                    <RectangleGeometry Rect="0,-12,1024,12" />
                 </wctc:DropShadowPanel.Clip>
             </wctc:DropShadowPanel>
 
-            <ContentPresenter Grid.Row="1"
-                              Grid.Column="5"
-                              Content="{TemplateBinding SetsEndHeader}"
-                              ContentTemplate="{TemplateBinding SetsEndHeaderTemplate}" />
+            <ContentPresenter
+                Grid.Row="1"
+                Grid.Column="5"
+                Content="{TemplateBinding SetsEndHeader}"
+                ContentTemplate="{TemplateBinding SetsEndHeaderTemplate}" />
 
-            <ContentPresenter x:Name="SetsContentPresenter"
-                              Canvas.ZIndex="100"
-                              Grid.Row="2"
-                              Grid.ColumnSpan="6" 
-                              Grid.Column="0"
-                              Background="{ThemeResource SetsViewItemHeaderBackgroundPressed}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}" />
+            <ContentPresenter
+                x:Name="SetsContentPresenter"
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="6"
+                Background="{ThemeResource SetsViewItemHeaderBackgroundPressed}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Canvas.ZIndex="100" />
 
             <!--  Shadow above Footer  -->
-            <wctc:DropShadowPanel    
-                Style="{StaticResource TopEdgeShadowStyle}"
-                Canvas.ZIndex="50"
+            <wctc:DropShadowPanel
                 Grid.Row="3"
-                Grid.ColumnSpan="6" 
-                Grid.Column="0">
-                <Grid Height="1"/>
+                Grid.Column="0"
+                Grid.ColumnSpan="6"
+                Canvas.ZIndex="50"
+                Style="{StaticResource TopEdgeShadowStyle}">
+                <Grid Height="1" />
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="0,0,23040,12"></RectangleGeometry>
+                    <RectangleGeometry Rect="0,0,23040,12" />
                 </wctc:DropShadowPanel.Clip>
             </wctc:DropShadowPanel>
 
-            <ContentPresenter Grid.Row="3"
-                              Canvas.ZIndex="50"
-                              Grid.ColumnSpan="6" Grid.Column="0"
-                              Content="{TemplateBinding Footer}"
-                              ContentTemplate="{TemplateBinding FooterTemplate}" />
+            <ContentPresenter
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="6"
+                Canvas.ZIndex="50"
+                Content="{TemplateBinding Footer}"
+                ContentTemplate="{TemplateBinding FooterTemplate}" />
         </Grid>
     </ControlTemplate>
 
     <!--  Based on Style for ListViewItemExpanded Template - https://msdn.microsoft.com/en-us/library/windows/apps/mt299136.aspx  -->
-    <ControlTemplate x:Key="SetsViewItemHeaderTemplate"
-                     TargetType="local:SetsViewItem">
-        <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
-        <Grid x:Name="LayoutRoot"
-              wctui:FrameworkElementExtensions.AncestorType="local:SetsView"
-              Background="{TemplateBinding Background}"
-              BorderBrush="{TemplateBinding BorderBrush}"
-              BorderThickness="{TemplateBinding BorderThickness}"
-              CornerRadius="0"
-              Control.IsTemplateFocusTarget="True"
-              FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-              RenderTransformOrigin="0.5,0.5">
+    <ControlTemplate x:Key="SetsViewItemHeaderTemplate" TargetType="local:SetsViewItem">
+        <Grid
+            x:Name="LayoutRoot"
+            wctui:FrameworkElementExtensions.AncestorType="local:SetsView"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            Control.IsTemplateFocusTarget="True"
+            CornerRadius="{ThemeResource ControlCornerRadius}"
+            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+            RenderTransformOrigin="0.5,0.5">
             <Grid.BackgroundTransition>
                 <BrushTransition />
             </Grid.BackgroundTransition>
@@ -359,62 +346,62 @@
                 <ScaleTransform x:Name="LayoutRootScale" />
             </Grid.RenderTransform>
 
-            <wctc:DropShadowPanel 
+            <wctc:DropShadowPanel
                 x:Name="ItemLeftSideShadow"
-                Style="{StaticResource SideEdgeShadowStyle}"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                Style="{StaticResource SideEdgeShadowStyle}">
 
                 <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="-8,0,8,32"></RectangleGeometry>
+                    <RectangleGeometry Rect="-8,0,8,32" />
                 </wctc:DropShadowPanel.Clip>
 
-                <Grid Width="1"/>
-
-            </wctc:DropShadowPanel>
-
-            <wctc:DropShadowPanel 
-                x:Name="ItemRightSideShadow"
-                Style="{StaticResource SideEdgeShadowStyle}"
-                HorizontalAlignment="Right">
-
-                <wctc:DropShadowPanel.Clip>
-                    <RectangleGeometry Rect="1,0,8,32"></RectangleGeometry>
-                </wctc:DropShadowPanel.Clip>
-
-                <Grid Width="1"/>
+                <Grid Width="1" />
 
             </wctc:DropShadowPanel>
 
             <wctc:DropShadowPanel
-                x:Name="ItemBottomSideShadow"
-                Style="{StaticResource BottomEdgeShadowStyle}">
-                <Grid Height="1"/>
+                x:Name="ItemRightSideShadow"
+                HorizontalAlignment="Right"
+                Style="{StaticResource SideEdgeShadowStyle}">
+
+                <wctc:DropShadowPanel.Clip>
+                    <RectangleGeometry Rect="1,0,8,32" />
+                </wctc:DropShadowPanel.Clip>
+
+                <Grid Width="1" />
+
             </wctc:DropShadowPanel>
 
-            <Rectangle x:Name="SelectionIndicator"
-                       Height="2"
-                       Margin="0,-1"
-                       VerticalAlignment="Top"
-                       Fill="{TemplateBinding SelectionIndicatorForeground}"
-                       Opacity="0">
-            </Rectangle>
+            <wctc:DropShadowPanel x:Name="ItemBottomSideShadow" Style="{StaticResource BottomEdgeShadowStyle}">
+                <Grid Height="1" />
+            </wctc:DropShadowPanel>
 
-            <Border x:Name="LeftSideSeparator"
-                    Grid.Column="0"
-                    HorizontalAlignment="Left"
-                    Visibility="Collapsed"
-                    Width="1"
-                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
-                    BorderThickness="1"
-                    Margin="0,6,0,6"/>
+            <Rectangle
+                x:Name="SelectionIndicator"
+                Height="2"
+                Margin="0,-1"
+                VerticalAlignment="Top"
+                Fill="{TemplateBinding SelectionIndicatorForeground}"
+                Opacity="0" />
 
-            <Border x:Name="RightSideSeparator"
-                    HorizontalAlignment="Right"
-                    Visibility="Collapsed"
-                    Width="1"
-                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
-                    BorderThickness="1"
-                    Margin="0,6,0,6"/>
+            <Border
+                x:Name="LeftSideSeparator"
+                Grid.Column="0"
+                Width="1"
+                Margin="0,6,0,6"
+                HorizontalAlignment="Left"
+                BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                BorderThickness="1"
+                Visibility="Collapsed" />
+
+            <Border
+                x:Name="RightSideSeparator"
+                Width="1"
+                Margin="0,6,0,6"
+                HorizontalAlignment="Right"
+                BorderBrush="{ThemeResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                BorderThickness="1"
+                Visibility="Collapsed" />
 
             <Grid Padding="{TemplateBinding Padding}">
                 <Grid x:Name="ContentPresenterGrid">
@@ -427,38 +414,44 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <!--  Modifications of default ListViewItem Template for our Set Here  -->
-                    <Viewbox x:Name="IconBox"
-                             MaxWidth="{ThemeResource SetsViewItemHeaderIconSize}"
-                             MaxHeight="{ThemeResource SetsViewItemHeaderIconSize}"
-                             Margin="{ThemeResource SetsViewItemHeaderIconMargin}"
-                             Visibility="{Binding Icon, Converter={StaticResource NullVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
-                        <ContentPresenter x:Name="Icon"
-                                          Content="{TemplateBinding Icon}"
-                                          Foreground="{TemplateBinding Foreground}" />
+                    <Viewbox
+                        x:Name="IconBox"
+                        MaxWidth="{ThemeResource SetsViewItemHeaderIconSize}"
+                        MaxHeight="{ThemeResource SetsViewItemHeaderIconSize}"
+                        Margin="{ThemeResource SetsViewItemHeaderIconMargin}"
+                        Visibility="{Binding Icon, Converter={StaticResource NullVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
+                        <ContentPresenter
+                            x:Name="Icon"
+                            Content="{TemplateBinding Icon}"
+                            Foreground="{TemplateBinding Foreground}" />
                     </Viewbox>
-                    <ContentPresenter x:Name="ContentPresenter"
-                                      Grid.Column="1"
-                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      Content="{TemplateBinding Header}"
-                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                      ContentTransitions="{TemplateBinding ContentTransitions}"
-                                      FontWeight="{TemplateBinding FontWeight}"
-                                      OpticalMarginAlignment="TrimSideBearings" />
+                    <ContentPresenter
+                        x:Name="ContentPresenter"
+                        Grid.Column="1"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Header}"
+                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        FontWeight="{TemplateBinding FontWeight}"
+                        OpticalMarginAlignment="TrimSideBearings" />
                     <!--  Use grid to toggle visibility based on IsClosable property and inner border for hover animations.  -->
-                    <Border x:Name="CloseButtonContainer"
-                            Grid.Column="2"
-                            Width="{Binding (wctui:FrameworkElementExtensions.Ancestor).IsCloseButtonOverlay, Converter={StaticResource CloseCollapsingSizeConverter}, ElementName=LayoutRoot}"
-                            HorizontalAlignment="Center"
-                            Visibility="{Binding IsClosable, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
-                        <Border x:Name="CloseButtonBorder"
-                                Width="{StaticResource SetsViewItemHeaderCloseWidth}"
-                                Margin="{ThemeResource SetsViewItemHeaderCloseMargin}"
-                                Background="{TemplateBinding Background}"
-                                Visibility="Collapsed">
-                            <Button x:Name="CloseButton"
-                                    x:Uid="/SetsView/Resources/SetsView_CloseButton"
-                                    Style="{StaticResource SetsViewItemCloseButtonStyle}">
+                    <Border
+                        x:Name="CloseButtonContainer"
+                        Grid.Column="2"
+                        Width="{Binding (wctui:FrameworkElementExtensions.Ancestor).IsCloseButtonOverlay, Converter={StaticResource CloseCollapsingSizeConverter}, ElementName=LayoutRoot}"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding IsClosable, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
+                        <Border
+                            x:Name="CloseButtonBorder"
+                            Width="{StaticResource SetsViewItemHeaderCloseWidth}"
+                            Margin="{ThemeResource SetsViewItemHeaderCloseMargin}"
+                            Background="{TemplateBinding Background}"
+                            Visibility="Collapsed">
+                            <Button
+                                x:Name="CloseButton"
+                                x:Uid="/SetsView/Resources/SetsView_CloseButton"
+                                Style="{StaticResource SetsViewItemCloseButtonStyle}">
                                 &#xE711;
                             </Button>
                         </Border>
@@ -480,15 +473,11 @@
 
                         <Storyboard>
                             <!--  Close Button  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Background">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -512,38 +501,29 @@
 
                         <Storyboard>
                             <!--  Selected Bar  -->
-                            <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="1"
-                                             Duration="0" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SelectionIndicator"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0" />
 
                             <!--  Close Button  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Background">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
 
                             <!--  Left, right and bottom shadows  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Collapsed" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -557,38 +537,29 @@
 
                         <Storyboard>
                             <!--  Selected Bar  -->
-                            <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="1"
-                                             Duration="0" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SelectionIndicator"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0" />
 
                             <!--  Close Button  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Background">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
 
                             <!--  Left, right and bottom shadows  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Collapsed" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -602,38 +573,29 @@
 
                         <Storyboard>
                             <!--  Selected Bar  -->
-                            <DoubleAnimation Storyboard.TargetName="SelectionIndicator"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="1"
-                                             Duration="0" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SelectionIndicator"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0" />
 
                             <!--  Close Button  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Background">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonBorder" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
 
                             <!--  Left, right and bottom shadows  -->
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemLeftSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemRightSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                             </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow"
-                                                           Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                        Value="Collapsed" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemBottomSideShadow" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -661,39 +623,42 @@
 
                     <VisualState x:Name="BottomReorderHint">
                         <Storyboard>
-                            <DragOverThemeAnimation Direction="Bottom"
-                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    TargetName="LayoutRoot" />
+                            <DragOverThemeAnimation
+                                Direction="Bottom"
+                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                TargetName="LayoutRoot" />
                         </Storyboard>
                     </VisualState>
 
                     <VisualState x:Name="TopReorderHint">
                         <Storyboard>
-                            <DragOverThemeAnimation Direction="Top"
-                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    TargetName="LayoutRoot" />
+                            <DragOverThemeAnimation
+                                Direction="Top"
+                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                TargetName="LayoutRoot" />
                         </Storyboard>
                     </VisualState>
 
                     <VisualState x:Name="RightReorderHint">
                         <Storyboard>
-                            <DragOverThemeAnimation Direction="Right"
-                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    TargetName="LayoutRoot" />
+                            <DragOverThemeAnimation
+                                Direction="Right"
+                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                TargetName="LayoutRoot" />
                         </Storyboard>
                     </VisualState>
 
                     <VisualState x:Name="LeftReorderHint">
                         <Storyboard>
-                            <DragOverThemeAnimation Direction="Left"
-                                                    ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    TargetName="LayoutRoot" />
+                            <DragOverThemeAnimation
+                                Direction="Left"
+                                ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                TargetName="LayoutRoot" />
                         </Storyboard>
                     </VisualState>
 
                     <VisualStateGroup.Transitions>
-                        <VisualTransition GeneratedDuration="0:0:0.2"
-                                          To="NoReorderHint" />
+                        <VisualTransition GeneratedDuration="0:0:0.2" To="NoReorderHint" />
                     </VisualStateGroup.Transitions>
                 </VisualStateGroup>
 
@@ -702,10 +667,11 @@
 
                     <VisualState x:Name="Dragging">
                         <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="LayoutRoot"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="{ThemeResource ListViewItemDragThemeOpacity}"
-                                             Duration="0" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="LayoutRoot"
+                                Storyboard.TargetProperty="Opacity"
+                                To="{ThemeResource ListViewItemDragThemeOpacity}"
+                                Duration="0" />
                             <DragItemThemeAnimation TargetName="LayoutRoot" />
                         </Storyboard>
                     </VisualState>
@@ -720,27 +686,31 @@
 
                     <VisualState x:Name="Reordering">
                         <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="LayoutRoot"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="{ThemeResource ListViewItemReorderThemeOpacity}"
-                                             Duration="0:0:0.240" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="LayoutRoot"
+                                Storyboard.TargetProperty="Opacity"
+                                To="{ThemeResource ListViewItemReorderThemeOpacity}"
+                                Duration="0:0:0.240" />
                         </Storyboard>
                     </VisualState>
 
                     <VisualState x:Name="ReorderingTarget">
                         <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="LayoutRoot"
-                                             Storyboard.TargetProperty="Opacity"
-                                             To="{ThemeResource ListViewItemReorderTargetThemeOpacity}"
-                                             Duration="0:0:0.240" />
-                            <DoubleAnimation Storyboard.TargetName="LayoutRootScale"
-                                             Storyboard.TargetProperty="ScaleX"
-                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
-                                             Duration="0:0:0.240" />
-                            <DoubleAnimation Storyboard.TargetName="LayoutRootScale"
-                                             Storyboard.TargetProperty="ScaleY"
-                                             To="{ThemeResource ListViewItemReorderTargetThemeScale}"
-                                             Duration="0:0:0.240" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="LayoutRoot"
+                                Storyboard.TargetProperty="Opacity"
+                                To="{ThemeResource ListViewItemReorderTargetThemeOpacity}"
+                                Duration="0:0:0.240" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="LayoutRootScale"
+                                Storyboard.TargetProperty="ScaleX"
+                                To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                Duration="0:0:0.240" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="LayoutRootScale"
+                                Storyboard.TargetProperty="ScaleY"
+                                To="{ThemeResource ListViewItemReorderTargetThemeScale}"
+                                Duration="0:0:0.240" />
                         </Storyboard>
                     </VisualState>
 
@@ -759,8 +729,7 @@
                     </VisualState>
 
                     <VisualStateGroup.Transitions>
-                        <VisualTransition GeneratedDuration="0:0:0.2"
-                                          To="NotDragging" />
+                        <VisualTransition GeneratedDuration="0:0:0.2" To="NotDragging" />
                     </VisualStateGroup.Transitions>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
@@ -788,12 +757,11 @@
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="0" />
         <Setter Property="IsClosable" Value="False" />
-        <Setter Property="SelectionIndicatorForeground" Value="{ThemeResource SetsViewSelectionIndicatorForeground}"/>
+        <Setter Property="SelectionIndicatorForeground" Value="{ThemeResource SetsViewSelectionIndicatorForeground}" />
         <Setter Property="Template" Value="{StaticResource SetsViewItemHeaderTemplate}" />
     </Style>
 
-    <Style x:Key="SetsViewItemCloseButtonStyle"
-           TargetType="Button">
+    <Style x:Key="SetsViewItemCloseButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
@@ -808,18 +776,18 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          Padding="{TemplateBinding Padding}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}" />
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -829,10 +797,8 @@
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonPointerOverForegroundThemeBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonPointerOverForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
                                     </Storyboard>
@@ -843,35 +809,25 @@
                                                    Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>-->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlHighlightBaseHighBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseHighBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -884,62 +840,75 @@
     </Style>
 
     <Style x:Key="SetsViewRepeatButtonStyle" TargetType="RepeatButton">
-        <Setter Property="Background" Value="{ThemeResource RepeatButtonRevealBackground}"/>
-        <Setter Property="BackgroundSizing" Value="OuterBorderEdge"/>
-        <Setter Property="Foreground" Value="{ThemeResource RepeatButtonForeground}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource RepeatButtonRevealBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}"/>
-        <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
-        <Setter Property="FocusVisualMargin" Value="-3"/>
+        <Setter Property="Background" Value="{ThemeResource RepeatButtonRevealBackground}" />
+        <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+        <Setter Property="Foreground" Value="{ThemeResource RepeatButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RepeatButtonRevealBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
+        <Setter Property="Padding" Value="{StaticResource ButtonPadding}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BackgroundSizing="{TemplateBinding BackgroundSizing}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" CornerRadius="{TemplateBinding CornerRadius}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                    <ContentPresenter
+                        x:Name="ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        AutomationProperties.AccessibilityView="Raw"
+                        Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBackgroundPointerOver}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBackgroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushPointerOver}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundPointerOver}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBackgroundPressed}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBackgroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushPressed}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundPressed}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundDisabled}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushDisabled}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonBorderBrushDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundDisabled}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RepeatButtonForegroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -951,8 +920,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="SetsViewScrollViewer"
-           TargetType="ScrollViewer">
+    <Style x:Key="SetsViewScrollViewer" TargetType="ScrollViewer">
         <Setter Property="HorizontalScrollMode" Value="Auto" />
         <Setter Property="VerticalScrollMode" Value="Auto" />
         <Setter Property="IsHorizontalRailEnabled" Value="True" />
@@ -970,10 +938,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
-                    <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -982,79 +951,80 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  Scroll to the left button bottom shadow  -->
-                            <wctc:DropShadowPanel
-                                Style="{StaticResource BottomEdgeShadowStyle}"
-                                Grid.Column="0">
-                                <Grid Height="1" Margin="-1,0,0,-1"/>
+                            <wctc:DropShadowPanel Grid.Column="0" Style="{StaticResource BottomEdgeShadowStyle}">
+                                <Grid Height="1" Margin="-1,0,0,-1" />
                                 <wctc:DropShadowPanel.Clip>
-                                    <RectangleGeometry Rect="-1,-12,1024,12"></RectangleGeometry>
+                                    <RectangleGeometry Rect="-1,-12,1024,12" />
                                 </wctc:DropShadowPanel.Clip>
                             </wctc:DropShadowPanel>
 
-                            <RepeatButton x:Name="SetsScrollBackButton"
-                                          Grid.Column="0"
-                                          VerticalAlignment="Stretch"
-                                          Background="Transparent"
-                                          BorderThickness="1"
-                                          BorderBrush ="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                          Delay="50"
-                                          FontFamily="Segoe MDL2 Assets"
-                                          Interval="100"
-                                          Style="{ThemeResource SetsViewRepeatButtonStyle}"
-                                          Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                            <RepeatButton
+                                x:Name="SetsScrollBackButton"
+                                Grid.Column="0"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                Delay="50"
+                                FontFamily="Segoe MDL2 Assets"
+                                Interval="100"
+                                Style="{ThemeResource SetsViewRepeatButtonStyle}"
+                                Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
                                 &#xE76B;
                             </RepeatButton>
 
                             <!--  SetsItemsScrollViewer left side shadow  -->
-                            <wctc:DropShadowPanel 
+                            <wctc:DropShadowPanel
                                 x:Name="SetsItemsScrollViewerLeftSideShadow"
-                                Style="{StaticResource SideEdgeShadowStyle}"
-                                Grid.Column="1" 
-                                HorizontalAlignment="Left">
-                                <Grid Width="1"/>
+                                Grid.Column="1"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource SideEdgeShadowStyle}">
+                                <Grid Width="1" />
                                 <wctc:DropShadowPanel.Clip>
-                                    <RectangleGeometry Rect="-10,0,10,32"></RectangleGeometry>
+                                    <RectangleGeometry Rect="-10,0,10,32" />
                                 </wctc:DropShadowPanel.Clip>
                             </wctc:DropShadowPanel>
 
                             <!--  SetsItemsScrollViewer right side shadow  -->
-                            <wctc:DropShadowPanel 
+                            <wctc:DropShadowPanel
                                 x:Name="SetsItemsScrollViewerRightSideShadow"
-                                Style="{StaticResource SideEdgeShadowStyle}"
-                                Grid.Column="1" 
-                                HorizontalAlignment="Right">
-                                <Grid Width="1"/>
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{StaticResource SideEdgeShadowStyle}">
+                                <Grid Width="1" />
                                 <wctc:DropShadowPanel.Clip>
-                                    <RectangleGeometry Rect="1,0,10,32"></RectangleGeometry>
+                                    <RectangleGeometry Rect="1,0,10,32" />
                                 </wctc:DropShadowPanel.Clip>
                             </wctc:DropShadowPanel>
 
-                            <ScrollContentPresenter x:Name="ScrollContentPresenter"
-                                                    Grid.Column="1"
-                                                    TabFocusNavigation="Once"
-                                                    Margin="{TemplateBinding Padding}"/>
+                            <ScrollContentPresenter
+                                x:Name="ScrollContentPresenter"
+                                Grid.Column="1"
+                                Margin="{TemplateBinding Padding}"
+                                TabFocusNavigation="Once" />
 
                             <!--  Scroll to the right button bottom shadow  -->
-                            <wctc:DropShadowPanel
-                                Style="{StaticResource BottomEdgeShadowStyle}"
-                                Grid.Column="2">
-                                <Grid Height="1" Margin="0,0,0,-1"/>
+                            <wctc:DropShadowPanel Grid.Column="2" Style="{StaticResource BottomEdgeShadowStyle}">
+                                <Grid Height="1" Margin="0,0,0,-1" />
                                 <wctc:DropShadowPanel.Clip>
-                                    <RectangleGeometry Rect="0,-12,1024,12"></RectangleGeometry>
+                                    <RectangleGeometry Rect="0,-12,1024,12" />
                                 </wctc:DropShadowPanel.Clip>
                             </wctc:DropShadowPanel>
 
-                            <RepeatButton x:Name="SetsScrollForwardButton"
-                                          Grid.Column="2"
-                                          VerticalAlignment="Stretch"
-                                          Background="Transparent"
-                                          BorderThickness="1"
-                                          BorderBrush ="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                          Delay="50"
-                                          FontFamily="Segoe MDL2 Assets"
-                                          Interval="100"
-                                          Style="{ThemeResource SetsViewRepeatButtonStyle}"
-                                          Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                            <RepeatButton
+                                x:Name="SetsScrollForwardButton"
+                                Grid.Column="2"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                Delay="50"
+                                FontFamily="Segoe MDL2 Assets"
+                                Interval="100"
+                                Style="{ThemeResource SetsViewRepeatButtonStyle}"
+                                Visibility="{Binding ScrollableWidth, Converter={StaticResource GreaterThanToleranceVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
                                 &#xE76C;
                             </RepeatButton>
                         </Grid>

@@ -17,8 +17,7 @@
 
         public NotepadsDialog()
         {
-            // TODO: Uncomment to apply CornerRadius
-            //CornerRadius = (CornerRadius)Application.Current.Resources["OverlayCornerRadius"];
+            CornerRadius = (CornerRadius)Application.Current.Resources["OverlayCornerRadius"];
             PrimaryButtonStyle = GetButtonStyle();
             SecondaryButtonStyle = GetButtonStyle();
             CloseButtonStyle = GetButtonStyle();
@@ -43,9 +42,10 @@
         internal static Style GetButtonStyle()
         {
             var buttonStyle = new Style(typeof(Button));
-            // TODO: Uncomment to apply CornerRadius
-            //buttonStyle.Setters.Add(new Setter(Control.CornerRadiusProperty,
-            //    (CornerRadius)Application.Current.Resources["ControlCornerRadius"]));
+            buttonStyle.Setters.Add(
+                new Setter(
+                    Control.CornerRadiusProperty,
+                    (CornerRadius)Application.Current.Resources["ControlCornerRadius"]));
             return buttonStyle;
         }
 

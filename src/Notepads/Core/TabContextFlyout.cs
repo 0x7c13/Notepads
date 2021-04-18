@@ -49,8 +49,7 @@
 
             var style = new Style(typeof(MenuFlyoutPresenter));
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
-            // TODO: Remove CornerRadius property setter
-            style.Setters.Add(new Setter(Control.CornerRadiusProperty, 0));
+
             MenuFlyoutPresenterStyle = style;
 
             Opening += TabContextFlyout_Opening;

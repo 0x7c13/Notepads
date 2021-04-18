@@ -5,23 +5,25 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
+    mc:Ignorable="d">
 
     <Grid>
-        <ScrollViewer x:Name="MarkdownScrollViewer"
-                      Margin="0"
-                      Padding="8"
-                      BorderBrush="Transparent"
-                      BorderThickness="0"
-                      HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Auto">
-            <wctc:MarkdownTextBlock x:Name="MarkdownTextBlock"
-                                    Margin="0"
-                                    Padding="0"
-                                    Background="Transparent"
-                                    Header1Foreground="{StaticResource SystemControlForegroundAccentBrush}"
-                                    LinkForeground="{StaticResource SystemControlForegroundAccentBrush}"/>
+        <ScrollViewer
+            x:Name="MarkdownScrollViewer"
+            Margin="0"
+            Padding="8"
+            BorderBrush="Transparent"
+            BorderThickness="0"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <wctc:MarkdownTextBlock
+                x:Name="MarkdownTextBlock"
+                Margin="0"
+                Padding="0"
+                Background="Transparent"
+                Header1Foreground="{StaticResource SystemControlForegroundAccentBrush}"
+                LinkForeground="{StaticResource SystemControlForegroundAccentBrush}" />
         </ScrollViewer>
     </Grid>
 </UserControl>

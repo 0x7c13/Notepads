@@ -1,40 +1,35 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="TextEditorForeground"
-                             Color="Black"/>
+            <SolidColorBrush x:Key="TextEditorForeground" Color="Black" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="TextEditorForeground"
-                             Color="#F0F0F0"/>
+            <SolidColorBrush x:Key="TextEditorForeground" Color="#F0F0F0" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="TextEditorForeground"
-                             Color="{ThemeResource TextControlForeground}"/>
+            <SolidColorBrush x:Key="TextEditorForeground" Color="{ThemeResource TextControlForeground}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
     <Style x:Key="TextEditorCore" TargetType="RichEditBox">
-        <Setter Property="Foreground" Value="{ThemeResource TextEditorForeground}"/>
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{ThemeResource TextEditorForeground}" />
+        <Setter Property="Background" Value="Transparent" />
         <!--<Setter Property="ContentLinkForegroundColor" Value="{ThemeResource ContentLinkForegroundColor}"/>
         <Setter Property="ContentLinkBackgroundColor" Value="{ThemeResource ContentLinkBackgroundColor}"/>-->
-        <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="0,0,0,0"/>
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled"/>
-        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-        <Setter Property="TextWrapping" Value="NoWrap"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
+        <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}" />
         <!--<Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}"/>
         <Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}"/>-->
         <Setter Property="Template">
@@ -42,98 +37,99 @@
                 <ControlTemplate TargetType="RichEditBox">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Disabled"/>
-                                <VisualState x:Name="Normal"/>
-                                <VisualState x:Name="PointerOver"/>
-                                <VisualState x:Name="Focused"/>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
                             x:Name="HeaderContentPresenter"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Grid.Row="0"
+                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}"
+                            VerticalAlignment="Top"
+                            x:DeferLoadStrategy="Lazy"
                             Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
                             FontWeight="Normal"
                             Foreground="{ThemeResource TextControlHeaderForeground}"
-                            Margin="{ThemeResource RichEditBoxTopHeaderMargin}"
-                            Grid.Row="0"
                             TextWrapping="Wrap"
-                            VerticalAlignment="Top"
-                            Visibility="Collapsed"
-                            x:DeferLoadStrategy="Lazy">
-                        </ContentPresenter>
+                            Visibility="Collapsed" />
                         <Border
                             x:Name="BorderElement"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            MinHeight="{ThemeResource TextControlThemeMinHeight}"
+                            Grid.Row="1"
                             MinWidth="{ThemeResource TextControlThemeMinWidth}"
-                            Grid.Row="1"/>
+                            MinHeight="{ThemeResource TextControlThemeMinHeight}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
                         <Grid x:Name="RootGrid" Grid.Row="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition x:Name="LineNumberColumnDefinition" Width="Auto"/>
-                                <ColumnDefinition x:Name="TextEditorColumnDefinition" Width="*"/>
+                                <ColumnDefinition x:Name="LineNumberColumnDefinition" Width="Auto" />
+                                <ColumnDefinition x:Name="TextEditorColumnDefinition" Width="*" />
                             </Grid.ColumnDefinitions>
                             <Canvas x:Name="LineHighlighterAndIndicatorCanvas" Grid.ColumnSpan="2">
-                                <Border x:Name="LineIndicator"
-                                        BorderBrush="{StaticResource SystemControlForegroundAccentBrush}"
-                                        Visibility="Collapsed"/>
-                                <!-- TODO: Change CornerRadius to {ThemeResource ControlCornerRadius}-->
-                                <Grid x:Name="LineHighlighter"
-                                      Background="{ThemeResource SystemControlBackgroundListLowBrush}"
-                                      CornerRadius="0"
-                                      Opacity="0.65"
-                                      BorderThickness="0"
-                                      Visibility="Collapsed"/>
+                                <Border
+                                    x:Name="LineIndicator"
+                                    BorderBrush="{StaticResource SystemControlForegroundAccentBrush}"
+                                    Visibility="Collapsed" />
+                                <Grid
+                                    x:Name="LineHighlighter"
+                                    Background="{ThemeResource SystemControlBackgroundListLowBrush}"
+                                    BorderThickness="0"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                                    Opacity="0.65"
+                                    Visibility="Collapsed" />
                             </Canvas>
-                            <Grid x:Name="LineNumberGrid" 
-                                  Grid.Column="0"
-                                  BorderThickness="0,0,0,0"
-                                  BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}">
-                                <Canvas x:Name="LineNumberCanvas"/>
+                            <Grid
+                                x:Name="LineNumberGrid"
+                                Grid.Column="0"
+                                BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
+                                BorderThickness="0,0,0,0">
+                                <Canvas x:Name="LineNumberCanvas" />
                             </Grid>
                             <Grid Grid.Column="1">
                                 <ScrollViewer
-                                x:Name="ContentElement"
-                                AutomationProperties.AccessibilityView="Raw"
-                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                IsTabStop="False"
-                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                Margin="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}"
-                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                ZoomMode="Disabled"/>
+                                    x:Name="ContentElement"
+                                    Margin="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                    IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                    IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                    IsTabStop="False"
+                                    IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                    VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                    ZoomMode="Disabled" />
                             </Grid>
                         </Grid>
-                        <TextBlock 
+                        <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
-                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                            IsHitTestVisible="False"
+                            Grid.Row="1"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            Grid.Row="1"
+                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            IsHitTestVisible="False"
+                            OpticalMarginAlignment="TrimSideBearings"
                             Text="{TemplateBinding PlaceholderText}"
-                            TextWrapping="{TemplateBinding TextWrapping}"
                             TextAlignment="{TemplateBinding TextAlignment}"
-                            OpticalMarginAlignment="TrimSideBearings"/>
+                            TextWrapping="{TemplateBinding TextWrapping}" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
+                            Grid.Row="2"
+                            x:Load="False"
                             AutomationProperties.AccessibilityView="Raw"
                             Content="{TemplateBinding Description}"
-                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"
-                            Grid.Row="2"
-                            x:Load="False"/>
+                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Focused" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

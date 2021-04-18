@@ -23,50 +23,32 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
-                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomSliderStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomNavigationViewStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomFlyoutItemStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml" />
+                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml" />
+                <ResourceDictionary Source="Resource/CustomSliderStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomNavigationViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomFlyoutItemStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
-                <Setter Property="FontSize" Value="18"/>
+            <Style
+                x:Key="CompactSubtitleTextBlockStyle"
+                BasedOn="{StaticResource SubtitleTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
             </Style>
 
-            <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}"/>
+            <Style
+                x:Key="DescriptionTextBlockStyle"
+                BasedOn="{StaticResource CaptionTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}" />
             </Style>
-
-            <!-- TODO: Remove these styles -->
-            <Style TargetType="MenuFlyoutPresenter">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style TargetType="FlyoutPresenter">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style x:Key="ButtonRevealStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style TargetType="ComboBox">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style TargetType="muxc:ColorPicker">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            <Style TargetType="ToolTip">
-                <Setter Property="CornerRadius" Value="0" />
-            </Style>
-            
         </ResourceDictionary>
     </Application.Resources>
 </Application>
