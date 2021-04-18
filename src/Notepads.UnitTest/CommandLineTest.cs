@@ -320,7 +320,7 @@
                                                                           testCase.argument
                                                                      );
 
-                if (!testResult.Equals(testCase.result))
+                if (testResult.Equals(testCase.result))
                 {
                     failedScenarios.Add(
                         $"- Test case {testCases.IndexOf(testCase) + 1} failed with:\n" +
