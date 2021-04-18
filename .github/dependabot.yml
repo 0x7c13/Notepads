@@ -10,7 +10,7 @@ updates:
 
   - package-ecosystem: "nuget"
     # location of package manifests
-    directory: "/src/Notepads"
+    directory: "/src/Notepads.UnitTest"
     schedule:
       interval: "daily"
     commit-message:
