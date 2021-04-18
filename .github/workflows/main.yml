@@ -106,6 +106,8 @@ jobs:
       is_release: ${{ matrix.release }}
     env:
       SOLUTION_NAME: src\Notepads.sln
+      PROJECT_NAME: src\Notepads\Notepads.csproj
+      TEST_PROJECT_NAME: src\Notepads.UnitTest\Notepads.UnitTest.csproj
       CONFIGURATION: ${{ matrix.configuration }}
       DEFAULT_DIR: ${{ github.workspace }}
     steps:
@@ -254,7 +256,7 @@ jobs:
         id: build_app
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild $env:PROJECT_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
           /p:AllowUnsafeBlocks=true `
@@ -282,7 +284,7 @@ jobs:
         id: build_app_arm_debug
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild $env:PROJECT_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
           /p:AllowUnsafeBlocks=true `
@@ -337,7 +339,6 @@ jobs:
         env:
           PLATFORM: x64
           APPX_BUNDLE_PLATFORMS: x64
-          TEST_PROJECT_NAME: src\Notepads.UnitTest\Notepads.UnitTest.csproj
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
