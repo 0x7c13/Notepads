@@ -43,9 +43,8 @@ DWORD WINAPI unblockFileFromPipeData(LPVOID /* param */)
         } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
         hstring filePath(pipeData.str());
-        com_ptr<IPersistFile> pFile;
-        if (SUCCEEDED(CoCreateInstance(CLSID_PersistentZoneIdentifier, 0, CLSCTX_ALL, __uuidof(pFile), pFile.put_void())) &&
-            SUCCEEDED(pFile->Load(filePath.c_str(), STGM_READWRITE)))
+        com_ptr<IPersistFile> pFile = create_instance<IPersistFile>(CLSID_PersistentZoneIdentifier);
+        if (SUCCEEDED(pFile->Load(filePath.c_str(), STGM_READWRITE)))
         {
             LPTSTR lastWriterPackageFamilyName;
             if (SUCCEEDED(pFile.as<IZoneIdentifier2>()->GetLastWriterPackageFamilyName(&lastWriterPackageFamilyName)) &&
@@ -83,7 +82,7 @@ VOID launchElevatedProcess()
     GetModuleFileName(NULL, fileName, MAX_PATH);
 
     SHELLEXECUTEINFO shExInfo
-    { 
+    {
         .cbSize = sizeof(shExInfo),
         .fMask = SEE_MASK_NOCLOSEPROCESS,
         .hwnd = 0,
