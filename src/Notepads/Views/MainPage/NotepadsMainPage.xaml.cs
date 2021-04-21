@@ -43,8 +43,6 @@
         private bool _loaded = false;
         private bool _appShouldExitAfterLastEditorClosed = false;
 
-        //public static EventWaitHandle SessionLoadWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-
         private INotepadsCore _notepadsCore;
 
         private INotepadsCore NotepadsCore
@@ -260,8 +258,6 @@
                 _loaded = true;
             }
 
-            //SessionLoadWaitHandle.Set();
-
             if (isSessionSnapshotEnabled)
             {
                 SessionManager.IsBackupEnabled = true;
@@ -459,8 +455,6 @@
             // Execute only if session restore is complete before instance type initialized
             if (_sessionRestoreCompleted)
             {
-                //SessionLoadWaitHandle.WaitOne();
-
                 if (isSessionBackupAndRestoreEnabled)
                 {
                     await Dispatcher.CallOnUIThreadAsync(async () =>
