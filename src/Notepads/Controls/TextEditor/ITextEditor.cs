@@ -97,8 +97,11 @@
 
         void OpenSideBySideDiffViewer();
 
+        void OpenSideBySideComparerViewer(ITextEditor leftFile, ITextEditor rightFile);
+
         void CloseSideBySideDiffViewer();
 
+        void CloseSideBySideDiffComparer();
         /// <summary>
         /// Returns 1-based indexing values
         /// </summary>

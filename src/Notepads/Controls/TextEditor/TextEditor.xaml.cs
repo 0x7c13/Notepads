@@ -256,6 +256,13 @@
                 UnloadObject(SideBySideDiffViewer);
             }
 
+            if (SideBySideDiffComparer != null)
+            {
+                SideBySideDiffComparer.OnCloseEvent -= SideBySideDiffComparer_OnCloseEvent;
+                SideBySideDiffComparer.Dispose();
+                UnloadObject(SideBySideDiffComparer);
+            }
+
             if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Content is FindAndReplaceControl findAndReplaceControl)
             {
                 findAndReplaceControl.Dispose();
@@ -649,6 +656,21 @@
             Analytics.TrackEvent("SideBySideDiffViewer_Opened");
         }
 
+        public void OpenSideBySideComparerViewer(ITextEditor leftFile, ITextEditor rightFile)
+        {
+            if (string.Equals(leftFile.GetText(), rightFile.GetText())) return;
+            if (Mode == TextEditorMode.DiffPreview) return;
+            if (SideBySideDiffComparer == null) LoadSideBySideDiffComparer();
+            Mode = TextEditorMode.DiffPreview;
+            TextEditorCore.IsEnabled = false;
+            EditorRowDefinition.Height = new GridLength(0);
+            SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
+            SideBySideDiffComparer.Visibility = Visibility.Visible;
+            SideBySideDiffComparer.RenderDiff(leftFile.GetText(), rightFile.GetText(), ThemeSettingsService.ThemeMode, leftFile.EditingFileName, rightFile.EditingFileName);
+            SideBySideDiffComparer.Focus();
+            Analytics.TrackEvent("SideBySideDiffComparer_Opened");
+        }
+
         public void CloseSideBySideDiffViewer()
         {
             if (Mode != TextEditorMode.DiffPreview) return;
@@ -658,6 +680,18 @@
             SideBySideDiffViewRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewer.Visibility = Visibility.Collapsed;
             SideBySideDiffViewer.StopRenderingAndClearCache();
+            TextEditorCore.ResetFocusAndScrollToPreviousPosition();
+        }
+
+        public void CloseSideBySideDiffComparer()
+        {
+            if (Mode != TextEditorMode.DiffPreview) return;
+            Mode = TextEditorMode.Editing;
+            TextEditorCore.IsEnabled = true;
+            EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
+            SideBySideDiffViewRowDefinition.Height = new GridLength(0);
+            SideBySideDiffComparer.Visibility = Visibility.Collapsed;
+            SideBySideDiffComparer.StopRenderingAndClearCache();
             TextEditorCore.ResetFocusAndScrollToPreviousPosition();
         }
 
@@ -748,7 +782,10 @@
         {
             if (Mode == TextEditorMode.DiffPreview)
             {
-                SideBySideDiffViewer.Focus();
+                if (SideBySideDiffViewer != null)
+                    SideBySideDiffViewer.Focus();
+                else
+                    SideBySideDiffComparer.Focus();
             }
             else if (Mode == TextEditorMode.Editing)
             {
@@ -874,9 +911,27 @@
             SideBySideDiffViewer.OnCloseEvent += SideBySideDiffViewer_OnCloseEvent;
         }
 
+        private void LoadSideBySideDiffComparer()
+        {
+            FindName("SideBySideDiffComparer");
+            SideBySideDiffComparer.Visibility = Visibility.Collapsed;
+            SideBySideDiffComparer.OnCloseEvent += SideBySideDiffComparer_OnCloseEvent;
+        }
+
         private void SideBySideDiffViewer_OnCloseEvent(object sender, EventArgs e)
         {
-            CloseSideBySideDiffViewer();
+            if (SideBySideDiffViewer != null)
+                CloseSideBySideDiffViewer();
+            else
+                CloseSideBySideDiffComparer();
+        }
+
+        private void SideBySideDiffComparer_OnCloseEvent(object sender, EventArgs e)
+        {
+            if (SideBySideDiffViewer != null)
+                CloseSideBySideDiffViewer();
+            else
+                CloseSideBySideDiffComparer();
         }
 
         private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)

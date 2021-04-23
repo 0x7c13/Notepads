@@ -5,5 +5,6 @@
     public interface ISideBySideDiffViewer
     {
         void RenderDiff(string left, string right, ElementTheme theme);
+        void RenderDiff(string left, string right, ElementTheme theme, string leftHeader = null, string rightHeader = null);
     }
 }

@@ -178,5 +178,8 @@
         <diffViewer:SideBySideDiffViewer x:Name="SideBySideDiffViewer"
                                          x:Load="False"
                                          Grid.Row="1"/>
+        <diffViewer:SideBySideDiffComparer x:Name="SideBySideDiffComparer"
+                                         x:Load="False"
+                                         Grid.Row="1"/>
     </Grid>
 </UserControl>

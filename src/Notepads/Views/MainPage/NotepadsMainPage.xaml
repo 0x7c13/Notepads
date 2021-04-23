@@ -159,6 +159,11 @@
                                                     <KeyboardAccelerator Key="F" Modifiers="Control,Shift" IsEnabled="False"/>
                                                 </MenuFlyoutItem.KeyboardAccelerators>
                                             </MenuFlyoutItem>
+                                            <MenuFlyoutItem x:Uid="MainMenu_Button_CompareMenu" x:Name="MenuCompareButton">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#x25EB;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutSeparator x:Name="MenuFullScreenSeparator"/>
                                             <MenuFlyoutItem Text="Enter Full Screen" x:Name="MenuFullScreenButton">
                                                 <MenuFlyoutItem.Icon>

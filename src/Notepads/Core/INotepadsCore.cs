@@ -46,7 +46,7 @@
 
         void OpenNewTextEditor(string fileNamePlaceholder);
 
-        void OpenTextEditor(ITextEditor editor, int atIndex = -1);
+        void OpenTextEditor(ITextEditor editor, string headerComparer = null, int atIndex = -1);
 
         void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
 
