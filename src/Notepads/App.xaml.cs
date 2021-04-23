@@ -31,6 +31,7 @@
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
+        // Notepads GitHub CD workflow will swap null with production value getting from Github Secrets
         private const string AppCenterSecret = null;
 
         public static Mutex InstanceHandlerMutex { get; set; }

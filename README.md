@@ -87,11 +87,11 @@ winget install notepads
 To be 100% transparent:
 
 * Notepads does not and will never collect user information in terms of user privacy.
-* I will not track your IP. 
-* I will not record your typings or read any of your files created in Notepads including file name and file path. 
-* No typings or files will be sent to me or third parties. 
+* I will not track your IP.
+* I will not record your typings or read any of your files created in Notepads including file name and file path.
+* No typings or files will be sent to me or third parties.
 
-I am using analytics service "AppCenter" to collect basic usage data plus some minimum telemetry to help me debug runtime errors. Here is the thread I made clear on this topic: https://github.com/JasonStein/Notepads/issues/334 
+I am using analytics service "AppCenter" to collect basic usage data plus some minimum telemetry to help me debug runtime errors. Here is the thread I made clear on this topic: https://github.com/JasonStein/Notepads/issues/334
 
 Feel free to review the source code or build your own version of Notepads since it is 100% open sourced.
 
@@ -122,7 +122,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * Alexandru Sterpu - App Tester, who helped me a lot during preview/beta testing.
 * Code Contributors: [DanverZ](https://github.com/chenghanzou), [BernhardWebstudio](https://github.com/BernhardWebstudio), [Csányi István](https://github.com/AmionSky), [Pavel Erokhin](https://github.com/MairwunNx), [Sergio Pedri](https://github.com/Sergio0694), [Lucas Pinho B. Santos](https://github.com/pinholucas), [Soumya Ranjan Mahunt](https://github.com/soumyamahunt), [Belleve Invis](https://github.com/be5invis), [Maickonn Richard](https://github.com/Maickonn), [Xam](https://github.com/XamDR)
 * Documentation Contributors: [Craig S.](https://github.com/sercraig)
-* Localization Contributors: 
+* Localization Contributors:
     * [fr-FR][French (France)]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou), [Armand Delessert](https://github.com/ArmandDelessert)
     * [es-ES][Spanish (Spain)]: [Jose Pinilla](https://github.com/joseppinilla)
     * [zh-CN][Chinese (S)]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/JasonStein)
@@ -133,7 +133,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [ru-RU][Russian (Russia)]: [Pavel Erokhin](https://github.com/MairwunNx), [krlvm](https://github.com/krlvm)
     * [fi-FI][Finnish (Finland)]: [Esa Elo](https://github.com/sauihdik)
     * [uk-UA][Ukrainian (Ukraine)]: [Taras Fomin aka Tarik02](https://github.com/Tarik02)
-    * [it-IT][Italian (Italy)]: [Andrea Guarinoni](https://github.com/guari)
+    * [it-IT][Italian (Italy)]: [Andrea Guarinoni](https://github.com/guari), [Bunz](https://github.com/66Bunz)
     * [cs-CZ][Czech (Czech Republic)]: [Jan Rajnoha](https://github.com/JanRajnoha)
     * [pt-BR][Portuguese (Brazil)]: [Lucas Pinho B. Santos](https://github.com/pinholucas)
     * [ko-KR][Korean (Korea)]: [Donghyeok Tak](https://github.com/tdh8316)
@@ -142,6 +142,9 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [ka-GE][Georgian (Georgia)]: [guram mazanashvili](https://github.com/gmaza)
     * [hr-HR][Croatian (Croatia)]: [milotype](https://github.com/milotype)
     * [zh-TW][Chinese (T)]: [Tony Yao](https://github.com/SeaBao)
+    * [pt-PT][Portuguese (Portugal)]: [O.Leitão](https://github.com/oleitao)
+
+* Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 
 [![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/0)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/0)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/1)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/1)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/2)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/2)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/3)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/3)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/4)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/4)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/5)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/5)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/6)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/6)[![](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/images/7)](https://sourcerer.io/fame/JasonStein/JasonStein/Notepads/links/7)
 

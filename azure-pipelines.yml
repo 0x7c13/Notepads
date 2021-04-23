@@ -1,7 +1,15 @@
 # Universal Windows Platform build definition
 
 trigger:
-- master
+  paths:
+    exclude:
+    - '*.md'
+    - 'ScreenShots/'
+    - '.whitesource'
+    - '.github/'
+  tags:
+    exclude:
+    - '*'
 
 pool:
   vmImage: 'windows-latest'

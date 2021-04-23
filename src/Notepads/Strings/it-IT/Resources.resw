@@ -358,11 +358,11 @@
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Linea {0}, Colonna {1} ({2} {3})</value>
+    <value>Riga {0}, Colonna {1} ({2} {3})</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Linea {0}, Colonna {1}</value>
+    <value>Riga {0}, Colonna {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
@@ -402,7 +402,7 @@
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>File reloaded</value>
+    <value>File ricaricato</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
@@ -442,7 +442,7 @@
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>File already opened!</value>
+    <value>File già aperto!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
@@ -458,99 +458,99 @@
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Open Recent</value>
+    <value>Apri Recenti</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Vai alla riga</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Go To:</value>
+    <value>Vai a:</value>
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Line number exceeds beyond the total number of lines!</value>
+    <value>Il numero di riga indicato supera il totale delle righe!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>You can only type a number!</value>
+    <value>Sono accettati solo i numeri!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Go To Line</value>
+    <value>Vai alla riga</value>
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Search in web</value>
+    <value>Cerca nel web</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restore Default Zoom</value>
+    <value>Ripristina zoom predefinito</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Zoom In</value>
+    <value>Ingrandisci</value>
     <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Zoom Out</value>
+    <value>Riduci</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Use Regular Expression</value>
+    <value>Usa regular expression</value>
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Print All...</value>
+    <value>Stampa tutto...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Can only accept upto one decimal place</value>
+    <value>Accetta numeri fino ad un solo decimale</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Value out of range</value>
+    <value>Valore fuori scala</value>
     <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Footer</value>
+    <value>Piè di pagina</value>
     <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Header</value>
+    <value>Intestazione</value>
     <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Horizontal Margin (in %)</value>
+    <value>Margine orizzontale (in %)</value>
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>In % of paper width</value>
+    <value>In % della larghezza della pagina</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Error printing:</value>
+    <value>Errore di stampa:</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Failed to print</value>
+    <value>Stampa fallita</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Printing is not supported on this device</value>
+    <value>Stampa non supportata dal dispositivo</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Vertical Margin (in %)</value>
+    <value>Margine verticale (in %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Clear Recently Opened</value>
+    <value>Svuota aperti di recente</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
+    <value>Codifiche aggiuntive</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
@@ -562,135 +562,135 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
+    <value>Regular expression non valida!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
+    <value>Autorilevamento della codifica</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
+    <value>La codifica no può essere determinata</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>Trova precedente (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>Attiva modalità di sostituzione</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
+    <value>Ordine di lettura da destra a sinistra</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
+    <value>Corsivo</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normale</value>
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
+    <value>Obliquo</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
+    <value>Marcato</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>Grassetto</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Extra Black</value>
+    <value>Marcato extra</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Extra Bold</value>
+    <value>Grassetto extra</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Extra Light</value>
+    <value>Extra chiaro</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
+    <value>Chiaro</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
+    <value>Medio</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Normale</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Semi Bold</value>
+    <value>Mezzo grassetto</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Semi Light</value>
+    <value>Mezzo chiaro</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
+    <value>Sottile</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annulla</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Salva</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
+    <value>Rinomina</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
+    <value>Il nome del file non deve contenere carratteri non validi</value>
     <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>File name should not contain leading spaces</value>
+    <value>Il nome del file non deve conteneri spazi all'inizio</value>
     <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>File name should not contain trailing spaces</value>
+    <value>Il nome del file non deve contenere spazi alla fines</value>
     <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>File name cannot be empty or all whitespace</value>
+    <value>Il nonme del file no può essere vuoto o contenere solamente spazi</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
+    <value>Nome del file non valido o non permesso</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>File name cannot be longer than 255 characters</value>
+    <value>Il nome del file non può superare i 255 caratteri</value>
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>Rinomina</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
+    <value>Rinominato</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Empty file extension is not supported at this moment</value>
+    <value>Estensione del file vuota non supportata al momento</value>
     <comment>FileRenameError: Empty file extension is not currently supported.</comment>
   </data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>File extension "{0}" is not supported at this moment</value>
+    <value>Estensione del file "{0}" non supportata al momento</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
   <data name="MainMenu_Button_CompareMenu.Text" xml:space="preserve">
