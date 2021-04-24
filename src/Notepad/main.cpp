@@ -49,41 +49,31 @@ INT main()
 
     auto nArgs = 0;
     auto szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
-    if (szArglist && nArgs > 1)
+    if (szArglist && nArgs > 1) [[likely]]
     {
         auto verb = OPEN;
-        if (wcscmp(NOTEPADPRINTCOMMAND, szArglist[1]) == 0) verb = PRINT;
+        [[unlikely]] if (wcscmp(NOTEPADPRINTCOMMAND, szArglist[1]) == 0) verb = PRINT;
         auto increment = wcscmp(OPEN, verb) == 0 ? 1 : 2;
 
         auto ct = nArgs - increment;
-        auto rgpidl = new(std::nothrow) PIDLIST_ABSOLUTE[ct];
-        if (rgpidl)
+        auto rgpidl = com_array<PIDLIST_ABSOLUTE>(ct);
+        auto cpidl = 0;
+        for (auto hr = S_OK; SUCCEEDED(hr) && cpidl < ct; cpidl++) [[likely]]
         {
-            auto cpidl = 0;
-            for (auto hr = S_OK; SUCCEEDED(hr) && cpidl < ct; cpidl++)
-            {
-                hr = SHParseDisplayName(szArglist[cpidl + increment], NULL, &rgpidl[cpidl], 0, NULL);
-            }
-
-            if (cpidl > 0)
-            {
-                auto pid = DWORD(0);
-                auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, cpidl, rgpidl);
-                auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
-                appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
-#ifdef _DEBUG
-                cout << "Launched files with process id: " << pid;
-                Sleep(2000);
-#endif
-            }
-
-            for (auto i = 0; i < cpidl; i++)
-            {
-                CoTaskMemFree(rgpidl[i]);
-            }
+            hr = SHParseDisplayName(szArglist[cpidl + increment], NULL, &rgpidl[cpidl], 0, NULL);
         }
 
-        delete[] rgpidl;
+        if (cpidl > 0) [[likely]]
+        {
+            auto pid = DWORD(0);
+            auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, cpidl, rgpidl.data());
+            auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
+            appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
+#ifdef _DEBUG
+            cout << "Launched files with process id: " << pid;
+            Sleep(2000);
+#endif
+        }
     }
 
     LocalFree(szArglist);
