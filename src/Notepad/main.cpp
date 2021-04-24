@@ -46,7 +46,7 @@ INT main()
 #endif
 {
     init_apartment();
-    
+
     auto nArgs = 0;
     auto szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
     if (szArglist && nArgs > 1)
