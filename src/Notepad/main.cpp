@@ -2,7 +2,6 @@
 #pragma comment(lib, "shell32")
 #define STRICT
 #define STRICT_TYPED_ITEMIDS
-#include "iostream"
 #include "windows.h"
 #include "shellapi.h"
 #include "shlobj_core.h"
@@ -32,7 +31,6 @@ namespace winrt
     }
 }
 
-using namespace std;
 using namespace winrt;
 
 #ifndef _DEBUG
@@ -48,7 +46,7 @@ INT main()
     init_apartment();
 
     auto nArgs = 0;
-    auto args = array_view(CommandLineToArgvW(GetCommandLine(), &nArgs), nArgs);
+    auto args = CommandLineToArgvW(GetCommandLine(), &nArgs);
     if (nArgs > 1)
     {
         auto nIgnore = 1;
@@ -72,11 +70,12 @@ INT main()
             auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
             appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
 #ifdef _DEBUG
-            cout << "Launched files with process id: " << pid;
+            printf("Launched files with process id: %d", pid);
             Sleep(2000);
 #endif
         }
     }
 
+    LocalFree(args);
     uninit_apartment();
 }
