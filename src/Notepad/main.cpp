@@ -9,17 +9,17 @@
 #include "winrt/base.h"
 
 #ifdef _PRODUCTION
-#define AUMID                               L"19282JackieLiu.Notepads-Beta_echhpq9pdbte8!App"
+#define AUMID                                    L"19282JackieLiu.Notepads-Beta_echhpq9pdbte8!App"
 #else
-#define AUMID                               L"Notepads-Dev_echhpq9pdbte8!App"
+#define AUMID                                    L"Notepads-Dev_echhpq9pdbte8!App"
 #endif
 
-#define OPEN                                L"open"
-#define PRINT                               L"print"
+#define OPEN                                     L"open"
+#define PRINT                                    L"print"
 
-#define NOTEPADPRINTCOMMAND                 L"/p"
-#define NOTEPADOPENWITHANSIENCODINGCOMMAND  L"/a"
-#define NOTEPADOPENWITHUTF16ENCODINGCOMMAND L"/w"
+#define NOTEPAD_PRINT_COMMAND                    L"/p"
+#define NOTEPAD_OPEN_WITH_ANSI_ENCODING_COMMAND  L"/a"
+#define NOTEPAD_OPEN_WITH_UTF16_ENCODING_COMMAND L"/w"
 
 namespace winrt
 {
@@ -48,25 +48,27 @@ INT main()
     init_apartment();
 
     auto nArgs = 0;
-    auto szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
-    if (szArglist && nArgs > 1) [[likely]]
+    auto args = array_view(CommandLineToArgvW(GetCommandLine(), &nArgs), nArgs);
+    if (nArgs > 1)
     {
+        auto nIgnore = 1;
         auto verb = OPEN;
-        [[unlikely]] if (wcscmp(NOTEPADPRINTCOMMAND, szArglist[1]) == 0) verb = PRINT;
-        auto increment = wcscmp(OPEN, verb) == 0 ? 1 : 2;
-
-        auto ct = nArgs - increment;
-        auto rgpidl = com_array<PIDLIST_ABSOLUTE>(ct);
-        auto cpidl = 0;
-        for (auto hr = S_OK; SUCCEEDED(hr) && cpidl < ct; cpidl++) [[likely]]
+        if (wcscmp(NOTEPAD_PRINT_COMMAND, args[1]) == 0)
         {
-            hr = SHParseDisplayName(szArglist[cpidl + increment], NULL, &rgpidl[cpidl], 0, NULL);
+            nIgnore = 2;
+            verb = PRINT;
         }
 
-        if (cpidl > 0) [[likely]]
+        auto rgpidl = com_array<PIDLIST_ABSOLUTE>(nArgs - nIgnore);
+        for (auto ppidl = rgpidl.begin(); ppidl < rgpidl.end(); ppidl++, nArgs--)
+        {
+            SHParseDisplayName(args[nArgs - 1], NULL, ppidl, 0, NULL);
+        }
+
+        if (rgpidl.size() > 0)
         {
             auto pid = DWORD(0);
-            auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, cpidl, rgpidl.data());
+            auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, rgpidl.size(), rgpidl.data());
             auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
             appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
 #ifdef _DEBUG
@@ -76,6 +78,5 @@ INT main()
         }
     }
 
-    LocalFree(szArglist);
     uninit_apartment();
 }
