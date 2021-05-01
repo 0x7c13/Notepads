@@ -586,7 +586,7 @@
         {
             foreach (var storageItem in storageItems)
             {
-                if (storageItem is StorageFile file)
+                if (storageItem is IStorageFile file)
                 {
                     await OpenFile(file);
                     Analytics.TrackEvent("OnStorageFileDropped");

@@ -46,7 +46,7 @@
 
         string EditingFilePath { get; }
 
-        StorageFile EditingFile { get; }
+        IStorageFile EditingFile { get; }
 
         bool IsModified { get; }
 
@@ -59,7 +59,7 @@
         bool DisplayLineHighlighter { get; set; }
 
         void Init(TextFile textFile,
-            StorageFile file,
+            IStorageFile file,
             bool resetLastSavedSnapshot = true,
             bool clearUndoQueue = true,
             bool isModified = false,
@@ -116,7 +116,7 @@
 
         bool IsEditorEnabled();
 
-        Task SaveContentToFileAndUpdateEditorState(StorageFile file);
+        Task SaveContentToFileAndUpdateEditorState(IStorageFile file);
 
         string GetContentForSharing();
 

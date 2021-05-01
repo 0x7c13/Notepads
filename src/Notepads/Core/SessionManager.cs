@@ -388,7 +388,7 @@
 
         private async Task<ITextEditor> RecoverTextEditorAsync(TextEditorSessionDataV1 editorSessionData)
         {
-            StorageFile editingFile = null;
+            IStorageFile editingFile = null;
 
             if (editorSessionData.EditingFileFutureAccessToken != null)
             {
@@ -448,7 +448,7 @@
             return textEditor;
         }
 
-        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, StorageFile file)
+        private static async Task<bool> BackupTextAsync(string text, Encoding encoding, LineEnding lineEnding, IStorageFile file)
         {
             try
             {
@@ -470,7 +470,7 @@
                 .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
+            foreach (var backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
             {
                 if (!backupPaths.Contains(backupFile.Path))
                 {

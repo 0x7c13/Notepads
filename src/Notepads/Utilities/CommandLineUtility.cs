@@ -30,7 +30,7 @@
                 : Path.Combine(basePath, path));
         }
 
-        public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
+        public static async Task<IStorageFile> OpenFileFromCommandLine(string dir, string args)
         {
             SetEnvironmentVariables();
 

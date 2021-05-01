@@ -119,7 +119,7 @@
 
             foreach (var item in await MRUService.Get(top: 10))
             {
-                if (item is StorageFile file)
+                if (item is IStorageFile file)
                 {
                     if (MRUFileList.Contains(file.Path))
                     {

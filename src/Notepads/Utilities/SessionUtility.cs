@@ -50,7 +50,7 @@
             return await FileSystemUtility.GetOrCreateAppFolder(backupFolderName);
         }
 
-        public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync(string backupFolderName)
+        public static async Task<IReadOnlyList<IStorageFile>> GetAllBackupFilesAsync(string backupFolderName)
         {
             StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
             return await backupFolder.GetFilesAsync();
@@ -108,7 +108,7 @@
             }
         }
 
-        public static async Task<StorageFile> CreateNewFileInBackupFolderAsync(string fileName, CreationCollisionOption collisionOption, string backupFolderName)
+        public static async Task<IStorageFile> CreateNewFileInBackupFolderAsync(string fileName, CreationCollisionOption collisionOption, string backupFolderName)
         {
             StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
             return await backupFolder.CreateFileAsync(fileName, collisionOption);

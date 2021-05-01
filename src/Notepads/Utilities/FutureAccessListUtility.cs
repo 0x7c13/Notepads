@@ -10,7 +10,7 @@
 
     public static class FutureAccessListUtility
     {
-        public static async Task<StorageFile> GetFileFromFutureAccessList(string token)
+        public static async Task<IStorageFile> GetFileFromFutureAccessList(string token)
         {
             try
             {
@@ -26,7 +26,7 @@
             return null;
         }
 
-        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, StorageFile file)
+        public static async Task<bool> TryAddOrReplaceTokenInFutureAccessList(string token, IStorageFile file)
         {
             try
             {

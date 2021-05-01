@@ -80,18 +80,18 @@
             return true;
         }
 
-        public static async Task<long> GetDateModified(StorageFile file)
+        public static async Task<long> GetDateModified(IStorageFile file)
         {
             var properties = await file.GetBasicPropertiesAsync();
             return properties.DateModified.ToFileTime();
         }
 
-        public static bool IsFileReadOnly(StorageFile file)
+        public static bool IsFileReadOnly(IStorageFile file)
         {
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> IsFileWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(IStorageFile file)
         {
             try
             {
@@ -104,25 +104,25 @@
             }
         }
 
-        public static async Task<Tuple<StorageFile, Exception>> GetFile(string filePath)
+        public static async Task<Tuple<IStorageFile, Exception>> GetFile(string filePath)
         {
             try
             {
-                return new Tuple<StorageFile, Exception>(await StorageFile.GetFileFromPathAsync(filePath), null);
+                return new Tuple<IStorageFile, Exception>(await StorageFile.GetFileFromPathAsync(filePath), null);
             }
             catch (Exception e)
             {
-                return new Tuple<StorageFile, Exception>(null, e);
+                return new Tuple<IStorageFile, Exception>(null, e);
             }
         }
 
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
-            StorageFile file = (await GetFile(filePath)).Item1;
+            var file = (await GetFile(filePath)).Item1;
             return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
+        public static async Task<TextFile> ReadFile(IStorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
@@ -349,7 +349,7 @@
         /// <param name="encoding"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
+        public static async Task WriteToFile(string text, Encoding encoding, IStorageFile file)
         {
             bool usedDeferUpdates = true;
 
@@ -433,12 +433,12 @@
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
+        public static async Task<IStorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
             return await folder.CreateFileAsync(fileName, option);
         }
 
-        public static async Task<bool> FileExists(StorageFile file)
+        public static async Task<bool> FileExists(IStorageFile file)
         {
             try
             {
