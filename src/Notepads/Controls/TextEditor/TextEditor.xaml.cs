@@ -83,16 +83,7 @@
             {
                 if (EditingFile == null) return;
 
-                if (value)
-                {
-                    _fileAttributes |= System.IO.FileAttributes.ReadOnly;
-                }
-                else
-                {
-                    _fileAttributes &= ~System.IO.FileAttributes.ReadOnly;
-                }
-
-                EditingFile.SetFileAttributes(_fileAttributes);
+                EditingFile.SetFileAttributes(value ? _fileAttributes | System.IO.FileAttributes.ReadOnly : _fileAttributes & ~System.IO.FileAttributes.ReadOnly, async () => await CheckAndUpdateAttributesInfo());
             }
         }
 
@@ -108,7 +99,7 @@
             }
         }
 
-        private void UpdateDocumentInfo()
+        private async void UpdateDocumentInfo()
         {
             if (EditingFile == null)
             {
@@ -123,7 +114,7 @@
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
 
-            CheckAndUpdateAttributesInfo();
+            await CheckAndUpdateAttributesInfo();
 
             // Hide content preview if current file type is not supported for previewing
             if (!FileTypeUtility.IsPreviewSupported(FileType))
@@ -135,21 +126,18 @@
             }
         }
 
-        private void CheckAndUpdateAttributesInfo()
+        private async Task CheckAndUpdateAttributesInfo()
         {
-            if (EditingFile != null  && FileModificationState != FileModificationState.RenamedMovedOrDeleted)
-            {
-                var fileAttributes = EditingFile.GetFileAttributes(!_isAttributeCheckedOnce);
-                _isAttributeCheckedOnce = true;
-                if (_fileAttributes != fileAttributes)
-                {
-                    _fileAttributes = fileAttributes;
-                    Dispatcher.CallOnUIThreadAsync(() =>
-                    {
-                        FileAttributeChanged?.Invoke(this, null);
-                    }).Wait(0);
-                }
-            }
+            if (EditingFile == null || FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            var fileAttributes = EditingFile.GetFileAttributes(!_isAttributeCheckedOnce);
+            _isAttributeCheckedOnce = true;
+            if (_fileAttributes == fileAttributes) return;
+
+            _fileAttributes = fileAttributes;
+            await Dispatcher.CallOnUIThreadAsync(
+                () => FileAttributeChanged?.Invoke(this, null)
+            );
         }
 
         private bool _isModified;
@@ -252,8 +240,6 @@
             base.KeyDown += TextEditor_KeyDown;
 
             TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
-
-            Win32FileSystemUtility.FileAttributeChanged += Win32FileSystemUtility_OnFileAttributeChanged;
         }
 
         private void TextEditor_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -397,11 +383,11 @@
             return metaData;
         }
 
-        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
+        private async void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded?.Invoke(this, e);
 
-            CheckAndUpdateAttributesInfo();
+            await CheckAndUpdateAttributesInfo();
 
             StartCheckingFileStatusPeriodically();
 
@@ -432,7 +418,7 @@
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
                         await CheckAndUpdateFileStatus(cancellationToken);
-                        CheckAndUpdateAttributesInfo();
+                        await CheckAndUpdateAttributesInfo();
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -1169,15 +1155,6 @@
         {
             GoToPlaceholder.Dismiss();
             TextEditorCore.Focus(FocusState.Programmatic);
-        }
-
-        private void Win32FileSystemUtility_OnFileAttributeChanged(object sender, StorageFile file)
-        {
-            if (file != null && file == EditingFile)
-            {
-                FileAttributeChanged?.Invoke(this, null);
-                CheckAndUpdateAttributesInfo();
-            }
         }
     }
 }

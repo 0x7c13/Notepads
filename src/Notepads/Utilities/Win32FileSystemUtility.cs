@@ -9,14 +9,12 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Microsoft.Win32.SafeHandles;
-    using Notepads.Extensions;
-    using Windows.ApplicationModel.Core;
     using Notepads.Services;
+    using Windows.System;
+    using System.Threading.Tasks;
 
     public static class Win32FileSystemUtility
     {
-        public static event EventHandler<Windows.Storage.StorageFile> FileAttributeChanged;
-
         private const string FileAttributeProperty = "System.FileAttributes";
 
         [DllImport("api-ms-win-core-file-l2-1-0.dll", CharSet = CharSet.Auto,
@@ -85,7 +83,10 @@
             [FieldOffset(4)] public Int32 HighPart;
         }
 
-        public static FileAttributes GetFileAttributes(this Windows.Storage.IStorageFile file, bool logError = false)
+        public static FileAttributes GetFileAttributes(
+            this Windows.Storage.IStorageFile file,
+            bool logError = false
+        )
         {
             FileAttributes fileAttributes = 0;
             unsafe
@@ -100,7 +101,13 @@
                     try
                     {
                         hFile = file.CreateSafeFileHandle(FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                        if (GetFileInformationByHandleEx(hFile, FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo, fileInformationBuff, (uint)size))
+                        if (GetFileInformationByHandleEx(
+                            hFile,
+                            FILE_INFO_BY_HANDLE_CLASS.FileBasicInfo,
+                            fileInformationBuff,
+                            (uint)size
+                            )
+                           )
                         {
                             fileAttributes = (FileAttributes)fileInformation.FileAttributes;
                         }
@@ -144,27 +151,31 @@
             return fileAttributes;
         }
 
-        public static async void SetFileAttributes(this Windows.Storage.StorageFile file, FileAttributes fileAttributes)
+        public static async void SetFileAttributes(
+            this Windows.Storage.StorageFile file,
+            FileAttributes fileAttributes,
+            Func<Task> completion
+        )
         {
             try
             {
-                await file.Properties.SavePropertiesAsync(new List<KeyValuePair<string, object>>
-                {
-                    new KeyValuePair<string, object>(FileAttributeProperty, (uint)fileAttributes) 
-                });
+                await file.Properties.SavePropertiesAsync(
+                    new List<KeyValuePair<string, object>>
+                    {
+                        new KeyValuePair<string, object>(FileAttributeProperty, (uint)fileAttributes)
+                    }
+                );
 
-                FileAttributeChanged?.Invoke(null, file);
+                await completion.Invoke();
             }
             catch (Exception e)
             {
                 if (!SetFileAttributesFromApp(file.Path, (uint)fileAttributes))
                 {
                     e = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.CallOnUIThreadAsync(
-                        () =>
-                        {
-                            NotificationCenter.Instance.PostNotification(e.Message, 1500);
-                        });
+                    DispatcherQueue.GetForCurrentThread().TryEnqueue(
+                        () => NotificationCenter.Instance.PostNotification(e.Message, 1500)
+                    );
 
                     var diagnosticInfo = new Dictionary<string, string>()
                     {
@@ -189,7 +200,7 @@
                 }
                 else
                 {
-                    FileAttributeChanged?.Invoke(null, file);
+                    await completion.Invoke();
                 }
             }
         }
