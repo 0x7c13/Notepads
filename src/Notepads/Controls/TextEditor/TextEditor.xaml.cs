@@ -83,7 +83,12 @@
             {
                 if (EditingFile == null) return;
 
-                EditingFile.SetFileAttributes(value ? _fileAttributes | System.IO.FileAttributes.ReadOnly : _fileAttributes & ~System.IO.FileAttributes.ReadOnly, async () => await CheckAndUpdateAttributesInfo());
+                EditingFile.SetFileAttributes(
+                    value
+                    ? _fileAttributes | System.IO.FileAttributes.ReadOnly
+                    : _fileAttributes & ~System.IO.FileAttributes.ReadOnly,
+                    () => CheckAndUpdateAttributesInfo()
+                );
             }
         }
 
@@ -418,7 +423,6 @@
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
                         await CheckAndUpdateFileStatus(cancellationToken);
-                        await CheckAndUpdateAttributesInfo();
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -476,6 +480,8 @@
             {
                 FileModificationState = newState.Value;
             });
+
+            await CheckAndUpdateAttributesInfo();
 
             _fileStatusSemaphoreSlim.Release();
         }
