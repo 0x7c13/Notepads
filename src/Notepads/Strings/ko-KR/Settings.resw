@@ -402,7 +402,7 @@
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>사용하면 메모장에서는 선택한 글자를 클립보드로 복사하기 전에Once enabled, Notepads will smartly trim leading and trailing spaces, tabs, and empty lines before copying the selected text to the clipboard.</value>
+    <value>사용하면 메모장에서는 선택한 글자를 클립보드로 복사하기 전에 앞뒤의 공백, 탭, 빈 줄을 제거합니다.</value>
     <comment>AdvancedPage SmartCopySettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
