@@ -134,7 +134,7 @@
     <comment>.ahk</comment>
   </data>
   <data name="BashAliasesFileDisplayName" xml:space="preserve">
-    <value>Bash TakmaAd Dosyası</value>
+    <value>Bash Lakap Dosyası</value>
     <comment>.bash_aliases</comment>
   </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
@@ -142,11 +142,11 @@
     <comment>.bash_history</comment>
   </data>
   <data name="BashLoginFileDisplayName" xml:space="preserve">
-    <value>Bash Giriş Dosyası</value>
+    <value>Bash Login Dosyası</value>
     <comment>.bash_login</comment>
   </data>
   <data name="BashLogoutFileDisplayName" xml:space="preserve">
-    <value>Bash Çıkış Dosyası</value>
+    <value>Bash Logout Dosyası</value>
     <comment>.bash_logout</comment>
   </data>
   <data name="BashProfileFileDisplayName" xml:space="preserve">
@@ -398,7 +398,7 @@
     <comment>.sql, .dsql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
-    <value>Substation Alpha Altyazı Dosyası</value>
+    <value>SubStation Alpha Altyazı Dosyası</value>
     <comment>.ssa</comment>
   </data>
   <data name="SubtitleFileDisplayName" xml:space="preserve">
