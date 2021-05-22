@@ -19,11 +19,10 @@ struct logger
 
 	static winrt::fire_and_forget start(bool elevated) noexcept
 	{
-		DateTimeFormatter log_file_formatter{ LOG_FILE_FORMAT };
 		auto local_folder = ApplicationData::Current().LocalFolder();
 		auto log_folder = co_await local_folder.CreateFolderAsync(L"Logs", CreationCollisionOption::OpenIfExists);
 		log_file = co_await log_folder.CreateFileAsync(
-			log_file_formatter.Format(winrt::clock::now()) +
+			get_time_stamp(LOG_FILE_FORMAT) +
 			winrt::to_hstring(elevated  ? L"-extension.log" : L"-elevated-extension.log"),
 			CreationCollisionOption::OpenIfExists
 		);
@@ -47,7 +46,7 @@ struct logger
 		}
 	}
 
-	static void log_info(winrt::hstring const& message, bool console_only = true) noexcept
+	static void log_info(winrt::hstring const& message, bool console_only = false) noexcept
 	{
 		std::wstring formatted_message = fmt::format(
 			L"{} [Info] {}\n",
@@ -69,7 +68,7 @@ struct logger
 		wprintf_s(L"%ls", message.c_str());
 		Sleep(sleep);
 #else
-	static void print(winrt::hstring const& message, uint48_t /* sleep */) noexcept
+	static void print(winrt::hstring const& message, uint48_t /* sleep */ = 0) noexcept
 	{
 #endif
 		OutputDebugStringW(message.c_str());

@@ -18,26 +18,28 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
     hstring file_path{};
     try
     {
-        auto extension_unblock_event = handle(
-            OpenEvent(
+        handle extension_unblock_event
+        {
+            OpenEventW(
                 SYNCHRONIZE | EVENT_MODIFY_STATE,
-                FALSE,
+                false,
                 fmt::format(
                     NAMED_OBJECT_FORMAT,
                     package_sid,
                     EXTENSION_UNBLOCK_EVENT_NAME_STR
                 ).c_str()
             )
-        );
+        };
 
         check_bool(!WaitForSingleObject(extension_unblock_event.get(), INFINITE));
         check_bool(ResetEvent(extension_unblock_event.get()));
-        check_bool(WaitNamedPipe(unblock_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
+        check_bool(WaitNamedPipeW(unblock_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
 
         CreateThread(nullptr, 0, unblock_file_from_pipe_data, nullptr, 0, nullptr);
 
-        auto h_pipe = handle(
-            CreateFile(
+        handle h_pipe
+        {
+            CreateFileW(
                 unblock_pipe.c_str(),
                 GENERIC_READ,
                 0,
@@ -46,13 +48,13 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
                 0,
                 nullptr
             )
-        );
+        };
 
         check_bool(bool(h_pipe));
 
-        auto read_buffer = wstring(PIPE_READ_BUFFER, '\0');
-        auto pipe_data = wstringstream();
-        auto byte_read = DWORD(0);
+        wstring read_buffer{ PIPE_READ_BUFFER, '\0' };
+        wstringstream pipe_data{};
+        auto byte_read = 0UL;
         do
         {
             fill(read_buffer.begin(), read_buffer.end(), '\0');
@@ -70,7 +72,7 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
         check_hresult(p_file.as<IZoneIdentifier2>()->GetLastWriterPackageFamilyName(&last_writer_package_family));
         check_bool(Package::Current().Id().FamilyName() == last_writer_package_family);
         check_hresult(p_file.as<IZoneIdentifier>()->Remove());
-        check_hresult(p_file->Save(file_path.c_str(), TRUE));
+        check_hresult(p_file->Save(file_path.c_str(), true));
 
         logger::log_info(fmt::format(L"Successfully unblocked file \"{}\"", file_path).c_str(), true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
@@ -98,7 +100,7 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
     }
 }
 
-void launchElevatedProcess()
+void launch_elevated_process()
 {
     report::dictionary properties{};
 
@@ -120,10 +122,10 @@ void launchElevatedProcess()
 
     try
     {
-        auto file_name = wstring(MAX_PATH, '\0');
+        wstring file_name{ MAX_PATH, '\0' };
 
     GetModulePath:
-        auto result = GetModuleFileName(nullptr, &file_name[0], static_cast<ULONG>(file_name.size()));
+        auto result = GetModuleFileNameW(nullptr, &file_name[0], static_cast<ULONG>(file_name.size()));
         check_bool(result);
         if (result == file_name.size() && GetLastError() == ERROR_INSUFFICIENT_BUFFER)
         {
@@ -131,7 +133,7 @@ void launchElevatedProcess()
             goto GetModulePath;
         }
 
-        auto sh_ex_info = SHELLEXECUTEINFO
+        SHELLEXECUTEINFO sh_ex_info
         {
             .cbSize = sizeof(SHELLEXECUTEINFO),
             .fMask = SEE_MASK_NOCLOSEPROCESS,
@@ -144,7 +146,7 @@ void launchElevatedProcess()
             .hInstApp = 0
         };
 
-        if (ShellExecuteEx(&sh_ex_info))
+        if (ShellExecuteExW(&sh_ex_info))
         {
             settings_key::write(LAST_CHANGED_SETTINGS_APP_INSTANCE_ID_STR, box_value(L""));
             settings_key::write(LAST_CHANGED_SETTINGS_KEY_STR, box_value(LAUNCH_ELEVATED_PROCESS_SUCCESS_STR));
@@ -172,27 +174,27 @@ void launchElevatedProcess()
     analytics::track_event("OnAdminstratorPrivilageRequested", properties);
 }
 
-void launchElevatedProcessIfRequested()
+void launch_elevated_process_if_requested()
 {
     auto n_args = 0;
-    auto args = array_view(CommandLineToArgvW(GetCommandLineW(), &n_args), 4);
+    array_view args{ CommandLineToArgvW(GetCommandLineW(), &n_args), 4 };
     if (n_args < 4) return;
 
     // Assumed first entry is for uwp app
-    auto praid = wstring(Package::Current().GetAppListEntries().GetAt(0).AppUserModelId());
+    wstring praid{ Package::Current().GetAppListEntries().GetAt(0).AppUserModelId() };
     praid.erase(0, praid.find(L"!") + 1);
     if (wcscmp(args[1], L"/InvokerPRAID:") == 0 &&
         wcscmp(args[2], praid.c_str()) == 0 &&
         wcscmp(args[3], L"/admin") == 0
         )
     {
-        launchElevatedProcess();
+        launch_elevated_process();
     }
 }
 
 void initialize_extension_service()
 {
-    launchElevatedProcessIfRequested();
+    launch_elevated_process_if_requested();
 
     if (!is_first_instance(EXTENSION_MUTEX_NAME)) return;
 
@@ -206,8 +208,7 @@ void initialize_extension_service()
         logger::log_info(L"Successfully started Desktop Extension.", true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
 
-        auto thread = handle(CreateThread(nullptr, 0, unblock_file_from_pipe_data, nullptr, 0, nullptr));
-        check_bool(bool(thread));
+        check_bool(CreateThread(nullptr, 0, unblock_file_from_pipe_data, nullptr, 0, nullptr));
     }
     catch (hresult_error const& e)
     {
@@ -221,17 +222,18 @@ void initialize_extension_service()
     }
 
 LifeTimeCheck:
-    auto life_time_obj = handle(
-        OpenMutex(
+    handle life_time_obj
+    {
+        OpenMutexW(
             SYNCHRONIZE,
-            FALSE,
+            false,
             fmt::format(
                 L"AppContainerNamedObjects\\{}\\{}",
                 package_sid,
                 EXTENSION_PROCESS_LIFETIME_OBJ_NAME_STR
             ).c_str()
         )
-    );
+    };
 
     if (life_time_obj)
     {

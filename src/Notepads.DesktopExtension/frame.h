@@ -55,7 +55,7 @@ struct frame
         if (!symbols) return winrt::to_hstring(m_offset);
 
         auto name = std::string(256, '\0');
-        auto size = uint48_t(0);
+        auto size = 0UL;
         auto result = SUCCEEDED(
             symbols->GetNameByOffset(
                 m_offset,
@@ -90,7 +90,7 @@ struct frame
         if (!symbols) return L"";
 
         auto file = std::string(256, '\0');
-        auto size = uint48_t(0);
+        auto size = 0UL;
         auto result = SUCCEEDED(
             symbols->GetLineByOffset(
                 m_offset,
@@ -126,7 +126,7 @@ struct frame
 
         if (!symbols) return 0;
 
-        auto line = uint48_t(0);
+        auto line = 0UL;
         auto result = SUCCEEDED(
             symbols->GetLineByOffset(m_offset, &line, 0, 0, 0, 0)
         );

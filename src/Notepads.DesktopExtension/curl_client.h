@@ -46,26 +46,65 @@ struct curl_client
 		curl_easy_setopt(curl.get(), CURLOPT_COPYPOSTFIELDS, data.c_str());
 
 #ifdef  _DEBUG
-		logger::print(L"\n\n\n");
-		logger::print(winrt::to_hstring(data), 2000);
-		logger::print(L"\n\n\n");
+		curl_easy_setopt(curl.get(), CURLOPT_DEBUGFUNCTION, debug_callback);
 		curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
 #endif
 
 		auto res = curl_easy_perform(curl.get());
 		if (res != CURLE_OK)
 		{
-			logger::print(
+			logger::log_info(
 				fmt::format(
 					L"curl_easy_perform() failed: {}",
-					winrt::to_hstring(curl_easy_strerror(res)
-					)
+					winrt::to_hstring(curl_easy_strerror(res))
 				).c_str()
 			);
 		}
 	}
 
 private:
+
+#ifdef  _DEBUG
+	static int debug_callback(curl_handle /* handle */, curl_infotype type, char* data, size_t size, void* /* userp */)
+	{
+		std::string curl_data{ data, size };
+		if (curl_data.empty()) return 0;
+
+		std::string log_data;
+		std::string time_stamp = winrt::to_string(logger::get_time_stamp(LOG_FORMAT));
+
+		switch (type)
+		{
+		case CURLINFO_TEXT:
+			log_data = fmt::format("{} [CURL] {}", time_stamp, curl_data);
+			break;
+		default:
+			log_data = fmt::format("{} [CURL] Unknown Data: {}", time_stamp, curl_data);
+			break;
+		case CURLINFO_HEADER_OUT:
+			log_data = fmt::format("\n\n{} [CURL] Request Headers: \n> {}", time_stamp, curl_data);
+			break;
+		case CURLINFO_DATA_OUT:
+			log_data = fmt::format("\n{} [CURL] Request Data: \n{}\n\n\n", time_stamp, curl_data);
+			break;
+		case CURLINFO_SSL_DATA_OUT:
+			log_data = fmt::format("\n{} [CURL] Request SSL Data: \n{}\n\n\n", time_stamp, curl_data);
+			break;
+		case CURLINFO_HEADER_IN:
+			log_data = fmt::format("\n{} [CURL] Response Headers: \n< {}", time_stamp, curl_data);
+			break;
+		case CURLINFO_DATA_IN:
+			log_data = fmt::format("\n\n{} [CURL] Response Data: \n{}\n\n\n", time_stamp, curl_data);
+			break;
+		case CURLINFO_SSL_DATA_IN:
+			log_data = fmt::format("\n\n{} [CURL] Response SSL Data: \n{}\n\n\n", time_stamp, curl_data);
+			break;
+		}
+
+		logger::print(winrt::to_hstring(log_data));
+		return 0;
+	}
+#endif
 
 	curl_client() noexcept = default;
 	curl_client(curl_client&&) = default;

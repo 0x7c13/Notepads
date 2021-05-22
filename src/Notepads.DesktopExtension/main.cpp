@@ -4,9 +4,6 @@
 
 using namespace std;
 using namespace winrt;
-using namespace Windows::ApplicationModel;
-using namespace Windows::System;
-using namespace Windows::System::UserProfile;
 
 void exit_app(int code)
 {
@@ -18,12 +15,12 @@ bool is_first_instance(hstring mutex_name)
 {
     auto result = true;
 
-    auto hMutex = handle(OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutex_name.c_str()));
-    if (!hMutex)
+    handle h_mutex{ OpenMutexW(MUTEX_ALL_ACCESS, false, mutex_name.c_str()) };
+    if (!h_mutex)
     {
         try
         {
-            check_bool(CreateMutex(nullptr, FALSE, mutex_name.c_str()));
+            check_bool(CreateMutexW(nullptr, false, mutex_name.c_str()));
         }
         catch (hresult_error const& e)
         {
@@ -43,7 +40,8 @@ bool is_first_instance(hstring mutex_name)
     else
     {
         result = false;
-        logger::print(L"Closing this instance as another instance is already running.\n", 3000);
+        logger::log_info(L"Closing this instance as another instance is already running.", true);
+        logger::print(L"", 3000);
         exit_app();
     }
 

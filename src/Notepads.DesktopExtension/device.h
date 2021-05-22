@@ -13,9 +13,15 @@ struct device
 	device() noexcept
 	{
 		auto package_version = Package::Current().Id().Version();
-		m_build = m_version = fmt::format("{}.{}.{}.{}", package_version.Major, package_version.Minor, package_version.Build, package_version.Revision);
+		m_build = m_version = fmt::format(
+			"{}.{}.{}.{}",
+			package_version.Major,
+			package_version.Minor,
+			package_version.Build,
+			package_version.Revision
+		);
 
-		auto oem_info = EasClientDeviceInformation();
+		EasClientDeviceInformation oem_info{};
 		m_os = to_string(oem_info.OperatingSystem());
 
 		auto version = std::stoull(AnalyticsInfo::VersionInfo().DeviceFamilyVersion().c_str());

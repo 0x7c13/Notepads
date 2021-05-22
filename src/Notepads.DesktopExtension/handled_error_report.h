@@ -7,7 +7,7 @@ struct handled_error_report : managed_error_report
 {
 	explicit handled_error_report(
 		winrt_error const& error,
-		std::vector<std::pair<std::string, std::string>> const& properties,
+		report::dictionary const& properties,
 		std::string const& attachment = ""
 	) noexcept :
 		managed_error_report(error, attachment), m_properties(properties)
@@ -61,5 +61,5 @@ protected:
 		}
 	}*/
 
-	std::vector<std::pair<std::string, std::string>> m_properties;
+	report::dictionary m_properties;
 };

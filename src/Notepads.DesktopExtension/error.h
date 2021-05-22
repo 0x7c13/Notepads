@@ -233,7 +233,7 @@ private:
 
         if (count <= 0) return;
         frame* frames = new frame[count];
-        for (uint48_t i = 0; i < count; ++i)
+        for (auto i = 0UL; i < count; ++i)
         {
             frames[i] = traces[i];
         }

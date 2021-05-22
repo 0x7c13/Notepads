@@ -15,24 +15,46 @@ extern hstring package_sid;
 hstring write_pipe;
 hstring rename_pipe;
 
-DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
+DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
 {
     try
     {
-        handle elevated_write_event = handle(OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, package_sid, ELEVATED_WRITE_EVENT_NAME_STR).c_str()));
+        handle elevated_write_event
+        {
+            OpenEventW(
+                SYNCHRONIZE | EVENT_MODIFY_STATE,
+                false,
+                format(
+                    NAMED_OBJECT_FORMAT,
+                    package_sid,
+                    ELEVATED_WRITE_EVENT_NAME_STR
+                ).c_str()
+            )
+        };
 
         check_bool(!WaitForSingleObject(elevated_write_event.get(), INFINITE));
         check_bool(ResetEvent(elevated_write_event.get()));
-        check_bool(WaitNamedPipe(write_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
+        check_bool(WaitNamedPipeW(write_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
 
-        auto h_pipe = handle(CreateFile(write_pipe.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr));
+        handle h_pipe
+        {
+            CreateFileW(
+                write_pipe.c_str(),
+                GENERIC_READ | GENERIC_WRITE,
+                0,
+                nullptr,
+                OPEN_EXISTING,
+                0,
+                nullptr
+            )
+        };
         check_bool(bool(h_pipe));
 
-        CreateThread(nullptr, 0, saveFileFromPipeData, nullptr, 0, nullptr);
+        CreateThread(nullptr, 0, save_file_from_pipe_data, nullptr, 0, nullptr);
 
         TCHAR read_buffer[PIPE_READ_BUFFER];
-        wstringstream pipe_data;
-        DWORD byte_read;
+        wstringstream pipe_data{};
+        auto byte_read = 0UL;
         do
         {
             fill(begin(read_buffer), end(read_buffer), '\0');
@@ -42,23 +64,35 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
             }
         } while (byte_read >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
-        wstring filePath;
-        wstring memory_map_id;
-        wstring data_length_str;
+        wstring filePath{};
+        wstring memory_map_id{};
+        wstring data_length_str{};
         getline(pipe_data, filePath, L'|');
         getline(pipe_data, memory_map_id, L'|');
         getline(pipe_data, data_length_str);
 
-        int data_length = stoi(data_length_str);
-        wstring memory_map = format(NAMED_OBJECT_FORMAT, package_sid, memory_map_id);
+        auto data_length = stoi(data_length_str);
+        auto memory_map = format(NAMED_OBJECT_FORMAT, package_sid, memory_map_id);
 
-        auto h_memory = handle(OpenFileMapping(FILE_MAP_READ, FALSE, memory_map.c_str()));
+        handle h_memory{ OpenFileMappingW(FILE_MAP_READ, false, memory_map.c_str()) };
         check_bool(bool(h_memory));
 
         auto map_view = MapViewOfFile(h_memory.get(), FILE_MAP_READ, 0, 0, data_length);
         check_bool(map_view);
 
-        auto h_file = handle(CreateFile(filePath.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, TRUNCATE_EXISTING, 0, nullptr));
+        handle h_file
+        {
+            CreateFileW(
+                filePath.c_str(),
+                GENERIC_READ | GENERIC_WRITE,
+                0,
+                nullptr,
+                TRUNCATE_EXISTING,
+                0,
+                nullptr
+            )
+        };
+
         check_bool(bool(h_file));
         check_bool(WriteFile(h_file.get(), map_view, data_length, nullptr, nullptr));
         check_bool(FlushFileBuffers(h_file.get()));
@@ -95,26 +129,48 @@ DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
     }
 }
 
-DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
+DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
 {
-    hstring old_name;
-    wstring new_name;
+    hstring old_name{};
+    wstring new_name{};
     try
     {
-        handle elevated_rename_event = handle(OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, package_sid, ELEVATED_RENAME_EVENT_NAME_STR).c_str()));
+        handle elevated_rename_event
+        {
+            OpenEventW(
+                SYNCHRONIZE | EVENT_MODIFY_STATE,
+                false,
+                format(
+                    NAMED_OBJECT_FORMAT,
+                    package_sid,
+                    ELEVATED_RENAME_EVENT_NAME_STR
+                ).c_str()
+            )
+        };
 
         check_bool(!WaitForSingleObject(elevated_rename_event.get(), INFINITE));
         check_bool(ResetEvent(elevated_rename_event.get()));
-        check_bool(WaitNamedPipe(rename_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
+        check_bool(WaitNamedPipeW(rename_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
 
-        auto h_pipe = handle(CreateFile(rename_pipe.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr));
+        handle h_pipe
+        {
+            CreateFileW(
+                rename_pipe.c_str(),
+                GENERIC_READ | GENERIC_WRITE,
+                0,
+                nullptr,
+                OPEN_EXISTING,
+                0,
+                nullptr
+            )
+        };
         check_bool(bool(h_pipe));
 
-        CreateThread(nullptr, 0, renameFileFromPipeData, nullptr, 0, nullptr);
+        CreateThread(nullptr, 0, rename_file_from_pipe_data, nullptr, 0, nullptr);
 
         TCHAR read_buffer[PIPE_READ_BUFFER];
-        wstringstream pipe_data;
-        DWORD byte_read;
+        wstringstream pipe_data{};
+        auto byte_read = 0UL;
         do
         {
             fill(begin(read_buffer), end(read_buffer), '\0');
@@ -124,7 +180,7 @@ DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
             }
         } while (byte_read >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
-        wstring file_token;
+        wstring file_token{};
         getline(pipe_data, file_token, L'|');
         getline(pipe_data, new_name, L'|');
 
@@ -189,9 +245,8 @@ void initialize_elevated_service()
         logger::log_info(L"Successfully started Elevated Process.", true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
 
-        auto write_thread = handle(CreateThread(nullptr, 0, saveFileFromPipeData, nullptr, 0, nullptr));
-        auto rename_thread = handle(CreateThread(nullptr, 0, renameFileFromPipeData, nullptr, 0, nullptr));
-        check_bool(bool(write_thread));
+        check_bool(CreateThread(nullptr, 0, save_file_from_pipe_data, nullptr, 0, nullptr));
+        CreateThread(nullptr, 0, rename_file_from_pipe_data, nullptr, 0, nullptr);
     }
     catch (hresult_error const& e)
     {
@@ -205,17 +260,18 @@ void initialize_elevated_service()
     }
 
 LifeTimeCheck:
-    auto life_time_obj = handle(
-        OpenMutex(
+    handle life_time_obj
+    {
+        OpenMutexW(
             SYNCHRONIZE,
-            FALSE,
+            false,
             format(
                 L"AppContainerNamedObjects\\{}\\{}",
                 package_sid,
                 ELEVATED_PROCESS_LIFETIME_OBJ_NAME_STR
             ).c_str()
         )
-    );
+    };
 
     if (life_time_obj)
     {
