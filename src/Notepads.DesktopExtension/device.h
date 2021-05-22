@@ -1,140 +1,131 @@
 #pragma once
 #include "pch.h"
-#include "resource.h"
+#include "constants.h"
+#include "appcenter.h"
 
-namespace AppCenter
+struct device
 {
-	using namespace fmt;
-	using namespace rapidjson;
-	using namespace std;
-	using namespace winrt;
-	using namespace Windows::ApplicationModel;
-	using namespace Windows::Security::ExchangeActiveSyncProvisioning;
-	using namespace Windows::System::Profile;
+	using Package = winrt::Windows::ApplicationModel::Package;
+	using AnalyticsInfo = winrt::Windows::System::Profile::AnalyticsInfo;
+	using GlobalizationPreferences = winrt::Windows::System::UserProfile::GlobalizationPreferences;
+	using EasClientDeviceInformation = winrt::Windows::Security::ExchangeActiveSyncProvisioning::EasClientDeviceInformation;
 
-	class Device
+	device() noexcept
 	{
-	public:
-		Device()
-		{
-			auto packageVersion = Package::Current().Id().Version();
-			_appVersion = format("{}.{}.{}.{}", packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-			_appBuild = _appVersion;
+		auto package_version = Package::Current().Id().Version();
+		m_build = m_version = fmt::format("{}.{}.{}.{}", package_version.Major, package_version.Minor, package_version.Build, package_version.Revision);
 
-			HMODULE appModule = GetModuleHandle(NULL);
-			_sdkVersion = static_cast<CHAR*>(LockResource(LoadResource(appModule,
-				FindResource(appModule, MAKEINTRESOURCE(APPCENTER_SDK_VERSION), MAKEINTRESOURCE(TEXTFILE)))));
+		auto oem_info = EasClientDeviceInformation();
+		m_os = to_string(oem_info.OperatingSystem());
 
-			EasClientDeviceInformation oemInfo = EasClientDeviceInformation();
-			_osName = to_string(oemInfo.OperatingSystem());
+		auto version = std::stoull(AnalyticsInfo::VersionInfo().DeviceFamilyVersion().c_str());
+		auto major = (version & 0xFFFF000000000000L) >> 48;
+		auto minor = (version & 0x0000FFFF00000000L) >> 32;
+		auto build = (version & 0x00000000FFFF0000L) >> 16;
+		auto revision = (version & 0x000000000000FFFFL);
+		m_osversion = fmt::format("{}.{}.{}", major, minor, build);
+		m_osbuild = fmt::format("{}.{}.{}.{}", major, minor, build, revision);
 
-			ULONGLONG version = stoull(AnalyticsInfo::VersionInfo().DeviceFamilyVersion().c_str());
-			ULONGLONG major = (version & 0xFFFF000000000000L) >> 48;
-			ULONGLONG minor = (version & 0x0000FFFF00000000L) >> 32;
-			ULONGLONG build = (version & 0x00000000FFFF0000L) >> 16;
-			ULONGLONG revision = (version & 0x000000000000FFFFL);
-			_osVersion = format("{}.{}.{}", major, minor, build);
-			_osBuild = format("{}.{}.{}.{}", major, minor, build, revision);
+		m_model = to_string(oem_info.SystemProductName());
+		m_oem = to_string(oem_info.SystemManufacturer());
 
-			_model = to_string(oemInfo.SystemProductName());
-			_oemName = to_string(oemInfo.SystemManufacturer());
+		RECT desktop;
+		GetWindowRect(GetDesktopWindow(), &desktop);
+		m_screen = fmt::format("{}x{}", desktop.right, desktop.bottom);
 
-			RECT desktop;
-			GetWindowRect(GetDesktopWindow(), &desktop);
-			_screenSize = format("{}x{}", desktop.right, desktop.bottom);
+		m_locale = to_string(
+			GlobalizationPreferences::Languages().Size() > 0
+			? GlobalizationPreferences::Languages().First().Current()
+			: L""
+		);
 
-			TCHAR locale[LOCALE_NAME_MAX_LENGTH + 1];
-			LCIDToLocaleName(GetThreadLocale(), locale, LOCALE_NAME_MAX_LENGTH, 0);
-			TCHAR localeDisplayName[LOCALE_NAME_MAX_LENGTH + 1];
-			GetLocaleInfoEx(locale, LOCALE_SENGLISHDISPLAYNAME, localeDisplayName, LOCALE_NAME_MAX_LENGTH);
-			_locale = to_string(locale);
+		TIME_ZONE_INFORMATION timeZoneInfo;
+		GetTimeZoneInformation(&timeZoneInfo);
+		m_timezone = -1 * timeZoneInfo.Bias;
+	}
 
-			TIME_ZONE_INFORMATION timeZoneInfo;
-			GetTimeZoneInformation(&timeZoneInfo);
-			_timeZoneOffset = -1 * timeZoneInfo.Bias;
-		}
+	device(device const& device) noexcept :
+		m_version(device.m_version),
+		m_build(device.m_build),
+		m_sdkversion(device.m_sdkversion),
+		m_os(device.m_os),
+		m_osversion(device.m_osversion),
+		m_osbuild(device.m_osbuild),
+		m_model(device.m_model),
+		m_oem(device.m_oem),
+		m_screen(device.m_screen),
+		m_locale(device.m_locale),
+		m_timezone(device.m_timezone)
+	{}
 
-		Device(const Device& device) :
-			_appVersion(device._appVersion), _appBuild(device._appBuild), _sdkVersion(device._sdkVersion),
-			_osName(device._osName), _osVersion(device._osVersion), _osBuild(device._osBuild),
-			_model(device._model), _oemName(device._oemName), _screenSize(device._screenSize),
-			_locale(device._locale), _timeZoneOffset(device._timeZoneOffset) {}
+	device& operator=(device const& device) noexcept
+	{
+		m_namespace = device.m_namespace;
+		m_version = device.m_version;
+		m_build = device.m_build;
+		m_sdk = device.m_sdk;
+		m_sdkversion = device.m_sdkversion;
+		m_os = device.m_os;
+		m_osversion = device.m_osversion;
+		m_osbuild = device.m_osbuild;
+		m_model = device.m_model;
+		m_oem = device.m_oem;
+		m_screen = device.m_screen;
+		m_locale = device.m_locale;
+		m_timezone = device.m_timezone;
+		return *this;
+	}
 
-		~Device() {}
+	template <typename Writer>
+	void serialize(Writer& writer) const noexcept
+	{
+		writer.StartObject();
+		writer.String("appNamespace");
+		writer.String(m_namespace.c_str(), static_cast<rapidjson::SizeType>(m_namespace.length()));
+		writer.String("appVersion");
+		writer.String(m_version.c_str(), static_cast<rapidjson::SizeType>(m_version.length()));
+		writer.String("appBuild");
+		writer.String(m_build.c_str(), static_cast<rapidjson::SizeType>(m_build.length()));
+		writer.String("sdkName");
+		writer.String(m_sdk.c_str(), static_cast<rapidjson::SizeType>(m_sdk.length()));
+		writer.String("sdkVersion");
+		writer.String(m_sdkversion.c_str(), static_cast<rapidjson::SizeType>(m_sdkversion.length()));
+		writer.String("osName");
+		writer.String(m_os.c_str(), static_cast<rapidjson::SizeType>(m_os.length()));
+		writer.String("osVersion");
+		writer.String(m_osversion.c_str(), static_cast<rapidjson::SizeType>(m_osversion.length()));
+		writer.String("osBuild");
+		writer.String(m_osbuild.c_str(), static_cast<rapidjson::SizeType>(m_osbuild.length()));
+		writer.String("model");
+		writer.String(m_model.c_str(), static_cast<rapidjson::SizeType>(m_model.length()));
+		writer.String("oemName");
+		writer.String(m_oem.c_str(), static_cast<rapidjson::SizeType>(m_oem.length()));
+		writer.String("screenSize");
+		writer.String(m_screen.c_str(), static_cast<rapidjson::SizeType>(m_screen.length()));
+		writer.String("locale");
+		writer.String(m_locale.c_str(), static_cast<rapidjson::SizeType>(m_locale.length()));
+		writer.String("timeZoneOffset");
+		writer.Uint(m_timezone);
+		writer.EndObject();
+	}
 
-		Device& operator=(const Device& device)
-		{
-			if (this == &device) return *this;
+	std::string osbuild() const noexcept
+	{
+		return m_osbuild;
+	}
 
-			_appNamespace = device._appNamespace;
-			_appVersion = device._appVersion;
-			_appBuild = device._appBuild;
-			_sdkName = device._sdkName;
-			_sdkVersion = device._sdkVersion;
-			_osName = device._osName;
-			_osVersion = device._osVersion;
-			_osBuild = device._osBuild;
-			_model = device._model;
-			_oemName = device._oemName;
-			_screenSize = device._screenSize;
-			_locale = device._locale;
-			_timeZoneOffset = device._timeZoneOffset;
-			return *this;
-		}
-
-		template <typename Writer>
-		VOID Serialize(Writer& writer) const
-		{
-			writer.StartObject();
-
-			writer.String("appNamespace");
-			writer.String(_appNamespace.c_str(), static_cast<SizeType>(_appNamespace.length()));
-			writer.String("appVersion");
-			writer.String(_appVersion.c_str(), static_cast<SizeType>(_appVersion.length()));
-			writer.String("appBuild");
-			writer.String(_appBuild.c_str(), static_cast<SizeType>(_appBuild.length()));
-			writer.String("sdkName");
-			writer.String(_sdkName.c_str(), static_cast<SizeType>(_sdkName.length()));
-			writer.String("sdkVersion");
-			writer.String(_sdkVersion.c_str(), static_cast<SizeType>(_sdkVersion.length()));
-			writer.String("osName");
-			writer.String(_osName.c_str(), static_cast<SizeType>(_osName.length()));
-			writer.String("osVersion");
-			writer.String(_osVersion.c_str(), static_cast<SizeType>(_osVersion.length()));
-			writer.String("osBuild");
-			writer.String(_osBuild.c_str(), static_cast<SizeType>(_osBuild.length()));
-			writer.String("model");
-			writer.String(_model.c_str(), static_cast<SizeType>(_model.length()));
-			writer.String("oemName");
-			writer.String(_oemName.c_str(), static_cast<SizeType>(_oemName.length()));
-			writer.String("screenSize");
-			writer.String(_screenSize.c_str(), static_cast<SizeType>(_screenSize.length()));
-			writer.String("locale");
-			writer.String(_locale.c_str(), static_cast<SizeType>(_locale.length()));
-			writer.String("timeZoneOffset");
-			writer.Uint(_timeZoneOffset);
-
-			writer.EndObject();
-		}
-
-		string getOsVersion()
-		{
-			return _osBuild;
-		}
-
-	private:
-		string _appNamespace = "Notepads.DesktopExtension";
-		string _appVersion;
-		string _appBuild;
-		string _sdkName = "appcenter.uwp";
-		string _sdkVersion;
-		string _osName;
-		string _osVersion;
-		string _osBuild;
-		string _model;
-		string _oemName;
-		string _screenSize;
-		string _locale;
-		unsigned _timeZoneOffset;
-	};
-}
+private:
+	std::string m_namespace = "Notepads.DesktopExtension";
+	std::string m_version;
+	std::string m_build;
+	std::string m_sdk = "appcenter.uwp";
+	std::string m_sdkversion = APP_CENTER_SDK_VERSION;
+	std::string m_os;
+	std::string m_osversion;
+	std::string m_osbuild;
+	std::string m_model;
+	std::string m_oem;
+	std::string m_screen;
+	std::string m_locale;
+	unsigned m_timezone;
+};

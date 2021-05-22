@@ -7,7 +7,6 @@ namespace winrt::Notepads::Core::implementation
     {
         CoreKey() = default;
 
-        static hstring AppCenterSecret();
         static hstring PackageSidStr();
         static hstring AppCenterInstallIdStr();
         static hstring LastChangedSettingsKeyStr();

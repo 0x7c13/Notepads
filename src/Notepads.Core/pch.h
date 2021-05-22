@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "winrt/base.h"
 
-#define APP_CENTER_SECRET L""
 #define PACKAGE_SID_STR L"PackageSidStr"
 #define APP_CENTER_INSTALL_ID_STR L"AppCenterInstallIdStr"
 #define LAST_CHANGED_SETTINGS_KEY_STR L"LastChangedSettingsKeyStr"

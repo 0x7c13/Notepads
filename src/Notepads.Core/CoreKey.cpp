@@ -4,11 +4,6 @@
 
 namespace winrt::Notepads::Core::implementation
 {
-    hstring CoreKey::AppCenterSecret()
-    {
-        return APP_CENTER_SECRET;
-    }
-
     hstring CoreKey::PackageSidStr()
     {
         return PACKAGE_SID_STR;

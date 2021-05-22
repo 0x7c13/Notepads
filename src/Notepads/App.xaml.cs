@@ -9,7 +9,6 @@
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Microsoft.Toolkit.Uwp.Helpers;
-    using Notepads.Core;
     using Notepads.Services;
     using Notepads.Settings;
     using Notepads.Utilities;
@@ -32,6 +31,9 @@
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
 
+        // Notepads GitHub CD workflow will swap null with production value getting from Github Secrets
+        private const string AppCenterSecret = null;
+
         public static Mutex InstanceHandlerMutex { get; set; }
 
         /// <summary>
@@ -44,7 +46,7 @@
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
             var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(CoreKey.AppCenterSecret, services);
+            AppCenter.Start(AppCenterSecret, services);
 
             InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)

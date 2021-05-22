@@ -3,20 +3,11 @@
   "version": "1.0.0.0",
   "builtin-baseline": "75522bb1f2e7d863078bcd06322348f053a9e33f",
   "dependencies": [
-    "boost-stacktrace",
     "curl",
     "fmt",
-    "rapidjson",
-    {
-      "name": "boost-build",
-      "host": true
-    }
+    "rapidjson"
   ],
   "overrides": [
-    {
-      "name": "boost-stacktrace",
-      "version": "1.75.0"
-    },
     {
       "name": "curl",
       "version": "7.74.0",

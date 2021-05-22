@@ -1,6 +1,13 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE        101
+#define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_SYMED_VALUE           103
+#endif
+#endif
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -41,13 +48,8 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-#ifdef _PRODUCTION
-            VALUE "FileDescription", "Notepads"
-            VALUE "ProductName", "Notepads"
-#else
             VALUE "FileDescription", "Notepads-Dev"
             VALUE "ProductName", "Notepads-Dev"
-#endif
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "Notepads.DesktopExtension"
             VALUE "LegalCopyright", "Copyright © 2020 Jackie Liu"
@@ -60,13 +62,6 @@ BEGIN
         VALUE "Translation", 0x0, 1200
     END
 END
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Text File
-//
-
-APPCENTER_SDK_VERSION   TEXTFILE                  "appcenter-sdk-version.txt"
 
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////

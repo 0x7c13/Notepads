@@ -206,7 +206,7 @@
                 }
             }
 
-            // Replace all forward slash with platform supported directory separator 
+            // Replace all forward slash with platform supported directory separator
             path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
 
             if (IsFullPath(path))
@@ -585,7 +585,7 @@
                         await DesktopExtensionService.SaveFileAsAdmin(file.Path, result);
                     }
                 }
-                else // Use StorageFile API to save 
+                else // Use StorageFile API to save
                 {
                     using (var stream = await file.OpenStreamForWriteAsync())
                     using (var writer = new StreamWriter(stream, encoding))

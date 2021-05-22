@@ -132,9 +132,6 @@
       <AdditionalOptions>%(AdditionalOptions) /permissive- /bigobj</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Unrestricted $(ProjectDir)build.ps1 -project_dir $(ProjectDir)</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
@@ -171,13 +168,20 @@
   <ItemGroup>
     <ClInclude Include="appcenter.h" />
     <ClInclude Include="device.h" />
-    <ClInclude Include="exception.h" />
-    <ClInclude Include="log.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="error_attachment_report.h" />
+    <ClInclude Include="error_report.h" />
+    <ClInclude Include="frame.h" />
+    <ClInclude Include="handled_error_report.h" />
+    <ClInclude Include="event_report.h" />
+    <ClInclude Include="curl_client.h" />
+    <ClInclude Include="logger.h" />
+    <ClInclude Include="managed_error_report.h" />
+    <ClInclude Include="report.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="settings_key.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="appcenter.cpp" />
     <ClCompile Include="elevated.cpp" />
     <ClCompile Include="extension.cpp" />
     <ClCompile Include="main.cpp" />
@@ -186,7 +190,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="appcenter-sdk-version.txt" />
     <None Include="packages.config" />
     <None Include="vcpkg.json" />
   </ItemGroup>
@@ -219,5 +222,33 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+  </Target>
+  <UsingTask TaskName="UpdateAppCenterConstants" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ProjectDir ParameterType="System.String" Required="true" />
+      <AppCenterSdkVersion ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO" />
+      <Reference Include="System.Xml" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Xml" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+          var uwpProject = new XmlDocument();
+          uwpProject.Load(Path.Combine(ProjectDir, @"..\Notepads\Notepads.csproj"));
+          var nsmgr = new XmlNamespaceManager(uwpProject.NameTable);
+          var ns = "ms";
+          var packagePath = string.Format("//{0}:PackageReference[@Include='{1}']", ns, "Microsoft.AppCenter.Crashes");
+          nsmgr.AddNamespace("ms", uwpProject.DocumentElement.NamespaceURI);
+          AppCenterSdkVersion = uwpProject.DocumentElement.SelectSingleNode(packagePath, nsmgr)["Version"].InnerText;
+        ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="GenerateAppCenterConstants" BeforeTargets="PrepareForBuild">
+    <UpdateAppCenterConstants ProjectDir="$(ProjectDir)">
+      <Output TaskParameter="AppCenterSdkVersion" PropertyName="AppCenterSdkVersion" />
+    </UpdateAppCenterConstants>
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION &quot;$(AppCenterSdkVersion)&quot;" Overwrite="true" Encoding="Unicode" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SECRET &quot;$(AppCenterSecret)&quot;" Encoding="Unicode" />
   </Target>
 </Project>

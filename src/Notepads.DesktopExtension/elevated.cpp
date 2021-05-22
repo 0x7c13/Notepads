@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "logger.h"
 #include "appcenter.h"
 #include "fmt/format.h"
 
@@ -8,229 +9,217 @@ using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::Storage::AccessCache;
 
-extern DWORD sessionId;
-extern hstring packageSid;
+extern DWORD session_id;
+extern hstring package_sid;
 
-HANDLE elevatedWriteEvent = NULL;
-HANDLE elevatedRenameEvent = NULL;
-
-wstring writePipeName;
-wstring renamePipeName;
+hstring write_pipe;
+hstring rename_pipe;
 
 DWORD WINAPI saveFileFromPipeData(LPVOID /* param */)
 {
-    setExceptionHandling();
-
-    vector<pair<const CHAR*, string>> properties;
-    LPCTSTR result = L"Failed";
-
-    HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(elevatedWriteEvent, INFINITE) &&
-        ResetEvent(elevatedWriteEvent) &&
-        WaitNamedPipe(writePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    try
     {
-        hPipe = CreateFile(writePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-    }
+        handle elevated_write_event = handle(OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, package_sid, ELEVATED_WRITE_EVENT_NAME_STR).c_str()));
 
-    if (hPipe)
-    {
-        CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
+        check_bool(!WaitForSingleObject(elevated_write_event.get(), INFINITE));
+        check_bool(ResetEvent(elevated_write_event.get()));
+        check_bool(WaitNamedPipe(write_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
 
-        TCHAR readBuffer[PIPE_READ_BUFFER];
-        wstringstream pipeData;
-        DWORD byteRead;
+        auto h_pipe = handle(CreateFile(write_pipe.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr));
+        check_bool(bool(h_pipe));
+
+        CreateThread(nullptr, 0, saveFileFromPipeData, nullptr, 0, nullptr);
+
+        TCHAR read_buffer[PIPE_READ_BUFFER];
+        wstringstream pipe_data;
+        DWORD byte_read;
         do
         {
-            fill(begin(readBuffer), end(readBuffer), '\0');
-            if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
+            fill(begin(read_buffer), end(read_buffer), '\0');
+            if (ReadFile(h_pipe.get(), read_buffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byte_read, nullptr))
             {
-                pipeData << readBuffer;
+                pipe_data << read_buffer;
             }
-        } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
+        } while (byte_read >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
         wstring filePath;
-        wstring memoryMapId;
-        wstring dataArrayLengthStr;
-        getline(pipeData, filePath, L'|');
-        getline(pipeData, memoryMapId, L'|');
-        getline(pipeData, dataArrayLengthStr);
+        wstring memory_map_id;
+        wstring data_length_str;
+        getline(pipe_data, filePath, L'|');
+        getline(pipe_data, memory_map_id, L'|');
+        getline(pipe_data, data_length_str);
 
-        INT dataArrayLength = stoi(dataArrayLengthStr);
-        wstring memoryMapName = format(NAMED_OBJECT_FORMAT, packageSid, memoryMapId);
-        HANDLE hMemory = OpenFileMapping(FILE_MAP_READ, FALSE, memoryMapName.c_str());
-        if (hMemory)
+        int data_length = stoi(data_length_str);
+        wstring memory_map = format(NAMED_OBJECT_FORMAT, package_sid, memory_map_id);
+
+        auto h_memory = handle(OpenFileMapping(FILE_MAP_READ, FALSE, memory_map.c_str()));
+        check_bool(bool(h_memory));
+
+        auto map_view = MapViewOfFile(h_memory.get(), FILE_MAP_READ, 0, 0, data_length);
+        check_bool(map_view);
+
+        auto h_file = handle(CreateFile(filePath.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, TRUNCATE_EXISTING, 0, nullptr));
+        check_bool(bool(h_file));
+        check_bool(WriteFile(h_file.get(), map_view, data_length, nullptr, nullptr));
+        check_bool(FlushFileBuffers(h_file.get()));
+
+        UnmapViewOfFile(map_view);
+
+        auto result = L"Success";
+        check_bool(WriteFile(h_pipe.get(), result, static_cast<DWORD>(wcslen(result) * sizeof(TCHAR)), nullptr, nullptr));
+        check_bool(FlushFileBuffers(h_pipe.get()));
+
+        report::dictionary properties
         {
-            LPVOID mapView = MapViewOfFile(hMemory, FILE_MAP_READ, 0, 0, dataArrayLength);
-            if (mapView)
-            {
-                HANDLE hFile = CreateFile(
-                    filePath.c_str(),
-                    GENERIC_READ | GENERIC_WRITE,
-                    0,
-                    NULL,
-                    TRUNCATE_EXISTING,
-                    0,
-                    NULL);
+            pair("Result", to_string(result))
+        };
+        logger::log_info(format(L"Successfully wrote to \"{}\"", filePath).c_str(), true);
+        logger::log_info(L"Waiting on uwp app to send data.", true);
 
-                if (hFile)
-                {
-                    if (WriteFile(hFile, mapView, dataArrayLength, NULL, NULL) && FlushFileBuffers(hFile))
-                    {
-                        result = L"Success";
-                    }
-
-                    CloseHandle(hFile);
-                }
-
-                UnmapViewOfFile(mapView);
-            }
-
-            CloseHandle(hMemory);
-        }
-
-        if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
-        CloseHandle(hPipe);
-
-        properties.push_back(pair("Result", to_string(result)));
-        if (wcscmp(result, L"Success") == 0)
-        {
-            printDebugMessage(format(L"Successfully wrote to \"{}\"", filePath).c_str());
-        }
-        else
-        {
-            pair<DWORD, wstring> ex = getLastErrorDetails();
-            properties.insert(properties.end(),
-                {
-                    pair("Error Code", to_string(ex.first)),
-                    pair("Error Message", winrt::to_string(ex.second))
-                });
-            printDebugMessage(format(L"Failed to write to \"{}\"", filePath).c_str());
-        }
-        printDebugMessage(L"Waiting on uwp app to send data.");
-
-        AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
+        analytics::track_event("OnWriteToSystemFileRequested", properties);
+        return 0;
     }
-    else
+    catch (hresult_error const& e)
     {
-        pair<DWORD, wstring> ex = getLastErrorDetails();
-        properties.insert(properties.end(),
-            {
-                pair("Result", to_string(result)),
-                pair("Error Code", to_string(ex.first)),
-                pair("Error Message", winrt::to_string(ex.second))
-            });
-        AppCenter::trackEvent("OnWriteToSystemFileRequested", properties);
-        exitApp();
+        winrt_error error{ e, true, 3 };
+        report::dictionary properties
+        {
+            pair("Result", "Failed")
+        };
+        report::add_device_metadata(properties);
+        logger::log_error(error);
+        crashes::track_error(error, properties);
+        analytics::track_event("OnWriteToSystemFileRequested", properties);
+        exit_app(e.code());
+        return e.code();
     }
-
-    return 0;
 }
 
 DWORD WINAPI renameFileFromPipeData(LPVOID /* param */)
 {
-    setExceptionHandling();
-
-    vector<pair<const CHAR*, string>> properties;
-    LPCTSTR result = L"Failed";
-
-    HANDLE hPipe = INVALID_HANDLE_VALUE;
-    if (!WaitForSingleObject(elevatedRenameEvent, INFINITE) &&
-        ResetEvent(elevatedRenameEvent) &&
-        WaitNamedPipe(renamePipeName.c_str(), NMPWAIT_WAIT_FOREVER))
+    hstring old_name;
+    wstring new_name;
+    try
     {
-        hPipe = CreateFile(renamePipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-    }
+        handle elevated_rename_event = handle(OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, package_sid, ELEVATED_RENAME_EVENT_NAME_STR).c_str()));
 
-    if (hPipe)
-    {
-        CreateThread(NULL, 0, renameFileFromPipeData, NULL, 0, NULL);
+        check_bool(!WaitForSingleObject(elevated_rename_event.get(), INFINITE));
+        check_bool(ResetEvent(elevated_rename_event.get()));
+        check_bool(WaitNamedPipe(rename_pipe.c_str(), NMPWAIT_WAIT_FOREVER));
 
-        TCHAR readBuffer[PIPE_READ_BUFFER];
-        wstringstream pipeData;
-        DWORD byteRead;
+        auto h_pipe = handle(CreateFile(rename_pipe.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr));
+        check_bool(bool(h_pipe));
+
+        CreateThread(nullptr, 0, renameFileFromPipeData, nullptr, 0, nullptr);
+
+        TCHAR read_buffer[PIPE_READ_BUFFER];
+        wstringstream pipe_data;
+        DWORD byte_read;
         do
         {
-            fill(begin(readBuffer), end(readBuffer), '\0');
-            if (ReadFile(hPipe, readBuffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byteRead, NULL))
+            fill(begin(read_buffer), end(read_buffer), '\0');
+            if (ReadFile(h_pipe.get(), read_buffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byte_read, nullptr))
             {
-                pipeData << readBuffer;
+                pipe_data << read_buffer;
             }
-        } while (byteRead >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
+        } while (byte_read >= (PIPE_READ_BUFFER - 1) * sizeof(TCHAR));
 
-        wstring fileToken;
-        wstring newName;
-        getline(pipeData, fileToken, L'|');
-        getline(pipeData, newName, L'|');
+        wstring file_token;
+        getline(pipe_data, file_token, L'|');
+        getline(pipe_data, new_name, L'|');
 
-        auto file = StorageApplicationPermissions::FutureAccessList().GetFileAsync(fileToken).get();
-        StorageApplicationPermissions::FutureAccessList().Remove(fileToken);
-        auto oldName = file.Path();
-        file.RenameAsync(newName).get();
-        result = StorageApplicationPermissions::FutureAccessList().Add(file).c_str();
+        auto file = StorageApplicationPermissions::FutureAccessList().GetFileAsync(file_token).get();
+        StorageApplicationPermissions::FutureAccessList().Remove(file_token);
+        old_name = file.Path();
+        file.RenameAsync(new_name).get();
 
-        if (WriteFile(hPipe, result, wcslen(result) * sizeof(TCHAR), NULL, NULL)) FlushFileBuffers(hPipe);
-        CloseHandle(hPipe);
+        auto result = StorageApplicationPermissions::FutureAccessList().Add(file).c_str();
 
-        if (wcscmp(result, L"Failed") == 0)
+        check_bool(WriteFile(h_pipe.get(), result, static_cast<DWORD>(wcslen(result) * sizeof(TCHAR)), nullptr, nullptr));
+        check_bool(FlushFileBuffers(h_pipe.get()));
+
+        logger::log_info(format(L"Successfully renamed \"{}\" to \"{}\"", old_name, new_name).c_str(), true);
+        logger::log_info(L"Waiting on uwp app to send data.", true);
+
+        report::dictionary properties
         {
-            pair<DWORD, wstring> ex = getLastErrorDetails();
-            properties.insert(properties.end(),
-                {
-                    pair("Result", to_string(result)),
-                    pair("Error Code", to_string(ex.first)),
-                    pair("Error Message", winrt::to_string(ex.second))
-                });
-            printDebugMessage(format(L"Failed to rename \"{}\" to \"{}\"", oldName, newName).c_str());
-        }
-        else
-        {
-            properties.push_back(pair("Result", "Success"));
-            printDebugMessage(format(L"Successfully renamed \"{}\" to \"{}\"", oldName, newName).c_str());
-        }
-        printDebugMessage(L"Waiting on uwp app to send data.");
+            pair("Result", "Success")
+        };
 
-        AppCenter::trackEvent("OnRenameToSystemFileRequested", properties);
+        analytics::track_event("OnRenameToSystemFileRequested", properties);
+        return 0;
     }
-    else
+    catch (hresult_error const& e)
     {
-        pair<DWORD, wstring> ex = getLastErrorDetails();
-        properties.insert(properties.end(),
-            {
-                pair("Result", to_string(result)),
-                pair("Error Code", to_string(ex.first)),
-                pair("Error Message", winrt::to_string(ex.second))
-            });
-        AppCenter::trackEvent("OnRenameToSystemFileRequested", properties);
-        exitApp();
-    }
+        winrt_error error{ e, true, 3 };
+        logger::log_info(
+            old_name.empty()
+            ? new_name.empty()
+            ? L"Failed to rename file"
+            : format(L"Failed to rename file to \"{}\"", new_name).c_str()
+            : format(L"Failed to rename \"{}\" to \"{}\"", old_name, new_name).c_str(),
+            true
+        );
 
-    return 0;
+        report::dictionary properties
+        {
+            pair("Result", "Failed")
+        };
+        report::add_device_metadata(properties);
+        logger::log_error(error);
+        crashes::track_error(error, properties);
+        analytics::track_event("OnRenameToSystemFileRequested", properties);
+        exit_app(e.code());
+        return e.code();
+    }
 }
 
-VOID initializeElevatedService()
+void initialize_elevated_service()
 {
-    if (!isFirstInstance(ElevatedMutexName)) return;
+    if (!is_first_instance(ELEVATED_MUTEX_NAME)) return;
 
-    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
-    packageSid = unbox_value_or<hstring>(readSettingsKey(PackageSidStr), L"");
+    try
+    {
+        check_bool(ProcessIdToSessionId(GetCurrentProcessId(), &session_id));
+        package_sid = unbox_value<hstring>(settings_key::read(PACKAGE_SID_STR));
 
-    elevatedWriteEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, packageSid, ElevatedWriteEventNameStr).c_str());
-    elevatedRenameEvent = OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, format(NAMED_OBJECT_FORMAT, packageSid, ElevatedRenameEventNameStr).c_str());
+        write_pipe = format(PIPE_NAME_FORMAT, session_id, package_sid, ELEVATED_WRITE_PIPE_CONNECTION_NAME_STR);
+        rename_pipe = format(PIPE_NAME_FORMAT, session_id, package_sid, ELEVATED_RENAME_PIPE_CONNECTION_NAME_STR);
 
-    writePipeName = format(PIPE_NAME_FORMAT, sessionId, packageSid, ElevatedWritePipeConnectionNameStr);
-    renamePipeName = format(PIPE_NAME_FORMAT, sessionId, packageSid, ElevatedRenamePipeConnectionNameStr);
+        logger::log_info(L"Successfully started Elevated Process.", true);
+        logger::log_info(L"Waiting on uwp app to send data.", true);
 
-    printDebugMessage(L"Successfully started Elevated Process.");
-    printDebugMessage(L"Waiting on uwp app to send data.");
-
-    CreateThread(NULL, 0, saveFileFromPipeData, NULL, 0, NULL);
-    CreateThread(NULL, 0, renameFileFromPipeData, NULL, 0, NULL);
+        auto write_thread = handle(CreateThread(nullptr, 0, saveFileFromPipeData, nullptr, 0, nullptr));
+        auto rename_thread = handle(CreateThread(nullptr, 0, renameFileFromPipeData, nullptr, 0, nullptr));
+        check_bool(bool(write_thread));
+    }
+    catch (hresult_error const& e)
+    {
+        winrt_error error{ e, true, 3 };
+        report::dictionary properties{};
+        report::add_device_metadata(properties);
+        logger::log_error(error);
+        crashes::track_error(error, properties);
+        analytics::track_event("OnInitializationForExtensionFailed", properties);
+        exit_app(e.code());
+    }
 
 LifeTimeCheck:
-    HANDLE lifeTimeObj = OpenMutex(SYNCHRONIZE, FALSE, format(L"AppContainerNamedObjects\\{}\\{}", packageSid, ElevatedProcessLifetimeObjNameStr).c_str());
-    if (lifeTimeObj)
+    auto life_time_obj = handle(
+        OpenMutex(
+            SYNCHRONIZE,
+            FALSE,
+            format(
+                L"AppContainerNamedObjects\\{}\\{}",
+                package_sid,
+                ELEVATED_PROCESS_LIFETIME_OBJ_NAME_STR
+            ).c_str()
+        )
+    );
+
+    if (life_time_obj)
     {
-        CloseHandle(lifeTimeObj);
+        life_time_obj.close();
         Sleep(1000);
         goto LifeTimeCheck;
     }

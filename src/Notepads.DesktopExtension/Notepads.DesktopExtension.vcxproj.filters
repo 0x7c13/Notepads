@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="AppCenter">
-      <UniqueIdentifier>{de4d9f33-9346-4bce-97fe-469f12bf39a5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,9 +24,6 @@
     <ClCompile Include="elevated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="appcenter.cpp">
-      <Filter>AppCenter</Filter>
-    </ClCompile>
     <ClCompile Include="extension.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,27 +32,48 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="event_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="error_attachment_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="managed_error_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="handled_error_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="error_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curl_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="appcenter.h">
-      <Filter>AppCenter</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="log.h">
-      <Filter>AppCenter</Filter>
+    <ClInclude Include="logger.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="device.h">
-      <Filter>AppCenter</Filter>
-    </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>AppCenter</Filter>
+    <ClInclude Include="settings_key.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vcpkg.json" />
-    <None Include="appcenter-sdk-version.txt">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

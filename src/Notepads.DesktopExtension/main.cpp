@@ -1,111 +1,99 @@
 ﻿#include "pch.h"
+#include "logger.h"
 #include "appcenter.h"
 
+using namespace std;
 using namespace winrt;
+using namespace Windows::ApplicationModel;
+using namespace Windows::System;
+using namespace Windows::System::UserProfile;
 
-extern HANDLE extensionUnblockEvent;
-extern HANDLE elevatedWriteEvent;
-extern HANDLE elevatedRenameEvent;
-
-INT releaseResources()
+void exit_app(int code)
 {
-    CloseHandle(extensionUnblockEvent);
-    CloseHandle(elevatedWriteEvent);
-    CloseHandle(elevatedRenameEvent);
-    AppCenter::exit();
     uninit_apartment();
-    return 0;
+    exit(code);
 }
 
-VOID exitApp()
-{
-    exit(0);
-}
-
-VOID onUnhandledException()
-{
-    logLastError(true).get();
-    exitApp();
-}
-
-VOID onUnexpectedException()
-{
-    logLastError(false).get();
-    exitApp();
-}
-
-VOID setExceptionHandling()
-{
-    set_terminate(onUnhandledException);
-    set_unexpected(onUnexpectedException);
-}
-
-bool isFirstInstance(LPCTSTR mutexName)
+bool is_first_instance(hstring mutex_name)
 {
     auto result = true;
 
-    HANDLE hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutexName);
+    auto hMutex = handle(OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutex_name.c_str()));
     if (!hMutex)
     {
-        CreateMutex(NULL, FALSE, mutexName);
+        try
+        {
+            check_bool(CreateMutex(nullptr, FALSE, mutex_name.c_str()));
+        }
+        catch (hresult_error const& e)
+        {
+            winrt_error error{ e, true, 3 };
+            report::dictionary properties{};
+            report::add_device_metadata(properties);
+            logger::log_error(error);
+            crashes::track_error(error, properties);
+            analytics::track_event("OnExtensionInstanceDetectionFailed", properties);
+            exit_app(e.code());
+        }
 
 #ifdef _DEBUG
-        initializeLogging(wcscmp(mutexName, ExtensionMutexName) == 0 ? L"-extension.log" : L"-elevated-extension.log");
+        logger::start(mutex_name == EXTENSION_MUTEX_NAME);
 #endif
     }
     else
     {
         result = false;
-        printDebugMessage(L"Closing this instance as another instance is already running.", 3000);
-        exitApp();
+        logger::print(L"Closing this instance as another instance is already running.\n", 3000);
+        exit_app();
     }
-    if (hMutex) ReleaseMutex(hMutex);
-    
+
     return result;
 }
 
-bool isElevatedProcess()
+bool is_elevated_process()
 {
-    auto result = false;
-
-    HANDLE hToken = NULL;
-    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
+    try
     {
-        TOKEN_ELEVATION Elevation;
-        DWORD cbSize = sizeof(TOKEN_ELEVATION);
-        if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize))
-        {
-            result = Elevation.TokenIsElevated;
-        }
+        handle h_token;
+        check_bool(OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, h_token.put()));
+        TOKEN_ELEVATION elevation;
+        auto size = static_cast<DWORD>(sizeof(elevation));
+        check_bool(GetTokenInformation(h_token.get(), TokenElevation, &elevation, sizeof(elevation), &size));
+        return elevation.TokenIsElevated;
     }
-
-    if (hToken)
+    catch (hresult_error const& e)
     {
-        CloseHandle(hToken);
+        winrt_error error{ e, true, 3 };
+        report::dictionary properties{};
+        report::add_device_metadata(properties);
+        crashes::track_error(error, properties);
+        analytics::track_event("OnPrivilageDetectionFailed", properties);
+        return false;
     }
-
-    return result;
 }
 
 #ifndef _DEBUG
-INT APIENTRY wWinMain(_In_ HINSTANCE /* hInstance */, _In_opt_ HINSTANCE /* hPrevInstance */, _In_ LPWSTR /* lpCmdLine */, _In_ INT /* nCmdShow */)
+int APIENTRY wWinMain(
+    _In_ HINSTANCE /* hInstance */,
+    _In_opt_ HINSTANCE /* hPrevInstance */,
+    _In_ LPWSTR /* lpCmdLine */,
+    _In_ int /* nCmdShow */
+)
 #else
-INT main()
+int main()
 #endif
 {
-    setExceptionHandling();
-    SetErrorMode(SEM_NOGPFAULTERRORBOX);
-    _onexit(releaseResources);
-
     init_apartment();
-    AppCenter::start();
+    appcenter::start();
 
-    if (isElevatedProcess())
+    if (is_elevated_process())
     {
-        initializeElevatedService();
+        initialize_elevated_service();
     }
     else
     {
-        initializeExtensionService();
+        initialize_extension_service();
     }
+
+    uninit_apartment();
 }
