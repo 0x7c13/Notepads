@@ -5,337 +5,114 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Notepads.Utilities;
 
-    public class CommandLineTestCase
-    {
-        public readonly string parentDirectory;
-        public readonly string argument;
-        public readonly string result;
-
-        public CommandLineTestCase(
-            string parentDirectory,
-            string argument,
-            string result)
-        {
-            this.parentDirectory = parentDirectory;
-            this.argument = argument;
-            this.result = result;
-        }
-    }
-
     [TestClass]
     public class CommandLineTest
     {
-        private string cmdArg = "notepads";
-        private string pwshArg = "\"C:\\Users\\Test User\\AppData\\Local\\Microsoft\\WindowsApps\\Notepads.exe\"";
+        private const string cmdArg = "notepads";
+        private const string pwshArg = "\"C:\\Users\\Test User\\AppData\\Local\\Microsoft\\WindowsApps\\Notepads.exe\"";
 
-        private string windowsRoot = "C:";
-        private string wslRoot = @"\\wsl$\Ubuntu";
+        private const string windowsRoot = "C:";
+        private const string wslRoot = @"\\wsl$\Ubuntu";
 
-        [TestMethod]
-        public void CommandLineTestForCommandPrompt()
+        private static IEnumerable<string[]> GetTestData(string root, string alias)
         {
-            var testCases = new List<CommandLineTestCase>
-            {
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"{windowsRoot}\\1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"{windowsRoot}\\1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} {windowsRoot}\\1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} {windowsRoot}\\1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"{windowsRoot}\\2.txt\"", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"{windowsRoot}\\2 3.txt\"", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} {windowsRoot}\\2.txt", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} {windowsRoot}\\2 3.txt", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"\\1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"\\1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \\1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \\1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"\\2.txt\"", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"\\2 3.txt\"", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \\2.txt", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \\2 3.txt", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} 1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} 1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"2.txt\"", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"2 3.txt\"", $"{windowsRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} 2.txt", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} 2 3.txt", $"{windowsRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"1\\2.txt\"", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} \"1 2\\3 4.txt\"", $"{windowsRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} 1\\2.txt", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{cmdArg} 1 2\\3 4.txt", $"{windowsRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"2\\3.txt\"", $"{windowsRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} \"2 3\\4 5.txt\"", $"{windowsRoot}\\1\\2 3\\4 5.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} 2\\3.txt", $"{windowsRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{cmdArg} 2 3\\4 5.txt", $"{windowsRoot}\\1\\2 3\\4 5.txt")
-            };
-
-            var failedScenarios = new List<string>();
-            foreach (var testCase in testCases)
-            {
-                var testResult =
-                    CommandLineUtility.GetAbsolutePathFromCommandLine(
-                                                                          testCase.parentDirectory,
-                                                                          testCase.argument
-                                                                     );
-
-                if (!testResult.Equals(testCase.result))
-                {
-                    failedScenarios.Add(
-                        $"- Test case {testCases.IndexOf(testCase) + 1} failed with:\n" +
-                        $"Parent Directory: {testCase.parentDirectory}\n" +
-                        $"CommandLine Argument: {testCase.argument}\n" +
-                        $"Test Case Output: {testResult}\n" +
-                        $"Expected Output: {testCase.result}"
-                    );
-                }
-            }
-
-            if (failedScenarios.Count > 0)
-            {
-                throw new AssertFailedException(string.Join("\n\n\n", failedScenarios));
-            }
+            yield return new string[] { $"{root}\\", $"{alias} \"{root}\\1.txt\"", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"{root}\\1 2.txt\"", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} {root}\\1.txt", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} {root}\\1 2.txt", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"{root}\\2.txt\"", $"{root}\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"{root}\\2 3.txt\"", $"{root}\\2 3.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} {root}\\2.txt", $"{root}\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} {root}\\2 3.txt", $"{root}\\2 3.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"\\1.txt\"", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"\\1 2.txt\"", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \\1.txt", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \\1 2.txt", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"\\2.txt\"", $"{root}\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"\\2 3.txt\"", $"{root}\\2 3.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \\2.txt", $"{root}\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \\2 3.txt", $"{root}\\2 3.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"1.txt\"", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"1 2.txt\"", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} 1.txt", $"{root}\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} 1 2.txt", $"{root}\\1 2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"2.txt\"", $"{root}\\1\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"2 3.txt\"", $"{root}\\1\\2 3.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} 2.txt", $"{root}\\1\\2.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} 2 3.txt", $"{root}\\1\\2 3.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"1\\2.txt\"", $"{root}\\1\\2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"1 2\\3 4.txt\"", $"{root}\\1 2\\3 4.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} 1\\2.txt", $"{root}\\1\\2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} 1 2\\3 4.txt", $"{root}\\1 2\\3 4.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"2\\3.txt\"", $"{root}\\1\\2\\3.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} \"2 3\\4 5.txt\"", $"{root}\\1\\2 3\\4 5.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} 2\\3.txt", $"{root}\\1\\2\\3.txt" };
+            yield return new string[] { $"{root}\\1", $"{alias} 2 3\\4 5.txt", $"{root}\\1\\2 3\\4 5.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"D:\\1.txt\"", $"D:\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"D:\\1\\2.txt\"", $"D:\\1\\2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} D:\\1.txt", $"D:\\1.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} D:\\1\\2.txt", $"D:\\1\\2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"D:\\1 2.txt\"", $"D:\\1 2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} \"D:\\1 2\\3 4.txt\"", $"D:\\1 2\\3 4.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} D:\\1 2.txt", $"D:\\1 2.txt" };
+            yield return new string[] { $"{root}\\", $"{alias} D:\\1 2\\3 4.txt", $"D:\\1 2\\3 4.txt" };
         }
 
-        [TestMethod]
-        public void CommandLineTestForPowerShell()
+        private static IEnumerable<string[]> GetCommandPromptTestData()
         {
-            var testCases = new List<CommandLineTestCase>
-            {
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"{windowsRoot}\\1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"{windowsRoot}\\1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} {windowsRoot}\\1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} {windowsRoot}\\1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"{windowsRoot}\\2.txt\"", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"{windowsRoot}\\2 3.txt\"", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} {windowsRoot}\\2.txt", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} {windowsRoot}\\2 3.txt", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"\\1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"\\1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \\1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \\1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"\\2.txt\"", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"\\2 3.txt\"", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \\2.txt", $"{windowsRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \\2 3.txt", $"{windowsRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"1.txt\"", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"1 2.txt\"", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} 1.txt", $"{windowsRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} 1 2.txt", $"{windowsRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"2.txt\"", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"2 3.txt\"", $"{windowsRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} 2.txt", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} 2 3.txt", $"{windowsRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"1\\2.txt\"", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} \"1 2\\3 4.txt\"", $"{windowsRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} 1\\2.txt", $"{windowsRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\", $"{pwshArg} 1 2\\3 4.txt", $"{windowsRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"2\\3.txt\"", $"{windowsRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} \"2 3\\4 5.txt\"", $"{windowsRoot}\\1\\2 3\\4 5.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} 2\\3.txt", $"{windowsRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{windowsRoot}\\1", $"{pwshArg} 2 3\\4 5.txt", $"{windowsRoot}\\1\\2 3\\4 5.txt")
-            };
-
-            var failedScenarios = new List<string>();
-            foreach (var testCase in testCases)
-            {
-                var testResult =
-                    CommandLineUtility.GetAbsolutePathFromCommandLine(
-                                                                          testCase.parentDirectory,
-                                                                          testCase.argument
-                                                                     );
-
-                if (!testResult.Equals(testCase.result))
-                {
-                    failedScenarios.Add(
-                        $"- Test case {testCases.IndexOf(testCase) + 1} failed with:\n" +
-                        $"Parent Directory: {testCase.parentDirectory}\n" +
-                        $"CommandLine Argument: {testCase.argument}\n" +
-                        $"Test Case Output: {testResult}\n" +
-                        $"Expected Output: {testCase.result}"
-                    );
-                }
-            }
-
-            if (failedScenarios.Count > 0)
-            {
-                throw new AssertFailedException(string.Join("\n\n\n", failedScenarios));
-            }
+            return GetTestData(windowsRoot, cmdArg);
         }
 
-        [TestMethod]
-        public void CommandLineTestForWsl()
+        private static IEnumerable<string[]> GetPowerShellTestData()
         {
-            var testCases = new List<CommandLineTestCase>
+            return GetTestData(windowsRoot, pwshArg);
+        }
+
+        private static IEnumerable<string[]> GetWslTestData()
+        {
+            foreach(var data in GetTestData(wslRoot, pwshArg))
             {
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"{wslRoot}\\1.txt\"", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"{wslRoot}\\1 2.txt\"", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} {wslRoot}\\1.txt", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} {wslRoot}\\1 2.txt", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"{wslRoot}\\2.txt\"", $"{wslRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"{wslRoot}\\2 3.txt\"", $"{wslRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} {wslRoot}\\2.txt", $"{wslRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} {wslRoot}\\2 3.txt", $"{wslRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"\\1.txt\"", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"\\1 2.txt\"", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \\1.txt", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \\1 2.txt", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"\\2.txt\"", $"{wslRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"\\2 3.txt\"", $"{wslRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \\2.txt", $"{wslRoot}\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \\2 3.txt", $"{wslRoot}\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"1.txt\"", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"1 2.txt\"", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} 1.txt", $"{wslRoot}\\1.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} 1 2.txt", $"{wslRoot}\\1 2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"2.txt\"", $"{wslRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"2 3.txt\"", $"{wslRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} 2.txt", $"{wslRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} 2 3.txt", $"{wslRoot}\\1\\2 3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"1\\2.txt\"", $"{wslRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} \"1 2\\3 4.txt\"", $"{wslRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} 1\\2.txt", $"{wslRoot}\\1\\2.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\", $"{pwshArg} 1 2\\3 4.txt", $"{wslRoot}\\1 2\\3 4.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"2\\3.txt\"", $"{wslRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} \"2 3\\4 5.txt\"", $"{wslRoot}\\1\\2 3\\4 5.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} 2\\3.txt", $"{wslRoot}\\1\\2\\3.txt"),
-
-                new CommandLineTestCase($"{wslRoot}\\1", $"{pwshArg} 2 3\\4 5.txt", $"{wslRoot}\\1\\2 3\\4 5.txt"),
-
-                new CommandLineTestCase($"{wslRoot}", $"{pwshArg} \"/etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}", $"{pwshArg} \"etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}", $"{pwshArg} /etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}", $"{pwshArg} etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}\\etc", $"{pwshArg} \"/etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}\\etc", $"{pwshArg} \"sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}\\etc", $"{pwshArg} /etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf"),
-
-                new CommandLineTestCase($"{wslRoot}\\etc", $"{pwshArg} sudo.conf", $"{wslRoot}\\etc\\sudo.conf")
-            };
-
-            var failedScenarios = new List<string>();
-            foreach (var testCase in testCases)
-            {
-                var testResult =
-                    CommandLineUtility.GetAbsolutePathFromCommandLine(
-                                                                          testCase.parentDirectory,
-                                                                          testCase.argument
-                                                                     );
-
-                if (!testResult.Equals(testCase.result))
-                {
-                    failedScenarios.Add(
-                        $"- Test case {testCases.IndexOf(testCase) + 1} failed with:\n" +
-                        $"Parent Directory: {testCase.parentDirectory}\n" +
-                        $"CommandLine Argument: {testCase.argument}\n" +
-                        $"Test Case Output: {testResult}\n" +
-                        $"Expected Output: {testCase.result}"
-                    );
-                }
+                yield return data;
             }
 
-            if (failedScenarios.Count > 0)
-            {
-                throw new AssertFailedException(string.Join("\n\n\n", failedScenarios));
-            }
+            yield return new string[] { $"{wslRoot}\\", $"{pwshArg} \"/etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\", $"{pwshArg} \"etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\", $"{pwshArg} /etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\", $"{pwshArg} etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\etc", $"{pwshArg} \"/etc/sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\etc", $"{pwshArg} \"sudo.conf\"", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\etc", $"{pwshArg} /etc/sudo.conf", $"{wslRoot}\\etc\\sudo.conf" };
+            yield return new string[] { $"{wslRoot}\\etc", $"{pwshArg} sudo.conf", $"{wslRoot}\\etc\\sudo.conf" };
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(GetCommandPromptTestData), DynamicDataSourceType.Method)]
+        public void CommandLineTestForCommandPrompt(string dir, string arg, string result)
+        {
+            Assert.AreEqual(
+                CommandLineUtility.GetAbsolutePathFromCommandLine(dir, arg),
+                result
+            );
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(GetPowerShellTestData), DynamicDataSourceType.Method)]
+        public void CommandLineTestForPowerShell(string dir, string arg, string result)
+        {
+            Assert.AreEqual(
+                CommandLineUtility.GetAbsolutePathFromCommandLine(dir, arg),
+                result
+            );
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(GetWslTestData), DynamicDataSourceType.Method)]
+        public void CommandLineTestForWsl(string dir, string arg, string result)
+        {
+            Assert.AreEqual(
+                CommandLineUtility.GetAbsolutePathFromCommandLine(dir, arg),
+                result
+            );
         }
     }
 }
