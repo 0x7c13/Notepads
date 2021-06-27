@@ -1,7 +1,6 @@
 ﻿#pragma once
 #pragma comment(lib, "shell32")
-#include "iostream"
-#include "sstream"
+#include "format"
 #include "windows.h"
 #include "shlobj_core.h"
 #include "winrt/Windows.ApplicationModel.h"
@@ -16,7 +15,6 @@
 #include "winrt/Windows.System.Profile.h"
 #include "winrt/Windows.System.UserProfile.h"
 #include "winrt/Notepads.Core.h"
-#include "fmt/core.h"
 
 #define EXTENSION_MUTEX_NAME L"ExtensionMutex"
 #define ELEVATED_MUTEX_NAME L"ElevatedMutex"

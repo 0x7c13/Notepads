@@ -1,9 +1,7 @@
 #include "pch.h"
 #include "logger.h"
 #include "appcenter.h"
-#include "fmt/format.h"
 
-using namespace fmt;
 using namespace std;
 using namespace winrt;
 using namespace Windows::ApplicationModel;
@@ -24,9 +22,9 @@ DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
             OpenEventW(
                 SYNCHRONIZE | EVENT_MODIFY_STATE,
                 false,
-                format(
+                std::format(
                     NAMED_OBJECT_FORMAT,
-                    package_sid,
+                    package_sid.c_str(),
                     ELEVATED_WRITE_EVENT_NAME_STR
                 ).c_str()
             )
@@ -72,7 +70,7 @@ DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
         getline(pipe_data, data_length_str);
 
         auto data_length = stoi(data_length_str);
-        auto memory_map = format(NAMED_OBJECT_FORMAT, package_sid, memory_map_id);
+        auto memory_map = std::format(NAMED_OBJECT_FORMAT, package_sid.c_str(), memory_map_id);
 
         handle h_memory{ OpenFileMappingW(FILE_MAP_READ, false, memory_map.c_str()) };
         check_bool(bool(h_memory));
@@ -107,7 +105,7 @@ DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
         {
             pair("Result", to_string(result))
         };
-        logger::log_info(format(L"Successfully wrote to \"{}\"", filePath).c_str(), true);
+        logger::log_info(std::format(L"Successfully wrote to \"{}\"", filePath).c_str(), true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
 
         analytics::track_event("OnWriteToSystemFileRequested", properties);
@@ -140,9 +138,9 @@ DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
             OpenEventW(
                 SYNCHRONIZE | EVENT_MODIFY_STATE,
                 false,
-                format(
+                std::format(
                     NAMED_OBJECT_FORMAT,
-                    package_sid,
+                    package_sid.c_str(),
                     ELEVATED_RENAME_EVENT_NAME_STR
                 ).c_str()
             )
@@ -194,7 +192,7 @@ DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
         check_bool(WriteFile(h_pipe.get(), result, static_cast<DWORD>(wcslen(result) * sizeof(TCHAR)), nullptr, nullptr));
         check_bool(FlushFileBuffers(h_pipe.get()));
 
-        logger::log_info(format(L"Successfully renamed \"{}\" to \"{}\"", old_name, new_name).c_str(), true);
+        logger::log_info(std::format(L"Successfully renamed \"{}\" to \"{}\"", old_name.c_str(), new_name).c_str(), true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
 
         report::dictionary properties
@@ -212,8 +210,8 @@ DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
             old_name.empty()
             ? new_name.empty()
             ? L"Failed to rename file"
-            : format(L"Failed to rename file to \"{}\"", new_name).c_str()
-            : format(L"Failed to rename \"{}\" to \"{}\"", old_name, new_name).c_str(),
+            : std::format(L"Failed to rename file to \"{}\"", new_name).c_str()
+            : std::format(L"Failed to rename \"{}\" to \"{}\"", old_name.c_str(), new_name).c_str(),
             true
         );
 
@@ -239,8 +237,8 @@ void initialize_elevated_service()
         check_bool(ProcessIdToSessionId(GetCurrentProcessId(), &session_id));
         package_sid = unbox_value<hstring>(settings_key::read(PACKAGE_SID_STR));
 
-        write_pipe = format(PIPE_NAME_FORMAT, session_id, package_sid, ELEVATED_WRITE_PIPE_CONNECTION_NAME_STR);
-        rename_pipe = format(PIPE_NAME_FORMAT, session_id, package_sid, ELEVATED_RENAME_PIPE_CONNECTION_NAME_STR);
+        write_pipe = std::format(PIPE_NAME_FORMAT, session_id, package_sid.c_str(), ELEVATED_WRITE_PIPE_CONNECTION_NAME_STR);
+        rename_pipe = std::format(PIPE_NAME_FORMAT, session_id, package_sid.c_str(), ELEVATED_RENAME_PIPE_CONNECTION_NAME_STR);
 
         logger::log_info(L"Successfully started Elevated Process.", true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
@@ -265,9 +263,9 @@ LifeTimeCheck:
         OpenMutexW(
             SYNCHRONIZE,
             false,
-            format(
+            std::format(
                 L"AppContainerNamedObjects\\{}\\{}",
-                package_sid,
+                package_sid.c_str(),
                 ELEVATED_PROCESS_LIFETIME_OBJ_NAME_STR
             ).c_str()
         )

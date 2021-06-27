@@ -169,7 +169,7 @@ struct winrt_error
     template <typename json_writer>
     void serialize(json_writer& writer) const noexcept
     {
-        auto error = winrt::to_string(fmt::format(L"HResult: {}", code()));
+        auto error = winrt::to_string(std::format(L"HResult: {}", code().value));
         auto msg = winrt::to_string(message());
         auto st = winrt::to_string(stacktrace());
 

@@ -1,10 +1,9 @@
 {
   "name": "notepads-desktopextension",
   "version": "1.0.0.0",
-  "builtin-baseline": "75522bb1f2e7d863078bcd06322348f053a9e33f",
+  "builtin-baseline": "86d689b2305d8c453418cae1ed2009718d05cddf",
   "dependencies": [
     "curl",
-    "fmt",
     "rapidjson"
   ],
   "overrides": [
@@ -12,10 +11,6 @@
       "name": "curl",
       "version": "7.74.0",
       "port-version": 3
-    },
-    {
-      "name": "fmt",
-      "version": "7.1.3"
     },
     {
       "name": "rapidjson",

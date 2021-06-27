@@ -30,12 +30,12 @@ struct logger
 
 	static void log_error(winrt_error const& error) noexcept
 	{
-		std::wstring formatted_message = fmt::format(
+		std::wstring formatted_message = std::format(
 			L"{} [Error] HResult Error {}: {}\n{}\n",
-			get_time_stamp(LOG_FORMAT),
-			error.code(),
-			error.message(),
-			error.stacktrace()
+			get_time_stamp(LOG_FORMAT).c_str(),
+			error.code().value,
+			error.message().c_str(),
+			error.stacktrace().c_str()
 		);
 
 		logger::print(formatted_message.c_str());
@@ -48,10 +48,10 @@ struct logger
 
 	static void log_info(winrt::hstring const& message, bool console_only = false) noexcept
 	{
-		std::wstring formatted_message = fmt::format(
+		std::wstring formatted_message = std::format(
 			L"{} [Info] {}\n",
-			get_time_stamp(LOG_FORMAT),
-			message
+			get_time_stamp(LOG_FORMAT).c_str(),
+			message.c_str()
 		);
 
 		logger::print(formatted_message.c_str());

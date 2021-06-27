@@ -24,8 +24,8 @@ struct appcenter
 
 		struct curl_slist* slist = nullptr;
 		slist = curl_slist_append(slist, "Content-Type: application/json");
-		slist = curl_slist_append(slist, fmt::format("app-secret: {}", APP_CENTER_SECRET).c_str());
-		slist = curl_slist_append(slist, fmt::format("install-id: {}", winrt::to_string(install_id)).c_str());
+		slist = curl_slist_append(slist, std::format("app-secret: {}", APP_CENTER_SECRET).c_str());
+		slist = curl_slist_append(slist, std::format("install-id: {}", winrt::to_string(install_id)).c_str());
 		header.attach(slist);
 	}
 

@@ -13,7 +13,7 @@ struct device
 	device() noexcept
 	{
 		auto package_version = Package::Current().Id().Version();
-		m_build = m_version = fmt::format(
+		m_build = m_version = std::format(
 			"{}.{}.{}.{}",
 			package_version.Major,
 			package_version.Minor,
@@ -29,15 +29,15 @@ struct device
 		auto minor = (version & 0x0000FFFF00000000L) >> 32;
 		auto build = (version & 0x00000000FFFF0000L) >> 16;
 		auto revision = (version & 0x000000000000FFFFL);
-		m_osversion = fmt::format("{}.{}.{}", major, minor, build);
-		m_osbuild = fmt::format("{}.{}.{}.{}", major, minor, build, revision);
+		m_osversion = std::format("{}.{}.{}", major, minor, build);
+		m_osbuild = std::format("{}.{}.{}.{}", major, minor, build, revision);
 
 		m_model = to_string(oem_info.SystemProductName());
 		m_oem = to_string(oem_info.SystemManufacturer());
 
 		RECT desktop;
 		GetWindowRect(GetDesktopWindow(), &desktop);
-		m_screen = fmt::format("{}x{}", desktop.right, desktop.bottom);
+		m_screen = std::format("{}x{}", desktop.right, desktop.bottom);
 
 		m_locale = to_string(
 			GlobalizationPreferences::Languages().Size() > 0

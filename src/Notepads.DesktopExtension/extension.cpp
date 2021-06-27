@@ -23,9 +23,9 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
             OpenEventW(
                 SYNCHRONIZE | EVENT_MODIFY_STATE,
                 false,
-                fmt::format(
+                std::format(
                     NAMED_OBJECT_FORMAT,
-                    package_sid,
+                    package_sid.c_str(),
                     EXTENSION_UNBLOCK_EVENT_NAME_STR
                 ).c_str()
             )
@@ -52,13 +52,13 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
 
         check_bool(bool(h_pipe));
 
-        wstring read_buffer{ PIPE_READ_BUFFER, '\0' };
+        TCHAR read_buffer[PIPE_READ_BUFFER];
         wstringstream pipe_data{};
         auto byte_read = 0UL;
         do
         {
-            fill(read_buffer.begin(), read_buffer.end(), '\0');
-            if (ReadFile(h_pipe.get(), &read_buffer[0], (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byte_read, nullptr))
+            fill(begin(read_buffer), end(read_buffer), '\0');
+            if (ReadFile(h_pipe.get(), read_buffer, (PIPE_READ_BUFFER - 1) * sizeof(TCHAR), &byte_read, nullptr))
             {
                 pipe_data << read_buffer;
             }
@@ -74,7 +74,7 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
         check_hresult(p_file.as<IZoneIdentifier>()->Remove());
         check_hresult(p_file->Save(file_path.c_str(), true));
 
-        logger::log_info(fmt::format(L"Successfully unblocked file \"{}\"", file_path).c_str(), true);
+        logger::log_info(std::format(L"Successfully unblocked file \"{}\"", file_path.c_str()).c_str(), true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
         return 0;
     }
@@ -85,7 +85,7 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
         logger::log_info(
             file_path.empty()
             ? L"Failed to unblock file"
-            : fmt::format(L"Failed to unblock file \"{}\"", file_path).c_str(),
+            : std::format(L"Failed to unblock file \"{}\"", file_path.c_str()).c_str(),
             true
         );
 
@@ -203,7 +203,7 @@ void initialize_extension_service()
         check_bool(ProcessIdToSessionId(GetCurrentProcessId(), &session_id));
         package_sid = unbox_value<hstring>(settings_key::read(PACKAGE_SID_STR));
 
-        unblock_pipe = fmt::format(PIPE_NAME_FORMAT, session_id, package_sid, EXTENSION_UNBLOCK_PIPE_CONNECTION_NAME_STR);
+        unblock_pipe = std::format(PIPE_NAME_FORMAT, session_id, package_sid.c_str(), EXTENSION_UNBLOCK_PIPE_CONNECTION_NAME_STR);
 
         logger::log_info(L"Successfully started Desktop Extension.", true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
@@ -227,9 +227,9 @@ LifeTimeCheck:
         OpenMutexW(
             SYNCHRONIZE,
             false,
-            fmt::format(
+            std::format(
                 L"AppContainerNamedObjects\\{}\\{}",
-                package_sid,
+                package_sid.c_str(),
                 EXTENSION_PROCESS_LIFETIME_OBJ_NAME_STR
             ).c_str()
         )

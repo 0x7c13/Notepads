@@ -54,9 +54,9 @@ struct curl_client
 		if (res != CURLE_OK)
 		{
 			logger::log_info(
-				fmt::format(
+				std::format(
 					L"curl_easy_perform() failed: {}",
-					winrt::to_hstring(curl_easy_strerror(res))
+					winrt::to_hstring(curl_easy_strerror(res)).c_str()
 				).c_str()
 			);
 		}
@@ -76,28 +76,28 @@ private:
 		switch (type)
 		{
 		case CURLINFO_TEXT:
-			log_data = fmt::format("{} [CURL] {}", time_stamp, curl_data);
+			log_data = std::format("{} [CURL] {}", time_stamp, curl_data);
 			break;
 		default:
-			log_data = fmt::format("{} [CURL] Unknown Data: {}", time_stamp, curl_data);
+			log_data = std::format("{} [CURL] Unknown Data: {}", time_stamp, curl_data);
 			break;
 		case CURLINFO_HEADER_OUT:
-			log_data = fmt::format("\n\n{} [CURL] Request Headers: \n> {}", time_stamp, curl_data);
+			log_data = std::format("\n\n{} [CURL] Request Headers: \n> {}", time_stamp, curl_data);
 			break;
 		case CURLINFO_DATA_OUT:
-			log_data = fmt::format("\n{} [CURL] Request Data: \n{}\n\n\n", time_stamp, curl_data);
+			log_data = std::format("\n{} [CURL] Request Data: \n{}\n\n\n", time_stamp, curl_data);
 			break;
 		case CURLINFO_SSL_DATA_OUT:
-			log_data = fmt::format("\n{} [CURL] Request SSL Data: \n{}\n\n\n", time_stamp, curl_data);
+			log_data = std::format("\n{} [CURL] Request SSL Data: \n{}\n\n\n", time_stamp, curl_data);
 			break;
 		case CURLINFO_HEADER_IN:
-			log_data = fmt::format("\n{} [CURL] Response Headers: \n< {}", time_stamp, curl_data);
+			log_data = std::format("\n{} [CURL] Response Headers: \n< {}", time_stamp, curl_data);
 			break;
 		case CURLINFO_DATA_IN:
-			log_data = fmt::format("\n\n{} [CURL] Response Data: \n{}\n\n\n", time_stamp, curl_data);
+			log_data = std::format("\n\n{} [CURL] Response Data: \n{}\n\n\n", time_stamp, curl_data);
 			break;
 		case CURLINFO_SSL_DATA_IN:
-			log_data = fmt::format("\n\n{} [CURL] Response SSL Data: \n{}\n\n\n", time_stamp, curl_data);
+			log_data = std::format("\n\n{} [CURL] Response SSL Data: \n{}\n\n\n", time_stamp, curl_data);
 			break;
 		}
 

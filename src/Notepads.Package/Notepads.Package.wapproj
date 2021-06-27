@@ -76,10 +76,13 @@
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+  <Import Project="..\Notepads\Package.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.19041.8" PrivateAssets="all" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Notepads\Notepads.csproj" />
     <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj" />
   </ItemGroup>
-  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
-  <Import Project="..\Notepads\Package.targets" />
 </Project>
