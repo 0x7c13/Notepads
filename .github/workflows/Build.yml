@@ -12,7 +12,6 @@ jobs:
     env:
       Solution_Name: src\Notepads.sln
       Project_Path: src\Notepads.Package\Notepads.Package.wapproj
-      Vcpkg_Nuget_Package: ${{ github.repository_owner }}-${{ github.event.repository.name }}
 
     runs-on: windows-latest
     steps:
@@ -35,20 +34,6 @@ jobs:
         msbuild $env:Solution_Name /t:Restore
         nuget restore $env:Solution_Name
 
-    - name: 'Setup Vcpkg Binary Caching'
-      shell: 'pwsh'
-      run: |
-        & $(& $env:Vcpkg_Path fetch nuget | select -last 1) sources add `
-        -source "https://nuget.pkg.github.com/$env:Owner/index.json" `
-        -storepasswordincleartext `
-        -name "$env:Vcpkg_Nuget_Package" `
-        -username "$env:Owner" `
-        -password "$env:Key"
-      env:
-        Owner: ${{ github.repository_owner }}
-        Key: ${{ secrets.GITHUB_TOKEN }}
-        Vcpkg_Path: src\packages\vcpkg\vcpkg
-
     - name: Build
       shell: 'pwsh'
       run: |
@@ -63,5 +48,3 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: StoreUpload
         Configuration: ${{ matrix.configuration }}
-        VCPKG_BINARY_SOURCES: 'clear;nuget,${{ env.Vcpkg_Nuget_Package }},readwrite;interactive'
-        VCPKG_USE_NUGET_CACHE: 'true'
