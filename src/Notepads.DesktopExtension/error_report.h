@@ -28,11 +28,13 @@ struct error_report : report
 	{
 	}
 
-	virtual void serialize(json_writer& writer)  const noexcept
+	virtual winrt::Windows::Data::Json::IJsonValue to_json() const noexcept
 	{
-		m_managed_error_report.serialize(writer);
-		m_handled_error_report.serialize(writer);
+		auto json_obj = json_array();
+		json_obj.Append(m_managed_error_report.to_json());
+		json_obj.Append(m_handled_error_report.to_json());
 		last_error_report_sid = m_managed_error_report.sid();
+		return json_obj;
 	}
 
 protected:

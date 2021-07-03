@@ -3,12 +3,6 @@
 #include "pch.h"
 #include "dbgeng.h"
 
-#ifdef  _DEBUG
-#include "rapidjson/prettywriter.h"
-#else
-#include "rapidjson/writer.h"
-#endif
-
 __declspec(selectany) winrt::com_ptr<IDebugSymbols> symbols;
 
 struct frame
@@ -134,32 +128,24 @@ struct frame
         return (result ? line : 0);
     }
 
-    template <typename json_writer>
-    void serialize(json_writer& writer) const noexcept
+    winrt::Windows::Data::Json::IJsonValue to_json() const noexcept
     {
-        if (m_offset <= 0) return;
-
-        auto full_name = winrt::to_string(name());
-        auto file_name = winrt::to_string(file());
-        auto line_number = line();
-
+        std::wstring full_name = name().c_str();
         auto delimiter = full_name.find_first_of('!');
-        auto class_name = delimiter == std::string::npos ? full_name : full_name.substr(0, delimiter);
-        auto method_name = delimiter == std::string::npos ? "" : full_name.substr(delimiter + 1, full_name.length());
+        auto class_name = delimiter == std::wstring::npos ? full_name : full_name.substr(0, delimiter);
+        auto method_name = delimiter == std::wstring::npos ? L"" : full_name.substr(delimiter + 1, full_name.length());
 
-        writer.StartObject();
-        writer.String("className");
-        writer.String(class_name.c_str(), static_cast<rapidjson::SizeType>(class_name.length()));
-        writer.String("methodName");
-        writer.String(method_name.c_str(), static_cast<rapidjson::SizeType>(method_name.length()));
-        writer.String("fileName");
-        writer.String(file_name.c_str(), static_cast<rapidjson::SizeType>(file_name.length()));
-        writer.String("lineNumber");
-        writer.Uint(line_number);
-        writer.EndObject();
+        auto json_obj = winrt::Windows::Data::Json::JsonObject();
+        json_obj.Insert(L"className", JsonValue::CreateStringValue(class_name));
+        json_obj.Insert(L"methodName", JsonValue::CreateStringValue(method_name));
+        json_obj.Insert(L"fileName", JsonValue::CreateStringValue(file()));
+        json_obj.Insert(L"lineNumber", JsonValue::CreateNumberValue(line()));
+        return json_obj;
     }
 
 private:
+
+    using JsonValue = winrt::Windows::Data::Json::JsonValue;
 
     static void originate() noexcept
     {

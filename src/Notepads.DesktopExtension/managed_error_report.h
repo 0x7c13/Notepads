@@ -6,10 +6,11 @@
 struct managed_error_report : report
 {
 	explicit managed_error_report(winrt_error const& error, std::string const& attachment = "") noexcept :
-		report(), m_error(error), m_attachment(attachment)
+		report(), m_error(error), m_attachment(m_id, attachment)
 	{
-		m_sid = winrt::to_string(winrt::to_hstring(winrt::Windows::Foundation::GuidHelper::CreateNewGuid()));
-		m_sid.erase(0, m_sid.find_first_not_of('{')).erase(m_sid.find_last_not_of('}') + 1);
+		std::wstring sid = winrt::to_hstring(winrt::Windows::Foundation::GuidHelper::CreateNewGuid()).c_str();
+		sid.erase(0, sid.find_first_not_of('{')).erase(sid.find_last_not_of('}') + 1);
+		m_sid = sid;
 	}
 
 	managed_error_report(managed_error_report const& other) noexcept :
@@ -30,53 +31,48 @@ struct managed_error_report : report
 	{
 	}
 
-	std::string sid() const noexcept
+	hstring sid() const noexcept
 	{
 		return m_sid;
 	}
 
-protected:
-
-	virtual void append_type_data(json_writer& writer)  const noexcept
+	virtual winrt::Windows::Data::Json::IJsonValue to_json() const noexcept
 	{
-		writer.String("type");
-		writer.String("managedError");
-	}
+		auto json_obj = json_array();
 
-	virtual void append_additional_data(json_writer& writer)  const noexcept
-	{
-		report::append_additional_data(writer);
-
-		writer.String("sid");
-		writer.String(m_sid.c_str(), static_cast<rapidjson::SizeType>(m_sid.length()));
-		writer.String("processId");
-		writer.Uint(m_pid);
-		writer.String("fatal");
-		writer.Bool(m_error.fatal());
-		writer.String("processName");
-		writer.String(m_process.c_str(), static_cast<rapidjson::SizeType>(m_process.length()));
-		writer.String("errorThreadId");
-		writer.Uint(m_thread);
-
-		// Write exception data
-		writer.String("exception");
-		m_error.serialize(writer);
-	}
-
-	virtual void append_report(json_writer& writer)  const noexcept
-	{
-		report::append_report(writer);
+		json_obj.Append(report::to_json());
 
 		if (!m_attachment.empty())
 		{
-			error_attachment_report(m_id, m_attachment).serialize(writer);
+			json_obj.Append(m_attachment.to_json());
 		}
+
+		return json_obj;
+	}
+
+protected:
+
+	virtual hstring type() const noexcept
+	{
+		return L"managedError";
+	}
+
+	virtual void append_additional_data(json_object& json_obj)  const noexcept
+	{
+		report::append_additional_data(json_obj);
+
+		json_obj.Insert(L"sid", JsonValue::CreateStringValue(m_sid));
+		json_obj.Insert(L"processId", JsonValue::CreateNumberValue(m_pid));
+		json_obj.Insert(L"fatal", JsonValue::CreateBooleanValue(m_error.fatal()));
+		json_obj.Insert(L"processName", JsonValue::CreateStringValue(m_process));
+		json_obj.Insert(L"errorThreadId", JsonValue::CreateNumberValue(m_thread));
+		json_obj.Insert(L"exception", m_error.to_json());
 	}
 
 	unsigned m_pid = GetCurrentProcessId();
 	unsigned m_thread = GetCurrentThreadId();
-	std::string m_sid;
-	std::string m_process = "Notepads32.exe";
-	std::string m_attachment;
+	hstring m_sid;
+	hstring m_process = L"Notepads32.exe";
+	error_attachment_report m_attachment;
 	winrt_error m_error;
 };

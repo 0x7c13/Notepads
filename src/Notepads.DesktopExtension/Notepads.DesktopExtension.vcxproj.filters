@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="elevated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,7 +67,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vcpkg.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

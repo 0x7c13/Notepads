@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="EnsureVcpkgBuild" DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -107,21 +107,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Label="Vcpkg">
-    <VcpkgRepo>https://github.com/microsoft/vcpkg</VcpkgRepo>
-    <!--
-    TODO: Enable version feature flag while vcpkg versions resolution feature is on beta,
-    once it becomes stable remove this from additional options and use msbuild integration
-    -->
-    <VcpkgAdditionalInstallOptions>--feature-flags=versions</VcpkgAdditionalInstallOptions>
-    <VcpkgEnabled>true</VcpkgEnabled>
-    <VcpkgConfiguration Condition="'$(Configuration)'=='Production'">Release</VcpkgConfiguration>
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-    <VcpkgManifestInstall>true</VcpkgManifestInstall>
-    <VcpkgInstalledDir>$(ProjectDir)$(BaseIntermediateOutputPath)$(Platform)\</VcpkgInstalledDir>
-    <VcpkgHostTriplet Condition="'$(PROCESSOR_ARCHITECTURE)'=='x86' Or '$(PROCESSOR_ARCHITECTURE)'=='AMD64'">x86-windows</VcpkgHostTriplet>
-    <VcpkgHostTriplet Condition="'$(PROCESSOR_ARCHITECTURE)'=='ARM' Or '$(PROCESSOR_ARCHITECTURE)'=='ARM64'">arm-windows</VcpkgHostTriplet>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -182,15 +167,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="elevated.cpp" />
-    <ClCompile Include="extension.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="extension.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AssemblyInfo.rc" />
@@ -203,19 +186,8 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
-  <Target Name="EnsureVcpkgBuild" BeforeTargets="PrepareForBuild">
-    <Exec Command="git clone $(VcpkgRepo).git ..\packages\vcpkg" Condition="!Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="git --git-dir=..\packages\vcpkg\.git --work-tree=..\packages\vcpkg pull --ff-only" Condition="Exists('..\packages\vcpkg\.git')" ContinueOnError="true" />
-    <Exec Command="..\packages\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" ContinueOnError="true" />
-    <PropertyGroup>
-      <ErrorText>This project uses vcpkg that is missing on this computer. Manually download from $(VcpkgRepo) and place the contents in {0}. Or install git and add it to your path, for more information see https://git-scm.com. The missing file is {1}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\vcpkg\vcpkg.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\vcpkg.exe'))" />
-    <Error Condition="!Exists('..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg\', '..\packages\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets'))" />
-  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -249,7 +221,7 @@
       <Output TaskParameter="AppCenterSdkVersion" PropertyName="AppCenterSdkVersion" />
     </UpdateAppCenterConstants>
     <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#pragma once" Overwrite="true" Encoding="Unicode" />
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION &quot;$(AppCenterSdkVersion)&quot;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SECRET &quot;$(AppCenterSecret)&quot;" Encoding="Unicode" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION L&quot;$(AppCenterSdkVersion)&quot;" Encoding="Unicode" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SECRET L&quot;$(AppCenterSecret)&quot;" Encoding="Unicode" />
   </Target>
 </Project>

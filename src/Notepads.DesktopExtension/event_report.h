@@ -5,10 +5,10 @@
 
 struct event_report : report
 {
-	explicit event_report(std::string const& name, report::dictionary const& properties) noexcept :
+	explicit event_report(hstring const& name, report::dictionary const& properties) noexcept :
 		report(), m_sid(last_error_report_sid), m_name(name), m_properties(properties)
 	{
-		last_error_report_sid = "";
+		last_error_report_sid = L"";
 	}
 
 	event_report(event_report const& other) noexcept :
@@ -26,41 +26,32 @@ struct event_report : report
 
 protected:
 
-	virtual void append_type_data(json_writer& writer)  const noexcept
+	virtual hstring type() const noexcept
 	{
-		writer.String("type");
-		writer.String("event");
+		return L"event";
 	}
 
-	virtual void append_additional_data(json_writer& writer)  const noexcept
+	virtual void append_additional_data(json_object& json_obj)  const noexcept
 	{
-		report::append_additional_data(writer);
+		report::append_additional_data(json_obj);
 
-		writer.String("sid");
-		writer.String(m_sid.c_str(), static_cast<rapidjson::SizeType>(m_sid.length()));
-		writer.String("name");
-		writer.String(m_name.c_str(), static_cast<rapidjson::SizeType>(m_name.length()));
+		json_obj.Insert(L"sid", JsonValue::CreateStringValue(m_sid));
+		json_obj.Insert(L"name", JsonValue::CreateStringValue(m_name));
 
 		// Write custom properties if available
 		if (!m_properties.empty())
 		{
-			writer.String("properties");
-			writer.StartObject();
+			auto properties = json_object();
 			for (auto& property : m_properties)
 			{
-				writer.String(property.first.c_str(), static_cast<rapidjson::SizeType>(property.first.length()));
-				writer.String(property.second.c_str(), static_cast<rapidjson::SizeType>(property.second.length()));
+				properties.Insert(property.first, JsonValue::CreateStringValue(property.second));
 			}
-			writer.EndObject();
+
+			json_obj.Insert(L"properties", properties);
 		}
 	}
 
-	virtual void append_report(json_writer& writer)  const noexcept
-	{
-		report::append_report(writer);
-	}
-
-	std::string m_sid;
-	std::string m_name;
+	hstring m_sid;
+	hstring m_name;
 	report::dictionary m_properties;
 };

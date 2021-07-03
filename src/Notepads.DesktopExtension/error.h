@@ -166,28 +166,21 @@ struct winrt_error
         return m_code;
     }
 
-    template <typename json_writer>
-    void serialize(json_writer& writer) const noexcept
+    winrt::Windows::Data::Json::IJsonValue to_json() const noexcept
     {
-        auto error = winrt::to_string(std::format(L"HResult: {}", code().value));
-        auto msg = winrt::to_string(message());
-        auto st = winrt::to_string(stacktrace());
+        auto json_obj = winrt::Windows::Data::Json::JsonObject();
+        json_obj.Insert(L"type", JsonValue::CreateStringValue(std::format(L"HResult: {}", code().value)));
+        json_obj.Insert(L"message", JsonValue::CreateStringValue(message()));
+        //json_obj.Insert(L"stackTrace", JsonValue::CreateStringValue(stacktrace()));
 
-        writer.StartObject();
-        writer.String("type");
-        writer.String(error.c_str(), static_cast<rapidjson::SizeType>(error.length()));
-        writer.String("message");
-        writer.String(msg.c_str(), static_cast<rapidjson::SizeType>(msg.length()));
-        /*writer.String("stackTrace");
-        writer.String(st.c_str(), static_cast<rapidjson::SizeType>(st.size()));*/
-        writer.String("frames");
-        writer.StartArray();
+        auto frames = JsonArray();
         for (auto& frame : m_trace)
         {
-            frame.serialize(writer);
+            frames.Append(frame.to_json());
         }
-        writer.EndArray();
-        writer.EndObject();
+        json_obj.Insert(L"frames", frames);
+
+        return json_obj;
     }
 
     static winrt_error get_last_error() noexcept
@@ -196,6 +189,9 @@ struct winrt_error
     }
 
 private:
+
+    using JsonValue = winrt::Windows::Data::Json::JsonValue;
+    using JsonArray = winrt::Windows::Data::Json::JsonArray;
 
     static int32_t __stdcall fallback_RoOriginateLanguageException(int32_t error, void* message, void*) noexcept
     {

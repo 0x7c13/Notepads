@@ -29,7 +29,7 @@ bool is_first_instance(hstring mutex_name)
             report::add_device_metadata(properties);
             logger::log_error(error);
             crashes::track_error(error, properties);
-            analytics::track_event("OnExtensionInstanceDetectionFailed", properties);
+            analytics::track_event(L"OnExtensionInstanceDetectionFailed", properties);
             exit_app(e.code());
         }
 
@@ -65,7 +65,7 @@ bool is_elevated_process()
         report::dictionary properties{};
         report::add_device_metadata(properties);
         crashes::track_error(error, properties);
-        analytics::track_event("OnPrivilageDetectionFailed", properties);
+        analytics::track_event(L"OnPrivilageDetectionFailed", properties);
         return false;
     }
 }

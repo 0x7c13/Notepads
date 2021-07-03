@@ -93,7 +93,7 @@ DWORD WINAPI unblock_file_from_pipe_data(LPVOID /* param */)
         report::add_device_metadata(properties);
         logger::log_error(error);
         crashes::track_error(error, properties);
-        analytics::track_event("OnFileUnblockFailed", properties);
+        analytics::track_event(L"OnFileUnblockFailed", properties);
 
         exit_app(error.code());
         return error.code();
@@ -113,9 +113,9 @@ void launch_elevated_process()
         properties.insert(
             properties.end(),
             {
-                pair("Denied", "True"),
-                pair("Error Code", to_string(ex.code())),
-                pair("Error Message", to_string(ex.message()))
+                pair(L"Denied", L"True"),
+                pair(L"Error Code", to_hstring(ex.code())),
+                pair(L"Error Message", ex.message())
             }
         );
     };
@@ -152,7 +152,7 @@ void launch_elevated_process()
             settings_key::write(LAST_CHANGED_SETTINGS_KEY_STR, box_value(LAUNCH_ELEVATED_PROCESS_SUCCESS_STR));
 
             logger::log_info(L"Elevated Process has been launched.", true);
-            properties.push_back(pair("Accepted", "True"));
+            properties.push_back(pair(L"Accepted", L"True"));
         }
         else
         {
@@ -171,7 +171,7 @@ void launch_elevated_process()
         crashes::track_error(error, properties);
     }
 
-    analytics::track_event("OnAdminstratorPrivilageRequested", properties);
+    analytics::track_event(L"OnAdminstratorPrivilageRequested", properties);
 }
 
 void launch_elevated_process_if_requested()
@@ -217,7 +217,7 @@ void initialize_extension_service()
         report::add_device_metadata(properties);
         logger::log_error(error);
         crashes::track_error(error, properties);
-        analytics::track_event("OnInitializationForExtensionFailed", properties);
+        analytics::track_event(L"OnInitializationForExtensionFailed", properties);
         exit_app(e.code());
     }
 

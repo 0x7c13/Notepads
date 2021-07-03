@@ -4,8 +4,8 @@
 
 struct error_attachment_report : report
 {
-	explicit error_attachment_report(std::string const& id, std::string const& attachment) noexcept :
-		report(), m_errorid(id), m_attachment(base64_encode(attachment))
+	explicit error_attachment_report(hstring const& id, std::string const& attachment) noexcept :
+		report(), m_errorid(id), m_attachment(winrt::to_hstring(base64_encode(attachment)))
 	{
 	}
 
@@ -21,6 +21,33 @@ struct error_attachment_report : report
 		report(other)
 	{
 	}
+
+	bool empty() const noexcept
+	{
+		return m_attachment.empty();
+	}
+
+protected:
+
+	virtual hstring type() const noexcept
+	{
+		return L"errorAttachment";
+	}
+
+	virtual void append_additional_data(json_object& json_obj)  const noexcept
+	{
+		report::append_additional_data(json_obj);
+
+		json_obj.Insert(L"contentType", JsonValue::CreateStringValue(m_content));
+		json_obj.Insert(L"data", JsonValue::CreateStringValue(m_attachment));
+		json_obj.Insert(L"errorId", JsonValue::CreateStringValue(m_errorid));
+	}
+
+	hstring m_errorid;
+	hstring m_content = L"text/plain";
+	hstring m_attachment;
+
+private:
 
 	//From https://stackoverflow.com/a/34571089/5155484
 	static std::string base64_encode(std::string const& in) noexcept
@@ -41,33 +68,4 @@ struct error_attachment_report : report
 		while (out.size() % 4) out.push_back('=');
 		return out;
 	}
-
-protected:
-
-	virtual void append_type_data(json_writer& writer)  const noexcept
-	{
-		writer.String("type");
-		writer.String("errorAttachment");
-	}
-
-	virtual void append_additional_data(json_writer& writer)  const noexcept
-	{
-		report::append_additional_data(writer);
-
-		writer.String("contentType");
-		writer.String(m_content.c_str(), static_cast<rapidjson::SizeType>(m_content.length()));
-		writer.String("data");
-		writer.String(m_attachment.c_str(), static_cast<rapidjson::SizeType>(m_attachment.length()));
-		writer.String("errorId");
-		writer.String(m_errorid.c_str(), static_cast<rapidjson::SizeType>(m_errorid.length()));
-	}
-
-	virtual void append_report(json_writer& writer)  const noexcept
-	{
-		report::append_report(writer);
-	}
-
-	std::string m_errorid;
-	std::string m_content = "text/plain";
-	std::string m_attachment;
 };

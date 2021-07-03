@@ -103,12 +103,12 @@ DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
 
         report::dictionary properties
         {
-            pair("Result", to_string(result))
+            pair(L"Result", result)
         };
         logger::log_info(std::format(L"Successfully wrote to \"{}\"", filePath).c_str(), true);
         logger::log_info(L"Waiting on uwp app to send data.", true);
 
-        analytics::track_event("OnWriteToSystemFileRequested", properties);
+        analytics::track_event(L"OnWriteToSystemFileRequested", properties);
         return 0;
     }
     catch (hresult_error const& e)
@@ -116,12 +116,12 @@ DWORD WINAPI save_file_from_pipe_data(LPVOID /* param */)
         winrt_error error{ e, true, 3 };
         report::dictionary properties
         {
-            pair("Result", "Failed")
+            pair(L"Result", L"Failed")
         };
         report::add_device_metadata(properties);
         logger::log_error(error);
         crashes::track_error(error, properties);
-        analytics::track_event("OnWriteToSystemFileRequested", properties);
+        analytics::track_event(L"OnWriteToSystemFileRequested", properties);
         exit_app(e.code());
         return e.code();
     }
@@ -197,10 +197,10 @@ DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
 
         report::dictionary properties
         {
-            pair("Result", "Success")
+            pair(L"Result", L"Success")
         };
 
-        analytics::track_event("OnRenameToSystemFileRequested", properties);
+        analytics::track_event(L"OnRenameToSystemFileRequested", properties);
         return 0;
     }
     catch (hresult_error const& e)
@@ -217,12 +217,12 @@ DWORD WINAPI rename_file_from_pipe_data(LPVOID /* param */)
 
         report::dictionary properties
         {
-            pair("Result", "Failed")
+            pair(L"Result", L"Failed")
         };
         report::add_device_metadata(properties);
         logger::log_error(error);
         crashes::track_error(error, properties);
-        analytics::track_event("OnRenameToSystemFileRequested", properties);
+        analytics::track_event(L"OnRenameToSystemFileRequested", properties);
         exit_app(e.code());
         return e.code();
     }
@@ -253,7 +253,7 @@ void initialize_elevated_service()
         report::add_device_metadata(properties);
         logger::log_error(error);
         crashes::track_error(error, properties);
-        analytics::track_event("OnInitializationForExtensionFailed", properties);
+        analytics::track_event(L"OnInitializationForExtensionFailed", properties);
         exit_app(e.code());
     }
 
