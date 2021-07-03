@@ -59,9 +59,6 @@
     <ClInclude Include="error_report.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="curl_client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="appcenter.h">
       <Filter>Header Files</Filter>
     </ClInclude>

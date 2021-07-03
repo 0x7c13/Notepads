@@ -11,12 +11,6 @@ __declspec(selectany) winrt::Windows::Storage::StorageFile log_file = nullptr;
 
 struct logger
 {
-	using FileIO = winrt::Windows::Storage::FileIO;
-	using StorageFile = winrt::Windows::Storage::StorageFile;
-	using ApplicationData = winrt::Windows::Storage::ApplicationData;
-	using CreationCollisionOption = winrt::Windows::Storage::CreationCollisionOption;
-	using DateTimeFormatter = winrt::Windows::Globalization::DateTimeFormatting::DateTimeFormatter;
-
 	static winrt::fire_and_forget start(bool elevated) noexcept
 	{
 		auto local_folder = ApplicationData::Current().LocalFolder();
@@ -85,6 +79,12 @@ struct logger
 	}
 
 private:
+
+	using FileIO = winrt::Windows::Storage::FileIO;
+	using StorageFile = winrt::Windows::Storage::StorageFile;
+	using ApplicationData = winrt::Windows::Storage::ApplicationData;
+	using CreationCollisionOption = winrt::Windows::Storage::CreationCollisionOption;
+	using DateTimeFormatter = winrt::Windows::Globalization::DateTimeFormatting::DateTimeFormatter;
 
 	logger() noexcept = default;
 	logger(logger&&) noexcept = default;

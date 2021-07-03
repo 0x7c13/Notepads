@@ -14,6 +14,8 @@
 #include "winrt/Windows.System.h"
 #include "winrt/Windows.System.Profile.h"
 #include "winrt/Windows.System.UserProfile.h"
+#include "winrt/Windows.Web.Http.h"
+#include "winrt/Windows.Web.Http.Headers.h"
 #include "winrt/Notepads.Core.h"
 
 #define EXTENSION_MUTEX_NAME L"ExtensionMutex"

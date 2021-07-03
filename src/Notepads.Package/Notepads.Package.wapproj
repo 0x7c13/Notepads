@@ -82,7 +82,11 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.19041.8" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Notepads\Notepads.csproj" />
-    <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj" />
+    <ProjectReference Include="..\Notepads\Notepads.csproj">
+      <Properties>AppCenterSecret=$(AppCenterSecret)</Properties>
+    </ProjectReference>
+    <ProjectReference Include="..\Notepads.DesktopExtension\Notepads.DesktopExtension.vcxproj">
+      <Properties>AppCenterSecret=$(AppCenterSecret)</Properties>
+    </ProjectReference>
   </ItemGroup>
 </Project>

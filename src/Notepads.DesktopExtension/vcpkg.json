@@ -3,15 +3,9 @@
   "version": "1.0.0.0",
   "builtin-baseline": "86d689b2305d8c453418cae1ed2009718d05cddf",
   "dependencies": [
-    "curl",
     "rapidjson"
   ],
   "overrides": [
-    {
-      "name": "curl",
-      "version": "7.74.0",
-      "port-version": 3
-    },
     {
       "name": "rapidjson",
       "version-date": "2020-09-14"

@@ -2,31 +2,27 @@
 #include "pch.h"
 #include "error.h"
 #include "device.h"
-#include "curl_client.h"
 #include "error_report.h"
 #include "event_report.h"
 #include "settings_key.h"
 #include "rapidjson/stringbuffer.h"
 
 // Documentation is at https://docs.microsoft.com/en-us/appcenter/diagnostics/upload-crashes
-#define APP_CENTER_ENDPOINT "https://in.appcenter.ms/logs?Api-Version=1.0.0"
+#define APP_CENTER_ENDPOINT L"https://in.appcenter.ms/logs?Api-Version=1.0.0"
+const winrt::Windows::Foundation::Uri app_center_uri{ APP_CENTER_ENDPOINT };
 
-__declspec(selectany) curl_slist_handle header { nullptr };
+__declspec(selectany) winrt::Windows::Web::Http::HttpClient client{};
 
 struct appcenter
 {
 	static void start() noexcept
 	{
 		if (!APP_CENTER_SECRET || strlen(APP_CENTER_SECRET) == 0) return;
-
 		auto install_id = winrt::unbox_value_or<winrt::hstring>(settings_key::read(APP_CENTER_INSTALL_ID_STR), L"");
 		if (install_id.empty()) return;
 
-		struct curl_slist* slist = nullptr;
-		slist = curl_slist_append(slist, "Content-Type: application/json");
-		slist = curl_slist_append(slist, std::format("app-secret: {}", APP_CENTER_SECRET).c_str());
-		slist = curl_slist_append(slist, std::format("install-id: {}", winrt::to_string(install_id)).c_str());
-		header.attach(slist);
+		client.DefaultRequestHeaders().Append(L"app-secret", TEXT(APP_CENTER_SECRET));
+		client.DefaultRequestHeaders().Append(L"install-id", install_id);
 	}
 
 private:
@@ -44,7 +40,7 @@ struct crashes
 		std::string const& attachment = ""
 	) noexcept
 	{
-		if (!header) return;
+		if (!client.DefaultRequestHeaders().HasKey(L"app-secret") || !client.DefaultRequestHeaders().HasKey(L"install-id")) return;
 
 		rapidjson::StringBuffer report;
 		report::json_writer writer(report);
@@ -56,10 +52,13 @@ struct crashes
 		writer.EndArray();
 		writer.EndObject();
 
-		curl_client::post(APP_CENTER_ENDPOINT, header, report.GetString());
+		auto content = HttpStringContent(winrt::to_hstring(report.GetString()));
+		auto response = client.TryPostAsync(app_center_uri, content).get();
 	}
 
 private:
+
+	using HttpStringContent = winrt::Windows::Web::Http::HttpStringContent;
 
 	crashes() noexcept = default;
 	crashes(crashes&&) noexcept = default;
@@ -73,7 +72,7 @@ struct analytics
 		report::dictionary const& properties
 	) noexcept
 	{
-		if (!header) return;
+		if (!client.DefaultRequestHeaders().HasKey(L"app-secret") || !client.DefaultRequestHeaders().HasKey(L"install-id")) return;
 
 		rapidjson::StringBuffer report;
 		report::json_writer writer(report);
@@ -85,10 +84,13 @@ struct analytics
 		writer.EndArray();
 		writer.EndObject();
 
-		curl_client::post(APP_CENTER_ENDPOINT, header, report.GetString());
+		auto content = HttpStringContent(winrt::to_hstring(report.GetString()));
+		auto response = client.TryPostAsync(app_center_uri, content).get();
 	}
 
 private:
+
+	using HttpStringContent = winrt::Windows::Web::Http::HttpStringContent;
 
 	analytics() noexcept = default;
 	analytics(analytics&&) noexcept = default;

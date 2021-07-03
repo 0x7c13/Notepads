@@ -174,7 +174,6 @@
     <ClInclude Include="frame.h" />
     <ClInclude Include="handled_error_report.h" />
     <ClInclude Include="event_report.h" />
-    <ClInclude Include="curl_client.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="managed_error_report.h" />
     <ClInclude Include="report.h" />
@@ -249,7 +248,8 @@
     <UpdateAppCenterConstants ProjectDir="$(ProjectDir)">
       <Output TaskParameter="AppCenterSdkVersion" PropertyName="AppCenterSdkVersion" />
     </UpdateAppCenterConstants>
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION &quot;$(AppCenterSdkVersion)&quot;" Overwrite="true" Encoding="Unicode" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#pragma once" Overwrite="true" Encoding="Unicode" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION &quot;$(AppCenterSdkVersion)&quot;" Encoding="Unicode" />
     <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SECRET &quot;$(AppCenterSecret)&quot;" Encoding="Unicode" />
   </Target>
 </Project>

@@ -1,15 +1,9 @@
 #pragma once
 #include "pch.h"
 #include "constants.h"
-#include "appcenter.h"
 
 struct device
 {
-	using Package = winrt::Windows::ApplicationModel::Package;
-	using AnalyticsInfo = winrt::Windows::System::Profile::AnalyticsInfo;
-	using GlobalizationPreferences = winrt::Windows::System::UserProfile::GlobalizationPreferences;
-	using EasClientDeviceInformation = winrt::Windows::Security::ExchangeActiveSyncProvisioning::EasClientDeviceInformation;
-
 	device() noexcept
 	{
 		auto package_version = Package::Current().Id().Version();
@@ -121,6 +115,12 @@ struct device
 	}
 
 private:
+
+	using Package = winrt::Windows::ApplicationModel::Package;
+	using AnalyticsInfo = winrt::Windows::System::Profile::AnalyticsInfo;
+	using GlobalizationPreferences = winrt::Windows::System::UserProfile::GlobalizationPreferences;
+	using EasClientDeviceInformation = winrt::Windows::Security::ExchangeActiveSyncProvisioning::EasClientDeviceInformation;
+
 	std::string m_namespace = "Notepads.DesktopExtension";
 	std::string m_version;
 	std::string m_build;
