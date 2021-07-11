@@ -63,19 +63,19 @@ INT main()
             SHParseDisplayName(args[nArgs - 1], NULL, ppidl, 0, NULL);
         }
 
-        if (rgpidl.size() > 0)
-        {
-            auto pid = DWORD(0);
-            auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, rgpidl.size(), rgpidl.data());
-            auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
-            appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
+        if (rgpidl.size() <= 0) goto CleanUp;
+
+        auto pid = 0UL;
+        auto ppsia = parse<IShellItemArray>(SHCreateShellItemArrayFromIDLists, rgpidl.size(), rgpidl.data());
+        auto appActivationMgr = create_instance<IApplicationActivationManager>(CLSID_ApplicationActivationManager);
+        appActivationMgr->ActivateForFile(AUMID, ppsia.get(), verb, &pid);
 #ifdef _DEBUG
-            printf("Launched files with process id: %d", pid);
-            Sleep(2000);
+        printf("Launched files with process id: %d", pid);
+        Sleep(2000);
 #endif
-        }
     }
 
+CleanUp:
     LocalFree(args);
     uninit_apartment();
 }
