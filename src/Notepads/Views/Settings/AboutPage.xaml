@@ -4,13 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
+    mc:Ignorable="d">
 
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0" />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.BackgroundTransition>
@@ -24,47 +24,59 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
-                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                    <Image x:Name="AppIconImage" Width="90" Margin="-6,0,0,0" Source="/Assets/appicon_ws.png"/>
+            <StackPanel Margin="0,0,0,40" HorizontalAlignment="Left">
+                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                    <Image
+                        x:Name="AppIconImage"
+                        Width="90"
+                        Margin="-6,0,0,0"
+                        Source="/Assets/appicon_ws.png" />
                     <StackPanel Margin="10,0,0,0">
                         <TextBlock
                             Margin="0,5,0,0"
-                            FontWeight="Normal"
                             FontSize="25"
+                            FontWeight="Normal"
                             Text="{x:Bind AppName, Mode=OneTime}" />
                         <TextBlock
                             Margin="2,5,0,5"
-                            FontWeight="Normal"
                             FontSize="20"
+                            FontWeight="Normal"
                             Text="{x:Bind AppVersion, Mode=OneTime}" />
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Margin="0,15,0,0">
-                    <TextBlock x:Uid="/Settings/AboutPage_NotepadsDesktopActivationDescription" TextWrapping="WrapWholeWords"/>
+                <StackPanel
+                    x:Name="DesktopActivationPanel"
+                    Margin="0,15,0,0"
+                    x:Load="{x:Bind IsDesktopPlatform, Mode=OneTime}">
+                    <TextBlock x:Uid="/Settings/AboutPage_NotepadsDesktopActivationDescription" TextWrapping="WrapWholeWords" />
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,5,5,0"
-                                x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyPath"
-                                Click="DesktopActivationCopyPath_Clicked"/>
-                        <Button Grid.Column="1"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,5,5,0"
-                                x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyFile"
-                                Click="DesktopActivationCopyFile_Clicked"/>
+                        <Button
+                            x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyPath"
+                            Grid.Column="0"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            Click="DesktopActivationCopyPath_Clicked" />
+                        <Button
+                            x:Uid="/Settings/AboutPage_NotepadsDesktopActivationCopyFile"
+                            Grid.Column="1"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            Click="DesktopActivationCopyFile_Clicked" />
                     </Grid>
                 </StackPanel>
-                <RichTextBlock MaxWidth="600" Margin="0,15,0,0" IsTextSelectionEnabled="False">
+                <RichTextBlock
+                    MaxWidth="600"
+                    Margin="0,15,0,0"
+                    IsTextSelectionEnabled="False">
                     <Paragraph>
-                        <Run x:Uid="/Settings/AboutPage_NotepadsShortDescription"/>
+                        <Run x:Uid="/Settings/AboutPage_NotepadsShortDescription" />
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
-                        <Run x:Uid="/Settings/AboutPage_Notepads_SourceCodeTitle"/>
+                        <Run x:Uid="/Settings/AboutPage_Notepads_SourceCodeTitle" />
                     </Paragraph>
                     <Paragraph>
                         <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
@@ -72,7 +84,7 @@
                         </Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
-                        <Run x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle"/>
+                        <Run x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle" />
                     </Paragraph>
                     <Paragraph>
                         <Hyperlink NavigateUri="https://www.NotepadsApp.com">
@@ -80,13 +92,13 @@
                         </Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
-                        <Run x:Uid="/Settings/AboutPage_Notepads_AuthorContactsTitle"/>
+                        <Run x:Uid="/Settings/AboutPage_Notepads_AuthorContactsTitle" />
                         <Hyperlink NavigateUri="mailto:NotepadsApp@outlook.com">
                             mailto:NotepadsApp@outlook.com
                         </Hyperlink>
                     </Paragraph>
                     <Paragraph Margin="0,15,0,0">
-                        <Run x:Uid="/Settings/AboutPage_Notepads_IssueAndFeatureRequestsTitle"/>
+                        <Run x:Uid="/Settings/AboutPage_Notepads_IssueAndFeatureRequestsTitle" />
                     </Paragraph>
                     <Paragraph>
                         <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/issues">
@@ -94,14 +106,20 @@
                         </Hyperlink>
                     </Paragraph>
                 </RichTextBlock>
-                <Button  Content="Feedback" Margin="0,8,0,0" Visibility="Collapsed" />
+                <Button
+                    Margin="0,8,0,0"
+                    Content="Feedback"
+                    Visibility="Collapsed" />
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_ChangelogUrl_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
-                <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                <RichTextBlock
+                    MaxWidth="600"
+                    Margin="0,10,0,0"
+                    IsTextSelectionEnabled="False">
                     <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads/releases">Notepads Releases</Hyperlink>
                     </Paragraph>
@@ -109,10 +127,13 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_DependenciesAndReferences_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
-                <RichTextBlock IsTextSelectionEnabled="False" MaxWidth="600" Margin="0,10,0,0" >
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                <RichTextBlock
+                    MaxWidth="600"
+                    Margin="0,10,0,0"
+                    IsTextSelectionEnabled="False">
                     <Paragraph Margin="0,10,0,10">
                         <Hyperlink NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">Windows UI Library</Hyperlink>
                     </Paragraph>
@@ -138,19 +159,22 @@
 
                 <TextBlock
                     x:Uid="/Settings/AboutPage_Disclaimer_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
-                <RichTextBlock MaxWidth="600" Margin="0,10,0,0" IsTextSelectionEnabled="False">
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                <RichTextBlock
+                    MaxWidth="600"
+                    Margin="0,10,0,0"
+                    IsTextSelectionEnabled="False">
                     <Paragraph>
-                        <Run x:Uid="/Settings/AboutPage_Disclaimer_Content"/>
+                        <Run x:Uid="/Settings/AboutPage_Disclaimer_Content" />
                     </Paragraph>
                     <Paragraph>
-                        <LineBreak /> Copyright (c) 2020 Jackie (Jiaqi) Liu.
-                    </Paragraph>
+                        <LineBreak />
+                        Copyright (c) 2020 Jackie (Jiaqi) Liu.</Paragraph>
                     <Paragraph Margin="0,10,0,10">
-                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads" >
-                            <Run x:Uid="/Settings/AboutPage_PrivacyStatementTitle"/>
+                        <Hyperlink NavigateUri="https://github.com/JasonStein/Notepads">
+                            <Run x:Uid="/Settings/AboutPage_PrivacyStatementTitle" />
                         </Hyperlink>
                     </Paragraph>
                 </RichTextBlock>

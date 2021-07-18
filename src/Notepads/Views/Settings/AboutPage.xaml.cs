@@ -7,6 +7,7 @@
     using Notepads.Services;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.Foundation.Metadata;
     using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -17,6 +18,8 @@
         public string AppName => App.ApplicationName;
 
         public string AppVersion => $"v{GetAppVersion()}";
+
+        private bool IsDesktopPlatform = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0);
 
         private static string desktopActivationComponentPath = @"Resource\Notepad.exe";
 

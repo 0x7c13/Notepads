@@ -480,6 +480,11 @@
       <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
       <Name>Notepads.Controls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Notepad\Notepad.vcxproj">
+      <Project>{0f39c2eb-f8c6-473e-b26a-0714385798f5}</Project>
+      <Name>Notepad</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\**\*.resw" />
@@ -498,19 +503,16 @@
     </PropertyGroup>
     <WriteLinesToFile File="$(InputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))" Overwrite="true" Encoding="Unicode" />
   </Target>
-  <Target Name="IncludeDesktopActivationComponent" BeforeTargets="BeforeBuild">
+  <Target Name="IncludeDesktopActivationComponent" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
       <Win32Platform>$(Platform)</Win32Platform>
       <Win32Platform Condition="'$(Win32Platform)' == 'x86'">Win32</Win32Platform>
     </PropertyGroup>
-    <MSBuild Projects="..\Notepad\Notepad.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Win32Platform)">
-      <Output TaskParameter="TargetOutputs" ItemName="Win32Items" />
-    </MSBuild>
     <ItemGroup>
-      <Content Include="%(Win32Items.RelativeDir)%(Win32Items.Filename).exe" Link="Resource\%(Win32Items.Filename).exe" />
+      <Content Include="%(ProjectReference.RelativeDir)bin\$(Win32Platform)\$(Configuration)\%(ProjectReference.Name).exe" Link="Resource\%(ProjectReference.Name).exe" Condition="%(ProjectReference.Name) == 'Notepad'" />
     </ItemGroup>
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
