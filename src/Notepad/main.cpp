@@ -6,12 +6,7 @@
 #include "shellapi.h"
 #include "shlobj_core.h"
 #include "winrt/base.h"
-
-#ifdef _PRODUCTION
-#define AUMID                                    L"19282JackieLiu.Notepads-Beta_echhpq9pdbte8!App"
-#else
-#define AUMID                                    L"Notepads-Dev_echhpq9pdbte8!App"
-#endif
+#include "constants.h"
 
 #define OPEN                                     L"open"
 #define PRINT                                    L"print"

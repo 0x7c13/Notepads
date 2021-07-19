@@ -163,4 +163,135 @@
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210329.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210329.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210329.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210329.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
   </Target>
+
+  <UsingTask TaskName="GenerateApplicationUserModeId" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ManifestPath ParameterType="System.String" Required="true" />
+      <ApplicationUserModeId ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Reference Include="System.Xml" />
+      <Reference Include="System.Runtime.InteropServices" />
+      <Reference Include="Microsoft.Build.Framework" />
+      <Code Type="Class" Language="cs">
+        <![CDATA[
+          using System;
+          using System.Xml;
+          using System.Text;
+          using System.Runtime.InteropServices;
+          using Microsoft.Build.Framework;
+          using Microsoft.Build.Utilities;
+
+          public class GenerateApplicationUserModeId : Task
+          {
+              [Required]
+              public string ManifestPath { get; set; }
+
+              [Output]
+              public string ApplicationUserModeId { get; set; }
+
+              public override bool Execute()
+              {
+                  var manifest = new XmlDocument();
+                  manifest.Load(ManifestPath);
+
+                  var packageName = manifest["Package"]["Identity"].GetAttribute("Name");
+                  var publisher = manifest["Package"]["Identity"].GetAttribute("Publisher");
+                  var packageId = new PACKAGE_ID
+                  {
+                      name = packageName,
+                      publisher = publisher
+                  };
+
+                  uint packageFamilyNameLength = 0;
+                  if (PackageFamilyNameFromId(packageId, ref packageFamilyNameLength, null) != 122)
+                  {
+                      throw new Exception("Failed to retrieve Package Family Name length");
+                  }
+
+                  var packageFamilyNameBuilder = new StringBuilder((int)packageFamilyNameLength);
+                  if (PackageFamilyNameFromId(packageId, ref packageFamilyNameLength, packageFamilyNameBuilder) != 0)
+                  {
+                      throw new Exception("Failed to retrieve Package Family Name");
+                  }
+
+                  string packageFamilyName = packageFamilyNameBuilder.ToString();
+                  string applicationUserModelId = null;
+                  foreach (XmlElement application in manifest["Package"]["Applications"].ChildNodes)
+                  {
+                      if (application.Name != "Application" || application.GetAttribute("EntryPoint") != "Notepads.App") continue;
+
+                      var appId = application.GetAttribute("Id");
+                      uint applicationUserModelIdLength = 0;
+                      if (FormatApplicationUserModelId(packageFamilyName, appId, ref applicationUserModelIdLength, null) != 122)
+                      {
+                          throw new Exception("Failed to retrieve Application User Mode Id length");
+                      }
+
+                      var applicationUserModelIdBuilder = new StringBuilder((int)applicationUserModelIdLength);
+                      if (FormatApplicationUserModelId(packageFamilyName, appId, ref applicationUserModelIdLength, applicationUserModelIdBuilder) != 0)
+                      {
+                          throw new Exception("Failed to retrieve Application User Mode Id");
+                      }
+
+                      applicationUserModelId = applicationUserModelIdBuilder.ToString();
+                      break;
+                  }
+
+                  if (!string.IsNullOrEmpty(applicationUserModelId))
+                  {
+                      ApplicationUserModeId = applicationUserModelId;
+                  }
+                  else
+                  {
+                      throw new Exception("Couldn't find required Application User Mode Id");
+                  }
+
+                  return true;
+              }
+
+              [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 4)]
+              private class PACKAGE_ID
+              {
+                  public uint reserved;
+                  public uint processorArchitecture;
+                  public ulong version;
+                  public string name;
+                  public string publisher;
+                  public string resourceId;
+                  public string publisherId;
+              }
+
+              [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+              private static extern uint PackageFamilyNameFromId(
+                  PACKAGE_ID packageId,
+                  ref uint packageFamilyNameLength,
+                  StringBuilder packageFamilyName
+              );
+
+              [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+              private static extern uint FormatApplicationUserModelId(
+                  string packageFamilyName,
+                  string packageRelativeApplicationId,
+                  ref uint applicationUserModelIdLength,
+                  StringBuilder applicationUserModelId
+              );
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="EnsureAUMIDGenerated" BeforeTargets="PrepareForBuild">
+    <GenerateApplicationUserModeId ManifestPath="$(PackageManifestPath)" Condition="'$(PackageManifestPath)' != ''" >
+      <Output TaskParameter="ApplicationUserModeId" PropertyName="ApplicationUserModeId" />
+    </GenerateApplicationUserModeId>
+    <PropertyGroup>
+      <ApplicationUserModeId Condition="'$(ApplicationUserModeId)' == '' and '$(Configuration)' == 'Production'" >19282JackieLiu.Notepads-Beta_echhpq9pdbte8!App</ApplicationUserModeId>
+      <ApplicationUserModeId Condition="'$(ApplicationUserModeId)' == '' and '$(Configuration)' != 'Production'" >Notepads-Dev_echhpq9pdbte8!App</ApplicationUserModeId>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#pragma once" Overwrite="true" />
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define AUMID L&quot;$(ApplicationUserModeId)&quot;" Overwrite="false" />
+  </Target>
 </Project>
