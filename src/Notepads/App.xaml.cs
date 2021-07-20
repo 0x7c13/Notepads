@@ -22,7 +22,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
 
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public static string ApplicationName = "Notepads";
 
@@ -30,9 +30,6 @@
 
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
-
-        // Notepads GitHub CD workflow will swap null with production value getting from Github Secrets
-        private const string AppCenterSecret = null;
 
         public static Mutex InstanceHandlerMutex { get; set; }
 
