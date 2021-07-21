@@ -112,6 +112,19 @@
             {nameof(FontWeights.ExtraBlack), FontWeights.ExtraBlack.Weight}
         };
 
+        public static readonly Dictionary<string, FontStretch> PredefinedFontStretchesMap = new Dictionary<string, FontStretch>()
+        {
+            {nameof(FontStretch.Normal),  FontStretch.Normal},
+            {nameof(FontStretch.Condensed),  FontStretch.Condensed},
+            {nameof(FontStretch.ExtraCondensed), FontStretch.ExtraCondensed},
+            {nameof(FontStretch.SemiCondensed),  FontStretch.SemiCondensed},
+            {nameof(FontStretch.UltraCondensed), FontStretch.UltraCondensed},
+            {nameof(FontStretch.Expanded),  FontStretch.Expanded},
+            {nameof(FontStretch.ExtraExpanded), FontStretch.ExtraExpanded},
+            {nameof(FontStretch.SemiExpanded),  FontStretch.SemiExpanded},
+            {nameof(FontStretch.UltraExpanded), FontStretch.UltraExpanded}
+        };
+
         public static bool IsMonospacedFont(FontFamily font)
         {
             var tb1 = new TextBlock { Text = "(!aiZ%#BIm,. ~`", FontFamily = font };

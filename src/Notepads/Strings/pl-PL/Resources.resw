@@ -693,4 +693,40 @@
     <value>Rozszerzenie "{0}" nie jest jeszcze wspierane</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="FontStretch_Condensed" xml:space="preserve">
+    <value>Condensed</value>
+    <comment>FontStretch: "Condensed"</comment>
+  </data>
+  <data name="FontStretch_Expanded" xml:space="preserve">
+    <value>Expanded</value>
+    <comment>FontStretch: "Expanded"</comment>
+  </data>
+  <data name="FontStretch_ExtraCondensed" xml:space="preserve">
+    <value>ExtraCondensed</value>
+    <comment>FontStretch: "ExtraCondensed"</comment>
+  </data>
+  <data name="FontStretch_ExtraExpanded" xml:space="preserve">
+    <value>ExtraExpanded</value>
+    <comment>FontStretch: "ExtraExpanded"</comment>
+  </data>
+  <data name="FontStretch_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>FontStretch: "Normal"</comment>
+  </data>
+  <data name="FontStretch_SemiCondensed" xml:space="preserve">
+    <value>SemiCondensed</value>
+    <comment>FontStretch: "SemiCondensed"</comment>
+  </data>
+  <data name="FontStretch_SemiExpanded" xml:space="preserve">
+    <value>SemiExpanded</value>
+    <comment>FontStretch: "SemiExpanded"</comment>
+  </data>
+  <data name="FontStretch_UltraCondensed" xml:space="preserve">
+    <value>UltraCondensed</value>
+    <comment>FontStretch: "UltraCondensed"</comment>
+  </data>
+  <data name="FontStretch_UltraExpanded" xml:space="preserve">
+    <value>UltraExpanded</value>
+    <comment>FontStretch: "UltraExpanded"</comment>
+  </data>
 </root>

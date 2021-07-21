@@ -421,4 +421,8 @@
     <value>З налаштувань системи</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
+  <data name="TextAndEditorPage_FontStretchSettings_Title.Text" xml:space="preserve">
+    <value>Default Font Stretch</value>
+    <comment>TextAndEditorPage FontStretchSettings Title display text.</comment>
+  </data>
 </root>

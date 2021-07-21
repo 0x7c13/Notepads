@@ -15,6 +15,7 @@
             AppSettingsService.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
             AppSettingsService.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
             AppSettingsService.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
+            AppSettingsService.OnFontStretchChanged += EditorSettingsService_OnFontStretchChanged;
             AppSettingsService.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
             AppSettingsService.OnHighlightMisspelledWordsChanged += EditorSettingsService_OnHighlightMisspelledWordsChanged;
             AppSettingsService.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
@@ -29,6 +30,7 @@
             AppSettingsService.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
             AppSettingsService.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
             AppSettingsService.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
+            AppSettingsService.OnFontStretchChanged -= EditorSettingsService_OnFontStretchChanged;
             AppSettingsService.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
             AppSettingsService.OnHighlightMisspelledWordsChanged -= EditorSettingsService_OnHighlightMisspelledWordsChanged;
             AppSettingsService.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
@@ -67,6 +69,17 @@
             await Dispatcher.CallOnUIThreadAsync(() =>
             {
                 FontWeight = fontWeight;
+            });
+        }
+
+        private async void EditorSettingsService_OnFontStretchChanged(object sender, FontStretch fontStretch)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                //FontStretch = fontStretch;
+                var format = Document.GetDefaultCharacterFormat();
+                format.FontStretch = fontStretch;
+                Document.SetDefaultCharacterFormat(format);
             });
         }
 
