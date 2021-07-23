@@ -28,7 +28,6 @@ struct error_attachment_report : report
 	}
 
 protected:
-
 	virtual hstring type() const noexcept
 	{
 		return L"errorAttachment";

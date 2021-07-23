@@ -83,7 +83,6 @@ protected:
 	hstring m_timestamp = logger::get_utc_time_stamp(APP_CENTER_FORMAT);
 
 private:
-
 	using Package = winrt::Windows::ApplicationModel::Package;
 	using JsonValue = winrt::Windows::Data::Json::JsonValue;
 	using MemoryManager = winrt::Windows::System::MemoryManager;
