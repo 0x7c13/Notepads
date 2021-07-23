@@ -48,7 +48,6 @@ protected:
 	hstring m_attachment;
 
 private:
-
 	//From https://stackoverflow.com/a/34571089/5155484
 	static std::string base64_encode(std::string const& in) noexcept
 	{

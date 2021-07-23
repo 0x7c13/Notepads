@@ -189,7 +189,6 @@ struct winrt_error
     }
 
 private:
-
     using JsonValue = winrt::Windows::Data::Json::JsonValue;
     using JsonArray = winrt::Windows::Data::Json::JsonArray;
 

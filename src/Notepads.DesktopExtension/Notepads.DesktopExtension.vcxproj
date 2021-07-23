@@ -205,7 +205,8 @@
       <Reference Include="System.Xml" />
       <Using Namespace="System.IO" />
       <Using Namespace="System.Xml" />
-      <Code Type="Fragment" Language="cs"><![CDATA[
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
           var uwpProject = new XmlDocument();
           uwpProject.Load(Path.Combine(ProjectDir, @"..\Notepads\Notepads.csproj"));
           var nsmgr = new XmlNamespaceManager(uwpProject.NameTable);
@@ -213,15 +214,21 @@
           var packagePath = string.Format("//{0}:PackageReference[@Include='{1}']", ns, "Microsoft.AppCenter.Crashes");
           nsmgr.AddNamespace("ms", uwpProject.DocumentElement.NamespaceURI);
           AppCenterSdkVersion = uwpProject.DocumentElement.SelectSingleNode(packagePath, nsmgr)["Version"].InnerText;
-        ]]></Code>
+        ]]>
+      </Code>
     </Task>
   </UsingTask>
   <Target Name="GenerateAppCenterConstants" BeforeTargets="PrepareForBuild">
     <UpdateAppCenterConstants ProjectDir="$(ProjectDir)">
       <Output TaskParameter="AppCenterSdkVersion" PropertyName="AppCenterSdkVersion" />
     </UpdateAppCenterConstants>
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#pragma once" Overwrite="true" Encoding="Unicode" />
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SDK_VERSION L&quot;$(AppCenterSdkVersion)&quot;" Encoding="Unicode" />
-    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="#define APP_CENTER_SECRET L&quot;$(AppCenterSecret)&quot;" Encoding="Unicode" />
+    <PropertyGroup>
+      <CppCode>
+#pragma once
+#define APP_CENTER_SDK_VERSION L"$(AppCenterSdkVersion)"
+#define APP_CENTER_SECRET L"$(AppCenterSecret)"
+      </CppCode>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(GeneratedFilesDir)constants.h" Lines="$(CppCode)" Overwrite="true" WriteOnlyWhenDifferent="true" />
   </Target>
 </Project>

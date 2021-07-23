@@ -25,7 +25,6 @@ struct event_report : report
 	}
 
 protected:
-
 	virtual hstring type() const noexcept
 	{
 		return L"event";

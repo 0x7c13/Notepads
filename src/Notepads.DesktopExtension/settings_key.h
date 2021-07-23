@@ -22,7 +22,6 @@ struct settings_key
 	}
 
 private:
-
 	settings_key() noexcept = default;
 	settings_key(settings_key&&) noexcept = default;
 	settings_key(settings_key const& other) noexcept = default;

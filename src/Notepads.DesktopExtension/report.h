@@ -47,7 +47,6 @@ struct report
 	}
 
 protected:
-
 	using hstring = winrt::hstring;
 	using json_array = winrt::Windows::Data::Json::JsonArray;
 

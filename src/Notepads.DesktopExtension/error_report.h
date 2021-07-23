@@ -38,7 +38,6 @@ struct error_report : report
 	}
 
 protected:
-
 	managed_error_report m_managed_error_report;
 	handled_error_report m_handled_error_report;
 };

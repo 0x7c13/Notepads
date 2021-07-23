@@ -26,7 +26,6 @@ struct handled_error_report : managed_error_report
 	}
 
 protected:
-
 	virtual hstring type() const noexcept
 	{
 		return L"handledError";

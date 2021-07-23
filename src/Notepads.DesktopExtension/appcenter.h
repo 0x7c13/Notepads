@@ -27,7 +27,6 @@ struct appcenter
 	}
 
 private:
-
 	appcenter() noexcept = default;
 	appcenter(appcenter&&) noexcept = default;
 	appcenter(appcenter const& other) noexcept = default;
@@ -50,7 +49,6 @@ struct crashes
 	}
 
 private:
-
 	using HttpStringContent = winrt::Windows::Web::Http::HttpStringContent;
 
 	crashes() noexcept = default;
@@ -74,7 +72,6 @@ struct analytics
 	}
 
 private:
-
 	using HttpStringContent = winrt::Windows::Web::Http::HttpStringContent;
 
 	analytics() noexcept = default;

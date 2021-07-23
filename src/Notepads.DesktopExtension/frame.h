@@ -144,7 +144,6 @@ struct frame
     }
 
 private:
-
     using JsonValue = winrt::Windows::Data::Json::JsonValue;
 
     static void originate() noexcept

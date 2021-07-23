@@ -51,7 +51,6 @@ struct managed_error_report : report
 	}
 
 protected:
-
 	virtual hstring type() const noexcept
 	{
 		return L"managedError";

@@ -79,7 +79,6 @@ struct logger
 	}
 
 private:
-
 	using FileIO = winrt::Windows::Storage::FileIO;
 	using StorageFile = winrt::Windows::Storage::StorageFile;
 	using ApplicationData = winrt::Windows::Storage::ApplicationData;

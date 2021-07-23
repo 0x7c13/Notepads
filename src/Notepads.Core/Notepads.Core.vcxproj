@@ -12,7 +12,6 @@
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
-    <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <MinimalCoreWin>true</MinimalCoreWin>
     <GeneratedFilesDir>$(BaseIntermediateOutputPath)Generated Files\</GeneratedFilesDir>
     <AppContainerApplication>true</AppContainerApplication>

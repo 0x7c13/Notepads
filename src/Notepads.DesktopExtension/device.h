@@ -99,7 +99,6 @@ struct device
 	}
 
 private:
-
 	using hstring = winrt::hstring;
 	using Package = winrt::Windows::ApplicationModel::Package;
 	using JsonValue = winrt::Windows::Data::Json::JsonValue;
