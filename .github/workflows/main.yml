@@ -2,13 +2,13 @@ name: Notepads CI/CD Pipeline
 
 on:
   push:
-    paths-ignore:
-    - '**.md'
-    - 'ScreenShots/**'
-    - '.whitesource'
-    - 'azure-pipelines.yml'
-    - '.github/**'
-    - '!.github/workflows/main.yml'
+    #paths-ignore:
+    #- '**.md'
+    #- 'ScreenShots/**'
+    #- '.whitesource'
+    #- 'azure-pipelines.yml'
+    #- '.github/**'
+    #- '!.github/workflows/main.yml'
     branches-ignore:
     # PRs made by bots trigger both 'push' and 'pull_request' event, ignore 'push' event in that case
     - 'dependabot**'
