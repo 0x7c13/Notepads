@@ -503,7 +503,7 @@
       <Win32Platform>$(Platform)</Win32Platform>
       <Win32Platform Condition="'$(Win32Platform)' == 'x86'">Win32</Win32Platform>
     </PropertyGroup>
-    <MSBuild Projects="..\Notepad\Notepad.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Win32Platform);PackageManifestPath=%(AppxManifest.Identity)">
+    <MSBuild Projects="..\Notepad\Notepad.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Win32Platform);PackageManifestPath=%(AppxManifest.FullPath)">
       <Output TaskParameter="TargetOutputs" ItemName="Win32Items" />
     </MSBuild>
     <ItemGroup>
