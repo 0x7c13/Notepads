@@ -24,7 +24,7 @@
         <muxc:NavigationView.MenuItems>
             <muxc:NavigationViewItem
                 x:Uid="/Settings/TextAndEditorPage_Title"
-                Width="78"
+                Width="90"
                 IsSelected="True"
                 Tag="TextAndEditor">
                 <muxc:NavigationViewItem.Icon>
@@ -33,7 +33,7 @@
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
                 x:Uid="/Settings/PersonalizationPage_Title"
-                Width="78"
+                Width="90"
                 Tag="Personalization">
                 <muxc:NavigationViewItem.Icon>
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
@@ -41,7 +41,7 @@
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
                 x:Uid="/Settings/AdvancedPage_Title"
-                Width="78"
+                Width="90"
                 Tag="Advanced">
                 <muxc:NavigationViewItem.Icon>
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
@@ -49,7 +49,7 @@
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
                 x:Uid="/Settings/AboutPage_Title"
-                Width="78"
+                Width="90"
                 Tag="About">
                 <muxc:NavigationViewItem.Icon>
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />

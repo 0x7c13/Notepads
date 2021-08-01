@@ -138,10 +138,10 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" MinWidth="{ThemeResource TopNavigationViewPaneCustomContentMinWidth}" />
+                                        <!--<ColumnDefinition Width="*" MinWidth="{ThemeResource TopNavigationViewPaneCustomContentMinWidth}" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />-->
                                     </Grid.ColumnDefinitions>
 
                                     <Grid
@@ -183,7 +183,7 @@
                                         </ScrollViewer>
                                     </muxc:ItemsRepeaterScrollHost>
 
-                                    <Button
+                                    <!--<Button
                                         x:Name="TopNavOverflowButton"
                                         Grid.Column="4"
                                         Margin="{ThemeResource TopNavigationViewOverflowButtonMargin}"
@@ -196,7 +196,9 @@
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="Padding" Value="{ThemeResource TopNavigationViewOverflowMenuPadding}" />
-                                                        <!--  Set negative top margin to make the flyout align exactly with the button  -->
+                                    -->
+                                    <!--  Set negative top margin to make the flyout align exactly with the button  -->
+                                    <!--
                                                         <Setter Property="Margin" Value="0,-4,0,0" />
                                                         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
                                                         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -244,16 +246,16 @@
                                                 </muxc:ItemsRepeaterScrollHost>
                                             </Flyout>
                                         </Button.Flyout>
-                                    </Button>
+                                    </Button>-->
 
-                                    <ContentControl
+                                    <!--<ContentControl
                                         x:Name="PaneCustomContentOnTopPane"
                                         Grid.Column="5"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch"
-                                        IsTabStop="False" />
+                                        IsTabStop="False" />-->
 
-                                    <Grid
+                                    <!--<Grid
                                         x:Name="TopPaneAutoSuggestArea"
                                         Grid.Column="6"
                                         Height="{ThemeResource NavigationViewTopPaneHeight}">
@@ -265,16 +267,16 @@
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Center"
                                             IsTabStop="False" />
-                                    </Grid>
+                                    </Grid>-->
 
-                                    <ContentControl
+                                    <!--<ContentControl
                                         x:Name="PaneFooterOnTopPane"
                                         Grid.Column="7"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch"
-                                        IsTabStop="False" />
+                                        IsTabStop="False" />-->
                                     <!--  Top footer menu ItemsRepeater  -->
-                                    <muxc:ItemsRepeater
+                                    <!--<muxc:ItemsRepeater
                                         x:Name="TopFooterMenuItemsHost"
                                         Grid.Column="8"
                                         AutomationProperties.AccessibilityView="Content"
@@ -282,7 +284,7 @@
                                         <muxc:ItemsRepeater.Layout>
                                             <muxc:StackLayout Orientation="Horizontal" />
                                         </muxc:ItemsRepeater.Layout>
-                                    </muxc:ItemsRepeater>
+                                    </muxc:ItemsRepeater>-->
 
                                 </Grid>
                                 <Border x:Name="TopNavContentOverlayAreaGrid" Child="{TemplateBinding ContentOverlay}" />
@@ -579,7 +581,7 @@
                                 </VisualState>
                             </VisualStateGroup>
 
-                            <VisualStateGroup x:Name="AutoSuggestGroup">
+                            <!--<VisualStateGroup x:Name="AutoSuggestGroup">
                                 <VisualState x:Name="AutoSuggestBoxVisible" />
                                 <VisualState x:Name="AutoSuggestBoxCollapsed">
                                     <VisualState.Setters>
@@ -587,7 +589,7 @@
                                         <Setter Target="TopPaneAutoSuggestArea.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
-                            </VisualStateGroup>
+                            </VisualStateGroup>-->
 
                             <VisualStateGroup x:Name="PaneStateGroup">
                                 <VisualState x:Name="NotClosedCompact" />
@@ -669,14 +671,14 @@
                                 </VisualState>
                             </VisualStateGroup>
 
-                            <VisualStateGroup x:Name="OverflowLabelGroup">
+                            <!--<VisualStateGroup x:Name="OverflowLabelGroup">
                                 <VisualState x:Name="OverflowButtonWithLabel" />
                                 <VisualState x:Name="OverflowButtonNoLabel">
                                     <VisualState.Setters>
                                         <Setter Target="TopNavOverflowButton.Style" Value="{ThemeResource NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop}" />
                                     </VisualState.Setters>
                                 </VisualState>
-                            </VisualStateGroup>
+                            </VisualStateGroup>-->
 
                             <VisualStateGroup x:Name="BackButtonGroup">
                                 <VisualState x:Name="BackButtonVisible" />
