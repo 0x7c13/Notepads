@@ -5,17 +5,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: 'action-deps: '
 
   - package-ecosystem: "nuget"
     # location of package manifests
     directory: "/src/Notepads"
     schedule:
       interval: "daily"
-
-  - package-ecosystem: "nuget"
-    # location of package manifests
-    directory: "/src/Notepads.Controls"
-    schedule:
-      interval: "daily"
+    commit-message:
+      prefix: 'nuget-deps: '
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

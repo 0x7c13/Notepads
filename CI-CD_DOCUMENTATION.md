@@ -143,9 +143,9 @@ We've also configured CodeQL to run on schedule, so every day at 8:00AM UTC, it 
 
 ### Code scanning alerts bulk dismissal tool
 
-##### - currently, GitHub allows for only 25 code scanning alerts to be dismissed at a time. Sometimes, you might have hundreds you would like to dismiss, so you will have to click many times and wait for a long time to dismiss them. Via the "csa-bulk-dismissal.yml", you would be able to that with one click.
+##### - currently, GitHub allows for only 25 code scanning alerts to be dismissed at a time. Sometimes, you might have hundreds you would like to dismiss, so you will have to click many times and wait for a long time to dismiss them. Via the "csa-bulk-dismissal.yml", you can automatically dismiss unnecessary alerts or manually do that with one click.
 
-NOTE: This tool executes manual **only**. It won't execute on any other GitHub event like push commit, PR creation etc.
+NOTE: This tool executes automatically when **Notepads CI/CD Pipeline** action completes.
 
 #### 1. Setup
 
@@ -161,19 +161,22 @@ NOTE: This tool executes manual **only**. It won't execute on any other GitHub e
 
 - CSA_ACCESS_TOKEN - [create a PAT with "security_events" permission only](#7-how-to-create-a-pat).
 
-- DISMISS_REASON_VAR - this secret refers to the reason why you dismissed the code scanning alert. Use the appropriate one as the value of this secret, out of the three available options: **false positive**, **won't fix** or **used in tests**.
-
 #### 2. Execution
 
-1. In your repo, click on the Actions tab and on the left, in the Workflows list, click on the "Code scanning alerts bulk dismissal"
+1. This tool is automatically triggered when **Notepads CI/CD Pipeline** task completes, if you want to manually execute this follow next steps
+
+2. In your repo, click on the Actions tab and on the left, in the Workflows list, click on the "Code scanning alerts bulk dismissal"
 
 ![CSA_execute_1](ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_1.png)
 
-2. On the right, click on the "Run workflow" dropdown. Under "Use workflow from" choose your default branch (usually main/master) and click on the **Run workflow** button
+3. On the right, click on the "Run workflow" dropdown. Under "Use workflow from" choose your default branch (usually main/master), in the **Type of filter to use** field type "path"/"desc" depending upon whether dismiss alerts based on predefined paths or description respectively (default is "path"), in the **Reason for dismissal** type "fp"/"wf"/"ut" for "false positive"/"won't fix"/"used in tests" respectively (default is "wf") and click on the **Run workflow** button
 
+<a name="csa_execute"></a>
 ![CSA_execute_2](ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_2.png)
 
-3. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts, with a certain description be dismissed
+NOTE: if any unsupported values are entered default values will be used
+
+4. If everything was set up currently in the "Setup" phase, the "Code scanning alerts bulk dismissal" workflow is going to be executed successfully, which after some time, would result in **all** previously open code scanning alerts, with a certain description be dismissed
 
 ![CSA_execute_3](ScreenShots/CI-CD_DOCUMENTATION/CSA_execute_3.png)
 
@@ -185,22 +188,56 @@ NOTE: "closed" refers to "dismissed" alerts
 
 #### 3. Customization
 
-The "ALERT_DESC" strategy matrix in the pipeline, allows for more precise filtering of alerts to bulk dismiss. It uses the description of the alert to determine if it has to be dismissed or not. We've added the following alert descriptions by default:
+The "setup" job in the pipeline, allows for more precise filtering of alerts to bulk dismiss. It uses the filter type to choose (filter based on path or description) from the alert to determine if it has to be dismissed or not. We've added the following paths and alert descriptions by default:
+
+##### Paths:
+
+- "\*/obj/\*" (if path contains `obj` folder at any position)
+
+##### Descriptions:
 
 - "Calls to unmanaged code"
 - "Unmanaged code"
 
-To add more descriptions, follow these steps:
+##### To add more paths, follow these steps:
 
 1. In your source code, open ".github/workflows/csa-bulk-dismissal.yml"
 
-2. On line 11, notice "ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']". This is the array of descriptions that the CSABD (Code scanning alerts bulk dismissal) tool uses to filter through the alerts:
+2. From line 50 to 56, notice "$MATRIX = **". This is the [powershell hashtable](https://docs.microsoft.com/powershell/scripting/learn/deep-dives/everything-about-hashtable?view=powershell-7.1) of filters that the CSABD (Code scanning alerts bulk dismissal) tool uses to filter through the alerts:
+
+![CSA_custom_3](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_3.png)
+
+3. To add more paths under **include** element use comma separation and followed from next line add `@{ filter = "New path" }`. Replace "New path" with the path (with or without [wild cards](https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_wildcards?view=powershell-7.1)) you want:
+
+![CSA_custom_4](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_4.png)
+
+##### To add more descriptions, follow these steps:
+
+1. In your source code, open ".github/workflows/csa-bulk-dismissal.yml"
+
+2. From line 58 to 67, notice "$MATRIX = **". This is the [powershell hashtable](https://docs.microsoft.com/powershell/scripting/learn/deep-dives/everything-about-hashtable?view=powershell-7.1) of filters that the CSABD (Code scanning alerts bulk dismissal) tool uses to filter through the alerts:
 
 ![CSA_custom_1](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_1.png)
 
-3. To add more descriptions use comma separation, followed by a single space and the description enclosed in double quotes, then enclosed in single quotes:
+3. To add more descriptions under **include** element use comma separation and followed from next line add `@{ filter = "New description" }`. Replace "New description" with the description you want:
 
 ![CSA_custom_2](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_2.png)
+
+##### To change default filter type and dismissal reason, follow these steps:
+
+1. In your source code, open ".github/workflows/csa-bulk-dismissal.yml"
+
+2. To change default filter type change **$FILTER_TYPE** variable in line 31 to something else (default is "path", supported are: "desc" and "path"):
+
+![CSA_custom_5](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_5.png)
+
+3. To change dismissal reason change **$REASON** variable in line 45 to something else (default is "won't fix", supported are: "false positive", "won't fix" and "used in tests"):
+
+![CSA_custom_6](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_6.png)
+
+NOTE: changing default filter type and dismissal reason won't change dafault value typed when [manually executing](#csa_execute) tool, change values in line 13 and 17 respectively to reflect the change
+
+![CSA_custom_7](ScreenShots/CI-CD_DOCUMENTATION/CSA_custom_7.png)
 
 <br>
 <a name="github_release"></a>
