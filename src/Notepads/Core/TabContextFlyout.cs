@@ -49,6 +49,7 @@
 
             var style = new Style(typeof(MenuFlyoutPresenter));
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
+
             MenuFlyoutPresenterStyle = style;
 
             Opening += TabContextFlyout_Opening;

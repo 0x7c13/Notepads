@@ -5,13 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="using:Notepads.Services"
-    mc:Ignorable="d"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
+    mc:Ignorable="d">
 
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0"/>
+                <EntranceThemeTransition FromHorizontalOffset="25" FromVerticalOffset="0" />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.BackgroundTransition>
@@ -25,201 +25,295 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
+            <StackPanel Margin="0,0,0,40" HorizontalAlignment="Left">
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,15,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_ToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="TextWrappingToggle"/>
+                    <ToggleSwitch x:Name="TextWrappingToggle" x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_ToggleSwitch" />
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_SpellingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="HighlightMisspelledWordsToggle"/>
+                    <ToggleSwitch x:Name="HighlightMisspelledWordsToggle" x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch" />
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineHighlighterToggle"
-                                  Margin="0,0,0,10"/>
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineNumbersToggle"/>
-                    <TextBlock x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                    <ToggleSwitch
+                        x:Name="LineHighlighterToggle"
+                        x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
+                        Margin="0,0,0,10" />
+                    <ToggleSwitch x:Name="LineNumbersToggle" x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch" />
+                    <TextBlock
+                        x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description"
+                        Margin="0,8,0,0"
+                        Style="{ThemeResource DescriptionTextBlockStyle}" />
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ComboBox x:Name="FontFamilyPicker"
-                              ItemsSource="{x:Bind AvailableFonts, Mode=OneTime}"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Center"
-                              BorderThickness="1"
-                              Height="36"
-                              Background="Transparent"
-                              IsTextSearchEnabled="True">
+                    <ComboBox
+                        x:Name="FontFamilyPicker"
+                        Height="36"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="1"
+                        IsTextSearchEnabled="True"
+                        ItemsSource="{x:Bind AvailableFonts, Mode=OneTime}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}"
-                                           FontFamily="{Binding}" />
+                                <TextBlock FontFamily="{Binding}" Text="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <ComboBox x:Name="FontSizePicker"
-                              ItemsSource="{x:Bind AvailableFontSizes, Mode=OneTime}"
-                              IsEditable="False"
-                              Margin="0,10,0,0"
-                              VerticalAlignment="Center"
-                              BorderThickness="1"
-                              Height="36"
-                              MinWidth="70"
-                              Background="Transparent">
-                    </ComboBox>
+                    <ComboBox
+                        x:Name="FontSizePicker"
+                        Height="36"
+                        MinWidth="70"
+                        Margin="0,10,0,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="1"
+                        IsEditable="False"
+                        ItemsSource="{x:Bind AvailableFontSizes, Mode=OneTime}" />
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontStyleSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ComboBox x:Name="FontStylePicker"
-                              ItemsSource="{x:Bind AvailableFontStyles, Mode=OneTime}"
-                              FontFamily="{x:Bind settings:AppSettingsService.EditorFontFamily}"
-                              VerticalAlignment="Center"
-                              BorderThickness="1"
-                              Height="36"
-                              Background="Transparent"
-                              IsTextSearchEnabled="True">
+                    <ComboBox
+                        x:Name="FontStylePicker"
+                        Height="36"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="1"
+                        FontFamily="{x:Bind settings:AppSettingsService.EditorFontFamily}"
+                        IsTextSearchEnabled="True"
+                        ItemsSource="{x:Bind AvailableFontStyles, Mode=OneTime}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding FontStyleLocalizedName}"
-                                           FontStyle="{Binding FontStyle}" />
+                                <TextBlock FontStyle="{Binding FontStyle}" Text="{Binding FontStyleLocalizedName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontWeightSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,20,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel Margin="0,10,0,0">
-                    <ComboBox x:Name="FontWeightPicker"
-                              ItemsSource="{x:Bind AvailableFontWeights, Mode=OneTime}"
-                              FontFamily="{x:Bind settings:AppSettingsService.EditorFontFamily}"
-                              IsEditable="False"
-                              VerticalAlignment="Center"
-                              BorderThickness="1"
-                              Height="36"
-                              MinWidth="70"
-                              Background="Transparent">
+                    <ComboBox
+                        x:Name="FontWeightPicker"
+                        Height="36"
+                        MinWidth="70"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="1"
+                        FontFamily="{x:Bind settings:AppSettingsService.EditorFontFamily}"
+                        IsEditable="False"
+                        ItemsSource="{x:Bind AvailableFontWeights, Mode=OneTime}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding FontWeightLocalizedName}"
-                                           FontWeight="{Binding FontWeight}" />
+                                <TextBlock FontWeight="{Binding FontWeight}" Text="{Binding FontWeightLocalizedName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel x:Name="LineEndingPanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CrlfRadioButton" Tag="Crlf" Content="Windows (CRLF)" GroupName="LineEndingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CrRadioButton" Tag="Cr" Content="Macintosh (CR)" GroupName="LineEndingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="LfRadioButton" Tag="Lf" Content="Unix (LF)" GroupName="LineEndingGroup"/>
+                    <RadioButton
+                        x:Name="CrlfRadioButton"
+                        Content="Windows (CRLF)"
+                        GroupName="LineEndingGroup"
+                        Tag="Crlf" />
+                    <RadioButton
+                        x:Name="CrRadioButton"
+                        Content="Macintosh (CR)"
+                        GroupName="LineEndingGroup"
+                        Tag="Cr" />
+                    <RadioButton
+                        x:Name="LfRadioButton"
+                        Content="Unix (LF)"
+                        GroupName="LineEndingGroup"
+                        Tag="Lf" />
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Description"
+                    Margin="0,8,0,0"
+                    Style="{ThemeResource DescriptionTextBlockStyle}" />
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel x:Name="EncodingPanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8EncodingRadioButton" Tag="UTF-8" Content="UTF-8" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8BomEncodingRadioButton" Tag="UTF-8-BOM" Content="UTF-8-BOM" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16LeBomEncodingRadioButton" Tag="UTF-16 LE BOM" Content="UTF-16 LE BOM" GroupName="EncodingGroup"/>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf16BeBomEncodingRadioButton" Tag="UTF-16 BE BOM" Content="UTF-16 BE BOM" GroupName="EncodingGroup"/>
+                    <RadioButton
+                        x:Name="Utf8EncodingRadioButton"
+                        Content="UTF-8"
+                        GroupName="EncodingGroup"
+                        Tag="UTF-8" />
+                    <RadioButton
+                        x:Name="Utf8BomEncodingRadioButton"
+                        Content="UTF-8-BOM"
+                        GroupName="EncodingGroup"
+                        Tag="UTF-8-BOM" />
+                    <RadioButton
+                        x:Name="Utf16LeBomEncodingRadioButton"
+                        Content="UTF-16 LE BOM"
+                        GroupName="EncodingGroup"
+                        Tag="UTF-16 LE BOM" />
+                    <RadioButton
+                        x:Name="Utf16BeBomEncodingRadioButton"
+                        Content="UTF-16 BE BOM"
+                        GroupName="EncodingGroup"
+                        Tag="UTF-16 BE BOM" />
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Description"
+                    Margin="0,8,0,0"
+                    Style="{ThemeResource DescriptionTextBlockStyle}" />
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel x:Name="DecodingPanel" Margin="0,10,0,0">
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AutoGuessRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AutoGuessDecodingRadioButton" Tag="Auto" GroupName="DecodingGroup"/>
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Utf8RadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="Utf8DecodingRadioButton" Tag="UTF-8" GroupName="DecodingGroup"/>
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AnsiRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="AnsiDecodingRadioButton" Tag="ANSI" GroupName="DecodingGroup"/>
+                    <RadioButton
+                        x:Name="AutoGuessDecodingRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AutoGuessRadioButton"
+                        GroupName="DecodingGroup"
+                        Tag="Auto" />
+                    <RadioButton
+                        x:Name="Utf8DecodingRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Utf8RadioButton"
+                        GroupName="DecodingGroup"
+                        Tag="UTF-8" />
+                    <RadioButton
+                        x:Name="AnsiDecodingRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AnsiRadioButton"
+                        GroupName="DecodingGroup"
+                        Tag="ANSI" />
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Description"
+                    Margin="0,8,0,0"
+                    Style="{ThemeResource DescriptionTextBlockStyle}" />
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel x:Name="TabBehaviorPanel" Margin="0,10,0,0">
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_DefaultRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabDefaultRadioButton" Tag="-1" GroupName="TabBehaviorGroup"/>
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabTwoSpacesRadioButton" Tag="2" GroupName="TabBehaviorGroup"/>
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_FourSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabFourSpacesRadioButton" Tag="4" GroupName="TabBehaviorGroup"/>
-                    <RadioButton x:Uid="/Settings/TextAndEditorPage_TabKeySettings_EightSpacesRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="TabEightSpacesRadioButton" Tag="8" GroupName="TabBehaviorGroup"/>
+                    <RadioButton
+                        x:Name="TabDefaultRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_TabKeySettings_DefaultRadioButton"
+                        GroupName="TabBehaviorGroup"
+                        Tag="-1" />
+                    <RadioButton
+                        x:Name="TabTwoSpacesRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton"
+                        GroupName="TabBehaviorGroup"
+                        Tag="2" />
+                    <RadioButton
+                        x:Name="TabFourSpacesRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_TabKeySettings_FourSpacesRadioButton"
+                        GroupName="TabBehaviorGroup"
+                        Tag="4" />
+                    <RadioButton
+                        x:Name="TabEightSpacesRadioButton"
+                        x:Uid="/Settings/TextAndEditorPage_TabKeySettings_EightSpacesRadioButton"
+                        GroupName="TabBehaviorGroup"
+                        Tag="8" />
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description"
+                    Margin="0,8,0,0"
+                    Style="{ThemeResource DescriptionTextBlockStyle}" />
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"
-                    FontWeight="Normal"/>
+                    FontWeight="Normal"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                 <StackPanel x:Name="SearchEnginePanel" Margin="0,10,0,0">
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="BingRadioButton" GroupName="SearchEngineGroup">
+                    <RadioButton x:Name="BingRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_bing.png" Width="16" Stretch="Uniform"/>
-                            <TextBlock Text="Bing" Margin="8,0,0,0"/>
+                            <Image
+                                Width="16"
+                                Source="ms-appx:///Assets/search_bing.png"
+                                Stretch="Uniform" />
+                            <TextBlock Margin="8,0,0,0" Text="Bing" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="GoogleRadioButton" GroupName="SearchEngineGroup">
+                    <RadioButton x:Name="GoogleRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_google.png" Width="16" Stretch="Uniform"/>
-                            <TextBlock Text="Google" Margin="8,0,0,0"/>
+                            <Image
+                                Width="16"
+                                Source="ms-appx:///Assets/search_google.png"
+                                Stretch="Uniform" />
+                            <TextBlock Margin="8,0,0,0" Text="Google" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="DuckDuckGoRadioButton" GroupName="SearchEngineGroup">
+                    <RadioButton x:Name="DuckDuckGoRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_duckduckgo.png" Width="16" Stretch="Uniform"/>
-                            <TextBlock Text="Duck Duck Go" Margin="8,0,0,0"/>
+                            <Image
+                                Width="16"
+                                Source="ms-appx:///Assets/search_duckduckgo.png"
+                                Stretch="Uniform" />
+                            <TextBlock Margin="8,0,0,0" Text="Duck Duck Go" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CustomSearchUrlRadioButton" GroupName="SearchEngineGroup">
+                    <RadioButton x:Name="CustomSearchUrlRadioButton" GroupName="SearchEngineGroup">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Assets/search_custom.png" Width="16" Stretch="Uniform"/>
-                            <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton" Text="Custom Search Engine" Margin="8,0,0,0"/>
+                            <Image
+                                Width="16"
+                                Source="ms-appx:///Assets/search_custom.png"
+                                Stretch="Uniform" />
+                            <TextBlock
+                                x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton"
+                                Margin="8,0,0,0"
+                                Text="Custom Search Engine" />
                         </StackPanel>
                     </RadioButton>
-                    <StackPanel  Margin="28,5,0,10">
-                        <TextBox Style="{StaticResource TransparentTextBoxStyle}" BorderThickness="0" x:Name="CustomSearchUrl" PlaceholderText="https://www.example.com/search?q={0}" IsSpellCheckEnabled="False" TextChanged="CustomSearchUrl_TextChanged" LostFocus="CustomSearchUrl_LostFocus"/>
-                        <TextBlock x:Name="CustomUrlErrorReport" x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport" Style="{ThemeResource DescriptionTextBlockStyle}" Foreground="Red" Visibility="Collapsed"/>
+                    <StackPanel Margin="28,5,0,10">
+                        <TextBox
+                            x:Name="CustomSearchUrl"
+                            BorderThickness="0"
+                            IsSpellCheckEnabled="False"
+                            LostFocus="CustomSearchUrl_LostFocus"
+                            PlaceholderText="https://www.example.com/search?q={0}"
+                            TextChanged="CustomSearchUrl_TextChanged" />
+                        <TextBlock
+                            x:Name="CustomUrlErrorReport"
+                            x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport"
+                            Foreground="Red"
+                            Style="{ThemeResource DescriptionTextBlockStyle}"
+                            Visibility="Collapsed" />
                     </StackPanel>
                 </StackPanel>
-                <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Description"
+                    Margin="0,8,0,0"
+                    Style="{ThemeResource DescriptionTextBlockStyle}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

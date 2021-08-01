@@ -106,8 +106,8 @@
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
-                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
+                { "OSArchitecture", SystemInformation.Instance.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", $"{SystemInformation.Instance.OperatingSystemVersion.Major}.{SystemInformation.Instance.OperatingSystemVersion.Minor}.{SystemInformation.Instance.OperatingSystemVersion.Build}" },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
@@ -229,11 +229,11 @@
             {
                 { "Message", e.Message },
                 { "Exception", e.Exception?.ToString() },
-                { "Culture", SystemInformation.Culture.EnglishName },
-                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "Culture", SystemInformation.Instance.Culture.EnglishName },
+                { "AvailableMemory", SystemInformation.Instance.AvailableMemory.ToString("F0") },
+                { "FirstUseTimeUTC", SystemInformation.Instance.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "OSArchitecture", SystemInformation.Instance.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.Instance.OperatingSystemVersion.ToString() },
                 { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };

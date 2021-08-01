@@ -1,0 +1,13 @@
+﻿<ContentDialog
+    x:Class="Notepads.Controls.Dialog.FileOpenErrorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Notepads.Controls.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="FileOpenErrorDialog"
+    d:Content="Sorry, file &quot;C:\Test.txt&quot; couldn't be opened: Error"
+    d:PrimaryButtonText="Ok"
+    d:Title="File Open Error"
+    Style="{StaticResource NotepadsDialogStyle}"
+    mc:Ignorable="d" />

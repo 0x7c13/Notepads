@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+  <data name="AppCloseSaveReminderDialog.CloseButtonText" xml:space="preserve">
     <value>취소</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
-  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
+  <data name="AppCloseSaveReminderDialog.Content" xml:space="preserve">
     <value>저장하지 않은 변경 사항이 있습니다.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="AppCloseSaveReminderDialog.PrimaryButtonText" xml:space="preserve">
     <value>모두 저장</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+  <data name="AppCloseSaveReminderDialog.SecondaryButtonText" xml:space="preserve">
     <value>저장하지 않고 종료</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
-  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
+  <data name="AppCloseSaveReminderDialog.Title" xml:space="preserve">
     <value>변경 사항을 저장하시겠습니까?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
@@ -157,11 +157,11 @@
     <value>파일 "{0}" 을 열 수 없습니다: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="FileOpenErrorDialog.PrimaryButtonText" xml:space="preserve">
     <value>확인</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
+  <data name="FileOpenErrorDialog.Title" xml:space="preserve">
     <value>파일 열기 오류</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
@@ -169,11 +169,11 @@
     <value>파일 "{0}" 을 저장할 수 없습니다: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="FileSaveErrorDialog.PrimaryButtonText" xml:space="preserve">
     <value>확인</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
+  <data name="FileSaveErrorDialog.Title" xml:space="preserve">
     <value>파일 저장 오류</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
@@ -253,7 +253,7 @@
     <value>설정</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
-  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
+  <data name="RevertAllChangesConfirmationDialog.CloseButtonText" xml:space="preserve">
     <value>취소</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
@@ -261,15 +261,15 @@
     <value>파일 "{0}" 의 모든 변경 사항이 원래대로 돌아갑니다!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
-  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="RevertAllChangesConfirmationDialog.PrimaryButtonText" xml:space="preserve">
     <value>확인</value>
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
+  <data name="RevertAllChangesConfirmationDialog.Title" xml:space="preserve">
     <value>정말 모든 변경 사항을 취소하시겠습니까?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
-  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
+  <data name="SetCloseSaveReminderDialog.CloseButtonText" xml:space="preserve">
     <value>취소</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
@@ -277,15 +277,15 @@
     <value>"{0}"에 저장하시겠습니까?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
-  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="SetCloseSaveReminderDialog.PrimaryButtonText" xml:space="preserve">
     <value>저장</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
+  <data name="SetCloseSaveReminderDialog.SecondaryButtonText" xml:space="preserve">
     <value>저장하지 않음</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
-  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
+  <data name="SetCloseSaveReminderDialog.Title" xml:space="preserve">
     <value>변경 사항을 저장하시겠습니까?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
@@ -641,15 +641,15 @@
     <value>Thin</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
-  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
+  <data name="FileRenameDialog.CloseButtonText" xml:space="preserve">
     <value>취소</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
-  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
+  <data name="FileRenameDialog.PrimaryButtonText" xml:space="preserve">
     <value>저장</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
-  <data name="FileRenameDialog_Title" xml:space="preserve">
+  <data name="FileRenameDialog.Title" xml:space="preserve">
     <value>이름 변경</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>

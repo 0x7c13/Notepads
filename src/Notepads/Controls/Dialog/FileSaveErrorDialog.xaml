@@ -1,0 +1,13 @@
+﻿<ContentDialog
+    x:Class="Notepads.Controls.Dialog.FileSaveErrorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Notepads.Controls.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="FileSaveErrorDialog"
+    d:Content="Sorry, file &quot;C:\Test.txt&quot; couldn't be saved: Error"
+    d:PrimaryButtonText="Ok"
+    d:Title="File Save Error"
+    Style="{StaticResource NotepadsDialogStyle}"
+    mc:Ignorable="d" />
