@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:muxca="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:settings="using:Notepads.Views.Settings"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
@@ -28,7 +29,11 @@
                 IsSelected="True"
                 Tag="TextAndEditor">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF17F;" />
+                    <muxc:AnimatedIcon>
+                        <muxc:AnimatedIcon.FallbackIconSource>
+                            <muxc:FontIconSource FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF17F;" />
+                        </muxc:AnimatedIcon.FallbackIconSource>
+                    </muxc:AnimatedIcon>
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
@@ -36,7 +41,11 @@
                 Width="90"
                 Tag="Personalization">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                    <muxc:AnimatedIcon>
+                        <muxc:AnimatedIcon.FallbackIconSource>
+                            <muxc:FontIconSource FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                        </muxc:AnimatedIcon.FallbackIconSource>
+                    </muxc:AnimatedIcon>
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
@@ -44,7 +53,11 @@
                 Width="90"
                 Tag="Advanced">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
+                    <muxc:AnimatedIcon>
+                        <muxc:AnimatedIcon.FallbackIconSource>
+                            <muxc:FontIconSource FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
+                        </muxc:AnimatedIcon.FallbackIconSource>
+                    </muxc:AnimatedIcon>
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
             <muxc:NavigationViewItem
@@ -52,7 +65,11 @@
                 Width="90"
                 Tag="About">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                    <muxc:AnimatedIcon>
+                        <muxc:AnimatedIcon.FallbackIconSource>
+                            <muxc:FontIconSource FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                        </muxc:AnimatedIcon.FallbackIconSource>
+                    </muxc:AnimatedIcon>
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
         </muxc:NavigationView.MenuItems>

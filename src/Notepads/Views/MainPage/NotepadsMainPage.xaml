@@ -102,10 +102,7 @@
                                     BorderThickness="0"
                                     IsTabStop="False"
                                     Style="{StaticResource TabViewButtonStyle}">
-                                    <muxc:AnimatedIcon
-                                        x:Name="MainMenuButtonIcon"
-                                        MaxWidth="16"
-                                        MaxHeight="16">
+                                    <muxc:AnimatedIcon MaxWidth="16" MaxHeight="16">
                                         <muxc:AnimatedIcon.Source>
                                             <muxca:AnimatedGlobalNavigationButtonVisualSource />
                                         </muxc:AnimatedIcon.Source>

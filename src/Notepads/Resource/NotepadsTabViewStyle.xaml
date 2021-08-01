@@ -492,6 +492,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
+                            <!--  Scroll to the left button bottom shadow  -->
+                            <wctc:DropShadowPanel Grid.Column="0" Style="{StaticResource BottomEdgeShadowStyle}">
+                                <Grid Height="1" Margin="-1,0,0,-1" />
+                                <wctc:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="-1,-12,1024,12" />
+                                </wctc:DropShadowPanel.Clip>
+                            </wctc:DropShadowPanel>
+
                             <Border
                                 x:Name="ScrollDecreaseButtonContainer"
                                 Padding="{StaticResource TabViewItemLeftScrollButtonContainerPadding}"
@@ -512,6 +520,14 @@
                                 Grid.Column="1"
                                 Padding="1,0,0,0"
                                 TabFocusNavigation="Once" />
+
+                            <!--  Scroll to the right button bottom shadow  -->
+                            <wctc:DropShadowPanel Grid.Column="2" Style="{StaticResource BottomEdgeShadowStyle}">
+                                <Grid Height="1" Margin="0,0,0,-1" />
+                                <wctc:DropShadowPanel.Clip>
+                                    <RectangleGeometry Rect="0,-12,1024,12" />
+                                </wctc:DropShadowPanel.Clip>
+                            </wctc:DropShadowPanel>
 
                             <Border
                                 x:Name="ScrollIncreaseButtonContainer"
