@@ -24,6 +24,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Microsoft.AppCenter.Analytics;
+    using Microsoft.UI.Xaml.Controls;
 
     public class NotepadsCore : INotepadsCore
     {
@@ -44,7 +45,7 @@
 
         public event KeyEventHandler TextEditorKeyDown;
 
-        public SetsView Sets;
+        public TabView Sets;
 
         private readonly INotepadsExtensionProvider _extensionProvider;
 
@@ -56,6 +57,12 @@
 
         private readonly CoreDispatcher _dispatcher;
 
+        private readonly Microsoft.UI.Xaml.Controls.FontIconSource _modifierIcon = new Microsoft.UI.Xaml.Controls.FontIconSource()
+        {
+            Glyph = "\uF127",
+            FontSize = 1.5
+        };
+
         private const string SetDragAndDropActionStatus = "SetDragAndDropActionStatus";
         private const string NotepadsTextEditorMetaData = "NotepadsTextEditorMetaData";
         private const string NotepadsTextEditorGuid = "NotepadsTextEditorGuid";
@@ -64,20 +71,20 @@
         private const string NotepadsTextEditorPendingContent = "NotepadsTextEditorPendingContent";
         private const string NotepadsTextEditorEditingFilePath = "NotepadsTextEditorEditingFilePath";
 
-        public NotepadsCore(SetsView sets,
+        public NotepadsCore(TabView sets,
             INotepadsExtensionProvider extensionProvider,
             CoreDispatcher dispatcher)
         {
             Sets = sets;
             Sets.SelectionChanged += SetsView_OnSelectionChanged;
-            Sets.Items.VectorChanged += SetsView_OnItemsChanged;
-            Sets.SetClosing += SetsView_OnSetClosing;
-            Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as ITextEditor); };
-            Sets.SetDraggedOutside += Sets_SetDraggedOutside;
+            Sets.TabItemsChanged += SetsView_OnItemsChanged;
+            Sets.TabCloseRequested += SetsView_OnSetClosing;
+            //Sets.SetTapped += (sender, args) => { FocusOnTextEditor(args.Item as ITextEditor); };
+            Sets.TabDroppedOutside += Sets_SetDraggedOutside;
             Sets.DragOver += Sets_DragOver;
             Sets.Drop += Sets_Drop;
-            Sets.DragItemsStarting += Sets_DragItemsStarting;
-            Sets.DragItemsCompleted += Sets_DragItemsCompleted;
+            Sets.TabDragStarting += Sets_DragItemsStarting;
+            Sets.TabDragCompleted += Sets_DragItemsCompleted;
 
             _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
@@ -89,11 +96,11 @@
         {
             await _dispatcher.CallOnUIThreadAsync(() =>
             {
-                if (Sets.Items == null) return;
-                foreach (SetsViewItem item in Sets.Items)
+                if (Sets.TabItems == null) return;
+                foreach (TabViewItem item in Sets.TabItems)
                 {
-                    item.Icon.Foreground = new SolidColorBrush(color);
-                    item.SelectionIndicatorForeground = new SolidColorBrush(color);
+                    //item.IconSource.Foreground = new SolidColorBrush(color);
+                    //item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
         }
@@ -113,7 +120,7 @@
 
         public void OpenTextEditor(ITextEditor textEditor, int atIndex = -1)
         {
-            SetsViewItem textEditorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
+            TabViewItem textEditorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
 
             // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
             // If index != -1, it means set was created after a drag and drop, we should skip this logic
@@ -122,25 +129,25 @@
                 var selectedEditor = GetAllTextEditors().First();
                 if (selectedEditor.EditingFile == null && !selectedEditor.IsModified)
                 {
-                    Sets.Items?.Clear();
+                    Sets.TabItems?.Clear();
                 }
             }
 
             if (atIndex == -1)
             {
-                Sets.Items?.Add(textEditorSetsViewItem);
+                Sets.TabItems?.Add(textEditorSetsViewItem);
             }
             else
             {
-                Sets.Items?.Insert(atIndex, textEditorSetsViewItem);
+                Sets.TabItems?.Insert(atIndex, textEditorSetsViewItem);
             }
 
-            if (GetNumberOfOpenedTextEditors() > 1)
+            if (GetNumberOfOpenedTextEditors() > 0)
             {
                 Sets.SelectedItem = textEditorSetsViewItem;
                 if (atIndex == -1)
                 {
-                    Sets.ScrollToLastSet();
+                    //Sets.ScrollToLastSet();
                 }
             }
         }
@@ -152,7 +159,7 @@
             foreach (var textEditor in editors)
             {
                 var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
-                Sets.Items?.Add(editorSetsViewItem);
+                Sets.TabItems?.Add(editorSetsViewItem);
                 if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
                 {
                     Sets.SelectedItem = editorSetsViewItem;
@@ -163,7 +170,7 @@
             if (selectedEditorId == null || !selectedEditorFound)
             {
                 Sets.SelectedIndex = editors.Length - 1;
-                Sets.ScrollToLastSet();
+                //Sets.ScrollToLastSet();
             }
         }
 
@@ -220,8 +227,8 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item == null) return;
             item.IsEnabled = false;
-            item.PrepareForClosing();
-            Sets.Items?.Remove(item);
+            //item.PrepareForClosing();
+            Sets.TabItems?.Remove(item);
 
             if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
             {
@@ -246,7 +253,7 @@
 
         public int GetNumberOfOpenedTextEditors()
         {
-            return Sets.Items?.Count ?? 0;
+            return Sets.TabItems?.Count ?? 0;
         }
 
         public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content)
@@ -258,8 +265,8 @@
 
         public bool HaveUnsavedTextEditor()
         {
-            if (Sets.Items == null || Sets.Items.Count == 0) return false;
-            foreach (SetsViewItem setsItem in Sets.Items)
+            if (Sets.TabItems == null || Sets.TabItems.Count == 0) return false;
+            foreach (TabViewItem setsItem in Sets.TabItems)
             {
                 if (!(setsItem.Content is ITextEditor textEditor)) continue;
                 if (!textEditor.IsModified) continue;
@@ -270,8 +277,8 @@
 
         public bool HaveNonemptyTextEditor()
         {
-            if (Sets.Items == null || Sets.Items.Count <= 1) return false;
-            foreach (SetsViewItem setsItem in Sets.Items)
+            if (Sets.TabItems == null || Sets.TabItems.Count <= 1) return false;
+            foreach (TabViewItem setsItem in Sets.TabItems)
             {
                 if (!(setsItem.Content is ITextEditor textEditor)) continue;
                 if (string.IsNullOrEmpty(textEditor.GetText())) continue;
@@ -287,10 +294,10 @@
 
         public void SwitchTo(bool next)
         {
-            if (Sets.Items == null) return;
-            if (Sets.Items.Count < 2) return;
+            if (Sets.TabItems == null) return;
+            if (Sets.TabItems.Count < 2) return;
 
-            var setsCount = Sets.Items.Count;
+            var setsCount = Sets.TabItems.Count;
             var selected = Sets.SelectedIndex;
 
             if (next && setsCount > 1)
@@ -319,7 +326,7 @@
 
         public void SwitchTo(int index)
         {
-            if (Sets.Items == null || index < 0 || index >= Sets.Items.Count) return;
+            if (Sets.TabItems == null || index < 0 || index >= Sets.TabItems.Count) return;
             Sets.SelectedIndex = index;
         }
 
@@ -329,7 +336,7 @@
             if (Sets.SelectedItem != item)
             {
                 Sets.SelectedItem = item;
-                Sets.ScrollIntoView(item);
+                //Sets.ScrollIntoView(item);
             }
         }
 
@@ -337,7 +344,7 @@
         {
             if (ThreadUtility.IsOnUIThread())
             {
-                if ((!((Sets.SelectedItem as SetsViewItem)?.Content is ITextEditor textEditor))) return null;
+                if ((!((Sets.SelectedItem as TabViewItem)?.Content is ITextEditor textEditor))) return null;
                 return textEditor;
             }
             return _selectedTextEditor;
@@ -353,9 +360,9 @@
         public ITextEditor[] GetAllTextEditors()
         {
             if (!ThreadUtility.IsOnUIThread()) return _allTextEditors;
-            if (Sets.Items == null) return Array.Empty<ITextEditor>();
+            if (Sets.TabItems == null) return Array.Empty<ITextEditor>();
             var editors = new List<ITextEditor>();
-            foreach (SetsViewItem item in Sets.Items)
+            foreach (TabViewItem item in Sets.TabItems)
             {
                 if (item.Content is ITextEditor textEditor)
                 {
@@ -378,7 +385,8 @@
         public void CloseTextEditor(ITextEditor textEditor)
         {
             var item = GetTextEditorSetsViewItem(textEditor);
-            item?.Close();
+            Sets.TabItems.Remove(item);
+            //item?.Close();
         }
 
         public ITextEditor GetTextEditor(StorageFile file)
@@ -389,31 +397,31 @@
 
         public double GetTabScrollViewerHorizontalOffset()
         {
-            return Sets.ScrollViewerHorizontalOffset;
+            return 50;// Sets.ScrollViewerHorizontalOffset;
         }
 
         public void SetTabScrollViewerHorizontalOffset(double offset)
         {
-            Sets.ScrollTo(offset);
+            //Sets.ScrollTo(offset);
         }
 
-        private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
+        private TabViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
         {
-            var modifierIcon = new FontIcon()
+            var modifierIcon = new Microsoft.UI.Xaml.Controls.FontIconSource()
             {
                 Glyph = "\uF127",
                 FontSize = 1.5,
-                Width = 3,
-                Height = 3,
-                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+                //Width = 3,
+                //Height = 3,
+                //Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
             };
 
-            var textEditorSetsViewItem = new SetsViewItem
+            var textEditorSetsViewItem = new TabViewItem
             {
                 Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
                 Content = textEditor,
-                SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-                Icon = modifierIcon
+                //SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+                //IconSource = null
             };
 
             if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)
@@ -421,16 +429,17 @@
                 throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
             }
 
-            textEditorSetsViewItem.Icon.Visibility = textEditor.IsModified ? Visibility.Visible : Visibility.Collapsed;
+            textEditorSetsViewItem.IconSource = textEditor.IsModified ? _modifierIcon : null;
+            //textEditorSetsViewItem.Icon.Visibility = textEditor.IsModified ? Visibility.Visible : Visibility.Collapsed;
             textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor);
 
             return textEditorSetsViewItem;
         }
 
-        private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
+        private TabViewItem GetTextEditorSetsViewItem(StorageFile file)
         {
-            if (Sets.Items == null) return null;
-            foreach (SetsViewItem setsItem in Sets.Items)
+            if (Sets.TabItems == null) return null;
+            foreach (TabViewItem setsItem in Sets.TabItems)
             {
                 if (!(setsItem.Content is ITextEditor textEditor)) continue;
                 if (textEditor.EditingFilePath != null && string.Equals(textEditor.EditingFilePath, file.Path, StringComparison.OrdinalIgnoreCase))
@@ -441,10 +450,10 @@
             return null;
         }
 
-        private SetsViewItem GetTextEditorSetsViewItem(ITextEditor textEditor)
+        private TabViewItem GetTextEditorSetsViewItem(ITextEditor textEditor)
         {
-            if (Sets.Items == null) return null;
-            foreach (SetsViewItem setsItem in Sets.Items)
+            if (Sets.TabItems == null) return null;
+            foreach (TabViewItem setsItem in Sets.TabItems)
             {
                 if (setsItem.Content is ITextEditor editor)
                 {
@@ -460,7 +469,8 @@
             var item = GetTextEditorSetsViewItem(textEditor);
             if (item != null)
             {
-                item.Icon.Visibility = Visibility.Visible;
+                item.IconSource = _modifierIcon;
+                //item.Icon.Visibility = Visibility.Visible;
             }
         }
 
@@ -474,7 +484,8 @@
                 {
                     item.Header = textEditor.EditingFileName;
                 }
-                item.Icon.Visibility = Visibility.Collapsed;
+                item.IconSource = null;
+                //item.Icon.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -488,13 +499,13 @@
             _allTextEditors = GetAllTextEditors();
         }
 
-        private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
+        private void SetsView_OnSetClosing(object sender, TabViewTabCloseRequestedEventArgs e)
         {
-            if (!(e.Set.Content is ITextEditor textEditor)) return;
+            if (!(e.Tab.Content is ITextEditor textEditor)) return;
 
             if (TextEditorClosing != null)
             {
-                e.Cancel = true;
+                //e.Cancel = true;
                 TextEditorClosing.Invoke(this, textEditor);
             }
         }
@@ -636,11 +647,10 @@
             deferral.Complete();
         }
 
-        private void Sets_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
+        private void Sets_DragItemsStarting(object sender, TabViewTabDragStartingEventArgs args)
         {
             // In Initial Window we need to serialize our tab data.
-            var item = args.Items.FirstOrDefault();
-            if (!(item is ITextEditor editor)) return;
+            if (!(args.Tab.Content is ITextEditor editor)) return;
 
             try
             {
@@ -679,7 +689,7 @@
 
         private async void Sets_Drop(object sender, DragEventArgs args)
         {
-            if (!(sender is SetsView sets))
+            if (!(sender is TabView sets))
             {
                 return;
             }
@@ -757,9 +767,9 @@
                 var index = -1;
 
                 // Determine which items in the list our pointer is in between.
-                for (int i = 0; i < sets.Items?.Count; i++)
+                for (int i = 0; i < sets.TabItems?.Count; i++)
                 {
-                    var item = sets.ContainerFromIndex(i) as SetsViewItem;
+                    var item = sets.ContainerFromIndex(i) as TabViewItem;
 
                     if (args.GetPosition(item).X - item?.ActualWidth < 0)
                     {
@@ -768,7 +778,7 @@
                     }
                 }
 
-                var atIndex = index == -1 ? sets.Items.Count : index;
+                var atIndex = index == -1 ? sets.TabItems.Count : index;
 
                 var textFile = new TextFile(lastSavedText,
                     EncodingUtility.GetEncodingByName(metaData.LastSavedEncoding),
@@ -799,11 +809,11 @@
             }
         }
 
-        private void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        private void Sets_DragItemsCompleted(TabView sender, TabViewTabDragCompletedEventArgs args)
         {
             if (ApplicationSettingsStore.Read(SetDragAndDropActionStatus) is string setDragAndDropActionStatus && setDragAndDropActionStatus == "Handled")
             {
-                if (args.Items.FirstOrDefault() is ITextEditor editor)
+                if (args.Tab.Content is ITextEditor editor)
                 {
                     TextEditorMovedToAnotherAppInstance?.Invoke(this, editor);
                 }
@@ -812,9 +822,9 @@
             ApplicationSettingsStore.Remove(SetDragAndDropActionStatus);
         }
 
-        private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
+        private async void Sets_SetDraggedOutside(object sender, TabViewTabDroppedOutsideEventArgs e)
         {
-            if (Sets.Items?.Count > 1 && e.Set?.Content is ITextEditor textEditor)
+            if (Sets.TabItems?.Count > 1 && e.Tab?.Content is ITextEditor textEditor)
             {
                 // Only allow untitled empty document to be dragged outside for now
                 if (!textEditor.IsModified && textEditor.EditingFile == null)

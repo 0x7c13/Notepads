@@ -147,12 +147,25 @@
     <Compile Include="Commands\MouseCommandHandler.cs" />
     <Compile Include="Commands\KeyboardCommand.cs" />
     <Compile Include="Commands\KeyboardCommandHandler.cs" />
-    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
-    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
-    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
-    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
-    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
-    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
+    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.xaml.cs">
+      <DependentUpon>AppCloseSaveReminderDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialog\FileOpenErrorDialog.xaml.cs">
+      <DependentUpon>FileOpenErrorDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialog\FileRenameDialog.xaml.cs">
+      <DependentUpon>FileRenameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialog\FileSaveErrorDialog.xaml.cs">
+      <DependentUpon>FileSaveErrorDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialog\INotepadsDialog.cs" />
+    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.xaml.cs">
+      <DependentUpon>RevertAllChangesConfirmationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.xaml.cs">
+      <DependentUpon>SetCloseSaveReminderDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
       <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
     </Compile>
@@ -175,6 +188,7 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="Utilities\BehaviorUtility.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />
     <Compile Include="Utilities\LanguageUtility.cs" />
     <Compile Include="Views\Settings\AboutPage.xaml.cs">
@@ -257,7 +271,6 @@
     <Compile Include="Utilities\LineEndingUtility.cs" />
     <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Services\ThemeSettingsService.cs" />
-    <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
     <Compile Include="Utilities\SearchEngineUtility.cs" />
     <Compile Include="Utilities\SessionUtility.cs" />
     <Compile Include="Models\TextFile.cs" />
@@ -302,6 +315,34 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Dialog\AppCloseSaveReminderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dialog\FileOpenErrorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dialog\FileRenameDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dialog\FileSaveErrorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\NotepadsDialogStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dialog\RevertAllChangesConfirmationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dialog\SetCloseSaveReminderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\FindAndReplace\FindAndReplaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -318,7 +359,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resource\CustomFlyoutItemStyle.xaml">
+    <Page Include="Resource\NotepadsInteractiveGridStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\NotepadsTabViewStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\Theme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -366,35 +415,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\FindAndReplace\FindAndReplacePlaceholder.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomAppBarButtonStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomNavigationViewStyle.xaml">
+    <Page Include="Resource\NotepadsSettingsViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resource\CustomRadioButtonStyle.xaml">
+    <Page Include="Resource\NotepadsInAppNotificationStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resource\CustomSliderStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomToggleSwitchStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\InAppNotificationNoDismissButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\CustomSplitViewStyle.xaml">
+    <Page Include="Resource\NotepadsSplitViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -412,19 +441,19 @@
       <Version>1.7.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>4.2.0</Version>
+      <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>4.2.0</Version>
+      <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.0.1</Version>
+      <Version>7.0.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.5.0</Version>
+      <Version>2.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.Registry">
       <Version>5.0.0</Version>
@@ -440,17 +469,88 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Notepads.Controls\Notepads.Controls.csproj">
-      <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
-      <Name>Notepads.Controls</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\**\*.resw" />
+    <PRIResource Include="Strings\ar-YE\Manifest.resw" />
+    <PRIResource Include="Strings\ar-YE\Resources.resw" />
+    <PRIResource Include="Strings\ar-YE\Settings.resw" />
+    <PRIResource Include="Strings\bg-BG\Manifest.resw" />
+    <PRIResource Include="Strings\bg-BG\Resources.resw" />
+    <PRIResource Include="Strings\bg-BG\Settings.resw" />
+    <PRIResource Include="Strings\cs-CZ\Manifest.resw" />
+    <PRIResource Include="Strings\cs-CZ\Resources.resw" />
+    <PRIResource Include="Strings\cs-CZ\Settings.resw" />
+    <PRIResource Include="Strings\de-CH\Manifest.resw" />
+    <PRIResource Include="Strings\de-CH\Resources.resw" />
+    <PRIResource Include="Strings\de-CH\Settings.resw" />
+    <PRIResource Include="Strings\de-DE\Manifest.resw" />
+    <PRIResource Include="Strings\de-DE\Resources.resw" />
+    <PRIResource Include="Strings\de-DE\Settings.resw" />
+    <PRIResource Include="Strings\en-US\Manifest.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\en-US\Settings.resw" />
+    <PRIResource Include="Strings\es-ES\Manifest.resw" />
+    <PRIResource Include="Strings\es-ES\Resources.resw" />
+    <PRIResource Include="Strings\es-ES\Settings.resw" />
+    <PRIResource Include="Strings\fi-FI\Manifest.resw" />
+    <PRIResource Include="Strings\fi-FI\Resources.resw" />
+    <PRIResource Include="Strings\fi-FI\Settings.resw" />
+    <PRIResource Include="Strings\fr-FR\Manifest.resw" />
+    <PRIResource Include="Strings\fr-FR\Resources.resw" />
+    <PRIResource Include="Strings\fr-FR\Settings.resw" />
+    <PRIResource Include="Strings\hi-IN\Manifest.resw" />
+    <PRIResource Include="Strings\hi-IN\Resources.resw" />
+    <PRIResource Include="Strings\hi-IN\Settings.resw" />
+    <PRIResource Include="Strings\hr-HR\Manifest.resw" />
+    <PRIResource Include="Strings\hr-HR\Resources.resw" />
+    <PRIResource Include="Strings\hr-HR\Settings.resw" />
+    <PRIResource Include="Strings\hu-HU\Manifest.resw" />
+    <PRIResource Include="Strings\hu-HU\Resources.resw" />
+    <PRIResource Include="Strings\hu-HU\Settings.resw" />
+    <PRIResource Include="Strings\it-IT\Manifest.resw" />
+    <PRIResource Include="Strings\it-IT\Resources.resw" />
+    <PRIResource Include="Strings\it-IT\Settings.resw" />
+    <PRIResource Include="Strings\ja-JP\Manifest.resw" />
+    <PRIResource Include="Strings\ja-JP\Resources.resw" />
+    <PRIResource Include="Strings\ja-JP\Settings.resw" />
+    <PRIResource Include="Strings\ka-GE\Manifest.resw" />
+    <PRIResource Include="Strings\ka-GE\Resources.resw" />
+    <PRIResource Include="Strings\ka-GE\Settings.resw" />
+    <PRIResource Include="Strings\ko-KR\Manifest.resw" />
+    <PRIResource Include="Strings\ko-KR\Resources.resw" />
+    <PRIResource Include="Strings\ko-KR\Settings.resw" />
+    <PRIResource Include="Strings\or-IN\Manifest.resw" />
+    <PRIResource Include="Strings\or-IN\Resources.resw" />
+    <PRIResource Include="Strings\or-IN\Settings.resw" />
+    <PRIResource Include="Strings\pl-PL\Manifest.resw" />
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
+    <PRIResource Include="Strings\pl-PL\Settings.resw" />
+    <PRIResource Include="Strings\pt-BR\Manifest.resw" />
+    <PRIResource Include="Strings\pt-BR\Resources.resw" />
+    <PRIResource Include="Strings\pt-BR\Settings.resw" />
+    <PRIResource Include="Strings\pt-PT\Manifest.resw" />
+    <PRIResource Include="Strings\pt-PT\Resources.resw" />
+    <PRIResource Include="Strings\pt-PT\Settings.resw" />
+    <PRIResource Include="Strings\ru-RU\Manifest.resw" />
+    <PRIResource Include="Strings\ru-RU\Resources.resw" />
+    <PRIResource Include="Strings\ru-RU\Settings.resw" />
+    <PRIResource Include="Strings\tr-TR\Manifest.resw" />
+    <PRIResource Include="Strings\tr-TR\Resources.resw" />
+    <PRIResource Include="Strings\tr-TR\Settings.resw" />
+    <PRIResource Include="Strings\uk-UA\Manifest.resw" />
+    <PRIResource Include="Strings\uk-UA\Resources.resw" />
+    <PRIResource Include="Strings\uk-UA\Settings.resw" />
+    <PRIResource Include="Strings\zh-CN\Manifest.resw" />
+    <PRIResource Include="Strings\zh-CN\Resources.resw" />
+    <PRIResource Include="Strings\zh-CN\Settings.resw" />
+    <PRIResource Include="Strings\zh-TW\Manifest.resw" />
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+    <PRIResource Include="Strings\zh-TW\Settings.resw" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.targets" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

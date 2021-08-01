@@ -32,7 +32,7 @@
 
             var firstItem = ((NavigationViewItem)SettingsNavigationView.MenuItems.First());
             firstItem.IsSelected = true;
-            SettingsPanel.Show(firstItem.Content.ToString(), firstItem?.Tag as string);
+            SettingsPanel.Show(Windows.UI.Xaml.Controls.ToolTipService.GetToolTip(firstItem).ToString(), firstItem?.Tag as string);
         }
 
         private void SettingsPage_Unloaded(object sender, RoutedEventArgs e)
@@ -70,7 +70,7 @@
 
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            SettingsPanel.Show((args.InvokedItem as string), (args.InvokedItemContainer as NavigationViewItem)?.Tag as string);
+            SettingsPanel.Show((Windows.UI.Xaml.Controls.ToolTipService.GetToolTip(args.InvokedItemContainer) as string), (args.InvokedItemContainer as NavigationViewItem)?.Tag as string);
         }
     }
 }

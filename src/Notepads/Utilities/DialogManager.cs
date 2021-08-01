@@ -9,11 +9,11 @@
 
     public static class DialogManager
     {
-        public static NotepadsDialog ActiveDialog;
+        public static INotepadsDialog ActiveDialog;
 
         private static TaskCompletionSource<bool> _dialogAwaiter = new TaskCompletionSource<bool>();
 
-        public static async Task<ContentDialogResult?> OpenDialogAsync(NotepadsDialog dialog, bool awaitPreviousDialog)
+        public static async Task<ContentDialogResult?> OpenDialogAsync(INotepadsDialog dialog, bool awaitPreviousDialog)
         {
             try
             {
@@ -43,7 +43,7 @@
             return null;
         }
 
-        private static async Task<ContentDialogResult> OpenDialog(NotepadsDialog dialog, bool awaitPreviousDialog)
+        private static async Task<ContentDialogResult> OpenDialog(INotepadsDialog dialog, bool awaitPreviousDialog)
         {
             TaskCompletionSource<bool> currentAwaiter = _dialogAwaiter;
             TaskCompletionSource<bool> nextAwaiter = new TaskCompletionSource<bool>();

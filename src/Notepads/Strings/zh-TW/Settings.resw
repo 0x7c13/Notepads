@@ -153,7 +153,7 @@
     <value>隱私權聲明</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
+  <data name="AboutPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>關於</value>
     <comment>AboutPage Title display text.</comment>
   </data>
@@ -169,7 +169,7 @@
     <value>狀態列設定</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+  <data name="AdvancedPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>進階設定</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
@@ -209,7 +209,7 @@
     <value>使用 Windows 設定</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+  <data name="PersonalizationPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>個人化</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
@@ -285,7 +285,7 @@
     <value>自動換行</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+  <data name="TextAndEditorPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>文字與編輯器</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>

@@ -4,14 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Height="36"
+    d:DesignHeight="36"
     d:DesignWidth="250"
     mc:Ignorable="d">
 
     <Grid
         x:Name="GoToRootGrid"
-        Height="36"
-        Padding="1,1,1,1"
+        Height="44"
+        Padding="1,4,1,7"
         KeyDown="GoToRootGrid_KeyDown">
 
         <Grid.ColumnDefinitions>
@@ -43,6 +43,7 @@
                 IsSpellCheckEnabled="False"
                 KeyDown="GoToBar_OnKeyDown"
                 LostFocus="GoToBar_LostFocus"
+                Style="{StaticResource TransparentTextBoxStyle}"
                 TextAlignment="Left"
                 TextChanged="GoToBar_OnTextChanged" />
         </Grid>
@@ -51,10 +52,10 @@
             x:Name="SearchButton"
             x:Uid="GoTo_SearchButton"
             Grid.Column="2"
-            Width="36"
+            Width="40"
             Click="SearchButton_OnClick"
             Content="&#xEBE7;"
-            FontFamily="Segoe MDL2 Assets"
+            FontFamily="{ThemeResource SymbolThemeFontFamily}"
             FontSize="16"
             IsTabStop="False"
             Style="{StaticResource DismissButtonStyle}"
@@ -64,10 +65,10 @@
             x:Name="DismissButton"
             x:Uid="FindAndReplace_DismissButton"
             Grid.Column="3"
-            Width="36"
+            Width="40"
             Click="DismissButton_OnClick"
             Content="&#xE894;"
-            FontFamily="Segoe MDL2 Assets"
+            FontFamily="{ThemeResource SymbolThemeFontFamily}"
             FontSize="16"
             IsTabStop="False"
             Style="{StaticResource DismissButtonStyle}" />

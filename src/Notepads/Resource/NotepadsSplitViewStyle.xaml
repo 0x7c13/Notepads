@@ -3,7 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Notepads">
 
-    <Style x:Key="CustomSplitViewStyle" TargetType="SplitView">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Theme.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style BasedOn="{StaticResource NotepadsSplitViewStyle}" TargetType="SplitView" />
+
+    <Style x:Key="NotepadsSplitViewStyle" TargetType="SplitView">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
@@ -45,7 +51,7 @@
                                 Width="1"
                                 HorizontalAlignment="Right"
                                 x:DeferLoadStrategy="Lazy"
-                                Fill="{ThemeResource SystemControlForegroundTransparentBrush}"
+                                Fill="{ThemeResource SubtleFillColorTransparentBrush}"
                                 Visibility="Collapsed" />
                         </Grid>
                         <Grid x:Name="ContentRoot" Grid.ColumnSpan="2">

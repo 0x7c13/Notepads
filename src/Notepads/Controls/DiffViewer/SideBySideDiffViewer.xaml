@@ -7,37 +7,6 @@
     Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush
-                        x:Key="RightBoxBackgroundThemeBrush"
-                        Opacity="0.25"
-                        Color="White" />
-                    <SolidColorBrush
-                        x:Key="HeaderBackgroundThemeBrush"
-                        Opacity="0.35"
-                        Color="LightGray" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush
-                        x:Key="RightBoxBackgroundThemeBrush"
-                        Opacity="0.15"
-                        Color="Black" />
-                    <SolidColorBrush
-                        x:Key="HeaderBackgroundThemeBrush"
-                        Opacity="0.2"
-                        Color="Black" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-
-    </UserControl.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -66,7 +35,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Content="&#xE894;"
-                    FontFamily="Segoe MDL2 Assets"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
                     FontSize="12"
                     IsTabStop="False"
                     Style="{StaticResource DismissButtonStyle}">

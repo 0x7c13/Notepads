@@ -5,50 +5,18 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
     <Application.Resources>
-        <ResourceDictionary>
-
-            <!--<ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="HighContrast">
-
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>-->
-
-            <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
-                <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
-                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml" />
+        <muxc:XamlControlsResources>
+            <muxc:XamlControlsResources.MergedDictionaries>
+                <ResourceDictionary Source="Resource/Theme.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsTabViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsSplitViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsSettingsViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsInteractiveGridStyle.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsInAppNotificationStyle.xaml" />
+                <ResourceDictionary Source="Resource/NotepadsDialogStyle.xaml" />
                 <ResourceDictionary Source="Resource/DismissButtonStyle.xaml" />
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml" />
-                <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml" />
-                <ResourceDictionary Source="Resource/CustomSliderStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomNavigationViewStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml" />
-                <ResourceDictionary Source="Resource/CustomFlyoutItemStyle.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <Style
-                x:Key="CompactSubtitleTextBlockStyle"
-                BasedOn="{StaticResource SubtitleTextBlockStyle}"
-                TargetType="TextBlock">
-                <Setter Property="FontSize" Value="18" />
-            </Style>
-
-            <Style
-                x:Key="DescriptionTextBlockStyle"
-                BasedOn="{StaticResource CaptionTextBlockStyle}"
-                TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}" />
-            </Style>
-        </ResourceDictionary>
+            </muxc:XamlControlsResources.MergedDictionaries>
+        </muxc:XamlControlsResources>
     </Application.Resources>
 </Application>

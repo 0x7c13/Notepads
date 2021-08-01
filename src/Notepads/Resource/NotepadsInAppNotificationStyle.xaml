@@ -3,9 +3,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
-    <Style x:Key="InAppNotificationNoDismissButton" TargetType="wctc:InAppNotification">
-        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Theme.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="NotepadsInAppNotificationStyle" TargetType="wctc:InAppNotification">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="VerticalOffset" Value="100" />
+        <Setter Property="HorizontalOffset" Value="0" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,1" />
+        <Setter Property="Margin" Value="24,12" />
+        <Setter Property="Padding" Value="24,12" />
+        <Setter Property="MaxWidth" Value="960" />
+        <Setter Property="MinWidth" Value="132" />
+        <Setter Property="MinHeight" Value="55" />
+        <Setter Property="Background" Value="{ThemeResource InAppNotificationBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimary}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource InAppNotificationBorderBrush}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="AnimationDuration" Value="0:0:0.100" />
+        <Setter Property="Visibility" Value="Collapsed" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -23,7 +43,8 @@
                             <wctc:DropShadowPanel
                                 HorizontalContentAlignment="Stretch"
                                 VerticalContentAlignment="Stretch"
-                                BlurRadius="8"
+                                BlurRadius="20"
+                                CornerRadius="{TemplateBinding CornerRadius}"
                                 OffsetX="0.3"
                                 OffsetY="0.3"
                                 ShadowOpacity="0.3">
@@ -32,7 +53,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    CornerRadius="{TemplateBinding CornerRadius}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>

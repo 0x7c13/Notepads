@@ -153,7 +153,7 @@
     <value>კონფედენციალურობის შესახებგანცხადება</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
+  <data name="AboutPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>შესახებ</value>
     <comment>AboutPage Title display text.</comment>
   </data>
@@ -169,7 +169,7 @@
     <value>სტატუს ბარის სეთინგები</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+  <data name="AdvancedPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>გაფართოებული</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
@@ -209,7 +209,7 @@
     <value>გამოიყენე ჩემი Windows-ის რეჟიმი</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+  <data name="PersonalizationPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>პერსონალიზაცია</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
@@ -285,7 +285,7 @@
     <value>ტექსტის შეფუთვა</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+  <data name="TextAndEditorPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>ტექსტი &amp; ედიტორი</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>

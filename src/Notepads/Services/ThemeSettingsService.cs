@@ -250,7 +250,7 @@
 
             if (DialogManager.ActiveDialog != null)
             {
-                DialogManager.ActiveDialog.RequestedTheme = ThemeMode;
+                //DialogManager.ActiveDialog.RequestedTheme = ThemeMode;
             }
 
             // Set accent color

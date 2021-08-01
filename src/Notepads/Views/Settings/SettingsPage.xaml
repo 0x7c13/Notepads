@@ -11,37 +11,48 @@
 
     <muxc:NavigationView
         x:Name="SettingsNavigationView"
+        CompactModeThresholdWidth="10"
         IsBackButtonVisible="Collapsed"
         IsBackEnabled="False"
         IsPaneOpen="False"
         IsSettingsVisible="False"
         ItemInvoked="SettingsPanel_OnItemInvoked"
         OpenPaneLength="200"
-        PaneDisplayMode="LeftCompact"
+        PaneDisplayMode="Top"
         PaneToggleButtonStyle="{StaticResource PaneToggleButtonStyle}">
 
         <muxc:NavigationView.MenuItems>
             <muxc:NavigationViewItem
                 x:Uid="/Settings/TextAndEditorPage_Title"
+                Width="78"
                 IsSelected="True"
                 Tag="TextAndEditor">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF17F;" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF17F;" />
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem x:Uid="/Settings/PersonalizationPage_Title" Tag="Personalization">
+            <muxc:NavigationViewItem
+                x:Uid="/Settings/PersonalizationPage_Title"
+                Width="78"
+                Tag="Personalization">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE771;" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem x:Uid="/Settings/AdvancedPage_Title" Tag="Advanced">
+            <muxc:NavigationViewItem
+                x:Uid="/Settings/AdvancedPage_Title"
+                Width="78"
+                Tag="Advanced">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE9E9;" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem x:Uid="/Settings/AboutPage_Title" Tag="About">
+            <muxc:NavigationViewItem
+                x:Uid="/Settings/AboutPage_Title"
+                Width="78"
+                Tag="About">
                 <muxc:NavigationViewItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                 </muxc:NavigationViewItem.Icon>
             </muxc:NavigationViewItem>
         </muxc:NavigationView.MenuItems>

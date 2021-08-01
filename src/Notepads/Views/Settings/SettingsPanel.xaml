@@ -7,22 +7,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="WhiteSmoke" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="#222222" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="{StaticResource SystemColorHighlightColor}" />
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPanelBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />

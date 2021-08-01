@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:controls="using:Notepads.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:muxca="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:wctc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wctui="using:Microsoft.Toolkit.Uwp.UI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -33,23 +34,24 @@
             OpenPaneLength="385"
             PaneBackground="Transparent"
             PanePlacement="Right"
-            Style="{StaticResource CustomSplitViewStyle}">
+            Style="{StaticResource NotepadsSplitViewStyle}">
 
             <SplitView.Content>
                 <Grid>
-                    <controls:SetsView
+                    <muxc:TabView
                         x:Name="Sets"
                         Grid.ColumnSpan="2"
                         AllowDrop="True"
+                        AllowDropTabs="True"
                         Background="Transparent"
-                        CanCloseSets="True"
-                        CanDragItems="True"
-                        CanReorderItems="True"
-                        IsCloseButtonOverlay="False"
+                        CanDrag="True"
+                        CanDragTabs="True"
+                        CanReorderTabs="True"
+                        CloseButtonOverlayMode="OnPointerOver"
                         Loaded="Sets_Loaded"
-                        SetsWidthBehavior="Equal"
+                        Style="{StaticResource NotepadsTabViewStyle}"
                         TabIndex="0"
-                        Template="{StaticResource SetsViewTemplate}">
+                        TabWidthMode="Equal">
 
                         <!--<sets:SetsView.KeyboardAccelerators>
                             <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="KeyboardAccelerator_Ctrl_N_OnInvoked"/>
@@ -58,21 +60,14 @@
                             <KeyboardAccelerator Key="Tab" Modifiers="Control,Shift" Invoked="KeyboardAccelerator_Ctrl_Shift_Tab_OnInvoked"/>
                         </sets:SetsView.KeyboardAccelerators>-->
 
-                        <controls:SetsView.Resources>
-                            <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
-                            <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
-                            <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
-                            <Storyboard x:Name="NewSetButtonOpacityAnimation">
-                                <DoubleAnimation
-                                    Storyboard.TargetName="NewSetButton"
-                                    Storyboard.TargetProperty="Opacity"
-                                    From="0.0"
-                                    To="1.0"
-                                    Duration="0:0:1" />
-                            </Storyboard>
-                        </controls:SetsView.Resources>
+                        <!--<muxc:TabView.Resources>
+                            <x:Double x:Key="TabViewItemMinHeight">32</x:Double>
+                            <x:Double x:Key="TabViewItemAddButtonHeight">32</x:Double>
+                            <x:Double x:Key="TabViewItemMinWidth">90</x:Double>
+                            <x:Double x:Key="TabViewItemMaxWidth">210</x:Double>
+                        </muxc:TabView.Resources>-->
 
-                        <controls:SetsView.SetsStartHeader>
+                        <muxc:TabView.TabStripHeader>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -83,16 +78,16 @@
                                     x:Name="ExitCompactOverlayButton"
                                     Grid.Column="0"
                                     Width="42"
-                                    Height="{StaticResource SetsViewItemHeaderMinHeight}"
+                                    Height="{StaticResource TabViewItemMinHeight}"
                                     Margin="0,0,0,0"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     Click="ExitCompactOverlayButton_OnClick"
                                     IsTabStop="False"
-                                    Style="{ThemeResource ButtonRevealStyle}"
+                                    Style="{StaticResource TabViewButtonStyle}"
                                     Visibility="Collapsed">
                                     <Viewbox MaxWidth="18" MaxHeight="18">
-                                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE944;" />
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE944;" />
                                     </Viewbox>
                                 </Button>
 
@@ -100,18 +95,29 @@
                                     x:Name="MainMenuButton"
                                     Grid.Column="1"
                                     Width="42"
-                                    Height="{StaticResource SetsViewItemHeaderMinHeight}"
-                                    Margin="0,0,-1,0"
+                                    Height="{StaticResource TabViewItemMinHeight}"
+                                    Margin="0,0,0,0"
                                     Padding="0"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     IsTabStop="False"
-                                    Style="{ThemeResource ButtonRevealStyle}">
-                                    <Viewbox MaxWidth="16" MaxHeight="16">
-                                        <SymbolIcon Symbol="GlobalNavigationButton" />
-                                    </Viewbox>
+                                    Style="{StaticResource TabViewButtonStyle}">
+                                    <muxc:AnimatedIcon
+                                        x:Name="MainMenuButtonIcon"
+                                        MaxWidth="16"
+                                        MaxHeight="16">
+                                        <muxc:AnimatedIcon.Source>
+                                            <muxca:AnimatedGlobalNavigationButtonVisualSource />
+                                        </muxc:AnimatedIcon.Source>
+                                        <muxc:AnimatedIcon.FallbackIconSource>
+                                            <muxc:SymbolIconSource Symbol="GlobalNavigationButton" />
+                                        </muxc:AnimatedIcon.FallbackIconSource>
+                                    </muxc:AnimatedIcon>
                                     <FlyoutBase.AttachedFlyout>
-                                        <MenuFlyout x:Name="MainMenuButtonFlyout" Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyout
+                                            x:Name="MainMenuButtonFlyout"
+                                            MenuFlyoutPresenterStyle="{StaticResource MainMenuFlyoutStyle}"
+                                            Placement="BottomEdgeAlignedLeft">
                                             <MenuFlyoutItem
                                                 x:Name="MenuCreateNewButton"
                                                 x:Uid="MainMenu_Button_New"
@@ -129,7 +135,7 @@
                                                 x:Uid="MainMenu_Button_New_Window"
                                                 AccessKey="N">
                                                 <MenuFlyoutItem.Icon>
-                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE737;" />
+                                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE737;" />
                                                 </MenuFlyoutItem.Icon>
                                                 <MenuFlyoutItem.KeyboardAccelerators>
                                                     <KeyboardAccelerator
@@ -247,19 +253,13 @@
                                                     <KeyboardAccelerator Key="F1" IsEnabled="False" />
                                                 </MenuFlyoutItem.KeyboardAccelerators>
                                             </MenuFlyoutItem>
-                                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                                <Style TargetType="MenuFlyoutPresenter">
-                                                    <Setter Property="BorderThickness" Value="0" />
-                                                    <Setter Property="MaxWidth" Value="1200" />
-                                                </Style>
-                                            </MenuFlyout.MenuFlyoutPresenterStyle>
                                         </MenuFlyout>
                                     </FlyoutBase.AttachedFlyout>
                                 </Button>
                             </Grid>
-                        </controls:SetsView.SetsStartHeader>
+                        </muxc:TabView.TabStripHeader>
 
-                        <controls:SetsView.SetsActionHeader>
+                        <!--<controls:SetsView.SetsActionHeader>
                             <Button
                                 x:Name="NewSetButton"
                                 Grid.Column="0"
@@ -271,28 +271,42 @@
                                 IsTabStop="False"
                                 Style="{ThemeResource ButtonRevealStyle}">
                                 <Viewbox MaxWidth="14" MaxHeight="14">
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" />
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
                                 </Viewbox>
                             </Button>
-                        </controls:SetsView.SetsActionHeader>
+                        </controls:SetsView.SetsActionHeader>-->
 
-                        <controls:SetsView.SetsPaddingHeader>
+                        <!--<controls:SetsView.SetsPaddingHeader>
                             <Grid
                                 x:Name="AppTitleBar"
                                 Height="32"
                                 Background="Transparent" />
-                        </controls:SetsView.SetsPaddingHeader>
+                        </controls:SetsView.SetsPaddingHeader>-->
 
-                        <controls:SetsView.SetsEndHeader>
-                            <Grid
-                                x:Name="TitleBarReservedArea"
-                                Width="180"
-                                Height="32"
-                                HorizontalAlignment="Center"
-                                Background="Transparent" />
-                        </controls:SetsView.SetsEndHeader>
+                        <muxc:TabView.TabStripFooter>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                    </controls:SetsView>
+                                <Grid
+                                    x:Name="AppTitleBar"
+                                    Grid.Column="0"
+                                    Height="{StaticResource TabViewItemMinHeight}"
+                                    Background="Transparent" />
+
+                                <Grid
+                                    x:Name="TitleBarReservedArea"
+                                    Grid.Column="1"
+                                    Width="180"
+                                    Height="{StaticResource TabViewItemMinHeight}"
+                                    HorizontalAlignment="Center"
+                                    Background="Transparent" />
+                            </Grid>
+                        </muxc:TabView.TabStripFooter>
+
+                    </muxc:TabView>
 
                     <wctc:InAppNotification
                         x:Name="StatusNotification"
@@ -303,7 +317,7 @@
                         FontWeight="Light"
                         HorizontalOffset="0"
                         ShowDismissButton="False"
-                        Style="{StaticResource InAppNotificationNoDismissButton}"
+                        Style="{StaticResource NotepadsInAppNotificationStyle}"
                         VerticalOffset="-20" />
                 </Grid>
             </SplitView.Content>
@@ -332,17 +346,6 @@
             Grid.Row="1"
             Height="25"
             x:Load="false">
-            <Grid.Resources>
-                <Style x:Key="StatusBarTextBlockStyle" TargetType="TextBlock">
-                    <Setter Property="Height" Value="25" />
-                    <Setter Property="Padding" Value="8,4,8,4" />
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                    <Setter Property="FontSize" Value="11" />
-                    <Setter Property="FontWeight" Value="Normal" />
-                    <Setter Property="Opacity" Value="1.0" />
-                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                </Style>
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MinWidth="4" />
                 <ColumnDefinition Width="*" />
@@ -358,26 +361,9 @@
                 <Grid
                     x:Name="FileModificationStateIndicator"
                     Padding="8,5,6,5"
-                    wctui:FrameworkElementExtensions.Cursor="Hand"
                     IsTapEnabled="True"
+                    Style="{StaticResource NotepadsInteractiveGridStyle}"
                     Tapped="StatusBarComponent_OnTapped">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="PointerEntered">
-                            <Core:ChangePropertyAction PropertyName="Background">
-                                <Core:ChangePropertyAction.Value>
-                                    <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                                </Core:ChangePropertyAction.Value>
-                            </Core:ChangePropertyAction>
-                        </Core:EventTriggerBehavior>
-
-                        <Core:EventTriggerBehavior EventName="PointerExited">
-                            <Core:ChangePropertyAction PropertyName="Background">
-                                <Core:ChangePropertyAction.Value>
-                                    <SolidColorBrush Color="Transparent" />
-                                </Core:ChangePropertyAction.Value>
-                            </Core:ChangePropertyAction>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
                     <Viewbox>
                         <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}" />
                     </Viewbox>
@@ -385,6 +371,7 @@
                         <MenuFlyout
                             x:Name="FileModifiedOutsideFlyout"
                             Closing="StatusBarFlyout_OnClosing"
+                            MenuFlyoutPresenterStyle="{StaticResource StatusBarFlyoutStyle}"
                             Placement="TopEdgeAlignedLeft">
                             <MenuFlyoutItem
                                 x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem"
@@ -401,48 +388,23 @@
                                         Modifiers="Control,Shift" />
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </Grid.ContextFlyout>
                 </Grid>
             </Grid>
 
-            <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
-                Column="1"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
+            <Grid Column="1" Style="{StaticResource NotepadsInteractiveLargeGridStyle}">
                 <TextBlock
                     x:Name="PathIndicator"
                     Padding="4,4,8,4"
                     IsTapEnabled="True"
                     Style="{StaticResource StatusBarTextBlockStyle}"
                     Tapped="StatusBarComponent_OnTapped">
-
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="PointerEntered">
-                            <Core:ChangePropertyAction PropertyName="Opacity">
-                                <Core:ChangePropertyAction.Value>
-                                    0.7
-                                </Core:ChangePropertyAction.Value>
-                            </Core:ChangePropertyAction>
-                        </Core:EventTriggerBehavior>
-
-                        <Core:EventTriggerBehavior EventName="PointerExited">
-                            <Core:ChangePropertyAction PropertyName="Opacity">
-                                <Core:ChangePropertyAction.Value>
-                                    1.0
-                                </Core:ChangePropertyAction.Value>
-                            </Core:ChangePropertyAction>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
                     <TextBlock.ContextFlyout>
                         <MenuFlyout
                             x:Name="PathIndicatorFlyout"
                             Closing="StatusBarFlyout_OnClosing"
+                            MenuFlyoutPresenterStyle="{StaticResource StatusBarFlyoutStyle}"
                             Placement="TopEdgeAlignedLeft">
                             <MenuFlyoutItem
                                 x:Name="PathIndicatorFlyoutReloadFileFromDiskFlyoutItem"
@@ -488,38 +450,12 @@
                                     <KeyboardAccelerator Key="F2" IsEnabled="False" />
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
 
-            <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
-                Column="2"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
+            <Grid Column="2" Style="{StaticResource NotepadsInteractiveGridStyle}">
                 <TextBlock
                     x:Name="ModificationIndicator"
                     Foreground="{StaticResource SystemControlForegroundAccentBrush}"
@@ -530,6 +466,7 @@
                         <MenuFlyout
                             x:Name="ModificationFlyout"
                             Closing="StatusBarFlyout_OnClosing"
+                            MenuFlyoutPresenterStyle="{StaticResource StatusBarFlyoutStyle}"
                             Placement="TopEdgeAlignedRight">
                             <MenuFlyoutItem
                                 x:Name="PreviewTextChangesFlyoutItem"
@@ -554,12 +491,6 @@
                                     <FontIcon Glyph="&#xE7A7;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
                 </TextBlock>
@@ -567,26 +498,8 @@
 
             <Grid
                 x:Name="LineColumnIndicatorButton"
-                wctui:FrameworkElementExtensions.Cursor="Hand"
                 Column="3"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
+                Style="{StaticResource NotepadsInteractiveGridStyle}">
                 <TextBlock
                     x:Name="LineColumnIndicator"
                     IsTapEnabled="True"
@@ -594,125 +507,69 @@
                     Tapped="StatusBarComponent_OnTapped" />
             </Grid>
 
-            <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
-                Column="4"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
+            <Grid Column="4" Style="{StaticResource NotepadsInteractiveGridStyle}">
                 <TextBlock
                     x:Name="FontZoomIndicator"
                     IsTapEnabled="True"
                     Style="{StaticResource StatusBarTextBlockStyle}"
                     Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
-                        <Flyout
+                        <muxc:CommandBarFlyout
                             x:Name="FontZoomIndicatorFlyout"
+                            AlwaysExpanded="True"
                             Closing="StatusBarFlyout_OnClosing"
                             Placement="TopEdgeAlignedRight">
-                            <StackPanel>
-                                <StackPanel Margin="-10,0,-10,0" Orientation="Horizontal">
-                                    <AppBarButton
-                                        x:Name="ZoomOut"
-                                        x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
-                                        Width="40"
-                                        VerticalAlignment="Center"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                        Click="FontZoomIndicatorFlyoutSelection_OnClick"
-                                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                                        KeyboardAcceleratorTextOverride="Ctrl+Minus"
-                                        LabelPosition="Collapsed">
-                                        <AppBarButton.Icon>
-                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE108;" />
-                                        </AppBarButton.Icon>
-                                        <AppBarButton.KeyboardAccelerators>
-                                            <KeyboardAccelerator
-                                                Key="Subtract"
-                                                IsEnabled="False"
-                                                Modifiers="Control" />
-                                        </AppBarButton.KeyboardAccelerators>
-                                    </AppBarButton>
-                                    <Slider
-                                        x:Name="FontZoomSlider"
-                                        Width="150"
-                                        Margin="5"
-                                        VerticalAlignment="Center"
-                                        Maximum="500"
-                                        Minimum="10"
-                                        ValueChanged="FontZoomSlider_ValueChanged"
-                                        Value="100" />
-                                    <AppBarButton
-                                        x:Name="ZoomIn"
-                                        x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
-                                        Width="40"
-                                        VerticalAlignment="Center"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
-                                        Click="FontZoomIndicatorFlyoutSelection_OnClick"
-                                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                                        KeyboardAcceleratorTextOverride="Ctrl+Plus"
-                                        LabelPosition="Collapsed">
-                                        <AppBarButton.Icon>
-                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE109;" />
-                                        </AppBarButton.Icon>
-                                        <AppBarButton.KeyboardAccelerators>
-                                            <KeyboardAccelerator
-                                                Key="Add"
-                                                IsEnabled="False"
-                                                Modifiers="Control" />
-                                        </AppBarButton.KeyboardAccelerators>
-                                    </AppBarButton>
-                                </StackPanel>
-                                <StackPanel Margin="5,-5,0,0" Orientation="Horizontal">
-                                    <TextBlock
-                                        x:Name="MinZoom"
-                                        Margin="30,0,0,0"
-                                        FontSize="10"
-                                        Text="10%" />
-                                    <TextBlock
-                                        x:Name="MaxZoom"
-                                        Margin="108,0,0,0"
-                                        FontSize="10"
-                                        Text="500%" />
-                                </StackPanel>
-                                <StackPanel
-                                    Margin="0,-15,0,0"
-                                    HorizontalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontSize="15"
-                                        Text="{x:Bind FontZoomSlider.Value, Mode=OneWay}" />
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontSize="15"
-                                        Text="%" />
-                                </StackPanel>
+                            <AppBarButton
+                                x:Name="ZoomOut"
+                                x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
+                                Click="FontZoomIndicatorFlyoutSelection_OnClick"
+                                KeyboardAcceleratorTextOverride="Ctrl+Minus"
+                                LabelPosition="Collapsed">
+                                <AppBarButton.Icon>
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE108;" />
+                                </AppBarButton.Icon>
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator
+                                        Key="Subtract"
+                                        IsEnabled="False"
+                                        Modifiers="Control" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarElementContainer>
+                                <Slider
+                                    x:Name="FontZoomSlider"
+                                    Width="180"
+                                    Margin="0,2,0,0"
+                                    Maximum="500"
+                                    Minimum="10"
+                                    StepFrequency="1"
+                                    TickFrequency="90"
+                                    TickPlacement="Outside"
+                                    ValueChanged="FontZoomSlider_ValueChanged"
+                                    Value="100" />
+                            </AppBarElementContainer>
+                            <AppBarButton
+                                x:Name="ZoomIn"
+                                x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
+                                Click="FontZoomIndicatorFlyoutSelection_OnClick"
+                                KeyboardAcceleratorTextOverride="Ctrl+Plus"
+                                LabelPosition="Collapsed">
+                                <AppBarButton.Icon>
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE109;" />
+                                </AppBarButton.Icon>
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator
+                                        Key="Add"
+                                        IsEnabled="False"
+                                        Modifiers="Control" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <muxc:CommandBarFlyout.SecondaryCommands>
                                 <AppBarButton
                                     x:Name="RestoreDefaultZoom"
                                     x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom"
-                                    Margin="-10,5,-10,-5"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
                                     Click="FontZoomIndicatorFlyoutSelection_OnClick"
-                                    CornerRadius="{ThemeResource ControlCornerRadius}"
-                                    Icon="Undo"
-                                    Style="{StaticResource CustomAppBarButtonLabelToRightStyle}">
+                                    Icon="Undo">
                                     <AppBarButton.KeyboardAccelerators>
                                         <KeyboardAccelerator
                                             Key="Number0"
@@ -720,39 +577,13 @@
                                             Modifiers="Control" />
                                     </AppBarButton.KeyboardAccelerators>
                                 </AppBarButton>
-                            </StackPanel>
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                        </Flyout>
+                            </muxc:CommandBarFlyout.SecondaryCommands>
+                        </muxc:CommandBarFlyout>
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
 
-            <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
-                Column="5"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
+            <Grid Column="5" Style="{StaticResource NotepadsInteractiveGridStyle}">
                 <TextBlock
                     x:Name="LineEndingIndicator"
                     IsTapEnabled="True"
@@ -762,6 +593,7 @@
                         <MenuFlyout
                             x:Name="LineEndingSelectionFlyout"
                             Closing="StatusBarFlyout_OnClosing"
+                            MenuFlyoutPresenterStyle="{StaticResource StatusBarFlyoutStyle}"
                             Placement="TopEdgeAlignedRight">
                             <MenuFlyoutItem
                                 Click="LineEndingSelection_OnClick"
@@ -775,38 +607,12 @@
                                 Click="LineEndingSelection_OnClick"
                                 Tag="LF"
                                 Text="Unix (LF)" />
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
 
-            <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
-                Column="6"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
+            <Grid Column="6" Style="{StaticResource NotepadsInteractiveGridStyle}">
                 <TextBlock
                     x:Name="EncodingIndicator"
                     IsTapEnabled="True"
@@ -816,50 +622,23 @@
                         <MenuFlyout
                             x:Name="EncodingSelectionFlyout"
                             Closing="StatusBarFlyout_OnClosing"
-                            Placement="TopEdgeAlignedRight">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
+                            MenuFlyoutPresenterStyle="{StaticResource StatusBarFlyoutStyle}"
+                            Placement="TopEdgeAlignedRight" />
                     </TextBlock.ContextFlyout>
                 </TextBlock>
             </Grid>
 
             <Grid
-                wctui:FrameworkElementExtensions.Cursor="Hand"
+                x:Name="ShadowWindowIndicator"
+                Padding="6,6,6,6"
                 Column="7"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerEntered">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="{ThemeResource SystemRevealListLowColor}" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-
-                    <Core:EventTriggerBehavior EventName="PointerExited">
-                        <Core:ChangePropertyAction PropertyName="Background">
-                            <Core:ChangePropertyAction.Value>
-                                <SolidColorBrush Color="Transparent" />
-                            </Core:ChangePropertyAction.Value>
-                        </Core:ChangePropertyAction>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
-                <Grid
-                    x:Name="ShadowWindowIndicator"
-                    Padding="6,6,6,6"
-                    CornerRadius="{ThemeResource ControlCornerRadius}"
-                    IsTapEnabled="True"
-                    Tapped="StatusBarComponent_OnTapped"
-                    Visibility="Collapsed">
-                    <Viewbox>
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Glyph="&#xE737;" />
-                    </Viewbox>
-                </Grid>
+                IsTapEnabled="True"
+                Style="{StaticResource NotepadsInteractiveGridStyle}"
+                Tapped="StatusBarComponent_OnTapped"
+                Visibility="Collapsed">
+                <Viewbox>
+                    <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Glyph="&#xE737;" />
+                </Viewbox>
             </Grid>
         </Grid>
 

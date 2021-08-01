@@ -13,73 +13,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush
-                        x:Key="SplitViewBackgroundThemeBrush"
-                        Opacity="0.4"
-                        Color="White" />
-                    <SolidColorBrush
-                        x:Key="GridSplitterBackgroundThemeBrush"
-                        Opacity="0.5"
-                        Color="LightGray" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush
-                        x:Key="SplitViewBackgroundThemeBrush"
-                        Opacity="0.25"
-                        Color="Black" />
-                    <SolidColorBrush
-                        x:Key="GridSplitterBackgroundThemeBrush"
-                        Opacity="0.3"
-                        Color="Black" />
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-                    <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-
-            <Style x:Key="CustomGridSplitterStyle" TargetType="wctc:GridSplitter">
-                <Setter Property="IsTabStop" Value="True" />
-                <Setter Property="UseSystemFocusVisuals" Value="True" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="VerticalAlignment" Value="Stretch" />
-                <Setter Property="IsFocusEngagementEnabled" Value="True" />
-                <Setter Property="MinWidth" Value="2" />
-                <Setter Property="MinHeight" Value="2" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="GripperForeground" Value="Transparent" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="wctc:GridSplitter">
-                            <Grid x:Name="RootGrid" Background="Transparent">
-                                <ContentPresenter
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
-                                    Content="{TemplateBinding Element}" />
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="GridSplitterStates">
-                                        <VisualState x:Name="Normal" />
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Target="RootGrid.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Target="RootGrid.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
+        <ResourceDictionary Source="TextEditorCore.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -184,7 +118,7 @@
                 GripperCursor="Default"
                 ResizeBehavior="BasedOnAlignment"
                 ResizeDirection="Auto"
-                Style="{StaticResource CustomGridSplitterStyle}">
+                Style="{StaticResource NotepadsGridSplitterStyle}">
                 <wctc:GridSplitter.RenderTransform>
                     <TranslateTransform X="0" />
                 </wctc:GridSplitter.RenderTransform>

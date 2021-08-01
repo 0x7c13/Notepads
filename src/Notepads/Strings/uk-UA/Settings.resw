@@ -153,7 +153,7 @@
     <value>Конфіденційність</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
+  <data name="AboutPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>Про програму</value>
     <comment>AboutPage Title display text.</comment>
   </data>
@@ -169,7 +169,7 @@
     <value>Налаштування рядка стану</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+  <data name="AdvancedPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>Додатково</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
@@ -209,7 +209,7 @@
     <value>Використовувати тему Windows</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+  <data name="PersonalizationPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>Персоналізація</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
@@ -285,7 +285,7 @@
     <value>Переносити слова</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+  <data name="TextAndEditorPage_Title.ToolTipService.ToolTip" xml:space="preserve">
     <value>Текст і редактор</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
