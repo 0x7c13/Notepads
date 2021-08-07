@@ -119,6 +119,11 @@
             FontSize = AppSettingsService.EditorFontSize;
             FontStyle = AppSettingsService.EditorFontStyle;
             FontWeight = AppSettingsService.EditorFontWeight;
+            //FontStretch = AppSettingsService.EditorFontStretch;
+            var format = Document.GetDefaultCharacterFormat();
+            format.FontStretch = AppSettingsService.EditorFontStretch;
+            Document.SetDefaultCharacterFormat(format);
+
             SelectionHighlightColor = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionHighlightColorWhenNotFocused = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
             SelectionFlyout = null;
