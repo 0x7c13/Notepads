@@ -41,7 +41,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 ![Screenshot DiffViewer](ScreenShots/3.png?raw=true "DiffViewer")
 ![Screenshot Light](ScreenShots/4.png?raw=true "Light")
 
-******* 📣 Notepads App is still under active development. *******
+**📣 Notepads App is still under active development.**
 
 ## Status update
 
