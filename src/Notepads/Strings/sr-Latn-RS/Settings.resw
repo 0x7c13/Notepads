@@ -117,580 +117,308 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>There are unsaved changes.</value>
-    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save All &amp; Exit</value>
-    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Discard &amp; Exit</value>
-    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Do you want to save the changes?</value>
-    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
-  </data>
-  <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Nothing to share because no text is selected and current document is empty.</value>
-    <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
-  </data>
-  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>After your changes</value>
-    <comment>DiffViewer: Header's text for new text (After changes).</comment>
-  </data>
-  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>Before your changes</value>
-    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
-  </data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads does not support file greater than 1MB at this moment.</value>
-    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Sorry, file "{0}" couldn't be opened: {1}</value>
-    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
-    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>File Open Error</value>
-    <comment>FileOpenErrorDialog: "Title" display text.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Sorry, file "{0}" couldn't be saved: {1}</value>
-    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
-    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>File Save Error</value>
-    <comment>FileSaveErrorDialog: "Title" display text.</comment>
-  </data>
-  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Close</value>
-    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
-    <value>Find</value>
-    <comment>FindAndReplace: Find bar placeholder text.</comment>
-  </data>
-  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>Not Found</value>
-    <comment>FindAndReplace: Notification message when target not found.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Replace All (Ctrl+Alt+Enter)</value>
-    <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
-    <value>Replace</value>
-    <comment>FindAndReplace: Replace bar placeholder text.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Replace (Alt+R)</value>
-    <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Next (F3)</value>
-    <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Search Options</value>
-    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Match Case</value>
-    <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Match Whole Word</value>
-    <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>Find...</value>
-    <comment>MainMenu: "Find" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>New</value>
-    <comment>MainMenu: "New" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>Open...</value>
-    <comment>MainMenu: "Open" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>Print...</value>
-    <comment>MainMenu: "Print" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>Replace...</value>
-    <comment>MainMenu: "Replace" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Save.Text" xml:space="preserve">
-    <value>Save</value>
-    <comment>MainMenu: "Save" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Save All</value>
-    <comment>MainMenu: "Save All" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>Save As...</value>
-    <comment>MainMenu: "Save As" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>Settings</value>
-    <comment>MainMenu: "Settings" button display text.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>All changes including text, line ending and encoding made to "{0}" will be reverted!</value>
-    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Yes</value>
-    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Are you sure to revert all changes?</value>
-    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Save file "{0}"?</value>
-    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
-    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Don't Save</value>
-    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Save your changes?</value>
-    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
-    <value>Close</value>
-    <comment>Tab: ContextFlyout "Close" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>Close Others</value>
-    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Close to the Right</value>
-    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Close Saved</value>
-    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>Copy Full Path</value>
-    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
-    <value>Open Containing Folder</value>
-    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
-    <value>Copy</value>
-    <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
-    <value>Cut</value>
-    <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
-    <value>Paste</value>
-    <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>Toggle Preview</value>
-    <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
-    <value>Redo</value>
-    <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
-    <value>Select All</value>
-    <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
-    <value>Share</value>
-    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Share Selected</value>
-    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
-    <value>Undo</value>
-    <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Word Wrap</value>
-    <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
-  </data>
-  <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>Untitled.txt</value>
-    <comment>TextEditor: Default file name for new document.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Ln {0}, Col {1} ({2} {3})</value>
-    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Ln {0}, Col {1}</value>
-    <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>Preview text changes</value>
-    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Revert all changes</value>
-    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>Modified</value>
-    <comment>TextEditor: ModificationIndicator display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>Copied</value>
-    <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
-    <value>Saved</value>
-    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Press F11 to exit full screen</value>
-    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
-  </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Reload file from disk</value>
-    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>File has been modified externally</value>
-    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>File has been moved, renamed or deleted!</value>
-    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>File reloaded</value>
-    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
-  </data>
-  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Compact Overlay</value>
-    <comment>App: "Compact Overlay" display text</comment>
-  </data>
-  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Full Screen</value>
-    <comment>App: "Full Screen" display text</comment>
-  </data>
-  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Exit Compact Overlay</value>
-    <comment>App: "Exit Compact Overlay" display text</comment>
-  </data>
-  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Exit Full Screen</value>
-    <comment>App: "Exit Full Screen" display text</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>selected</value>
-    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>selected</value>
-    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
-  </data>
-  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Move tab here</value>
-    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
-  </data>
-  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Open with Notepads</value>
-    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
-  </data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>This is a shadow window of Notepads. Session snapshot and settings are disabled.</value>
-    <comment>App: ShadowWindowIndicator Description display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>File already opened!</value>
-    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
-  </data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>New window</value>
-    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
-  </data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Opens a new window</value>
-    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
-  </data>
-  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>New Window</value>
-    <comment>MainMenu: "New Window" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Open Recent</value>
-    <comment>MainMenu: "Open Recent" button display text.</comment>
-  </data>
-  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Go To Line</value>
-    <comment>GoTo: Go to bar placeholder text.</comment>
-  </data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Line number exceeds beyond the total number of lines!</value>
-    <comment>GoTo: Notification message when input exceeds input limit.</comment>
-  </data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>You can only type a number!</value>
-    <comment>GoTo: Notification message when invalid input entered.</comment>
-  </data>
-  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Go To Line</value>
-    <comment>GoTo: "Search" button tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Search in web</value>
-    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restore Default Zoom</value>
-    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Zoom In</value>
-    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Zoom Out</value>
-    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
-  </data>
-  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Go To:</value>
-    <comment>GoTo: Go to bar label</comment>
-  </data>
-  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Print All...</value>
-    <comment>MainMenu: "Print All" button display text.</comment>
-  </data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Can only accept upto one decimal place</value>
-    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
-  </data>
-  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Value out of range</value>
-    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
-  </data>
-  <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Footer</value>
-    <comment>Print: PrintManager custom option "FooterText" title.</comment>
-  </data>
-  <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Header</value>
-    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
-  </data>
-  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Horizontal Margin (in %)</value>
-    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
-  </data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>In % of paper width</value>
-    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Error printing:</value>
-    <comment>Print: Notification message when error occurs while showing print ui.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Failed to print</value>
-    <comment>Print: Notification message on print failure.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Printing is not supported on this device</value>
-    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
-  </data>
-  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Vertical Margin (in %)</value>
-    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Use Regular Expression</value>
-    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Clear Recently Opened</value>
-    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>More Encodings</value>
-    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Reopen with Encoding</value>
-    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Save with Encoding</value>
-    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Invalid regular expression!</value>
-    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
-    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
-    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
-  </data>
-  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
-    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
-    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
-    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
-  </data>
-  <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
-    <comment>FontStyle: "Italic"</comment>
-  </data>
-  <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
-    <comment>FontStyle: "Normal"</comment>
-  </data>
-  <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
-    <comment>FontStyle: "Oblique"</comment>
-  </data>
-  <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
-    <comment>FontWeight: "Black"</comment>
-  </data>
-  <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
-    <comment>FontWeight: "Bold"</comment>
-  </data>
-  <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Extra Black</value>
-    <comment>FontWeight: "ExtraBlack"</comment>
-  </data>
-  <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Extra Bold</value>
-    <comment>FontWeight: "ExtraBold"</comment>
-  </data>
-  <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Extra Light</value>
-    <comment>FontWeight: "ExtraLight"</comment>
-  </data>
-  <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
-    <comment>FontWeight: "Light"</comment>
-  </data>
-  <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
-    <comment>FontWeight: "Medium"</comment>
-  </data>
-  <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
-    <comment>FontWeight: "Normal"</comment>
-  </data>
-  <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Semi Bold</value>
-    <comment>FontWeight: "SemiBold"</comment>
-  </data>
-  <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Semi Light</value>
-    <comment>FontWeight: "SemiLight"</comment>
-  </data>
-  <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
-    <comment>FontWeight: "Thin"</comment>
-  </data>
-  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>FileRenameDialog: CloseButtonText.</comment>
-  </data>
-  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
-    <comment>FileRenameDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
-    <comment>FileRenameDialog: "Title" display text.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
-    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>File name should not contain leading spaces</value>
-    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>File name should not contain trailing spaces</value>
-    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
-  </data>
-  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>File name cannot be empty or all whitespace</value>
-    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
-  </data>
-  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
-    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
-  </data>
-  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>File name cannot be longer than 255 characters</value>
-    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
-    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
-    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
-  </data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Empty file extension is not supported at this moment</value>
-    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
-  </data>
-  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>File extension "{0}" is not supported at this moment</value>
-    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
+    <value>Zavisnosti i reference</value>
+    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
+    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
+  </data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
+    <value>Odricanje od odgovornosti</value>
+    <comment>AboutPage Disclaimer Title display text.</comment>
+  </data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
+    <value>Besplatan i open source uređivač teksta dizajniran i implementiran od strane Jackie (Jiaqi) Liu</value>
+    <comment>AboutPage NotepadsShortDescription display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
+    <value>Da kontaktirate autore:</value>
+    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
+    <value>Za prijavljivanje problema i predloge mogućnosti:</value>
+    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
+    <value>Izvorni kod je dostupan na GitHub-u:</value>
+    <comment>AboutPage Notepads SourceCode Title display text.</comment>
+  </data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
+    <value>Za još informacija, molimo posetite naš veb-sajt:</value>
+    <comment>AboutPage Notepads Website Title display text.</comment>
+  </data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+    <value>Izjava o privatnosti</value>
+    <comment>AboutPage PrivacyStatementTitle display text.</comment>
+  </data>
+  <data name="AboutPage_Title.Content" xml:space="preserve">
+    <value>O aplikaciji</value>
+    <comment>AboutPage Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
+    <value>Prikaži statusnu traku</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
+    <value>Prikaži statusnu traku</value>
+    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
+    <value>Postavke statusne trake</value>
+    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve">
+    <value>Napredno</value>
+    <comment>AdvancedPage Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
+    <value>Boja za isticanje</value>
+    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
+    <value>Koristi sistemsku boju za isticanje</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
+  </data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
+    <value>Koristi sistemsku boju za isticanje</value>
+    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
+    <value>Akrilna neprozirnost boje pozadine. Akrilni efekt će se deaktivirati kad se uključi štednja baterije ili ako se isključi efekt prozirnosti u postavkama Windows-a.</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
+  </data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
+    <value>Neprozirnost boje pozadine</value>
+    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
+    <value>Tamna</value>
+    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
+    <value>Svetla</value>
+    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
+    <value>Tema</value>
+    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
+  </data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
+    <value>Koristi moju Windows temu</value>
+    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
+  </data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
+    <value>Personalizacija</value>
+    <comment>PersonalizationPage Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
+    <value>ANSI (kodna stranica za Windows)</value>
+    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
+    <value>Rezervno dekodiranje će biti iskorišćeno ako se kodiranje datoteke ne može prepoznati.</value>
+    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
+    <value>Rezervno dekodiranje</value>
+    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
+    <value>UTF-8</value>
+    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
+    <value>Važi samo za nove dokumente.</value>
+    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevano kodiranje</value>
+    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevani font i veličina</value>
+    <comment>TextAndEditorPage FontSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
+    <value>Važi samo za nove dokumente.</value>
+    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevani završetak redova</value>
+    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
+    <value>Standardno (\t)</value>
+    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
+    <value>Postavke ponašanja tastera Tab, važi samo za nove tabulatore umetnute od strane korisnika.</value>
+    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
+    <value>8 razmaka</value>
+    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
+    <value>4 razmaka</value>
+    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
+    <value>Ponašanje tastera Tab</value>
+    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
+    <value>2 razmaka</value>
+    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
+    <value>Prelamanje teksta</value>
+    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Prelamanje reči</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Prelamanje reči</value>
+    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
+    <value>Tekst i uređivanje</value>
+    <comment>TextAndEditorPage Title display text.</comment>
+  </data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
+    <value>Dnevnik izmena</value>
+    <comment>AboutPage Changelog Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
+    <value>Kad je aktivno, Notepads će pamtiti trenutnu sesiju za sledeće pokretanje i redovno čuvati sigurnosne kopije snimaka sesija, da bi se sprečio slučajni gubitak podataka zbog nespremljenih promena. Notepads vas NEĆE podsećati da spremite svoj rad kad se program zatvara, ako je ova funkcija aktivirana. Imajte u vidu da snimanje sesije radi samo u prvom ili glavnom prozoru programa.</value>
+    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
+    <value>Omogući snimanje sesije</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
+    <value>Omogući snimanje sesije</value>
+    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
+    <value>Podešavanja snimaka sesije</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
+    <value>Markiraj pogrešno otkucane reči</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
+    <value>Markiraj pogrešno otkucane reči</value>
+    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
+    <value>Pravopis</value>
+    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
+    <value>Kada je aktivno, Notepads će uvek otvarati fajlove u novom prozoru, umesto da otvori novu karticu.</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
+    <value>Uvek otvori u novom prozoru</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
+    <value>Uvek otvori u novom prozoru</value>
+    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Postavke pokretanja</value>
+    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Označi trenutni red</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Označi trenutni red</value>
+    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
+    <value>Sopstveni pretraživač</value>
+    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
+    <value>*Unesite URL u formatu https://www.example.com/search?q={0}</value>
+    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
+    <value>Podešavanja podrazumevanog pretraživača za veb-pretrage.</value>
+    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevani pretraživač</value>
+    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
+    <value>Automatski pogađaj kodiranje (preporučeno)</value>
+    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
+    <value>Prikaz</value>
+    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
+    <value>Prikaži brojeve redova u dokumentu.</value>
+    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
+    <value>Prikaži brojeve redova</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
+    <value>Prikaži brojeve redova</value>
+    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevani stil fonta</value>
+    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
+  </data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
+    <value>Podrazumevana težina fonta</value>
+    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
+    <value>Izaberite sopstveni jezik da premostite sistemski jezik koji se koristi u Notepads-u. Ponovno pokretanje je neophodno za završetak promena.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
+    <value>*Ponovo pokrenite Notepads za završetak promena.</value>
+    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
+    <value>Postavke jezika</value>
+    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
+    <value>Kada je aktivno, Notepads će pametno opseći razmake, tabulatore i prazne redove na početku i kraju pre kopiranja teksta u ostavu.</value>
+    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
+    <value>Omogući Pametno kopiranje</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
+    <value>Omogući Pametno kopiranje</value>
+    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
+  </data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
+    <value>Postavke Pametnog kopiranja</value>
+    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
+    <value>Sistemski podrazumevani</value>
+    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
 </root>
