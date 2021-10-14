@@ -1,9 +1,11 @@
 ﻿<Application
     x:Class="Notepads.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads">
 
     <Application.Resources>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
         <ResourceDictionary>
 
             <!--<ResourceDictionary.ThemeDictionaries>
