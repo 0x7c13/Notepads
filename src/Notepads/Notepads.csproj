@@ -436,7 +436,7 @@
       <Version>5.0.2</Version>
     </PackageReference>
     <PackageReference Include="UTF.Unknown">
-      <Version>2.3.0</Version>
+      <Version>2.5.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
