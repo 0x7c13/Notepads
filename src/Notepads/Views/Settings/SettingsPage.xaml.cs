@@ -5,10 +5,11 @@
     using System.Linq;
     using Windows.UI;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
+    using muxc = Microsoft.UI.Xaml;
     using Windows.UI.Xaml.Navigation;
+    using Microsoft.UI.Xaml.Controls;
 
-    public sealed partial class SettingsPage : Page
+    public sealed partial class SettingsPage : Windows.UI.Xaml.Controls.Page
     {
         public SettingsPage()
         {
@@ -31,6 +32,19 @@
             }
             ((NavigationViewItem)SettingsNavigationView.MenuItems.First()).IsSelected = true;
         }
+
+        /*private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (App.IsGameBarWidget)
+            {
+                ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
+                ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+            }
+            SettingsNavigationView.SelectedItem = SettingsNavigationView.MenuItems[0];
+        }*/
+
+
+
 
         private void SettingsPage_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -68,6 +82,7 @@
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             SettingsPanel.Show((args.InvokedItem as string), (args.InvokedItemContainer as NavigationViewItem)?.Tag as string);
+
         }
     }
 }
