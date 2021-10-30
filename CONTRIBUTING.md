@@ -18,6 +18,7 @@ You can contribute to Notepads project by:
         3. Do your work and test it on your machine and check your work to make sure it is not breaking any existing layout.
         4. Finish your work and create a PR, prefix PR title with `lang: ` (Example: https://github.com/JasonStein/Notepads/pull/30)
         5. Let me know and I will merge it if it looks good to me.
+        Notes: You should use the language code as your folder name listed here: https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages
 
 Note: This repository follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), format your pull request title according to specifications.
 

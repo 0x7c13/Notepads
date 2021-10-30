@@ -281,16 +281,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ColorCode.UWP">
-      <Version>2.0.8</Version>
+      <Version>2.0.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.12</Version>
+      <Version>6.2.13</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.25.0</Version>
+      <Version>1.26.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
