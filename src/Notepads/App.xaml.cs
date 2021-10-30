@@ -16,6 +16,7 @@
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources.Core;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -168,6 +169,16 @@
         private Frame CreateRootFrame(IActivatedEventArgs e)
         {
             Frame rootFrame = new Frame();
+
+            var flowDirectionSetting = ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
+            if (flowDirectionSetting == "RTL" || flowDirectionSetting == "TTBRTL")
+            {
+                rootFrame.FlowDirection = FlowDirection.RightToLeft;
+            }
+            else
+            {
+                rootFrame.FlowDirection = FlowDirection.LeftToRight;
+            }
             rootFrame.NavigationFailed += OnNavigationFailed;
 
             if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
