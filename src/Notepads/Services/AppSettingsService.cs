@@ -20,6 +20,7 @@
         public static event EventHandler<Encoding> OnDefaultEncodingChanged;
         public static event EventHandler<int> OnDefaultTabIndentsChanged;
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
+        public static event EventHandler<bool> OnSessionBackupAndRestoreOptionForInstanceChanged;
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
         public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
 
@@ -328,23 +329,47 @@
         private static void InitializeSessionSnapshotSettings()
         {
             // We should disable session snapshot feature on multi instances
+            App.OnInstanceTypeChanged += (_, args) =>
+            {
+                var wasSessionSnapshotEnabled = _isSessionSnapshotEnabled;
+
+                _isSessionSnapshotEnabled = IsSessionSnapshotEnabledInternal();
+
+                if (wasSessionSnapshotEnabled != _isSessionSnapshotEnabled)
+                {
+                    if (_isSessionSnapshotEnabled)
+                    {
+                        OnSessionBackupAndRestoreOptionForInstanceChanged?.Invoke(null, _isSessionSnapshotEnabled);
+                    }
+                    else
+                    {
+                        OnSessionBackupAndRestoreOptionChanged?.Invoke(null, _isSessionSnapshotEnabled);
+                    }
+                }
+            };
+
+            _isSessionSnapshotEnabled = IsSessionSnapshotEnabledInternal();
+        }
+
+        private static bool IsSessionSnapshotEnabledInternal()
+        {
             if (!App.IsPrimaryInstance)
             {
-                _isSessionSnapshotEnabled = false;
+                return false;
             }
             else if (App.IsGameBarWidget)
             {
-                _isSessionSnapshotEnabled = true;
+                return true;
             }
             else
             {
                 if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableSessionBackupAndRestoreBool) is bool enableSessionBackupAndRestore)
                 {
-                    _isSessionSnapshotEnabled = enableSessionBackupAndRestore;
+                    return enableSessionBackupAndRestore;
                 }
                 else
                 {
-                    _isSessionSnapshotEnabled = false;
+                    return false;
                 }
             }
         }

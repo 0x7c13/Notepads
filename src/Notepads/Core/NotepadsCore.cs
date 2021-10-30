@@ -149,8 +149,20 @@
         {
             bool selectedEditorFound = false;
 
+            // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
+            if (GetNumberOfOpenedTextEditors() == 1 && editors.Length > 0)
+            {
+                var selectedEditor = GetAllTextEditors().First();
+                if (selectedEditor.EditingFile == null && !selectedEditor.IsModified)
+                {
+                    Sets.Items?.Clear();
+                }
+            }
+
             foreach (var textEditor in editors)
             {
+                Sets.Items?.Remove(GetTextEditorSetsViewItem(textEditor.EditingFile));
+
                 var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
                 Sets.Items?.Add(editorSetsViewItem);
                 if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
@@ -429,7 +441,7 @@
 
         private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
         {
-            if (Sets.Items == null) return null;
+            if (Sets.Items == null || file == null) return null;
             foreach (SetsViewItem setsItem in Sets.Items)
             {
                 if (!(setsItem.Content is ITextEditor textEditor)) continue;
