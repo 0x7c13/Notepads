@@ -143,6 +143,8 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [hr-HR][Croatian (Croatia)]: [milotype](https://github.com/milotype)
     * [zh-TW][Chinese (T)]: [Tony Yao](https://github.com/SeaBao)
     * [pt-PT][Portuguese (Portugal)]: [O.Leitão](https://github.com/oleitao)
+    * [sr-Latn-RS][Serbian (Latin)]: [bzzrak](https://github.com/bzzrak)
+    * [sr-Cyrl-RS][Serbian (Cyrillic)]: [bzzrak](https://github.com/bzzrak)
 
 * Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 
