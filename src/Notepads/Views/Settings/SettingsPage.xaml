@@ -6,10 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="using:Notepads.Views.Settings"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
-    <muxc:NavigationView x:Name="SettingsNavigationView"
+    <NavigationView x:Name="SettingsNavigationView"
                     IsPaneOpen="False"
                     IsSettingsVisible="False"
                     IsBackEnabled="False"
@@ -18,42 +17,42 @@
                     OpenPaneLength="200"
                     ItemInvoked="SettingsPanel_OnItemInvoked">
 
-        <muxc:NavigationView.MenuItems>
-            <muxc:NavigationViewItem 
+        <NavigationView.MenuItems>
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
                                 x:Uid="/Settings/TextAndEditorPage_Title"
                                 Tag="TextAndEditor"
                                 IsSelected="True">
-                <muxc:NavigationViewItem.Icon>
+                <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xF17F;" />
-                </muxc:NavigationViewItem.Icon>
-            </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem 
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
                                 x:Uid="/Settings/PersonalizationPage_Title"
                                 Tag="Personalization" >
-                <muxc:NavigationViewItem.Icon>
+                <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE771;" />
-                </muxc:NavigationViewItem.Icon>
-            </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
                                 x:Uid="/Settings/AdvancedPage_Title"
                                 Tag="Advanced" >
-                <muxc:NavigationViewItem.Icon>
+                <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE9E9;" />
-                </muxc:NavigationViewItem.Icon>
-            </muxc:NavigationViewItem>
-            <muxc:NavigationViewItem
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Style="{StaticResource CustomNavigationViewItemStyle}" 
                                 x:Uid="/Settings/AboutPage_Title"
                                 Tag="About" >
-                <muxc:NavigationViewItem.Icon>
+                <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets"
                               Glyph="&#xE946;" />
-                </muxc:NavigationViewItem.Icon>
-            </muxc:NavigationViewItem>
-        </muxc:NavigationView.MenuItems>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
         <settings:SettingsPanel x:Name="SettingsPanel"/>
-    </muxc:NavigationView>
+    </NavigationView>
 
 </Page>
