@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" ?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -118,579 +118,579 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Откажи</value>
     <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Hay cambios sin guardar.</value>
+    <value>Постоје несачуване промене.</value>
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Guardar Todo &amp; Salir</value>
+    <value>Сачувај и затвори</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Descartar &amp; Salir</value>
+    <value>Одбаци и затвори</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>¿Quieres Guardar los Cambios?</value>
+    <value>Сачувати промене?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Nada para compartir porque no hay texto seleccionado o el documento está vacío.</value>
+    <value>Нема шта да се подели, јер никакав текст није означен и тренутни документ је празан.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>Después de los Cambios</value>
+    <value>Након промена</value>
     <comment>DiffViewer: Header's text for new text (After changes).</comment>
   </data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>Antes de los Cambios</value>
+    <value>Пре промена</value>
     <comment>DiffViewer: Header's text for old text (Before changes).</comment>
   </data>
   <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads no soporta archivos de más de 1MB en este momento.</value>
+    <value>Notepads тренутно не подржава датотеке веће од 1 МБ.</value>
     <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
   </data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Lo sentimos, el archivo "{0}" no pudo ser abierto: {1}</value>
+    <value>Нажалост, датотека „{0}” се не може отворити: {1}</value>
     <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>У реду</value>
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>Error al Abrir Archivo</value>
+    <value>Грешка при отварању датотеке</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Lo sentimos, el archivo "{0}" no pudo ser guardado: {1}</value>
+    <value>Нажалост, датотека „{0}” се не може сачувати: {1}</value>
     <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
+    <value>У реду</value>
     <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>Error al Guardar Archivo</value>
+    <value>Грешка при чувању датотеке</value>
     <comment>FileSaveErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Cerrar</value>
+    <value>Затвори</value>
     <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
-    <value>Buscar</value>
+    <value>Пронађи</value>
     <comment>FindAndReplace: Find bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>No Encontrado</value>
-    <comment>FindAndReplace: Notification message when target not found.</comment>
+    <value>Није пронађено</value>
+    <comment>FindAndReplace: Notification message when target not found .</comment>
   </data>
   <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Reemplazar Todo (Ctrl+Alt+Enter)</value>
+    <value>Замени све (Ctrl+Alt+Enter)</value>
     <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
-    <value>Reemplazar</value>
+    <value>Замени</value>
     <comment>FindAndReplace: Replace bar placeholder text.</comment>
   </data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Reemplazar (Alt+R)</value>
+    <value>Замени (Alt+R)</value>
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Buscar Siguiente (F3)</value>
+    <value>Пронађи следеће (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Opciones de Búsqueda</value>
+    <value>Опције претраге</value>
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Coincidencia Exacta</value>
+    <value>Велика/мала слова</value>
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Palabras Completas</value>
+    <value>Упореди целе речи</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>Buscar...</value>
+    <value>Пронађи...</value>
     <comment>MainMenu: "Find" button display text.</comment>
   </data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>Nuevo</value>
+    <value>Ново</value>
     <comment>MainMenu: "New" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>Abrir...</value>
+    <value>Отвори...</value>
     <comment>MainMenu: "Open" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>Imprimir...</value>
+    <value>Одштампај</value>
     <comment>MainMenu: "Print" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>Reemplazar...</value>
+    <value>Замени...</value>
     <comment>MainMenu: "Replace" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Save.Text" xml:space="preserve">
-    <value>Guardar</value>
+    <value>Сачувај</value>
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Guardar Todo</value>
+    <value>Сачувај све</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>Guardar Como...</value>
+    <value>Сачувај као...</value>
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>Ajustes</value>
+    <value>Поставке</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Откажи</value>
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>¡Todos los cambios incluyendo texto, fin de línea y codificación hechos a ¨{0}" serán revertidos!</value>
+    <value>Поништиће се све промене у датотеци „{0}” – укључујући текст, преломе редова и кодирање!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Sí</value>
+    <value>Да</value>
     <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Está seguro de revertir todos los cambios?</value>
+    <value>Поништити све промене?</value>
     <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Немој да сачуваш</value>
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>¿Guardar Archivo "{0}"?</value>
+    <value>Сачувати датотеку „{0}”?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Guardar</value>
+    <value>Сачувај</value>
     <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>No Guardar</value>
+    <value>Немој чувати</value>
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>¿Guardar Cambios?</value>
+    <value>Сачувати промене?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
-    <value>Cerrar</value>
+    <value>Затвори</value>
     <comment>Tab: ContextFlyout "Close" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>Cerrar Otros</value>
+    <value>Затвори остале</value>
     <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Cerrar pestaña a la Derecha</value>
+    <value>Затвори са десне стране</value>
     <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Cerrar Guardados</value>
+    <value>Затвори сачуване</value>
     <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>Copiar Ruta de Acceso</value>
+    <value>Копирај целу путању</value>
     <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
-    <value>Abrir Carpeta Contenedora</value>
+    <value>Отвори фасциклу</value>
     <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
-    <value>Copiar</value>
+    <value>Копирај</value>
     <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
-    <value>Cortar</value>
+    <value>Исеци</value>
     <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
-    <value>Pegar</value>
+    <value>Налепи</value>
     <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>Alternar Vista Preliminar</value>
+    <value>Укључи/искључи преглед</value>
     <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
-    <value>Rehacer</value>
+    <value>Понови</value>
     <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
-    <value>Seleccionar Todo</value>
+    <value>Означи све</value>
     <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
-    <value>Compartir</value>
+    <value>Дели</value>
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Compartir Selección</value>
+    <value>Дели означено</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
-    <value>Deshacer</value>
+    <value>Поништи</value>
     <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Ajuste de Texto</value>
+    <value>Преломи речи</value>
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>Nuevo Documento.txt</value>
+    <value>Без наслова.txt</value>
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Ln {0}, Col {1} ({2} {3})</value>
+    <value>Ред {0}, Колона {1} ({2} {3})</value>
     <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Ln {0}, Col {1}</value>
+    <value>Ред {0}, Колона {1}</value>
     <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>Vista previa de cambios de texto</value>
+    <value>Приказ промена</value>
     <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Revertir todos los cambios</value>
+    <value>Поништи све промене</value>
     <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
   </data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>Modificado</value>
+    <value>Промењено</value>
     <comment>TextEditor: ModificationIndicator display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>Copiado</value>
+    <value>Копирано</value>
     <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
-    <value>Guardado</value>
+    <value>Сачувано</value>
     <comment>TextEditor: Notification message when file has been saved successfully.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Pulse F11 para salir de pantalla completa</value>
+    <value>Напусти приказ преко целог екрана помоћу тастера F11</value>
     <comment>TextEditor: Notification message when app entering full screen mode.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Volver a cargar archivo desde el disco</value>
+    <value>Поново учитај датотеку с диска</value>
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>¡El archivo ha sido modificado fuera!</value>
+    <value>Датотека је промењена изван Notepads програма!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>¡Archivo ha sido movido, renombrado o borrado!</value>
+    <value>Датотека је премештена, преименована или избрисана!</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>Archivo recargado</value>
+    <value>Датотека је поново учитана</value>
     <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
   </data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Modo Compacto</value>
+    <value>Компактни приказ</value>
     <comment>App: "Compact Overlay" display text</comment>
   </data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Pantalla Completa</value>
+    <value>Приказ преко целог екрана</value>
     <comment>App: "Full Screen" display text</comment>
   </data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Salir de Modo Compacto</value>
+    <value>Прекини компактни приказ</value>
     <comment>App: "Exit Compact Overlay" display text</comment>
   </data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Salir de Pantalla Completa</value>
+    <value>Прекини приказ преко целог екрана</value>
     <comment>App: "Exit Full Screen" display text</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>seleccionados</value>
+    <value>означено</value>
     <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>seleccionado</value>
+    <value>означено</value>
     <comment>TextEditor: Singular form for the selected word count indicator.</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Mover pestaña aquí</value>
+    <value>Премести картицу овамо</value>
     <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
   </data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Abrir con Notepads</value>
+    <value>Отвори помоћу Notepads</value>
     <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
   </data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Esta es una pantalla sombra de Notepads. Ajustes de sesión y restauración están desactivados.</value>
+    <value>Ово је копија прозора Notepads. Снимање сесије и поставке су деактивиране.</value>
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>¡El archivo ya está abierto!</value>
+    <value>Датотека је већ отворена!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Abrir nueva ventana</value>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
+    <value>Нови прозор</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
   </data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>Nueva ventana</value>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
+    <value>Отвара нови прозор</value>
     <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
   </data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>Nueva Ventana</value>
+    <value>Нови прозор</value>
     <comment>MainMenu: "New Window" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Abrir Reciente</value>
+    <value>Отвори недавне</value>
     <comment>MainMenu: "Open Recent" button display text.</comment>
   </data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Ir a Línea</value>
+    <value>Иди на ред</value>
     <comment>GoTo: Go to bar placeholder text.</comment>
   </data>
-  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Ir a:</value>
-    <comment>GoTo:Go to bar label</comment>
-  </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>¡Número de línea excede el total de líneas!</value>
+    <value>Број реда је већи од укупног броја редова!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>¡Sólo se permiten números!</value>
+    <value>Прихватају се само бројеви!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ir a Línea</value>
+    <value>Иди на ред</value>
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Buscar en la web</value>
+    <value>Претражи на вебу</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restaurar Vista Original</value>
+    <value>Врати подразумевани зум</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Acercar</value>
+    <value>Увећај</value>
     <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Alejar</value>
+    <value>Умањи</value>
     <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
   </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Usar Expresiones Regulares</value>
-    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
+    <value>Иди на:</value>
+    <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Imprimir Todo...</value>
+    <value>Одштампај све...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Sólo se permite un decimal</value>
+    <value>Дозвољено је само једно децимално место</value>
     <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Valor fuera de rango</value>
+    <value>Вредност је изван распона</value>
     <comment>Print: Error message when value for margin entry exceeds limit.</comment>
   </data>
   <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Pie de página</value>
+    <value>Подножје</value>
     <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Encabezamiento</value>
+    <value>Заглавље</value>
     <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Margen Horizontal (en %)</value>
+    <value>Водоравна маргина (у %)</value>
     <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
   </data>
   <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>En % del ancho del papel</value>
+    <value>У % ширине папира</value>
     <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Error durante impresión:</value>
+    <value>Грешка при штампању:</value>
     <comment>Print: Notification message when error occurs while showing print ui.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>La impresión falló</value>
+    <value>Штампање није успело</value>
     <comment>Print: Notification message on print failure.</comment>
   </data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Este dispositivo no soporta impresión</value>
+    <value>Овај уређај не подржава штампање</value>
     <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
   </data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Margen Vertical (en %)</value>
+    <value>Усправна маргина (у %)</value>
     <comment>Print: PrintManager custom option "TopMargin" title.</comment>
   </data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
+    <value>Користи регуларне изразе</value>
+    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
+  </data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Borrar Archivos Recientes</value>
+    <value>Испразни списак недавно отворених</value>
     <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>Más Codificaciones</value>
+    <value>Још кодирања</value>
     <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Volver a Abrir con Codificación</value>
+    <value>Поново отвори с кодирањем</value>
     <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Guardar con Codificación</value>
+    <value>Сачувај с кодирањем</value>
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>¡Expresión Regular Inválida!</value>
+    <value>Неважећи регуларни израз!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Adivinar codificación</value>
+    <value>Аутоматски погађај кодирање</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>No se puede determinar la codificación</value>
+    <value>Кодирање се не може одредити</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Buscar anterior (Shift+F3)</value>
+    <value>Пронађи претходно (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Cambiar modo de reemplazo</value>
+    <value>Укључи/искључи режим замене</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Orden de lectura de derecha a izquierda</value>
+    <value>Читање са десна на лево</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Cursiva</value>
+    <value>Курзив</value>
     <comment>FontStyle: "Italic"</comment>
   </data>
   <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Стандардни</value>
     <comment>FontStyle: "Normal"</comment>
   </data>
   <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblicua</value>
+    <value>Oblique</value>
     <comment>FontStyle: "Oblique"</comment>
   </data>
   <data name="FontWeight_Black" xml:space="preserve">
-    <value>Negro</value>
+    <value>Црна</value>
     <comment>FontWeight: "Black"</comment>
   </data>
   <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Negrita</value>
+    <value>Подебљана</value>
     <comment>FontWeight: "Bold"</comment>
   </data>
   <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Ultra-Negro</value>
+    <value>Екстра црна</value>
     <comment>FontWeight: "ExtraBlack"</comment>
   </data>
   <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Ultra-Negrita</value>
+    <value>Екстра подебљана</value>
     <comment>FontWeight: "ExtraBold"</comment>
   </data>
   <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Ultra-Ligero</value>
+    <value>Екстра лагана</value>
     <comment>FontWeight: "ExtraLight"</comment>
   </data>
   <data name="FontWeight_Light" xml:space="preserve">
-    <value>Ligero</value>
+    <value>Лагана</value>
     <comment>FontWeight: "Light"</comment>
   </data>
   <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medio</value>
+    <value>Средња</value>
     <comment>FontWeight: "Medium"</comment>
   </data>
   <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
+    <value>Нормална</value>
     <comment>FontWeight: "Normal"</comment>
   </data>
   <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Semi-Negrita</value>
+    <value>Полуподебљана</value>
     <comment>FontWeight: "SemiBold"</comment>
   </data>
   <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Semi-Ligero</value>
+    <value>Полулагана</value>
     <comment>FontWeight: "SemiLight"</comment>
   </data>
   <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Delgado</value>
+    <value>Танка</value>
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Откажи</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Guardar</value>
+    <value>Сачувај</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Renombrar</value>
+    <value>Преименуј</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>El nombre del archivo no debe contener caracteres no válidos</value>
+    <value>Име датотеке не сме да садржи недозвољене карактере</value>
     <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>El nombre del archivo no debe contener espacios al principio</value>
+    <value>Име датотеке не сме почињати размаком</value>
     <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>El nombre del archivo no debe contener espacios al final</value>
+    <value>Име датотеке се не сме завршавати размаком</value>
     <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>El nombre del archivo no puede estar vacío ni contener espacios en blanco</value>
+    <value>Име датотеке не сме бити празно или се састојати само од размака</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>El nombre del archivo no es válido o no está permitido</value>
+    <value>Име датотеке је неважеће или недозвољено</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>El nombre del archivo no puede tener más de 255 caracteres</value>
+    <value>Име датотеке не сме бити дуже од 255 карактера</value>
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Renombrar</value>
+    <value>Преименуј</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renombrado</value>
+    <value>Преименовано</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>La extensión de archivo vacía no se admite en este momento</value>
+    <value>Празна екстензија датотеке тренутно није подржана</value>
     <comment>FileRenameError: Empty file extension is not currently supported.</comment>
   </data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>La extensión de archivo "{0}" no es compatible en este momento</value>
+    <value>Екстензија датотеке "{0}" тренутно није подржана</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

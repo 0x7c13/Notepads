@@ -1,58 +1,128 @@
 name: Code scanning alerts bulk dismissal
 
-on: [workflow_dispatch]
+on:
+  workflow_run:
+    workflows: [ "Notepads CI/CD Pipeline" ]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      type:
+        description: Type of filter to use ("path" for using path and "desc" for using description)
+        required: true
+        default: 'path'
+      reason:
+        description: Reason for dismissal ("fp" for "false positive", "wf" for "won't fix" and "ut" for "used in tests")
+        required: true
+        default: 'wf'
 
 jobs:
-  dismiss-alerts: 
+  setup:
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.set_filter_matrix.outputs.matrix }}
+    steps:
+      - name: Setup filter matrix
+        id: set_filter_matrix
+        shell: pwsh
+        run: |
+          $FILTER_TYPE = $env:FILTER_TYPE
+          if ( !( $env:FILTER_TYPE -ieq 'path' ) -And !( $env:FILTER_TYPE -ieq 'desc' ) ) {
+            $FILTER_TYPE = 'path'
+          }
+
+          switch ( $env:REASON ) {
+            fp {
+              $REASON = "false positive"
+            }
+            wf {
+              $REASON = "won't fix"
+            }
+            ut {
+              $REASON = "used in tests"
+            }
+            default {
+              $REASON = "won't fix"
+            }
+          }
+
+          if ( $FILTER_TYPE -ieq 'path' ) {
+            $MATRIX = @{
+              include = @(
+                @{
+                   filter = "*/obj/*"
+                 }
+              )
+            }
+          } elseif ( $FILTER_TYPE -ieq 'desc' ) {
+            $MATRIX = @{
+              include = @(
+                @{
+                   filter = "Calls to unmanaged code"
+                 },
+                @{
+                   filter = "Unmanaged code"
+                 }
+              )
+            }
+          } else {
+              throw "Invalid filter type argument"
+          }
+
+          $MATRIX.include | Foreach-Object {
+            $_.Add('type',"$FILTER_TYPE")
+            $_.Add('reason',"$REASON")
+          }
+          echo "::set-output name=matrix::$($MATRIX | ConvertTo-Json -depth 32 -Compress)"
+        env:
+          FILTER_TYPE: ${{ github.event.inputs.type }}
+          REASON: ${{ github.event.inputs.reason }}
+  dismiss-alerts:
     name: Dismiss alerts
-    runs-on: ubuntu-latest
+    needs: setup
+    runs-on: windows-latest
     strategy:
-      matrix:
-        ALERT_DESC: ['"Calls to unmanaged code"', '"Unmanaged code"']
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     env:
       # Settings
       OWNER: ${{ github.repository_owner }} # verbatim from URL
       PROJECT_NAME: ${{ github.event.repository.name }} # verbatim from URL
       ACCESS_TOKEN: ${{ secrets.CSA_ACCESS_TOKEN }} # requires security_events read/write permissions
-      DISMISS_REASON: ${{ secrets.DISMISS_REASON_VAR }} # "false positive", "won't fix" or "used in tests". 
-      ALERTS_PER_PAGE: 100
-      ALERT_DESCRIPTION: ${{ matrix.ALERT_DESC }}
+      DISMISS_REASON: ${{ matrix.reason }} # "false positive", "won't fix" or "used in tests".
+      ALERTS_PER_PAGE: 100 # maximum is 100
+      FILTER: ${{ matrix.filter }}
+      FILTER_TYPE: ${{ matrix.type }}
     steps:
-      - name: Install jq
-        id: install_jq
-        uses: r26d/jq-action@master
-        with:
-          cmd: jq -n env
-
       - name: Run automation
         id: run_automation
-        shell: bash
+        shell: pwsh
         run: |
-          page=1
-          LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
+          $HEADERS = @{
+            Authorization = 'Basic {0}' -f [System.Convert]::ToBase64String([char[]]"$($env:OWNER):$($env:ACCESS_TOKEN)")
+            Accept = 'application/vnd.github.v3+json'
+          }
 
-          while [ -n "$LIST_OF_ALERTS" ]
-          do
-            echo -n $LIST_OF_ALERTS" " >> "data.json"
+          $page = 1
+          $FETCH_URL = "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts?state=open&page={0}&per_page=$env:ALERTS_PER_PAGE"
+          $LIST_OF_ALERTS = Invoke-RestMethod -Method Get -Headers $HEADERS -Uri $($FETCH_URL -f $page)
+          while ( $LIST_OF_ALERTS -ne $null ) {
+            if ( $env:FILTER_TYPE -ieq 'path' ) {
+              $MATCHES += $($LIST_OF_ALERTS | Where-Object { $_.most_recent_instance.location.path -like "$env:FILTER" })
+            } else {
+              $MATCHES += $($LIST_OF_ALERTS | Where-Object { $_.rule.description -like "$env:FILTER" })
+            }
 
-            ((page=page+1))
+            $page += 1
+            $LIST_OF_ALERTS = Invoke-RestMethod -Method Get -Headers $HEADERS -Uri $($FETCH_URL -f $page)
+          }
 
-            LIST_OF_ALERTS=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts?state=open&page=$page&per_page=$ALERTS_PER_PAGE"| jq .[].number )
-          done
-
-          LIST_OF_INDEXES=$(cat data.json)
-
-          for index in $LIST_OF_INDEXES
-          do
-            ALERT_DESC=$(curl -u $OWNER:$ACCESS_TOKEN -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index" | jq .rule.description)
-
-            if [ "$ALERT_DESC" == "$ALERT_DESCRIPTION" ]; then
-              ALERT_URL="https://api.github.com/repos/$OWNER/$PROJECT_NAME/code-scanning/alerts/$index"
-
-              curl -u $OWNER:$ACCESS_TOKEN -X PATCH -H "Accept: application/vnd.github.v3+json" $ALERT_URL -d '{"state":"dismissed","dismissed_reason":"'"$DISMISS_REASON"'"}'
-            fi
-          done
-
-          rm -f data.json
+          $ALERT_URL = "https://api.github.com/repos/$env:OWNER/$env:PROJECT_NAME/code-scanning/alerts/{0}"
+          $BODY = @{
+            state = 'dismissed'
+            dismissed_reason = "$env:DISMISS_REASON"
+          } | ConvertTo-Json
+          foreach ($index in $MATCHES.number) {
+            Invoke-RestMethod -Method Patch -Headers $HEADERS -Uri $($ALERT_URL -f $index) -Body $BODY
+          }
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)

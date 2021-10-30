@@ -122,7 +122,7 @@
     <comment>.ass</comment>
   </data>
   <data name="AsmFileDisplayName" xml:space="preserve">
-    <value>Assembly Language File</value>
+    <value>Assembly Dili Dosyası</value>
     <comment>.asm</comment>
   </data>
   <data name="AspFileDisplayName" xml:space="preserve">
@@ -134,7 +134,7 @@
     <comment>.ahk</comment>
   </data>
   <data name="BashAliasesFileDisplayName" xml:space="preserve">
-    <value>Bash Aliases File</value>
+    <value>Bash Lakap Dosyası</value>
     <comment>.bash_aliases</comment>
   </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
@@ -142,15 +142,15 @@
     <comment>.bash_history</comment>
   </data>
   <data name="BashLoginFileDisplayName" xml:space="preserve">
-    <value>Bash Login File</value>
+    <value>Bash Login Dosyası</value>
     <comment>.bash_login</comment>
   </data>
   <data name="BashLogoutFileDisplayName" xml:space="preserve">
-    <value>Bash Logout File</value>
+    <value>Bash Logout Dosyası</value>
     <comment>.bash_logout</comment>
   </data>
   <data name="BashProfileFileDisplayName" xml:space="preserve">
-    <value>Bash Profile File</value>
+    <value>Bash Profil Dosyası</value>
     <comment>.bash_profile</comment>
   </data>
   <data name="BashScriptFileDisplayName" xml:space="preserve">
@@ -162,7 +162,7 @@
     <comment>.bib</comment>
   </data>
   <data name="BondFileDisplayName" xml:space="preserve">
-    <value>Bond File</value>
+    <value>Bond Dosyası</value>
     <comment>.bond</comment>
   </data>
   <data name="BuildPathFileDisplayName" xml:space="preserve">
@@ -186,11 +186,11 @@
     <comment>.cmake</comment>
   </data>
   <data name="CoffeeScriptFileDisplayName" xml:space="preserve">
-    <value>CoffeeScript File</value>
+    <value>CoffeeScript Dosyası</value>
     <comment>.coffee, .cson, .iced</comment>
   </data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve">
-    <value>Comma Separated Values File</value>
+    <value>Virgülle Ayrılmış Değerler Dosyası</value>
     <comment>.csv</comment>
   </data>
   <data name="ConfigFileDisplayName" xml:space="preserve">
@@ -210,23 +210,23 @@
     <comment>.css, .scss</comment>
   </data>
   <data name="DatFileDisplayName" xml:space="preserve">
-    <value>DAT File</value>
+    <value>DAT Dosyası</value>
     <comment>.dat</comment>
   </data>
   <data name="DiffFileDisplayName" xml:space="preserve">
-    <value>Diff File</value>
+    <value>Diff Dosyası</value>
     <comment>.patch, .diff, .rej</comment>
   </data>
   <data name="DockerFileDisplayName" xml:space="preserve">
-    <value>Docker File</value>
+    <value>Docker Dosyası</value>
     <comment>.dockerfile</comment>
   </data>
   <data name="EBuildFileDisplayName" xml:space="preserve">
-    <value>EBuild File</value>
+    <value>EBuild Dosyası</value>
     <comment>.ebuild</comment>
   </data>
   <data name="FSharpFileDisplayName" xml:space="preserve">
-    <value>F# File</value>
+    <value>F# Dosyası</value>
     <comment>.fs, .fsi, .fsx, .fsscript</comment>
   </data>
   <data name="GitAttributesFileDisplayName" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>.gitignore</comment>
   </data>
   <data name="GlspFileDisplayName" xml:space="preserve">
-    <value>GLSP File</value>
+    <value>GLSP Dosyası</value>
     <comment>.glsp</comment>
   </data>
   <data name="GoFileDisplayName" xml:space="preserve">
@@ -250,19 +250,19 @@
     <comment>.go</comment>
   </data>
   <data name="GroovyFileDisplayName" xml:space="preserve">
-    <value>Groovy File</value>
+    <value>Groovy Dosyası</value>
     <comment>.groovy, .gvy, .gradle</comment>
   </data>
   <data name="HandlebarsFileDisplayName" xml:space="preserve">
-    <value>Handlebars File</value>
+    <value>Handlebars Dosyası</value>
     <comment>.handlebars, .hbs, .hjs</comment>
   </data>
   <data name="HeaderFileDisplayName" xml:space="preserve">
     <value>Header Dosyası</value>
     <comment>.h, .hpp, .hh, .hxx</comment>
   </data>
-  <data name="HlslFileDisplayName" xml:space="preserve">
-    <value>HLSL File</value>
+  <data name="HlslFileDisplayName" xml:space="preserve">☻
+    <value>HLSL Dosyası</value>
     <comment>.hlsl, .hlsli, .fx, .fxh, .vsh, .psh, .cginc, .compute</comment>
   </data>
   <data name="HtmlFileDisplayName" xml:space="preserve">
@@ -270,15 +270,15 @@
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
   </data>
   <data name="HypertextAccessFileDisplayName" xml:space="preserve">
-    <value>Hypertext Access File</value>
+    <value>Hipermetin Erişim Dosyası</value>
     <comment>.htaccess</comment>
   </data>
   <data name="InitializationFileDisplayName" xml:space="preserve">
-    <value>Başlangıç Dosyası</value>
+    <value>Başlatma Dosyası</value>
     <comment>.ini</comment>
   </data>
   <data name="InstallFileDisplayName" xml:space="preserve">
-    <value>Install File</value>
+    <value>Yükleme Dosyası</value>
     <comment>.install</comment>
   </data>
   <data name="JavaFileDisplayName" xml:space="preserve">
@@ -298,7 +298,7 @@
     <comment>.jsp, .jspx</comment>
   </data>
   <data name="LessFileDisplayName" xml:space="preserve">
-    <value>Less File</value>
+    <value>Less Dosyası</value>
     <comment>.less</comment>
   </data>
   <data name="LogFileDisplayName" xml:space="preserve">
@@ -314,7 +314,7 @@
     <comment>.lua</comment>
   </data>
   <data name="MapFileDisplayName" xml:space="preserve">
-    <value>Map File</value>
+    <value>Map Dosyası</value>
     <comment>.map</comment>
   </data>
   <data name="MarkdownFileDisplayName" xml:space="preserve">
@@ -330,7 +330,7 @@
     <comment>.npmrc</comment>
   </data>
   <data name="Perl6FileDisplayName" xml:space="preserve">
-    <value>Perl 6 File</value>
+    <value>Perl 6 Dosyası</value>
     <comment>.p6, .pl6, .pm6, .nqp</comment>
   </data>
   <data name="PerlFileDisplayName" xml:space="preserve">
@@ -342,15 +342,15 @@
     <comment>.php, .php4, .php5, .phtml, .ctp</comment>
   </data>
   <data name="PodFileDisplayName" xml:space="preserve">
-    <value>Pod File</value>
+    <value>Pod Dosyası</value>
     <comment>.pod, .podspec</comment>
   </data>
   <data name="PowerShellFileDisplayName" xml:space="preserve">
-    <value>PowerShell File</value>
+    <value>PowerShell Dosyası</value>
     <comment>.ps1, .psm1, .psd1, .pssc, .psrc</comment>
   </data>
   <data name="ProfileFileDisplayName" xml:space="preserve">
-    <value>Profile File</value>
+    <value>Profile Dosyası</value>
     <comment>.profile</comment>
   </data>
   <data name="ProjectFileDisplayName" xml:space="preserve">
@@ -358,7 +358,7 @@
     <comment>.project, .prj</comment>
   </data>
   <data name="PugFileDisplayName" xml:space="preserve">
-    <value>Pug File</value>
+    <value>Pug Dosyası</value>
     <comment>.jade, .pug</comment>
   </data>
   <data name="PythonFileDisplayName" xml:space="preserve">
@@ -366,11 +366,11 @@
     <comment>.py</comment>
   </data>
   <data name="RazorFileDisplayName" xml:space="preserve">
-    <value>Razor File</value>
+    <value>Razor Dosyası</value>
     <comment>.cshtml</comment>
   </data>
   <data name="RFileDisplayName" xml:space="preserve">
-    <value>R File</value>
+    <value>R Dosyası</value>
     <comment>.r, .rhistory, .rprofile, .rt</comment>
   </data>
   <data name="RubyFileDisplayName" xml:space="preserve">
@@ -382,11 +382,11 @@
     <comment>.bashrc, .vimrc, .rc</comment>
   </data>
   <data name="RustFileDisplayName" xml:space="preserve">
-    <value>Rust File</value>
+    <value>Rust Dosyası</value>
     <comment>.rs</comment>
   </data>
   <data name="ShaderFileDisplayName" xml:space="preserve">
-    <value>Shader File</value>
+    <value>Shader Dosyası</value>
     <comment>.shader</comment>
   </data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve">
@@ -398,7 +398,7 @@
     <comment>.sql, .dsql</comment>
   </data>
   <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve">
-    <value>Sub Station Alpha Altyazı Dosyası</value>
+    <value>SubStation Alpha Altyazı Dosyası</value>
     <comment>.ssa</comment>
   </data>
   <data name="SubtitleFileDisplayName" xml:space="preserve">
@@ -406,7 +406,7 @@
     <comment>.srt</comment>
   </data>
   <data name="SwiftFileDisplayName" xml:space="preserve">
-    <value>Swift File</value>
+    <value>Swift Dosyası</value>
     <comment>.swift</comment>
   </data>
   <data name="TextFileDisplayName" xml:space="preserve">
@@ -414,7 +414,7 @@
     <comment>.txt</comment>
   </data>
   <data name="TFileDisplayName" xml:space="preserve">
-    <value>T File</value>
+    <value>T Dosyası</value>
     <comment>.t</comment>
   </data>
   <data name="TypeScriptFileDisplayName" xml:space="preserve">
@@ -422,7 +422,7 @@
     <comment>.ts, .tsx</comment>
   </data>
   <data name="UserFileDisplayName" xml:space="preserve">
-    <value>User File</value>
+    <value>User Dosyası</value>
     <comment>.user</comment>
   </data>
   <data name="VerilogFileDisplayName" xml:space="preserve">
@@ -442,7 +442,7 @@
     <comment>.vue</comment>
   </data>
   <data name="XamlFileDisplayName" xml:space="preserve">
-    <value>XAML File</value>
+    <value>XAML Dosyası</value>
     <comment>.xaml</comment>
   </data>
   <data name="XmlFileDisplayName" xml:space="preserve">
@@ -462,55 +462,55 @@
     <comment>.zsh_history</comment>
   </data>
   <data name="M3uFileDisplayName" xml:space="preserve">
-    <value>M3U File</value>
+    <value>M3U Dosyası</value>
     <comment>.m3u, .m3u8</comment>
   </data>
   <data name="CheatFileDisplayName" xml:space="preserve">
-    <value>Cheat File</value>
+    <value>Cheat Dosyası</value>
     <comment>.cht</comment>
   </data>
   <data name="CSharpeProjectFileDisplayName" xml:space="preserve">
-    <value>C# Project File</value>
+    <value>C# Proje Dosyası</value>
     <comment>.csproj</comment>
   </data>
   <data name="EnvironmentFileDisplayName" xml:space="preserve">
-    <value>Environment File</value>
+    <value>Environment Dosyası</value>
     <comment>.env</comment>
   </data>
   <data name="GlslFileDisplayName" xml:space="preserve">
-    <value>GLSL File</value>
+    <value>GLSL Dosyası</value>
     <comment>.glslp</comment>
   </data>
   <data name="LicenseFileDisplayName" xml:space="preserve">
-    <value>License File</value>
+    <value>Lisans Dosyası</value>
     <comment>.lic</comment>
   </data>
   <data name="OptFileDisplayName" xml:space="preserve">
-    <value>OPT File</value>
+    <value>OPT Dosyası</value>
     <comment>.opt</comment>
   </data>
   <data name="PropertyListFileDisplayName" xml:space="preserve">
-    <value>Property List File</value>
+    <value>Property List Dosyası</value>
     <comment>.plist</comment>
   </data>
   <data name="PvdFileDisplayName" xml:space="preserve">
-    <value>PVD File</value>
+    <value>PVD Dosyası</value>
     <comment>.pvd</comment>
   </data>
   <data name="ResourceFileDisplayName" xml:space="preserve">
-    <value>Resource File</value>
+    <value>Kaynak Dosyası</value>
     <comment>.resx</comment>
   </data>
   <data name="TomlFileDisplayName" xml:space="preserve">
-    <value>TOML File</value>
+    <value>TOML Dosyası</value>
     <comment>.toml</comment>
   </data>
   <data name="XslFileDisplayName" xml:space="preserve">
-    <value>XSL File</value>
+    <value>XSL Dosyası</value>
     <comment>.xsl</comment>
   </data>
   <data name="NewTextDocumentDisplayName" xml:space="preserve">
-    <value>Text Document</value>
+    <value>Metin Belgesi</value>
     <comment>New .txt file name</comment>
   </data>
 </root>
