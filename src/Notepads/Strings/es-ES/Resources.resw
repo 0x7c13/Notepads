@@ -134,11 +134,11 @@
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Quieres Guardar los Cambios?</value>
+    <value>¿Quieres Guardar los Cambios?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Nada para compartir porque no hay texto selecionado o el documento está vacío.</value>
+    <value>Nada para compartir porque no hay texto seleccionado o el documento está vacío.</value>
     <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
@@ -162,7 +162,7 @@
     <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>Eror al Abrir Archivo</value>
+    <value>Error al Abrir Archivo</value>
     <comment>FileOpenErrorDialog: "Title" display text.</comment>
   </data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve">
@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Todos los cambios incluyendo texto, fin de línea y codificación hechos a ¨{0}" serán revertidos!</value>
+    <value>¡Todos los cambios incluyendo texto, fin de línea y codificación hechos a ¨{0}" serán revertidos!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
@@ -274,7 +274,7 @@
     <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Guardar Archivo "{0}"?</value>
+    <value>¿Guardar Archivo "{0}"?</value>
     <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
@@ -286,7 +286,7 @@
     <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Guardar Cambios?</value>
+    <value>¿Guardar Cambios?</value>
     <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
@@ -394,11 +394,11 @@
     <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>El archivo ha sido modificado fuera!</value>
+    <value>¡El archivo ha sido modificado fuera!</value>
     <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>Archivo ha sido movido, renombrado o borrado!</value>
+    <value>¡Archivo ha sido movido, renombrado o borrado!</value>
     <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
@@ -442,7 +442,7 @@
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>El archivo ya está abierto!</value>
+    <value>¡El archivo ya está abierto!</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
@@ -470,11 +470,11 @@
     <comment>GoTo:Go to bar label</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Número de línea excede el total de líneas!</value>
+    <value>¡Número de línea excede el total de líneas!</value>
     <comment>GoTo: Notification message when input exceeds input limit.</comment>
   </data>
   <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>Sólo se permiten números!</value>
+    <value>¡Sólo se permiten números!</value>
     <comment>GoTo: Notification message when invalid input entered.</comment>
   </data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -562,27 +562,27 @@
     <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Expresión Regular Inválida!</value>
+    <value>¡Expresión Regular Inválida!</value>
     <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
   </data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Auto Guess Encoding</value>
+    <value>Adivinar codificación</value>
     <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Encoding cannot be determined</value>
+    <value>No se puede determinar la codificación</value>
     <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
   </data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Find Previous (Shift+F3)</value>
+    <value>Buscar anterior (Shift+F3)</value>
     <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Replace Mode</value>
+    <value>Cambiar modo de reemplazo</value>
     <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Right-to-Left Reading order</value>
+    <value>Orden de lectura de derecha a izquierda</value>
     <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
   </data>
   <data name="FontStyle_Italic" xml:space="preserve">
@@ -642,55 +642,55 @@
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Guardar</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
+    <value>Renombrar</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
+    <value>El nombre del archivo no debe contener caracteres no válidos</value>
     <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>File name should not contain leading spaces</value>
+    <value>El nombre del archivo no debe contener espacios al principio</value>
     <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>File name should not contain trailing spaces</value>
+    <value>El nombre del archivo no debe contener espacios al final</value>
     <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>File name cannot be empty or all whitespace</value>
+    <value>El nombre del archivo no puede estar vacío ni contener espacios en blanco</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
+    <value>El nombre del archivo no es válido o no está permitido</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>File name cannot be longer than 255 characters</value>
+    <value>El nombre del archivo no puede tener más de 255 caracteres</value>
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>Renombrar</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
+    <value>Renombrado</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Empty file extension is not supported at this moment</value>
+    <value>La extensión de archivo vacía no se admite en este momento</value>
     <comment>FileRenameError: Empty file extension is not currently supported.</comment>
   </data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>File extension "{0}" is not supported at this moment</value>
+    <value>La extensión de archivo "{0}" no es compatible en este momento</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
 </root>

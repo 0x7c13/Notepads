@@ -362,11 +362,11 @@
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Auto guess Encoding (Recommended)</value>
+    <value>Adivinar codificación (recomendado)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Display</value>
+    <value>Visualización</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
