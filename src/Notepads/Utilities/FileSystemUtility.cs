@@ -12,7 +12,6 @@
     using Notepads.Services;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
-    using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
     using UtfUnknown;
 
@@ -29,12 +28,12 @@
 
     public static class FileSystemUtility
     {
-        private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
-
-        private const string WslRootPath = "\\\\wsl$\\";
+        private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
         // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
-        private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
+        private static readonly Regex _validWindowsFileNames = new Regex(
+            @"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$",
+            RegexOptions.IgnoreCase);
 
         public static bool IsFilenameValid(string filename, out InvalidFilenameError error)
         {
@@ -71,7 +70,7 @@
                 return false;
             }
 
-            if (filename.EndsWith(".") || !ValidWindowsFileNames.IsMatch(filename))
+            if (filename.EndsWith(".") || !_validWindowsFileNames.IsMatch(filename))
             {
                 error = InvalidFilenameError.InvalidOrNotAllowed;
                 return false;
@@ -81,213 +80,18 @@
             return true;
         }
 
-        public static bool IsFullPath(string path)
+        public static async Task<long> GetDateModified(IStorageFile file)
         {
-            return !String.IsNullOrWhiteSpace(path)
-                   && path.IndexOfAny(System.IO.Path.GetInvalidPathChars().ToArray()) == -1
-                   && Path.IsPathRooted(path)
-                   && !Path.GetPathRoot(path).Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
+            var properties = await file.GetBasicPropertiesAsync();
+            return properties.DateModified.ToFileTime();
         }
 
-        public static String GetAbsolutePath(String basePath, String path)
-        {
-            String finalPath;
-            if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
-            {
-                if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
-                {
-                    finalPath = Path.Combine(Path.GetPathRoot(basePath), path.TrimStart(Path.DirectorySeparatorChar));
-                }
-                else
-                {
-                    finalPath = Path.Combine(basePath, path);
-                }
-            }
-            else
-            {
-                finalPath = path;
-            }
-
-            // Resolves any internal "..\" to get the true full path.
-            return Path.GetFullPath(finalPath);
-        }
-
-        public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
-        {
-            string path = null;
-
-            try
-            {
-                args = ReplaceEnvironmentVariables(args);
-                path = GetAbsolutePathFromCommandLine(dir, args, App.ApplicationName);
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to parse command line: {args} with Exception: {ex}");
-            }
-
-            if (string.IsNullOrEmpty(path))
-            {
-                return null;
-            }
-
-            LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
-
-            return await GetFile(path);
-        }
-
-        private static string ReplaceEnvironmentVariables(string args)
-        {
-            if (args.Contains("%homepath%", StringComparison.OrdinalIgnoreCase))
-            {
-                args = args.Replace("%homepath%",
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (args.Contains("%localappdata%", StringComparison.OrdinalIgnoreCase))
-            {
-                args = args.Replace("%localappdata%",
-                    UserDataPaths.GetDefault().LocalAppData,
-                    StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (args.Contains("%temp%", StringComparison.OrdinalIgnoreCase))
-            {
-                args = args.Replace("%temp%",
-                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
-                    "TEMP",
-                    Environment.GetEnvironmentVariable("temp")),
-                    StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (args.Contains("%tmp%", StringComparison.OrdinalIgnoreCase))
-            {
-                args = args.Replace("%tmp%",
-                    (string)Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Environment",
-                    "TEMP",
-                    Environment.GetEnvironmentVariable("tmp")),
-                    StringComparison.OrdinalIgnoreCase);
-            }
-
-            return Environment.ExpandEnvironmentVariables(args);
-        }
-
-        public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
-        {
-            if (string.IsNullOrEmpty(args)) return null;
-
-            args = args.Trim();
-
-            args = RemoveExecutableNameOrPathFromCommandLineArgs(args, appName);
-
-            if (string.IsNullOrEmpty(args))
-            {
-                return null;
-            }
-
-            string path = args;
-
-            // Get first quoted string if any
-            if (path.StartsWith("\"") && path.Length > 1)
-            {
-                var index = path.IndexOf('\"', 1);
-                if (index == -1) return null;
-                path = args.Substring(1, index - 1);
-            }
-
-            if (dir.StartsWith(WslRootPath))
-            {
-                if (path.StartsWith('/'))
-                {
-                    var distroRootPath = dir.Substring(0, dir.IndexOf('\\', WslRootPath.Length) + 1);
-                    var fullPath = distroRootPath + path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
-                    if (IsFullPath(fullPath)) return fullPath;
-                }
-            }
-
-            // Replace all forward slash with platform supported directory separator 
-            path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
-
-            if (IsFullPath(path))
-            {
-                return path;
-            }
-
-            if (path.StartsWith(".\\"))
-            {
-                path = dir + Path.DirectorySeparatorChar + path.Substring(2, path.Length - 2);
-            }
-            else if (path.StartsWith("..\\"))
-            {
-                path = GetAbsolutePath(dir, path);
-            }
-            else
-            {
-                path = dir + Path.DirectorySeparatorChar + path;
-            }
-
-            return path;
-        }
-
-        private static string RemoveExecutableNameOrPathFromCommandLineArgs(string args, string appName)
-        {
-            if (!args.StartsWith('\"'))
-            {
-                // From Windows Command Line
-                // notepads <file> ...
-                // notepads.exe <file>
-
-                if (args.StartsWith($"{appName}.exe",
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    args = args.Substring($"{appName}.exe".Length);
-                }
-
-                if (args.StartsWith(appName,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    args = args.Substring(appName.Length);
-                }
-            }
-            else if (args.StartsWith('\"') && args.Length > 1)
-            {
-                // From PowerShell or run
-                // "notepads" <file>
-                // "notepads.exe" <file>
-                // "<app-install-path><app-name>.exe"  <file> ...
-                var index = args.IndexOf('\"', 1);
-                if (index == -1) return null;
-                if (args.Length == index + 1) return null;
-                args = args.Substring(index + 1);
-            }
-            else
-            {
-                return null;
-            }
-
-            args = args.Trim();
-            return args;
-        }
-
-        public static async Task<BasicProperties> GetFileProperties(StorageFile file)
-        {
-            return await file.GetBasicPropertiesAsync();
-        }
-
-        public static async Task<long> GetDateModified(StorageFile file)
-        {
-            var properties = await GetFileProperties(file);
-            var dateModified = properties.DateModified;
-            return dateModified.ToFileTime();
-        }
-
-        public static bool IsFileReadOnly(StorageFile file)
+        public static bool IsFileReadOnly(IStorageFile file)
         {
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> IsFileWritable(StorageFile file)
+        public static async Task<bool> IsFileWritable(IStorageFile file)
         {
             try
             {
@@ -300,31 +104,31 @@
             }
         }
 
-        public static async Task<StorageFile> GetFile(string filePath)
+        public static async Task<Tuple<IStorageFile, Exception>> GetFile(string filePath)
         {
             try
             {
-                return await StorageFile.GetFileFromPathAsync(filePath);
+                return new Tuple<IStorageFile, Exception>(await StorageFile.GetFileFromPathAsync(filePath), null);
             }
-            catch
+            catch (Exception e)
             {
-                return null;
+                return new Tuple<IStorageFile, Exception>(null, e);
             }
         }
 
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
-            StorageFile file = await GetFile(filePath);
+            var file = (await GetFile(filePath)).Item1;
             return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
+        public static async Task<TextFile> ReadFile(IStorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
             if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
             {
-                throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
+                throw new Exception(_resourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
             }
 
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -545,7 +349,7 @@
         /// <param name="encoding"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
+        public static async Task WriteToFile(string text, Encoding encoding, IStorageFile file)
         {
             bool usedDeferUpdates = true;
 
@@ -575,7 +379,7 @@
                     var result = encoding.GetPreamble().Concat(content).ToArray();
                     await PathIO.WriteBytesAsync(file.Path, result);
                 }
-                else // Use StorageFile API to save 
+                else // Use StorageFile API to save
                 {
                     using (var stream = await file.OpenStreamForWriteAsync())
                     using (var writer = new StreamWriter(stream, encoding))
@@ -611,7 +415,7 @@
         {
             try
             {
-                var file = await GetFile(filePath);
+                var file = (await GetFile(filePath)).Item1;
                 if (file != null)
                 {
                     await file.DeleteAsync(deleteOption);
@@ -629,12 +433,12 @@
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
+        public static async Task<IStorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
             return await folder.CreateFileAsync(fileName, option);
         }
 
-        public static async Task<bool> FileExists(StorageFile file)
+        public static async Task<bool> FileExists(IStorageFile file)
         {
             try
             {

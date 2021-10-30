@@ -169,7 +169,7 @@
 
         public async Task<ITextEditor> CreateTextEditor(
             Guid id,
-            StorageFile file,
+            IStorageFile file,
             Encoding encoding = null,
             bool ignoreFileSizeLimit = false)
         {
@@ -180,7 +180,7 @@
         public ITextEditor CreateTextEditor(
             Guid id,
             TextFile textFile,
-            StorageFile editingFile,
+            IStorageFile editingFile,
             string fileNamePlaceholder,
             bool isModified = false)
         {
@@ -207,7 +207,7 @@
             return textEditor;
         }
 
-        public async Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, IStorageFile file)
         {
             await textEditor.SaveContentToFileAndUpdateEditorState(file); // Will throw if not succeeded
             MarkTextEditorSetSaved(textEditor);
@@ -381,7 +381,7 @@
             item?.Close();
         }
 
-        public ITextEditor GetTextEditor(StorageFile file)
+        public ITextEditor GetTextEditor(IStorageFile file)
         {
             var item = GetTextEditorSetsViewItem(file);
             return item?.Content as ITextEditor;
@@ -427,7 +427,7 @@
             return textEditorSetsViewItem;
         }
 
-        private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
+        private SetsViewItem GetTextEditorSetsViewItem(IStorageFile file)
         {
             if (Sets.Items == null) return null;
             foreach (SetsViewItem setsItem in Sets.Items)
@@ -601,7 +601,7 @@
                 try
                 {
                     var items = await args.DataView.GetStorageItemsAsync();
-                    if (items.Count > 0 && items.Any(i => i is StorageFile))
+                    if (items.Count > 0 && items.Any(i => i is IStorageFile))
                     {
                         canHandle = true;
                         dragUICaption = _resourceLoader.GetString("App_DragAndDrop_UIOverride_Caption_OpenWithNotepads");
@@ -718,12 +718,12 @@
                     }
                 }
 
-                StorageFile editingFile = null;
+                IStorageFile editingFile = null;
 
                 if (metaData.HasEditingFile && args.DataView.Contains(StandardDataFormats.StorageItems))
                 {
                     var storageItems = await args.DataView.GetStorageItemsAsync();
-                    if (storageItems.Count == 1 && storageItems[0] is StorageFile file)
+                    if (storageItems.Count == 1 && storageItems[0] is IStorageFile file)
                     {
                         editingFile = file;
                     }

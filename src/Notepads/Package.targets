@@ -4,7 +4,7 @@
     <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
     <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
   </PropertyGroup>
-  
+
   <UsingTask TaskName="UpdateNotepadsPackageManifest" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <ManifestPath ParameterType="System.String" Required="true" Output="true" />
@@ -32,7 +32,7 @@
       </Code>
     </Task>
   </UsingTask>
-  
+
   <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <ResourceGroupPath ParameterType="System.String" Required="true" />

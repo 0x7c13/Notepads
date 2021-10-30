@@ -18,7 +18,7 @@
     {
         private async Task OpenNewFiles()
         {
-            IReadOnlyList<StorageFile> files;
+            IReadOnlyList<IStorageFile> files;
 
             try
             {
@@ -47,7 +47,7 @@
             }
         }
 
-        public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
+        public async Task<bool> OpenFile(IStorageFile file, bool rebuildOpenRecentItems = true)
         {
             try
             {
@@ -90,7 +90,7 @@
         // This information will be used to on-board new extension support for future release.
         // Because UWP does not allow user to associate arbitrary file extension with the app.
         // File name will not and should not be tracked.
-        private void TrackFileExtensionIfNotSupported(StorageFile file)
+        private void TrackFileExtensionIfNotSupported(IStorageFile file)
         {
             try
             {
@@ -119,7 +119,7 @@
             int successCount = 0;
             foreach (var storageItem in storageItems)
             {
-                if (storageItem is StorageFile file)
+                if (storageItem is IStorageFile file)
                 {
                     if (await OpenFile(file, rebuildOpenRecentItems: false))
                     {
@@ -134,15 +134,15 @@
             return successCount;
         }
 
-        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
+        private async Task<IStorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
-            StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
+            var file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
             NotepadsCore.FocusOnTextEditor(textEditor);
             return file;
         }
 
-        private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        private async Task SaveInternal(ITextEditor textEditor, IStorageFile file, bool rebuildOpenRecentItems)
         {
             await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
             var success = MRUService.TryAdd(file); // Remember recently used files
@@ -161,7 +161,7 @@
                 return true;
             }
 
-            StorageFile file = null;
+            IStorageFile file = null;
 
             try
             {

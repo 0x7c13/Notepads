@@ -33,14 +33,14 @@
 
         Task<ITextEditor> CreateTextEditor(
             Guid id,
-            StorageFile file,
+            IStorageFile file,
             Encoding encoding = null,
             bool ignoreFileSizeLimit = false);
 
         ITextEditor CreateTextEditor(
             Guid id,
             TextFile textFile,
-            StorageFile editingFile,
+            IStorageFile editingFile,
             string fileNamePlaceHolder,
             bool isModified = false);
 
@@ -50,7 +50,7 @@
 
         void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
 
-        Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
+        Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, IStorageFile file);
 
         void DeleteTextEditor(ITextEditor textEditor);
 
@@ -72,7 +72,7 @@
 
         ITextEditor GetSelectedTextEditor();
 
-        ITextEditor GetTextEditor(StorageFile file);
+        ITextEditor GetTextEditor(IStorageFile file);
 
         ITextEditor GetTextEditor(string editingFilePath);
 

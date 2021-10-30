@@ -73,9 +73,9 @@
 
         public string EditingFilePath { get; private set; }
 
-        private StorageFile _editingFile;
+        private IStorageFile _editingFile;
 
-        public StorageFile EditingFile
+        public IStorageFile EditingFile
         {
             get => _editingFile;
             private set
@@ -463,7 +463,7 @@
             });
         }
 
-        public void Init(TextFile textFile, StorageFile file, bool resetLastSavedSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
+        public void Init(TextFile textFile, IStorageFile file, bool resetLastSavedSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
         {
             _loaded = false;
             EditingFile = file;
@@ -709,7 +709,7 @@
             return TextEditorCore.IsEnabled;
         }
 
-        public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorState(IStorageFile file)
         {
             if (Mode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
             TextFile textFile = await SaveContentToFile(file); // Will throw if not succeeded
@@ -719,7 +719,7 @@
             StartCheckingFileStatusPeriodically();
         }
 
-        private async Task<TextFile> SaveContentToFile(StorageFile file)
+        private async Task<TextFile> SaveContentToFile(IStorageFile file)
         {
             var text = TextEditorCore.GetText();
             var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;

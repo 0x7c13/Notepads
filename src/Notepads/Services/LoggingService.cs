@@ -20,7 +20,7 @@
         private static readonly TimeSpan LoggingInterval = TimeSpan.FromSeconds(10);
         private static readonly List<string> Messages = new List<string>();
 
-        private static StorageFile _logFile;
+        private static IStorageFile _logFile;
         private static Task _backgroundTask;
         private static bool _initialized;
 
@@ -37,7 +37,7 @@
             await InitializeLogFileWriterBackgroundTaskAsync();
         }
 
-        public static StorageFile GetLogFile()
+        public static IStorageFile GetLogFile()
         {
             return _logFile;
         }

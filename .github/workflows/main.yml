@@ -1,6 +1,6 @@
 name: Notepads CI/CD Pipeline
 
-on: 
+on:
   push:
     paths-ignore:
     - '**.md'
@@ -106,6 +106,8 @@ jobs:
       is_release: ${{ matrix.release }}
     env:
       SOLUTION_NAME: src\Notepads.sln
+      PROJECT_NAME: src\Notepads\Notepads.csproj
+      TEST_PROJECT_NAME: src\Notepads.UnitTest\Notepads.UnitTest.csproj
       CONFIGURATION: ${{ matrix.configuration }}
       DEFAULT_DIR: ${{ github.workspace }}
     steps:
@@ -123,6 +125,10 @@ jobs:
       - name: Setup NuGet
         id: setup-nuget
         uses: NuGet/setup-nuget@v1.0.5
+
+      - name: Setup VSTest
+        id: setup-vstest
+        uses: darenm/Setup-VSTest@v1
 
       - name: Checkout repository
         id: checkout_repo
@@ -156,7 +162,7 @@ jobs:
         name: Bump GitHub tag
         id: tag_generator
         uses: soumyamahunt/github-tag-action@test-other-ver-support
-        with: 
+        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
           default_bump: true
@@ -212,7 +218,7 @@ jobs:
         id: init_sonar_scanner
         shell: pwsh
         run: |
-          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
           /o:"$LOWERCASE_REPOSITORY_NAME" `
@@ -250,9 +256,10 @@ jobs:
         id: build_app
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild $env:PROJECT_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxPackageSigningEnabled=$env:APPX_PACKAGE_SIGNING_ENABLED `
@@ -277,9 +284,10 @@ jobs:
         id: build_app_arm_debug
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild $env:PROJECT_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
@@ -313,6 +321,24 @@ jobs:
         with:
           name: Build artifacts
           path: Artifacts/
+
+      - if: matrix.debug || matrix.release
+        name: Run Unit Tests
+        id: run_unittest
+        shell: pwsh
+        run: |
+          msbuild $env:TEST_PROJECT_NAME `
+          /p:Platform=$env:PLATFORM `
+          /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
+          /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
+
+          $TEST_PATH = "$([System.IO.Path]::GetDirectoryName($env:TEST_PROJECT_NAME))$(
+          )\bin\$($env:PLATFORM)\$($env:CONFIGURATION)\Notepads.UnitTest.build.appxrecipe"
+          vstest.console.exe $TEST_PATH /framework:FrameworkUap10
+        env:
+          PLATFORM: x64
+          APPX_BUNDLE_PLATFORMS: x64
 
   cd:
     # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."

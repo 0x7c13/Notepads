@@ -220,7 +220,7 @@
             }
             else if (_appLaunchCmdDir != null)
             {
-                var file = await FileSystemUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
+                var file = await CommandLineUtility.OpenFileFromCommandLine(_appLaunchCmdDir, _appLaunchCmdArgs);
                 if (file != null && await OpenFile(file))
                 {
                     loadedCount++;
@@ -586,7 +586,7 @@
         {
             foreach (var storageItem in storageItems)
             {
-                if (storageItem is StorageFile file)
+                if (storageItem is IStorageFile file)
                 {
                     await OpenFile(file);
                     Analytics.TrackEvent("OnStorageFileDropped");

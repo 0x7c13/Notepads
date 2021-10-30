@@ -15,7 +15,8 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solution: '**\*.sln'
+  project: 'src\Notepads\Notepads.csproj'
   buildPlatform: 'x86|x64|arm64'
   buildConfiguration: 'Production'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
@@ -30,9 +31,10 @@ steps:
 - task: VSBuild@1
   inputs:
     platform: 'x64'
-    solution: '$(solution)'
+    solution: '$(project)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)"
+    msbuildArgs: '/p:AllowUnsafeBlocks=true
+                  /p:AppxBundlePlatforms="$(buildPlatform)"
                   /p:AppxPackageDir="$(appxPackageDir)"
                   /p:AppxBundle=Always
                   /p:UapAppxPackageBuildMode=StoreUpload
