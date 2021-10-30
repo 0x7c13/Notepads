@@ -43,9 +43,6 @@
             SettingsNavigationView.SelectedItem = SettingsNavigationView.MenuItems[0];
         }*/
 
-
-
-
         private void SettingsPage_Unloaded(object sender, RoutedEventArgs e)
         {
             if (App.IsGameBarWidget)
@@ -82,7 +79,6 @@
         private void SettingsPanel_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             SettingsPanel.Show((args.InvokedItem as string), (args.InvokedItemContainer as NavigationViewItem)?.Tag as string);
-
         }
     }
 }
