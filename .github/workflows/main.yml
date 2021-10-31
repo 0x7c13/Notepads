@@ -1,14 +1,14 @@
 name: Notepads CI/CD Pipeline
 
-on: 
+on:
   push:
-    paths-ignore:
-    - '**.md'
-    - 'ScreenShots/**'
-    - '.whitesource'
-    - 'azure-pipelines.yml'
-    - '.github/**'
-    - '!.github/workflows/main.yml'
+    #paths-ignore:
+    #- '**.md'
+    #- 'ScreenShots/**'
+    #- '.whitesource'
+    #- 'azure-pipelines.yml'
+    #- '.github/**'
+    #- '!.github/workflows/main.yml'
     branches-ignore:
     # PRs made by bots trigger both 'push' and 'pull_request' event, ignore 'push' event in that case
     - 'dependabot**'
@@ -25,10 +25,11 @@ on:
     - '!.github/workflows/main.yml'
   workflow_dispatch:
     inputs:
-      type:
-        description: 'Type of event to trigger (type "release" to trigger release)'
+      param:
+        description: Optional parameter for additional actions
+        # Type '(major|maj) (realease|rel)' or '(minor|min) (realease|rel)' or release for major,miner,patch release respectively
+        # Or explicitly provide version number to create release with that version
         required: false
-        default: 'test'
   schedule:
     - cron: '0 8 * * *'
 
@@ -43,55 +44,89 @@ jobs:
         shell: pwsh
         run: |
           $MATRIX = @{
-            include = @(
-              @{
-                 configuration= "Debug"
-                 appxBundlePlatforms = "x86|x64"
-                 runCodeqlAnalysis = $false
-                 runSonarCloudScan = $false
-                 debug = $true
-                 release= $false
-               },
-              @{
-                 configuration= "Release"
-                 appxBundlePlatforms= "x86|x64|ARM64"
-                 runCodeqlAnalysis= $false
-                 runSonarCloudScan= $false
-                 debug= $false
-                 release= $false
-               },
-              @{
-                 configuration= "Production"
-                 appxBundlePlatforms= "x86|x64|ARM64"
-                 runCodeqlAnalysis= $true
-                 runSonarCloudScan= $true
-                 debug= $false
-                 release= $false
-               }
+            include = @( [ordered]@{
+                configuration= "Debug"
+                appxBundlePlatforms = "x86|x64"
+                oldVersion = ""
+                newVersion = ""
+                debug = $true
+                runCodeqlAnalysis = $false
+                runSonarCloudScan = $false
+              }, [ordered]@{
+                configuration= "Release"
+                appxBundlePlatforms= "x86|x64|ARM64"
+                oldVersion = ""
+                newVersion = ""
+                debug = $true
+                runCodeqlAnalysis= $false
+                runSonarCloudScan= $false
+              }, [ordered]@{
+                configuration= "Production"
+                appxBundlePlatforms= "x86|x64|ARM64"
+                oldVersion = ""
+                newVersion = ""
+                debug = $true
+                runCodeqlAnalysis= $true
+                runSonarCloudScan= $true
+              }
             )
           }
 
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'pull_request') -or ($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
+          if ( ( $env:GITHUB_EVENT -eq 'pull_request' ) `
+               -or ( $env:GITHUB_EVENT -eq 'schedule' ) `
+               -or ( $env:FORK -eq 'true' ) ) {
             $MATRIX.include | Foreach-Object { $_.runSonarCloudScan = $false }
           }
 
-          if ( !($env:GITHUB_EVENT_NAME -ceq 'push') -And !($env:GITHUB_EVENT_NAME -ceq 'pull_request') ) {
-            $MATRIX.include = @($MATRIX.include | Where-Object { $_.configuration -ceq "$env:RELEASE_CONFIGURATION" })
-            if ( ($env:GITHUB_EVENT_NAME -ceq 'workflow_dispatch') -and ($env:EVENT_TYPE -ieq 'release') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
+          if ( ( $env:GITHUB_EVENT -ne 'push' ) `
+               -and ( $env:GITHUB_EVENT -ne 'pull_request' ) ) {
+            $MATRIX.include = @($MATRIX.include | Where-Object { $_.configuration -eq "$env:RELEASE_CONFIGURATION" })
+
+            if ( ( $env:GITHUB_EVENT -eq 'workflow_dispatch' ) `
+                 -and ( $env:GITHUB_REF -eq 'refs/heads/master' ) ) {
+              $FETCH_URL = "https://api.github.com/repos/$env:GIT_REPOSITORY/tags?per_page=1"
+              $OLD_VER = [System.Version]::Parse($(Invoke-RestMethod -Method Get -Uri $FETCH_URL).name -replace 'v')
+
+              [System.Int32[]]$VER_INPUT = $($env:PARAM -replace '[a-zA-Z]| ').Split('.')
+              if ( ( $VER_INPUT.Count -gt 1 ) -or ( $VER_INPUT[0] -gt 0 ) ) {
+                $NEW_VER = [System.Version]::new($VER_INPUT[0],`
+                                                (if ( $VER_INPUT.Count -ge 1 ) { $VER_INPUT[1] } else { 0 }),`
+                                                (if ( $VER_INPUT.Count -ge 2 ) { $VER_INPUT[2] } else { 0 }),`
+                                                (if ( $VER_INPUT.Count -ge 3 ) { $VER_INPUT[3] } else { 0 }))
+              } elseif ( $env:PARAM -match 'rel' ) {
+                if ( $env:PARAM -match 'maj' ) {
+                  $NEW_VER = [System.Version]::new($OLD_VER.Major + 1, 0, 0, 0)
+                } elseif ( $env:PARAM -match 'min' ) {
+                  $NEW_VER = [System.Version]::new($OLD_VER.Major, $OLD_VER.Minor + 1, 0, 0)
+                } else {
+                  $NEW_VER = [System.Version]::new($OLD_VER.Major, $OLD_VER.Minor, $OLD_VER.Build + 1, 0)
+                }
+              }
+
+              if ( ![System.String]::IsNullOrEmpty($OLD_VER) `
+                   -and ![System.String]::IsNullOrEmpty($NEW_VER) `
+                   -and ( $NEW_VER -gt $OLD_VER ) ) {
+                $MATRIX.include | Foreach-Object { $_.oldVersion = $OLD_VER.ToString() }
+                $MATRIX.include | Foreach-Object { $_.newVersion = $NEW_VER.ToString() }
+              }
+
               $MATRIX.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
-              $MATRIX.include | Foreach-Object { if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true } }
+              $MATRIX.include | Foreach-Object {
+                if ( $_.configuration -eq "$env:RELEASE_CONFIGURATION" ) { $_.release = $true }
+              }
             } else {
               $MATRIX.include | Foreach-Object { $_.appxBundlePlatforms = 'x64' }
-              if ( !($env:GITHUB_EVENT_NAME -ceq 'schedule') ) {
+              if ( $env:GITHUB_EVENT -ne 'schedule' ) {
                 $MATRIX.include | Foreach-Object { $_.runCodeqlAnalysis = $false }
               }
             }
           }
           echo "::set-output name=matrix::$($MATRIX | ConvertTo-Json -depth 32 -Compress)"
         env:
-          EVENT_TYPE: ${{ github.event.inputs.type }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          FORK: ${{ github.event.repository.fork }}
+          PARAM: ${{ github.event.inputs.param }}
           GITHUB_REF: ${{ github.ref }}
+          GITHUB_EVENT: ${{ github.event_name }}
           RELEASE_CONFIGURATION: Production
 
   ci:
@@ -100,10 +135,8 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     outputs:
-      changelog: ${{ steps.tag_generator.outputs.changelog }}
-      new_version: "${{ steps.tag_generator.outputs.new_version }}.0"
-      new_version_tag: "v${{ steps.tag_generator.outputs.new_version }}.0"
-      is_release: ${{ matrix.release }}
+      old_version: ${{ matrix.oldVersion }}
+      new_version: ${{ matrix.newVersion }}
     env:
       SOLUTION_NAME: src\Notepads.sln
       CONFIGURATION: ${{ matrix.configuration }}
@@ -139,32 +172,10 @@ jobs:
         with:
             minimum-size: 8GB
             maximum-size: 10GB
-            disk-root: "D:"
 
-      - if: matrix.release
-        name: Check latest tag
-        id: check_latest_tag
-        shell: pwsh
-        run: |
-          $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_REPOSITORY.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
-          $LATEST_VERSION = [System.Version]::Parse($LATEST_TAG -replace 'v')
-          echo "::set-output name=semver::$(echo "$($LATEST_VERSION.Major).$($LATEST_VERSION.Minor).$($LATEST_VERSION.Build)")"
-        env:
-          GIT_REPOSITORY: ${{ github.repository }}
-
-      - if: matrix.release && steps.check_latest_tag.outputs.semver != ''
-        name: Bump GitHub tag
-        id: tag_generator
-        uses: soumyamahunt/github-tag-action@test-other-ver-support
-        with: 
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          latest_ver: ${{ steps.check_latest_tag.outputs.semver }}
-          default_bump: true
-          dry_run: true
-
-      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
-        name: Update tag and manifest
-        id: update
+      - if: matrix.newVersion != ''
+        name: Bump GitHub tag and Update manifest
+        id: tag_manifest_generator
         shell: pwsh
         run: |
           git config --global user.name $env:GIT_USER_NAME
@@ -172,14 +183,14 @@ jobs:
           git tag -a -m "$env:NEW_VERSION_TAG" $env:NEW_VERSION_TAG
           git push --follow-tags
           $xml = [xml](Get-Content $env:APPXMANIFEST_PATH)
-          $xml.Package.Identity.SetAttribute('Version', "$env:NEW_VERSION")
+          $xml.Package.Identity.Version = $env:NEW_VERSION
           $xml.save($env:APPXMANIFEST_PATH)
         env:
           GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           APPXMANIFEST_PATH: src\Notepads\Package.appxmanifest
-          NEW_VERSION: "${{ steps.tag_generator.outputs.new_version }}.0"
-          NEW_VERSION_TAG: "v${{ steps.tag_generator.outputs.new_version }}.0"
+          NEW_VERSION: ${{ matrix.newVersion }}
+          NEW_VERSION_TAG: v${{ matrix.newVersion }}
 
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
@@ -212,7 +223,7 @@ jobs:
         id: init_sonar_scanner
         shell: pwsh
         run: |
-          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()        
+          $LOWERCASE_REPOSITORY_NAME = "${{ github.event.repository.name }}".ToLower()
           .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" `
           /o:"$LOWERCASE_REPOSITORY_NAME" `
@@ -221,16 +232,27 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
-        name: Create PFX certificate for AppxBundle
-        id: create_pfx_cert
+      - if: matrix.newVersion != ''
+        name: Create and validate PFX certificate for AppxBundle
+        id: create_validate_pfx_cert
         shell: pwsh
         run: |
           $TARGET_FILE = "$env:DEFAULT_DIR\cert.pfx"
-          $FROM_BASE64_STR = [System.Convert]::FromBase64String("$env:BASE64_STR")
+          $FROM_BASE64_STR = [System.Convert]::FromBase64String($env:BASE64_STR)
           [System.IO.File]::WriteAllBytes($TARGET_FILE, $FROM_BASE64_STR)
+
+          $FILE_STREAM = [System.IO.File]::OpenRead($TARGET_FILE)
+          $FILE_STREAM.Position = 0
+          $SHA256 = [System.Security.Cryptography.SHA256]::Create()
+          $HASH_BUILDER = [System.Text.StringBuilder]::new()
+          $SHA256.ComputeHash($FILE_STREAM) | ForEach-Object { $HASH_BUILDER.Append($_.ToString("x2")) }
+          if ( $HASH_BUILDER.ToString() -cne $env:SHA256_HASH ) {
+            throw [System.Exception]::new("Created certificate hash $($HASH_BUILDER.ToString()) $(
+                                           )doesn't match provided hash $($env:SHA256_HASH)")
+          }
         env:
           BASE64_STR: ${{ secrets.PACKAGE_CERTIFICATE_BASE64 }}
+          SHA256_HASH: ${{ secrets.PACKAGE_CERTIFICATE_SHA256 }}
 
       - name: Restore the application
         id: restore_application
@@ -245,6 +267,7 @@ jobs:
         uses: github/codeql-action/init@v1
         with:
           queries: security-and-quality
+          languages: csharp
 
       - name: Build and generate bundles
         id: build_app
@@ -265,7 +288,7 @@ jobs:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
           APPX_BUNDLE: Always
-          APPX_PACKAGE_SIGNING_ENABLED: ${{ matrix.release }}
+          APPX_PACKAGE_SIGNING_ENABLED: ${{ matrix.newVersion != '' }}
           APPX_BUNDLE_PLATFORMS: ${{ matrix.appxBundlePlatforms }}
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
@@ -306,7 +329,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - if: matrix.release && steps.tag_generator.outputs.new_version != ''
+      - if: matrix.newVersion != ''
         name: Upload build artifacts
         id: upload_artifacts
         uses: actions/upload-artifact@v2.2.3
@@ -315,13 +338,14 @@ jobs:
           path: Artifacts/
 
   cd:
-    # "This job will execute when the workflow is triggered on a 'push event', the target branch is 'master' and the commit is intended to be a release."
-    if: needs.ci.outputs.is_release == 'true' && needs.ci.outputs.new_version != ''
+    # This job will execute when the workflow is triggered on a 'workflow_dispatch' event,
+    # the target branch is 'master' and required parameter provided for release.
+    if: needs.ci.outputs.new_version != ''
     needs: [ setup, ci ]
     runs-on: windows-latest
     env:
+      OLD_VERSION: ${{ needs.ci.outputs.old_version }}
       NEW_VERSION: ${{ needs.ci.outputs.new_version }}
-      NEW_VERSION_TAG: ${{ needs.ci.outputs.new_version_tag }}
     steps:
       - name: Checkout repository
         id: checkout_repo
@@ -334,57 +358,37 @@ jobs:
           name: Build artifacts
           path: Artifacts/
 
-      - name: Format changelog
-        id: format_changlog
-        shell: pwsh
-        run: |
-          $CHANGELOG = $($env:CHANGELOG -replace $($env:NEW_VERSION -replace '\.[0-9]+$',''),$env:NEW_VERSION)
-          $CHANGELOG = $CHANGELOG -replace '%','%25'
-          $CHANGELOG = $CHANGELOG -replace '\r','%0D'
-          $CHANGELOG = $CHANGELOG -replace '\n','%0A'
-          echo "::set-output name=changelog::$(echo $CHANGELOG)"
-        env:
-          CHANGELOG: ${{ needs.ci.outputs.changelog }}
-
-      - name: Create and publish release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ env.NEW_VERSION_TAG }}
-          release_name: Notepads ${{ env.NEW_VERSION_TAG }}
-          body: ${{ steps.format_changlog.outputs.changelog }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create deployment payload
         id: create_notepads_zip
         shell: pwsh
         run: |
           Get-ChildItem -Filter *Production* -Recurse | Rename-Item -NewName { $_.name -replace "_Production|_Test",'' }
-          Compress-Archive -Path "Notepads_$($env:NEW_VERSION)\*" -DestinationPath "Notepads_$($env:NEW_VERSION)\Notepads_$($env:NEW_VERSION)_x86_x64_ARM64.zip"
+          Compress-Archive -Path "Notepads_$($env:NEW_VERSION)\*" `
+                           -DestinationPath "Notepads_$($env:NEW_VERSION)\Notepads_$($env:NEW_VERSION)_x86_x64_ARM64.zip"
         working-directory: ./Artifacts
 
-      - name: Upload msixbundle as release asset
-        id: upload_notepads_bundle
-        uses: actions/upload-release-asset@v1
+      - name: Generate changelog
+        id: generate_changlog
+        uses: mrchief/universal-changelog-action@v1.2.1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          previousReleaseTagNameOrSha: v${{ env.OLD_VERSION }}
+          nextReleaseTagName: v${{ env.NEW_VERSION }}
+          nextReleaseName: v${{ env.NEW_VERSION }}
+          configFilePath: .github/RELEASE_TEMPLATE/changelog_config.json
 
-      - name: Upload zip as release asset
-        id: upload_notepads_zip
-        uses: actions/upload-release-asset@v1
+      - name: Create and publish release
+        id: create_release
+        uses: ncipollo/release-action@v1.8.3
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.zip
-          asset_name: Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.zip
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: v${{ env.NEW_VERSION }}
+          name: Notepads v${{ env.NEW_VERSION }}
+          body: ${{ steps.generate_changlog.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts:
+             Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.msixbundle
+             Artifacts/Notepads_${{ env.NEW_VERSION }}/Notepads_${{ env.NEW_VERSION }}_x86_x64_ARM64.zip
 
 #      - name: Publish to Windows Store
 #        id: publish_to_store
