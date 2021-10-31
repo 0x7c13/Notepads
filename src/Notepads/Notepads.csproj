@@ -139,6 +139,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppCenterSecret.cs" />
     <Compile Include="Commands\IMouseCommand.cs" />
     <Compile Include="Commands\IKeyboardCommand.cs" />
     <Compile Include="Commands\ICommandHandler.cs" />
@@ -456,24 +457,11 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="Package.targets" />
-  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild">
+  <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
     <PropertyGroup>
-      <InputFile>AppCenter.cs</InputFile>
-      <CsCode>
-namespace Notepads
-{
-    public sealed partial class App
-    {
-        private const string AppCenterSecret = "$(AppCenterSecret)"%3b
-    }
-}
-      </CsCode>
+      <InputFile>AppCenterSecret.cs</InputFile>
     </PropertyGroup>
-    <WriteLinesToFile File="$(BaseIntermediateOutputPath)$(InputFile)" Lines="$(CsCode)" Overwrite="true" />
-    <ItemGroup>
-      <Compile Include="$(BaseIntermediateOutputPath)$(InputFile)" />
-      <FileWrites Include="$(BaseIntermediateOutputPath)$(InputFile)" />
-    </ItemGroup>
+    <WriteLinesToFile File="$(InputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))" Overwrite="true" Encoding="Unicode" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
