@@ -1,0 +1,42 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="UpdateNuGetPackageBuildImports" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <PackageConfigPath ParameterType="System.String" Required="true" />
+      <ProjectPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO" />
+      <Reference Include="System.Text.RegularExpressions" />
+      <Reference Include="System.Xml" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Using Namespace="System.Xml" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          var nugetVersionRegex = @"([0-9]+)(\.([0-9]+)){0,3}(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
+          var config = new XmlDocument();
+          config.Load(PackageConfigPath);
+          foreach (XmlNode package in config["packages"].ChildNodes)
+          {
+            var packageName = package.Attributes["id"].Value;
+            var packageVersion = package.Attributes["version"].Value;
+            var replacement = packageName + "." + packageVersion;
+            var regex = new Regex(Regex.Escape(packageName + ".") + nugetVersionRegex, RegexOptions.Multiline);
+            var projectContent = File.ReadAllText(ProjectPath);
+            if (regex.Matches(projectContent).Count != Regex.Matches(projectContent, Regex.Escape(replacement)).Count)
+            {
+              File.WriteAllText(ProjectPath, regex.Replace(projectContent, replacement));
+            }
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="EnsureNuGetPackageBuildImportsUpdate" BeforeTargets="Restore">
+    <ItemGroup>
+      <NugetPackageConfig Include="%(None.Identity)" Condition="'%(None.Filename)%(None.Extension)' == 'packages.config'" />
+    </ItemGroup>
+    <UpdateNuGetPackageBuildImports PackageConfigPath="%(NugetPackageConfig.FullPath)" ProjectPath="$(MSBuildProjectFullPath)" />
+  </Target>
+</Project>

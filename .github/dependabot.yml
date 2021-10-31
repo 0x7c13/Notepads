@@ -16,4 +16,10 @@ updates:
     commit-message:
       prefix: 'nuget-deps: '
 
+  - package-ecosystem: "nuget"
+    # location of package manifests
+    directory: "/src/Notepad"
+    schedule:
+      interval: "daily"
+
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
