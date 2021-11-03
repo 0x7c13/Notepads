@@ -16,13 +16,14 @@
     using Windows.ApplicationModel.Activation;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.ApplicationModel.Resources.Core;
     using Windows.UI;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
 
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public static string ApplicationName = "Notepads";
 
@@ -30,9 +31,6 @@
 
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
-
-        // Notepads GitHub CD workflow will swap null with production value getting from Github Secrets
-        private const string AppCenterSecret = null;
 
         public static Mutex InstanceHandlerMutex { get; set; }
 
@@ -168,6 +166,16 @@
         private Frame CreateRootFrame(IActivatedEventArgs e)
         {
             Frame rootFrame = new Frame();
+
+            var flowDirectionSetting = ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
+            if (flowDirectionSetting == "RTL" || flowDirectionSetting == "TTBRTL")
+            {
+                rootFrame.FlowDirection = FlowDirection.RightToLeft;
+            }
+            else
+            {
+                rootFrame.FlowDirection = FlowDirection.LeftToRight;
+            }
             rootFrame.NavigationFailed += OnNavigationFailed;
 
             if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
