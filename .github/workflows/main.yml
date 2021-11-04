@@ -369,7 +369,7 @@ jobs:
 
       - name: Generate changelog
         id: generate_changlog
-        uses: mrchief/universal-changelog-action@v1.2.1
+        uses: mrchief/universal-changelog-action@v1.3.1
         with:
           previousReleaseTagNameOrSha: v${{ env.OLD_VERSION }}
           nextReleaseTagName: v${{ env.NEW_VERSION }}
@@ -378,7 +378,7 @@ jobs:
 
       - name: Create and publish release
         id: create_release
-        uses: ncipollo/release-action@v1.8.3
+        uses: ncipollo/release-action@v1.8.10
         with:
           allowUpdates: true
           replacesArtifacts: true
