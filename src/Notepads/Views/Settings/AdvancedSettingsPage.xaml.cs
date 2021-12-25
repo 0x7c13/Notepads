@@ -63,6 +63,7 @@
             EnableSmartCopyToggleSwitch.Toggled -= EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
+            LanguagePicker.SelectionChanged -= LanguagePicker_SelectionChanged;
         }
 
         private void EnableSmartCopyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
