@@ -126,15 +126,15 @@
     <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Guardar Todos</value>
+    <value>Guardar Tudo</value>
     <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Descartar</value>
+    <value>Não Guardar</value>
     <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
   </data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Você deseja guardar as alterações?</value>
+    <value>Pretende guardar as alterações?</value>
     <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
   </data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
@@ -198,7 +198,7 @@
     <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Localizar próxima (F3)</value>
+    <value>Localizar Seguinte (F3)</value>
     <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -206,11 +206,11 @@
     <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Diferenciar maiúsculas de minúsculas</value>
+    <value>Respeitar maiúsculas de minúsculas</value>
     <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
   </data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Coincidir palavra inteira</value>
+    <value>Corresponder palavra completa</value>
     <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve">
@@ -238,7 +238,7 @@
     <comment>MainMenu: "Save" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Guardar Todos</value>
+    <value>Guardar Tudo</value>
     <comment>MainMenu: "Save All" button display text.</comment>
   </data>
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>MainMenu: "Save As" button display text.</comment>
   </data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>Configurações</value>
+    <value>Definições</value>
     <comment>MainMenu: "Settings" button display text.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
@@ -334,11 +334,11 @@
     <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
-    <value>Compartilhar</value>
+    <value>Partilhar</value>
     <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Compartilhar o selecionado</value>
+    <value>Partilhar seleção</value>
     <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
@@ -482,11 +482,11 @@
     <comment>GoTo: "Search" button tool tip display text.</comment>
   </data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Procurar na web</value>
+    <value>Pesquisar na web</value>
     <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Restaurar Zoom Padrão</value>
+    <value>Restaurar Zoom Predefinido</value>
     <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
   </data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
@@ -502,7 +502,7 @@
     <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
   </data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Imprimir Todos...</value>
+    <value>Imprimir Tudo...</value>
     <comment>MainMenu: "Print All" button display text.</comment>
   </data>
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">

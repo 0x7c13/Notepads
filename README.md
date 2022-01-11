@@ -71,7 +71,7 @@ Notepads is available in Microsoft Store. You can get the latest version of Note
 
 You can also use Windows Package Manager to install notepads:
 ```cmd
-winget install notepads
+winget install "Notepads App"
 ```
 
 ## Roadmap:
