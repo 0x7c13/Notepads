@@ -434,7 +434,7 @@
       <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>5.0.2</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="UTF.Unknown">
       <Version>2.5.0</Version>
