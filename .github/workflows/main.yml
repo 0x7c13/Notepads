@@ -66,8 +66,8 @@ jobs:
                 oldVersion = ""
                 newVersion = ""
                 debug = $true
-                runCodeqlAnalysis= $true
-                runSonarCloudScan= $true
+                runCodeqlAnalysis= $false
+                runSonarCloudScan= $false
               }
             )
           }
