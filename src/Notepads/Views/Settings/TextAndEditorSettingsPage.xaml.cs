@@ -26,6 +26,13 @@
         public string FontWeightLocalizedName { get; set; }
     }
 
+    public class FontStretchItem
+    {
+        public FontStretch FontStretch { get; set; }
+
+        public string FontStretchLocalizedName { get; set; }
+    }
+
     public sealed partial class TextAndEditorSettingsPage : Page
     {
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
@@ -84,6 +91,31 @@
             }
         }
 
+        private IList<FontStretchItem> _availableFontStretches;
+
+        public IList<FontStretchItem> AvailableFontStretches
+        {
+            get
+            {
+                if (_availableFontStretches != null)
+                {
+                    return _availableFontStretches;
+                }
+
+                _availableFontStretches = new List<FontStretchItem>();
+                foreach (var (fontStretchName, fontStretch) in FontUtility.PredefinedFontStretchesMap)
+                {
+                    _availableFontStretches.Add(new FontStretchItem()
+                    {
+                        FontStretch = fontStretch,
+                        FontStretchLocalizedName = _resourceLoader.GetString($"FontStretch_{fontStretchName}")
+                    });
+                }
+
+                return _availableFontStretches;
+            }
+        }
+
         public TextAndEditorSettingsPage()
         {
             InitializeComponent();
@@ -96,6 +128,7 @@
             FontSizePicker.SelectedItem = AppSettingsService.EditorFontSize;
             FontStylePicker.SelectedItem = AvailableFontStyles.FirstOrDefault(style => style.FontStyle == AppSettingsService.EditorFontStyle);
             FontWeightPicker.SelectedItem = AvailableFontWeights.FirstOrDefault(weight => weight.FontWeight.Weight == AppSettingsService.EditorFontWeight.Weight);
+            FontStretchPicker.SelectedItem = AvailableFontStretches.FirstOrDefault(style => style.FontStretch == AppSettingsService.EditorFontStretch);
 
             InitializeLineEndingSettings();
 
@@ -223,6 +256,7 @@
             FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
             FontStylePicker.SelectionChanged += FontStylePicker_OnSelectionChanged;
             FontWeightPicker.SelectionChanged += FontWeightPicker_OnSelectionChanged;
+            FontStretchPicker.SelectionChanged += FontStretchPicker_OnSelectionChanged;
 
             CrlfRadioButton.Checked += LineEndingRadioButton_OnChecked;
             CrRadioButton.Checked += LineEndingRadioButton_OnChecked;
@@ -367,6 +401,7 @@
             AppSettingsService.EditorFontFamily = fontFamily.Source;
             FontStylePicker.FontFamily = fontFamily;
             FontWeightPicker.FontFamily = fontFamily;
+            FontStretchPicker.FontFamily = fontFamily;
         }
 
         private void FontSizePicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -382,6 +417,11 @@
         private void FontWeightPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             AppSettingsService.EditorFontWeight = ((FontWeightItem)e.AddedItems.First()).FontWeight;
+        }
+
+        private void FontStretchPicker_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            AppSettingsService.EditorFontStretch = ((FontStretchItem)e.AddedItems.First()).FontStretch;
         }
 
         private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)

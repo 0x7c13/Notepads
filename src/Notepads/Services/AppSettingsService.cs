@@ -12,6 +12,7 @@
         public static event EventHandler<string> OnFontFamilyChanged;
         public static event EventHandler<FontStyle> OnFontStyleChanged;
         public static event EventHandler<FontWeight> OnFontWeightChanged;
+        public static event EventHandler<FontStretch> OnFontStretchChanged;
         public static event EventHandler<int> OnFontSizeChanged;
         public static event EventHandler<TextWrapping> OnDefaultTextWrappingChanged;
         public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
@@ -72,6 +73,19 @@
                 _editorFontWeight = value;
                 OnFontWeightChanged?.Invoke(null, value);
                 ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value.Weight);
+            }
+        }
+
+        private static FontStretch _editorFontStretch;
+
+        public static FontStretch EditorFontStretch
+        {
+            get => _editorFontStretch;
+            set
+            {
+                _editorFontStretch = value;
+                OnFontStretchChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorFontStretchStr, value.ToString());
             }
         }
 
@@ -554,6 +568,16 @@
             else
             {
                 _editorFontWeight = FontWeights.Normal;
+            }
+
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorFontStretchStr) is string fontStretchStr &&
+                Enum.TryParse(typeof(FontStretch), fontStretchStr, out var fontStretch))
+            {
+                _editorFontStretch = (FontStretch)fontStretch;
+            }
+            else
+            {
+                _editorFontStretch = FontStretch.Normal;
             }
         }
 
