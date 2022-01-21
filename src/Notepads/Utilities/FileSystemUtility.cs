@@ -238,10 +238,22 @@
                 // notepads <file> ...
                 // notepads.exe <file>
 
+                if (args.StartsWith($"{appName}-Dev.exe",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring($"{appName}-Dev.exe".Length);
+                }
+
                 if (args.StartsWith($"{appName}.exe",
                     StringComparison.OrdinalIgnoreCase))
                 {
                     args = args.Substring($"{appName}.exe".Length);
+                }
+
+                if (args.StartsWith($"{appName}-Dev",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    args = args.Substring($"{appName}-Dev".Length);
                 }
 
                 if (args.StartsWith(appName,
