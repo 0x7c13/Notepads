@@ -459,8 +459,37 @@
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
                     InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.W, (args) => ToggleWordWrap()),
+                new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.B, (args) => ToggleBoldText()),
             });
+        }
+
+        public void ToggleWordWrap()
+        {
+            if (TextEditorCore.TextWrapping.Equals(TextWrapping.NoWrap))
+            {
+                TextEditorCore.TextWrapping = TextWrapping.Wrap;
+                AppSettingsService.EditorDefaultTextWrapping = TextWrapping.Wrap;
+            }
+            else if (TextEditorCore.TextWrapping.Equals(TextWrapping.Wrap))
+            {
+                AppSettingsService.EditorDefaultTextWrapping = TextWrapping.NoWrap;
+            }
+        }
+
+        public void ToggleBoldText()
+        {
+            if (TextEditorCore.FontWeight.Weight < FontWeights.Bold.Weight)
+            {
+                TextEditorCore.FontWeight = FontWeights.Bold;
+                AppSettingsService.EditorFontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                TextEditorCore.FontWeight = FontWeights.Normal;
+                AppSettingsService.EditorFontWeight = FontWeights.Normal;
+            }
         }
 
         public void Init(TextFile textFile, StorageFile file, bool resetLastSavedSnapshot = true, bool clearUndoQueue = true, bool isModified = false, bool resetText = true)
