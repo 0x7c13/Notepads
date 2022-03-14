@@ -411,7 +411,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.7.0</Version>
+      <Version>1.7.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>4.5.0</Version>
