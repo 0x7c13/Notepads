@@ -221,7 +221,7 @@
 
             _lineNumberCanvas?.Children.Clear();
             _renderedLineNumberBlocks.Clear();
-            _miniRequisiteIntegerTextRenderingWidthCache.Clear();
+            _minRequisiteIntegerTextRenderingWidthCache.Clear();
 
             SelectionChanged -= OnSelectionChanged;
             TextWrappingChanged -= OnTextWrappingChanged;
@@ -258,6 +258,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.J, (args) => JoinText()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(AppSettingsService.EditorDefaultTabIndents)),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, (args) => RemoveIndentation(AppSettingsService.EditorDefaultTabIndents)),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Up, (args) => MoveTextUp()),

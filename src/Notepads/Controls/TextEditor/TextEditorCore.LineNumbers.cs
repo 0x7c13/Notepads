@@ -36,7 +36,7 @@
         }
 
         private readonly IList<TextBlock> _renderedLineNumberBlocks = new List<TextBlock>();
-        private readonly Dictionary<string, double> _miniRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
+        private readonly Dictionary<string, double> _minRequisiteIntegerTextRenderingWidthCache = new Dictionary<string, double>();
         private readonly SolidColorBrush _lineNumberDarkModeForegroundBrush = new SolidColorBrush("#99EEEEEE".ToColor());
         private readonly SolidColorBrush _lineNumberLightModeForegroundBrush = new SolidColorBrush("#99000000".ToColor());
 
@@ -127,9 +127,9 @@
         {
             var cacheKey = $"{fontFamily.Source}-{(int)fontSize}-{numberTextLength}";
 
-            if (_miniRequisiteIntegerTextRenderingWidthCache.ContainsKey(cacheKey))
+            if (_minRequisiteIntegerTextRenderingWidthCache.ContainsKey(cacheKey))
             {
-                return _miniRequisiteIntegerTextRenderingWidthCache[cacheKey];
+                return _minRequisiteIntegerTextRenderingWidthCache[cacheKey];
             }
 
             double minRequisiteWidth = 0;
@@ -144,7 +144,7 @@
                 }
             }
 
-            _miniRequisiteIntegerTextRenderingWidthCache[cacheKey] = minRequisiteWidth;
+            _minRequisiteIntegerTextRenderingWidthCache[cacheKey] = minRequisiteWidth;
             return minRequisiteWidth;
         }
 
