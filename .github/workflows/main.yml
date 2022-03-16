@@ -369,7 +369,7 @@ jobs:
 
       - name: Generate changelog
         id: generate_changlog
-        uses: mrchief/universal-changelog-action@v1.3.1
+        uses: mrchief/universal-changelog-action@v1.3.2
         with:
           previousReleaseTagNameOrSha: v${{ env.OLD_VERSION }}
           nextReleaseTagName: v${{ env.NEW_VERSION }}
