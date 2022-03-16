@@ -332,7 +332,7 @@ jobs:
       - if: matrix.newVersion != ''
         name: Upload build artifacts
         id: upload_artifacts
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: Build artifacts
           path: Artifacts/
