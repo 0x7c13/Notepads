@@ -1,4 +1,4 @@
-﻿namespace Notepads.Utilities
+namespace Notepads.Utilities
 {
     using Notepads.Services;
     using System.Collections.Generic;
@@ -8,6 +8,8 @@
         Bing,
         Google,
         DuckDuckGo,
+		Brave,
+		Qwant,
         Custom
     }
 
@@ -18,6 +20,8 @@
             {SearchEngine.Bing, "https://www.bing.com/search?q={0}&form=NPCTXT"},
             {SearchEngine.Google, "https://www.google.com/search?q={0}&oq={0}"},
             {SearchEngine.DuckDuckGo, "https://duckduckgo.com/?q={0}&ia=web"},
+            {SearchEngine.Brave, "https://search.brave.com/search?q={0}&source=web"},
+            {SearchEngine.Qwant, "https://www.qwant.com/?q={0}&t=web"},
             {SearchEngine.Custom, ""}
         };
 
