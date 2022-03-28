@@ -27,6 +27,26 @@
             VerticalScrollMode="Auto">
             <StackPanel HorizontalAlignment="Left" Margin="0,0,0,40">
                 <TextBlock
+                    x:Uid="/Settings/AdvancedPage_DefaultFileExtensionSettings_Title"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,15,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,0">
+                    <TextBox x:Uid="/Settings/AdvancedPage_DefaultFileExtensionSettings_DefaultFileExtension"
+                             Style="{StaticResource TransparentTextBoxStyle}"
+                             BorderThickness="0"
+                             x:Name="DefaultFileExtension"
+                             PlaceholderText=".md"
+                             IsSpellCheckEnabled="False"
+                             TextChanged="DefaultFileExtension_TextChanged"
+                             LostFocus="DefaultFileExtension_LostFocus"/>
+                    <TextBlock x:Name="DefaultFileExtensionErrorReport"
+                               x:Uid="/Settings/AdvancedPage_DefaultFileExtensionSettings_DefaultFileExtensionErrorReport"
+                               Style="{ThemeResource DescriptionTextBlockStyle}"
+                               Foreground="Red"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+                <TextBlock
                     x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title"
                     Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,15,0,0"

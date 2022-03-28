@@ -354,7 +354,7 @@
     <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
   </data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>ଆଖ୍ୟାବିହୀନ.txt</value>
+    <value>ଆଖ୍ୟାବିହୀନ</value>
     <comment>TextEditor: Default file name for new document.</comment>
   </data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">

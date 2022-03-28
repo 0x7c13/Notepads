@@ -421,4 +421,16 @@
     <value>Rendszer alapértelmezett</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
+  <data name="AdvancedPage_DefaultFileExtensionSettings_Title.Text" xml:space="preserve">
+    <value>Default File Extension Settings</value>
+    <comment>AdvancedPage DefaultFileExtensionSettings Title display text.</comment>
+  </data>
+  <data name="AdvancedPage_DefaultFileExtensionSettings_DefaultFileExtensionErrorReport.Text" xml:space="preserve">
+    <value>*file extension must be in the format .{0} and must not contain any invalid characters</value>
+    <comment>AdvancedPage DefaultFileExtensionSettings DefaultFileExtension when entered text is not a valid format.</comment>
+  </data>
+  <data name="AdvancedPage_DefaultFileExtensionSettings_DefaultFileExtension.Header" xml:space="preserve">
+    <value>Default File Extension</value>
+    <comment>AdvancedPage DefaultFileExtensionSettings DefaultFileExtension header text.</comment>
+  </data>
 </root>

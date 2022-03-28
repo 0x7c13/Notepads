@@ -30,6 +30,7 @@
         internal static string EditorDefaultTabIndentsInt = "EditorDefaultTabIndentsInt";
         internal static string EditorDefaultSearchEngineStr = "EditorDefaultSearchUrlStr";
         internal static string EditorCustomMadeSearchUrlStr = "EditorCustomMadeSearchUrlStr";
+        internal static string EditorDefaultFileExtensionStr = "EditorDefaultFileExtensionStr";
         internal static string EditorShowStatusBarBool = "EditorShowStatusBarBool";
         internal static string EditorEnableSessionBackupAndRestoreBool = "EditorEnableSessionBackupAndRestoreBool";
         internal static string EditorHighlightMisspelledWordsBool = "EditorHighlightMisspelledWordsBool";

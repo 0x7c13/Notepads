@@ -44,8 +44,18 @@
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
             RestartPrompt.Visibility = LanguageUtility.CurrentLanguageID == ApplicationLanguages.PrimaryLanguageOverride ? Visibility.Collapsed : Visibility.Visible;
 
+            InitializeFileExtensionSettings();
+
             Loaded += AdvancedSettings_Loaded;
             Unloaded += AdvancedSettings_Unloaded;
+        }
+
+        private void InitializeFileExtensionSettings()
+        {
+            if (!string.IsNullOrEmpty(AppSettingsService.EditorDefaultFileExtension))
+            {
+                DefaultFileExtension.Text = AppSettingsService.EditorDefaultFileExtension;
+            }
         }
 
         private void AdvancedSettings_Loaded(object sender, RoutedEventArgs e)
@@ -64,6 +74,18 @@
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
             LanguagePicker.SelectionChanged -= LanguagePicker_SelectionChanged;
+        }
+
+        private void DefaultFileExtension_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            AppSettingsService.EditorDefaultFileExtension = DefaultFileExtension.Text;
+            DefaultFileExtensionErrorReport.Visibility = FileSystemUtility.IsFilenameValid(DefaultFileExtension.Text, out _) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void DefaultFileExtension_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DefaultFileExtensionErrorReport.Visibility = FileSystemUtility.IsFilenameValid(DefaultFileExtension.Text, out _) ? Visibility.Collapsed : Visibility.Visible;
+            AppSettingsService.EditorDefaultFileExtension = FileSystemUtility.IsFilenameValid(DefaultFileExtension.Text, out _) ? DefaultFileExtension.Text : ".md";
         }
 
         private void EnableSmartCopyToggleSwitch_Toggled(object sender, RoutedEventArgs e)

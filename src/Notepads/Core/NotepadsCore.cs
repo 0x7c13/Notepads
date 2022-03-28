@@ -103,11 +103,12 @@
             var textFile = new TextFile(string.Empty,
                 AppSettingsService.EditorDefaultEncoding,
                 AppSettingsService.EditorDefaultLineEnding);
+            var fileName = fileNamePlaceholder + AppSettingsService.EditorDefaultFileExtension;
             var newEditor = CreateTextEditor(
                 Guid.NewGuid(),
                 textFile,
                 null,
-                fileNamePlaceholder);
+                fileName);
             OpenTextEditor(newEditor);
         }
 

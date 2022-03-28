@@ -208,6 +208,18 @@
             }
         }
 
+        private static string _editorDefaultFileExtension;
+
+        public static string EditorDefaultFileExtension
+        {
+            get => _editorDefaultFileExtension;
+            set
+            {
+                _editorDefaultFileExtension = value;
+                ApplicationSettingsStore.Write(SettingsKey.EditorDefaultFileExtensionStr, value);
+            }
+        }
+
         private static bool _showStatusBar;
 
         public static bool ShowStatusBar
@@ -306,11 +318,25 @@
 
             InitializeSearchEngineSettings();
 
+            InitializeFileExtensionSettings();
+
             InitializeStatusBarSettings();
 
             InitializeSessionSnapshotSettings();
 
             InitializeAppOpeningPreferencesSettings();
+        }
+
+        private static void InitializeFileExtensionSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultFileExtensionStr) is string fileExtension)
+            {
+                _editorDefaultFileExtension = fileExtension;
+            }
+            else
+            {
+                _editorDefaultFileExtension = ".md";
+            }
         }
 
         private static void InitializeStatusBarSettings()
