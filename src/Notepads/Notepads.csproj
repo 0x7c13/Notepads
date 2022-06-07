@@ -423,7 +423,7 @@
       <Version>6.2.13</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>6.1.1</Version>
+      <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.Registry">
       <Version>5.0.0</Version>
