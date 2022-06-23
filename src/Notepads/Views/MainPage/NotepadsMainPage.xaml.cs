@@ -274,6 +274,8 @@
                 Window.Current.CoreWindow.Activated -= CoreWindow_Activated;
                 Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             }
+
+            InterInstanceSyncService.Initialize(this);
         }
 
         private async void App_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
@@ -428,6 +430,11 @@
             {
                 editorFlyout.Hide();
             }
+        }
+
+        public void CloseSettingsPane()
+        {
+            RootSplitView.IsPaneOpen = false;
         }
 
         private async void OnSessionBackupAndRestoreOptionChanged(object sender, bool isSessionBackupAndRestoreEnabled)

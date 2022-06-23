@@ -7,10 +7,11 @@
         internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
         internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
         internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";
+        internal static string LastChangedSettingsKeyStr = "LastChangedSettingsKeyStr";
+        internal static string LastChangedSettingsAppInstanceIdStr = "LastChangedSettingsAppInstanceIdStr";
 
         // Theme related
         internal static string RequestedThemeStr = "RequestedThemeStr";
-        internal static string UseWindowsThemeBool = "UseWindowsThemeBool";
         internal static string AppBackgroundTintOpacityDouble = "AppBackgroundTintOpacityDouble";
         internal static string AppAccentColorHexStr = "AppAccentColorHexStr";
         internal static string CustomAccentColorHexStr = "CustomAccentColorHexStr";

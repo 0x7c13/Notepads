@@ -18,21 +18,17 @@
         {
             InitializeComponent();
 
-            if (ThemeSettingsService.UseWindowsTheme)
+            switch (ThemeSettingsService.ThemeMode)
             {
-                ThemeModeDefaultButton.IsChecked = true;
-            }
-            else
-            {
-                switch (ThemeSettingsService.ThemeMode)
-                {
-                    case ElementTheme.Light:
-                        ThemeModeLightButton.IsChecked = true;
-                        break;
-                    case ElementTheme.Dark:
-                        ThemeModeDarkButton.IsChecked = true;
-                        break;
-                }
+                case ElementTheme.Light:
+                    ThemeModeLightButton.IsChecked = true;
+                    break;
+                case ElementTheme.Dark:
+                    ThemeModeDarkButton.IsChecked = true;
+                    break;
+                default:
+                    ThemeModeDefaultButton.IsChecked = true;
+                    break;
             }
 
             AccentColorToggle.IsOn = ThemeSettingsService.UseWindowsAccentColor;
@@ -124,15 +120,13 @@
                 switch (radioButton.Tag)
                 {
                     case "Light":
-                        ThemeSettingsService.UseWindowsTheme = false;
-                        ThemeSettingsService.SetTheme(ElementTheme.Light);
+                        ThemeSettingsService.ThemeMode = ElementTheme.Light;
                         break;
                     case "Dark":
-                        ThemeSettingsService.UseWindowsTheme = false;
-                        ThemeSettingsService.SetTheme(ElementTheme.Dark);
+                        ThemeSettingsService.ThemeMode = ElementTheme.Dark;
                         break;
                     case "Default":
-                        ThemeSettingsService.UseWindowsTheme = true;
+                        ThemeSettingsService.ThemeMode = ElementTheme.Default;
                         break;
                 }
             }
@@ -142,8 +136,8 @@
         {
             if (AccentColorPicker.IsEnabled)
             {
-                ThemeSettingsService.AppAccentColor = args.NewColor;
                 if (!AccentColorToggle.IsOn) ThemeSettingsService.CustomAccentColor = args.NewColor;
+                ThemeSettingsService.AppAccentColor = args.NewColor;
             }
         }
 
