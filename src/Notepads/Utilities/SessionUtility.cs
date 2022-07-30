@@ -9,6 +9,10 @@
     using Notepads.Services;
     using Windows.Storage;
     using Microsoft.AppCenter.Analytics;
+    using System.IO;
+    using Newtonsoft.Json.Linq;
+    using Notepads.Core.SessionDataModels;
+    using System.Text.Json;
 
     internal static class SessionUtility
     {
@@ -45,6 +49,11 @@
             return sessionManager;
         }
 
+        public static string GetBackupFolderPath(string backupFolderName)
+        {
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, backupFolderName);
+        }
+
         public static async Task<StorageFolder> GetBackupFolderAsync(string backupFolderName)
         {
             return await FileSystemUtility.GetOrCreateAppFolder(backupFolderName);
@@ -56,16 +65,72 @@
             return await backupFolder.GetFilesAsync();
         }
 
-        public static async Task<string> GetSerializedSessionMetaDataAsync(string sessionMetaDataFileName)
+        public static async Task<NotepadsSessionDataV1> GetSessionMetaDataAsync(string sessionMetaDataFileName)
         {
             try
             {
                 StorageFolder localFolder = ApplicationData.Current.LocalFolder;
                 if (await localFolder.FileExistsAsync(sessionMetaDataFileName))
                 {
-                    var data = await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
-                    LoggingService.LogInfo($"[{nameof(SessionUtility)}] Session metadata Loaded from {localFolder.Path}");
-                    return data;
+                    NotepadsSessionDataV1 sessionData = null;
+                    string metadataFilePath = null;
+
+                    var tempMetaDataFilePath = Path.Combine(localFolder.Path, sessionMetaDataFileName + "~.TMP");
+                    if (File.Exists(tempMetaDataFilePath))
+                    {
+                        var data = await File.ReadAllTextAsync(tempMetaDataFilePath);
+                        try
+                        {
+                            var json = JsonDocument.Parse(data);
+                            var version = json.RootElement.GetProperty("Version").GetInt32();
+
+                            if (version == 1)
+                            {
+                                sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
+                            }
+                            else
+                            {
+                                throw new Exception($"Invalid version found in temporary session metadata: {version}");
+                            }
+
+                            metadataFilePath = tempMetaDataFilePath;
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load temporary last session metadata: {ex.Message}");
+                            Analytics.TrackEvent("SessionManager_FailedToLoadLastTempSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                        }
+                    }
+
+                    if (sessionData == null)
+                    {
+                        var data = await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
+
+                        try
+                        {
+                            var json = JObject.Parse(data);
+                            var version = (int)json["Version"];
+
+                            if (version == 1)
+                            {
+                                sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
+                            }
+                            else
+                            {
+                                throw new Exception($"Invalid version found in session metadata: {version}");
+                            }
+
+                            metadataFilePath = Path.Combine(localFolder.Path, sessionMetaDataFileName);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
+                            Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                        }
+                    }
+
+                    LoggingService.LogInfo($"[{nameof(SessionUtility)}] Session metadata Loaded from {metadataFilePath}");
+                    return sessionData;
                 }
             }
             catch (Exception ex)
@@ -84,17 +149,6 @@
         public static async Task SaveSerializedSessionMetaDataAsync(string serializedData, string sessionMetaDataFileName)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-
-            // Attempt to delete session meta data file first in case it was not been deleted
-            try
-            {
-                await DeleteSerializedSessionMetaDataAsync(sessionMetaDataFileName);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
             await localFolder.WriteTextToFileAsync(serializedData, sessionMetaDataFileName, CreationCollisionOption.ReplaceExisting);
         }
 

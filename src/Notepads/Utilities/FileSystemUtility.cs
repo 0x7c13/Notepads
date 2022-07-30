@@ -324,14 +324,61 @@
             }
         }
 
+        public static async Task<TextFile> ReadLocalFile(string filePath, Encoding encoding = null)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            string text;
+            var bom = new byte[4];
+
+            using (var stream = File.OpenRead(filePath))
+            {
+                await stream.ReadAsync(bom, 0, 4); // Read BOM values
+                stream.Position = 0; // Reset stream position
+
+                var reader = CreateStreamReader(stream, bom, encoding);
+
+                async Task<string> PeekAndRead()
+                {
+                    if (encoding == null)
+                    {
+                        reader.Peek();
+                        encoding = reader.CurrentEncoding;
+                    }
+                    var str = await reader.ReadToEndAsync();
+                    reader.Close();
+                    return str;
+                }
+
+                try
+                {
+                    text = await PeekAndRead();
+                }
+                catch (DecoderFallbackException)
+                {
+                    stream.Position = 0; // Reset stream position
+                    encoding = GetFallBackEncoding();
+                    reader = new StreamReader(stream, encoding);
+                    text = await PeekAndRead();
+                }
+            }
+
+            encoding = FixUtf8Bom(encoding, bom);
+            return new TextFile(text, encoding, LineEndingUtility.GetLineEndingTypeFromText(text), File.GetLastWriteTime(filePath).ToFileTime());
+        }
+
         public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
             StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
+            return await ReadFile(file, ignoreFileSizeLimit, encoding);
         }
 
         public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
+            if (file == null) return null;
+
             var fileProperties = await file.GetBasicPropertiesAsync();
 
             if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
@@ -597,6 +644,71 @@
                         await writer.FlushAsync();
                         stream.SetLength(stream.Position); // Truncate
                     }
+                }
+            }
+            finally
+            {
+                if (usedDeferUpdates)
+                {
+                    // Let Windows know that we're finished changing the file so the
+                    // other app can update the remote version of the file.
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status != FileUpdateStatus.Complete)
+                    {
+                        // Track FileUpdateStatus here to better understand the failed scenarios
+                        // File name, path and content are not included to respect/protect user privacy
+                        Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
+                        {
+                            { "FileUpdateStatus", nameof(status) }
+                        });
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Safely Save text to a file with requested encoding with transaction model
+        /// https://docs.microsoft.com/en-us/windows/uwp/files/best-practices-for-writing-to-files
+        /// Exception will be thrown if not succeeded
+        /// Exception should be caught and handled by caller
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static async Task SafeWriteToFile(string text, Encoding encoding, StorageFile file)
+        {
+            bool usedDeferUpdates = true;
+
+            try
+            {
+                // Prevent updates to the remote version of the file until we
+                // finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(file);
+            }
+            catch (Exception)
+            {
+                // If DeferUpdates fails, just ignore it and try to save the file anyway
+                usedDeferUpdates = false;
+            }
+
+            // Write to file
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            try
+            {
+                var content = encoding.GetBytes(text);
+                var result = encoding.GetPreamble().Concat(content).ToArray();
+                if (IsFileReadOnly(file) || !await IsFileWritable(file))
+                {
+                    // For file(s) dragged into Notepads, they are read-only
+                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
+                    await PathIO.WriteBytesAsync(file.Path, result);
+                }
+                else // Use FileIO API to save 
+                {
+                    await FileIO.WriteBytesAsync(file, result);
                 }
             }
             finally
