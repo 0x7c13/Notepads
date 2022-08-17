@@ -442,7 +442,7 @@
     <comment>App: ShadowWindowIndicator Description display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>Dosya zaten açık!</value>
+    <value>Dosya zaten açık</value>
     <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
   </data>
   <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
