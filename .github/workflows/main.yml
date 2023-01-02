@@ -195,7 +195,7 @@ jobs:
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
         id: cache_sonar_packages
-        uses: actions/cache@v3.0.3
+        uses: actions/cache@v3.2.2
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
@@ -204,7 +204,7 @@ jobs:
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
-        uses: actions/cache@v3.0.3
+        uses: actions/cache@v3.2.2
         with:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
