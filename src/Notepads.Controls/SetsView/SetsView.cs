@@ -4,9 +4,9 @@
 
 namespace Notepads.Controls
 {
+    using Microsoft.Toolkit.Uwp.UI;
     using System;
     using System.Linq;
-    using Microsoft.Toolkit.Uwp.UI.Extensions;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -158,10 +158,10 @@ namespace Notepads.Controls
                 _setsScrollForwardButton.Click -= ScrollSetForwardButton_Click;
             }
 
-            _setsScrollBackButton = _setsScroller.FindDescendantByName(SetsScrollBackButtonName) as ButtonBase;
-            _setsScrollForwardButton = _setsScroller.FindDescendantByName(SetsScrollForwardButtonName) as ButtonBase;
-            _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
-            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendantByName(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel;
+            _setsScrollBackButton = _setsScroller.FindDescendant(SetsScrollBackButtonName) as ButtonBase;
+            _setsScrollForwardButton = _setsScroller.FindDescendant(SetsScrollForwardButtonName) as ButtonBase;
+            _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendant(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
+            _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendant(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel;
 
             if (_setsScrollBackButton != null)
             {

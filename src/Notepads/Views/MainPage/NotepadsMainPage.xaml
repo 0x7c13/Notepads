@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Notepads.Controls"
-    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
@@ -294,7 +294,7 @@
                 <Grid x:Name="FileModificationStateIndicator"
                       Padding="8,5,6,5"
                       IsTapEnabled="True" 
-                      extensions:Mouse.Cursor="Hand"
+                      ui:FrameworkElementExtensions.Cursor ="Hand"
                       Tapped="StatusBarComponent_OnTapped">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="PointerEntered">
@@ -339,7 +339,7 @@
                 </Grid>
             </Grid>
             <Grid Column="1"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
                            Padding ="4,4,8,4"
                            IsTapEnabled="True"
@@ -411,7 +411,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="2"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -465,7 +465,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="3" x:Name="LineColumnIndicatorButton"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -489,7 +489,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="4"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -581,7 +581,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="5"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -618,7 +618,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="6"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">
@@ -652,7 +652,7 @@
                 </TextBlock>
             </Grid>
             <Grid Column="7"
-                  extensions:Mouse.Cursor="Hand">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:ChangePropertyAction PropertyName="Background">

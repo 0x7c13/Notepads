@@ -139,6 +139,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppCenterSecret.cs" />
     <Compile Include="Commands\IMouseCommand.cs" />
     <Compile Include="Commands\IKeyboardCommand.cs" />
     <Compile Include="Commands\ICommandHandler.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
       <DependentUpon>PrintPageFormat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextEditor\TextEditorCore.JoinText.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
@@ -409,19 +411,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex">
-      <Version>1.7.0</Version>
+      <Version>1.7.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>4.4.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>4.4.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.13</Version>
+      <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>6.1.1</Version>
+      <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.Registry">
       <Version>5.0.0</Version>
@@ -430,13 +432,13 @@
       <Version>2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>5.0.2</Version>
+      <Version>7.0.1</Version>
     </PackageReference>
     <PackageReference Include="UTF.Unknown">
-      <Version>2.5.0</Version>
+      <Version>2.5.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -458,11 +460,11 @@
   <Import Project="Package.targets" />
   <Target Name="AssignAppCenterSecret" BeforeTargets="BeforeBuild" Condition=" $(AppCenterSecret) != '' ">
     <PropertyGroup>
-      <InputFile>App.xaml.cs</InputFile>
+      <InputFile>AppCenterSecret.cs</InputFile>
     </PropertyGroup>
     <WriteLinesToFile File="$(InputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('AppCenterSecret = null','AppCenterSecret = &quot;$(AppCenterSecret)&quot;'))" Overwrite="true" Encoding="Unicode" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

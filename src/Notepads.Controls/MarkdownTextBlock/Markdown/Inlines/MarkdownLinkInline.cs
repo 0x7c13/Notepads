@@ -5,9 +5,9 @@
 
 namespace Notepads.Controls.Markdown
 {
+    using Microsoft.Toolkit;
     using System;
     using System.Collections.Generic;
-    using Microsoft.Toolkit.Extensions;
 
     /// <summary>
     /// Represents a type of hyperlink where the text can be different from the target URL.

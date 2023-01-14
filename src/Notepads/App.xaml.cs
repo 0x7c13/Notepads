@@ -23,7 +23,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
 
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public static string ApplicationName = "Notepads";
 
@@ -31,9 +31,6 @@
 
         public static bool IsPrimaryInstance = false;
         public static bool IsGameBarWidget = false;
-
-        // Notepads GitHub CD workflow will swap null with production value getting from Github Secrets
-        private const string AppCenterSecret = null;
 
         public static Mutex InstanceHandlerMutex { get; set; }
 
@@ -107,8 +104,8 @@
 
             var appLaunchSettings = new Dictionary<string, string>()
             {
-                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", $"{SystemInformation.OperatingSystemVersion.Major}.{SystemInformation.OperatingSystemVersion.Minor}.{SystemInformation.OperatingSystemVersion.Build}" },
+                { "OSArchitecture", SystemInformation.Instance.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", $"{SystemInformation.Instance.OperatingSystemVersion.Major}.{SystemInformation.Instance.OperatingSystemVersion.Minor}.{SystemInformation.Instance.OperatingSystemVersion.Build}" },
                 { "UseWindowsTheme", ThemeSettingsService.UseWindowsTheme.ToString() },
                 { "ThemeMode", ThemeSettingsService.ThemeMode.ToString() },
                 { "UseWindowsAccentColor", ThemeSettingsService.UseWindowsAccentColor.ToString() },
@@ -240,11 +237,11 @@
             {
                 { "Message", e.Message },
                 { "Exception", e.Exception?.ToString() },
-                { "Culture", SystemInformation.Culture.EnglishName },
-                { "AvailableMemory", SystemInformation.AvailableMemory.ToString("F0") },
-                { "FirstUseTimeUTC", SystemInformation.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
-                { "OSArchitecture", SystemInformation.OperatingSystemArchitecture.ToString() },
-                { "OSVersion", SystemInformation.OperatingSystemVersion.ToString() },
+                { "Culture", SystemInformation.Instance.Culture.EnglishName },
+                { "AvailableMemory", SystemInformation.Instance.AvailableMemory.ToString("F0") },
+                { "FirstUseTimeUTC", SystemInformation.Instance.FirstUseTime.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss") },
+                { "OSArchitecture", SystemInformation.Instance.OperatingSystemArchitecture.ToString() },
+                { "OSVersion", SystemInformation.Instance.OperatingSystemVersion.ToString() },
                 { "IsShadowWindow", (!IsPrimaryInstance && !IsGameBarWidget).ToString() },
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };

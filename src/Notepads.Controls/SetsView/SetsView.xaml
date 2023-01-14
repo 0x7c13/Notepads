@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-                    xmlns:ex="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+                    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
                     xmlns:controls="using:Notepads.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
@@ -342,7 +342,7 @@
     <ControlTemplate x:Key="SetsViewItemHeaderTemplate"
                      TargetType="controls:SetsViewItem">
         <Grid x:Name="LayoutRoot"
-              ex:FrameworkElementExtensions.AncestorType="controls:SetsView"
+              ui:FrameworkElementExtensions.AncestorType="controls:SetsView"
               Background="{TemplateBinding Background}"
               BorderBrush="{TemplateBinding BorderBrush}"
               BorderThickness="{TemplateBinding BorderThickness}"
@@ -445,7 +445,7 @@
                     <!--  Use grid to toggle visibility based on IsClosable property and inner border for hover animations.  -->
                     <Border x:Name="CloseButtonContainer"
                             Grid.Column="2"
-                            Width="{Binding (ex:FrameworkElementExtensions.Ancestor).IsCloseButtonOverlay, Converter={StaticResource CloseCollapsingSizeConverter}, ElementName=LayoutRoot}"
+                            Width="{Binding (ui:FrameworkElementExtensions.Ancestor).IsCloseButtonOverlay, Converter={StaticResource CloseCollapsingSizeConverter}, ElementName=LayoutRoot}"
                             HorizontalAlignment="Center"
                             Visibility="{Binding IsClosable, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
                         <Border x:Name="CloseButtonBorder"
