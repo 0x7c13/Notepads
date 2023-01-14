@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Notepads.Controls")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCopyright("Copyright ©  2020-2023 Jackie (Jiaqi) Liu")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
