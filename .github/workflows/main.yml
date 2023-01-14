@@ -155,7 +155,7 @@ jobs:
 
       - name: Setup NuGet
         id: setup-nuget
-        uses: NuGet/setup-nuget@v1.0.6
+        uses: NuGet/setup-nuget@v1.1.1
 
       - name: Checkout repository
         id: checkout_repo
