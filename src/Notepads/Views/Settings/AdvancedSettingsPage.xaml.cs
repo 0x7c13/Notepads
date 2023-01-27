@@ -30,7 +30,7 @@
                 EnableSessionSnapshotToggleSwitch.IsOn = AppSettingsService.IsSessionSnapshotEnabled;
             }
 
-            ExitingLastTabClosesWindowToggleSwitch.IsOn = AppSettingsService.ExitingLastTabClosesWindow;
+            ExitWhenLastTabClosedToggleSwitch.IsOn = AppSettingsService.ExitWhenLastTabClosed;
             AlwaysOpenNewWindowToggleSwitch.IsOn = AppSettingsService.AlwaysOpenNewWindow;
 
             if (App.IsGameBarWidget)
@@ -39,7 +39,7 @@
                 SessionSnapshotSettingsTitle.Visibility = Visibility.Collapsed;
                 SessionSnapshotSettingsControls.Visibility = Visibility.Collapsed;
                 LaunchPreferenceSettingsTitle.Visibility = Visibility.Collapsed;
-                LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
+                AppPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
@@ -54,7 +54,7 @@
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled += EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
-            ExitingLastTabClosesWindowToggleSwitch.Toggled += ExitingLastTabClosesWindowToggleSwitch_Toggled;
+            ExitWhenLastTabClosedToggleSwitch.Toggled += ExitWhenLastTabClosedToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
             LanguagePicker.SelectionChanged += LanguagePicker_SelectionChanged;
         }
@@ -64,7 +64,7 @@
             ShowStatusBarToggleSwitch.Toggled -= ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled -= EnableSmartCopyToggleSwitch_Toggled;
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
-            ExitingLastTabClosesWindowToggleSwitch.Toggled -= ExitingLastTabClosesWindowToggleSwitch_Toggled;
+            ExitWhenLastTabClosedToggleSwitch.Toggled -= ExitWhenLastTabClosedToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
             LanguagePicker.SelectionChanged -= LanguagePicker_SelectionChanged;
         }
@@ -84,9 +84,9 @@
             AppSettingsService.ShowStatusBar = ShowStatusBarToggleSwitch.IsOn;
         }
 
-        private void ExitingLastTabClosesWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        private void ExitWhenLastTabClosedToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            AppSettingsService.ExitingLastTabClosesWindow = ExitingLastTabClosesWindowToggleSwitch.IsOn;
+            AppSettingsService.ExitWhenLastTabClosed = ExitWhenLastTabClosedToggleSwitch.IsOn;
         }
 
         private void AlwaysOpenNewWindowToggleSwitch_Toggled(object sender, RoutedEventArgs e)

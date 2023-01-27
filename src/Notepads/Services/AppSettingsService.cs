@@ -247,15 +247,15 @@
             }
         }
 
-        private static bool _exitingLastTabClosesWindow;
+        private static bool _exitWhenLastTabClosed;
 
-        public static bool ExitingLastTabClosesWindow
+        public static bool ExitWhenLastTabClosed
         {
-            get => _exitingLastTabClosesWindow;
+            get => _exitWhenLastTabClosed;
             set
             {
-                _exitingLastTabClosesWindow = value;
-                ApplicationSettingsStore.Write(SettingsKey.ExitingLastTabClosesWindowBool, value);
+                _exitWhenLastTabClosed = value;
+                ApplicationSettingsStore.Write(SettingsKey.ExitWhenLastTabClosed, value);
             }
         }
 
@@ -585,13 +585,13 @@
 
         private static void InitializeAppClosingPreferencesSettings()
         {
-            if (ApplicationSettingsStore.Read(SettingsKey.ExitingLastTabClosesWindowBool) is bool exitingLastTabClosesWindow)
+            if (ApplicationSettingsStore.Read(SettingsKey.ExitWhenLastTabClosed) is bool exitWhenLastTabClosed)
             {
-                _exitingLastTabClosesWindow = exitingLastTabClosesWindow;
+                _exitWhenLastTabClosed = exitWhenLastTabClosed;
             }
             else
             {
-                _exitingLastTabClosesWindow = false;
+                _exitWhenLastTabClosed = false;
             }
         }
     }
