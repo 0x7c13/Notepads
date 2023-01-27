@@ -39,7 +39,7 @@
                 SessionSnapshotSettingsTitle.Visibility = Visibility.Collapsed;
                 SessionSnapshotSettingsControls.Visibility = Visibility.Collapsed;
                 LaunchPreferenceSettingsTitle.Visibility = Visibility.Collapsed;
-                AppPreferenceSettingsControls.Visibility = Visibility.Collapsed;
+                LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
             }
 
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
