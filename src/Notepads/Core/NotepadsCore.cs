@@ -666,7 +666,7 @@
 
                 args.Data.Properties.Add(NotepadsTextEditorMetaData, data);
                 args.Data.Properties.Add(NotepadsTextEditorGuid, editor.Id.ToString());
-                args.Data.Properties.Add(NotepadsInstanceId, App.Id.ToString());
+                args.Data.Properties.Add(NotepadsInstanceId, App.InstanceId.ToString());
                 args.Data.Properties.ApplicationName = App.ApplicationName;
 
                 ApplicationSettingsStore.Write(SetDragAndDropActionStatus, "Started");

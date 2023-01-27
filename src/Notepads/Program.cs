@@ -75,13 +75,13 @@
 
         private static void OpenNewInstance()
         {
-            AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString());
+            AppInstance.FindOrRegisterInstanceForKey(App.InstanceId.ToString());
             Windows.UI.Xaml.Application.Start(p => new App());
         }
 
         private static void RedirectOrCreateNewInstance()
         {
-            var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(App.Id.ToString()));
+            var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(App.InstanceId.ToString()));
 
             if (instance.IsCurrentInstance)
             {
