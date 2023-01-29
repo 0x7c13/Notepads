@@ -66,10 +66,6 @@ You can also use the Windows Package Manager to install notepads:
 winget install "Notepads App"
 ```
 
-## Roadmap:
-
-* [Project Roadmap](ROADMAP.md)
-
 ## Changelog:
 
 * [Notepads Releases](https://github.com/0x7c13/Notepads/releases)
