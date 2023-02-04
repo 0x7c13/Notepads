@@ -421,4 +421,12 @@
     <value>System Default</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve">
+    <value>Exit app when closing last tab</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
+  </data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve">
+    <value>Exit app when closing last tab</value>
+    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
+  </data>
 </root>
