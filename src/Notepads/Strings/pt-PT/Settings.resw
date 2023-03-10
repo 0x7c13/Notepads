@@ -178,11 +178,11 @@
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Usar cor de destaque do sistema</value>
+    <value>Utilizar definição do sistema</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Usar cor de destaque do sistema</value>
+    <value>Utilizar definição do sistema</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
@@ -206,7 +206,7 @@
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Usar configuração do sistema</value>
+    <value>Utilizar definição do sistema</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
