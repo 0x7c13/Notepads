@@ -175,6 +175,7 @@
     <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
     <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
+    <Compile Include="Core\BackupSessionUtility.cs" />
     <Compile Include="Extensions\DispatcherExtensions.cs" />
     <Compile Include="Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="Utilities\FutureAccessListUtility.cs" />

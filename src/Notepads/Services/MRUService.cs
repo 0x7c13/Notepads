@@ -62,19 +62,5 @@
             return items;
         }
 
-        public static void ClearAll()
-        {
-            try
-            {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Clear();
-            }
-            catch (Exception ex)
-            {
-                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
-                {
-                    { "Exception", ex.ToString() }
-                });
-            }
-        }
     }
 }
