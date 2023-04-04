@@ -273,7 +273,7 @@
                 if (textEditor.EditingFile != null)
                 {
                     // Persist the last save known to the app, which might not be up-to-date (if the file was modified outside the app)
-                    var lastSavedBackupFile = await BackupSessionUtility.CreateNewFileInBackupFolderAsync(
+                    var lastSavedBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-LastSaved",
                         CreationCollisionOption.ReplaceExisting,
                         _backupFolderName);
@@ -293,7 +293,7 @@
                     !string.Equals(textEditor.LastSavedSnapshot.Content, textEditor.GetText()))
                 {
                     // Persist pending changes relative to the last save
-                    var pendingBackupFile = await BackupSessionUtility.CreateNewFileInBackupFolderAsync(
+                    var pendingBackupFile = await SessionUtility.CreateNewFileInBackupFolderAsync(
                         ToToken(textEditor.Id) + "-Pending",
                         CreationCollisionOption.ReplaceExisting,
                         _backupFolderName);
@@ -470,7 +470,7 @@
                 .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (StorageFile backupFile in await BackupSessionUtility.GetAllBackupFilesAsync(_backupFolderName))
+            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
             {
                 if (!backupPaths.Contains(backupFile.Path))
                 {
