@@ -120,7 +120,6 @@
             {
                 SemaphoreSlim.Release();
             }
-
             return false;
         }
         private static async Task WriteLogMessages()
