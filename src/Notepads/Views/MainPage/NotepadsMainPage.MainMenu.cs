@@ -11,6 +11,8 @@
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Media;
     using Notepads.Services;
+    using Microsoft.AppCenter.Analytics;
+    using System;
 
     public sealed partial class NotepadsMainPage
     {
@@ -156,7 +158,7 @@
 
                 clearRecentlyOpenedSubItem.Click += async (sender, args) =>
                 {
-                    MRUService.ClearAll();
+                    ClearAll();
                     await BuildOpenRecentButtonSubItems();
                 };
                 openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
@@ -167,6 +169,21 @@
             {
                 var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
                 MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
+            }
+        }
+
+        private static void ClearAll()
+        {
+            try
+            {
+                Windows.Storage.AccessCache.StorageApplicationPermissions.MostRecentlyUsedList.Clear();
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() }
+                });
             }
         }
     }
