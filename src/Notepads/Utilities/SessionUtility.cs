@@ -45,17 +45,6 @@
             return sessionManager;
         }
 
-        //public static async Task<StorageFolder> GetBackupFolderAsync(string backupFolderName)
-        //{
-        //    return await FileSystemUtility.GetOrCreateAppFolder(backupFolderName);
-        //}
-
-        //public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync(string backupFolderName)
-        //{
-        //    StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
-        //    return await backupFolder.GetFilesAsync();
-        //}
-
         public static async Task<string> GetSerializedSessionMetaDataAsync(string sessionMetaDataFileName)
         {
             try
@@ -107,12 +96,6 @@
                 await sessionDataFile.DeleteAsync();
             }
         }
-
-        //public static async Task<StorageFile> CreateNewFileInBackupFolderAsync(string fileName, CreationCollisionOption collisionOption, string backupFolderName)
-        //{
-        //    StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
-        //    return await backupFolder.CreateFileAsync(fileName, collisionOption);
-        //}
     }
 
     internal static class BackupSessionUtility
@@ -127,6 +110,7 @@
             StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
             return await backupFolder.GetFilesAsync();
         }
+      
         public static async Task<StorageFile> CreateNewFileInBackupFolderAsync(string fileName, CreationCollisionOption collisionOption, string backupFolderName)
         {
             StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
