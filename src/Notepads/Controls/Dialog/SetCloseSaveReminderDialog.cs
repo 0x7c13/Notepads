@@ -1,9 +1,10 @@
 ﻿namespace Notepads.Controls.Dialog
 {
     using System;
-
+    using Windows.ApplicationModel.Resources;
     public class SetCloseSaveReminderDialog : NotepadsDialog
     {
+        internal readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
         public SetCloseSaveReminderDialog(string fileNameOrPath, Action saveAction, Action skipSavingAction)
         {
             Title = ResourceLoader.GetString("SetCloseSaveReminderDialog_Title");
