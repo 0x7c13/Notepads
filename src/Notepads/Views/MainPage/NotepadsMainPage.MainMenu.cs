@@ -180,7 +180,7 @@
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
+                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>
                 {
                     { "Exception", ex.ToString() }
                 });
