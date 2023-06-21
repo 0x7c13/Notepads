@@ -693,4 +693,20 @@
     <value>File extension "{0}" is not supported at this moment</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="Tab_ContextFlyout_ToggleReadOnlyOffButtonDisplayText" xml:space="preserve">
+    <value>Remove read-only flag</value>
+    <comment>TextEditor: ContextFlyout "ToggleReadOnlyOff" button display text.</comment>
+  </data>
+  <data name="Tab_ContextFlyout_ToggleReadOnlyOnButtonDisplayText" xml:space="preserve">
+    <value>Make read-only</value>
+    <comment>TextEditor: ContextFlyout "ToggleReadOnlyOn" button display text.</comment>
+  </data>
+  <data name="TextEditor_PathIndicator_ToggleMenuFlyoutItem_ToggleFileReadonly" xml:space="preserve">
+    <value>Read-only</value>
+    <comment>TextEditor: PathIndicator "Toggle File Read-only Attribute" ToggleMenuFlyoutItem display text.</comment>
+  </data>
+  <data name="TextEditor_FileIsReadOnly_ToolTip" xml:space="preserve">
+    <value>File is read-only, changes wouldn't be saved</value>
+    <comment>TextEditor: FileIsReadOnlyIndicator tool tip display text.</comment>
+  </data>
 </root>

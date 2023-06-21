@@ -76,14 +76,14 @@
             }
             else if (selectedTextEditor.IsEditorEnabled() == false)
             {
-                MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
+                MenuSaveButton.IsEnabled = selectedTextEditor.IsModified && !selectedTextEditor.IsReadOnly;
                 MenuSaveAsButton.IsEnabled = true;
                 MenuFindButton.IsEnabled = false;
                 MenuReplaceButton.IsEnabled = false;
             }
             else
             {
-                MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
+                MenuSaveButton.IsEnabled = selectedTextEditor.IsModified && !selectedTextEditor.IsReadOnly;
                 MenuSaveAsButton.IsEnabled = true;
                 MenuFindButton.IsEnabled = true;
                 MenuReplaceButton.IsEnabled = true;

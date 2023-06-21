@@ -276,6 +276,7 @@ jobs:
           msbuild $env:SOLUTION_NAME `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
+          /p:AllowUnsafeBlocks=true `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxPackageSigningEnabled=$env:APPX_PACKAGE_SIGNING_ENABLED `

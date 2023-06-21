@@ -289,6 +289,16 @@
             }
         }
 
+        public static Brush GetReadOnlyTabIconForegroundBrush()
+        {
+            var darkModeBaseColor = Color.FromArgb(255, 123, 123, 123);
+            var lightModeBaseColor = Color.FromArgb(255, 146, 146, 146);
+
+            var baseColor = ThemeMode == ElementTheme.Light ? lightModeBaseColor : darkModeBaseColor;
+
+            return new SolidColorBrush(baseColor);
+        }
+
         public static void ApplyThemeForTitleBarButtons(ApplicationViewTitleBar titleBar, ElementTheme theme)
         {
             if (theme == ElementTheme.Dark)

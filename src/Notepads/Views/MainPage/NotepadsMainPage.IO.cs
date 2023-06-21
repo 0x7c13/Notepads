@@ -152,11 +152,11 @@
             }
         }
 
-        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
+        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true, bool skipReadOnlyFile = false)
         {
             if (textEditor == null) return false;
 
-            if (ignoreUnmodifiedDocument && !textEditor.IsModified)
+            if ((ignoreUnmodifiedDocument && !textEditor.IsModified) || (skipReadOnlyFile && textEditor.IsReadOnly))
             {
                 return true;
             }

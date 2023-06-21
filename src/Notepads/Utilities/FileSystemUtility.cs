@@ -294,7 +294,7 @@
             return dateModified.ToFileTime();
         }
 
-        public static bool IsFileReadOnly(StorageFile file)
+        public static bool IsFileReadOnly(IStorageFile file)
         {
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }

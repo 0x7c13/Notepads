@@ -329,6 +329,13 @@
                                     <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="FileRemoveReadonlyFlagFlyoutItem"
+                                            Tag="ReloadFileFromDisk"
+                                            Click="RemoveReadonlyFlag">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE148;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />
@@ -401,6 +408,14 @@
                                     <KeyboardAccelerator Key="F2" IsEnabled="False"/>
                                 </MenuFlyoutItem.KeyboardAccelerators>
                             </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutToggleFileReadonlyFlyoutItem"
+                                            Tag="ToggleFileReadonly"
+                                            Visibility="Collapsed"
+                                            Click="ToggleFileReadonlyAttribute">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE001;" Visibility="Collapsed" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />
@@ -433,8 +448,7 @@
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                            IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped"
-                           >
+                           Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
                         <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 

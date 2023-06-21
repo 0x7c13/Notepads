@@ -82,7 +82,23 @@
             _dispatcher = dispatcher;
             _extensionProvider = extensionProvider;
 
+            ThemeSettingsService.OnThemeChanged += ThemeSettingsService_OnThemeChanged;
             ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
+        }
+
+        private async void ThemeSettingsService_OnThemeChanged(object sender, ElementTheme e)
+        {
+            await _dispatcher.CallOnUIThreadAsync(() =>
+            {
+                if (Sets.Items == null) return;
+                foreach (SetsViewItem item in Sets.Items)
+                {
+                    var textEditor = item.Content as ITextEditor;
+                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly
+                    ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                    : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+                }
+            });
         }
 
         private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
@@ -92,7 +108,10 @@
                 if (Sets.Items == null) return;
                 foreach (SetsViewItem item in Sets.Items)
                 {
-                    item.Icon.Foreground = new SolidColorBrush(color);
+                    var textEditor = item.Content as ITextEditor;
+                    item.Icon.Foreground = textEditor != null && textEditor.IsReadOnly
+                    ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                    : new SolidColorBrush(color);
                     item.SelectionIndicatorForeground = new SolidColorBrush(color);
                 }
             });
@@ -203,6 +222,7 @@
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
             textEditor.FileRenamed += TextEditor_OnFileRenamed;
+            textEditor.FileAttributeChanged += TextEditor_OnFileAttributeChanged;
 
             return textEditor;
         }
@@ -241,6 +261,7 @@
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
             textEditor.FileRenamed -= TextEditor_OnFileRenamed;
+            textEditor.FileAttributeChanged -= TextEditor_OnFileAttributeChanged;
             textEditor.Dispose();
         }
 
@@ -405,7 +426,9 @@
                 FontSize = 1.5,
                 Width = 3,
                 Height = 3,
-                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+                Foreground = textEditor.IsReadOnly
+                ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                : new SolidColorBrush(ThemeSettingsService.AppAccentColor)
             };
 
             var textEditorSetsViewItem = new SetsViewItem
@@ -568,6 +591,20 @@
             if (item == null) return;
             item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             TextEditorRenamed?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnFileAttributeChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+
+            var item = GetTextEditorSetsViewItem(textEditor);
+            if (item == null) return;
+            item.Icon.Foreground = textEditor.IsReadOnly
+                ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                : new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+
+            TextEditorFileModificationStateChanged?.Invoke(this, textEditor);
+            TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
         }
 
         #region DragAndDrop

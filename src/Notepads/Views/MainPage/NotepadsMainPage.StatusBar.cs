@@ -18,6 +18,7 @@
     using Notepads.Extensions;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.UI.Xaml.Media;
 
     public sealed partial class NotepadsMainPage
     {
@@ -76,8 +77,17 @@
             if (StatusBar == null) return;
             if (textEditor.FileModificationState == FileModificationState.Untouched)
             {
-                FileModificationStateIndicatorIcon.Glyph = "";
-                FileModificationStateIndicator.Visibility = Visibility.Collapsed;
+                if (textEditor.IsReadOnly)
+                {
+                    FileModificationStateIndicatorIcon.Glyph = "\uE72E"; // Lock Icon
+                    ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileIsReadOnly_ToolTip"));
+                    FileModificationStateIndicator.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    FileModificationStateIndicatorIcon.Glyph = "";
+                    FileModificationStateIndicator.Visibility = Visibility.Collapsed;
+                }
             }
             else if (textEditor.FileModificationState == FileModificationState.Modified)
             {
@@ -120,6 +130,9 @@
                 ModificationIndicator.Text = _resourceLoader.GetString("TextEditor_ModificationIndicator_Text");
                 ModificationIndicator.Visibility = Visibility.Visible;
                 ModificationIndicator.IsTapEnabled = true;
+                ModificationIndicator.Foreground = textEditor.IsReadOnly
+                    ? ThemeSettingsService.GetReadOnlyTabIconForegroundBrush()
+                    : Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
             }
             else
             {
@@ -224,6 +237,16 @@
             }
         }
 
+        private void RemoveReadonlyFlag(object sender, RoutedEventArgs e)
+        {
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+
+            if (selectedEditor?.EditingFile != null && selectedEditor.IsReadOnly)
+            {
+                selectedEditor.IsReadOnly = false;
+            }
+        }
+
         private void CopyFullPath(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
@@ -263,6 +286,15 @@
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor?.EditingFile == null) return;
             await RenameFileAsync(selectedEditor);
+        }
+
+        private void ToggleFileReadonlyAttribute(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuFlyoutItem item)) return;
+
+            var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+            selectedEditor.IsReadOnly = item.Icon.Visibility == Visibility.Collapsed;
+            NotepadsCore.FocusOnTextEditor(selectedEditor);
         }
 
         private void FontZoomIndicatorFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
@@ -359,11 +391,18 @@
         {
             if (selectedEditor.FileModificationState == FileModificationState.Modified)
             {
+                FileRemoveReadonlyFlagFlyoutItem.Visibility = Visibility.Collapsed;
                 FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
             }
             else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
             {
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
+            }
+            else if (selectedEditor.IsReadOnly)
+            {
+                FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem.Visibility = Visibility.Collapsed;
+                FileRemoveReadonlyFlagFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_ToggleReadOnlyOffButtonDisplayText");
+                FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
             }
         }
 
@@ -374,6 +413,7 @@
             PathIndicatorFlyoutCopyFullPathFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText");
             PathIndicatorFlyoutOpenContainingFolderFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText");
             PathIndicatorFlyoutFileRenameFlyoutItem.Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText");
+            PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Text = _resourceLoader.GetString("TextEditor_PathIndicator_ToggleMenuFlyoutItem_ToggleFileReadonly");
 
             if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted ||
                 (selectedEditor.EditingFile != null && FileSystemUtility.IsFileReadOnly(selectedEditor.EditingFile)))
@@ -383,6 +423,17 @@
             else
             {
                 PathIndicatorFlyoutFileRenameFlyoutItem.IsEnabled = true;
+            }
+
+            if (selectedEditor.EditingFile == null)
+            {
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Visibility = Visibility.Visible;
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.IsEnabled = selectedEditor.FileModificationState == FileModificationState.Untouched;
+                PathIndicatorFlyoutToggleFileReadonlyFlyoutItem.Icon.Visibility = selectedEditor.IsReadOnly ? Visibility.Visible : Visibility.Collapsed;
             }
 
             if (App.IsGameBarWidget)

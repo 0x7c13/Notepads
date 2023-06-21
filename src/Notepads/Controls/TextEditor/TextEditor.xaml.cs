@@ -54,6 +54,7 @@
         public event EventHandler FileSaved;
         public event EventHandler FileReloaded;
         public event EventHandler FileRenamed;
+        public event EventHandler FileAttributeChanged;
 
         public Guid Id { get; set; }
 
@@ -73,6 +74,24 @@
 
         public string EditingFilePath { get; private set; }
 
+        private System.IO.FileAttributes _fileAttributes;
+
+        public bool IsReadOnly
+        {
+            get => _fileAttributes.HasFlag(System.IO.FileAttributes.ReadOnly);
+            set
+            {
+                if (EditingFile == null) return;
+
+                EditingFile.SetFileAttributes(
+                    value
+                    ? _fileAttributes | System.IO.FileAttributes.ReadOnly
+                    : _fileAttributes & ~System.IO.FileAttributes.ReadOnly,
+                    () => CheckAndUpdateAttributesInfo()
+                );
+            }
+        }
+
         private StorageFile _editingFile;
 
         public StorageFile EditingFile
@@ -85,7 +104,7 @@
             }
         }
 
-        private void UpdateDocumentInfo()
+        private async void UpdateDocumentInfo()
         {
             if (EditingFile == null)
             {
@@ -100,6 +119,8 @@
                 FileType = FileTypeUtility.GetFileTypeByFileName(EditingFile.Name);
             }
 
+            await CheckAndUpdateAttributesInfo();
+
             // Hide content preview if current file type is not supported for previewing
             if (!FileTypeUtility.IsPreviewSupported(FileType))
             {
@@ -108,6 +129,20 @@
                     ShowHideContentPreview();
                 }
             }
+        }
+
+        private async Task CheckAndUpdateAttributesInfo()
+        {
+            if (EditingFile == null || FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+
+            var fileAttributes = EditingFile.GetFileAttributes(!_isAttributeCheckedOnce);
+            _isAttributeCheckedOnce = true;
+            if (_fileAttributes == fileAttributes) return;
+
+            _fileAttributes = fileAttributes;
+            await Dispatcher.CallOnUIThreadAsync(
+                () => FileAttributeChanged?.Invoke(this, null)
+            );
         }
 
         private bool _isModified;
@@ -141,6 +176,8 @@
         private bool _loaded;
 
         private FileModificationState _fileModificationState;
+
+        private bool _isAttributeCheckedOnce = false;
 
         private bool _isContentPreviewPanelOpened;
 
@@ -351,9 +388,11 @@
             return metaData;
         }
 
-        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
+        private async void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded?.Invoke(this, e);
+
+            await CheckAndUpdateAttributesInfo();
 
             StartCheckingFileStatusPeriodically();
 
@@ -441,6 +480,8 @@
             {
                 FileModificationState = newState.Value;
             });
+
+            await CheckAndUpdateAttributesInfo();
 
             _fileStatusSemaphoreSlim.Release();
         }
