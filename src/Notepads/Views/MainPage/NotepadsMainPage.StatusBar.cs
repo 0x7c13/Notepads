@@ -200,7 +200,7 @@
             }
         }
 
-        private async void ReloadFileFromDisk(object sender, RoutedEventArgs e)
+        private async void ReloadFileFromDiskAsync(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
 
@@ -209,7 +209,7 @@
             {
                 try
                 {
-                    await selectedEditor.ReloadFromEditingFile();
+                    await selectedEditor.ReloadFromEditingFileAsync();
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
@@ -243,7 +243,7 @@
             }
         }
 
-        private async void OpenContainingFolder(object sender, RoutedEventArgs e)
+        private async void OpenContainingFolderAsync(object sender, RoutedEventArgs e)
         {
             var selectedEditor = NotepadsCore.GetSelectedTextEditor();
             if (selectedEditor?.EditingFile == null) return;
@@ -592,7 +592,7 @@
 
                 try
                 {
-                    await selectedTextEditor.ReloadFromEditingFile(encoding);
+                    await selectedTextEditor.ReloadFromEditingFileAsync(encoding);
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
@@ -627,7 +627,7 @@
                 {
                     try
                     {
-                        await selectedTextEditor.ReloadFromEditingFile(encoding);
+                        await selectedTextEditor.ReloadFromEditingFileAsync(encoding);
                         NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                     }
                     catch (Exception ex)

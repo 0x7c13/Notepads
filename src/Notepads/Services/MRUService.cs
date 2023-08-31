@@ -27,7 +27,7 @@
             }
         }
 
-        public static async Task<IList<IStorageItem>> Get(int top = 10)
+        public static async Task<IList<IStorageItem>> GetMostRecentlyUsedListAsync(int top = 10)
         {
             IList<IStorageItem> items = new List<IStorageItem>();
 

@@ -31,7 +31,7 @@
         event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
         event KeyEventHandler TextEditorKeyDown;
 
-        Task<ITextEditor> CreateTextEditor(
+        Task<ITextEditor> CreateTextEditorAsync(
             Guid id,
             StorageFile file,
             Encoding encoding = null,
@@ -50,7 +50,7 @@
 
         void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
 
-        Task SaveContentToFileAndUpdateEditorState(ITextEditor textEditor, StorageFile file);
+        Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file);
 
         void DeleteTextEditor(ITextEditor textEditor);
 

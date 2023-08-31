@@ -16,11 +16,11 @@
             }
             else if (e is FileActivatedEventArgs fileActivatedEventArgs)
             {
-                await FileActivated(rootFrame, fileActivatedEventArgs);
+                await FileActivatedAsync(rootFrame, fileActivatedEventArgs);
             }
             else if (e is CommandLineActivatedEventArgs commandLineActivatedEventArgs)
             {
-                await CommandActivated(rootFrame, commandLineActivatedEventArgs);
+                await CommandActivatedAsync(rootFrame, commandLineActivatedEventArgs);
             }
             else if (e is LaunchActivatedEventArgs launchActivatedEventArgs)
             {
@@ -65,7 +65,7 @@
             }
         }
 
-        private static async Task FileActivated(Frame rootFrame, FileActivatedEventArgs fileActivatedEventArgs)
+        private static async Task FileActivatedAsync(Frame rootFrame, FileActivatedEventArgs fileActivatedEventArgs)
         {
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [FileActivated]");
 
@@ -75,11 +75,11 @@
             }
             else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
-                await mainPage.OpenFiles(fileActivatedEventArgs.Files);
+                await mainPage.OpenFilesAsync(fileActivatedEventArgs.Files);
             }
         }
 
-        private static async Task CommandActivated(Frame rootFrame, CommandLineActivatedEventArgs commandLineActivatedEventArgs)
+        private static async Task CommandActivatedAsync(Frame rootFrame, CommandLineActivatedEventArgs commandLineActivatedEventArgs)
         {
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [CommandActivated] CurrentDirectoryPath: {commandLineActivatedEventArgs.Operation.CurrentDirectoryPath} " +
                                    $"Arguments: {commandLineActivatedEventArgs.Operation.Arguments}");
@@ -90,13 +90,13 @@
             }
             else if (rootFrame.Content is NotepadsMainPage mainPage)
             {
-                var file = await FileSystemUtility.OpenFileFromCommandLine(
+                var file = await FileSystemUtility.OpenFileFromCommandLineAsync(
                     commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
                     commandLineActivatedEventArgs.Operation.Arguments);
 
                 if (file != null)
                 {
-                    await mainPage.OpenFile(file);
+                    await mainPage.OpenFileAsync(file);
                 }
             }
         }

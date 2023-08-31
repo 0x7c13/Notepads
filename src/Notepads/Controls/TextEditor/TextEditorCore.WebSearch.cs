@@ -4,10 +4,11 @@
     using Windows.System;
     using Notepads.Services;
     using Notepads.Utilities;
+    using System.Threading.Tasks;
 
     public partial class TextEditorCore
     {
-        public async void SearchInWeb()
+        public async Task SearchInWebAsync()
         {
             try
             {

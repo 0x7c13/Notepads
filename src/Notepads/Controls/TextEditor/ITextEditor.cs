@@ -77,9 +77,7 @@
 
         void ResetEditorState(TextEditorStateMetaData metadata, string newText = null);
 
-        Task ReloadFromEditingFile();
-
-        Task ReloadFromEditingFile(Encoding encoding);
+        Task ReloadFromEditingFileAsync(Encoding encoding = null);
 
         LineEnding GetLineEnding();
 
@@ -116,7 +114,7 @@
 
         bool IsEditorEnabled();
 
-        Task SaveContentToFileAndUpdateEditorState(StorageFile file);
+        Task SaveContentToFileAndUpdateEditorStateAsync(StorageFile file);
 
         string GetContentForSharing();
 

@@ -19,17 +19,17 @@
             MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
 
             MenuCreateNewButton.Click += (sender, args) => NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
-            MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstance();
-            MenuOpenFileButton.Click += async (sender, args) => await OpenNewFiles();
-            MenuSaveButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
-            MenuSaveAsButton.Click += async (sender, args) => await Save(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-            MenuSaveAllButton.Click += async (sender, args) => await SaveAll(NotepadsCore.GetAllTextEditors());
+            MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstanceAsync();
+            MenuOpenFileButton.Click += async (sender, args) => await OpenNewFilesAsync();
+            MenuSaveButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
+            MenuSaveAsButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
+            MenuSaveAllButton.Click += async (sender, args) => await SaveAllAsync(NotepadsCore.GetAllTextEditors());
             MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
             MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
             MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
             MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
-            MenuPrintButton.Click += async (sender, args) => await Print(NotepadsCore.GetSelectedTextEditor());
-            MenuPrintAllButton.Click += async (sender, args) => await PrintAll(NotepadsCore.GetAllTextEditors());
+            MenuPrintButton.Click += async (sender, args) => await PrintAsync(NotepadsCore.GetSelectedTextEditor());
+            MenuPrintAllButton.Click += async (sender, args) => await PrintAllAsync(NotepadsCore.GetAllTextEditors());
             MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
             if (!App.IsPrimaryInstance)
@@ -106,7 +106,7 @@
             MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
         }
 
-        private async Task BuildOpenRecentButtonSubItems()
+        private async Task BuildOpenRecentButtonSubItemsAsync()
         {
             var openRecentSubItem = new MenuFlyoutSubItem
             {
@@ -117,7 +117,7 @@
 
             var MRUFileList = new HashSet<string>();
 
-            foreach (var item in await MRUService.Get(top: 10))
+            foreach (var item in await MRUService.GetMostRecentlyUsedListAsync(top: 10))
             {
                 if (item is StorageFile file)
                 {
@@ -132,7 +132,7 @@
                         Text = file.Path
                     };
                     ToolTipService.SetToolTip(newItem, file.Path);
-                    newItem.Click += async (sender, args) => { await OpenFile(file); };
+                    newItem.Click += async (sender, args) => { await OpenFileAsync(file); };
                     openRecentSubItem.Items?.Add(newItem);
                     MRUFileList.Add(file.Path);
                 }
@@ -157,7 +157,7 @@
                 clearRecentlyOpenedSubItem.Click += async (sender, args) =>
                 {
                     MRUService.ClearAll();
-                    await BuildOpenRecentButtonSubItems();
+                    await BuildOpenRecentButtonSubItemsAsync();
                 };
                 openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
                 openRecentSubItem.IsEnabled = true;

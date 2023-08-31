@@ -101,12 +101,12 @@
             {
                 if (_logFile == null)
                 {
-                    StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolder("Logs");
-                    _logFile = await FileSystemUtility.CreateFile(logsFolder,
+                    StorageFolder logsFolder = await FileSystemUtility.GetOrCreateAppFolderAsync("Logs");
+                    _logFile = await FileSystemUtility.CreateFileAsync(logsFolder,
                         DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log");
                 }
 
-                _backgroundTask = Task.Run(WriteLogMessages);
+                _backgroundTask = Task.Run(WriteLogMessagesAsync);
 
                 _initialized = true;
                 LogInfo($"Log file location: {_logFile.Path}", true);
@@ -123,7 +123,7 @@
             return false;
         }
 
-        private static async Task WriteLogMessages()
+        private static async Task WriteLogMessagesAsync()
         {
             while (true)
             {

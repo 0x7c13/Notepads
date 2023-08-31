@@ -285,7 +285,7 @@
                     hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
                     return _currentAppBackgroundBrush;
                 }
-                return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrush(baseColor, (float)AppBackgroundPanelTintOpacity).Result;
+                return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrushAsync(baseColor, (float)AppBackgroundPanelTintOpacity).Result;
             }
         }
 

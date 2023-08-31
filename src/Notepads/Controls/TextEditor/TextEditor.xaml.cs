@@ -383,7 +383,7 @@
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerDelayInSec), cancellationToken);
                         LoggingService.LogInfo($"[{nameof(TextEditor)}] Checking file status for \"{EditingFile.Path}\".", consoleOnly: true);
-                        await CheckAndUpdateFileStatus(cancellationToken);
+                        await CheckAndUpdateFileStatusAsync(cancellationToken);
                         await Task.Delay(TimeSpan.FromSeconds(_fileStatusCheckerPollingRateInSec), cancellationToken);
                     }
                 }, cancellationToken);
@@ -406,7 +406,7 @@
             }
         }
 
-        private async Task CheckAndUpdateFileStatus(CancellationToken cancellationToken)
+        private async Task CheckAndUpdateFileStatusAsync(CancellationToken cancellationToken)
         {
             if (EditingFile == null) return;
 
@@ -420,13 +420,13 @@
 
             FileModificationState? newState = null;
 
-            if (!await FileSystemUtility.FileExists(EditingFile))
+            if (!await FileSystemUtility.FileExistsAsync(EditingFile))
             {
                 newState = FileModificationState.RenamedMovedOrDeleted;
             }
             else
             {
-                newState = await FileSystemUtility.GetDateModified(EditingFile) != LastSavedSnapshot.DateModifiedFileTime ?
+                newState = await FileSystemUtility.GetDateModifiedAsync(EditingFile) != LastSavedSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
             }
@@ -486,16 +486,11 @@
             _loaded = true;
         }
 
-        public async Task ReloadFromEditingFile()
-        {
-            await ReloadFromEditingFile(null);
-        }
-
-        public async Task ReloadFromEditingFile(Encoding encoding)
+        public async Task ReloadFromEditingFileAsync(Encoding encoding = null)
         {
             if (EditingFile != null)
             {
-                var textFile = await FileSystemUtility.ReadFile(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
+                var textFile = await FileSystemUtility.ReadFileAsync(EditingFile, ignoreFileSizeLimit: false, encoding: encoding);
                 Init(textFile, EditingFile, clearUndoQueue: false);
                 LineEndingChanged?.Invoke(this, EventArgs.Empty);
                 EncodingChanged?.Invoke(this, EventArgs.Empty);
@@ -709,23 +704,23 @@
             return TextEditorCore.IsEnabled;
         }
 
-        public async Task SaveContentToFileAndUpdateEditorState(StorageFile file)
+        public async Task SaveContentToFileAndUpdateEditorStateAsync(StorageFile file)
         {
             if (Mode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
-            TextFile textFile = await SaveContentToFile(file); // Will throw if not succeeded
+            TextFile textFile = await SaveContentToFileAsync(file); // Will throw if not succeeded
             FileModificationState = FileModificationState.Untouched;
             Init(textFile, file, clearUndoQueue: false, resetText: false);
             FileSaved?.Invoke(this, EventArgs.Empty);
             StartCheckingFileStatusPeriodically();
         }
 
-        private async Task<TextFile> SaveContentToFile(StorageFile file)
+        private async Task<TextFile> SaveContentToFileAsync(StorageFile file)
         {
             var text = TextEditorCore.GetText();
             var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;
             var lineEnding = RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
-            await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file); // Will throw if not succeeded
-            var newFileModifiedTime = await FileSystemUtility.GetDateModified(file);
+            await FileSystemUtility.WriteToFileAsync(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file); // Will throw if not succeeded
+            var newFileModifiedTime = await FileSystemUtility.GetDateModifiedAsync(file);
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
 

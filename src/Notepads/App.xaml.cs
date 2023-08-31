@@ -313,11 +313,11 @@
         //    }
         //}
 
-        //private static async Task UpdateJumpList()
+        //private static async Task UpdateJumpListAsync()
         //{
         //    if (JumpListService.IsJumpListOutOfDate)
         //    {
-        //        if (await JumpListService.UpdateJumpList())
+        //        if (await JumpListService.UpdateJumpListAsync())
         //        {
         //            JumpListService.IsJumpListOutOfDate = false;
         //        }

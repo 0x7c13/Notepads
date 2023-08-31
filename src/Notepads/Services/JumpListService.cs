@@ -22,7 +22,7 @@
             set => ApplicationSettingsStore.Write(SettingsKey.IsJumpListOutOfDateBool, value);
         }
 
-        public static async Task<bool> UpdateJumpList()
+        public static async Task<bool> UpdateJumpListAsync()
         {
             if (!JumpList.IsSupported()) return false;
 
@@ -46,7 +46,7 @@
             return false;
         }
 
-        public static async Task<bool> ClearJumpList()
+        public static async Task<bool> ClearJumpListAsync()
         {
             if (!JumpList.IsSupported()) return false;
 

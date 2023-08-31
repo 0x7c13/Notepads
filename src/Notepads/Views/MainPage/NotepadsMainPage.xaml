@@ -321,7 +321,7 @@
                             <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem" 
                                             x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
                                             Tag="ReloadFileFromDisk" 
-                                            Click="ReloadFileFromDisk">
+                                            Click="ReloadFileFromDiskAsync">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72C;"/>
                                 </MenuFlyoutItem.Icon>
@@ -367,7 +367,7 @@
                             <MenuFlyoutItem x:Name="PathIndicatorFlyoutReloadFileFromDiskFlyoutItem" 
                                             x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
                                             Tag="ReloadFileFromDisk" 
-                                            Click="ReloadFileFromDisk">
+                                            Click="ReloadFileFromDiskAsync">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72C;"/>
                                 </MenuFlyoutItem.Icon>
@@ -385,7 +385,7 @@
                             </MenuFlyoutItem>
                             <MenuFlyoutItem x:Name="PathIndicatorFlyoutOpenContainingFolderFlyoutItem" 
                                             Tag="OpenContainingFolder" 
-                                            Click="OpenContainingFolder">
+                                            Click="OpenContainingFolderAsync">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;"/>
                                 </MenuFlyoutItem.Icon>

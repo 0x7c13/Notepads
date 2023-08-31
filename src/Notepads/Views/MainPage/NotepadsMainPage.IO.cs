@@ -16,7 +16,7 @@
 
     public sealed partial class NotepadsMainPage
     {
-        private async Task OpenNewFiles()
+        private async Task OpenNewFilesAsync()
         {
             IReadOnlyList<StorageFile> files;
 
@@ -43,11 +43,11 @@
 
             foreach (var file in files)
             {
-                await OpenFile(file);
+                await OpenFileAsync(file);
             }
         }
 
-        public async Task<bool> OpenFile(StorageFile file, bool rebuildOpenRecentItems = true)
+        public async Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true)
         {
             try
             {
@@ -61,13 +61,13 @@
                     return false;
                 }
 
-                var editor = await NotepadsCore.CreateTextEditor(Guid.NewGuid(), file);
+                var editor = await NotepadsCore.CreateTextEditorAsync(Guid.NewGuid(), file);
                 NotepadsCore.OpenTextEditor(editor);
                 NotepadsCore.FocusOnSelectedTextEditor();
                 var success = MRUService.TryAdd(file); // Remember recently used files
                 if (success && rebuildOpenRecentItems)
                 {
-                    await BuildOpenRecentButtonSubItems();
+                    await BuildOpenRecentButtonSubItemsAsync();
                 }
 
                 TrackFileExtensionIfNotSupported(file);
@@ -113,7 +113,7 @@
             }
         }
 
-        public async Task<int> OpenFiles(IReadOnlyList<IStorageItem> storageItems)
+        public async Task<int> OpenFilesAsync(IReadOnlyList<IStorageItem> storageItems)
         {
             if (storageItems == null || storageItems.Count == 0) return 0;
             int successCount = 0;
@@ -121,7 +121,7 @@
             {
                 if (storageItem is StorageFile file)
                 {
-                    if (await OpenFile(file, rebuildOpenRecentItems: false))
+                    if (await OpenFileAsync(file, rebuildOpenRecentItems: false))
                     {
                         successCount++;
                     }
@@ -129,12 +129,12 @@
             }
             if (successCount > 0)
             {
-                await BuildOpenRecentButtonSubItems();
+                await BuildOpenRecentButtonSubItemsAsync();
             }
             return successCount;
         }
 
-        private async Task<StorageFile> OpenFileUsingFileSavePicker(ITextEditor textEditor)
+        private async Task<StorageFile> OpenFileUsingFileSavePickerAsync(ITextEditor textEditor)
         {
             NotepadsCore.SwitchTo(textEditor);
             StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
@@ -142,17 +142,17 @@
             return file;
         }
 
-        private async Task SaveInternal(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+        private async Task SaveInternalAsync(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
         {
-            await NotepadsCore.SaveContentToFileAndUpdateEditorState(textEditor, file);
+            await NotepadsCore.SaveContentToFileAndUpdateEditorStateAsync(textEditor, file);
             var success = MRUService.TryAdd(file); // Remember recently used files
             if (success && rebuildOpenRecentItems)
             {
-                await BuildOpenRecentButtonSubItems();
+                await BuildOpenRecentButtonSubItemsAsync();
             }
         }
 
-        private async Task<bool> Save(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
+        private async Task<bool> SaveAsync(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false, bool rebuildOpenRecentItems = true)
         {
             if (textEditor == null) return false;
 
@@ -167,7 +167,7 @@
             {
                 if (textEditor.EditingFile == null || saveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await OpenFileUsingFileSavePickerAsync(textEditor);
                     if (file == null) return false; // User cancelled
                 }
                 else
@@ -178,7 +178,7 @@
                 bool promptSaveAs = false;
                 try
                 {
-                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+                    await SaveInternalAsync(textEditor, file, rebuildOpenRecentItems);
                 }
                 catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
                 {
@@ -191,10 +191,10 @@
 
                 if (promptSaveAs)
                 {
-                    file = await OpenFileUsingFileSavePicker(textEditor);
+                    file = await OpenFileUsingFileSavePickerAsync(textEditor);
                     if (file == null) return false; // User cancelled
 
-                    await SaveInternal(textEditor, file, rebuildOpenRecentItems);
+                    await SaveInternalAsync(textEditor, file, rebuildOpenRecentItems);
                     return true;
                 }
 
@@ -212,18 +212,18 @@
             }
         }
 
-        private async Task<bool> SaveAll(ITextEditor[] textEditors)
+        private async Task<bool> SaveAllAsync(ITextEditor[] textEditors)
         {
             var success = false;
 
             foreach (var textEditor in textEditors)
             {
-                if (await Save(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
+                if (await SaveAsync(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
             }
 
             if (success)
             {
-                await BuildOpenRecentButtonSubItems();
+                await BuildOpenRecentButtonSubItemsAsync();
             }
 
             return success;
@@ -257,14 +257,14 @@
             await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         }
 
-        public async Task Print(ITextEditor textEditor)
+        public async Task PrintAsync(ITextEditor textEditor)
         {
             if (App.IsGameBarWidget) return;
             if (textEditor == null) return;
-            await PrintAll(new[] { textEditor });
+            await PrintAllAsync(new[] { textEditor });
         }
 
-        public async Task PrintAll(ITextEditor[] textEditors)
+        public async Task PrintAllAsync(ITextEditor[] textEditors)
         {
             if (App.IsGameBarWidget) return;
             if (textEditors == null || textEditors.Length == 0) return;

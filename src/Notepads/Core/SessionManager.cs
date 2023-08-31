@@ -159,7 +159,7 @@
             {
                 try
                 {
-                    var textEditorSessionData = await GetTextEditorSessionData(textEditor);
+                    var textEditorSessionData = await GetTextEditorSessionDataAsync(textEditor);
 
                     if (textEditorSessionData == null) continue;
 
@@ -228,7 +228,7 @@
             _semaphoreSlim.Release();
         }
 
-        private async Task<TextEditorSessionDataV1> GetTextEditorSessionData(ITextEditor textEditor)
+        private async Task<TextEditorSessionDataV1> GetTextEditorSessionDataAsync(ITextEditor textEditor)
         {
             if (_sessionDataCache.TryGetValue(textEditor.Id, out TextEditorSessionDataV1 textEditorSessionData))
             {
@@ -238,7 +238,7 @@
             }
             else // Text content has been changed or editor has not backed up yet
             {
-                textEditorSessionData = await BuildTextEditorSessionData(textEditor);
+                textEditorSessionData = await BuildTextEditorSessionDataAsync(textEditor);
 
                 if (textEditorSessionData == null)
                 {
@@ -251,7 +251,7 @@
             return textEditorSessionData;
         }
 
-        private async Task<TextEditorSessionDataV1> BuildTextEditorSessionData(ITextEditor textEditor)
+        private async Task<TextEditorSessionDataV1> BuildTextEditorSessionDataAsync(ITextEditor textEditor)
         {
             TextEditorSessionDataV1 textEditorData = new TextEditorSessionDataV1
             {
@@ -262,7 +262,7 @@
             {
                 // Add the opened file to FutureAccessList so we can access it next launch
                 var futureAccessToken = ToToken(textEditor.Id);
-                await FutureAccessListUtility.TryAddOrReplaceTokenInFutureAccessList(futureAccessToken, textEditor.EditingFile);
+                await FutureAccessListUtility.TryAddOrReplaceTokenInFutureAccessListAsync(futureAccessToken, textEditor.EditingFile);
                 textEditorData.EditingFileFutureAccessToken = futureAccessToken;
                 textEditorData.EditingFileName = textEditor.EditingFileName;
                 textEditorData.EditingFilePath = textEditor.EditingFilePath;
@@ -392,7 +392,7 @@
 
             if (editorSessionData.EditingFileFutureAccessToken != null)
             {
-                editingFile = await FutureAccessListUtility.GetFileFromFutureAccessList(editorSessionData.EditingFileFutureAccessToken);
+                editingFile = await FutureAccessListUtility.GetFileFromFutureAccessListAsync(editorSessionData.EditingFileFutureAccessToken);
             }
 
             string lastSavedFile = editorSessionData.LastSavedBackupFilePath;
@@ -407,7 +407,7 @@
             else if (editingFile != null && lastSavedFile == null && pendingFile == null) // File without pending changes
             {
                 var encoding = EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding);
-                textEditor = await _notepadsCore.CreateTextEditor(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
+                textEditor = await _notepadsCore.CreateTextEditorAsync(editorSessionData.Id, editingFile, encoding: encoding, ignoreFileSizeLimit: true);
                 textEditor.ResetEditorState(editorSessionData.StateMetaData);
             }
             else // File with pending changes
@@ -417,7 +417,7 @@
 
                 if (lastSavedFile != null)
                 {
-                    TextFile lastSavedTextFile = await FileSystemUtility.ReadFile(lastSavedFile, ignoreFileSizeLimit: true,
+                    TextFile lastSavedTextFile = await FileSystemUtility.ReadFileAsync(lastSavedFile, ignoreFileSizeLimit: true,
                     EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding));
                     lastSavedText = lastSavedTextFile.Content;
                 }
@@ -436,7 +436,7 @@
 
                 if (pendingFile != null)
                 {
-                    TextFile pendingTextFile = await FileSystemUtility.ReadFile(pendingFile,
+                    TextFile pendingTextFile = await FileSystemUtility.ReadFileAsync(pendingFile,
                         ignoreFileSizeLimit: true,
                         EncodingUtility.GetEncodingByName(editorSessionData.StateMetaData.LastSavedEncoding));
                     pendingText = pendingTextFile.Content;
@@ -452,7 +452,7 @@
         {
             try
             {
-                await FileSystemUtility.WriteToFile(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
+                await FileSystemUtility.WriteToFileAsync(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
                 return true;
             }
             catch (Exception ex)

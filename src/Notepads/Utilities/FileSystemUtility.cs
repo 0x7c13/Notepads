@@ -112,7 +112,7 @@
             return Path.GetFullPath(finalPath);
         }
 
-        public static async Task<StorageFile> OpenFileFromCommandLine(string dir, string args)
+        public static async Task<StorageFile> OpenFileFromCommandLineAsync(string dir, string args)
         {
             string path = null;
 
@@ -133,7 +133,7 @@
 
             LoggingService.LogInfo($"[{nameof(FileSystemUtility)}] OpenFileFromCommandLine: {path}");
 
-            return await GetFile(path);
+            return await GetFileAsync(path);
         }
 
         private static string ReplaceEnvironmentVariables(string args)
@@ -282,14 +282,14 @@
             return args;
         }
 
-        public static async Task<BasicProperties> GetFileProperties(StorageFile file)
+        public static async Task<BasicProperties> GetFilePropertiesAsync(StorageFile file)
         {
             return await file.GetBasicPropertiesAsync();
         }
 
-        public static async Task<long> GetDateModified(StorageFile file)
+        public static async Task<long> GetDateModifiedAsync(StorageFile file)
         {
-            var properties = await GetFileProperties(file);
+            var properties = await GetFilePropertiesAsync(file);
             var dateModified = properties.DateModified;
             return dateModified.ToFileTime();
         }
@@ -299,7 +299,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> IsFileWritable(StorageFile file)
+        public static async Task<bool> IsFileWritableAsync(StorageFile file)
         {
             try
             {
@@ -312,7 +312,7 @@
             }
         }
 
-        public static async Task<StorageFile> GetFile(string filePath)
+        public static async Task<StorageFile> GetFileAsync(string filePath)
         {
             try
             {
@@ -324,13 +324,13 @@
             }
         }
 
-        public static async Task<TextFile> ReadFile(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
+        public static async Task<TextFile> ReadFileAsync(string filePath, bool ignoreFileSizeLimit, Encoding encoding)
         {
-            StorageFile file = await GetFile(filePath);
-            return file == null ? null : await ReadFile(file, ignoreFileSizeLimit, encoding);
+            StorageFile file = await GetFileAsync(filePath);
+            return file == null ? null : await ReadFileAsync(file, ignoreFileSizeLimit, encoding);
         }
 
-        public static async Task<TextFile> ReadFile(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
+        public static async Task<TextFile> ReadFileAsync(StorageFile file, bool ignoreFileSizeLimit, Encoding encoding = null)
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
@@ -557,7 +557,7 @@
         /// <param name="encoding"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        public static async Task WriteToFile(string text, Encoding encoding, StorageFile file)
+        public static async Task WriteToFileAsync(string text, Encoding encoding, StorageFile file)
         {
             bool usedDeferUpdates = true;
 
@@ -578,7 +578,7 @@
 
             try
             {
-                if (IsFileReadOnly(file) || !await IsFileWritable(file))
+                if (IsFileReadOnly(file) || !await IsFileWritableAsync(file))
                 {
                     // For file(s) dragged into Notepads, they are read-only
                     // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
@@ -619,11 +619,11 @@
             }
         }
 
-        internal static async Task DeleteFile(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
+        internal static async Task DeleteFileAsync(string filePath, StorageDeleteOption deleteOption = StorageDeleteOption.PermanentDelete)
         {
             try
             {
-                var file = await GetFile(filePath);
+                var file = await GetFileAsync(filePath);
                 if (file != null)
                 {
                     await file.DeleteAsync(deleteOption);
@@ -635,18 +635,18 @@
             }
         }
 
-        public static async Task<StorageFolder> GetOrCreateAppFolder(string folderName)
+        public static async Task<StorageFolder> GetOrCreateAppFolderAsync(string folderName)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             return await localFolder.CreateFolderAsync(folderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public static async Task<StorageFile> CreateFile(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
+        public static async Task<StorageFile> CreateFileAsync(StorageFolder folder, string fileName, CreationCollisionOption option = CreationCollisionOption.ReplaceExisting)
         {
             return await folder.CreateFileAsync(fileName, option);
         }
 
-        public static async Task<bool> FileExists(StorageFile file)
+        public static async Task<bool> FileExistsAsync(StorageFile file)
         {
             try
             {

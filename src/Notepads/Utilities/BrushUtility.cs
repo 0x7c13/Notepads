@@ -14,7 +14,7 @@
     {
         private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1);
 
-        public static async Task<Brush> GetHostBackdropAcrylicBrush(Color color, float tintOpacity)
+        public static async Task<Brush> GetHostBackdropAcrylicBrushAsync(Color color, float tintOpacity)
         {
             await SemaphoreSlim.WaitAsync();
             try

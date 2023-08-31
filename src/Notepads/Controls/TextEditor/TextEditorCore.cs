@@ -256,7 +256,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, (args) => ResetFontSizeToDefault()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, (args) => ResetFontSizeToDefault()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, (args) => InsertDateTimeString()),
-                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, (args) => SearchInWeb()),
+                new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, async (args) => await SearchInWebAsync()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, (args) => DuplicateText()),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.J, (args) => JoinText()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, (args) => AddIndentation(AppSettingsService.EditorDefaultTabIndents)),
@@ -354,7 +354,7 @@
 
         private async void OnPaste(object sender, TextControlPasteEventArgs args)
         {
-            await PastePlainTextFromWindowsClipboard(args);
+            await PastePlainTextFromWindowsClipboardAsync(args);
         }
 
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
@@ -655,7 +655,7 @@
             Document.Selection.SetRange(startPosition + startOffset, endPosition - endOffset);
         }
 
-        public async Task PastePlainTextFromWindowsClipboard(TextControlPasteEventArgs args)
+        public async Task PastePlainTextFromWindowsClipboardAsync(TextControlPasteEventArgs args)
         {
             if (args != null)
             {

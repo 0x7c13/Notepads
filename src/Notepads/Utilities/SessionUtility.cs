@@ -47,7 +47,7 @@
 
         public static async Task<StorageFolder> GetBackupFolderAsync(string backupFolderName)
         {
-            return await FileSystemUtility.GetOrCreateAppFolder(backupFolderName);
+            return await FileSystemUtility.GetOrCreateAppFolderAsync(backupFolderName);
         }
 
         public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync(string backupFolderName)

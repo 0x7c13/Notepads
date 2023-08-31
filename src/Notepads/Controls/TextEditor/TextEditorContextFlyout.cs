@@ -153,7 +153,7 @@
                         Key = VirtualKey.X,
                         IsEnabled = false,
                     });
-                    _cut.Click += (sender, args) => { _textEditorCore.Document.Selection.Cut(); };
+                    _cut.Click += (sender, args) => _textEditorCore.Document.Selection.Cut();
                 }
                 return _cut;
             }
@@ -191,7 +191,7 @@
                         Key = VirtualKey.V,
                         IsEnabled = false,
                     });
-                    _paste.Click += async (sender, args) => { await _textEditorCore.PastePlainTextFromWindowsClipboard(null); };
+                    _paste.Click += async (sender, args) => await _textEditorCore.PastePlainTextFromWindowsClipboardAsync(null);
                 }
                 return _paste;
             }
@@ -210,7 +210,7 @@
                         Key = VirtualKey.Z,
                         IsEnabled = false,
                     });
-                    _undo.Click += (sender, args) => { _textEditorCore.Undo(); };
+                    _undo.Click += (sender, args) => _textEditorCore.Undo();
                 }
                 return _undo;
             }
@@ -230,7 +230,7 @@
                         IsEnabled = false,
                     });
                     _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
-                    _redo.Click += (sender, args) => { _textEditorCore.Redo(); };
+                    _redo.Click += (sender, args) => _textEditorCore.Redo();
                 }
                 return _redo;
             }
@@ -249,10 +249,7 @@
                         Key = VirtualKey.A,
                         IsEnabled = false,
                     });
-                    _selectAll.Click += (sender, args) =>
-                    {
-                        _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
-                    };
+                    _selectAll.Click += (sender, args) => _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
                 }
                 return _selectAll;
             }
@@ -307,10 +304,8 @@
                     Key = VirtualKey.E,
                     IsEnabled = false,
                 });
-                _webSearch.Click += (sender, args) =>
-                {
-                    _textEditorCore.SearchInWeb();
-                };
+                _webSearch.Click += async (sender, args) => await _textEditorCore.SearchInWebAsync();
+                
                 return _webSearch;
             }
         }
@@ -322,10 +317,7 @@
                 if (_share == null)
                 {
                     _share = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Share), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText") };
-                    _share.Click += (sender, args) =>
-                    {
-                        Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
-                    };
+                    _share.Click += (sender, args) => Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
                 }
                 return _share;
             }

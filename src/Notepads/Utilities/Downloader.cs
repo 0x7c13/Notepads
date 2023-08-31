@@ -6,7 +6,7 @@
 
     public static class Downloader
     {
-        public static async Task<MemoryStream> GetDataFeed(string feedUrl)
+        public static async Task<MemoryStream> GetDataFeedAsync(string feedUrl)
         {
             using (var ms = new MemoryStream())
             {
