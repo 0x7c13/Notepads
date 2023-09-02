@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Notepads.Views.Settings.TextAndEditorSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -206,6 +206,18 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Source="ms-appx:///Assets/search_duckduckgo.png" Width="16" Stretch="Uniform"/>
                             <TextBlock Text="Duck Duck Go" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="BraveRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_brave.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock Text="Brave" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="QwantRadioButton" GroupName="SearchEngineGroup">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="ms-appx:///Assets/search_qwant.png" Width="16" Stretch="Uniform"/>
+                            <TextBlock Text="Qwant" Margin="8,0,0,0"/>
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource CustomRadioButtonStyle}" x:Name="CustomSearchUrlRadioButton" GroupName="SearchEngineGroup">

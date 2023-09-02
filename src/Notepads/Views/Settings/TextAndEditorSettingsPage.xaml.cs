@@ -1,4 +1,4 @@
-﻿namespace Notepads.Views.Settings
+namespace Notepads.Views.Settings
 {
     using System;
     using System.Collections.Generic;
@@ -201,6 +201,14 @@
                     DuckDuckGoRadioButton.IsChecked = true;
                     CustomSearchUrl.IsEnabled = false;
                     break;
+                case SearchEngine.Brave:
+                    BraveRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
+                case SearchEngine.Qwant:
+                    QwantRadioButton.IsChecked = true;
+                    CustomSearchUrl.IsEnabled = false;
+                    break;
                 case SearchEngine.Custom:
                     CustomSearchUrlRadioButton.IsChecked = true;
                     CustomSearchUrl.IsEnabled = true;
@@ -245,7 +253,8 @@
             BingRadioButton.Checked += SearchEngineRadioButton_Checked;
             GoogleRadioButton.Checked += SearchEngineRadioButton_Checked;
             DuckDuckGoRadioButton.Checked += SearchEngineRadioButton_Checked;
-            CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
+            BraveRadioButton.Checked += SearchEngineRadioButton_Checked;
+            QwantRadioButton.Checked += SearchEngineRadioButton_Checked;            CustomSearchUrlRadioButton.Checked += SearchEngineRadioButton_Checked;
         }
 
         private void SearchEngineRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -266,7 +275,14 @@
                     AppSettingsService.EditorDefaultSearchEngine = SearchEngine.DuckDuckGo;
                     OnCustomSearchEngineSelectionChanged(false);
                     break;
-                case "CustomSearchUrlRadioButton":
+                case "BraveRadioButton":
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Brave;
+                    OnCustomSearchEngineSelectionChanged(false);
+                    break;
+                case "QwantRadioButton":
+                    AppSettingsService.EditorDefaultSearchEngine = SearchEngine.Qwant;
+                    OnCustomSearchEngineSelectionChanged(false);
+                    break;                case "CustomSearchUrlRadioButton":
                     OnCustomSearchEngineSelectionChanged(true);
                     break;
             }
