@@ -138,7 +138,7 @@
     <comment>.bash_aliases</comment>
   </data>
   <data name="BashHistoryFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Bash History</value>
+    <value>Ficheiro de Histórico Bash</value>
     <comment>.bash_history</comment>
   </data>
   <data name="BashLoginFileDisplayName" xml:space="preserve">
@@ -158,7 +158,7 @@
     <comment>.bash</comment>
   </data>
   <data name="BibTeXFileDisplayName" xml:space="preserve">
-    <value>Ficheiro BibTeX</value>
+    <value>Base de Dados BibTeX</value>
     <comment>.bib</comment>
   </data>
   <data name="BondFileDisplayName" xml:space="preserve">
@@ -234,7 +234,7 @@
     <comment>.gitattributes</comment>
   </data>
   <data name="GitConfigFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Git Config</value>
+    <value>Configuração de Git</value>
     <comment>.gitconfig</comment>
   </data>
   <data name="GitIgnoreFileDisplayName" xml:space="preserve">
@@ -262,11 +262,11 @@
     <comment>.h, .hpp, .hh, .hxx</comment>
   </data>
   <data name="HlslFileDisplayName" xml:space="preserve">
-    <value>Ficheiro HLSL</value>
+    <value>Sombreador HLSL</value>
     <comment>.hlsl, .hlsli, .fx, .fxh, .vsh, .psh, .cginc, .compute</comment>
   </data>
   <data name="HtmlFileDisplayName" xml:space="preserve">
-    <value>Ficheiro HTML</value>
+    <value>Documento HTML</value>
     <comment>.html, .htm, .shtml, .xhtml, .mdoc, .jshtm, .volt</comment>
   </data>
   <data name="HypertextAccessFileDisplayName" xml:space="preserve">
@@ -302,11 +302,11 @@
     <comment>.less</comment>
   </data>
   <data name="LogFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Log</value>
+    <value>Ficheiro de Registo</value>
     <comment>.log</comment>
   </data>
   <data name="LrcFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Letras de música</value>
+    <value>Letras de Música</value>
     <comment>.lrc</comment>
   </data>
   <data name="LuaFileDisplayName" xml:space="preserve">
@@ -322,11 +322,11 @@
     <comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment>
   </data>
   <data name="NfoFileDisplayName" xml:space="preserve">
-    <value>Ficheiro NFO</value>
+    <value>Ficheiro de Informação NFO</value>
     <comment>.nfo</comment>
   </data>
   <data name="NpmConfigFileDisplayName" xml:space="preserve">
-    <value>Ficheiro NPM Config</value>
+    <value>Configuração de NPM</value>
     <comment>.npmrc</comment>
   </data>
   <data name="Perl6FileDisplayName" xml:space="preserve">
@@ -346,19 +346,19 @@
     <comment>.pod, .podspec</comment>
   </data>
   <data name="PowerShellFileDisplayName" xml:space="preserve">
-    <value>Ficheiro PowerShell</value>
+    <value>Script de PowerShell</value>
     <comment>.ps1, .psm1, .psd1, .pssc, .psrc</comment>
   </data>
   <data name="ProfileFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Profile</value>
+    <value>Ficheiro de Perfil</value>
     <comment>.profile</comment>
   </data>
   <data name="ProjectFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Project</value>
+    <value>Ficheiro de Projeto</value>
     <comment>.project, .prj</comment>
   </data>
   <data name="PugFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Pug</value>
+    <value>Modelo de Pug</value>
     <comment>.jade, .pug</comment>
   </data>
   <data name="PythonFileDisplayName" xml:space="preserve">
@@ -386,7 +386,7 @@
     <comment>.rs</comment>
   </data>
   <data name="ShaderFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Shader</value>
+    <value>Sombreador Shader</value>
     <comment>.shader</comment>
   </data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve">
@@ -422,7 +422,7 @@
     <comment>.ts, .tsx</comment>
   </data>
   <data name="UserFileDisplayName" xml:space="preserve">
-    <value>Configuração de usuário Visual Studio</value>
+    <value>Configuração de utilizador do Visual Studio</value>
     <comment>.user</comment>
   </data>
   <data name="VerilogFileDisplayName" xml:space="preserve">
@@ -442,27 +442,27 @@
     <comment>.vue</comment>
   </data>
   <data name="XamlFileDisplayName" xml:space="preserve">
-    <value>Ficheiro XAML</value>
+    <value>Ficheiro de Marcação XAML</value>
     <comment>.xaml</comment>
   </data>
   <data name="XmlFileDisplayName" xml:space="preserve">
-    <value>Ficheiro XML</value>
+    <value>Ficheiro de Marcação XML</value>
     <comment>.xml, .xsd, .ascx, .atom, .axml, .bpmn, .cpt, .csl</comment>
   </data>
   <data name="YamlFileDisplayName" xml:space="preserve">
-    <value>Ficheiro YAML</value>
+    <value>Documento YAML</value>
     <comment>.yml, .yaml</comment>
   </data>
   <data name="ZshellConfigFileDisplayName" xml:space="preserve">
-    <value>Configuração do Z shell</value>
+    <value>Configuração de Z shell</value>
     <comment>.zshrc</comment>
   </data>
   <data name="ZshellHistoryFileDisplayName" xml:space="preserve">
-    <value>Ficheiro Z shell History</value>
+    <value>Ficheiro de Histórico Z shell</value>
     <comment>.zsh_history</comment>
   </data>
   <data name="M3uFileDisplayName" xml:space="preserve">
-    <value>Lista de reprodução M3U</value>
+    <value>Lista de Reprodução M3U</value>
     <comment>.m3u, .m3u8</comment>
   </data>
   <data name="CheatFileDisplayName" xml:space="preserve">
@@ -470,7 +470,7 @@
     <comment>.cht</comment>
   </data>
   <data name="CSharpeProjectFileDisplayName" xml:space="preserve">
-    <value>Ficheiro de Projecto C#</value>
+    <value>Ficheiro de Projeto C#</value>
     <comment>.csproj</comment>
   </data>
   <data name="EnvironmentFileDisplayName" xml:space="preserve">
@@ -478,7 +478,7 @@
     <comment>.env</comment>
   </data>
   <data name="GlslFileDisplayName" xml:space="preserve">
-    <value>Ficheiro GLSL</value>
+    <value>Sombreador GLSL</value>
     <comment>.glslp</comment>
   </data>
   <data name="LicenseFileDisplayName" xml:space="preserve">
@@ -498,7 +498,7 @@
     <comment>.pvd</comment>
   </data>
   <data name="ResourceFileDisplayName" xml:space="preserve">
-    <value>Resource File</value>
+    <value>Recursos de Localização .NET</value>
     <comment>.resx</comment>
   </data>
   <data name="TomlFileDisplayName" xml:space="preserve">
