@@ -25,7 +25,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left" Margin="{StaticResource SettingsPageFooterMargin}">
+            <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
                 <!--  Text Wrapping  -->
                 <StackPanel x:Name="TextWrappingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">

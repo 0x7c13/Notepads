@@ -19,7 +19,7 @@
     </Style>
 
     <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlDescriptionTextForegroundBrush}" />
     </Style>
 
 </ResourceDictionary>

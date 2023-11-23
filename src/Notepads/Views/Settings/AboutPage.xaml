@@ -24,20 +24,19 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
-            <StackPanel HorizontalAlignment="Left" Margin="{StaticResource SettingsPageFooterMargin}">
+            <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
                 <!--  About  -->
-                <StackPanel Orientation="Horizontal" Spacing="12" Style="{StaticResource SettingsSectionStyle}">
-                    <Image x:Name="AppIconImage" Width="90" Margin="-6,0,0,0" Source="/Assets/appicon_ws.png" />
+                <StackPanel Orientation="Horizontal" Style="{StaticResource SettingsSectionStyle}">
+                    <Image x:Name="AppIconImage" Width="90" Margin="-6,0,12,0" Source="/Assets/appicon_ws.png" />
                     <StackPanel>
                         <TextBlock
-                            Margin="0,4,0,0"
+                            Margin="0,4"
                             FontWeight="Normal"
                             Style="{StaticResource TitleTextBlockStyle}"
                             Text="{x:Bind AppName, Mode=OneTime}" />
                         <TextBlock
-                            Margin="2,4,0,0"
-                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"
                             Style="{StaticResource SubtitleTextBlockStyle}"
                             Text="{x:Bind AppVersion, Mode=OneTime}" />
                     </StackPanel>
