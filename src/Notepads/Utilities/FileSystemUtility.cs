@@ -553,11 +553,7 @@
         /// Exception will be thrown if not succeeded
         /// Exception should be caught and handled by caller
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="encoding"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static async Task WriteToFileAsync(string text, Encoding encoding, StorageFile file)
+        public static async Task WriteTextToFileAsync(StorageFile file, string text, Encoding encoding)
         {
             bool usedDeferUpdates = true;
 
@@ -605,17 +601,92 @@
                 {
                     // Let Windows know that we're finished changing the file so the
                     // other app can update the remote version of the file.
-                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                    if (status != FileUpdateStatus.Complete)
+                    _ = await CachedFileManager.CompleteUpdatesAsync(file);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Save text to a file with UTF-8 encoding using FileIO API with retries for retriable errors
+        /// </summary>
+        public static async Task WriteUtf8TextToFileWithRetriesAsync(StorageFile storageFile, string text, int maxRetryAttempts)
+        {
+            // Retriable errors
+            const int ERROR_ACCESS_DENIED = unchecked((Int32)0x80070005);
+            const int ERROR_SHARING_VIOLATION = unchecked((Int32)0x80070020);
+            const int ERROR_UNABLE_TO_REMOVE_REPLACED = unchecked((Int32)0x80070497);
+            const int ERROR_FAIL = unchecked((Int32)0x80004005);
+
+            bool usedDeferUpdates = true;
+            int retryAttempts = 0;
+
+            try
+            {
+                // Prevent updates to the remote version of the file until we
+                // finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(storageFile);
+            }
+            catch (Exception)
+            {
+                // If DeferUpdates fails, just ignore it and try to save the file anyway
+                usedDeferUpdates = false;
+            }
+
+            try
+            {
+                while (retryAttempts < maxRetryAttempts)
+                {
+                    try
                     {
-                        // Track FileUpdateStatus here to better understand the failed scenarios
-                        // File name, path and content are not included to respect/protect user privacy
-                        Analytics.TrackEvent("CachedFileManager_CompleteUpdatesAsync_Failed", new Dictionary<string, string>()
-                        {
-                            { "FileUpdateStatus", nameof(status) }
-                        });
+                        retryAttempts++;
+                        await FileIO.WriteTextAsync(storageFile, text, Windows.Storage.Streams.UnicodeEncoding.Utf8);
+                        break;
+                    }
+                    catch (Exception ex) when ((ex.HResult == ERROR_ACCESS_DENIED) ||
+                                               (ex.HResult == ERROR_SHARING_VIOLATION) ||
+                                               (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED) ||
+                                               (ex.HResult == ERROR_FAIL))
+                    {
+                        // Delay 13ms before retrying for all retriable errors
+                        await Task.Delay(13);
                     }
                 }
+            }
+            finally
+            {
+                if (retryAttempts > 1) // Retry attempts were used
+                {
+                    // Track retry attempts to better understand the failed scenarios
+                    // File name, path and content are not included to respect/protect user privacy
+                    Analytics.TrackEvent("SaveSerializedSessionMetaDataAsync_RetryAttempts", new Dictionary<string, string>()
+                    {
+                        { "RetryAttempts", (retryAttempts - 1).ToString() }
+                    });
+                }
+                    
+                if (usedDeferUpdates)
+                {
+                    // Let Windows know that we're finished changing the file so the
+                    // other app can update the remote version of the file.
+                    _ = await CachedFileManager.CompleteUpdatesAsync(storageFile);
+                }
+            }
+        }
+
+        public static async Task<StorageFile> GetOrCreateFileAsync(StorageFolder folder, string fileName)
+        {
+            try
+            {
+                return await folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get or create file, Exception: {ex.Message}");
+                Analytics.TrackEvent("GetOrCreateFileAsync_Failed", new Dictionary<string, string>()
+                {
+                    { "Exception", ex.ToString() },
+                });
+                throw; // Rethrow
             }
         }
 

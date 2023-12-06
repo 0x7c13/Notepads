@@ -6,14 +6,14 @@
     using System.Threading.Tasks;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Core;
-    using Notepads.Services;
     using Windows.Storage;
-    using Microsoft.AppCenter.Analytics;
 
     internal static class SessionUtility
     {
         private const string BackupFolderDefaultName = "BackupFiles";
         private const string SessionMetaDataFileDefaultName = "NotepadsSessionData.json";
+        private const int SessionMetaDataFileWriteMaxRetryCount = 7;
+
         private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
         public static ISessionManager GetSessionManager(INotepadsCore notepadCore)
@@ -34,7 +34,9 @@
                     sessionMetaDataFileName = filePathPrefix + SessionMetaDataFileDefaultName;
                 }
 
-                sessionManager = new SessionManager(notepadCore, backupFolderName, sessionMetaDataFileName);
+                sessionManager = new SessionManager(notepadCore,
+                    backupFolderName,
+                    sessionMetaDataFileName);
 
                 if (!SessionManagers.TryAdd(notepadCore, sessionManager))
                 {
@@ -50,60 +52,48 @@
             return await FileSystemUtility.GetOrCreateAppFolderAsync(backupFolderName);
         }
 
-        public static async Task<IReadOnlyList<StorageFile>> GetAllBackupFilesAsync(string backupFolderName)
+        public static async Task<IReadOnlyList<StorageFile>> GetAllFilesInBackupFolderAsync(string backupFolderName)
         {
             StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
             return await backupFolder.GetFilesAsync();
         }
 
+        public static async Task<bool> IsSessionMetaDataFileExists(string sessionMetaDataFileName)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            return await localFolder.FileExistsAsync(sessionMetaDataFileName);
+        }
+
         public static async Task<string> GetSerializedSessionMetaDataAsync(string sessionMetaDataFileName)
         {
-            try
-            {
-                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                if (await localFolder.FileExistsAsync(sessionMetaDataFileName))
-                {
-                    var data = await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
-                    LoggingService.LogInfo($"[{nameof(SessionUtility)}] Session metadata Loaded from {localFolder.Path}");
-                    return data;
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(SessionUtility)}] Failed to get session meta data: {ex.Message}");
-                Analytics.TrackEvent("FailedToGetSerializedSessionMetaData", new Dictionary<string, string>()
-                {
-                    { "Exception", ex.ToString() },
-                    { "Message", ex.Message }
-                });
-            }
-
-            return null;
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            return await localFolder.ReadTextFromFileAsync(sessionMetaDataFileName);
         }
 
         public static async Task SaveSerializedSessionMetaDataAsync(string serializedData, string sessionMetaDataFileName)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile metaDataFile = await FileSystemUtility.GetOrCreateFileAsync(localFolder, sessionMetaDataFileName);
+            await FileSystemUtility.WriteUtf8TextToFileWithRetriesAsync(metaDataFile, serializedData, SessionMetaDataFileWriteMaxRetryCount);
+        }
 
-            // Attempt to delete session meta data file first in case it was not been deleted
+        public static async Task DeleteSerializedSessionMetaDataAsync(string sessionMetaDataFileName)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+
+            StorageFile sessionDataFile = null;
+
             try
             {
-                await DeleteSerializedSessionMetaDataAsync(sessionMetaDataFileName);
+                sessionDataFile = await localFolder.GetFileAsync(sessionMetaDataFileName);
             }
             catch (Exception)
             {
                 // ignored
             }
 
-            await localFolder.WriteTextToFileAsync(serializedData, sessionMetaDataFileName, CreationCollisionOption.ReplaceExisting);
-        }
-
-        public static async Task DeleteSerializedSessionMetaDataAsync(string sessionMetaDataFileName)
-        {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            if (await localFolder.FileExistsAsync(sessionMetaDataFileName))
+            if (sessionDataFile != null)
             {
-                var sessionDataFile = await localFolder.GetFileAsync(sessionMetaDataFileName);
                 await sessionDataFile.DeleteAsync();
             }
         }

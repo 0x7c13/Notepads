@@ -6,19 +6,19 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using Windows.Storage;
+    using Windows.Storage.AccessCache;
     using Microsoft.AppCenter.Analytics;
-    using System.Text.Json;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Windows.Storage;
-    using Windows.Storage.AccessCache;
 
-    internal class SessionManager : ISessionManager, IDisposable
+    internal sealed class SessionManager : ISessionManager, IDisposable
     {
         private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
         private readonly INotepadsCore _notepadsCore;
@@ -61,9 +61,9 @@
                 return 0; // Already loaded
             }
 
-            var data = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
+            bool sessionDataFileExists = await SessionUtility.IsSessionMetaDataFileExists(_sessionMetaDataFileName);
 
-            if (data == null)
+            if (!sessionDataFileExists)
             {
                 return 0; // No session data found
             }
@@ -72,12 +72,13 @@
 
             try
             {
-                var json = JsonDocument.Parse(data);
+                string sessionDataContent = await SessionUtility.GetSerializedSessionMetaDataAsync(_sessionMetaDataFileName);
+                var json = JsonDocument.Parse(sessionDataContent);
                 var version = json.RootElement.GetProperty("Version").GetInt32();
 
                 if (version == 1)
                 {
-                    sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(data);
+                    sessionData = JsonSerializer.Deserialize<NotepadsSessionDataV1>(sessionDataContent);
                 }
                 else
                 {
@@ -88,7 +89,28 @@
             {
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
+
+                // Last session data is corrupted, clear it first
                 await ClearSessionDataAsync();
+
+                // Rename all backup files to indicate they are corrupted with an extension of ".txt" to avoid being deleted
+                foreach (StorageFile backupFile in await SessionUtility.GetAllFilesInBackupFolderAsync(_backupFolderName))
+                {
+                    if (backupFile.Name.Contains(".")) continue; // Skip files with extension
+
+                    try
+                    {
+                        await backupFile.RenameAsync(backupFile.Name + "-Corrupted.txt");
+                    }
+                    catch (Exception)
+                    {
+                        // Best effort
+                    }
+                }
+
+                // TODO: Open backup folder and notify user with a special dialog
+                // await Launcher.LaunchFolderAsync(await SessionUtility.GetBackupFolderAsync(_backupFolderName));
+
                 return 0;
             }
 
@@ -208,11 +230,20 @@
                 try
                 {
                     await DeleteOrphanedBackupFilesAsync(sessionData);
-                    DeleteOrphanedTokensInFutureAccessList(sessionData);
                 }
                 catch (Exception ex)
                 {
                     Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles",
+                        new Dictionary<string, string>() { { "Exception", ex.Message } });
+                }
+
+                try
+                {
+                    DeleteOrphanedTokensInFutureAccessList(sessionData);
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokensInFutureAccessList",
                         new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
@@ -452,12 +483,13 @@
         {
             try
             {
-                await FileSystemUtility.WriteToFileAsync(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file);
+                await FileSystemUtility.WriteTextToFileAsync(file, LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding);
                 return true;
             }
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save backup file: {ex.Message}");
+                Analytics.TrackEvent("SessionManager_FailedToSaveBackupFile", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 return false;
             }
         }
@@ -470,18 +502,20 @@
                 .Where(path => path != null)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (StorageFile backupFile in await SessionUtility.GetAllBackupFilesAsync(_backupFolderName))
+            foreach (StorageFile backupFile in await SessionUtility.GetAllFilesInBackupFolderAsync(_backupFolderName))
             {
-                if (!backupPaths.Contains(backupFile.Path))
+                if (backupPaths.Contains(backupFile.Path)) continue; // Skip files that are known to be used
+
+                // Only delete files with no extension (by contract, all backup files have no extension)
+                if (backupFile.Name.Contains(".")) continue;
+
+                try
                 {
-                    try
-                    {
-                        await backupFile.DeleteAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned backup file: {ex.Message}");
-                    }
+                    await backupFile.DeleteAsync();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned backup file: {ex.Message}");
                 }
             }
         }

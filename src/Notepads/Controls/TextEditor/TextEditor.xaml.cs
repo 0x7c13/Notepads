@@ -719,7 +719,7 @@
             var text = TextEditorCore.GetText();
             var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;
             var lineEnding = RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
-            await FileSystemUtility.WriteToFileAsync(LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding, file); // Will throw if not succeeded
+            await FileSystemUtility.WriteTextToFileAsync(file, LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding); // Will throw if not succeeded
             var newFileModifiedTime = await FileSystemUtility.GetDateModifiedAsync(file);
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
         }
