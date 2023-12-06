@@ -43,9 +43,6 @@
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
-            var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(AppCenterSecret, services);
-
             InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)
             {
@@ -97,6 +94,16 @@
                 rootFrame = CreateRootFrame(e);
                 Window.Current.Content = rootFrame;
                 rootFrameCreated = true;
+
+                try
+                {
+                    var services = new Type[] { typeof(Crashes), typeof(Analytics) };
+                    AppCenter.Start(AppCenterSecret, services);
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[{nameof(App)}] Failed to start AppCenter: {ex.Message}");
+                }
 
                 ThemeSettingsService.Initialize();
                 AppSettingsService.Initialize();
@@ -181,7 +188,7 @@
 
             if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                //TODO: Load state from previously suspended application
+                // TODO: Load state from previously suspended application
             }
 
             return rootFrame;
