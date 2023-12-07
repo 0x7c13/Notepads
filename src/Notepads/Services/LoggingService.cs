@@ -120,6 +120,7 @@
             {
                 SemaphoreSlim.Release();
             }
+
             return false;
         }
 

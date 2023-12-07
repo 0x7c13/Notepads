@@ -97,8 +97,11 @@
 
                 try
                 {
-                    var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-                    AppCenter.Start(AppCenterSecret, services);
+                    if (!string.IsNullOrEmpty(AppCenterSecret))
+                    {
+                        var services = new Type[] { typeof(Crashes), typeof(Analytics) };
+                        AppCenter.Start(AppCenterSecret, services);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -217,10 +220,10 @@
         /// of memory still intact.
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        /// <param name="args">Details about the suspend request.</param>
+        private void OnSuspending(object sender, SuspendingEventArgs args)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            var deferral = args.SuspendingOperation.GetDeferral();
 
             try
             {
@@ -232,8 +235,10 @@
             {
                 // Best efforts
             }
-
-            deferral.Complete();
+            finally
+            {
+                deferral.Complete();
+            }
         }
 
         // Occurs when an exception is not handled on the UI thread.

@@ -12,7 +12,6 @@
     {
         private const string BackupFolderDefaultName = "BackupFiles";
         private const string SessionMetaDataFileDefaultName = "NotepadsSessionData.json";
-        private const int SessionMetaDataFileWriteMaxRetryCount = 7;
 
         private static readonly ConcurrentDictionary<INotepadsCore, ISessionManager> SessionManagers = new ConcurrentDictionary<INotepadsCore, ISessionManager>();
 
@@ -74,7 +73,7 @@
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile metaDataFile = await FileSystemUtility.GetOrCreateFileAsync(localFolder, sessionMetaDataFileName);
-            await FileSystemUtility.WriteUtf8TextToFileWithRetriesAsync(metaDataFile, serializedData, SessionMetaDataFileWriteMaxRetryCount);
+            await FileSystemUtility.WriteTextToFileAsync(metaDataFile, serializedData);
         }
 
         public static async Task DeleteSerializedSessionMetaDataAsync(string sessionMetaDataFileName)

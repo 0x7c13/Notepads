@@ -83,7 +83,9 @@ I am using analytics service "AppCenter" to collect basic usage data plus some m
 
 Feel free to review the source code or build your own version of Notepads since it is 100% open sourced.
 
-You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project, so don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+#### More to read here: [[Privacy Policy](PRIVACY.md)]
+
+TL;DR: You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project, so don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Contributing:
 

@@ -90,28 +90,9 @@
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
                 Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
 
-                // Last session data is corrupted, clear it first
-                await ClearSessionDataAsync();
+                await HandleMetaDataFileCorruptionAsync();
 
-                // Rename all backup files to indicate they are corrupted with an extension of ".txt" to avoid being deleted
-                foreach (StorageFile backupFile in await SessionUtility.GetAllFilesInBackupFolderAsync(_backupFolderName))
-                {
-                    if (backupFile.Name.Contains(".")) continue; // Skip files with extension
-
-                    try
-                    {
-                        await backupFile.RenameAsync(backupFile.Name + "-Corrupted.txt");
-                    }
-                    catch (Exception)
-                    {
-                        // Best effort
-                    }
-                }
-
-                // TODO: Open backup folder and notify user with a special dialog
-                // await Launcher.LaunchFolderAsync(await SessionUtility.GetBackupFolderAsync(_backupFolderName));
-
-                return 0;
+                return 0; // Failed to load session data
             }
 
             IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
@@ -146,6 +127,30 @@
             LoggingService.LogInfo($"[{nameof(SessionManager)}] {_sessionDataCache.Count} tab(s) restored from last session.");
 
             return _sessionDataCache.Count;
+        }
+
+        private async Task HandleMetaDataFileCorruptionAsync()
+        {
+            // Last session data is corrupted, clear it first
+            await ClearSessionDataAsync();
+
+            // Rename all backup files to indicate they are corrupted with an extension of ".txt" to avoid being deleted
+            foreach (StorageFile backupFile in await SessionUtility.GetAllFilesInBackupFolderAsync(_backupFolderName))
+            {
+                if (backupFile.Name.Contains(".")) continue; // Skip files with extension
+
+                try
+                {
+                    await backupFile.RenameAsync(backupFile.Name + "-Corrupted.txt");
+                }
+                catch (Exception)
+                {
+                    // Best effort
+                }
+            }
+
+            // TODO: Open backup folder and notify user with a special dialog
+            // await Launcher.LaunchFolderAsync(await SessionUtility.GetBackupFolderAsync(_backupFolderName));
         }
 
         public async Task SaveSessionAsync(Action actionAfterSaving = null)

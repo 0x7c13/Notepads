@@ -150,7 +150,7 @@
 
         private readonly int _fileStatusCheckerPollingRateInSec = 6;
 
-        private readonly double _fileStatusCheckerDelayInSec = 0.2;
+        private readonly double _fileStatusCheckerDelayInSec = 0.3;
 
         private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new SemaphoreSlim(1, 1);
 
@@ -392,6 +392,10 @@
             {
                 // ignore
             }
+            catch (ObjectDisposedException)
+            {
+                // ignore
+            }
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(TextEditor)}] Failed to check status for file [{EditingFile?.Path}]: {ex.Message}");
@@ -426,7 +430,8 @@
             }
             else
             {
-                newState = await FileSystemUtility.GetDateModifiedAsync(EditingFile) != LastSavedSnapshot.DateModifiedFileTime ?
+                long fileModifiedTime = await FileSystemUtility.GetDateModifiedAsync(EditingFile);
+                newState = fileModifiedTime != LastSavedSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified :
                     FileModificationState.Untouched;
             }
