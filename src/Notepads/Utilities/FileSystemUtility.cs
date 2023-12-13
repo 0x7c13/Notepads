@@ -1,5 +1,8 @@
 ﻿namespace Notepads.Utilities
 {
+    using Microsoft.AppCenter.Analytics;
+    using Notepads.Models;
+    using Notepads.Services;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -7,13 +10,11 @@
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Microsoft.AppCenter.Analytics;
-    using Notepads.Models;
-    using Notepads.Services;
+    using UtfUnknown;
     using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.FileProperties;
-    using UtfUnknown;
+    using Windows.Storage.Provider;
 
     public enum InvalidFilenameError
     {
@@ -560,29 +561,36 @@
         /// </summary>
         public static async Task WriteTextToFileAsync(StorageFile file, string text, Encoding encoding)
         {
-            await ExecuteFileIOWithRetries(file, async () =>
+            if (IsFileReadOnly(file) || !await IsFileWritableAsync(file))
             {
-                if (IsFileReadOnly(file) || !await IsFileWritableAsync(file))
-                {
-                    // For file(s) dragged into Notepads, they are read-only
-                    // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
-                    // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
-                    var content = encoding.GetBytes(text);
-                    var result = encoding.GetPreamble().Concat(content).ToArray();
-                    await PathIO.WriteBytesAsync(file.Path, result);
-                }
-                else // Use StorageFile API to save 
-                {
-                    using (var stream = await file.OpenStreamForWriteAsync())
-                    using (var writer = new StreamWriter(stream, encoding))
+                await ExecuteFileIOOperationWithRetries(file,
+                    "FileSystemUtility_WriteTextToFileAsync_UsingPathIO",
+                    async () =>
                     {
-                        stream.Position = 0;
-                        await writer.WriteAsync(text);
-                        await writer.FlushAsync();
-                        stream.SetLength(stream.Position); // Truncate
-                    }
-                }
-            });
+                        // For file(s) dragged into Notepads, they are read-only
+                        // StorageFile API won't work on read-only files but can be written by Win32 PathIO API (exploit?)
+                        // In case the file is actually read-only, WriteBytesAsync will throw UnauthorizedAccessException
+                        var content = encoding.GetBytes(text);
+                        var result = encoding.GetPreamble().Concat(content).ToArray();
+                        await PathIO.WriteBytesAsync(file.Path, result);
+                    });
+            }
+            else // Use StorageFile API to save 
+            {
+                await ExecuteFileIOOperationWithRetries(file,
+                    "FileSystemUtility_WriteTextToFileAsync_UsingStreamWriter",
+                    async () =>
+                    {
+                        using (var stream = await file.OpenStreamForWriteAsync())
+                        using (var writer = new StreamWriter(stream, encoding))
+                        {
+                            stream.Position = 0;
+                            await writer.WriteAsync(text);
+                            await writer.FlushAsync();
+                            stream.SetLength(stream.Position); // Truncate
+                        }
+                    });
+            }
         }
 
         /// <summary>
@@ -590,10 +598,15 @@
         /// </summary>
         public static async Task WriteTextToFileAsync(StorageFile storageFile, string text)
         {
-            await ExecuteFileIOWithRetries(storageFile, async () => await FileIO.WriteTextAsync(storageFile, text));
+            await ExecuteFileIOOperationWithRetries(storageFile,
+                "FileSystemUtility_WriteTextToFileAsync_UsingFileIO",
+                async () => await FileIO.WriteTextAsync(storageFile, text));
         }
 
-        private static async Task ExecuteFileIOWithRetries(StorageFile file, Func<Task> action, int maxRetryAttempts = 5)
+        private static async Task ExecuteFileIOOperationWithRetries(StorageFile file,
+            string operationName,
+            Func<Task> action,
+            int maxRetryAttempts = 7)
         {
             bool deferUpdatesUsed = true;
             int retryAttempts = 0;
@@ -610,6 +623,8 @@
                 deferUpdatesUsed = false;
             }
 
+            HashSet<string> errorCodes = new HashSet<string>();
+
             try
             {
                 while (retryAttempts < maxRetryAttempts)
@@ -625,29 +640,34 @@
                                                (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED) ||
                                                (ex.HResult == ERROR_FAIL))
                     {
-                        // Delay 13ms before retrying for all retriable errors
-                        await Task.Delay(13);
+                        errorCodes.Add("0x" + Convert.ToString(ex.HResult, 16));
+                        await Task.Delay(13); // Delay 13ms before retrying for all retriable errors
                     }
                 }
             }
             finally
             {
-                if (retryAttempts > 1) // Retry attempts were used
-                {
-                    // Track retry attempts to better understand the failed scenarios
-                    // File name, path and content are not included to respect/protect user privacy
-                    Analytics.TrackEvent("SaveSerializedSessionMetaDataAsync_RetryAttempts", new Dictionary<string, string>()
-                    {
-                        { "RetryAttempts", (retryAttempts - 1).ToString() },
-                        { "DeferUpdatesUsed" , deferUpdatesUsed.ToString() }
-                    });
-                }
+                string fileUpdateStatus = string.Empty;
 
                 if (deferUpdatesUsed)
                 {
                     // Let Windows know that we're finished changing the file so the
                     // other app can update the remote version of the file.
-                    _ = await CachedFileManager.CompleteUpdatesAsync(file);
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    fileUpdateStatus = status.ToString();
+                }
+
+                if (retryAttempts > 1) // Retry attempts were used
+                {
+                    // Track retry attempts to better understand the failed scenarios
+                    // File name, path and content are not included to respect/protect user privacy
+                    Analytics.TrackEvent(operationName, new Dictionary<string, string>()
+                    {
+                        { "RetryAttempts", (retryAttempts - 1).ToString() },
+                        { "DeferUpdatesUsed" , deferUpdatesUsed.ToString() },
+                        { "ErrorCodes", string.Join(", ", errorCodes) },
+                        { "FileUpdateStatus", fileUpdateStatus }
+                    });
                 }
             }
         }
