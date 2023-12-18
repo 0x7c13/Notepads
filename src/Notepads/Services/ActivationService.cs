@@ -53,12 +53,6 @@
         {
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [LaunchActivated] Kind: {launchActivatedEventArgs.Kind}");
 
-            if (launchActivatedEventArgs.PrelaunchActivated == false)
-            {
-                // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
-                Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
-            }
-
             if (rootFrame.Content == null)
             {
                 rootFrame.Navigate(typeof(NotepadsMainPage), launchActivatedEventArgs.Arguments);

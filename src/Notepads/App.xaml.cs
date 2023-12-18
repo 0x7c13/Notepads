@@ -167,6 +167,19 @@
                 throw;
             }
 
+            try
+            {
+                if (Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch"))
+                {
+                    // Only enable prelaunch when AlwaysOpenNewWindow is set to false
+                    CoreApplication.EnablePrelaunch(!AppSettingsService.AlwaysOpenNewWindow);
+                }
+            }
+            catch (Exception)
+            {
+                // Best efforts
+            }
+
             if (rootFrameCreated)
             {
                 ExtendViewIntoTitleBar();
