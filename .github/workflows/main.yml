@@ -264,7 +264,7 @@ jobs:
       - if: matrix.runCodeqlAnalysis
         name: Initialize CodeQL
         id: init_codeql
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           queries: security-and-quality
           languages: csharp
@@ -315,7 +315,7 @@ jobs:
       - if: matrix.runCodeqlAnalysis
         name: Perform CodeQL Analysis
         id: analyze_codeql
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         continue-on-error: true
 
       - if: matrix.runSonarCloudScan
