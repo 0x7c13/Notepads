@@ -573,7 +573,8 @@
                         var content = encoding.GetBytes(text);
                         var result = encoding.GetPreamble().Concat(content).ToArray();
                         await PathIO.WriteBytesAsync(file.Path, result);
-                    });
+                    },
+                    maxRetryAttempts: 3); // Retry 3 times for this case.
             }
             else // Use StorageFile API to save 
             {
@@ -589,7 +590,8 @@
                             await writer.FlushAsync();
                             stream.SetLength(stream.Position); // Truncate
                         }
-                    });
+                    },
+                    maxRetryAttempts: 5); // Retry 5 times for this case
             }
         }
 
@@ -600,13 +602,14 @@
         {
             await ExecuteFileIOOperationWithRetries(storageFile,
                 "FileSystemUtility_WriteTextToFileAsync_UsingFileIO",
-                async () => await FileIO.WriteTextAsync(storageFile, text));
+                async () => await FileIO.WriteTextAsync(storageFile, text),
+                maxRetryAttempts: 10); // Retry 10 times for this case since it is used for saving the session data.
         }
 
         private static async Task ExecuteFileIOOperationWithRetries(StorageFile file,
             string operationName,
             Func<Task> action,
-            int maxRetryAttempts = 7)
+            int maxRetryAttempts)
         {
             bool deferUpdatesUsed = true;
             int retryAttempts = 0;
@@ -635,13 +638,20 @@
                         await action.Invoke(); // Execute FileIO action
                         break;
                     }
-                    catch (Exception ex) when ((ex.HResult == ERROR_ACCESS_DENIED) ||
-                                               (ex.HResult == ERROR_SHARING_VIOLATION) ||
-                                               (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED) ||
-                                               (ex.HResult == ERROR_FAIL))
+                    catch (Exception ex)
                     {
-                        errorCodes.Add("0x" + Convert.ToString(ex.HResult, 16));
-                        await Task.Delay(13); // Delay 13ms before retrying for all retriable errors
+                        if (retryAttempts == maxRetryAttempts)
+                        {
+                            throw; // Rethrow the last attempt exception
+                        }
+                        else if ((ex.HResult == ERROR_ACCESS_DENIED) ||
+                                (ex.HResult == ERROR_SHARING_VIOLATION) ||
+                                (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED) ||
+                                (ex.HResult == ERROR_FAIL))
+                        {
+                            errorCodes.Add("0x" + Convert.ToString(ex.HResult, 16));
+                            await Task.Delay(10); // Delay 10ms before retrying for all retriable errors
+                        }
                     }
                 }
             }
@@ -663,7 +673,7 @@
                     // File name, path and content are not included to respect/protect user privacy
                     Analytics.TrackEvent(operationName, new Dictionary<string, string>()
                     {
-                        { "RetryAttempts", (retryAttempts - 1).ToString() },
+                        { "RetryAttempts", retryAttempts.ToString() },
                         { "DeferUpdatesUsed" , deferUpdatesUsed.ToString() },
                         { "ErrorCodes", string.Join(", ", errorCodes) },
                         { "FileUpdateStatus", fileUpdateStatus }
