@@ -640,17 +640,23 @@
                     }
                     catch (Exception ex)
                     {
+                        // Rethrow the last attempt exception regardless of its type
                         if (retryAttempts == maxRetryAttempts)
                         {
-                            throw; // Rethrow the last attempt exception
+                            throw;
                         }
+                        // Delay and retry for retriable errors
                         else if ((ex.HResult == ERROR_ACCESS_DENIED) ||
                                 (ex.HResult == ERROR_SHARING_VIOLATION) ||
                                 (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED) ||
                                 (ex.HResult == ERROR_FAIL))
                         {
                             errorCodes.Add("0x" + Convert.ToString(ex.HResult, 16));
-                            await Task.Delay(10); // Delay 10ms before retrying for all retriable errors
+                            await Task.Delay(10);
+                        }
+                        else // Throw immediately for other errors
+                        {
+                            throw;
                         }
                     }
                 }
