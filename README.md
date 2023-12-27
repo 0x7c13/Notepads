@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/release/0x7c13/notepads.svg?label=latest%20version&style=flat-square" alt="Releases" />
   </a>
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square" alt="Platform" />
+    <img src="https://img.shields.io/badge/platform-Windows%20%7C%20UWP-yellow.svg?style=flat-square" alt="Platform" />
   </a>
   <a style="text-decoration:none" href="https://discord.gg/VqetCub">
     <img src="https://img.shields.io/discord/588473626651787274.svg?style=flat-square" alt="Discord" />
