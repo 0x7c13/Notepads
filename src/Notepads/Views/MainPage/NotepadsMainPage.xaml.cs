@@ -244,11 +244,6 @@
                 {
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
                 }
-
-                if (!App.IsPrimaryInstance)
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
-                }
                 _loaded = true;
             }
 
