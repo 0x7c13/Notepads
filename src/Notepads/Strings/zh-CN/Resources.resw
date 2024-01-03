@@ -693,4 +693,20 @@
     <value>Notepads暂时不支持文件后缀名 "{0}"</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>由于数据损坏，无法从上次会话中恢复数据。请将快照备份文件夹中的所有文件（*.txt）备份以免丢失重要文档。</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>打开快照备份文件夹</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>警告</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
+  </data>
 </root>

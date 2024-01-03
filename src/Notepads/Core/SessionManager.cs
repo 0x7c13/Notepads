@@ -17,6 +17,14 @@
     using Notepads.Models;
     using Notepads.Services;
     using Notepads.Utilities;
+    using Windows.System;
+
+    public sealed class SessionDataCorruptedException : Exception
+    {
+        public SessionDataCorruptedException(string message) : base(message)
+        {
+        }
+    }
 
     internal sealed class SessionManager : ISessionManager, IDisposable
     {
@@ -87,12 +95,8 @@
             }
             catch (Exception ex)
             {
-                LoggingService.LogError($"[{nameof(SessionManager)}] Failed to load last session metadata: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToLoadLastSession", new Dictionary<string, string>() { { "Exception", ex.Message } });
-
-                await HandleMetaDataFileCorruptionAsync();
-
-                return 0; // Failed to load session data
+                // Failed to load session data, throw exception to indicate session data is corrupted
+                throw new SessionDataCorruptedException(ex.Message);
             }
 
             IList<ITextEditor> recoveredEditor = new List<ITextEditor>();
@@ -129,10 +133,9 @@
             return _sessionDataCache.Count;
         }
 
-        private async Task HandleMetaDataFileCorruptionAsync()
+        public async Task<int> RecoverBackupFilesAsync()
         {
-            // Last session data is corrupted, clear it first
-            await ClearSessionDataAsync();
+            int numberOfRecoveredFiles = 0;
 
             // Rename all backup files to indicate they are corrupted with an extension of ".txt" to avoid being deleted
             foreach (StorageFile backupFile in await SessionUtility.GetAllFilesInBackupFolderAsync(_backupFolderName))
@@ -142,6 +145,7 @@
                 try
                 {
                     await backupFile.RenameAsync(backupFile.Name + "-Corrupted.txt");
+                    numberOfRecoveredFiles++;
                 }
                 catch (Exception)
                 {
@@ -149,8 +153,12 @@
                 }
             }
 
-            // TODO: Open backup folder and notify user with a special dialog
-            // await Launcher.LaunchFolderAsync(await SessionUtility.GetBackupFolderAsync(_backupFolderName));
+            return numberOfRecoveredFiles;
+        }
+
+        public async Task OpenSessionBackupFolderAsync()
+        {
+            await Launcher.LaunchFolderAsync(await SessionUtility.GetBackupFolderAsync(_backupFolderName));
         }
 
         public async Task SaveSessionAsync(Action actionAfterSaving = null)

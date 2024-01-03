@@ -1,6 +1,6 @@
 ﻿namespace Notepads.Controls.Dialog
 {
-    public class FileSaveErrorDialog : NotepadsDialog
+    public sealed class FileSaveErrorDialog : NotepadsDialog
     {
         public FileSaveErrorDialog(string filePath, string errorMsg)
         {

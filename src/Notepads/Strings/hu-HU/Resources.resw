@@ -693,4 +693,20 @@
     <value>A(z) "{0}" fájlkiterjesztés jelenleg nem támogatott</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>Bezárás</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>Nem sikerült visszaállítani az adatokat az utolsó munkamenetből a sérült adatok miatt. Kérjük, készítsen biztonsági másolatot az összes nem mentett fájlról (*.txt) a munkamenet mappájában.</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Nyissa meg a munkamenet biztonsági mentésének mappáját</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>Figyelmeztetés</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
+  </data>
 </root>

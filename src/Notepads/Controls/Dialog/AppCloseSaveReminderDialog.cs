@@ -4,7 +4,7 @@
     using Windows.UI;
     using Windows.UI.Xaml;
 
-    public class AppCloseSaveReminderDialog : NotepadsDialog
+    public sealed class AppCloseSaveReminderDialog : NotepadsDialog
     {
         public AppCloseSaveReminderDialog(Action saveAndExitAction, Action discardAndExitAction, Action cancelAction)
         {

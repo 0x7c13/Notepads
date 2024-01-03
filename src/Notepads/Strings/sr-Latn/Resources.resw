@@ -693,4 +693,20 @@
     <value>Ekstenzija datoteke "{0}" trenutno nije podržana</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>Zatvorite</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>Nije uspelo oporavljanje podataka iz poslednje sesije zbog oštećenih podataka. Molimo vas da napravite rezervnu kopiju svih vaših nesačuvanih fajlova (*.txt) u fascikli sesije.</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Otvorite fasciklu sa rezervnim kopijama sesije</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>Upozorenje</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
+  </data>
 </root>

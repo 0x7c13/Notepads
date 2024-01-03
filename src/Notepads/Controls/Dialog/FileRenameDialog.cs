@@ -11,7 +11,7 @@
     using Notepads.Utilities;
     using Microsoft.AppCenter.Analytics;
 
-    public class FileRenameDialog : NotepadsDialog
+    public sealed class FileRenameDialog : NotepadsDialog
     {
         private readonly TextBox _fileNameTextBox;
 

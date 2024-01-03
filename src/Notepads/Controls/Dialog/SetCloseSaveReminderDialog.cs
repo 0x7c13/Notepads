@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class SetCloseSaveReminderDialog : NotepadsDialog
+    public sealed class SetCloseSaveReminderDialog : NotepadsDialog
     {
         public SetCloseSaveReminderDialog(string fileNameOrPath, Action saveAction, Action skipSavingAction)
         {

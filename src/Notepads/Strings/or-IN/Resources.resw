@@ -693,4 +693,20 @@
     <value>ଫାଇଲ ଏକ୍ସଟେନ୍ସନ୍ "{0}" ଏହି ମୁହୂର୍ତ୍ତରେ ସମର୍ଥିତ ନୁହେଁ</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>बंद करें</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>अशुद्ध डेटा के कारण पिछले सत्र से डेटा को पुनर्प्राप्त करने में विफल रहे। कृपया सत्र के फ़ोल्डर में अपने सभी बिना सेव किए गए फ़ाइलें (*.txt) बैकअप करें।</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>सत्र बैकअप फ़ोल्डर खोलें</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>चेतावनी</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
+  </data>
 </root>

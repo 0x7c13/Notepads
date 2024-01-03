@@ -16,5 +16,9 @@
         void StopSessionBackup();
 
         Task ClearSessionDataAsync();
+
+        Task<int> RecoverBackupFilesAsync();
+
+        Task OpenSessionBackupFolderAsync();
     }
 }

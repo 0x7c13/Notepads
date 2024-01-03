@@ -206,10 +206,40 @@
                 {
                     loadedCount = await SessionManager.LoadLastSessionAsync();
                 }
-                catch (Exception ex)
+                catch (SessionDataCorruptedException ex)
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to load last session: {ex}");
-                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> { { "Exception", ex.ToString() } });
+
+                    // Last session data is corrupted, clear it first
+                    await SessionManager.ClearSessionDataAsync();
+
+                    // Recover backup files
+                    int numberOfRecoveredFiles = await SessionManager.RecoverBackupFilesAsync();
+
+                    LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] {numberOfRecoveredFiles} file(s) recovered from last session backup.");
+
+                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_SessionDataCorruptedException",
+                        new Dictionary<string, string>()
+                        {
+                            { "Exception", ex.Message },
+                            { "NumberOfRecoveredFiles", numberOfRecoveredFiles.ToString() }
+                        });
+
+                    // Show session recovery dialog if there are any recovered files
+                    if (numberOfRecoveredFiles > 0)
+                    {
+                        var sessionCorruptionErrorDialog = new SessionCorruptionErrorDialog(
+                            recoveryAction: async () =>
+                            {
+                                await SessionManager.OpenSessionBackupFolderAsync();
+                            });
+                        await DialogManager.OpenDialogAsync(sessionCorruptionErrorDialog, awaitPreviousDialog: false);
+                    }
+                }
+                catch (Exception ex) // Catch all other exceptions
+                {
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to load last session: {ex}");
+                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_UnhandledException", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
 
