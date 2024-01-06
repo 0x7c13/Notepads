@@ -135,6 +135,7 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
     * [pt-PT][Portuguese (Portugal)]: [O.Leitão](https://github.com/oleitao)
     * [sr-Latn][Serbian (Latin)]: [bzzrak](https://github.com/bzzrak)
     * [sr-cyrl][Serbian (Cyrillic)]: [bzzrak](https://github.com/bzzrak)
+    * [nl-NL][Dutch (Netherlands)]: [Stephan Paternotte](https://github.com/Stephan-P)
 
 * Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 
