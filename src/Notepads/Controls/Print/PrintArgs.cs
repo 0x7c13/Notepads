@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.Print
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.Print
 {
     using System;
     using System.Collections.Generic;
@@ -11,8 +16,8 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Printing;
     using Windows.UI.Xaml.Media;
-    using Notepads.Services;
-    using Notepads.Controls.TextEditor;
+    using Services;
+    using TextEditor;
 
     public static class PrintArgs
     {

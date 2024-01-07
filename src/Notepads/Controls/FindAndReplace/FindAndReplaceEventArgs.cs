@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.FindAndReplace
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.FindAndReplace
 {
     using System;
 
@@ -15,7 +20,7 @@
         Next
     }
 
-    public class FindAndReplaceEventArgs : EventArgs
+    public sealed class FindAndReplaceEventArgs : EventArgs
     {
         public FindAndReplaceEventArgs(
             SearchContext searchContext,

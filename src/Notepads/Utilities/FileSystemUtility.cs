@@ -1,4 +1,9 @@
-﻿namespace Notepads.Utilities
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Utilities
 {
     using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
@@ -179,7 +184,7 @@
             return Environment.ExpandEnvironmentVariables(args);
         }
 
-        public static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
+        private static string GetAbsolutePathFromCommandLine(string dir, string args, string appName)
         {
             if (string.IsNullOrEmpty(args)) return null;
 
@@ -212,7 +217,7 @@
                 }
             }
 
-            // Replace all forward slash with platform supported directory separator 
+            // Replace all forward slash with platform supported directory separator
             path = path.Trim('/').Replace('/', Path.DirectorySeparatorChar);
 
             if (IsFullPath(path))
@@ -288,7 +293,7 @@
             return args;
         }
 
-        public static async Task<BasicProperties> GetFilePropertiesAsync(StorageFile file)
+        private static async Task<BasicProperties> GetFilePropertiesAsync(StorageFile file)
         {
             return await file.GetBasicPropertiesAsync();
         }
@@ -305,7 +310,7 @@
             return (file.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0;
         }
 
-        public static async Task<bool> IsFileWritableAsync(StorageFile file)
+        private static async Task<bool> IsFileWritableAsync(StorageFile file)
         {
             try
             {
@@ -576,7 +581,7 @@
                     },
                     maxRetryAttempts: 3); // Retry 3 times for this case.
             }
-            else // Use StorageFile API to save 
+            else // Use StorageFile API to save
             {
                 await ExecuteFileIOOperationWithRetries(file,
                     "FileSystemUtility_WriteTextToFileAsync_UsingStreamWriter",

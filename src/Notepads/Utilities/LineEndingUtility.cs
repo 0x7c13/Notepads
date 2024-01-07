@@ -1,4 +1,9 @@
-﻿namespace Notepads.Utilities
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Utilities
 {
     public enum LineEnding
     {
@@ -86,17 +91,17 @@
 
         public static string ApplyLineEnding(string text, LineEnding lineEnding)
         {
-            if (lineEnding == LineEnding.Cr)
+            switch (lineEnding)
             {
-                text = text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r");
-            }
-            else if (lineEnding == LineEnding.Crlf)
-            {
-                text = text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
-            }
-            else // LF
-            {
-                text = text.Replace("\r\n", "\n").Replace("\r", "\n");
+                case LineEnding.Cr:
+                    text = text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r");
+                    break;
+                case LineEnding.Crlf:
+                    text = text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                    break;
+                case LineEnding.Lf:
+                    text = text.Replace("\r\n", "\n").Replace("\r", "\n");
+                    break;
             }
 
             return text;

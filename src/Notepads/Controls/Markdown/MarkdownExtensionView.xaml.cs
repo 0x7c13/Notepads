@@ -1,16 +1,21 @@
-﻿namespace Notepads.Controls.Markdown
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.Markdown
 {
+    using Controls;
+    using Extensions;
+    using Microsoft.Toolkit.Uwp.UI;
+    using Services;
     using System;
     using System.IO;
     using System.Threading.Tasks;
-    using Notepads.Controls;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Extensions;
-    using Notepads.Services;
+    using TextEditor;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
-    using Microsoft.Toolkit.Uwp.UI;
 
     public sealed partial class MarkdownExtensionView : UserControl, IContentPreviewExtension
     {

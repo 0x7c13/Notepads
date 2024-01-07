@@ -1,4 +1,9 @@
-﻿namespace Notepads.Views.MainPage
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Views.MainPage
 {
     using System;
     using System.Collections.Generic;
@@ -47,24 +52,23 @@
         {
             get
             {
-                if (_notepadsCore == null)
-                {
-                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
-                    _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
-                    _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
-                    _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
-                    _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
-                    _notepadsCore.TextEditorClosing += OnTextEditorClosing;
-                    _notepadsCore.TextEditorSaved += OnTextEditorSaved;
-                    _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
-                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
-                    _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
-                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
-                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
-                }
+                if (_notepadsCore != null) return _notepadsCore;
+
+                _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
+                _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
+                _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
+                _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
+                _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
+                _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+                _notepadsCore.TextEditorSaved += OnTextEditorSaved;
+                _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
+                _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
+                _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
+                _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
+                _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
 
                 return _notepadsCore;
             }

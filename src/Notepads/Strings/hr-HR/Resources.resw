@@ -678,11 +678,11 @@
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>Preimenovati</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
+    <value>Preimenovan</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">

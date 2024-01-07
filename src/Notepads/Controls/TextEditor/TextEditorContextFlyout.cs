@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.TextEditor
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.TextEditor
 {
     using System;
     using Notepads.Utilities;
@@ -10,7 +15,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-    public class TextEditorContextFlyout : MenuFlyout
+    public sealed class TextEditorContextFlyout : MenuFlyout
     {
         private MenuFlyoutItem _cut;
         private MenuFlyoutItem _copy;
@@ -36,6 +41,7 @@
         {
             _textEditor = editor;
             _textEditorCore = editorCore;
+
             Items.Add(Cut);
             Items.Add(Copy);
             Items.Add(Paste);
@@ -144,17 +150,16 @@
         {
             get
             {
-                if (_cut == null)
+                if (_cut != null) return _cut;
+
+                _cut = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Cut), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CutButtonDisplayText") };
+                _cut.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _cut = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Cut), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CutButtonDisplayText") };
-                    _cut.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.X,
-                        IsEnabled = false,
-                    });
-                    _cut.Click += (sender, args) => _textEditorCore.Document.Selection.Cut();
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.X,
+                    IsEnabled = false,
+                });
+                _cut.Click += (sender, args) => _textEditorCore.Document.Selection.Cut();
                 return _cut;
             }
         }
@@ -163,17 +168,16 @@
         {
             get
             {
-                if (_copy == null)
+                if (_copy != null) return _copy;
+
+                _copy = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Copy), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CopyButtonDisplayText") };
+                _copy.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _copy = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Copy), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CopyButtonDisplayText") };
-                    _copy.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.C,
-                        IsEnabled = false,
-                    });
-                    _copy.Click += (sender, args) => _textEditor.CopyTextToWindowsClipboard(null);
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.C,
+                    IsEnabled = false,
+                });
+                _copy.Click += (sender, args) => _textEditor.CopyTextToWindowsClipboard(null);
                 return _copy;
             }
         }
@@ -182,17 +186,16 @@
         {
             get
             {
-                if (_paste == null)
+                if (_paste != null) return _paste;
+
+                _paste = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Paste), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_PasteButtonDisplayText") };
+                _paste.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _paste = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Paste), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_PasteButtonDisplayText") };
-                    _paste.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.V,
-                        IsEnabled = false,
-                    });
-                    _paste.Click += async (sender, args) => await _textEditorCore.PastePlainTextFromWindowsClipboardAsync(null);
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.V,
+                    IsEnabled = false,
+                });
+                _paste.Click += async (sender, args) => await _textEditorCore.PastePlainTextFromWindowsClipboardAsync(null);
                 return _paste;
             }
         }
@@ -201,17 +204,16 @@
         {
             get
             {
-                if (_undo == null)
+                if (_undo != null) return _undo;
+
+                _undo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Undo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UndoButtonDisplayText") };
+                _undo.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _undo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Undo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UndoButtonDisplayText") };
-                    _undo.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.Z,
-                        IsEnabled = false,
-                    });
-                    _undo.Click += (sender, args) => _textEditorCore.Undo();
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.Z,
+                    IsEnabled = false,
+                });
+                _undo.Click += (sender, args) => _textEditorCore.Undo();
                 return _undo;
             }
         }
@@ -220,18 +222,17 @@
         {
             get
             {
-                if (_redo == null)
+                if (_redo != null) return _redo;
+
+                _redo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Redo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RedoButtonDisplayText") };
+                _redo.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _redo = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Redo), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RedoButtonDisplayText") };
-                    _redo.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
-                        Key = VirtualKey.Z,
-                        IsEnabled = false,
-                    });
-                    _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
-                    _redo.Click += (sender, args) => _textEditorCore.Redo();
-                }
+                    Modifiers = (VirtualKeyModifiers.Control & VirtualKeyModifiers.Shift),
+                    Key = VirtualKey.Z,
+                    IsEnabled = false,
+                });
+                _redo.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Z";
+                _redo.Click += (sender, args) => _textEditorCore.Redo();
                 return _redo;
             }
         }
@@ -240,17 +241,16 @@
         {
             get
             {
-                if (_selectAll == null)
+                if (_selectAll != null) return _selectAll;
+
+                _selectAll = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.SelectAll), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SelectAllButtonDisplayText") };
+                _selectAll.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _selectAll = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.SelectAll), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SelectAllButtonDisplayText") };
-                    _selectAll.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.A,
-                        IsEnabled = false,
-                    });
-                    _selectAll.Click += (sender, args) => _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.A,
+                    IsEnabled = false,
+                });
+                _selectAll.Click += (sender, args) => _textEditorCore.Document.Selection.SetRange(0, Int32.MaxValue);
                 return _selectAll;
             }
         }
@@ -305,7 +305,7 @@
                     IsEnabled = false,
                 });
                 _webSearch.Click += async (sender, args) => await _textEditorCore.SearchInWebAsync();
-                
+
                 return _webSearch;
             }
         }
@@ -314,11 +314,10 @@
         {
             get
             {
-                if (_share == null)
-                {
-                    _share = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Share), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText") };
-                    _share.Click += (sender, args) => Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
-                }
+                if (_share != null) return _share;
+
+                _share = new MenuFlyoutItem { Icon = new SymbolIcon(Symbol.Share), Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ShareButtonDisplayText") };
+                _share.Click += (sender, args) => Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
                 return _share;
             }
         }

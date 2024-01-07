@@ -1,37 +1,41 @@
-﻿namespace Notepads.Services
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Services
 {
     using System.Threading.Tasks;
     using Notepads.Utilities;
     using Notepads.Views.MainPage;
     using Windows.ApplicationModel.Activation;
+    using Windows.Storage;
     using Windows.UI.Xaml.Controls;
 
     public static class ActivationService
     {
         public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e)
         {
-            if (e is ProtocolActivatedEventArgs protocolActivatedEventArgs)
+            switch (e)
             {
-                ProtocolActivated(rootFrame, protocolActivatedEventArgs);
-            }
-            else if (e is FileActivatedEventArgs fileActivatedEventArgs)
-            {
-                await FileActivatedAsync(rootFrame, fileActivatedEventArgs);
-            }
-            else if (e is CommandLineActivatedEventArgs commandLineActivatedEventArgs)
-            {
-                await CommandActivatedAsync(rootFrame, commandLineActivatedEventArgs);
-            }
-            else if (e is LaunchActivatedEventArgs launchActivatedEventArgs)
-            {
-                LaunchActivated(rootFrame, launchActivatedEventArgs);
-            }
-            else // For other types of activated events
-            {
-                if (rootFrame.Content == null)
-                {
-                    rootFrame.Navigate(typeof(NotepadsMainPage));
-                }
+                case ProtocolActivatedEventArgs protocolActivatedEventArgs:
+                    ProtocolActivated(rootFrame, protocolActivatedEventArgs);
+                    break;
+                case FileActivatedEventArgs fileActivatedEventArgs:
+                    await FileActivatedAsync(rootFrame, fileActivatedEventArgs);
+                    break;
+                case CommandLineActivatedEventArgs commandLineActivatedEventArgs:
+                    await CommandActivatedAsync(rootFrame, commandLineActivatedEventArgs);
+                    break;
+                case LaunchActivatedEventArgs launchActivatedEventArgs:
+                    LaunchActivated(rootFrame, launchActivatedEventArgs);
+                    break;
+                // For other types of activated events
+                default:
+                    {
+                        if (rootFrame.Content == null) rootFrame.Navigate(typeof(NotepadsMainPage));
+                        break;
+                    }
             }
         }
 
@@ -39,13 +43,14 @@
         {
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
 
-            if (rootFrame.Content == null)
+            switch (rootFrame.Content)
             {
-                rootFrame.Navigate(typeof(NotepadsMainPage), protocolActivatedEventArgs);
-            }
-            else if (rootFrame.Content is NotepadsMainPage mainPage)
-            {
-                mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
+                case null:
+                    rootFrame.Navigate(typeof(NotepadsMainPage), protocolActivatedEventArgs);
+                    break;
+                case NotepadsMainPage mainPage:
+                    mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
+                    break;
             }
         }
 
@@ -63,13 +68,14 @@
         {
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [FileActivated]");
 
-            if (rootFrame.Content == null)
+            switch (rootFrame.Content)
             {
-                rootFrame.Navigate(typeof(NotepadsMainPage), fileActivatedEventArgs);
-            }
-            else if (rootFrame.Content is NotepadsMainPage mainPage)
-            {
-                await mainPage.OpenFilesAsync(fileActivatedEventArgs.Files);
+                case null:
+                    rootFrame.Navigate(typeof(NotepadsMainPage), fileActivatedEventArgs);
+                    break;
+                case NotepadsMainPage mainPage:
+                    await mainPage.OpenFilesAsync(fileActivatedEventArgs.Files);
+                    break;
             }
         }
 
@@ -78,20 +84,24 @@
             LoggingService.LogInfo($"[{nameof(ActivationService)}] [CommandActivated] CurrentDirectoryPath: {commandLineActivatedEventArgs.Operation.CurrentDirectoryPath} " +
                                    $"Arguments: {commandLineActivatedEventArgs.Operation.Arguments}");
 
-            if (rootFrame.Content == null)
+            switch (rootFrame.Content)
             {
-                rootFrame.Navigate(typeof(NotepadsMainPage), commandLineActivatedEventArgs);
-            }
-            else if (rootFrame.Content is NotepadsMainPage mainPage)
-            {
-                var file = await FileSystemUtility.OpenFileFromCommandLineAsync(
-                    commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
-                    commandLineActivatedEventArgs.Operation.Arguments);
+                case null:
+                    rootFrame.Navigate(typeof(NotepadsMainPage), commandLineActivatedEventArgs);
+                    break;
+                case NotepadsMainPage mainPage:
+                    {
+                        StorageFile file = await FileSystemUtility.OpenFileFromCommandLineAsync(
+                            commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
+                            commandLineActivatedEventArgs.Operation.Arguments);
 
-                if (file != null)
-                {
-                    await mainPage.OpenFileAsync(file);
-                }
+                        if (file != null)
+                        {
+                            await mainPage.OpenFileAsync(file);
+                        }
+
+                        break;
+                    }
             }
         }
     }

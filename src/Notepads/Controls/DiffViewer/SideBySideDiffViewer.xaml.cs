@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.DiffViewer
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.DiffViewer
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +20,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-    public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer
+    public sealed partial class SideBySideDiffViewer : UserControl, ISideBySideDiffViewer, IDisposable
     {
         public event EventHandler OnCloseEvent;
 
