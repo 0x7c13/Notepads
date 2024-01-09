@@ -196,7 +196,7 @@
     <value>Decodering die wordt gebruikt wanneer de codering van een bestand niet wordt herkend.</value>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Terugval-codering</value>
+    <value>Terugval-decodering</value>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
     <value>UTF-8</value>
