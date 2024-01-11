@@ -126,7 +126,7 @@
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Vrijwaring</value>
+    <value>Clausule</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
@@ -166,7 +166,7 @@
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Instellingen statusbalk</value>
+    <value>Statusbalk</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
@@ -178,11 +178,11 @@
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Gebruik mijn Windows accentkleur</value>
+    <value>Mijn Windows accentkleur gebruiken</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Gebruik mijn Windows accentkleur</value>
+    <value>Mjn Windows accentkleur gebruiken</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
@@ -202,11 +202,11 @@
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Thema-modus</value>
+    <value>Themamodus</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Gebruik mijn Windows modus</value>
+    <value>Mijn Windows themamodus gebruiken</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
@@ -218,11 +218,11 @@
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Standaard-decodering die wordt gebruikt wanneer de codering van een bestand niet kan worden herkend.</value>
+    <value>Decodering die wordt gebruikt wanneer de codering van een bestand niet wordt herkend.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Fallback-decodering</value>
+    <value>Terugval-decodering</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,7 +230,7 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Alleen toepassen op nieuw document.</value>
+    <value>Van toepassing op nieuwe documenten.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
@@ -238,11 +238,11 @@
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Standaard Lettertype en -grootte</value>
+    <value>Standaard lettertype en -grootte</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Alleen toepassen op nieuw document.</value>
+    <value>Van toepassing op nieuwe documenten.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
@@ -294,7 +294,7 @@
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Eenmaal ingeschakeld, onthoudt Notepads de huidige sessie voor de volgende keer opstarten en wordt er periodiek een momentopname van de sessie gemaakt om onbedoeld gegevensverlies door niet-vastgelegde wijzigingen te voorkomen. Notepads herinnert u er NIET aan om uw werk op te slaan bij het sluiten van de app als deze functie is ingeschakeld. Houd er ook rekening mee dat een sessie-momentopname alleen werkt in het eerste of hoofdvenster van Notepads.</value>
+    <value>Indien ingeschakeld, onthoudt Notepads de huidige sessie voor de volgende keer opstarten en wordt er periodiek een momentopname van de sessie gemaakt om onbedoeld gegevensverlies door niet-vastgelegde wijzigingen te voorkomen. Notepads herinnert u er NIET aan om uw werk op te slaan bij het sluiten van de app als deze functie is ingeschakeld. Houd er ook rekening mee dat een sessie-momentopname alleen werkt in het eerste of hoofdvenster van Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
@@ -306,7 +306,7 @@
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Instellingen Sessie-momentopname</value>
+    <value>Sessie-momentopname</value>
     <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
@@ -322,7 +322,7 @@
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Eenmaal ingeschakeld, opent Notepads altijd het bestand in een nieuw venster in plaats van een nieuw tabblad aan te maken.</value>
+    <value>Indien ingeschakeld, opent Notepads altijd het bestand in een nieuw venster in plaats van een nieuw tabblad aan te maken.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
@@ -354,7 +354,7 @@
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Instellingen voor de gekozen standaardzoekmachine wanneer een webzoekopdracht is uitgevoerd.</value>
+    <value>Instellingen voor de gekozen standaardzoekmachine bij de uitvoering van een webzoekopdracht.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
@@ -382,7 +382,7 @@
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Standaard lettertype stijl</value>
+    <value>Standaard lettertypestijl</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
@@ -414,7 +414,7 @@
     <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>Instellingen Slim kopiëren</value>
+    <value>Slim kopiëren</value>
     <comment>AdvancedPage SmartCopySettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
