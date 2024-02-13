@@ -1,9 +1,14 @@
-﻿namespace Notepads.Core.SessionDataModels
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Core.SessionDataModels
 {
     using System;
     using System.Collections.Generic;
 
-    internal class NotepadsSessionDataV1
+    internal sealed class NotepadsSessionDataV1
     {
         public int Version { get; set; } = 1;
 

@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.DiffViewer
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.DiffViewer
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +13,7 @@
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Media;
 
-    public class ScrollViewerSynchronizer
+    public sealed class ScrollViewerSynchronizer : IDisposable
     {
         private readonly List<ScrollViewer> _scrollViewers;
         private readonly Dictionary<ScrollBar, ScrollViewer> _horizontalScrollBars = new Dictionary<ScrollBar, ScrollViewer>();

@@ -693,4 +693,20 @@
     <value>La extensión de archivo "{0}" no es compatible en este momento</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
   </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>Cerrar</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>No se pudo recuperar los datos de la última sesión debido a datos corruptos. Por favor, haga una copia de seguridad de todos sus archivos no guardados (*.txt) en la carpeta de la sesión.</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Abrir la carpeta de respaldo de la sesión</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>Advertencia</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
+  </data>
 </root>

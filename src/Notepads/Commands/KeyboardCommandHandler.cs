@@ -1,4 +1,9 @@
-﻿namespace Notepads.Commands
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Commands
 {
     using System.Collections.Generic;
     using Windows.System;
@@ -6,7 +11,7 @@
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
-    public class KeyboardCommandHandler : ICommandHandler<KeyRoutedEventArgs>
+    public sealed class KeyboardCommandHandler : ICommandHandler<KeyRoutedEventArgs>
     {
         public readonly ICollection<IKeyboardCommand<KeyRoutedEventArgs>> Commands;
 

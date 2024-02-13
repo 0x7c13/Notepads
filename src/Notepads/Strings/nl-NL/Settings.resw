@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>의존성 및 참조</value>
+    <value>Afhankelijkheden en referenties</value>
     <comment>AboutPage DependenciesAndReferences Title display text.</comment>
   </data>
   <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+    <value>DE SOFTWARE WORDT GELEVERD "ZOALS DEZE IS", ZONDER ENIGE VORM VAN GARANTIE, EXPLICIET OF IMPLICIET, MET INBEGRIP VAN, MAAR NIET BEPERKT TOT, DE GARANTIES VAN VERKOOPBAARHEID, GESCHIKTHEID VOOR EEN BEPAALD DOEL EN NIET-INBREUK. IN GEEN GEVAL ZIJN DE AUTEURS OF HOUDERS VAN AUTEURSRECHTEN AANSPRAKELIJK VOOR ENIGE CLAIM, SCHADE OF ANDERE AANSPRAKELIJKHEID, HETZIJ IN EEN ACTIE VAN CONTRACT, ONRECHTMATIGE DAAD OF ANDERSZINS, DIE VOORTVLOEIT UIT, UIT OF VERBAND HOUDT MET DE SOFTWARE OF HET GEBRUIK OF ANDERE TRANSACTIES IN DE SOFTWARE.</value>
     <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
   </data>
   <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>면책</value>
+    <value>Clausule</value>
     <comment>AboutPage Disclaimer Title display text.</comment>
   </data>
   <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Jackie (Jiaqi) Liu 가 제작한 무료 오픈소스 텍스트 에디터</value>
+    <value>Gratis en open source teksteditor ontworpen en geïmplementeerd door Jackie (Jiaqi) Liu</value>
     <comment>AboutPage NotepadsShortDescription display text.</comment>
   </data>
   <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>제작자에게 연락하기:</value>
+    <value>Contact met de auteurs:</value>
     <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>문제 보고와 기능 추가 요청하기:</value>
+    <value>Voor probleemrapportage en verzoeken :</value>
     <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>소스 코드는 Github에 공개됩니다:</value>
+    <value>Broncode is beschikbaar op Github:</value>
     <comment>AboutPage Notepads SourceCode Title display text.</comment>
   </data>
   <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>자세한 내용은 우리의 웹 사이트를 방문하십시오:</value>
+    <value>Voor meer informatie, bezoek de website:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
   <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>개인정보 보호 정책</value>
+    <value>Privacyverklaring</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
   <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>애플리케이션 정보</value>
+    <value>Over</value>
     <comment>AboutPage Title display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>상태표시줄 보이기</value>
+    <value>Statusbalk weergeven</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>상태표시줄 보이기</value>
+    <value>Statusbalk weergeven</value>
     <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>상태표시줄 설정</value>
+    <value>Statusbalk</value>
     <comment>AdvancedPage StatusBarSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>고급</value>
+    <value>Geavanceerd</value>
     <comment>AdvancedPage Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>테마 컬러</value>
+    <value>Accentkleur</value>
     <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows 테마 컬러 사용</value>
+    <value>Mijn Windows accentkleur gebruiken</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
   </data>
   <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Windows 의 강조 색상 사용</value>
+    <value>Mjn Windows accentkleur gebruiken</value>
     <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>아크릴 배경 색조 불투명도. 아크릴 효과의 경우 기기가 절전 모드로 전환되거나 Windows 설정에서 투명 효과를 끌 때 비활성화됨에 유의하십시오.</value>
+    <value>Acryl achtergrond tint dekking. Houd er rekening mee dat het acryleffect wordt uitgeschakeld wanneer de batterijbesparende modus is ingeschakeld of als u de transparantie-effecten in Windows-instellingen uitschakelt.</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
   </data>
   <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>배경 색조 불투명도</value>
+    <value>Achtergrond tint dekking</value>
     <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>어둡게</value>
+    <value>Donker</value>
     <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>밝게</value>
+    <value>Licht</value>
     <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>색 테마</value>
+    <value>Themamodus</value>
     <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
   </data>
   <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>기본 Windows 모드 사용</value>
+    <value>Mijn Windows themamodus gebruiken</value>
     <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
   </data>
   <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>개인 설정</value>
+    <value>Personalisatie</value>
     <comment>PersonalizationPage Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows 코드 페이지)</value>
+    <value>ANSI (Windows code page)</value>
     <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>파일 인코딩을 인식할 수 없는 경우 대체 설정이 적용됩니다.</value>
+    <value>Decodering die wordt gebruikt wanneer de codering van een bestand niet wordt herkend.</value>
     <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>대체 디코딩</value>
+    <value>Terugval-decodering</value>
     <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
@@ -230,203 +230,203 @@
     <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>새 문서에만 적용됩니다.</value>
+    <value>Van toepassing op nieuwe documenten.</value>
     <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>기본 인코딩</value>
+    <value>Standaard-codering</value>
     <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>기본 글꼴 및 크기</value>
+    <value>Standaard lettertype en -grootte</value>
     <comment>TextAndEditorPage FontSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>새 문서에만 적용됩니다.</value>
+    <value>Van toepassing op nieuwe documenten.</value>
     <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>기본 줄바꿈</value>
+    <value>Standaard regeleinde</value>
     <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>탭 문자 (\t)</value>
+    <value>Standaard (\t)</value>
     <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>탭 키 동작 설정은 사용자가 삽입한 새 탭에만 적용됩니다.</value>
+    <value>Instellingen voor gedrag van de tab-toets zijn alleen van toepassing op nieuwe tabbladen die door de gebruiker zijn ingevoegd.</value>
     <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>공백 8개</value>
+    <value>8 spaties</value>
     <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>공백 4개</value>
+    <value>4 spaties</value>
     <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>탭 키 동작</value>
+    <value>Tab-toets</value>
     <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>공백 2개</value>
+    <value>2 spaties</value>
     <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>텍스트 줄 바꿈</value>
+    <value>Tekstterugloop</value>
     <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>단어 단위로 자동 개행</value>
+    <value>Terugloop</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>단어 단위로 자동 개행</value>
+    <value>Terugloop</value>
     <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>에디터 설정</value>
+    <value>Tekst &amp; Bewerken</value>
     <comment>TextAndEditorPage Title display text.</comment>
   </data>
   <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>변경 내역</value>
+    <value>Wijzigingslogboek</value>
     <comment>AboutPage Changelog Title display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>활성화되면 메모장은 다음 실행을 위해 현재 세션을 기억하고 저장되지 않은 변경으로 인한 우발적인 데이터 손실을 방지하기 위해 주기적으로 세션 스냅샷을 백업합니다. 이 기능이 활성화 된 경우 종료 시에 변경 사항을 저장하라는 메시지를 표시하지 않습니다. 세션 스냅샷은 메모장의 첫 번째 또는 기본 창에서만 작동합니다.</value>
+    <value>Indien ingeschakeld, onthoudt Notepads de huidige sessie voor de volgende keer opstarten en wordt er periodiek een momentopname van de sessie gemaakt om onbedoeld gegevensverlies door niet-vastgelegde wijzigingen te voorkomen. Notepads herinnert u er NIET aan om uw werk op te slaan bij het sluiten van de app als deze functie is ingeschakeld. Houd er ook rekening mee dat een sessie-momentopname alleen werkt in het eerste of hoofdvenster van Notepads.</value>
     <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>세션 스냅샷 사용</value>
+    <value>Sessie-momentopname inschakelen</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>세션 스냅샷 사용</value>
+    <value>Sessie-momentopname inschakelen</value>
     <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>세션 스냅샷 설정</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
+    <value>Sessie-momentopname</value>
+    <comment>AdvancedPageSessionSnapshotSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>오타 강조</value>
+    <value>Spelfouten markeren</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>오타 강조</value>
+    <value>Spelfouten markeren</value>
     <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>철자</value>
+    <value>Spelling</value>
     <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>활성화되면 메모장은 항상 새 탭을 만드는 대신 새 창에서 파일을 엽니다.</value>
+    <value>Indien ingeschakeld, opent Notepads altijd het bestand in een nieuw venster in plaats van een nieuw tabblad aan te maken.</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>항상 새 창 열기</value>
+    <value>Altijd in nieuw venster openen</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>항상 새 창 열기</value>
+    <value>Altijd in nieuw venster openen</value>
     <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>실행 설정</value>
+    <value>Opstartvoorkeuren</value>
     <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>선택한 줄 강조 표시</value>
+    <value>Huidige regel markeren</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>선택한 줄 강조 표시</value>
+    <value>Huidige regel markeren</value>
     <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>사용자 지정 검색 엔진</value>
+    <value>Aangepaste zoekmachine</value>
     <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*https://www.example.com/search?q={0} 형식의 URL을 입력하세요</value>
+    <value>*Voer een url in met opmaak https//www.example.com/search?q = {0}</value>
     <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>웹 검색 수행 시 선택된 기본 검색 엔진에 대한 설정입니다.</value>
+    <value>Instellingen voor de gekozen standaardzoekmachine bij de uitvoering van een webzoekopdracht.</value>
     <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>기본 검색 엔진</value>
+    <value>Standaard zoekmachine</value>
     <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>자동으로 인코딩 결정 (추천)</value>
+    <value>Codering automatisch inschatten (aanbevolen)</value>
     <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
   </data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>표시</value>
+    <value>Weergave</value>
     <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>문서에 줄 번호를 표시합니다.</value>
+    <value>Regelnummers weergeven in het document.</value>
     <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>줄 번호 표시</value>
+    <value>Regelnummers weergeven</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
   </data>
   <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>줄 번호 표시</value>
+    <value>Regelnummers weergeven</value>
     <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>기본 글자 서식</value>
+    <value>Standaard lettertypestijl</value>
     <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
   </data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>기본 글자 굵기</value>
+    <value>Standaard lettergrootte</value>
     <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>메모장에서 시스템 기본 언어를 무시하고 사용할 언어를 지정하십시오. 변경 사항을 적용하려면 앱을 재시작해야 합니다.</value>
+    <value>Kies een aangepaste taal om de standaardtaal van het systeem te overschrijven die wordt gebruikt in Notepads. Een herstart is vereist om deze wijziging door te voeren.</value>
     <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*변경 사항을 적용하려면 앱을 재시작하십시오.</value>
+    <value>*Notepads opnieuw starten om wijzigingen door te voeren.</value>
     <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>언어 설정</value>
+    <value>Taalvoorkeuren</value>
     <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>사용하면 메모장에서는 선택한 글자를 클립보드로 복사하기 전에 앞뒤의 공백, 탭, 빈 줄을 제거합니다.</value>
+    <value>Eenmaal ingeschakeld, zal Notepads voorloop- en achterliggende spaties, tabs en lege regels slim inkorten voordat de geselecteerde tekst naar het klembord wordt gekopieerd.</value>
     <comment>AdvancedPage SmartCopySettings Description display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
-    <value>스마트 복사 사용</value>
+    <value>Slim kopiëren inschakelen</value>
     <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
-    <value>스마트 복사 사용</value>
+    <value>Slim kopiëren inschakelen</value>
     <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
   </data>
   <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>스마트 복사 설정</value>
+    <value>Slim kopiëren</value>
     <comment>AdvancedPage SmartCopySettings Title display text.</comment>
   </data>
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
-    <value>시스템 </value>
+    <value>Systeemstandaard</value>
     <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve">
-    <value>마지막 탭을 닫을 때 앱 종료</value>
+    <value>App afsluiten bij het sluiten van laatste tabblad</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
   </data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve">
-    <value>마지막 탭을 닫을 때 앱 종료</value>
+    <value>App afsluiten bij het sluiten van laatste tabblad</value>
     <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
   </data>
 </root>

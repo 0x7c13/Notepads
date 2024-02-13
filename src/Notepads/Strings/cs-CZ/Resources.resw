@@ -678,11 +678,11 @@
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>Přejmenovat</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Přejmenovaný</value>
+    <value>Přejmenován</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
@@ -692,5 +692,21 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
     <value>Souborová přípona "{0}" není v tento moment podporována</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>Zavřít</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>Nepodařilo se obnovit data z poslední relace kvůli poškozeným datům. Zazálohujte prosím všechny vaše neuložené soubory (*.txt) ve složce relace.</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>Otevřít složku zálohování relace</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>Varování</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
   </data>
 </root>

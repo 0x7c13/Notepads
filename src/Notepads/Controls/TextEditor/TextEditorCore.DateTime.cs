@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.TextEditor
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Globalization;
@@ -17,7 +22,7 @@
 
         /// <summary>
         /// <para>
-        /// Adds "Windows Notepad" style header with current date and time, 
+        /// Adds "Windows Notepad" style header with current date and time,
         /// if a text document contains ".LOG" at the very beginning of file.
         /// User can then add log entry from the very next line.
         /// </para>

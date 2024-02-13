@@ -1,4 +1,9 @@
-﻿namespace Notepads.Settings
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Settings
 {
     using System;
     using Notepads.Services;
@@ -11,9 +16,10 @@
             object obj = null;
 
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            if (localSettings.Values.ContainsKey(key))
+
+            if (localSettings.Values.TryGetValue(key, out var value))
             {
-                obj = localSettings.Values[key];
+                obj = value;
             }
 
             return obj;

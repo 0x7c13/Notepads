@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/release/0x7c13/notepads.svg?label=latest%20version&style=flat-square" alt="Releases" />
   </a>
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/platform-windows%2010%20%7C%20uwp-yellow.svg?style=flat-square" alt="Platform" />
+    <img src="https://img.shields.io/badge/platform-Windows%20%7C%20UWP-yellow.svg?style=flat-square" alt="Platform" />
   </a>
   <a style="text-decoration:none" href="https://discord.gg/VqetCub">
     <img src="https://img.shields.io/discord/588473626651787274.svg?style=flat-square" alt="Discord" />
@@ -83,7 +83,9 @@ I am using analytics service "AppCenter" to collect basic usage data plus some m
 
 Feel free to review the source code or build your own version of Notepads since it is 100% open sourced.
 
-You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project, so don’t put too much hope on me or treat it as a project sponsored by Microsoft.
+#### More to read here: [[Privacy Policy](PRIVACY.md)]
+
+TL;DR: You might notice that I work for Microsoft but Notepads is my personal project that I accomplish during free time (to empower every person and every organization on the planet to achieve more😃). I do not work for the Windows team, nor do I work for a Microsoft UX/App team. I am not expert on creating Windows apps either. I learned how to code UWP as soon as I started this project, so don’t put too much hope on me or treat it as a project sponsored by Microsoft.
 
 ## Contributing:
 
@@ -113,7 +115,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
 * Localization Contributors:
     * [fr-FR][French (France)]: [François Rousselet](https://github.com/frousselet), [François-Joseph du Fou](https://github.com/FJduFou), [Armand Delessert](https://github.com/ArmandDelessert)
     * [es-ES][Spanish (Spain)]: [Jose Pinilla](https://github.com/joseppinilla)
-    * [zh-CN][Chinese (S)]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [Jackie Liu](https://github.com/0x7c13)
+    * [zh-CN][Chinese (S)]: [lindexi](https://github.com/lindexi), [walterlv](https://github.com/walterlv), [0x7c13](https://github.com/0x7c13)
     * [hu-HU][Hungarian (Hungary)]: [Csányi István](https://github.com/AmionSky), [Kristóf Kékesi](https://github.com/KristofKekesi)
     * [tr-TR][Turkish (Turkey)]: [Mert Can Demir](https://github.com/validatedev), [Emirhakan Tanhan](https://github.com/EmirhakanTanhan)
     * [ja-JP][Japanese (Japan)]: [Mamoru Satoh](https://github.com/pnp0a03)
@@ -133,6 +135,7 @@ You might notice that I work for Microsoft but Notepads is my personal project t
     * [pt-PT][Portuguese (Portugal)]: [O.Leitão](https://github.com/oleitao)
     * [sr-Latn][Serbian (Latin)]: [bzzrak](https://github.com/bzzrak)
     * [sr-cyrl][Serbian (Cyrillic)]: [bzzrak](https://github.com/bzzrak)
+    * [nl-NL][Dutch (Netherlands)]: [Stephan Paternotte](https://github.com/Stephan-P)
 
 * Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 

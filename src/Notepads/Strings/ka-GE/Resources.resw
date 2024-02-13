@@ -642,55 +642,71 @@
     <comment>FontWeight: "Thin"</comment>
   </data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>გაუქმება</value>
     <comment>FileRenameDialog: CloseButtonText.</comment>
   </data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>გაუქმება</value>
     <comment>FileRenameDialog: PrimaryButtonText.</comment>
   </data>
   <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Rename</value>
+    <value>გადარქმევა</value>
     <comment>FileRenameDialog: "Title" display text.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>File name should not contain invalid characters</value>
+    <value>ფაილის სახელი არ უნდა შეიცავდეს არასწორ სიმბოლოებს</value>
     <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>File name should not contain leading spaces</value>
+    <value>ფაილის სახელი არ უნდა შეიცავდეს წინა ცარიელებებს</value>
     <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
   </data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>File name should not contain trailing spaces</value>
+    <value>ფაილის სახელი არ უნდა შეიცავდეს უკანა ცარიელებებს</value>
     <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
   </data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>File name cannot be empty or all whitespace</value>
+    <value>ფაილის სახელი არ უნდა იყოს ცარიელი ან მთლიანად ცარიელებით</value>
     <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
   </data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>File name is invalid or not allowed</value>
+    <value>ფაილის სახელი არასწორია ან არ არის დასაშვები</value>
     <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
   </data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>File name cannot be longer than 255 characters</value>
+    <value>ფაილის სახელი არ უნდა იყოს 255 სიმბოლოზე გრძელი</value>
     <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
   </data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Rename</value>
+    <value>გადარქმევა</value>
     <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
   </data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Renamed</value>
+    <value>გადარქმეულია</value>
     <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
   </data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Empty file extension is not supported at this moment</value>
+    <value>ცარიელი ფაილის გაფართოება ამ მომენტში არ მხარდაჭერია</value>
     <comment>FileRenameError: Empty file extension is not currently supported.</comment>
   </data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>File extension "{0}" is not supported at this moment</value>
+    <value>ფაილის გაფართოება "{0}" ამ მომენტში არ მხარდაჭერია</value>
     <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
+    <value>დახურვა</value>
+    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
+    <value>ბოლო სესიიდან მონაცემთა აღდგენა ჩავარდნილი მონაცემების გამო ვერ მოხერხდა. გთხოვთ, გააკეთეთ ბექაფი თქვენი შეუნახავი ფაილების (*.txt) სესიის ფოლდერში.</value>
+    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
+    <value>გახსენით სესიის ბექაფის ფოლდერი</value>
+    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
+  </data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
+    <value>გაფრთხილება</value>
+    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
   </data>
 </root>

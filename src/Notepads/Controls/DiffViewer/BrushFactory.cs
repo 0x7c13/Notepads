@@ -1,24 +1,27 @@
-﻿namespace Notepads.Controls.DiffViewer
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.DiffViewer
 {
     using System.Collections.Generic;
     using Windows.UI;
     using Windows.UI.Xaml.Media;
 
-    public class BrushFactory
+    public sealed class BrushFactory
     {
-        public Dictionary<Color, SolidColorBrush> Brushes = new Dictionary<Color, SolidColorBrush>();
+        private readonly Dictionary<Color, SolidColorBrush> _brushes = new Dictionary<Color, SolidColorBrush>();
 
         public SolidColorBrush GetOrCreateSolidColorBrush(Color color)
         {
-            if (Brushes.ContainsKey(color))
+            if (_brushes.TryGetValue(color, out var brush))
             {
-                return Brushes[color];
+                return brush;
             }
-            else
-            {
-                Brushes[color] = new SolidColorBrush(color);
-                return Brushes[color];
-            }
+
+            _brushes[color] = new SolidColorBrush(color);
+            return _brushes[color];
         }
     }
 }

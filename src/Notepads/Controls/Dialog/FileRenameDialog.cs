@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.Dialog
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.Dialog
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +16,7 @@
     using Notepads.Utilities;
     using Microsoft.AppCenter.Analytics;
 
-    public class FileRenameDialog : NotepadsDialog
+    public sealed class FileRenameDialog : NotepadsDialog
     {
         private readonly TextBox _fileNameTextBox;
 

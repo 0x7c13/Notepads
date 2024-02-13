@@ -1,11 +1,16 @@
-﻿namespace Notepads.Controls.TextEditor
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.TextEditor
 {
     using System;
     using Windows.UI.Xaml;
 
     public partial class TextEditorCore
     {
-        public bool _displayLineHighlighter;
+        private bool _displayLineHighlighter;
 
         public bool DisplayLineHighlighter
         {
@@ -20,7 +25,7 @@
             }
         }
 
-        public void UpdateLineHighlighterAndIndicator()
+        private void UpdateLineHighlighterAndIndicator()
         {
             if (!_loaded) return;
 

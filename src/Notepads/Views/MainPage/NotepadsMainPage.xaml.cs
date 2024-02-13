@@ -1,4 +1,9 @@
-﻿namespace Notepads.Views.MainPage
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Views.MainPage
 {
     using System;
     using System.Collections.Generic;
@@ -47,24 +52,23 @@
         {
             get
             {
-                if (_notepadsCore == null)
-                {
-                    _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
-                    _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
-                    _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
-                    _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
-                    _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
-                    _notepadsCore.TextEditorClosing += OnTextEditorClosing;
-                    _notepadsCore.TextEditorSaved += OnTextEditorSaved;
-                    _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
-                    _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
-                    _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
-                    _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
-                    _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
-                    _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-                    _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
-                }
+                if (_notepadsCore != null) return _notepadsCore;
+
+                _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher);
+                _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
+                _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
+                _notepadsCore.TextEditorUnloaded += OnTextEditorUnloaded;
+                _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
+                _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+                _notepadsCore.TextEditorSaved += OnTextEditorSaved;
+                _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
+                _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
+                _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
+                _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
+                _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
+                _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
+                _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
 
                 return _notepadsCore;
             }
@@ -157,7 +161,7 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F12, (args) => EnterExitCompactOverlayMode()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F1, (args) => { if (App.IsPrimaryInstance && !App.IsGameBarWidget) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
-                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, (args) => RenameFileAsync(NotepadsCore.GetSelectedTextEditor())),
+                new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F2, async (args) => await RenameFileAsync(NotepadsCore.GetSelectedTextEditor())),
                 new KeyboardCommand<KeyRoutedEventArgs>(true, true, true, VirtualKey.L, async (args) => { await OpenFileAsync(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); })
             });
         }
@@ -206,10 +210,40 @@
                 {
                     loadedCount = await SessionManager.LoadLastSessionAsync();
                 }
-                catch (Exception ex)
+                catch (SessionDataCorruptedException ex)
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to load last session: {ex}");
-                    Analytics.TrackEvent("FailedToLoadLastSession", new Dictionary<string, string> { { "Exception", ex.ToString() } });
+
+                    // Last session data is corrupted, clear it first
+                    await SessionManager.ClearSessionDataAsync();
+
+                    // Recover backup files
+                    int numberOfRecoveredFiles = await SessionManager.RecoverBackupFilesAsync();
+
+                    LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] {numberOfRecoveredFiles} file(s) recovered from last session backup.");
+
+                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_SessionDataCorruptedException",
+                        new Dictionary<string, string>()
+                        {
+                            { "Exception", ex.Message },
+                            { "NumberOfRecoveredFiles", numberOfRecoveredFiles.ToString() }
+                        });
+
+                    // Show session recovery dialog if there are any recovered files
+                    if (numberOfRecoveredFiles > 0)
+                    {
+                        var sessionCorruptionErrorDialog = new SessionCorruptionErrorDialog(
+                            recoveryAction: async () =>
+                            {
+                                await SessionManager.OpenSessionBackupFolderAsync();
+                            });
+                        await DialogManager.OpenDialogAsync(sessionCorruptionErrorDialog, awaitPreviousDialog: false);
+                    }
+                }
+                catch (Exception ex) // Catch all other exceptions
+                {
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to load last session: {ex}");
+                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_UnhandledException", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
 
@@ -243,11 +277,6 @@
                 if (loadedCount == 0)
                 {
                     NotepadsCore.OpenNewTextEditor(_defaultNewFileName);
-                }
-
-                if (!App.IsPrimaryInstance)
-                {
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("App_ShadowWindowIndicator_Description"), 4000);
                 }
                 _loaded = true;
             }

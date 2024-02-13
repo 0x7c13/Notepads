@@ -1,4 +1,9 @@
-﻿namespace Notepads.Controls.FindAndReplace
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.FindAndReplace
 {
     using System;
     using System.Collections.Generic;
@@ -52,7 +57,7 @@
             ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         }
 
-        public SearchContext GetSearchContext()
+        private SearchContext GetSearchContext()
         {
             return new SearchContext(FindBar.Text, MatchCaseToggle.IsChecked, MatchWholeWordToggle.IsChecked, UseRegexToggle.IsChecked);
         }
@@ -283,9 +288,9 @@
 
             var isNativeKeyboardCommand = false;
 
-            foreach (var KeyboardCommand in _nativeKeyboardCommands)
+            foreach (var keyboardCommand in _nativeKeyboardCommands)
             {
-                if (KeyboardCommand.Hit(ctrlDown, altDown, shiftDown, e.Key))
+                if (keyboardCommand.Hit(ctrlDown, altDown, shiftDown, e.Key))
                 {
                     isNativeKeyboardCommand = true;
                     break;

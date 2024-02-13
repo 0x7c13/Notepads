@@ -1,4 +1,9 @@
-﻿namespace Notepads.Core
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Core
 {
     using System;
     using System.IO;
@@ -14,7 +19,7 @@
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public class TabContextFlyout : MenuFlyout
+    public sealed class TabContextFlyout : MenuFlyout
     {
         private MenuFlyoutItem _close;
         private MenuFlyoutItem _closeOthers;
@@ -91,17 +96,16 @@
         {
             get
             {
-                if (_close == null)
+                if (_close != null) return _close;
+
+                _close = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText") };
+                _close.Click += (sender, args) => { _notepadsCore.CloseTextEditor(_textEditor); };
+                _close.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _close = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText") };
-                    _close.Click += (sender, args) => { _notepadsCore.CloseTextEditor(_textEditor); };
-                    _close.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Modifiers = VirtualKeyModifiers.Control,
-                        Key = VirtualKey.W,
-                        IsEnabled = false,
-                    });
-                }
+                    Modifiers = VirtualKeyModifiers.Control,
+                    Key = VirtualKey.W,
+                    IsEnabled = false,
+                });
                 return _close;
             }
         }
@@ -110,21 +114,20 @@
         {
             get
             {
-                if (_closeOthers == null)
+                if (_closeOthers != null) return _closeOthers;
+
+                _closeOthers = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseOthersButtonDisplayText") };
+                _closeOthers.Click += (sender, args) =>
                 {
-                    _closeOthers = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseOthersButtonDisplayText") };
-                    _closeOthers.Click += (sender, args) =>
-                    {
-                        ExecuteOnAllTextEditors(
-                            (textEditor) =>
+                    ExecuteOnAllTextEditors(
+                        (textEditor) =>
+                        {
+                            if (textEditor != _textEditor)
                             {
-                                if (textEditor != _textEditor)
-                                {
-                                    _notepadsCore.CloseTextEditor(textEditor);
-                                }
-                            });
-                    };
-                }
+                                _notepadsCore.CloseTextEditor(textEditor);
+                            }
+                        });
+                };
                 return _closeOthers;
             }
         }
@@ -133,27 +136,26 @@
         {
             get
             {
-                if (_closeRight == null)
-                {
-                    _closeRight = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseRightButtonDisplayText") };
-                    _closeRight.Click += (sender, args) =>
-                    {
-                        bool close = false;
+                if (_closeRight != null) return _closeRight;
 
-                        ExecuteOnAllTextEditors(
-                            (textEditor) =>
+                _closeRight = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseRightButtonDisplayText") };
+                _closeRight.Click += (sender, args) =>
+                {
+                    bool close = false;
+
+                    ExecuteOnAllTextEditors(
+                        (textEditor) =>
+                        {
+                            if (textEditor == _textEditor)
                             {
-                                if (textEditor == _textEditor)
-                                {
-                                    close = true;
-                                }
-                                else if (close)
-                                {
-                                    _notepadsCore.CloseTextEditor(textEditor);
-                                }
-                            });
-                    };
-                }
+                                close = true;
+                            }
+                            else if (close)
+                            {
+                                _notepadsCore.CloseTextEditor(textEditor);
+                            }
+                        });
+                };
                 return _closeRight;
             }
         }
@@ -162,21 +164,20 @@
         {
             get
             {
-                if (_closeSaved == null)
+                if (_closeSaved != null) return _closeSaved;
+
+                _closeSaved = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseSavedButtonDisplayText") };
+                _closeSaved.Click += (sender, args) =>
                 {
-                    _closeSaved = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseSavedButtonDisplayText") };
-                    _closeSaved.Click += (sender, args) =>
-                    {
-                        ExecuteOnAllTextEditors(
-                            (textEditor) =>
+                    ExecuteOnAllTextEditors(
+                        (textEditor) =>
+                        {
+                            if (!textEditor.IsModified)
                             {
-                                if (!textEditor.IsModified)
-                                {
-                                    _notepadsCore.CloseTextEditor(textEditor);
-                                }
-                            });
-                    };
-                }
+                                _notepadsCore.CloseTextEditor(textEditor);
+                            }
+                        });
+                };
                 return _closeSaved;
             }
         }
@@ -185,25 +186,24 @@
         {
             get
             {
-                if (_copyFullPath == null)
+                if (_copyFullPath != null) return _copyFullPath;
+
+                _copyFullPath = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText") };
+                _copyFullPath.Click += (sender, args) =>
                 {
-                    _copyFullPath = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText") };
-                    _copyFullPath.Click += (sender, args) =>
+                    try
                     {
-                        try
-                        {
-                            DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
-                            dataPackage.SetText(_filePath);
-                            Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
-                            Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
-                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
-                        }
-                        catch (Exception ex)
-                        {
-                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
-                        }
-                    };
-                }
+                        DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                        dataPackage.SetText(_filePath);
+                        Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
+                        Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
+                        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to copy full path: {ex.Message}");
+                    }
+                };
                 return _copyFullPath;
             }
         }
@@ -212,21 +212,20 @@
         {
             get
             {
-                if (_openContainingFolder == null)
+                if (_openContainingFolder != null) return _openContainingFolder;
+
+                _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
+                _openContainingFolder.Click += async (sender, args) =>
                 {
-                    _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
-                    _openContainingFolder.Click += async (sender, args) =>
+                    try
                     {
-                        try
-                        {
-                            await Launcher.LaunchFolderPathAsync(_containingFolderPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
-                        }
-                    };
-                }
+                        await Launcher.LaunchFolderPathAsync(_containingFolderPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingService.LogError($"[{nameof(TabContextFlyout)}] Failed to open containing folder: {ex.Message}");
+                    }
+                };
                 return _openContainingFolder;
             }
         }
@@ -235,39 +234,38 @@
         {
             get
             {
-                if (_rename == null)
+                if (_rename != null) return _rename;
+
+                _rename = new MenuFlyoutItem() { Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText") };
+                _rename.KeyboardAccelerators.Add(new KeyboardAccelerator()
                 {
-                    _rename = new MenuFlyoutItem() { Text = _resourceLoader.GetString("Tab_ContextFlyout_RenameButtonDisplayText") };
-                    _rename.KeyboardAccelerators.Add(new KeyboardAccelerator()
-                    {
-                        Key = VirtualKey.F2,
-                        IsEnabled = false,
-                    });
-                    _rename.Click += async (sender, args) =>
-                    {
-                        _notepadsCore.SwitchTo(_textEditor);
+                    Key = VirtualKey.F2,
+                    IsEnabled = false,
+                });
+                _rename.Click += async (sender, args) =>
+                {
+                    _notepadsCore.SwitchTo(_textEditor);
 
-                        await Task.Delay(10); // Give notepads core enough time to switch to the selected editor
+                    await Task.Delay(10); // Give notepads core enough time to switch to the selected editor
 
-                        var fileRenameDialog = new FileRenameDialog(_textEditor.EditingFileName ?? _textEditor.FileNamePlaceholder,
-                            fileExists: _textEditor.EditingFile != null,
-                            confirmedAction: async (newFilename) =>
+                    var fileRenameDialog = new FileRenameDialog(_textEditor.EditingFileName ?? _textEditor.FileNamePlaceholder,
+                        fileExists: _textEditor.EditingFile != null,
+                        confirmedAction: async (newFilename) =>
+                        {
+                            try
                             {
-                                try
-                                {
-                                    await _textEditor.RenameAsync(newFilename);
-                                    _notepadsCore.FocusOnSelectedTextEditor();
-                                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
-                                }
-                                catch (Exception ex)
-                                {
-                                    var errorMessage = ex.Message?.TrimEnd('\r', '\n');
-                                    NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
-                                }
-                            });
-                        await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
-                    };
-                }
+                                await _textEditor.RenameAsync(newFilename);
+                                _notepadsCore.FocusOnSelectedTextEditor();
+                                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
+                            }
+                            catch (Exception ex)
+                            {
+                                var errorMessage = ex.Message?.TrimEnd('\r', '\n');
+                                NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
+                            }
+                        });
+                    await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
+                };
                 return _rename;
             }
         }

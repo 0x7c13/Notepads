@@ -1,4 +1,9 @@
-﻿namespace Notepads
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads
 {
     using System;
     using System.Collections.Generic;
@@ -42,9 +47,6 @@
         {
             UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedException;
-
-            var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-            AppCenter.Start(AppCenterSecret, services);
 
             InstanceHandlerMutex = new Mutex(true, App.ApplicationName, out bool isNew);
             if (isNew)
@@ -97,6 +99,19 @@
                 rootFrame = CreateRootFrame(e);
                 Window.Current.Content = rootFrame;
                 rootFrameCreated = true;
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(AppCenterSecret))
+                    {
+                        var services = new Type[] { typeof(Crashes), typeof(Analytics) };
+                        AppCenter.Start(AppCenterSecret, services);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError($"[{nameof(App)}] Failed to start AppCenter: {ex.Message}");
+                }
 
                 ThemeSettingsService.Initialize();
                 AppSettingsService.Initialize();
@@ -157,6 +172,19 @@
                 throw;
             }
 
+            try
+            {
+                if (Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch"))
+                {
+                    // Only enable prelaunch when AlwaysOpenNewWindow is set to false
+                    CoreApplication.EnablePrelaunch(!AppSettingsService.AlwaysOpenNewWindow);
+                }
+            }
+            catch (Exception)
+            {
+                // Best efforts
+            }
+
             if (rootFrameCreated)
             {
                 ExtendViewIntoTitleBar();
@@ -181,7 +209,7 @@
 
             if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                //TODO: Load state from previously suspended application
+                // TODO: Load state from previously suspended application
             }
 
             return rootFrame;
@@ -210,10 +238,10 @@
         /// of memory still intact.
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        /// <param name="args">Details about the suspend request.</param>
+        private void OnSuspending(object sender, SuspendingEventArgs args)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            var deferral = args.SuspendingOperation.GetDeferral();
 
             try
             {
@@ -225,8 +253,10 @@
             {
                 // Best efforts
             }
-
-            deferral.Complete();
+            finally
+            {
+                deferral.Complete();
+            }
         }
 
         // Occurs when an exception is not handled on the UI thread.

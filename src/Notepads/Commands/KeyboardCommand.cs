@@ -1,10 +1,15 @@
-﻿namespace Notepads.Commands
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Commands
 {
     using System;
     using System.Collections.Generic;
     using Windows.System;
 
-    public class KeyboardCommand<T> : IKeyboardCommand<T>
+    public sealed class KeyboardCommand<T> : IKeyboardCommand<T>
     {
         private static readonly TimeSpan ConsecutiveHitsInterval = TimeSpan.FromMilliseconds(500);
 

@@ -1,4 +1,9 @@
-﻿namespace Notepads.Brushes
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Brushes
 {
     using System;
     using System.Collections.Generic;
@@ -21,12 +26,12 @@
     using Microsoft.Graphics.Canvas;
     using Microsoft.Graphics.Canvas.Effects;
     using Microsoft.Graphics.Canvas.UI.Composition;
-    using Notepads.Controls.Helpers;
+    using Controls.Helpers;
 
     public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase, IDisposable
     {
-        public static readonly DependencyProperty TintOpacityProperty = DependencyProperty.Register(
-            "TintOpacity",
+        private static readonly DependencyProperty TintOpacityProperty = DependencyProperty.Register(
+            nameof(TintOpacity),
             typeof(float),
             typeof(HostBackdropAcrylicBrush),
             new PropertyMetadata(0.0f, OnTintOpacityChanged)
@@ -38,29 +43,29 @@
             set => SetValue(TintOpacityProperty, value);
         }
 
-        private static void OnTintOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTintOpacityChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs args)
         {
-            if (d is HostBackdropAcrylicBrush brush)
+            if (!(dependencyObject is HostBackdropAcrylicBrush brush)) return;
+
+            if (brush.CompositionBrush is CompositionEffectBrush)
             {
-                if (brush.CompositionBrush is CompositionEffectBrush)
-                {
-                    TintOpacityToArithmeticCompositeEffectSourceAmount((float)e.NewValue,
-                        _acrylicTintOpacityMinThreshold,
-                        out var source1Amount,
-                        out var source2Amount);
-                    brush.CompositionBrush?.Properties.InsertScalar("LuminosityBlender.Source1Amount", source1Amount);
-                    brush.CompositionBrush?.Properties.InsertScalar("LuminosityBlender.Source2Amount", source2Amount);
-                }
-                else if (brush.CompositionBrush is CompositionColorBrush)
-                {
-                    // Do nothing since we are falling back to CompositionColorBrush here
-                    // TintOpacity only applies to the CompositionEffectBrush we created
-                }
+                TintOpacityToArithmeticCompositeEffectSourceAmount((float)args.NewValue,
+                    _acrylicTintOpacityMinThreshold,
+                    out var source1Amount,
+                    out var source2Amount);
+                brush.CompositionBrush?.Properties.InsertScalar("LuminosityBlender.Source1Amount", source1Amount);
+                brush.CompositionBrush?.Properties.InsertScalar("LuminosityBlender.Source2Amount", source2Amount);
+            }
+            else if (brush.CompositionBrush is CompositionColorBrush)
+            {
+                // Do nothing since we are falling back to CompositionColorBrush here
+                // TintOpacity only applies to the CompositionEffectBrush we created
             }
         }
 
-        public static readonly DependencyProperty LuminosityColorProperty = DependencyProperty.Register(
-            "LuminosityColor",
+        private static readonly DependencyProperty LuminosityColorProperty = DependencyProperty.Register(
+            nameof(LuminosityColor),
             typeof(Color),
             typeof(HostBackdropAcrylicBrush),
             new PropertyMetadata(Colors.Transparent, OnLuminosityColorChanged)
@@ -72,30 +77,31 @@
             set => SetValue(LuminosityColorProperty, value);
         }
 
-        private static void OnLuminosityColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnLuminosityColorChanged(DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs args)
         {
-            if (d is HostBackdropAcrylicBrush brush)
+            if (!(dependencyObject is HostBackdropAcrylicBrush brush)) return;
+
+            switch (brush.CompositionBrush)
             {
-                if (brush.CompositionBrush is CompositionEffectBrush)
-                {
-                    if (brush.CompositionBrush?.Properties.TryGetColor("LuminosityColor.Color", out var currentColor) == CompositionGetValueStatus.Succeeded)
+                case CompositionEffectBrush _
+                    when brush.CompositionBrush?.Properties.TryGetColor("LuminosityColor.Color", out var currentColor)
+                         == CompositionGetValueStatus.Succeeded:
                     {
                         var easing = Window.Current.Compositor.CreateLinearEasingFunction();
                         var animation = Window.Current.Compositor.CreateColorKeyFrameAnimation();
                         animation.InsertKeyFrame(0.0f, currentColor);
-                        animation.InsertKeyFrame(1.0f, (Color)e.NewValue, easing);
+                        animation.InsertKeyFrame(1.0f, (Color)args.NewValue, easing);
                         animation.Duration = TimeSpan.FromMilliseconds(167);
                         brush.CompositionBrush.StartAnimation("LuminosityColor.Color", animation);
+                        break;
                     }
-                    else
-                    {
-                        brush.CompositionBrush?.Properties.InsertColor("LuminosityColor.Color", (Color)e.NewValue);
-                    }
-                }
-                else if (brush.CompositionBrush is CompositionColorBrush colorBrush)
-                {
-                    colorBrush.Color = (Color)e.NewValue;
-                }
+                case CompositionEffectBrush _:
+                    brush.CompositionBrush?.Properties.InsertColor("LuminosityColor.Color", (Color)args.NewValue);
+                    break;
+                case CompositionColorBrush colorBrush:
+                    colorBrush.Color = (Color)args.NewValue;
+                    break;
             }
         }
 
@@ -136,7 +142,7 @@
                 }
                 else
                 {
-                    CompositionBrush = await BuildHostBackdropAcrylicBrushAsync();
+                    CompositionBrush = await BuildHostBackdropAcrylicBrushInternalAsync();
                 }
 
                 // Register energy saver event
@@ -147,12 +153,10 @@
                 UISettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
                 UISettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Fallback to color brush if unable to create HostBackdropAcrylicBrush
                 CompositionBrush = Window.Current.Compositor.CreateColorBrush(LuminosityColor);
-                Analytics.TrackEvent("FailedToBuildAcrylicBrush",
-                    new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
             finally
             {
@@ -191,7 +195,7 @@
             base.OnDisconnected();
         }
 
-        public async Task<CompositionBrush> BuildHostBackdropAcrylicBrushAsync()
+        private async Task<CompositionBrush> BuildHostBackdropAcrylicBrushInternalAsync()
         {
             int stage = 0;
 

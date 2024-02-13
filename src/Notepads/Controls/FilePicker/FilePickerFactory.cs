@@ -1,35 +1,39 @@
-﻿namespace Notepads.Controls.FilePicker
+﻿// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace Notepads.Controls.FilePicker
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Notepads.Controls.TextEditor;
-    using Notepads.Services;
-    using Notepads.Utilities;
+    using Services;
+    using TextEditor;
+    using Utilities;
     using Windows.Storage.Pickers;
 
     public static class FilePickerFactory
     {
         private static IList<string> _allSupportedExtensions;
 
-        public static IList<string> AllSupportedExtensions
+        private static IList<string> AllSupportedExtensions
         {
             get
             {
-                if (_allSupportedExtensions == null)
+                if (_allSupportedExtensions != null) return _allSupportedExtensions;
+
+                var allSupportedExtensions = FileExtensionProvider.AllSupportedFileExtensions.ToList();
+
+                foreach (var extension in FileExtensionProvider.TextDocumentFileExtensions)
                 {
-                    var allSupportedExtensions = FileExtensionProvider.AllSupportedFileExtensions.ToList();
-
-                    foreach (var extension in FileExtensionProvider.TextDocumentFileExtensions)
-                    {
-                        allSupportedExtensions.Remove(extension);
-                    }
-
-                    allSupportedExtensions.Sort();
-                    allSupportedExtensions.InsertRange(0, FileExtensionProvider.TextDocumentFileExtensions);
-
-                    _allSupportedExtensions = allSupportedExtensions;
+                    allSupportedExtensions.Remove(extension);
                 }
+
+                allSupportedExtensions.Sort();
+                allSupportedExtensions.InsertRange(0, FileExtensionProvider.TextDocumentFileExtensions);
+
+                _allSupportedExtensions = allSupportedExtensions;
 
                 return _allSupportedExtensions;
             }
