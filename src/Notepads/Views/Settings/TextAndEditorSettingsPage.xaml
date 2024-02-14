@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="using:Notepads.Services"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
 
     <Grid>
@@ -27,24 +26,24 @@
             VerticalScrollMode="Auto">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
-                <!--  Text Wrapping  -->
-                <StackPanel x:Name="TextWrappingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Text Wrapping -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel>
                         <ToggleSwitch x:Name="TextWrappingToggle" x:Uid="/Settings/TextAndEditorPage_TextWrappingSettings_ToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Spelling  -->
-                <StackPanel x:Name="SpellingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Spelling -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_SpellingSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel>
                         <ToggleSwitch x:Name="HighlightMisspelledWordsToggle" x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Display  -->
-                <StackPanel x:Name="DisplaySettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Display -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel Margin="0,0,0,8">
                         <ToggleSwitch x:Name="LineHighlighterToggle" x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
@@ -55,8 +54,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Font  -->
-                <StackPanel x:Name="FontSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Font -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_FontSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel Margin="0,6,0,8" Spacing="8">
                         <ComboBox
@@ -118,8 +117,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Line Ending  -->
-                <StackPanel x:Name="LineEndingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Line Ending -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="LineEndingPanel">
                         <RadioButton x:Name="CrlfRadioButton" Content="Windows (CRLF)" GroupName="LineEndingGroup" Style="{StaticResource CustomRadioButtonStyle}" Tag="Crlf" />
@@ -129,8 +128,8 @@
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                 </StackPanel>
 
-                <!--  Enconding  -->
-                <StackPanel x:Name="EncodingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Enconding -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="EncodingPanel">
                         <RadioButton x:Name="Utf8EncodingRadioButton" Content="UTF-8" GroupName="EncodingGroup" Style="{StaticResource CustomRadioButtonStyle}" Tag="UTF-8" />
@@ -141,8 +140,8 @@
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_EncodingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                 </StackPanel>
 
-                <!--  Decoding  -->
-                <StackPanel x:Name="DecodingSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Decoding -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="DecodingPanel">
                         <RadioButton x:Name="AutoGuessDecodingRadioButton" x:Uid="/Settings/TextAndEditorPage_DecodingSettings_AutoGuessRadioButton" GroupName="DecodingGroup" Style="{StaticResource CustomRadioButtonStyle}" Tag="Auto" />
@@ -152,8 +151,8 @@
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_DecodingSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                 </StackPanel>
 
-                <!--  Tab Key  -->
-                <StackPanel x:Name="TabKeySettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Tab Key -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="TabBehaviorPanel">
                         <RadioButton x:Name="TabDefaultRadioButton" x:Uid="/Settings/TextAndEditorPage_TabKeySettings_DefaultRadioButton" GroupName="TabBehaviorGroup" Style="{StaticResource CustomRadioButtonStyle}" Tag="-1" />
@@ -164,8 +163,8 @@
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_TabKeySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                 </StackPanel>
 
-                <!--  Search Engine  -->
-                <StackPanel x:Name="SearchEngineSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Search Engine -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="SearchEnginePanel">
                         <RadioButton x:Name="BingRadioButton" GroupName="SearchEngineGroup" Style="{StaticResource CustomRadioButtonStyle}">
@@ -203,7 +202,7 @@
                             <TextBlock
                                 x:Name="CustomUrlErrorReport"
                                 x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport"
-                                Foreground="Red"
+                                Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                 Style="{ThemeResource DescriptionTextBlockStyle}"
                                 Visibility="Collapsed" />
                         </StackPanel>

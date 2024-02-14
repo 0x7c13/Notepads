@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
 
     <Grid>
@@ -26,8 +25,8 @@
             VerticalScrollMode="Auto">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
-                <!--  About  -->
-                <StackPanel Orientation="Horizontal" Style="{StaticResource SettingsSectionStyle}">
+                <!-- About -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}" Orientation="Horizontal">
                     <Image x:Name="AppIconImage" Width="90" Margin="-6,0,12,0" Source="/Assets/appicon_ws.png" />
                     <StackPanel>
                         <TextBlock
@@ -42,50 +41,50 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Description & Related Links  -->
+                <!-- Description & Related Links -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}" Spacing="8">
                     <TextBlock x:Uid="/Settings/AboutPage_NotepadsShortDescription" Margin="0,0,0,8" TextWrapping="Wrap" />
                     <StackPanel Spacing="-4">
                         <TextBlock x:Uid="/Settings/AboutPage_Notepads_SourceCodeTitle" TextWrapping="Wrap" />
-                        <HyperlinkButton Content="https://github.com/0x7c13/Notepads" NavigateUri="https://github.com/0x7c13/Notepads" Style="{StaticResource TextBlockButtonStyle}" />
+                        <HyperlinkButton Content="https://github.com/0x7c13/Notepads" NavigateUri="https://github.com/0x7c13/Notepads" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
                         <TextBlock x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle" TextWrapping="Wrap" />
-                        <HyperlinkButton Content="https://www.NotepadsApp.com" NavigateUri="https://www.NotepadsApp.com" Style="{StaticResource TextBlockButtonStyle}" />
+                        <HyperlinkButton Content="https://www.NotepadsApp.com" NavigateUri="https://www.NotepadsApp.com" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
                         <TextBlock x:Uid="/Settings/AboutPage_Notepads_AuthorContactsTitle" TextWrapping="Wrap" />
-                        <HyperlinkButton Content="NotepadsApp@outlook.com" NavigateUri="mailto:NotepadsApp@outlook.com" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="Discord" NavigateUri="https://discord.gg/VqetCub" Style="{StaticResource TextBlockButtonStyle}" />
+                        <HyperlinkButton Content="NotepadsApp@outlook.com" NavigateUri="mailto:NotepadsApp@outlook.com" />
+                        <HyperlinkButton Content="Discord" NavigateUri="https://discord.gg/VqetCub" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
                         <TextBlock x:Uid="/Settings/AboutPage_Notepads_IssueAndFeatureRequestsTitle" TextWrapping="Wrap" />
-                        <HyperlinkButton Content="https://github.com/0x7c13/Notepads/issues" NavigateUri="https://github.com/0x7c13/Notepads/issues" Style="{StaticResource TextBlockButtonStyle}" />
+                        <HyperlinkButton Content="https://github.com/0x7c13/Notepads/issues" NavigateUri="https://github.com/0x7c13/Notepads/issues" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Changelog  -->
-                <StackPanel x:Name="ChangelogPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Changelog -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AboutPage_ChangelogUrl_Title" Margin="0,0,0,4" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
-                    <HyperlinkButton Content="Notepads Releases" NavigateUri="https://github.com/0x7c13/Notepads/releases" Style="{StaticResource TextBlockButtonStyle}" />
+                    <HyperlinkButton Content="Notepads Releases" NavigateUri="https://github.com/0x7c13/Notepads/releases" />
                 </StackPanel>
 
-                <!--  Dependencies & References  -->
-                <StackPanel x:Name="DependenciesAndReferencesPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Dependencies & References -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AboutPage_DependenciesAndReferences_Title" Margin="0,0,0,4" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel Spacing="-4">
-                        <HyperlinkButton Content="Windows UI Library" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="XAML Controls Gallery" NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="ColorCode Universal" NavigateUri="https://github.com/WilliamABradley/ColorCode-Universal" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="UTF Unknown" NavigateUri="https://github.com/CharsetDetector/UTF-unknown" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="DiffPlex" NavigateUri="https://github.com/mmanela/diffplex" Style="{StaticResource TextBlockButtonStyle}" />
-                        <HyperlinkButton Content="Win2D" NavigateUri="https://github.com/microsoft/Win2D" Style="{StaticResource TextBlockButtonStyle}" />
+                        <HyperlinkButton Content="Windows UI Library" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
+                        <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit" />
+                        <HyperlinkButton Content="XAML Controls Gallery" NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery" />
+                        <HyperlinkButton Content="ColorCode Universal" NavigateUri="https://github.com/WilliamABradley/ColorCode-Universal" />
+                        <HyperlinkButton Content="UTF Unknown" NavigateUri="https://github.com/CharsetDetector/UTF-unknown" />
+                        <HyperlinkButton Content="DiffPlex" NavigateUri="https://github.com/mmanela/diffplex" />
+                        <HyperlinkButton Content="Win2D" NavigateUri="https://github.com/microsoft/Win2D" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Disclamer  -->
-                <StackPanel x:Name="DisclaimerPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Disclamer -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AboutPage_Disclaimer_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <RichTextBlock MaxWidth="600" IsTextSelectionEnabled="False">
                         <Paragraph>

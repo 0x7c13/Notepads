@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utilities="using:Notepads.Utilities"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
 
     <Grid>
@@ -27,16 +26,16 @@
             VerticalScrollMode="Auto">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
-                <!--  Status Bar  -->
-                <StackPanel x:Name="StatusBarSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Status Bar -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel>
                         <ToggleSwitch x:Name="ShowStatusBarToggleSwitch" x:Uid="/Settings/AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Smart Copy  -->
-                <StackPanel x:Name="SmartCopySettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Smart Copy -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel>
                         <ToggleSwitch x:Name="EnableSmartCopyToggleSwitch" x:Uid="/Settings/AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
@@ -44,7 +43,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Session Snapshot  -->
+                <!-- Session Snapshot -->
                 <StackPanel x:Name="SessionSnapshotSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="SessionSnapshotSettingsTitle" x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="SessionSnapshotSettingsControls">
@@ -53,7 +52,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Launch  -->
+                <!-- Launch -->
                 <StackPanel x:Name="LaunchPreferenceSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="LaunchPreferenceSettingsTitle" x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="LaunchPreferenceSettingsControls">
@@ -66,8 +65,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Language  -->
-                <StackPanel x:Name="LanguagePreferenceSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Language -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="LanguagePreferenceSettingsTitle" x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="LanguagePreferenceSettingsControls" Margin="0,6,0,0">
                         <ComboBox

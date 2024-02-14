@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}"
     mc:Ignorable="d">
 
     <Grid>
@@ -26,8 +25,8 @@
             VerticalScrollMode="Auto">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
-                <!--  Theme  -->
-                <StackPanel x:Name="ThemeModeSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Theme -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="ThemePanel">
                         <RadioButton x:Name="ThemeModeLightButton" x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_LightModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" Tag="Light" />
@@ -36,42 +35,41 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Acrylic Opacity  -->
-                <StackPanel x:Name="BackgroundTintOpacitySettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Acrylic Opacity -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="BackgroundTintOpacityTitle" x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="BackgroundTintOpacityControls">
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon VerticalAlignment="Center" FontSize="16" Glyph="&#xE727;" />
+                            <FontIcon VerticalAlignment="Center" FontSize="20" Glyph="&#xE727;" />
                             <Slider
                                 x:Name="BackgroundTintOpacitySlider"
                                 Width="200"
-                                Margin="8,0"
-                                Maximum="100"
+                                Margin="12,0,8,0"
                                 StepFrequency="1"
-                                Style="{StaticResource CustomSliderStyle}" />
+                                Maximum="100" />
                             <TextBlock
+                                Style="{StaticResource SubtitleTextBlockStyle}"
                                 Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
                                 Padding="0,0,0,2"
                                 VerticalAlignment="Center"
-                                FontSize="18"
                                 Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}" />
                             <TextBlock
+                                Style="{StaticResource SubtitleTextBlockStyle}"
                                 Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
                                 Padding="0,0,0,2"
                                 VerticalAlignment="Center"
-                                FontSize="18"
                                 Text="%" />
                         </StackPanel>
                         <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                     </StackPanel>
                 </StackPanel>
 
-                <!--  Accent Color  -->
-                <StackPanel x:Name="AccentColorSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
+                <!-- Accent Color -->
+                <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/PersonalizationPage_AccentColorSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel Spacing="12">
                         <ToggleSwitch x:Name="AccentColorToggle" x:Uid="/Settings/PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
-                        <Viewbox MaxWidth="300" Stretch="Fill">
+                        <Viewbox MaxWidth="292" Stretch="Fill">
                             <ColorPicker
                                 x:Name="AccentColorPicker"
                                 ColorSpectrumShape="Ring"
