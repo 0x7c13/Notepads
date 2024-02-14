@@ -1,10 +1,9 @@
-﻿<Page
-    x:Class="Notepads.Views.Settings.PersonalizationSettingsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+﻿<Page x:Class="Notepads.Views.Settings.PersonalizationSettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
 
     <Grid>
         <Grid.ChildrenTransitions>
@@ -16,49 +15,58 @@
             <BrushTransition />
         </Grid.BackgroundTransition>
 
-        <ScrollViewer
-            Grid.Row="0"
-            Padding="{StaticResource SettingsPagePadding}"
-            IsTabStop="False"
-            UseSystemFocusVisuals="False"
-            VerticalScrollBarVisibility="Auto"
-            VerticalScrollMode="Auto">
+        <ScrollViewer Grid.Row="0"
+                      Padding="{StaticResource SettingsPagePadding}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      IsTabStop="False"
+                      UseSystemFocusVisuals="False">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
                 <!-- Theme -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="ThemePanel">
-                        <RadioButton x:Name="ThemeModeLightButton" x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_LightModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" Tag="Light" />
-                        <RadioButton x:Name="ThemeModeDarkButton" x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_DarkModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" Tag="Dark" />
-                        <RadioButton x:Name="ThemeModeDefaultButton" x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" Tag="Default" />
+                        <RadioButton x:Name="ThemeModeLightButton"
+                                     x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_LightModeRadioButton"
+                                     Style="{StaticResource CustomRadioButtonStyle}"
+                                     Tag="Light" />
+                        <RadioButton x:Name="ThemeModeDarkButton"
+                                     x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_DarkModeRadioButton"
+                                     Style="{StaticResource CustomRadioButtonStyle}"
+                                     Tag="Dark" />
+                        <RadioButton x:Name="ThemeModeDefaultButton"
+                                     x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton"
+                                     Style="{StaticResource CustomRadioButtonStyle}"
+                                     Tag="Default" />
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Acrylic Opacity -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
-                    <TextBlock x:Name="BackgroundTintOpacityTitle" x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                    <TextBlock x:Name="BackgroundTintOpacityTitle"
+                               x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title"
+                               Style="{StaticResource CompactSubtitleTextBlockStyle}" />
                     <StackPanel x:Name="BackgroundTintOpacityControls">
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon VerticalAlignment="Center" FontSize="20" Glyph="&#xE727;" />
-                            <Slider
-                                x:Name="BackgroundTintOpacitySlider"
-                                Width="200"
-                                Margin="12,0,8,0"
-                                StepFrequency="1"
-                                Maximum="100" />
-                            <TextBlock
-                                Style="{StaticResource SubtitleTextBlockStyle}"
-                                Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
-                                Padding="0,0,0,2"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}" />
-                            <TextBlock
-                                Style="{StaticResource SubtitleTextBlockStyle}"
-                                Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
-                                Padding="0,0,0,2"
-                                VerticalAlignment="Center"
-                                Text="%" />
+                            <FontIcon VerticalAlignment="Center"
+                                      FontSize="20"
+                                      Glyph="&#xE727;" />
+                            <Slider x:Name="BackgroundTintOpacitySlider"
+                                    Width="200"
+                                    Margin="12,0,8,0"
+                                    StepFrequency="1"
+                                    Maximum="100" />
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                       Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                       Padding="0,0,0,2"
+                                       VerticalAlignment="Center"
+                                       Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                       Height="{x:Bind BackgroundTintOpacitySlider.Height, Mode=OneWay}"
+                                       Padding="0,0,0,2"
+                                       VerticalAlignment="Center"
+                                       Text="%" />
                         </StackPanel>
                         <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
                     </StackPanel>
@@ -70,15 +78,14 @@
                     <StackPanel Spacing="12">
                         <ToggleSwitch x:Name="AccentColorToggle" x:Uid="/Settings/PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
                         <Viewbox MaxWidth="292" Stretch="Fill">
-                            <ColorPicker
-                                x:Name="AccentColorPicker"
-                                ColorSpectrumShape="Ring"
-                                IsAlphaEnabled="False"
-                                IsAlphaSliderVisible="True"
-                                IsAlphaTextInputVisible="True"
-                                IsColorChannelTextInputVisible="True"
-                                IsColorSliderVisible="True"
-                                IsHexInputVisible="True" />
+                            <ColorPicker x:Name="AccentColorPicker"
+                                         ColorSpectrumShape="Ring"
+                                         IsAlphaEnabled="False"
+                                         IsAlphaSliderVisible="True"
+                                         IsAlphaTextInputVisible="True"
+                                         IsColorChannelTextInputVisible="True"
+                                         IsColorSliderVisible="True"
+                                         IsHexInputVisible="True" />
                         </Viewbox>
                     </StackPanel>
                 </StackPanel>
