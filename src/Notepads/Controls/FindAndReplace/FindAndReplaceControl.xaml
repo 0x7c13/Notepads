@@ -1,92 +1,107 @@
-﻿<UserControl
-    x:Class="Notepads.Controls.FindAndReplace.FindAndReplaceControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
-    mc:Ignorable="d"
-    d:DesignHeight="72"
-    d:DesignWidth="250">
+﻿<UserControl x:Class="Notepads.Controls.FindAndReplace.FindAndReplaceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             HighContrastAdjustment="None"
+             d:DesignWidth="340"
+             d:DesignHeight="72"
+             mc:Ignorable="d">
 
-    <Grid x:Name="FindAndReplaceRootGrid" KeyDown="FindAndReplaceRootGrid_KeyDown">
-
+    <Grid x:Name="FindAndReplaceRootGrid"
+          Padding="1,1,1,1"
+          RowSpacing="4"
+          KeyDown="FindAndReplaceRootGrid_KeyDown">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Grid.Column="0" Padding="1, 1, 1, 1" Height="36" x:Name="ToggleReplaceModeButtonGrid">
+        <Grid x:Name="ToggleReplaceModeButtonGrid"
+              Grid.Row="0"
+              Grid.Column="0">
             <Button x:Name="ToggleReplaceModeButton"
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
-                    Grid.Column="0"
-                    IsTabStop="False"
-                    Width="20"
-                    Padding="0"
-                    FontSize="12"
                     Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE00F;"
-                    FontFamily="Segoe MDL2 Assets"
-                    Click="ToggleReplaceModeButton_OnClick">
-            </Button>
+                    Width="20"
+                    MinHeight="32"
+                    d:Content="&#xE76C;"
+                    FontSize="12"
+                    Click="ToggleReplaceModeButton_OnClick"
+                    IsTabStop="False" />
         </Grid>
 
-        <RelativePanel Grid.Row="0" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="FindBarPlaceHolder">
-
+        <RelativePanel x:Name="FindBarPlaceHolder"
+                       Grid.Row="0"
+                       Grid.Column="1">
             <findAndReplace:FindAndReplaceTextBox x:Name="FindBar"
                                                   x:Uid="FindAndReplace_FindBar"
-                                                  Style="{StaticResource TransparentTextBoxStyle}"
-                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
                                                   RelativePanel.AlignLeftWithPanel="True"
                                                   RelativePanel.AlignRightWithPanel="True"
+                                                  Style="{StaticResource TransparentTextBoxStyle}"
+                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                                  BorderThickness="0"
+                                                  Padding="10,3,32,6"
                                                   HorizontalAlignment="Stretch"
                                                   VerticalAlignment="Stretch"
-                                                  Padding="10,3,32,6"
-                                                  IsSpellCheckEnabled="False"
-                                                  TextAlignment="Left"
-                                                  BorderThickness="0"
                                                   FontSize="15"
-                                                  TextChanged="FindBar_OnTextChanged"
-                                                  KeyDown="FindBar_OnKeyDown"
+                                                  TextAlignment="Left"
                                                   GotFocus="FindBar_GotFocus"
-                                                  LostFocus="FindBar_LostFocus"/>
+                                                  IsSpellCheckEnabled="False"
+                                                  KeyDown="FindBar_OnKeyDown"
+                                                  LostFocus="FindBar_LostFocus"
+                                                  d:PlaceholderText="Find"
+                                                  TextChanged="FindBar_OnTextChanged" />
 
-            <Grid RelativePanel.AlignRightWithPanel="True" x:Name="OptionButtonGrid" Background="Transparent">
-                <Border x:Name="OptionButtonSelectionIndicator"
-                        BorderBrush="{StaticResource SystemControlBackgroundAccentBrush}" 
-                        VerticalAlignment="Bottom" 
-                        BorderThickness="1" 
-                        Margin="9"
-                        Visibility="Collapsed"/>
+            <Grid x:Name="OptionButtonGrid" RelativePanel.AlignRightWithPanel="True">
+                <Line x:Name="OptionButtonSelectionIndicator"
+                      X1="9" Y1="24"
+                      X2="23" Y2="24"
+                      Stroke="{ThemeResource SystemControlHighlightAccentBrush}"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Visibility="Collapsed"
+                      d:Visibility="Visible"
+                      IsHitTestVisible="False" />
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
-                        IsTabStop="False"
-                        Width="36"
-                        FontSize="16"
                         Style="{StaticResource DismissButtonStyle}"
-                        Content="&#xE712;" 
-                        FontFamily="Segoe MDL2 Assets">
+                        Width="32"
+                        Height="32"
+                        Content="&#xE712;"
+                        FontSize="16"
+                        IsTabStop="False">
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Name="MatchCaseToggle"
+                                                  x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase"
+                                                  Click="OptionButtonFlyoutItem_OnClick"
+                                                  HighContrastAdjustment="None">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="C"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="C" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord" x:Name="MatchWholeWordToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Name="MatchWholeWordToggle"
+                                                  x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord"
+                                                  Click="OptionButtonFlyoutItem_OnClick"
+                                                  HighContrastAdjustment="None">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="W"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="W" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
-                            <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex" x:Name="UseRegexToggle" Click="OptionButtonFlyoutItem_OnClick">
+                            <ToggleMenuFlyoutItem x:Name="UseRegexToggle"
+                                                  x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex"
+                                                  Click="OptionButtonFlyoutItem_OnClick"
+                                                  HighContrastAdjustment="None">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Modifiers="Menu" Key="E"/>
+                                    <KeyboardAccelerator Modifiers="Menu" Key="E" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
                         </MenuFlyout>
@@ -95,25 +110,9 @@
             </Grid>
         </RelativePanel>
 
-        <Grid Grid.Row="1" Grid.Column="1" Padding="1, 1, 1, 1" Height="36" x:Name="ReplaceBarPlaceHolder">
-            <findAndReplace:FindAndReplaceTextBox x:Name="ReplaceBar"
-                                                  x:Uid="FindAndReplace_ReplaceBar"
-                                                  Style="{StaticResource TransparentTextBoxStyle}"
-                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                                                  HorizontalAlignment="Stretch"
-                                                  VerticalAlignment="Stretch"
-                                                  IsSpellCheckEnabled="False"
-                                                  TextAlignment="Left"
-                                                  BorderThickness="0"
-                                                  FontSize="15"
-                                                  TextChanged="ReplaceBar_OnTextChanged"
-                                                  KeyDown="ReplaceBar_OnKeyDown"
-                                                  GotFocus="ReplaceBar_GotFocus"
-                                                  LostFocus="ReplaceBar_LostFocus"/>
-        </Grid>
-
-        <Grid Grid.Row="0" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">
-
+        <Grid Grid.Row="0"
+              Grid.Column="2"
+              Padding="2,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -122,51 +121,71 @@
 
             <Button x:Name="SearchBackwardButton"
                     x:Uid="FindAndReplace_SearchBackwardButton"
-                    Width="36"
-                    Grid.Column="0" 
-                    IsEnabled="False"
-                    IsTabStop="False"
-                    FontSize="16"
+                    Grid.Column="0"
                     Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE110;" 
-                    FontFamily="Segoe MDL2 Assets"
-                    Click="SearchBackwardButton_OnClick">
+                    Width="36"
+                    Height="32"
+                    Content="&#xE74A;"
+                    FontSize="16"
+                    Click="SearchBackwardButton_OnClick"
+                    IsEnabled="False"
+                    IsTabStop="False">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="Shift" Key="F3"/>
+                    <KeyboardAccelerator Modifiers="Shift" Key="F3" />
                 </Button.KeyboardAccelerators>
             </Button>
 
             <Button x:Name="SearchForwardButton"
                     x:Uid="FindAndReplace_SearchForwardButton"
-                    Width="36"
                     Grid.Column="1"
-                    IsEnabled="False"
-                    IsTabStop="False"
-                    FontSize="16"
                     Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE74B;" 
-                    FontFamily="Segoe MDL2 Assets"
-                    Click="SearchForwardButton_OnClick">
+                    Width="36"
+                    Height="32"
+                    Content="&#xE74B;"
+                    FontSize="16"
+                    Click="SearchForwardButton_OnClick"
+                    IsEnabled="False"
+                    IsTabStop="False">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F3"/>
+                    <KeyboardAccelerator Key="F3" />
                 </Button.KeyboardAccelerators>
             </Button>
 
             <Button x:Name="DismissButton"
                     x:Uid="FindAndReplace_DismissButton"
-                    IsTabStop="False"
-                    Width="36"
-                    Grid.Column="2" 
-                    FontSize="16"
+                    Grid.Column="2"
                     Style="{StaticResource DismissButtonStyle}"
-                    Content="&#xE894;" 
-                    FontFamily="Segoe MDL2 Assets" 
-                    Click="DismissButton_OnClick" >
-            </Button>
+                    Width="36"
+                    Height="32"
+                    Content="&#xE894;"
+                    FontSize="16"
+                    Click="DismissButton_OnClick"
+                    IsTabStop="False" />
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="2" Padding="1, 1, 1, 1" Height="36">
+        <Grid x:Name="ReplaceBarPlaceHolder"
+              Grid.Row="1"
+              Grid.Column="1">
+            <findAndReplace:FindAndReplaceTextBox x:Name="ReplaceBar"
+                                                  x:Uid="FindAndReplace_ReplaceBar"
+                                                  Style="{StaticResource TransparentTextBoxStyle}"
+                                                  Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                                                  BorderThickness="0"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  FontSize="15"
+                                                  TextAlignment="Left"
+                                                  GotFocus="ReplaceBar_GotFocus"
+                                                  IsSpellCheckEnabled="False"
+                                                  KeyDown="ReplaceBar_OnKeyDown"
+                                                  LostFocus="ReplaceBar_LostFocus"
+                                                  d:PlaceholderText="Replace"
+                                                  TextChanged="ReplaceBar_OnTextChanged" />
+        </Grid>
 
+        <Grid Grid.Row="1"
+              Grid.Column="2"
+              Padding="2,0,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -175,33 +194,33 @@
 
                 <Button x:Name="ReplaceButton"
                         x:Uid="FindAndReplace_ReplaceButton"
-                        IsEnabled="False"
-                        IsTabStop="False"
-                        Width="36"
-                        Grid.Column="0" 
-                        FontSize="16"
+                        Grid.Column="0"
                         Style="{StaticResource DismissButtonStyle}"
+                        Width="36"
+                        Height="32"
                         Content="&#xE8AB;"
-                        FontFamily="Segoe MDL2 Assets"
-                        Click="ReplaceButton_OnClick">
+                        FontSize="16"
+                        Click="ReplaceButton_OnClick"
+                        IsEnabled="False"
+                        IsTabStop="False">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Menu" Key="R"/>
+                        <KeyboardAccelerator Modifiers="Menu" Key="R" />
                     </Button.KeyboardAccelerators>
                 </Button>
 
                 <Button x:Name="ReplaceAllButton"
                         x:Uid="FindAndReplace_ReplaceAllButton"
-                        IsEnabled="False"
-                        IsTabStop="False"
-                        Width="36"
-                        Grid.Column="1" 
-                        FontSize="16"
+                        Grid.Column="1"
                         Style="{StaticResource DismissButtonStyle}"
-                        Content="&#xE7FD;" 
-                        FontFamily="Segoe MDL2 Assets"
-                        Click="ReplaceAllButton_OnClick">
+                        Width="36"
+                        Height="32"
+                        Content="&#xE7FD;"
+                        FontSize="16"
+                        Click="ReplaceAllButton_OnClick"
+                        IsEnabled="False"
+                        IsTabStop="False">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter"/>
+                        <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter" />
                     </Button.KeyboardAccelerators>
                 </Button>
             </Grid>

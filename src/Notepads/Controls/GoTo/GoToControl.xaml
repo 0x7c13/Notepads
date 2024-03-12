@@ -1,14 +1,17 @@
-﻿<UserControl
-    x:Class="Notepads.Controls.GoTo.GoToControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignWidth="250" Height="36">
+﻿<UserControl x:Class="Notepads.Controls.GoTo.GoToControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             HighContrastAdjustment="None"
+             d:DesignWidth="260"
+             d:DesignHeight="36"
+             mc:Ignorable="d">
 
-    <Grid Padding="1, 1, 1, 1" Height="36" x:Name="GoToRootGrid" KeyDown="GoToRootGrid_KeyDown">
-        
+    <Grid x:Name="GoToRootGrid"
+          Height="36"
+          Padding="1,1,1,1"
+          KeyDown="GoToRootGrid_KeyDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -16,49 +19,56 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" x:Uid="GoTo_GoToBarLabel" Margin="5,0,8,3" FontSize="15" VerticalAlignment="Center" TextAlignment="Center"/>
+        <TextBlock x:Uid="GoTo_GoToBarLabel"
+                   Grid.Column="0"
+                   Margin="6,0,8,5"
+                   VerticalAlignment="Center"
+                   FontSize="15"
+                   d:Text="Go To:" />
 
-        <Grid Grid.Column="1">
-            <TextBox x:Name="GoToBar"
-                     x:Uid="GoTo_GoToBar"
-                     Style="{StaticResource TransparentTextBoxStyle}"
-                     Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     IsSpellCheckEnabled="False"
-                     TextAlignment="Left"
-                     BorderThickness="0"
-                     FontSize="15"
-                     BeforeTextChanging="GoToBar_BeforeTextChanging"
-                     TextChanged="GoToBar_OnTextChanged"
-                     KeyDown="GoToBar_OnKeyDown"
-                     GotFocus="GoToBar_GotFocus"
-                     LostFocus="GoToBar_LostFocus"/>
-        </Grid>
+        <TextBox x:Name="GoToBar"
+                 x:Uid="GoTo_GoToBar"
+                 Grid.Column="1"
+                 Style="{StaticResource TransparentTextBoxStyle}"
+                 Foreground="{ThemeResource SystemControlHighlightChromeAltLowBrush}"
+                 BorderThickness="0"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Top"
+                 FontSize="15"
+                 TextAlignment="Left"
+                 BeforeTextChanging="GoToBar_BeforeTextChanging"
+                 GotFocus="GoToBar_GotFocus"
+                 InputScope="Number"
+                 IsSpellCheckEnabled="False"
+                 KeyDown="GoToBar_OnKeyDown"
+                 LostFocus="GoToBar_LostFocus"
+                 d:PlaceholderText="Go To Line"
+                 TextChanged="GoToBar_OnTextChanged" />
 
         <Button x:Name="SearchButton"
                 x:Uid="GoTo_SearchButton"
-                Width="36"
-                Grid.Column="2" 
-                Visibility="Collapsed"
-                IsTabStop="False"
-                FontSize="16"
+                Grid.Column="2"
                 Style="{StaticResource DismissButtonStyle}"
-                Content="&#xEBE7;" 
-                FontFamily="Segoe MDL2 Assets"
-                Click="SearchButton_OnClick">
-        </Button>
+                Width="36"
+                Height="32"
+                VerticalAlignment="Top"
+                Content="&#xEBE7;"
+                FontSize="16"
+                Visibility="Collapsed"
+                d:Visibility="Visible"
+                Click="SearchButton_OnClick"
+                IsTabStop="False" />
 
         <Button x:Name="DismissButton"
                 x:Uid="FindAndReplace_DismissButton"
-                IsTabStop="False"
-                Width="36"
-                Grid.Column="3" 
-                FontSize="16"
+                Grid.Column="3"
                 Style="{StaticResource DismissButtonStyle}"
-                Content="&#xE894;" 
-                FontFamily="Segoe MDL2 Assets" 
-                Click="DismissButton_OnClick" >
-        </Button>
+                Width="36"
+                Height="32"
+                VerticalAlignment="Top"
+                Content="&#xE894;"
+                FontSize="16"
+                Click="DismissButton_OnClick"
+                IsTabStop="False" />
     </Grid>
 </UserControl>

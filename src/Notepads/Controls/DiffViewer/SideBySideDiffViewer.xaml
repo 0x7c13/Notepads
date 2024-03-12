@@ -1,116 +1,96 @@
-﻿<UserControl
-    x:Class="Notepads.Controls.DiffViewer.SideBySideDiffViewer"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource SystemControlForegroundTransparentBrush}">
+﻿<UserControl x:Class="Notepads.Controls.DiffViewer.SideBySideDiffViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
-                                     Opacity="0.25"
-                                     Color="White"/>
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush"
-                                     Opacity="0.35"
-                                     Color="LightGray"/>
-                </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
-                                  Opacity="0.15"
-                                  Color="Black"/>
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush"
-                                     Opacity="0.2"
-                                     Color="Black"/>
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.2" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.15" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{StaticResource SystemBaseHighColor}" Opacity="0.05" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.25" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush"
-                                     Color="{ThemeResource SystemColorHighlightColor}"/>
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush"
-                                     Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
-
     </UserControl.Resources>
+
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Column="0">
-
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
-                <TextBlock Grid.Row="0"
-                           x:Uid="DiffViewer_Header_OldTextTittle"
-                           FontStyle="Italic"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center">
-                </TextBlock>
+            <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
                 <Button x:Name="DismissButton"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        IsTabStop="False"
-                        Padding="0"
-                        Height="25"
-                        Width="32"
-                        FontSize="12"
+                        x:Uid="FindAndReplace_DismissButton"
                         Style="{StaticResource DismissButtonStyle}"
-                        Content="&#xE894;" 
-                        FontFamily="Segoe MDL2 Assets">
+                        Width="42"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Content="&#xE894;"
+                        FontSize="12"
+                        IsTabStop="False">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Escape"/>
+                        <KeyboardAccelerator Key="Escape" />
                     </Button.KeyboardAccelerators>
                 </Button>
+                <TextBlock x:Uid="DiffViewer_Header_OldTextTittle"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontStyle="Italic"
+                           d:Text="Before your changes" />
             </Grid>
 
             <ScrollViewer Name="LeftScroller"
-                              Grid.Row="1"
-                              IsTabStop="False"
-                              Padding="6, 0, 8, 6"
-                              HorizontalScrollBarVisibility="Hidden"
-                              VerticalScrollBarVisibility="Hidden">
+                          Grid.Row="1"
+                          Padding="6,0,8,6"
+                          HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollBarVisibility="Hidden"
+                          IsTabStop="False">
                 <Border Name="LeftTextBlockBorder" Background="Transparent">
-                    <RichTextBlock Name="LeftTextBlock"
-                                   FontFamily="Consolas"/>
+                    <RichTextBlock Name="LeftTextBlock" FontFamily="Consolas" />
                 </Border>
             </ScrollViewer>
         </Grid>
 
-        <Grid Column="1" Background="{ThemeResource RightBoxBackgroundThemeBrush}">
-
+        <Grid Grid.Column="1" Background="{ThemeResource RightBoxBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
-                <TextBlock Grid.Row="0"
-                           x:Uid="DiffViewer_Header_NewTextTittle"
-                           FontStyle="Italic"
+            <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
+                <TextBlock x:Uid="DiffViewer_Header_NewTextTittle"
                            HorizontalAlignment="Center"
-                           VerticalAlignment="Center">
-                </TextBlock>
+                           VerticalAlignment="Center"
+                           FontStyle="Italic"
+                           d:Text="After your changes" />
             </Grid>
 
             <ScrollViewer Name="RightScroller"
                           Grid.Row="1"
-                          IsTabStop="False"
-                          Padding="6, 0, 8, 6"
+                          Padding="6,0,8,6"
                           HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
+                          VerticalScrollBarVisibility="Auto"
+                          IsTabStop="False">
                 <Border Name="RightTextBlockBorder" Background="Transparent">
-                    <RichTextBlock Name="RightTextBlock"
-                                   FontFamily="Consolas"/>
+                    <RichTextBlock Name="RightTextBlock" FontFamily="Consolas" />
                 </Border>
             </ScrollViewer>
         </Grid>
