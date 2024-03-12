@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Height="36"
-             d:DesignWidth="250"
+             d:DesignWidth="260"
              mc:Ignorable="d">
 
     <Grid x:Name="GoToRootGrid"
@@ -22,6 +22,7 @@
                    Grid.Column="0"
                    Margin="5,0,8,3"
                    VerticalAlignment="Center"
+                   d:Text="Go To:"
                    FontSize="15"
                    TextAlignment="Center" />
 
@@ -40,7 +41,8 @@
                      GotFocus="GoToBar_GotFocus"
                      IsSpellCheckEnabled="False"
                      KeyDown="GoToBar_OnKeyDown"
-                     LostFocus="GoToBar_LostFocus" />
+                     LostFocus="GoToBar_LostFocus"
+                     d:PlaceholderText="Go To Line" />
         </Grid>
 
         <Button x:Name="SearchButton"
@@ -52,6 +54,7 @@
                 FontFamily="Segoe MDL2 Assets"
                 FontSize="16"
                 Visibility="Collapsed"
+                d:Visibility="Visible"
                 Click="SearchButton_OnClick"
                 IsTabStop="False" />
 

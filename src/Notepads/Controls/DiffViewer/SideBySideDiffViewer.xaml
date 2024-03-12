@@ -57,6 +57,7 @@
                            Grid.Row="0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
+                           d:Text="Before your changes"
                            FontStyle="Italic" />
             </Grid>
 
@@ -83,6 +84,7 @@
                            Grid.Row="0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
+                           d:Text="After your changes"
                            FontStyle="Italic" />
             </Grid>
 

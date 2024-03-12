@@ -5,7 +5,7 @@
              xmlns:findAndReplace="using:Notepads.Controls.FindAndReplace"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="72"
-             d:DesignWidth="250"
+             d:DesignWidth="340"
              mc:Ignorable="d">
 
     <Grid x:Name="FindAndReplaceRootGrid" KeyDown="FindAndReplaceRootGrid_KeyDown">
@@ -32,6 +32,7 @@
                     Width="20"
                     Padding="0"
                     Content="&#xE00F;"
+                    d:Content="&#xE76C;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="12"
                     Click="ToggleReplaceModeButton_OnClick"
@@ -59,7 +60,8 @@
                                                   GotFocus="FindBar_GotFocus"
                                                   IsSpellCheckEnabled="False"
                                                   KeyDown="FindBar_OnKeyDown"
-                                                  LostFocus="FindBar_LostFocus" />
+                                                  LostFocus="FindBar_LostFocus"
+                                                  d:PlaceholderText="Find" />
 
             <Grid x:Name="OptionButtonGrid"
                   RelativePanel.AlignRightWithPanel="True"
@@ -69,7 +71,8 @@
                         BorderThickness="1"
                         Margin="9"
                         VerticalAlignment="Bottom"
-                        Visibility="Collapsed" />
+                        Visibility="Collapsed"
+                        d:Visibility="Visible" />
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         Style="{StaticResource DismissButtonStyle}"
@@ -179,7 +182,8 @@
                                                   GotFocus="ReplaceBar_GotFocus"
                                                   IsSpellCheckEnabled="False"
                                                   KeyDown="ReplaceBar_OnKeyDown"
-                                                  LostFocus="ReplaceBar_LostFocus" />
+                                                  LostFocus="ReplaceBar_LostFocus"
+                                                  d:PlaceholderText="Replace" />
         </Grid>
 
         <Grid Grid.Row="1"
