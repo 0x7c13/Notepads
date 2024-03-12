@@ -77,13 +77,15 @@ namespace Notepads.Controls.FindAndReplace
 
         public double GetHeight(bool showReplaceBar)
         {
+            double FindAndReplaceRootGridHeight = 36;
+
             if (showReplaceBar)
             {
-                return FindBarPlaceHolder.Height + ReplaceBarPlaceHolder.Height;
+                return FindAndReplaceRootGridHeight + FindAndReplaceRootGridHeight;
             }
             else
             {
-                return FindBarPlaceHolder.Height;
+                return FindAndReplaceRootGridHeight;
             }
         }
 
@@ -116,7 +118,8 @@ namespace Notepads.Controls.FindAndReplace
             if (showReplaceBar)
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 12 };
+                ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Stretch;
+                ToggleReplaceModeButton.Content = "\uE70D";
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -127,7 +130,8 @@ namespace Notepads.Controls.FindAndReplace
             else
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 12 };
+                ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Top;
+                ToggleReplaceModeButton.Content = "\uE76C";
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
