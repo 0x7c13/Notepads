@@ -2,60 +2,67 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Notepads">
 
-    <Style x:Key="DismissButtonStyle" TargetType="ButtonBase">
-        <Setter Property="Background" Value="{ThemeResource HyperlinkButtonBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
-        <Setter Property="Width" Value="40" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <Setter Property="HighContrastAdjustment" Value="None" />
+    <Style x:Name="DismissButtonStyle" TargetType="Button">
+        <Setter Property="Padding" Value="0,0,0,0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ButtonBase">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}"
-                          Margin="{TemplateBinding Padding}">
-                        <Border x:Name="TextBorder"
-                                BorderBrush="Transparent"
-                                BorderThickness="2">
-                            <ContentPresenter x:Name="Text"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Content="{TemplateBinding Content}" />
-                        </Border>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="ButtonLayoutGrid"
+                          Background="{ThemeResource SystemControlTransparentBrush}"
+                          BorderBrush="{ThemeResource HyperlinkButtonBorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <TextBlock x:Name="GlyphElement"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{TemplateBinding Content}"
+                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   FontStyle="Normal"
+                                   AutomationProperties.AccessibilityView="Raw" />
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
+
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemListMediumColor}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlTransparentBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemListMediumColor}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlTransparentBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundDisabled}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlTransparentBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="BorderBrush">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>

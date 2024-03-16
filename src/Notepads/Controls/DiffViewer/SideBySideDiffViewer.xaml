@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             Background="{ThemeResource SystemControlForegroundTransparentBrush}"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -15,10 +14,10 @@
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="White" Opacity="0.25" />
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="LightGray" Opacity="0.35" />
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="Black" Opacity="0.05" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
                     <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{ThemeResource SystemColorHighlightColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
@@ -33,20 +32,18 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
+                <RowDefinition Height="24" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
                 <Button x:Name="DismissButton"
                         Style="{StaticResource DismissButtonStyle}"
-                        Width="32"
-                        Height="25"
-                        Padding="0"
+                        Width="42"
+                        Height="24"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Content="&#xE894;"
-                        FontFamily="Segoe MDL2 Assets"
                         FontSize="12"
                         IsTabStop="False">
                     <Button.KeyboardAccelerators>
@@ -54,7 +51,6 @@
                     </Button.KeyboardAccelerators>
                 </Button>
                 <TextBlock x:Uid="DiffViewer_Header_OldTextTittle"
-                           Grid.Row="0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            d:Text="Before your changes"
@@ -75,13 +71,12 @@
 
         <Grid Grid.Column="1" Background="{ThemeResource RightBoxBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
+                <RowDefinition Height="24" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
                 <TextBlock x:Uid="DiffViewer_Header_NewTextTittle"
-                           Grid.Row="0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            d:Text="After your changes"

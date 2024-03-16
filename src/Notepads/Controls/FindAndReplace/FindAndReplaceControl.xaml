@@ -8,7 +8,9 @@
              d:DesignWidth="340"
              mc:Ignorable="d">
 
-    <Grid x:Name="FindAndReplaceRootGrid" KeyDown="FindAndReplaceRootGrid_KeyDown">
+    <Grid x:Name="FindAndReplaceRootGrid"
+          Padding="1,1,1,1"
+          KeyDown="FindAndReplaceRootGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,19 +23,14 @@
 
         <Grid x:Name="ToggleReplaceModeButtonGrid"
               Grid.Row="0"
-              Grid.Column="0"
-              Height="36"
-              Padding="1,1,1,1">
+              Grid.Column="0">
 
             <Button x:Name="ToggleReplaceModeButton"
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
-                    Grid.Column="0"
                     Style="{StaticResource DismissButtonStyle}"
                     Width="20"
-                    Padding="0"
-                    Content="&#xE00F;"
+                    MinHeight="32"
                     d:Content="&#xE76C;"
-                    FontFamily="Segoe MDL2 Assets"
                     FontSize="12"
                     Click="ToggleReplaceModeButton_OnClick"
                     IsTabStop="False" />
@@ -42,8 +39,7 @@
         <RelativePanel x:Name="FindBarPlaceHolder"
                        Grid.Row="0"
                        Grid.Column="1"
-                       Height="36"
-                       Padding="1,1,1,1">
+                       Height="36">
             <findAndReplace:FindAndReplaceTextBox x:Name="FindBar"
                                                   x:Uid="FindAndReplace_FindBar"
                                                   RelativePanel.AlignLeftWithPanel="True"
@@ -63,22 +59,23 @@
                                                   LostFocus="FindBar_LostFocus"
                                                   d:PlaceholderText="Find" />
 
-            <Grid x:Name="OptionButtonGrid"
-                  RelativePanel.AlignRightWithPanel="True"
-                  Background="Transparent">
-                <Border x:Name="OptionButtonSelectionIndicator"
-                        BorderBrush="{StaticResource SystemControlBackgroundAccentBrush}"
-                        BorderThickness="1"
-                        Margin="9"
-                        VerticalAlignment="Bottom"
-                        Visibility="Collapsed"
-                        d:Visibility="Visible" />
+            <Grid x:Name="OptionButtonGrid" RelativePanel.AlignRightWithPanel="True">
+                <Line x:Name="OptionButtonSelectionIndicator"
+                      X1="9" Y1="24"
+                      X2="23" Y2="24"
+                      Stroke="{ThemeResource SystemControlHighlightAccentBrush}"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Visibility="Collapsed"
+                      d:Visibility="Visible"
+                      IsHitTestVisible="False" />
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         Style="{StaticResource DismissButtonStyle}"
-                        Width="36"
+                        Width="32"
+                        Height="32"
                         Content="&#xE712;"
-                        FontFamily="Segoe MDL2 Assets"
                         FontSize="16"
                         IsTabStop="False">
                     <Button.Flyout>
@@ -112,8 +109,8 @@
 
         <Grid Grid.Row="0"
               Grid.Column="2"
-              Height="36"
-              Padding="1,1,1,1">
+              Padding="2,0,0,0"
+              VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -125,8 +122,8 @@
                     Grid.Column="0"
                     Style="{StaticResource DismissButtonStyle}"
                     Width="36"
-                    Content="&#xE110;"
-                    FontFamily="Segoe MDL2 Assets"
+                    Height="32"
+                    Content="&#xE74A;"
                     FontSize="16"
                     Click="SearchBackwardButton_OnClick"
                     IsEnabled="False"
@@ -141,8 +138,8 @@
                     Grid.Column="1"
                     Style="{StaticResource DismissButtonStyle}"
                     Width="36"
+                    Height="32"
                     Content="&#xE74B;"
-                    FontFamily="Segoe MDL2 Assets"
                     FontSize="16"
                     Click="SearchForwardButton_OnClick"
                     IsEnabled="False"
@@ -157,8 +154,8 @@
                     Grid.Column="2"
                     Style="{StaticResource DismissButtonStyle}"
                     Width="36"
+                    Height="32"
                     Content="&#xE894;"
-                    FontFamily="Segoe MDL2 Assets"
                     FontSize="16"
                     Click="DismissButton_OnClick"
                     IsTabStop="False" />
@@ -167,8 +164,7 @@
         <Grid x:Name="ReplaceBarPlaceHolder"
               Grid.Row="1"
               Grid.Column="1"
-              Height="36"
-              Padding="1,1,1,1">
+              VerticalAlignment="Top">
             <findAndReplace:FindAndReplaceTextBox x:Name="ReplaceBar"
                                                   x:Uid="FindAndReplace_ReplaceBar"
                                                   Style="{StaticResource TransparentTextBoxStyle}"
@@ -188,8 +184,8 @@
 
         <Grid Grid.Row="1"
               Grid.Column="2"
-              Height="36"
-              Padding="1,1,1,1">
+              Padding="2,0,0,0"
+              VerticalAlignment="Top">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -201,8 +197,8 @@
                         Grid.Column="0"
                         Style="{StaticResource DismissButtonStyle}"
                         Width="36"
+                        Height="32"
                         Content="&#xE8AB;"
-                        FontFamily="Segoe MDL2 Assets"
                         FontSize="16"
                         Click="ReplaceButton_OnClick"
                         IsEnabled="False"
@@ -217,8 +213,8 @@
                         Grid.Column="1"
                         Style="{StaticResource DismissButtonStyle}"
                         Width="36"
+                        Height="32"
                         Content="&#xE7FD;"
-                        FontFamily="Segoe MDL2 Assets"
                         FontSize="16"
                         Click="ReplaceAllButton_OnClick"
                         IsEnabled="False"
