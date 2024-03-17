@@ -104,7 +104,9 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="markdown">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="text/plain">.md</uap:FileType>
+              <uap:FileType ContentType="text/plain"
+                            uap4:ShellNewDisplayName="ms-resource:Manifest/MarkdownFileDisplayName"
+                            uap4:ShellNewFileName="Resource\Markdown Document.md">.md</uap:FileType>
               <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
               <uap:FileType ContentType="text/plain">.mkd</uap:FileType>
               <uap:FileType ContentType="text/plain">.mdwn</uap:FileType>

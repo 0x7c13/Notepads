@@ -284,6 +284,7 @@
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Resource\Markdown Document.md" />
     <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
     <Content Include="Resource\Text Document.txt" />
   </ItemGroup>
