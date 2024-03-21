@@ -117,7 +117,7 @@ namespace Notepads.Controls.FindAndReplace
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
                 ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Stretch;
-                ToggleReplaceModeButton.Content = "\xE70D";
+                ToggleReplaceModeButton.Content = "\uE70D";
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -129,7 +129,7 @@ namespace Notepads.Controls.FindAndReplace
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
                 ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Top;
-                ToggleReplaceModeButton.Content = "\xE76C";
+                ToggleReplaceModeButton.Content = "\uE76C";
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
