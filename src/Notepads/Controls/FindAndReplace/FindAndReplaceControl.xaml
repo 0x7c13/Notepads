@@ -84,21 +84,21 @@
                                                   x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase"
                                                   Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="C" Modifiers="Menu" />
+                                    <KeyboardAccelerator Modifiers="Menu" Key="C" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
                             <ToggleMenuFlyoutItem x:Name="MatchWholeWordToggle"
                                                   x:Uid="FindAndReplace_SearchOptionToggleButton_MatchWholeWord"
                                                   Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="W" Modifiers="Menu" />
+                                    <KeyboardAccelerator Modifiers="Menu" Key="W" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
                             <ToggleMenuFlyoutItem x:Name="UseRegexToggle"
                                                   x:Uid="FindAndReplace_SearchOptionToggleButton_UseRegex"
                                                   Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="E" Modifiers="Menu" />
+                                    <KeyboardAccelerator Modifiers="Menu" Key="E" />
                                 </ToggleMenuFlyoutItem.KeyboardAccelerators>
                             </ToggleMenuFlyoutItem>
                         </MenuFlyout>
@@ -129,7 +129,7 @@
                     IsEnabled="False"
                     IsTabStop="False">
                 <Button.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F3" Modifiers="Shift" />
+                    <KeyboardAccelerator Modifiers="Shift" Key="F3" />
                 </Button.KeyboardAccelerators>
             </Button>
 
@@ -204,7 +204,7 @@
                         IsEnabled="False"
                         IsTabStop="False">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="R" Modifiers="Menu" />
+                        <KeyboardAccelerator Modifiers="Menu" Key="R" />
                     </Button.KeyboardAccelerators>
                 </Button>
 
@@ -220,7 +220,7 @@
                         IsEnabled="False"
                         IsTabStop="False">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Enter" Modifiers="Control,Menu" />
+                        <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter" />
                     </Button.KeyboardAccelerators>
                 </Button>
             </Grid>
