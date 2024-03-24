@@ -3,6 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      d:DesignHeight="1120"
+      d:DesignWidth="333.333"
       mc:Ignorable="d">
 
     <Grid>
@@ -17,8 +19,8 @@
 
         <ScrollViewer Grid.Row="0"
                       Padding="{StaticResource SettingsPagePadding}"
-                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
                       IsTabStop="False"
                       UseSystemFocusVisuals="False">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
@@ -32,34 +34,36 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}"
                                    Margin="0,4"
-                                   FontWeight="Normal"
-                                   Text="{x:Bind AppName, Mode=OneTime}" />
+                                   Text="{x:Bind AppName, Mode=OneTime}"
+                                   d:Text="Notepads"
+                                   FontWeight="Normal" />
                         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"
-                                   Text="{x:Bind AppVersion, Mode=OneTime}" />
+                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                   Text="{x:Bind AppVersion, Mode=OneTime}"
+                                   d:Text="v1.0.0.0" />
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Description & Related Links -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}" Spacing="8">
                     <TextBlock x:Uid="/Settings/AboutPage_NotepadsShortDescription"
-                               Margin="0,0,0,8"
-                               TextWrapping="Wrap" />
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               Margin="0,0,0,12" />
                     <StackPanel Spacing="-4">
-                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_SourceCodeTitle" TextWrapping="Wrap" />
+                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_SourceCodeTitle" Style="{StaticResource BodyTextBlockStyle}" />
                         <HyperlinkButton Content="https://github.com/0x7c13/Notepads" NavigateUri="https://github.com/0x7c13/Notepads" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
-                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle" TextWrapping="Wrap" />
+                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_WebsiteTitle" Style="{StaticResource BodyTextBlockStyle}" />
                         <HyperlinkButton Content="https://www.NotepadsApp.com" NavigateUri="https://www.NotepadsApp.com" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
-                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_AuthorContactsTitle" TextWrapping="Wrap" />
+                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_AuthorContactsTitle" Style="{StaticResource BodyTextBlockStyle}" />
                         <HyperlinkButton Content="NotepadsApp@outlook.com" NavigateUri="mailto:NotepadsApp@outlook.com" />
                         <HyperlinkButton Content="Discord" NavigateUri="https://discord.gg/VqetCub" />
                     </StackPanel>
                     <StackPanel Spacing="-4">
-                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_IssueAndFeatureRequestsTitle" TextWrapping="Wrap" />
+                        <TextBlock x:Uid="/Settings/AboutPage_Notepads_IssueAndFeatureRequestsTitle" Style="{StaticResource BodyTextBlockStyle}" />
                         <HyperlinkButton Content="https://github.com/0x7c13/Notepads/issues" NavigateUri="https://github.com/0x7c13/Notepads/issues" />
                     </StackPanel>
                 </StackPanel>
@@ -67,7 +71,7 @@
                 <!-- Changelog -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AboutPage_ChangelogUrl_Title"
-                               Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                               Style="{StaticResource SubtitleAltTextBlockStyle}"
                                Margin="0,0,0,4" />
                     <HyperlinkButton Content="Notepads Releases" NavigateUri="https://github.com/0x7c13/Notepads/releases" />
                 </StackPanel>
@@ -75,7 +79,7 @@
                 <!-- Dependencies & References -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Uid="/Settings/AboutPage_DependenciesAndReferences_Title"
-                               Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                               Style="{StaticResource SubtitleAltTextBlockStyle}"
                                Margin="0,0,0,4" />
                     <StackPanel Spacing="-4">
                         <HyperlinkButton Content="Windows UI Library" NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml" />
@@ -90,20 +94,12 @@
 
                 <!-- Disclamer -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
-                    <TextBlock x:Uid="/Settings/AboutPage_Disclaimer_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
-                    <RichTextBlock MaxWidth="600" IsTextSelectionEnabled="False">
-                        <Paragraph>
-                            <Run x:Uid="/Settings/AboutPage_Disclaimer_Content" />
-                        </Paragraph>
-                        <Paragraph>
-                            <LineBreak /> Copyright (c) 2020-2024 Jackie (Jiaqi) Liu.
-                        </Paragraph>
-                        <Paragraph Margin="0,10,0,10">
-                            <Hyperlink NavigateUri="https://github.com/0x7c13/Notepads/blob/master/PRIVACY.md">
-                                <Run x:Uid="/Settings/AboutPage_PrivacyStatementTitle" />
-                            </Hyperlink>
-                        </Paragraph>
-                    </RichTextBlock>
+                    <TextBlock x:Uid="/Settings/AboutPage_Disclaimer_Title" Style="{StaticResource SubtitleAltTextBlockStyle}" />
+                    <TextBlock x:Uid="/Settings/AboutPage_Disclaimer_Content"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               Margin="0,0,0,16" />
+                    <TextBlock Margin="0,0,0,4" Text="Copyright (c) 2019-2024 Jackie (Jiaqi) Liu." />
+                    <HyperlinkButton x:Uid="/Settings/AboutPage_PrivacyStatementTitle" NavigateUri="https://github.com/0x7c13/Notepads/blob/master/PRIVACY.md" />
                 </StackPanel>
 
             </StackPanel>

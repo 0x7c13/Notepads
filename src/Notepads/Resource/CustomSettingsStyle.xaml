@@ -16,9 +16,10 @@
         <Setter Property="Margin" Value="0,8" />
     </Style>
 
-    <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
-        <Setter Property="FontSize" Value="18" />
+    <Style x:Key="SubtitleAltTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
         <Setter Property="Margin" Value="0,0,0,10" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="AutomationProperties.HeadingLevel" Value="Level2" />
     </Style>
     <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
         <Setter Property="Foreground" Value="{ThemeResource SystemControlDescriptionTextForegroundBrush}" />

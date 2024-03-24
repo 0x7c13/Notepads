@@ -3,20 +3,20 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      d:DesignWidth="333.333"
       mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="#222222" />
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="{ThemeResource SystemAltHighColor}" Opacity="0.4" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="WhiteSmoke" />
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="{ThemeResource SystemAltHighColor}" Opacity="0.7" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
-                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="{StaticResource SystemColorHighlightColor}" />
+                    <SolidColorBrush x:Key="SettingsPanelBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -29,12 +29,14 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+              BorderBrush="{ThemeResource SystemControlHighlightAltBaseMediumLowBrush}"
               BorderThickness="0,0,0,1"
               Margin="{StaticResource SettingsPagePadding}">
             <TextBlock x:Name="TitleTextBlock"
                        Style="{StaticResource TitleTextBlockStyle}"
-                       Padding="0,16,0,4" />
+                       Padding="0,16,0,8"
+                       d:Text="Panel Title"
+                       AutomationProperties.HeadingLevel="Level1" />
         </Grid>
 
         <Grid Grid.Row="1">

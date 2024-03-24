@@ -4,6 +4,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:utilities="using:Notepads.Utilities"
+      d:DesignWidth="333.333"
       mc:Ignorable="d">
 
     <Grid>
@@ -18,26 +19,26 @@
 
         <ScrollViewer Grid.Row="0"
                       Padding="{StaticResource SettingsPagePadding}"
-                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
                       IsTabStop="False"
                       UseSystemFocusVisuals="False">
             <StackPanel Margin="{StaticResource SettingsPageFooterMargin}" HorizontalAlignment="Left">
 
                 <!-- Status Bar -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
-                    <TextBlock x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                    <TextBlock x:Uid="/Settings/AdvancedPage_StatusBarSettings_Title" Style="{StaticResource SubtitleAltTextBlockStyle}" />
                     <StackPanel>
-                        <ToggleSwitch x:Name="ShowStatusBarToggleSwitch" x:Uid="/Settings/AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
+                        <ToggleSwitch x:Name="ShowStatusBarToggleSwitch" x:Uid="/Settings/AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch" />
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Smart Copy -->
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
-                    <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Title" Style="{StaticResource CompactSubtitleTextBlockStyle}" />
+                    <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Title" Style="{StaticResource SubtitleAltTextBlockStyle}" />
                     <StackPanel>
-                        <ToggleSwitch x:Name="EnableSmartCopyToggleSwitch" x:Uid="/Settings/AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
-                        <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
+                        <ToggleSwitch x:Name="EnableSmartCopyToggleSwitch" x:Uid="/Settings/AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch" />
+                        <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Description" Style="{StaticResource DescriptionTextBlockStyle}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -45,10 +46,10 @@
                 <StackPanel x:Name="SessionSnapshotSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="SessionSnapshotSettingsTitle"
                                x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Title"
-                               Style="{StaticResource CompactSubtitleTextBlockStyle}" />
-                    <StackPanel x:Name="SessionSnapshotSettingsControls">
-                        <ToggleSwitch x:Name="EnableSessionSnapshotToggleSwitch" x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
-                        <TextBlock x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" />
+                               Style="{StaticResource SubtitleAltTextBlockStyle}" />
+                    <StackPanel>
+                        <ToggleSwitch x:Name="EnableSessionSnapshotToggleSwitch" x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch" />
+                        <TextBlock x:Uid="/Settings/AdvancedPage_SessionSnapshotSettings_Description" Style="{StaticResource DescriptionTextBlockStyle}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -56,13 +57,13 @@
                 <StackPanel x:Name="LaunchPreferenceSettingsPanel" Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="LaunchPreferenceSettingsTitle"
                                x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_Title"
-                               Style="{StaticResource CompactSubtitleTextBlockStyle}" />
-                    <StackPanel x:Name="LaunchPreferenceSettingsControls">
-                        <ToggleSwitch x:Name="AlwaysOpenNewWindowToggleSwitch" x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
-                        <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description"
-                                   Style="{ThemeResource DescriptionTextBlockStyle}"
-                                   Margin="0,0,0,10" />
-                        <ToggleSwitch x:Name="ExitWhenLastTabClosedToggleSwitch" x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch" Style="{StaticResource CustomToggleSwitchStyle}" />
+                               Style="{StaticResource SubtitleAltTextBlockStyle}" />
+                    <StackPanel>
+                        <ToggleSwitch x:Name="AlwaysOpenNewWindowToggleSwitch" x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch" />
+                        <TextBlock x:Uid="/Settings/AdvancedPage_AlwaysOpenNewWindow_Description" Style="{StaticResource DescriptionTextBlockStyle}" />
+                        <ToggleSwitch x:Name="ExitWhenLastTabClosedToggleSwitch"
+                                      x:Uid="/Settings/AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch"
+                                      Margin="0,12,0,0" />
                     </StackPanel>
                 </StackPanel>
 
@@ -70,13 +71,14 @@
                 <StackPanel Style="{StaticResource SettingsSectionStyle}">
                     <TextBlock x:Name="LanguagePreferenceSettingsTitle"
                                x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Title"
-                               Style="{StaticResource CompactSubtitleTextBlockStyle}" />
-                    <StackPanel x:Name="LanguagePreferenceSettingsControls" Margin="0,6,0,0">
+                               Style="{StaticResource SubtitleAltTextBlockStyle}" />
+                    <StackPanel Margin="0,6,0,0">
                         <ComboBox x:Name="LanguagePicker"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Center"
                                   IsTextSearchEnabled="True"
-                                  ItemsSource="{x:Bind SupportedLanguages, Mode=OneTime}">
+                                  ItemsSource="{x:Bind SupportedLanguages, Mode=OneTime}"
+                                  d:PlaceholderText="System default">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="utilities:LanguageItem">
                                     <TextBlock Text="{x:Bind Name}" />
@@ -85,12 +87,13 @@
                         </ComboBox>
                         <TextBlock x:Name="RestartPrompt"
                                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
-                                   Style="{ThemeResource DescriptionTextBlockStyle}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                    Margin="0,8,0,0"
-                                   Visibility="Collapsed" />
+                                   Visibility="Collapsed"
+                                   d:Visibility="Visible" />
                         <TextBlock x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_Description"
-                                   Style="{ThemeResource DescriptionTextBlockStyle}"
+                                   Style="{StaticResource DescriptionTextBlockStyle}"
                                    Margin="0,6,0,0" />
                     </StackPanel>
                 </StackPanel>
