@@ -983,7 +983,7 @@
             FindAndReplacePlaceholder?.Dismiss();
         }
 
-        private void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
+        private async void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
             InitiateFindAndReplace(e);
@@ -992,6 +992,7 @@
             // We should re-focus on FindAndReplaceControl to make the next search "flows"
             if (!(sender is Button))
             {
+                await Task.Delay(10); // Wait for layout to refresh (ScrollViewer scroll to the found text) before focusing
                 FindAndReplaceControl.Focus(string.Empty, e.FindAndReplaceMode);
             }
         }
