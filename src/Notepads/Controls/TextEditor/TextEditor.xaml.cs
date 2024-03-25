@@ -461,9 +461,9 @@
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.P, (args) => { if (FileTypeUtility.IsPreviewSupported(FileType)) ShowHideContentPreview(); }),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.D, (args) => ShowHideSideBySideDiffViewer()),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, (args) =>
-                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next), out _)),
                 new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, (args) =>
-                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
+                    InitiateFindAndReplace(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous), out _)),
                 new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
             });
         }
@@ -986,22 +986,27 @@
         private async void FindAndReplaceControl_OnFindAndReplaceButtonClicked(object sender, FindAndReplaceEventArgs e)
         {
             TextEditorCore.Focus(FocusState.Programmatic);
-            InitiateFindAndReplace(e);
+            InitiateFindAndReplace(e, out bool found);
 
             // In case user hit "enter" key in search box instead of clicking on search button or hit F3
             // We should re-focus on FindAndReplaceControl to make the next search "flows"
             if (!(sender is Button))
             {
-                await Task.Delay(10); // Wait for layout to refresh (ScrollViewer scroll to the found text) before focusing
+                if (found)
+                {
+                    // Wait for layout to refresh (ScrollViewer scroll to the found text) before focusing
+                    await Task.Delay(10);
+                }
                 FindAndReplaceControl.Focus(string.Empty, e.FindAndReplaceMode);
             }
         }
 
-        private void InitiateFindAndReplace(FindAndReplaceEventArgs findAndReplaceEventArgs)
+        private void InitiateFindAndReplace(FindAndReplaceEventArgs findAndReplaceEventArgs, out bool found)
         {
+            found = false;
+
             if (string.IsNullOrEmpty(findAndReplaceEventArgs.SearchContext.SearchText)) return;
 
-            bool found = false;
             bool regexError = false;
 
             if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
