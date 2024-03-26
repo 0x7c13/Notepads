@@ -9,12 +9,12 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="Black" Opacity="0.15" />
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="Black" Opacity="0.2" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.15" />
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.2" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="White" Opacity="0.25" />
-                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="Black" Opacity="0.05" />
+                    <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{StaticResource SystemAltHighColor}" Opacity="0.25" />
+                    <SolidColorBrush x:Key="HeaderBackgroundThemeBrush" Color="{StaticResource SystemBaseHighColor}" Opacity="0.05" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <SolidColorBrush x:Key="RightBoxBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
