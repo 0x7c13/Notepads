@@ -41,10 +41,8 @@ namespace Notepads.Views.Settings
             if (App.IsGameBarWidget)
             {
                 // these settings don't make sense for Game Bar, there can be only one
-                SessionSnapshotSettingsTitle.Visibility = Visibility.Collapsed;
-                SessionSnapshotSettingsControls.Visibility = Visibility.Collapsed;
-                LaunchPreferenceSettingsTitle.Visibility = Visibility.Collapsed;
-                LaunchPreferenceSettingsControls.Visibility = Visibility.Collapsed;
+                SessionSnapshotSettingsPanel.Visibility = Visibility.Collapsed;
+                LaunchPreferenceSettingsPanel.Visibility = Visibility.Collapsed;
             }
 
             LanguagePicker.SelectedItem = SupportedLanguages.FirstOrDefault(language => language.ID == ApplicationLanguages.PrimaryLanguageOverride);
