@@ -149,7 +149,7 @@
     <value>Pour plus d'infos, visitez notre site :</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>Déclaration de confidentialité</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
