@@ -60,6 +60,24 @@
                                                   TextChanged="FindBar_OnTextChanged" />
 
             <Grid x:Name="OptionButtonGrid" RelativePanel.AlignRightWithPanel="True">
+                <Grid.Resources>
+                    <x:String x:Key="SelectionIndicatorScaleAnimationDuration">00:00:00.500</x:String>
+                    <BackEase x:Key="SelectionIndicatorEaseOutBackEase" EasingMode="EaseOut" Amplitude="0.5" />
+                    <BackEase x:Key="SelectionIndicatorEaseInBackEase" EasingMode="EaseIn" Amplitude="0.75" />
+
+                    <Storyboard x:Name="OptionButtonSelectedStoryboard">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorLineTransform" Storyboard.TargetProperty="ScaleX">
+                            <EasingDoubleKeyFrame KeyTime="{StaticResource SelectionIndicatorScaleAnimationDuration}" Value="1" EasingFunction="{StaticResource SelectionIndicatorEaseOutBackEase}" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+
+                    <Storyboard x:Name="OptionButtonUnselectedStoryboard">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorLineTransform" Storyboard.TargetProperty="ScaleX">
+                            <EasingDoubleKeyFrame KeyTime="{StaticResource SelectionIndicatorScaleAnimationDuration}" Value="0" EasingFunction="{StaticResource SelectionIndicatorEaseInBackEase}" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </Grid.Resources>
+
                 <Line x:Name="OptionButtonSelectionIndicator"
                       X1="9" Y1="24"
                       X2="23" Y2="24"
@@ -67,9 +85,12 @@
                       StrokeThickness="2"
                       StrokeStartLineCap="Round"
                       StrokeEndLineCap="Round"
-                      Visibility="Collapsed"
-                      d:Visibility="Visible"
-                      IsHitTestVisible="False" />
+                      IsHitTestVisible="False"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Line.RenderTransform>
+                        <ScaleTransform x:Name="SelectionIndicatorLineTransform" ScaleX="0" d:ScaleX="1" ScaleY="1" />
+                    </Line.RenderTransform>
+                </Line>
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         Style="{StaticResource DismissButtonStyle}"
