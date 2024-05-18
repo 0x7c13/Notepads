@@ -67,9 +67,29 @@
                       StrokeThickness="2"
                       StrokeStartLineCap="Round"
                       StrokeEndLineCap="Round"
-                      Visibility="Collapsed"
-                      d:Visibility="Visible"
-                      IsHitTestVisible="False" />
+                      IsHitTestVisible="False"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Line.Resources>
+                        <x:String x:Key="SelectionIndicatorAnimationDuration">00:00:00.500</x:String>
+                        <BackEase x:Key="SelectionIndicatorEaseOutBackEase" EasingMode="EaseOut" Amplitude="0.5" />
+                        <BackEase x:Key="SelectionIndicatorEaseInBackEase" EasingMode="EaseIn" Amplitude="0.75" />
+
+                        <Storyboard x:Name="SelectionIndicatorEaseOutScaleTransform">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                <EasingDoubleKeyFrame KeyTime="{StaticResource SelectionIndicatorAnimationDuration}" Value="1" EasingFunction="{StaticResource SelectionIndicatorEaseOutBackEase}" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+
+                        <Storyboard x:Name="SelectionIndicatorEaseInScaleTransform">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                <EasingDoubleKeyFrame KeyTime="{StaticResource SelectionIndicatorAnimationDuration}" Value="0" EasingFunction="{StaticResource SelectionIndicatorEaseInBackEase}" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </Line.Resources>
+                    <Line.RenderTransform>
+                        <ScaleTransform x:Name="SelectionIndicatorScaleTransform" ScaleX="0" d:ScaleX="1" ScaleY="1" />
+                    </Line.RenderTransform>
+                </Line>
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         Style="{StaticResource DismissButtonStyle}"

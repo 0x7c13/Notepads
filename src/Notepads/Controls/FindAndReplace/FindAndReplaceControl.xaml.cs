@@ -276,11 +276,11 @@ namespace Notepads.Controls.FindAndReplace
 
             if (MatchCaseToggle.IsChecked || MatchWholeWordToggle.IsChecked || UseRegexToggle.IsChecked)
             {
-                OptionButtonSelectionIndicator.Visibility = Visibility.Visible;
+                SelectionIndicatorEaseOutScaleTransform.Begin();
             }
             else
             {
-                OptionButtonSelectionIndicator.Visibility = Visibility.Collapsed;
+                SelectionIndicatorEaseInScaleTransform.Begin();
             }
         }
 
