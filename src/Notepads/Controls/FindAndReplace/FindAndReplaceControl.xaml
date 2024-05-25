@@ -26,15 +26,18 @@
         <Grid x:Name="ToggleReplaceModeButtonGrid"
               Grid.Row="0"
               Grid.Column="0">
-            <Button x:Name="ToggleReplaceModeButton"
-                    x:Uid="FindAndReplace_ToggleReplaceModeButton"
-                    Style="{StaticResource DismissButtonStyle}"
-                    Width="20"
-                    MinHeight="32"
-                    d:Content="&#xE76C;"
-                    FontSize="12"
-                    Click="ToggleReplaceModeButton_OnClick"
-                    IsTabStop="False" />
+            <ToggleButton x:Name="ToggleReplaceModeButton"
+                          x:Uid="FindAndReplace_ToggleReplaceModeButton"
+                          Style="{StaticResource ExpanderToggleButtonStyle}"
+                          Width="20"
+                          MinHeight="32"
+                          Content="{StaticResource ExpanderChevronRightGlyph}"
+                          Click="ToggleReplaceModeButton_OnClick"
+                          IsTabStop="False">
+                <ToggleButton.Resources>
+                    <x:Double x:Key="ExpandCollapseChevronCheckedAngle">90.0</x:Double>
+                </ToggleButton.Resources>
+            </ToggleButton>
         </Grid>
 
         <RelativePanel x:Name="FindBarPlaceHolder"

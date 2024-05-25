@@ -118,8 +118,8 @@ namespace Notepads.Controls.FindAndReplace
             if (showReplaceBar)
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
+                ToggleReplaceModeButton.IsChecked = true;
                 ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Stretch;
-                ToggleReplaceModeButton.Content = "\uE70D";
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -130,8 +130,7 @@ namespace Notepads.Controls.FindAndReplace
             else
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
-                ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Top;
-                ToggleReplaceModeButton.Content = "\uE76C";
+                ToggleReplaceModeButton.IsChecked = false;
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
@@ -141,6 +140,7 @@ namespace Notepads.Controls.FindAndReplace
         private void DismissButton_OnClick(object sender, RoutedEventArgs e)
         {
             OnDismissKeyDown?.Invoke(sender, e);
+            ToggleReplaceModeButton.IsChecked = false;
         }
 
         private void FindBar_OnTextChanged(object sender, TextChangedEventArgs e)
