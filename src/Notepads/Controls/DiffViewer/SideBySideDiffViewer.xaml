@@ -39,7 +39,7 @@
             <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
                 <Button x:Name="DismissButton"
                         x:Uid="FindAndReplace_DismissButton"
-                        Style="{StaticResource DismissButtonStyle}"
+                        Style="{StaticResource ChromelessIconButtonStyle}"
                         Width="42"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Stretch"
