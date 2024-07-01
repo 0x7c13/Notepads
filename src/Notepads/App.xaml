@@ -22,7 +22,7 @@
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/ChromelessIconButtonStyle.xaml" />
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml"></ResourceDictionary>
@@ -32,6 +32,7 @@
                 <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/ExpanderToggleButtonStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
