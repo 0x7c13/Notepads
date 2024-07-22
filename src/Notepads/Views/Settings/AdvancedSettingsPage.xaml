@@ -4,9 +4,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:utilities="using:Notepads.Utilities"
-      d:DesignWidth="333.333"
-      d:DesignHeight="768"
+      d:Background="{ThemeResource SystemControlBackgroundAltMediumHighBrush}"
+      d:RequestedTheme="Light"
       HighContrastAdjustment="None"
+      d:DesignWidth="334"
+      d:DesignHeight="768"
       mc:Ignorable="d">
 
     <Grid>
@@ -96,7 +98,7 @@
                         <TextBlock x:Name="RestartPrompt"
                                    x:Uid="/Settings/AdvancedPage_LanguagePreferenceSettings_RestartPrompt"
                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource DangerTextForegroundBrush}"
+                                   Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                    Margin="0,6,0,0"
                                    Visibility="Collapsed"
                                    d:Visibility="Visible" />

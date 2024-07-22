@@ -3,9 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      d:DesignWidth="333.333"
-      d:DesignHeight="900"
+      d:Background="{ThemeResource SystemControlBackgroundAltMediumHighBrush}"
+      d:RequestedTheme="Light"
       HighContrastAdjustment="None"
+      d:DesignWidth="334"
+      d:DesignHeight="900"
       mc:Ignorable="d">
 
     <Grid>
@@ -52,8 +54,8 @@
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="0,0,8,0"
                                   VerticalAlignment="Center"
-                                  Glyph="&#xE727;"
                                   FontSize="20"
+                                  Glyph="&#xE727;"
                                   IsHitTestVisible="False"
                                   AutomationProperties.AccessibilityView="Raw" />
                         <Slider x:Name="BackgroundTintOpacitySlider"
@@ -61,12 +63,13 @@
                                 Height="{StaticResource SliderHorizontalHeight}"
                                 Maximum="100"
                                 Minimum="0"
-                                StepFrequency="1" />
+                                StepFrequency="1"
+                                d:Value="100" />
                         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                    Margin="12,0,0,2"
                                    VerticalAlignment="Center"
                                    Text="{x:Bind BackgroundTintOpacitySlider.Value, Mode=OneWay}"
-                                   d:Text="100" />
+                                   d:Text="{Binding ElementName=BackgroundTintOpacitySlider, Path=Value}" />
                         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                    Margin="2,0,0,2"
                                    VerticalAlignment="Center"
@@ -86,6 +89,7 @@
                                       Margin="{StaticResource SettingsSubtitleLargeMargin}" />
                         <Viewbox MaxWidth="292" Stretch="Fill">
                             <ColorPicker x:Name="AccentColorPicker"
+                                         d:Color="{ThemeResource SystemControlBackgroundAccentBrush}"
                                          ColorSpectrumShape="Ring"
                                          IsColorSliderVisible="True"
                                          IsColorChannelTextInputVisible="True"

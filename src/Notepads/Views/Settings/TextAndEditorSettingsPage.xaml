@@ -4,9 +4,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:settings="using:Notepads.Services"
-      d:DesignWidth="333.333"
-      d:DesignHeight="1700"
+      d:Background="{ThemeResource SystemControlBackgroundAltMediumHighBrush}"
+      d:RequestedTheme="Light"
       HighContrastAdjustment="None"
+      d:DesignWidth="334"
+      d:DesignHeight="1700"
       mc:Ignorable="d">
 
     <Grid>
@@ -74,7 +76,7 @@
                                   d:PlaceholderText="Consolas">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding}" FontFamily="{Binding}" />
+                                    <TextBlock FontFamily="{Binding}" Text="{Binding}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -101,7 +103,7 @@
                                   d:PlaceholderText="Normal">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding FontStyleLocalizedName}" FontStyle="{Binding FontStyle}" />
+                                    <TextBlock FontStyle="{Binding FontStyle}" Text="{Binding FontStyleLocalizedName}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -121,7 +123,7 @@
                                   d:PlaceholderText="Normal">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding FontWeightLocalizedName}" FontWeight="{Binding FontWeight}" />
+                                    <TextBlock FontWeight="{Binding FontWeight}" Text="{Binding FontWeightLocalizedName}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -265,7 +267,7 @@
                             <TextBlock x:Name="CustomUrlErrorReport"
                                        x:Uid="/Settings/TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport"
                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource DangerTextForegroundBrush}"
+                                       Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
                                        Margin="0,4,0,0"
                                        Visibility="Collapsed"
                                        d:Visibility="Visible" />

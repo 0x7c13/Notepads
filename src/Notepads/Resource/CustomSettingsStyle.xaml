@@ -2,19 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Notepads">
 
-    <ResourceDictionary.ThemeDictionaries>
+    <!--<ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
-            <Color x:Key="DangerTextForegroundColor">#FFFF4419</Color>
-            <SolidColorBrush x:Key="DangerTextForegroundBrush" Color="{StaticResource DangerTextForegroundColor}" />
+            <Color x:Key="WarningTextColor">#FFFF4419</Color>
+            <SolidColorBrush x:Key="WarningTextForegroundBrush" Color="{StaticResource WarningTextColor}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <Color x:Key="DangerTextForegroundColor">#FFE00015</Color>
-            <SolidColorBrush x:Key="DangerTextForegroundBrush" Color="{StaticResource DangerTextForegroundColor}" />
+            <Color x:Key="WarningTextColor">#FFE00015</Color>
+            <SolidColorBrush x:Key="WarningTextForegroundBrush" Color="{StaticResource WarningTextColor}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="DangerTextForegroundBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="WarningTextForegroundBrush" Color="{ThemeResource SystemColorHighlightColor}" />
         </ResourceDictionary>
-    </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary.ThemeDictionaries>-->
 
     <StaticResource x:Key="ComboBoxBackground" ResourceKey="SystemControlTransparentBrush" />
 

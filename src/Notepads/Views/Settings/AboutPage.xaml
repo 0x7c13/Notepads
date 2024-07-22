@@ -3,9 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      d:DesignWidth="333.333"
-      d:DesignHeight="1124"
+      d:Background="{ThemeResource SystemControlBackgroundAltMediumHighBrush}"
+      d:RequestedTheme="Light"
       HighContrastAdjustment="None"
+      d:DesignWidth="334"
+      d:DesignHeight="1124"
       mc:Ignorable="d">
 
     <Grid>
@@ -30,9 +32,9 @@
                     <StackPanel>
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}"
                                    Margin="0,4,0,4"
+                                   FontWeight="Normal"
                                    Text="{x:Bind AppName, Mode=OneTime}"
-                                   d:Text="Notepads"
-                                   FontWeight="Normal" />
+                                   d:Text="Notepads" />
                         <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                    Text="{x:Bind AppVersion, Mode=OneTime}"

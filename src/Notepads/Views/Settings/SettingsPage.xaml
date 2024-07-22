@@ -4,12 +4,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:settings="using:Notepads.Views.Settings"
+      d:RequestedTheme="Light"
+      d:DesignWidth="386"
       mc:Ignorable="d">
 
     <NavigationView x:Name="SettingsNavigationView"
                     IsBackButtonVisible="Collapsed"
                     IsBackEnabled="False"
                     IsPaneOpen="False"
+                    d:IsPaneOpen="True"
                     IsSettingsVisible="False"
                     ItemInvoked="SettingsPanel_OnItemInvoked"
                     OpenPaneLength="200"
