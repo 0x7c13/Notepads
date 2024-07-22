@@ -22,7 +22,7 @@
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Resource/TransparentButtonStyle.xaml" />
                 <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml"></ResourceDictionary>

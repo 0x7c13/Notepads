@@ -26,15 +26,37 @@
         <Grid x:Name="ToggleReplaceModeButtonGrid"
               Grid.Row="0"
               Grid.Column="0">
+            <Grid.Resources>
+                <x:String x:Key="ExpandCollapseChevronAnimationDuration">00:00:00.200</x:String>
+                <x:String x:Key="ExpandCollapseChevronKeySpline">0.1,0.25,0.1,0.75</x:String>
+
+                <Storyboard x:Name="ExpandCollapseRotateCollapsedStoryboard">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronTransform" Storyboard.TargetProperty="Rotation">
+                        <SplineDoubleKeyFrame KeyTime="{StaticResource ExpandCollapseChevronAnimationDuration}" Value="0" KeySpline="{StaticResource ExpandCollapseChevronKeySpline}" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+
+                <Storyboard x:Name="ExpandCollapseRotateExpandedStoryboard">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronTransform" Storyboard.TargetProperty="Rotation">
+                        <SplineDoubleKeyFrame KeyTime="{StaticResource ExpandCollapseChevronAnimationDuration}" Value="90" KeySpline="{StaticResource ExpandCollapseChevronKeySpline}" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </Grid.Resources>
+
             <Button x:Name="ToggleReplaceModeButton"
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
-                    Style="{StaticResource DismissButtonStyle}"
+                    Style="{StaticResource TransparentButtonStyle}"
                     Width="20"
                     MinHeight="32"
-                    d:Content="&#xE76C;"
-                    FontSize="12"
+                    Padding="0"
                     Click="ToggleReplaceModeButton_OnClick"
-                    IsTabStop="False" />
+                    IsTabStop="False">
+                <FontIcon FontSize="12" Glyph="&#xE76C;" RenderTransformOrigin="0.5 0.5">
+                    <FontIcon.RenderTransform>
+                        <CompositeTransform x:Name="ExpandCollapseChevronTransform" />
+                    </FontIcon.RenderTransform>
+                </FontIcon>
+            </Button>
         </Grid>
 
         <RelativePanel x:Name="FindBarPlaceHolder"
@@ -93,12 +115,12 @@
                 </Line>
                 <Button x:Name="OptionButton"
                         x:Uid="FindAndReplace_SearchOptionButton"
-                        Style="{StaticResource DismissButtonStyle}"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Width="32"
                         Height="32"
-                        Content="&#xE712;"
-                        FontSize="16"
+                        Padding="0"
                         IsTabStop="False">
+                    <FontIcon FontSize="16" Glyph="&#xE712;" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <ToggleMenuFlyoutItem x:Name="MatchCaseToggle"
@@ -143,14 +165,14 @@
             <Button x:Name="SearchBackwardButton"
                     x:Uid="FindAndReplace_SearchBackwardButton"
                     Grid.Column="0"
-                    Style="{StaticResource DismissButtonStyle}"
+                    Style="{StaticResource TransparentButtonStyle}"
                     Width="36"
                     Height="32"
-                    Content="&#xE74A;"
-                    FontSize="16"
+                    Padding="0"
                     Click="SearchBackwardButton_OnClick"
                     IsEnabled="False"
                     IsTabStop="False">
+                <FontIcon FontSize="16" Glyph="&#xE74A;" />
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Modifiers="Shift" Key="F3" />
                 </Button.KeyboardAccelerators>
@@ -159,14 +181,14 @@
             <Button x:Name="SearchForwardButton"
                     x:Uid="FindAndReplace_SearchForwardButton"
                     Grid.Column="1"
-                    Style="{StaticResource DismissButtonStyle}"
+                    Style="{StaticResource TransparentButtonStyle}"
                     Width="36"
                     Height="32"
-                    Content="&#xE74B;"
-                    FontSize="16"
+                    Padding="0"
                     Click="SearchForwardButton_OnClick"
                     IsEnabled="False"
                     IsTabStop="False">
+                <FontIcon FontSize="16" Glyph="&#xE74B;" />
                 <Button.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F3" />
                 </Button.KeyboardAccelerators>
@@ -175,13 +197,14 @@
             <Button x:Name="DismissButton"
                     x:Uid="FindAndReplace_DismissButton"
                     Grid.Column="2"
-                    Style="{StaticResource DismissButtonStyle}"
+                    Style="{StaticResource TransparentButtonStyle}"
                     Width="36"
                     Height="32"
-                    Content="&#xE894;"
-                    FontSize="16"
+                    Padding="0"
                     Click="DismissButton_OnClick"
-                    IsTabStop="False" />
+                    IsTabStop="False">
+                <FontIcon FontSize="16" Glyph="&#xE894;" />
+            </Button>
         </Grid>
 
         <Grid x:Name="ReplaceBarPlaceHolder"
@@ -216,14 +239,14 @@
                 <Button x:Name="ReplaceButton"
                         x:Uid="FindAndReplace_ReplaceButton"
                         Grid.Column="0"
-                        Style="{StaticResource DismissButtonStyle}"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Width="36"
                         Height="32"
-                        Content="&#xE8AB;"
-                        FontSize="16"
+                        Padding="0"
                         Click="ReplaceButton_OnClick"
                         IsEnabled="False"
                         IsTabStop="False">
+                    <FontIcon FontSize="16" Glyph="&#xE8AB;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Menu" Key="R" />
                     </Button.KeyboardAccelerators>
@@ -232,14 +255,14 @@
                 <Button x:Name="ReplaceAllButton"
                         x:Uid="FindAndReplace_ReplaceAllButton"
                         Grid.Column="1"
-                        Style="{StaticResource DismissButtonStyle}"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Width="36"
                         Height="32"
-                        Content="&#xE7FD;"
-                        FontSize="16"
+                        Padding="0"
                         Click="ReplaceAllButton_OnClick"
                         IsEnabled="False"
                         IsTabStop="False">
+                    <FontIcon FontSize="16" Glyph="&#xE7FD;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter" />
                     </Button.KeyboardAccelerators>

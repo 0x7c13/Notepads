@@ -39,13 +39,13 @@
             <Grid Grid.Row="0" Background="{ThemeResource HeaderBackgroundThemeBrush}">
                 <Button x:Name="DismissButton"
                         x:Uid="FindAndReplace_DismissButton"
-                        Style="{StaticResource DismissButtonStyle}"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Width="42"
+                        Padding="0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Stretch"
-                        Content="&#xE894;"
-                        FontSize="12"
                         IsTabStop="False">
+                    <FontIcon FontSize="12" Glyph="&#xE894;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="Escape" />
                     </Button.KeyboardAccelerators>

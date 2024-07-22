@@ -48,27 +48,29 @@
         <Button x:Name="SearchButton"
                 x:Uid="GoTo_SearchButton"
                 Grid.Column="2"
-                Style="{StaticResource DismissButtonStyle}"
+                Style="{StaticResource TransparentButtonStyle}"
                 Width="36"
                 Height="32"
+                Padding="0"
                 VerticalAlignment="Top"
-                Content="&#xEBE7;"
-                FontSize="16"
                 Visibility="Collapsed"
                 d:Visibility="Visible"
                 Click="SearchButton_OnClick"
-                IsTabStop="False" />
+                IsTabStop="False">
+            <FontIcon FontSize="16" Glyph="&#xEBE7;" />
+        </Button>
 
         <Button x:Name="DismissButton"
                 x:Uid="FindAndReplace_DismissButton"
                 Grid.Column="3"
-                Style="{StaticResource DismissButtonStyle}"
+                Style="{StaticResource TransparentButtonStyle}"
                 Width="36"
                 Height="32"
+                Padding="0"
                 VerticalAlignment="Top"
-                Content="&#xE894;"
-                FontSize="16"
                 Click="DismissButton_OnClick"
-                IsTabStop="False" />
+                IsTabStop="False">
+            <FontIcon FontSize="16" Glyph="&#xE894;" />
+        </Button>
     </Grid>
 </UserControl>
