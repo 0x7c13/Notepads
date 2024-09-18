@@ -258,7 +258,7 @@
     <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Все внесенные изменения, включая текст, разрыв страки и кодировку, сделанные в "{0}" будут отменены!</value>
+    <value>Все внесенные изменения, включая текст, разрыв строки и кодировку, сделанные в "{0}" будут отменены!</value>
     <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
   </data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
