@@ -149,7 +149,7 @@
     <value>За још информација, молимо посетите наш веб-сајт:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>Изјава о приватности</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
