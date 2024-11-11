@@ -246,7 +246,7 @@
                         Click="ReplaceButton_OnClick"
                         IsEnabled="False"
                         IsTabStop="False">
-                    <FontIcon FontSize="16" Glyph="&#xE8AB;" />
+                    <FontIcon FontSize="16" Glyph="&#xE8AB;" MirroredWhenRightToLeft="True"  />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Menu" Key="R" />
                     </Button.KeyboardAccelerators>
@@ -262,7 +262,7 @@
                         Click="ReplaceAllButton_OnClick"
                         IsEnabled="False"
                         IsTabStop="False">
-                    <FontIcon FontSize="16" Glyph="&#xE7FD;" />
+                    <FontIcon FontSize="16" Glyph="&#xE7FD;" MirroredWhenRightToLeft="True"  />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control,Menu" Key="Enter" />
                     </Button.KeyboardAccelerators>

@@ -57,7 +57,7 @@
                 d:Visibility="Visible"
                 Click="SearchButton_OnClick"
                 IsTabStop="False">
-            <FontIcon FontSize="16" Glyph="&#xEBE7;" />
+            <FontIcon FontSize="16" Glyph="&#xEBE7;" MirroredWhenRightToLeft="True" />
         </Button>
 
         <Button x:Name="DismissButton"
