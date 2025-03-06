@@ -510,7 +510,7 @@
     <comment>.xsl</comment>
   </data>
   <data name="NewTextDocumentDisplayName" xml:space="preserve">
-    <value>Text Document</value>
-    <comment>New .txt file name</comment>
+    <value>Tài Liệu Mới</value>
+    <comment>Tên tệp .txt mới</comment>
   </data>
 </root>
