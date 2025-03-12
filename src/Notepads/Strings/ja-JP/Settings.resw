@@ -149,7 +149,7 @@
     <value>詳しくは公式サイトをご覧ください:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>プライバシーについて</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
