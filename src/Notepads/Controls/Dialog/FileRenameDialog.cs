@@ -14,7 +14,6 @@ namespace Notepads.Controls.Dialog
     using Windows.UI.Xaml.Media;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Microsoft.AppCenter.Analytics;
 
     public sealed class FileRenameDialog : NotepadsDialog
     {
@@ -68,7 +67,7 @@ namespace Notepads.Controls.Dialog
 
             PrimaryButtonClick += (sender, args) => TryRename();
 
-            Analytics.TrackEvent("FileRenameDialogOpened", new Dictionary<string, string>()
+            AnalyticsService.TrackEvent("FileRenameDialogOpened", new Dictionary<string, string>()
             {
                 { "FileExists", fileExists.ToString() },
             });

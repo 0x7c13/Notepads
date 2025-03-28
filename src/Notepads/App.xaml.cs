@@ -10,9 +10,6 @@ namespace Notepads
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
     using Microsoft.Toolkit.Uwp.Helpers;
     using Notepads.Services;
     using Notepads.Settings;
@@ -100,19 +97,6 @@ namespace Notepads
                 Window.Current.Content = rootFrame;
                 rootFrameCreated = true;
 
-                try
-                {
-                    if (!string.IsNullOrEmpty(AppCenterSecret))
-                    {
-                        var services = new Type[] { typeof(Crashes), typeof(Analytics) };
-                        AppCenter.Start(AppCenterSecret, services);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.LogError($"[{nameof(App)}] Failed to start AppCenter: {ex.Message}");
-                }
-
                 ThemeSettingsService.Initialize();
                 AppSettingsService.Initialize();
             }
@@ -136,7 +120,7 @@ namespace Notepads
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Launch settings: \n{string.Join("\n", appLaunchSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
-            Analytics.TrackEvent("AppLaunch_Settings", appLaunchSettings);
+            AnalyticsService.TrackEvent("AppLaunch_Settings", appLaunchSettings);
 
             var appLaunchEditorSettings = new Dictionary<string, string>()
             {
@@ -154,7 +138,7 @@ namespace Notepads
             };
 
             LoggingService.LogInfo($"[{nameof(App)}] Editor settings: \n{string.Join("\n", appLaunchEditorSettings.Select(x => x.Key + "=" + x.Value).ToArray())}.");
-            Analytics.TrackEvent("AppLaunch_Editor_Settings", appLaunchEditorSettings);
+            AnalyticsService.TrackEvent("AppLaunch_Editor_Settings", appLaunchEditorSettings);
 
             try
             {
@@ -167,8 +151,8 @@ namespace Notepads
                     { "Message", ex?.Message },
                     { "Exception", ex?.ToString() },
                 };
-                Analytics.TrackEvent("AppFailedToActivate", diagnosticInfo);
-                Crashes.TrackError(ex, diagnosticInfo);
+                AnalyticsService.TrackEvent("AppFailedToActivate", diagnosticInfo);
+                AnalyticsService.TrackError(ex, diagnosticInfo);
                 throw;
             }
 
@@ -224,7 +208,7 @@ namespace Notepads
         {
             var exception = new Exception($"[{nameof(App)}] Failed to load Page: {e.SourcePageType.FullName} Exception: {e.Exception.Message}");
             LoggingService.LogException(exception);
-            Analytics.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
+            AnalyticsService.TrackEvent("FailedToLoadPage", new Dictionary<string, string>()
             {
                 { "Page", e.SourcePageType.FullName },
                 { "Exception", e.Exception.Message }
@@ -277,15 +261,8 @@ namespace Notepads
                 { "IsGameBarWidget", IsGameBarWidget.ToString() }
             };
 
-            var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, " +
-                $"Message: {e.Message}, " +
-                $"InnerException: {e.Exception?.InnerException}, " +
-                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
-                "UnhandledException");
-
-            Analytics.TrackEvent("OnUnhandledException", diagnosticInfo);
-            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+            AnalyticsService.TrackEvent("OnUnhandledException", diagnosticInfo);
+            AnalyticsService.TrackError(e.Exception, diagnosticInfo);
 
             // suppress and handle it manually.
             e.Handled = true;
@@ -305,15 +282,8 @@ namespace Notepads
                 { "InnerExceptionMessage", e.Exception?.InnerException?.Message }
             };
 
-            var attachment = ErrorAttachmentLog.AttachmentWithText(
-                $"Exception: {e.Exception}, " +
-                $"Message: {e.Exception?.Message}, " +
-                $"InnerException: {e.Exception?.InnerException}, " +
-                $"InnerExceptionMessage: {e.Exception?.InnerException?.Message}",
-                "UnobservedException");
-
-            Analytics.TrackEvent("OnUnobservedException", diagnosticInfo);
-            Crashes.TrackError(e.Exception, diagnosticInfo, attachment);
+            AnalyticsService.TrackEvent("OnUnobservedException", diagnosticInfo);
+            AnalyticsService.TrackError(e.Exception, diagnosticInfo);
 
             // suppress and handle it manually.
             e.SetObserved();

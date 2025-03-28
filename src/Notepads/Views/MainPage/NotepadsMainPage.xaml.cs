@@ -30,7 +30,6 @@ namespace Notepads.Views.MainPage
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
-    using Microsoft.AppCenter.Analytics;
     using Windows.Graphics.Printing;
 
     public sealed partial class NotepadsMainPage : Page
@@ -170,7 +169,7 @@ namespace Notepads.Views.MainPage
         {
             if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance))
             {
-                Analytics.TrackEvent("FailedToOpenNewAppInstance");
+                AnalyticsService.TrackEvent("FailedToOpenNewAppInstance");
             }
         }
 
@@ -222,7 +221,7 @@ namespace Notepads.Views.MainPage
 
                     LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] {numberOfRecoveredFiles} file(s) recovered from last session backup.");
 
-                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_SessionDataCorruptedException",
+                    AnalyticsService.TrackEvent("SessionManager_FailedToLoadLastSession_SessionDataCorruptedException",
                         new Dictionary<string, string>()
                         {
                             { "Exception", ex.Message },
@@ -243,7 +242,7 @@ namespace Notepads.Views.MainPage
                 catch (Exception ex) // Catch all other exceptions
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to load last session: {ex}");
-                    Analytics.TrackEvent("SessionManager_FailedToLoadLastSession_UnhandledException", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                    AnalyticsService.TrackEvent("SessionManager_FailedToLoadLastSession_UnhandledException", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
 
@@ -507,7 +506,7 @@ namespace Notepads.Views.MainPage
                 {
                     if (!await ApplicationView.GetForCurrentView().TryConsolidateAsync())
                     {
-                        Analytics.TrackEvent("FailedToConsolidateOnExit");
+                        AnalyticsService.TrackEvent("FailedToConsolidateOnExit");
                     }
 
                     Application.Current.Exit();
@@ -621,7 +620,7 @@ namespace Notepads.Views.MainPage
                 if (storageItem is StorageFile file)
                 {
                     await OpenFileAsync(file);
-                    Analytics.TrackEvent("OnStorageFileDropped");
+                    AnalyticsService.TrackEvent("OnStorageFileDropped");
                 }
             }
         }

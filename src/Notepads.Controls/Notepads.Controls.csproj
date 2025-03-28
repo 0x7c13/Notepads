@@ -290,7 +290,7 @@
       <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.27.1</Version>
+      <Version>1.28.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

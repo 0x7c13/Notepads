@@ -10,7 +10,6 @@ namespace Notepads.Services
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.Storage.AccessCache;
-    using Microsoft.AppCenter.Analytics;
 
     public static class MRUService
     {
@@ -24,7 +23,7 @@ namespace Notepads.Services
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("MRUService_FailedToAddStorageItemToMRU", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("MRUService_FailedToAddStorageItemToMRU", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() }
                 });
@@ -58,7 +57,7 @@ namespace Notepads.Services
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("MRUService_FailedToGetMRU", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("MRUService_FailedToGetMRU", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() }
                 });
@@ -75,7 +74,7 @@ namespace Notepads.Services
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("MRUService_FailedToClearMRU", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() }
                 });

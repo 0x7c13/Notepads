@@ -8,7 +8,6 @@ namespace Notepads.Controls.TextEditor
     using System;
     using System.Collections.Generic;
     using Windows.UI.Text;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
 
     public partial class TextEditorCore
@@ -69,7 +68,7 @@ namespace Notepads.Controls.TextEditor
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to duplicate text: {ex}");
-                Analytics.TrackEvent("TextEditorCore_FailedToDuplicateText",
+                AnalyticsService.TrackEvent("TextEditorCore_FailedToDuplicateText",
                     new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
         }

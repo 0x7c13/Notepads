@@ -10,7 +10,7 @@ namespace Notepads.Utilities
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
-    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
 
     public static class EncodingUtility
     {
@@ -127,7 +127,7 @@ namespace Notepads.Utilities
                 try
                 {
                     encodingName = encoding.WebName; // WebName is supported by Encoding.GetEncoding(WebName)
-                    Analytics.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>()
+                    AnalyticsService.TrackEvent("EncodingUtility_FoundUnlistedEncoding", new Dictionary<string, string>()
                     {
                         {"CodePage", encoding.CodePage.ToString()},
                         {"WebName", encoding.WebName}
@@ -135,7 +135,7 @@ namespace Notepads.Utilities
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>()
+                    AnalyticsService.TrackEvent("EncodingUtility_FailedToGetNameOfUnlistedEncoding", new Dictionary<string, string>()
                     {
                         {"Exception", ex.ToString()},
                         {"Message", ex.Message}
@@ -217,7 +217,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("EncodingUtility_FailedToGetEncoding", new Dictionary<string, string>()
                 {
                     {"EncodingName", name},
                     {"Exception", ex.ToString()}
@@ -243,7 +243,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("EncodingUtility_FailedToGetSystemDefaultANSIEncoding", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
@@ -270,7 +270,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("EncodingUtility_FailedToGetCurrentCultureANSIEncoding", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },
@@ -300,7 +300,7 @@ namespace Notepads.Utilities
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>()
+                    AnalyticsService.TrackEvent("EncodingUtility_FailedToGetANSIEncoding", new Dictionary<string, string>()
                     {
                         { "Message", ex.Message },
                         { "Exception", ex.ToString() },

@@ -5,7 +5,6 @@
 
 namespace Notepads.Utilities
 {
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Models;
     using Notepads.Services;
     using System;
@@ -454,12 +453,12 @@ namespace Notepads.Utilities
                 }
                 else if (stream.Length > 0) // We do not care about empty file
                 {
-                    Analytics.TrackEvent("UnableToDetectEncoding");
+                    AnalyticsService.TrackEvent("UnableToDetectEncoding");
                 }
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("TryGuessEncodingFailedWithException", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },
                     { "Message", ex.Message }
@@ -682,7 +681,7 @@ namespace Notepads.Utilities
                 {
                     // Track retry attempts to better understand the failed scenarios
                     // File name, path and content are not included to respect/protect user privacy
-                    Analytics.TrackEvent(operationName, new Dictionary<string, string>()
+                    AnalyticsService.TrackEvent(operationName, new Dictionary<string, string>()
                     {
                         { "RetryAttempts", retryAttempts.ToString() },
                         { "DeferUpdatesUsed" , deferUpdatesUsed.ToString() },
@@ -702,7 +701,7 @@ namespace Notepads.Utilities
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(FileSystemUtility)}] Failed to get or create file, Exception: {ex.Message}");
-                Analytics.TrackEvent("GetOrCreateFileAsync_Failed", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("GetOrCreateFileAsync_Failed", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() },
                 });

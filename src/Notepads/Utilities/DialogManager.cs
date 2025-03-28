@@ -9,8 +9,8 @@ namespace Notepads.Utilities
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Notepads.Controls.Dialog;
+    using Notepads.Services;
     using Windows.UI.Xaml.Controls;
-    using Microsoft.AppCenter.Analytics;
 
     public static class DialogManager
     {
@@ -36,7 +36,7 @@ namespace Notepads.Utilities
                 {
                     pendingDialogTitle = pendingTitle;
                 }
-                Analytics.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("FailedToOpenDialog", new Dictionary<string, string>()
                 {
                     { "Message", ex.Message },
                     { "Exception", ex.ToString() },

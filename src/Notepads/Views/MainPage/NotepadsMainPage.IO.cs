@@ -17,7 +17,6 @@ namespace Notepads.Views.MainPage
     using Notepads.Controls.TextEditor;
     using Notepads.Services;
     using Notepads.Utilities;
-    using Microsoft.AppCenter.Analytics;
 
     public sealed partial class NotepadsMainPage
     {
@@ -106,7 +105,7 @@ namespace Notepads.Views.MainPage
                     {
                         extension = "<NoExtension>";
                     }
-                    Analytics.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
+                    AnalyticsService.TrackEvent("UnsupportedFileExtension", new Dictionary<string, string>()
                     {
                         { "Extension", extension },
                     });
