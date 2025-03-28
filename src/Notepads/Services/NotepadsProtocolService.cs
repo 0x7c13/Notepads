@@ -8,7 +8,6 @@ namespace Notepads.Services
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.AppCenter.Analytics;
     using Windows.ApplicationModel;
     using Windows.System;
 
@@ -50,7 +49,7 @@ namespace Notepads.Services
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(NotepadsProtocolService)}] Failed to parse protocol: {uri}, exception: {ex}");
-                Analytics.TrackEvent("NotepadsProtocolService_FailedToParseProtocol", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("NotepadsProtocolService_FailedToParseProtocol", new Dictionary<string, string>()
                 {
                     { "Protocol", uri.ToString() },
                     { "Exception", ex.ToString() }
@@ -82,7 +81,7 @@ namespace Notepads.Services
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(NotepadsProtocolService)}] Failed to execute protocol: {operation}, Exception: {ex}");
-                Analytics.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("NotepadsProtocolService_FailedToExecuteProtocol", new Dictionary<string, string>()
                 {
                     { "Protocol", operation.ToString() },
                     { "Exception", ex.Message }

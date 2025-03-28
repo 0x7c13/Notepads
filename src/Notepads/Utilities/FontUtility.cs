@@ -13,7 +13,7 @@ namespace Notepads.Utilities
     using Windows.UI.Text;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
-    using Microsoft.AppCenter.Analytics;
+    using Notepads.Services;
 
     public static class FontUtility
     {
@@ -144,7 +144,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
+                AnalyticsService.TrackEvent("FailedToGetSystemFontFamilies", new Dictionary<string, string>()
                 {
                     { "Exception", ex.ToString() }
                 });

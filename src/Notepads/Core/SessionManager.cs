@@ -16,7 +16,6 @@ namespace Notepads.Core
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.Storage.AccessCache;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Controls.TextEditor;
     using Notepads.Core.SessionDataModels;
     using Notepads.Models;
@@ -117,7 +116,7 @@ namespace Notepads.Core
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[{nameof(SessionManager)}] Failed to recover TextEditor: {ex.Message}");
-                    Analytics.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                    AnalyticsService.TrackEvent("SessionManager_FailedToRecoverTextEditor", new Dictionary<string, string>() { { "Exception", ex.Message } });
                     continue;
                 }
 
@@ -213,7 +212,7 @@ namespace Notepads.Core
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[{nameof(SessionManager)}] Failed to build TextEditor session data: {ex}");
-                    Analytics.TrackEvent("SessionManager_FailedToBuildTextEditorSessionData", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                    AnalyticsService.TrackEvent("SessionManager_FailedToBuildTextEditorSessionData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
 
@@ -237,7 +236,7 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save session metadata: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                AnalyticsService.TrackEvent("SessionManager_FailedToSaveSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 actionAfterSaving?.Invoke();
                 _semaphoreSlim.Release();
                 return; // Failed to save the session - do not proceed to delete backup files
@@ -251,7 +250,7 @@ namespace Notepads.Core
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles",
+                    AnalyticsService.TrackEvent("SessionManager_FailedToDeleteOrphanedBackupFiles",
                         new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
 
@@ -261,7 +260,7 @@ namespace Notepads.Core
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokensInFutureAccessList",
+                    AnalyticsService.TrackEvent("SessionManager_FailedToDeleteOrphanedTokensInFutureAccessList",
                         new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
@@ -413,7 +412,7 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete session meta data: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                AnalyticsService.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
             }
         }
 
@@ -507,7 +506,7 @@ namespace Notepads.Core
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(SessionManager)}] Failed to save backup file: {ex.Message}");
-                Analytics.TrackEvent("SessionManager_FailedToSaveBackupFile", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                AnalyticsService.TrackEvent("SessionManager_FailedToSaveBackupFile", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 return false;
             }
         }
@@ -565,7 +564,7 @@ namespace Notepads.Core
                 catch (Exception ex)
                 {
                     LoggingService.LogError($"[{nameof(SessionManager)}] Failed to delete orphaned token in FutureAccessList: {ex.Message}");
-                    Analytics.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() { { "Exception", ex.Message } });
+                    AnalyticsService.TrackEvent("SessionManager_FailedToDeleteOrphanedTokenInFutureAccessList", new Dictionary<string, string>() { { "Exception", ex.Message } });
                 }
             }
         }

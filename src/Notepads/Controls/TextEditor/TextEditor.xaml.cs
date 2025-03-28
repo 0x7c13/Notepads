@@ -5,7 +5,6 @@
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Commands;
     using Notepads.Controls.FindAndReplace;
     using Notepads.Controls.GoTo;
@@ -503,7 +502,7 @@
                 CloseSideBySideDiffViewer();
                 HideGoToControl();
                 FileReloaded?.Invoke(this, EventArgs.Empty);
-                Analytics.TrackEvent(encoding == null ? "OnFileReloaded" : "OnFileReopenedWithEncoding");
+                AnalyticsService.TrackEvent(encoding == null ? "OnFileReloaded" : "OnFileReopenedWithEncoding");
             }
         }
 
@@ -596,7 +595,7 @@
             SplitPanelColumnDefinition.MinWidth = 100.0f;
             SplitPanel.Visibility = Visibility.Visible;
             GridSplitter.Visibility = Visibility.Visible;
-            Analytics.TrackEvent("MarkdownContentPreview_Opened");
+            AnalyticsService.TrackEvent("MarkdownContentPreview_Opened");
             _isContentPreviewPanelOpened = true;
         }
 
@@ -646,7 +645,7 @@
             SideBySideDiffViewer.Visibility = Visibility.Visible;
             SideBySideDiffViewer.RenderDiff(LastSavedSnapshot.Content, TextEditorCore.GetText(), ThemeSettingsService.ThemeMode);
             SideBySideDiffViewer.Focus();
-            Analytics.TrackEvent("SideBySideDiffViewer_Opened");
+            AnalyticsService.TrackEvent("SideBySideDiffViewer_Opened");
         }
 
         public void CloseSideBySideDiffViewer()

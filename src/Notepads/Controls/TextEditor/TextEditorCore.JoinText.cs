@@ -8,7 +8,6 @@ namespace Notepads.Controls.TextEditor
     using System;
     using System.Collections.Generic;
     using Windows.UI.Text;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
 
     public partial class TextEditorCore
@@ -61,7 +60,7 @@ namespace Notepads.Controls.TextEditor
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(TextEditorCore)}] Failed to join text: {ex}");
-                Analytics.TrackEvent("TextEditorCore_FailedToJoinText",
+                AnalyticsService.TrackEvent("TextEditorCore_FailedToJoinText",
                     new Dictionary<string, string> { { "Exception", ex.ToString() } });
             }
         }

@@ -22,11 +22,11 @@ namespace Notepads.Brushes
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Media;
-    using Microsoft.AppCenter.Analytics;
     using Microsoft.Graphics.Canvas;
     using Microsoft.Graphics.Canvas.Effects;
     using Microsoft.Graphics.Canvas.UI.Composition;
     using Controls.Helpers;
+    using Notepads.Services;
 
     public sealed class HostBackdropAcrylicBrush : XamlCompositionBrushBase, IDisposable
     {
@@ -281,7 +281,7 @@ namespace Notepads.Brushes
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToBuildAcrylicBrushInternal",
+                AnalyticsService.TrackEvent("FailedToBuildAcrylicBrushInternal",
                     new Dictionary<string, string>
                     {
                         { "Exception", ex.ToString() },
@@ -329,7 +329,7 @@ namespace Notepads.Brushes
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToLoadImageBrush", new Dictionary<string, string> { { "Exception", ex.ToString() } });
+                AnalyticsService.TrackEvent("FailedToLoadImageBrush", new Dictionary<string, string> { { "Exception", ex.ToString() } });
                 return null;
             }
         }

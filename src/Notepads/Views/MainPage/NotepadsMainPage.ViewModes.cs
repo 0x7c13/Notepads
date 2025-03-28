@@ -8,7 +8,6 @@ namespace Notepads.Views.MainPage
     using System;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
     using Windows.Foundation;
 
@@ -57,7 +56,7 @@ namespace Notepads.Views.MainPage
                 if (!modeSwitched)
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter CompactOverlay view mode.");
-                    Analytics.TrackEvent("FailedToEnterCompactOverlayViewMode");
+                    AnalyticsService.TrackEvent("FailedToEnterCompactOverlayViewMode");
                 }
             }
             else if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
@@ -67,7 +66,7 @@ namespace Notepads.Views.MainPage
                 if (!modeSwitched)
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter Default view mode.");
-                    Analytics.TrackEvent("FailedToEnterDefaultViewMode");
+                    AnalyticsService.TrackEvent("FailedToEnterDefaultViewMode");
                 }
             }
         }
@@ -92,7 +91,7 @@ namespace Notepads.Views.MainPage
                 else
                 {
                     LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to enter full screen view mode.");
-                    Analytics.TrackEvent("FailedToEnterFullScreenViewMode");
+                    AnalyticsService.TrackEvent("FailedToEnterFullScreenViewMode");
                 }
             }
         }

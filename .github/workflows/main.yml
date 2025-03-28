@@ -282,8 +282,7 @@ jobs:
           /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS `
           /p:AppxPackageDir=$env:ARTIFACTS_DIR `
           /p:PackageCertificateKeyFile=$env:PACKAGE_CERTIFICATE_KEYFILE `
-          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD `
-          /p:AppCenterSecret=$env:APP_CENTER_SECRET
+          /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD
         env:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload

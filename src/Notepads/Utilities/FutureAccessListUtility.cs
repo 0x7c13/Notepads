@@ -10,7 +10,6 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.Storage;
     using Windows.Storage.AccessCache;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Services;
 
     public static class FutureAccessListUtility
@@ -44,7 +43,7 @@ namespace Notepads.Utilities
             catch (Exception ex)
             {
                 LoggingService.LogError($"[{nameof(FutureAccessListUtility)}] Failed to add file [{file.Path}] to future access list: {ex.Message}");
-                Analytics.TrackEvent("FailedToAddTokenInFutureAccessList",
+                AnalyticsService.TrackEvent("FailedToAddTokenInFutureAccessList",
                     new Dictionary<string, string>()
                     {
                         { "ItemCount", GetFutureAccessListItemCount().ToString() },

@@ -11,9 +11,9 @@ namespace Notepads.Utilities
     using System.Threading.Tasks;
     using Windows.UI;
     using Windows.UI.Xaml.Media;
-    using Microsoft.AppCenter.Analytics;
     using Notepads.Brushes;
     using Notepads.Extensions;
+    using Notepads.Services;
 
     public static class BrushUtility
     {
@@ -34,7 +34,7 @@ namespace Notepads.Utilities
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("FailedToCreateAcrylicBrush", new Dictionary<string, string>
+                AnalyticsService.TrackEvent("FailedToCreateAcrylicBrush", new Dictionary<string, string>
                 {
                     { "Exception", ex.ToString() },
                     { "Message", ex.Message },
