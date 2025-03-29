@@ -77,13 +77,15 @@ namespace Notepads.Controls.FindAndReplace
 
         public double GetHeight(bool showReplaceBar)
         {
+            double FindAndReplaceRootGridHeight = 36;
+
             if (showReplaceBar)
             {
-                return FindBarPlaceHolder.Height + ReplaceBarPlaceHolder.Height;
+                return FindAndReplaceRootGridHeight + FindAndReplaceRootGridHeight;
             }
             else
             {
-                return FindBarPlaceHolder.Height;
+                return FindAndReplaceRootGridHeight;
             }
         }
 
@@ -116,7 +118,8 @@ namespace Notepads.Controls.FindAndReplace
             if (showReplaceBar)
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 2);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE011", FontSize = 12 };
+                ToggleReplaceModeButton.VerticalAlignment = VerticalAlignment.Stretch;
+                ExpandCollapseRotateExpandedStoryboard.Begin();
                 ReplaceBarPlaceHolder.Visibility = Visibility.Visible;
                 if (!string.IsNullOrEmpty(FindBar.Text))
                 {
@@ -127,7 +130,7 @@ namespace Notepads.Controls.FindAndReplace
             else
             {
                 ToggleReplaceModeButtonGrid.SetValue(Grid.RowSpanProperty, 1);
-                ToggleReplaceModeButton.Content = new FontIcon { Glyph = "\xE00F", FontSize = 12 };
+                ExpandCollapseRotateCollapsedStoryboard.Begin();
                 ReplaceBarPlaceHolder.Visibility = Visibility.Collapsed;
                 ReplaceButton.IsEnabled = false;
                 ReplaceAllButton.IsEnabled = false;
@@ -272,11 +275,11 @@ namespace Notepads.Controls.FindAndReplace
 
             if (MatchCaseToggle.IsChecked || MatchWholeWordToggle.IsChecked || UseRegexToggle.IsChecked)
             {
-                OptionButtonSelectionIndicator.Visibility = Visibility.Visible;
+                OptionButtonSelectedStoryboard.Begin();
             }
             else
             {
-                OptionButtonSelectionIndicator.Visibility = Visibility.Collapsed;
+                OptionButtonUnselectedStoryboard.Begin();
             }
         }
 
