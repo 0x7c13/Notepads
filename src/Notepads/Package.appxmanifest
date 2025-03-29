@@ -82,7 +82,7 @@
               <uap:FileType>.cfg</uap:FileType>
               <uap:FileType>.config</uap:FileType>
               <uap:FileType>.cnf</uap:FileType>
-              <uap:FileType>.conf</uap:FileType>
+              <uap:FileType ContentType="text/plain">.conf</uap:FileType>
               <uap:FileType>.properties</uap:FileType>
               <uap:FileType>.directory</uap:FileType>
             </uap:SupportedFileTypes>
@@ -104,7 +104,9 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="markdown">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="text/plain">.md</uap:FileType>
+              <uap:FileType ContentType="text/plain"
+                            uap4:ShellNewDisplayName="ms-resource:Manifest/MarkdownFileDisplayName"
+                            uap4:ShellNewFileName="Resource\Markdown Document.md">.md</uap:FileType>
               <uap:FileType ContentType="text/plain">.markdown</uap:FileType>
               <uap:FileType ContentType="text/plain">.mkd</uap:FileType>
               <uap:FileType ContentType="text/plain">.mdwn</uap:FileType>
@@ -172,7 +174,7 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="xml">
             <uap:SupportedFileTypes>
-              <uap:FileType>.xml</uap:FileType>
+              <uap:FileType ContentType="application/xml">.xml</uap:FileType>
               <uap:FileType>.xsd</uap:FileType>
               <uap:FileType>.ascx</uap:FileType>
               <uap:FileType>.atom</uap:FileType>
@@ -189,8 +191,8 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="html">
             <uap:SupportedFileTypes>
-              <uap:FileType>.html</uap:FileType>
-              <uap:FileType>.htm</uap:FileType>
+              <uap:FileType ContentType="text/html">.html</uap:FileType>
+              <uap:FileType ContentType="text/html">.htm</uap:FileType>
               <uap:FileType>.shtml</uap:FileType>
               <uap:FileType>.xhtml</uap:FileType>
               <uap:FileType>.mdoc</uap:FileType>
@@ -227,7 +229,7 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="css">
             <uap:SupportedFileTypes>
-              <uap:FileType>.css</uap:FileType>
+              <uap:FileType ContentType="text/css">.css</uap:FileType>
               <uap:FileType>.scss</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/CssFileDisplayName</uap:DisplayName>
@@ -779,7 +781,7 @@
           <uap:FileTypeAssociation Name="diff">
             <uap:SupportedFileTypes>
               <uap:FileType>.patch</uap:FileType>
-              <uap:FileType>.diff</uap:FileType>
+              <uap:FileType ContentType="text/plain">.diff</uap:FileType>
               <uap:FileType>.rej</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/DiffFileDisplayName</uap:DisplayName>
@@ -1043,7 +1045,7 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="m3u">
             <uap:SupportedFileTypes>
-              <uap:FileType>.m3u</uap:FileType>
+              <uap:FileType ContentType="audio/x-mpegurl">.m3u</uap:FileType>
               <uap:FileType>.m3u8</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/M3uFileDisplayName</uap:DisplayName>
@@ -1114,7 +1116,7 @@
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="xsl">
             <uap:SupportedFileTypes>
-              <uap:FileType>.xsl</uap:FileType>
+              <uap:FileType ContentType="application/xml">.xsl</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>ms-resource:Manifest/XslFileDisplayName</uap:DisplayName>
             <uap:Logo>Assets\FileIcons\file.png</uap:Logo>
