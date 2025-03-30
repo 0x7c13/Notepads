@@ -21,26 +21,19 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
-                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomSliderStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml" />
+                <ResourceDictionary Source="Resource/DismissButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/TransparentTextBoxStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomSplitViewStyle.xaml" />
+                <ResourceDictionary Source="Resource/InAppNotificationNoDismissButton.xaml" />
+                <ResourceDictionary Source="Resource/CustomSliderStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomRadioButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml" />
+                <ResourceDictionary Source="Resource/CustomSettingsStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
-                <Setter Property="FontSize" Value="18"/>
-            </Style>
-
-            <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumHighColor}"/>
-            </Style>
 
         </ResourceDictionary>
     </Application.Resources>

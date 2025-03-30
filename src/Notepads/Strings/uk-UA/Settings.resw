@@ -149,7 +149,7 @@
     <value>Для додаткової інформації відвідайте наш сайт:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>Конфіденційність</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>

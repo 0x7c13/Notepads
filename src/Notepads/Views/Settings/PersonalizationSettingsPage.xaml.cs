@@ -48,8 +48,7 @@ namespace Notepads.Views.Settings
             if (App.IsGameBarWidget)
             {
                 // Game Bar widgets do not support transparency, disable this setting
-                BackgroundTintOpacityTitle.Visibility = Visibility.Collapsed;
-                BackgroundTintOpacityControls.Visibility = Visibility.Collapsed;
+                BackgroundTintOpacitySettingsPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
