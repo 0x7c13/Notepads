@@ -723,9 +723,21 @@
             var text = TextEditorCore.GetText();
             var encoding = RequestedEncoding ?? LastSavedSnapshot.Encoding;
             var lineEnding = RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
+            text = EnsureEndsWithLineEnding(text);
             await FileSystemUtility.WriteTextToFileAsync(file, LineEndingUtility.ApplyLineEnding(text, lineEnding), encoding); // Will throw if not succeeded
             var newFileModifiedTime = await FileSystemUtility.GetDateModifiedAsync(file);
             return new TextFile(text, encoding, lineEnding, newFileModifiedTime);
+        }
+
+        private string EnsureEndsWithLineEnding(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (!text.EndsWith("\n") && !text.EndsWith("\r"))
+            {
+                var effectiveLineEnding = RequestedLineEnding ?? LastSavedSnapshot.LineEnding;
+                return text + LineEndingUtility.GetLineEndingName(effectiveLineEnding);
+            }
+            return text;
         }
 
         public string GetContentForSharing()
