@@ -377,7 +377,7 @@ jobs:
 
       - name: Create and publish release
         id: create_release
-        uses: ncipollo/release-action@v1.16.0
+        uses: ncipollo/release-action@v1.18.0
         with:
           allowUpdates: true
           replacesArtifacts: true
