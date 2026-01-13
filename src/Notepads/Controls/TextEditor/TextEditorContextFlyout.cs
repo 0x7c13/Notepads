@@ -304,36 +304,11 @@ namespace Notepads.Controls.TextEditor
                 _uppercase = new MenuFlyoutItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UpperCaseButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed
-                    }
                 };
-                _uppercase.Click += (sender, args) =>
+                _uppercase.Click += (_, args) =>
                 {
-                    // Get current selection positions (thread-safe helper on TextEditorCore)
-                    int startPos = 0, endPos = 0;
-                    _textEditorCore.GetTextSelectionPosition(out startPos, out endPos);
-
-                    if (endPos > startPos)
-                    {
-                        // Replace selected text with its uppercase equivalent
-                        var fullText = _textEditor.GetText() ?? string.Empty;
-                        if (startPos < 0) startPos = 0;
-                        if (endPos > fullText.Length) endPos = fullText.Length;
-
-                        var capitalizedText = fullText.Substring(startPos, endPos - startPos).ToUpperInvariant();
-
-                        var newText = fullText.Substring(0, startPos) + capitalizedText + fullText.Substring(endPos);
-                        _textEditorCore.SetText(newText);
-                    }
-                    else
-                    {
-                        // No selection, replace entire document
-                        _textEditorCore.SetText(_textEditor.GetText().ToUpperInvariant());
-                    }
+                    _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
+                    _textEditorCore.Capitalize();
                     _textEditorCore.SetTextSelectionPosition(startPos, endPos);
                 };
                 return _uppercase;
@@ -349,14 +324,8 @@ namespace Notepads.Controls.TextEditor
                 _lowercase = new MenuFlyoutItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_LowerCaseButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed
-                    }
                 };
-                _lowercase.Click += (sender, args) =>
+                _lowercase.Click += (_, args) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.Decapitalize();
@@ -374,14 +343,8 @@ namespace Notepads.Controls.TextEditor
                 _sentencecase = new MenuFlyoutItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SentenceCaseButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed,
-                    },
                 };
-                _sentencecase.Click += (sender, args) =>
+                _sentencecase.Click += (_, args) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.SentenceCase();
@@ -399,14 +362,8 @@ namespace Notepads.Controls.TextEditor
                 _togglecase = new MenuFlyoutItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ToggleCaseButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed,
-                    },
                 };
-                _togglecase.Click += (sender, args) =>
+                _togglecase.Click += (_, args) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.ToggleCase();
@@ -424,14 +381,8 @@ namespace Notepads.Controls.TextEditor
                 _titlecase = new MenuFlyoutItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_TitleCaseButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed,
-                    },
                 };
-                _titlecase.Click += (sender, args) =>
+                _titlecase.Click += (_, args) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.TitleCase();
@@ -450,12 +401,6 @@ namespace Notepads.Controls.TextEditor
                 _capitalizations = new MenuFlyoutSubItem
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CapitalizationsButtonDisplayText"),
-                    Icon = new FontIcon()
-                    {
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                        Glyph = "\uE73E",
-                        Visibility = Visibility.Collapsed
-                    }
                 };
 
                 _capitalizations.Items.Add(UpperCase);
