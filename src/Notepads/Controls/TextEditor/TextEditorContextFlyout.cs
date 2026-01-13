@@ -29,6 +29,13 @@ namespace Notepads.Controls.TextEditor
         private MenuFlyoutItem _previewToggle;
         private MenuFlyoutItem _share;
 
+        private MenuFlyoutSubItem _capitalizations;
+        private MenuFlyoutItem _uppercase;
+        private MenuFlyoutItem _lowercase;
+        private MenuFlyoutItem _sentencecase;
+        private MenuFlyoutItem _togglecase;
+        private MenuFlyoutItem _titlecase;
+
         private MenuFlyout _proofingFlyout;
         private readonly MenuFlyoutSeparator _proofingSeparator = new MenuFlyoutSeparator();
 
@@ -54,6 +61,7 @@ namespace Notepads.Controls.TextEditor
             Items.Add(WebSearch);
             Items.Add(PreviewToggle);
             Items.Add(Share);
+            Items.Add(Capitalizations);
 
             Opening += TextEditorContextFlyout_Opening;
             Closed += TextEditorContextFlyout_Closed;
@@ -99,6 +107,10 @@ namespace Notepads.Controls.TextEditor
             {
                 Share.Visibility = Visibility.Collapsed;
             }
+
+            _textEditorCore.GetTextSelectionPosition(out var start, out var end);
+            SentenceCase.IsEnabled = start == end;
+            TitleCase.IsEnabled = start == end;
         }
 
         private void BuildProofingSubItems(MenuFlyout proofingFlyout)
@@ -280,6 +292,180 @@ namespace Notepads.Controls.TextEditor
                     _rightToLeftReadingOrder.Icon.Visibility = (_textEditorCore.FlowDirection == FlowDirection.RightToLeft) ? Visibility.Visible : Visibility.Collapsed;
                 };
                 return _rightToLeftReadingOrder;
+            }
+        }
+
+        public MenuFlyoutItem UpperCase
+        {
+            get
+            {
+                if (_uppercase != null) return _uppercase;
+
+                _uppercase = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UpperCaseButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed
+                    }
+                };
+                _uppercase.Click += (sender, args) =>
+                {
+                    // Get current selection positions (thread-safe helper on TextEditorCore)
+                    int startPos = 0, endPos = 0;
+                    _textEditorCore.GetTextSelectionPosition(out startPos, out endPos);
+
+                    if (endPos > startPos)
+                    {
+                        // Replace selected text with its uppercase equivalent
+                        var fullText = _textEditor.GetText() ?? string.Empty;
+                        if (startPos < 0) startPos = 0;
+                        if (endPos > fullText.Length) endPos = fullText.Length;
+
+                        var capitalizedText = fullText.Substring(startPos, endPos - startPos).ToUpperInvariant();
+
+                        var newText = fullText.Substring(0, startPos) + capitalizedText + fullText.Substring(endPos);
+                        _textEditorCore.SetText(newText);
+                    }
+                    else
+                    {
+                        // No selection, replace entire document
+                        _textEditorCore.SetText(_textEditor.GetText().ToUpperInvariant());
+                    }
+                    _textEditorCore.SetTextSelectionPosition(startPos, endPos);
+                };
+                return _uppercase;
+            }
+        }
+
+        public MenuFlyoutItem LowerCase
+        {
+            get
+            {
+                if (_lowercase != null) return _lowercase;
+
+                _lowercase = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_LowerCaseButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed
+                    }
+                };
+                _lowercase.Click += (sender, args) =>
+                {
+                    _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
+                    _textEditorCore.Decapitalize();
+                    _textEditorCore.SetTextSelectionPosition(startPos, endPos);
+                };
+                return _lowercase;
+            }
+        }
+
+        public MenuFlyoutItem SentenceCase
+        {
+            get
+            {
+                if (_sentencecase != null) return _sentencecase;
+                _sentencecase = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SentenceCaseButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed,
+                    },
+                };
+                _sentencecase.Click += (sender, args) =>
+                {
+                    _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
+                    _textEditorCore.SentenceCase();
+                    _textEditorCore.SetTextSelectionPosition(startPos, endPos);
+                };
+                return _sentencecase;
+            }
+        }
+
+        public MenuFlyoutItem ToggleCase
+        {
+            get
+            {
+                if (_togglecase != null) return _togglecase;
+                _togglecase = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ToggleCaseButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed,
+                    },
+                };
+                _togglecase.Click += (sender, args) =>
+                {
+                    _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
+                    _textEditorCore.ToggleCase();
+                    _textEditorCore.SetTextSelectionPosition(startPos, endPos);
+                };
+                return _togglecase;
+            }
+        }
+
+        public MenuFlyoutItem TitleCase
+        {
+            get
+            {
+                if (_titlecase != null) return _titlecase;
+                _titlecase = new MenuFlyoutItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_TitleCaseButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed,
+                    },
+                };
+                _titlecase.Click += (sender, args) =>
+                {
+                    _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
+                    _textEditorCore.TitleCase();
+                    _textEditorCore.SetTextSelectionPosition(startPos, endPos);
+                };
+                return _titlecase;
+            }
+        }
+
+        public MenuFlyoutSubItem Capitalizations
+        {
+            get
+            {
+                if (_capitalizations != null) return _capitalizations;
+
+                _capitalizations = new MenuFlyoutSubItem
+                {
+                    Text = _resourceLoader.GetString("TextEditor_ContextFlyout_CapitalizationsButtonDisplayText"),
+                    Icon = new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = "\uE73E",
+                        Visibility = Visibility.Collapsed
+                    }
+                };
+
+                _capitalizations.Items.Add(UpperCase);
+                _capitalizations.Items.Add(LowerCase);
+                _capitalizations.Items.Add(ToggleCase);
+                _capitalizations.Items.Add(new MenuFlyoutSeparator());
+                _capitalizations.Items.Add(TitleCase);
+                _capitalizations.Items.Add(SentenceCase);
+
+                return _capitalizations;
             }
         }
 
