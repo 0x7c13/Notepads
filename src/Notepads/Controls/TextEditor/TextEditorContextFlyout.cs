@@ -305,7 +305,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_UpperCaseButtonDisplayText"),
                 };
-                _uppercase.Click += (_, args) =>
+                _uppercase.Click += (_, __) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.Capitalize();
@@ -325,7 +325,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_LowerCaseButtonDisplayText"),
                 };
-                _lowercase.Click += (_, args) =>
+                _lowercase.Click += (_, __) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.Decapitalize();
@@ -344,7 +344,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_SentenceCaseButtonDisplayText"),
                 };
-                _sentencecase.Click += (_, args) =>
+                _sentencecase.Click += (_, __) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.SentenceCase();
@@ -363,7 +363,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_ToggleCaseButtonDisplayText"),
                 };
-                _togglecase.Click += (_, args) =>
+                _togglecase.Click += (_, __) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.ToggleCase();
@@ -382,7 +382,7 @@ namespace Notepads.Controls.TextEditor
                 {
                     Text = _resourceLoader.GetString("TextEditor_ContextFlyout_TitleCaseButtonDisplayText"),
                 };
-                _titlecase.Click += (_, args) =>
+                _titlecase.Click += (_, __) =>
                 {
                     _textEditorCore.GetTextSelectionPosition(out var startPos, out var endPos);
                     _textEditorCore.TitleCase();
