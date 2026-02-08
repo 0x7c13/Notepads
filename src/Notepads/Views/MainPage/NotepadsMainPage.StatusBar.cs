@@ -173,18 +173,52 @@ namespace Notepads.Views.MainPage
             if (!string.IsNullOrEmpty(selectedText))
             {
                 var selectedWordCount = CountWords(selectedText);
-                WordCountIndicator.Text = $"{selectedWordCount}/{totalWordCount} words";
+                WordCountIndicator.Text = string.Format(
+                    "Words: {0} | Selected: {1}",
+                    totalWordCount.ToString("N0", CultureInfo.CurrentCulture),
+                    selectedWordCount.ToString("N0", CultureInfo.CurrentCulture));
             }
             else
             {
-                WordCountIndicator.Text = $"{totalWordCount} words";
+                WordCountIndicator.Text = string.Format(
+                    "Words: {0}",
+                    totalWordCount.ToString("N0", CultureInfo.CurrentCulture));
             }
         }
 
+        /// <summary>
+        /// Counts words in the given text using character iteration for efficiency.
+        /// A word is defined as a contiguous sequence of non-whitespace characters.
+        /// </summary>
         private static int CountWords(string text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return 0;
-            return text.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
+            if (string.IsNullOrEmpty(text)) return 0;
+
+            int wordCount = 0;
+            bool inWord = false;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    if (inWord)
+                    {
+                        wordCount++;
+                        inWord = false;
+                    }
+                }
+                else
+                {
+                    inWord = true;
+                }
+            }
+
+            if (inWord)
+            {
+                wordCount++;
+            }
+
+            return wordCount;
         }
 
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
