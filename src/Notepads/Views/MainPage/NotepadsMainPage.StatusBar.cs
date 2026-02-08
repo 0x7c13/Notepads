@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ namespace Notepads.Views.MainPage
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
             UpdateLineColumnIndicator(textEditor);
+            UpdateWordCountIndicator(textEditor);
             UpdateFontZoomIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
@@ -159,6 +160,31 @@ namespace Notepads.Views.MainPage
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), startLineIndex, startColumn)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), startLineIndex, startColumn,
                     selectedCount, wordSelected);
+        }
+
+        private void UpdateWordCountIndicator(ITextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+
+            var fullText = textEditor.GetText();
+            var totalWordCount = CountWords(fullText);
+
+            var selectedText = textEditor.GetSelectedText();
+            if (!string.IsNullOrEmpty(selectedText))
+            {
+                var selectedWordCount = CountWords(selectedText);
+                WordCountIndicator.Text = $"{selectedWordCount}/{totalWordCount} words";
+            }
+            else
+            {
+                WordCountIndicator.Text = $"{totalWordCount} words";
+            }
+        }
+
+        private static int CountWords(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return 0;
+            return text.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
