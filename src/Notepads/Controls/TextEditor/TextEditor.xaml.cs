@@ -1,4 +1,4 @@
-﻿namespace Notepads.Controls.TextEditor
+namespace Notepads.Controls.TextEditor
 {
     using System;
     using System.Collections.Generic;
@@ -310,6 +310,13 @@
         public string GetText()
         {
             return TextEditorCore.GetText();
+        }
+
+        public string GetSelectedText()
+        {
+            return TextEditorCore.Document.Selection.StartPosition == TextEditorCore.Document.Selection.EndPosition
+                ? string.Empty
+                : TextEditorCore.Document.Selection.Text;
         }
 
         // Make sure this method is thread safe

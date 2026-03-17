@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ namespace Notepads.Core
         public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
         public event EventHandler<ITextEditor> TextEditorEncodingChanged;
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
+        public event EventHandler<ITextEditor> TextEditorTextChanging;
         public event EventHandler<ITextEditor> TextEditorModeChanged;
         public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
@@ -199,6 +200,7 @@ namespace Notepads.Core
             textEditor.Loaded += TextEditor_Loaded;
             textEditor.Unloaded += TextEditor_Unloaded;
             textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
+            textEditor.TextChanging += TextEditor_OnTextChanging;
             textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
             textEditor.KeyDown += TextEditorKeyDown;
             textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
@@ -238,6 +240,7 @@ namespace Notepads.Core
             textEditor.Unloaded -= TextEditor_Unloaded;
             textEditor.KeyDown -= TextEditorKeyDown;
             textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
+            textEditor.TextChanging -= TextEditor_OnTextChanging;
             textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
             textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
             textEditor.ModeChanged -= TextEditor_OnModeChanged;
@@ -519,6 +522,12 @@ namespace Notepads.Core
         {
             if (!(sender is ITextEditor textEditor)) return;
             TextEditorSelectionChanged?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnTextChanging(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorTextChanging?.Invoke(this, textEditor);
         }
 
         private void TextEditor_OnFontZoomFactorChanged(object sender, EventArgs e)
