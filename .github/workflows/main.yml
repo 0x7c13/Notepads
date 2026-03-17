@@ -159,7 +159,7 @@ jobs:
 
       - name: Checkout repository
         id: checkout_repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -348,7 +348,7 @@ jobs:
     steps:
       - name: Checkout repository
         id: checkout_repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download and extract MSIX package
         id: dl_package_artifact
