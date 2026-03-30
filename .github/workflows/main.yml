@@ -352,7 +352,7 @@ jobs:
 
       - name: Download and extract MSIX package
         id: dl_package_artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: Build artifacts
           path: Artifacts/
