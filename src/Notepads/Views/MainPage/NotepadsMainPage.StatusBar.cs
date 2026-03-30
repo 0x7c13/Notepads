@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ namespace Notepads.Views.MainPage
             UpdatePathIndicator(textEditor);
             UpdateEditorModificationIndicator(textEditor);
             UpdateLineColumnIndicator(textEditor);
+            UpdateWordCountIndicator(textEditor);
             UpdateFontZoomIndicator(textEditor);
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
@@ -159,6 +160,65 @@ namespace Notepads.Views.MainPage
                 ? string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_ShortText"), startLineIndex, startColumn)
                 : string.Format(_resourceLoader.GetString("TextEditor_LineColumnIndicator_FullText"), startLineIndex, startColumn,
                     selectedCount, wordSelected);
+        }
+
+        private void UpdateWordCountIndicator(ITextEditor textEditor)
+        {
+            if (StatusBar == null) return;
+
+            var fullText = textEditor.GetText();
+            var totalWordCount = CountWords(fullText);
+
+            var selectedText = textEditor.GetSelectedText();
+            if (!string.IsNullOrEmpty(selectedText))
+            {
+                var selectedWordCount = CountWords(selectedText);
+                WordCountIndicator.Text = string.Format(
+                    "Words: {0} | Selected: {1}",
+                    totalWordCount.ToString("N0", CultureInfo.CurrentCulture),
+                    selectedWordCount.ToString("N0", CultureInfo.CurrentCulture));
+            }
+            else
+            {
+                WordCountIndicator.Text = string.Format(
+                    "Words: {0}",
+                    totalWordCount.ToString("N0", CultureInfo.CurrentCulture));
+            }
+        }
+
+        /// <summary>
+        /// Counts words in the given text using character iteration for efficiency.
+        /// A word is defined as a contiguous sequence of non-whitespace characters.
+        /// </summary>
+        private static int CountWords(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return 0;
+
+            int wordCount = 0;
+            bool inWord = false;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    if (inWord)
+                    {
+                        wordCount++;
+                        inWord = false;
+                    }
+                }
+                else
+                {
+                    inWord = true;
+                }
+            }
+
+            if (inWord)
+            {
+                wordCount++;
+            }
+
+            return wordCount;
         }
 
         private void UpdateFontZoomIndicator(ITextEditor textEditor)
