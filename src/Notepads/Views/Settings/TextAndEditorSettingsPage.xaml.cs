@@ -370,6 +370,7 @@ namespace Notepads.Views.Settings
         {
             var fontFamily = new FontFamily((string)e.AddedItems.First());
             AppSettingsService.EditorFontFamily = fontFamily.Source;
+            FontSizePicker.FontFamily = fontFamily;
             FontStylePicker.FontFamily = fontFamily;
             FontWeightPicker.FontFamily = fontFamily;
         }

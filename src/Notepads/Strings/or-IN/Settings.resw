@@ -149,7 +149,7 @@
     <value>ଅଧିକ ସୂଚନା ପାଇଁ, ଦୟାକରି ଆମର ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>ଗୋପନୀୟତା ବିବୃତ୍ତି</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>

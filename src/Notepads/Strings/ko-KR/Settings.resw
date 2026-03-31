@@ -149,7 +149,7 @@
     <value>자세한 내용은 우리의 웹 사이트를 방문하십시오:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>개인정보 보호 정책</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>

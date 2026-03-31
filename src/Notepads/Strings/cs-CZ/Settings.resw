@@ -149,7 +149,7 @@
     <value>Pro více informací, prosím, navštivte náš web:</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>Prohlášení o zásadách ochrany osobních údajů</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>

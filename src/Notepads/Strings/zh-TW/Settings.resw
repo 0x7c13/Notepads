@@ -149,7 +149,7 @@
     <value>若要取得更多資訊，請造訪我們的官方網站：</value>
     <comment>AboutPage Notepads Website Title display text.</comment>
   </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
+  <data name="AboutPage_PrivacyStatementTitle.Content" xml:space="preserve">
     <value>隱私權聲明</value>
     <comment>AboutPage PrivacyStatementTitle display text.</comment>
   </data>
