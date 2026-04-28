@@ -35,7 +35,7 @@ on:
 
 jobs:
   setup:
-    runs-on: windows-latest
+    runs-on: windows-2022
     outputs:
       matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
@@ -121,7 +121,7 @@ jobs:
               }
             }
           }
-          echo "::set-output name=matrix::$($MATRIX | ConvertTo-Json -depth 32 -Compress)"
+          "matrix=$($MATRIX | ConvertTo-Json -depth 32 -Compress)" >> $env:GITHUB_OUTPUT
         env:
           FORK: ${{ github.event.repository.fork }}
           PARAM: ${{ github.event.inputs.param }}
@@ -131,7 +131,7 @@ jobs:
 
   ci:
     needs: setup
-    runs-on: windows-latest
+    runs-on: windows-2022
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     outputs:
@@ -151,11 +151,11 @@ jobs:
 
       - name: Setup MSBuild
         id: setup_msbuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Setup NuGet
         id: setup-nuget
-        uses: NuGet/setup-nuget@v2.0.1
+        uses: NuGet/setup-nuget@v3.0.0
 
       - name: Checkout repository
         id: checkout_repo
@@ -168,7 +168,7 @@ jobs:
       - if: matrix.runCodeqlAnalysis
         name: Configure Pagefile
         id: config_pagefile
-        uses: al-cheb/configure-pagefile-action@v1.4
+        uses: al-cheb/configure-pagefile-action@v1.5
         with:
             minimum-size: 8GB
             maximum-size: 10GB
@@ -195,7 +195,7 @@ jobs:
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud packages
         id: cache_sonar_packages
-        uses: actions/cache@v4.3.0
+        uses: actions/cache@v5.0.4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
@@ -204,7 +204,7 @@ jobs:
       - if: matrix.runSonarCloudScan
         name: Cache SonarCloud scanner
         id: cache_sonar_scanner
-        uses: actions/cache@v4.3.0
+        uses: actions/cache@v5.0.4
         with:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
@@ -264,7 +264,7 @@ jobs:
       - if: matrix.runCodeqlAnalysis
         name: Initialize CodeQL
         id: init_codeql
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           queries: security-and-quality
           languages: csharp
@@ -314,7 +314,7 @@ jobs:
       - if: matrix.runCodeqlAnalysis
         name: Perform CodeQL Analysis
         id: analyze_codeql
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         continue-on-error: true
 
       - if: matrix.runSonarCloudScan
@@ -341,7 +341,7 @@ jobs:
     # the target branch is 'master' and required parameter provided for release.
     if: needs.ci.outputs.new_version != ''
     needs: [ setup, ci ]
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       OLD_VERSION: ${{ needs.ci.outputs.old_version }}
       NEW_VERSION: ${{ needs.ci.outputs.new_version }}
