@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Notepads.Views.Settings.AdvancedSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -46,6 +46,19 @@
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="EnableSmartCopyToggleSwitch" />
                     <TextBlock x:Uid="/Settings/AdvancedPage_SmartCopySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                </StackPanel>
+                <TextBlock
+                    x:Name="AutosaveSettingsTitle"
+                    Text="Autosave"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="AutosaveSettingsControls" Margin="0,10,0,0">
+                    <ToggleSwitch Header="Enable Autosave"
+                                  Style="{StaticResource CustomToggleSwitchStyle}" 
+                                  x:Name="EnableAutosaveToggleSwitch" />
+                    <TextBlock Text="Automatically saves your file on every keystroke." Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                    <CheckBox x:Name="ShowSavedNotificationCheckBox" Content="Show 'Saved' notification popup" Margin="0,12,0,0" />
                 </StackPanel>
                 <TextBlock
                     x:Name="SessionSnapshotSettingsTitle"

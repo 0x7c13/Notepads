@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -83,6 +83,13 @@ namespace Notepads.Views.MainPage
 
         private readonly string _defaultNewFileName;
 
+        public ITextEditor GetTextEditor()
+        {
+            return NotepadsCore.GetSelectedTextEditor();
+        }
+
+        private DispatcherTimer _autosaveTimer;
+
         public NotepadsMainPage()
         {
             InitializeComponent();
@@ -95,6 +102,7 @@ namespace Notepads.Views.MainPage
             InitializeNotificationCenter();
             InitializeThemeSettings();
             InitializeStatusBar();
+            InitializeAutosave();
             InitializeControls();
             InitializeMainMenu();
             InitializeKeyboardShortcuts();
@@ -170,6 +178,63 @@ namespace Notepads.Views.MainPage
             if (!await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance))
             {
                 AnalyticsService.TrackEvent("FailedToOpenNewAppInstance");
+            }
+        }
+
+        private void InitializeAutosave()
+        {
+            if (!EnhancedAutosaveService.FeatureFlag_EnhancedAutosave) return;
+            EnhancedAutosaveService.Initialize();
+
+            _autosaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+            _autosaveTimer.Tick += AutosaveTimer_Tick;
+            
+            NotepadsCore.TextEditorTextChanging += NotepadsCore_TextEditorTextChanging;
+            EnhancedAutosaveService.AutosaveStateChanged += EnhancedAutosaveService_AutosaveStateChanged;
+            EnhancedAutosaveService.LastSaveTimeChanged += EnhancedAutosaveService_LastSaveTimeChanged;
+            UpdateAutosaveIndicatorVisibility();
+        }
+
+        private void EnhancedAutosaveService_AutosaveStateChanged(object sender, bool isAutosaveEnabled)
+        {
+            UpdateAutosaveIndicatorVisibility();
+        }
+
+        private async void EnhancedAutosaveService_LastSaveTimeChanged(object sender, DateTime time)
+        {
+            await Dispatcher.CallOnUIThreadAsync(() =>
+            {
+                UpdateAutosaveIndicatorVisibility();
+            });
+        }
+
+        private void NotepadsCore_TextEditorTextChanging(object sender, ITextEditor textEditor)
+        {
+            if (EnhancedAutosaveService.IsAutosaveEnabled)
+            {
+                _autosaveTimer.Stop();
+                _autosaveTimer.Start();
+            }
+        }
+
+        private void AutosaveTimer_Tick(object sender, object e)
+        {
+            _autosaveTimer.Stop();
+            if (!EnhancedAutosaveService.IsAutosaveEnabled) return;
+
+            var editors = NotepadsCore.GetAllTextEditors();
+            foreach (var editor in editors)
+            {
+                if (editor.IsModified && editor.EditingFile != null && editor.FileModificationState == FileModificationState.Untouched)
+                {
+                    EnhancedAutosaveService.QueueSave(async () =>
+                    {
+                        await Dispatcher.CallOnUIThreadAsync(async () =>
+                        {
+                            await SaveAsync(editor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false, isAutosave: true);
+                        });
+                    });
+                }
             }
         }
 
@@ -538,6 +603,12 @@ namespace Notepads.Views.MainPage
             {
                 SetupStatusBar(textEditor);
             }
+            
+            if (_isAutosaving && !EnhancedAutosaveService.ShowSavedNotification)
+            {
+                return;
+            }
+            
             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileSaved"), 1500);
         }
 

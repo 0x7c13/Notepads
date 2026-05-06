@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ namespace Notepads.Core
         event EventHandler<ITextEditor> TextEditorLineEndingChanged;
         event EventHandler<ITextEditor> TextEditorModeChanged;
         event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+        event EventHandler<ITextEditor> TextEditorTextChanging;
         event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
         event KeyEventHandler TextEditorKeyDown;
 

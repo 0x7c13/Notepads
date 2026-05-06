@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -44,6 +44,39 @@ namespace Notepads.Views.MainPage
             UpdateLineEndingIndicator(textEditor.GetLineEnding());
             UpdateEncodingIndicator(textEditor.GetEncoding());
             UpdateShadowWindowIndicator();
+            UpdateAutosaveIndicatorVisibility();
+        }
+
+        private void UpdateAutosaveIndicatorVisibility()
+        {
+            if (StatusBar == null) return;
+            if (EnhancedAutosaveService.FeatureFlag_EnhancedAutosave)
+            {
+                if (AutosaveIndicatorPanel != null)
+                {
+                    AutosaveIndicatorPanel.Visibility = Visibility.Visible;
+                    if (EnhancedAutosaveService.IsAutosaveEnabled)
+                    {
+                        AutosaveIcon.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.LimeGreen);
+                        AutosaveIndicatorText.Text = "Autosave: ON";
+                    }
+                    else
+                    {
+                        AutosaveIcon.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Gray);
+                        AutosaveIndicatorText.Text = "Autosave: OFF";
+                    }
+                    
+                    string lastSave = EnhancedAutosaveService.LastSaveTime == DateTime.MinValue ? "Never" : EnhancedAutosaveService.LastSaveTime.ToString("HH:mm:ss.fff");
+                    ToolTipService.SetToolTip(AutosaveIndicatorPanel, $"State: {(EnhancedAutosaveService.IsAutosaveEnabled ? "ON" : "OFF")}\nLast save: {lastSave}");
+                }
+            }
+            else
+            {
+                if (AutosaveIndicatorPanel != null)
+                {
+                    AutosaveIndicatorPanel.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         public void ShowHideStatusBar(bool showStatusBar)
@@ -353,6 +386,11 @@ namespace Notepads.Views.MainPage
             else if (sender == EncodingIndicator)
             {
                 EncodingIndicatorClicked(selectedEditor);
+            }
+            else if (sender == AutosaveIndicatorPanel)
+            {
+                EnhancedAutosaveService.IsAutosaveEnabled = !EnhancedAutosaveService.IsAutosaveEnabled;
+                UpdateAutosaveIndicatorVisibility();
             }
             else if (sender == ShadowWindowIndicator)
             {

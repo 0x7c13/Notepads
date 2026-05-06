@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ namespace Notepads.Services
         public static event EventHandler<bool> OnStatusBarVisibilityChanged;
         public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
         public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
+        public static event EventHandler<bool> OnAutosaveOptionChanged;
 
         private static string _editorFontFamily;
 
@@ -239,6 +240,19 @@ namespace Notepads.Services
             }
         }
 
+        private static bool _isAutosaveEnabled;
+
+        public static bool IsAutosaveEnabled
+        {
+            get => _isAutosaveEnabled;
+            set
+            {
+                _isAutosaveEnabled = value;
+                OnAutosaveOptionChanged?.Invoke(null, value);
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableAutosaveBool, value);
+            }
+        }
+
         private static bool _isHighlightMisspelledWordsEnabled;
 
         public static bool IsHighlightMisspelledWordsEnabled
@@ -327,6 +341,8 @@ namespace Notepads.Services
 
             InitializeSessionSnapshotSettings();
 
+            InitializeAutosaveSettings();
+
             InitializeAppOpeningPreferencesSettings();
 
             InitializeAppClosingPreferencesSettings();
@@ -365,6 +381,18 @@ namespace Notepads.Services
                 {
                     _isSessionSnapshotEnabled = false;
                 }
+            }
+        }
+
+        private static void InitializeAutosaveSettings()
+        {
+            if (ApplicationSettingsStore.Read(SettingsKey.EditorEnableAutosaveBool) is bool enableAutosave)
+            {
+                _isAutosaveEnabled = enableAutosave;
+            }
+            else
+            {
+                _isAutosaveEnabled = false;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -23,6 +23,9 @@ namespace Notepads.Views.Settings
 
             ShowStatusBarToggleSwitch.IsOn = AppSettingsService.ShowStatusBar;
             EnableSmartCopyToggleSwitch.IsOn = AppSettingsService.IsSmartCopyEnabled;
+            EnableAutosaveToggleSwitch.IsOn = EnhancedAutosaveService.IsAutosaveEnabled;
+            ShowSavedNotificationCheckBox.IsChecked = EnhancedAutosaveService.ShowSavedNotification;
+            ShowSavedNotificationCheckBox.IsEnabled = EnhancedAutosaveService.IsAutosaveEnabled;
 
             // Disable session snapshot toggle for shadow windows
             if (!App.IsPrimaryInstance)
@@ -58,6 +61,9 @@ namespace Notepads.Views.Settings
         {
             ShowStatusBarToggleSwitch.Toggled += ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled += EnableSmartCopyToggleSwitch_Toggled;
+            EnableAutosaveToggleSwitch.Toggled += EnableAutosaveToggleSwitch_Toggled;
+            ShowSavedNotificationCheckBox.Checked += ShowSavedNotificationCheckBox_Changed;
+            ShowSavedNotificationCheckBox.Unchecked += ShowSavedNotificationCheckBox_Changed;
             EnableSessionSnapshotToggleSwitch.Toggled += EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             ExitWhenLastTabClosedToggleSwitch.Toggled += ExitWhenLastTabClosedToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled += AlwaysOpenNewWindowToggleSwitch_Toggled;
@@ -68,10 +74,24 @@ namespace Notepads.Views.Settings
         {
             ShowStatusBarToggleSwitch.Toggled -= ShowStatusBarToggleSwitch_Toggled;
             EnableSmartCopyToggleSwitch.Toggled -= EnableSmartCopyToggleSwitch_Toggled;
+            EnableAutosaveToggleSwitch.Toggled -= EnableAutosaveToggleSwitch_Toggled;
+            ShowSavedNotificationCheckBox.Checked -= ShowSavedNotificationCheckBox_Changed;
+            ShowSavedNotificationCheckBox.Unchecked -= ShowSavedNotificationCheckBox_Changed;
             EnableSessionSnapshotToggleSwitch.Toggled -= EnableSessionBackupAndRestoreToggleSwitch_Toggled;
             ExitWhenLastTabClosedToggleSwitch.Toggled -= ExitWhenLastTabClosedToggleSwitch_Toggled;
             AlwaysOpenNewWindowToggleSwitch.Toggled -= AlwaysOpenNewWindowToggleSwitch_Toggled;
             LanguagePicker.SelectionChanged -= LanguagePicker_SelectionChanged;
+        }
+
+        private void EnableAutosaveToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            EnhancedAutosaveService.IsAutosaveEnabled = EnableAutosaveToggleSwitch.IsOn;
+            ShowSavedNotificationCheckBox.IsEnabled = EnableAutosaveToggleSwitch.IsOn;
+        }
+
+        private void ShowSavedNotificationCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            EnhancedAutosaveService.ShowSavedNotification = ShowSavedNotificationCheckBox.IsChecked ?? false;
         }
 
         private void EnableSmartCopyToggleSwitch_Toggled(object sender, RoutedEventArgs e)

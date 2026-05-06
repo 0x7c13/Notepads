@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ namespace Notepads.Core
         public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
         public event EventHandler<ITextEditor> TextEditorModeChanged;
         public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
+        public event EventHandler<ITextEditor> TextEditorTextChanging;
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
         public event KeyEventHandler TextEditorKeyDown;
@@ -207,6 +208,7 @@ namespace Notepads.Core
             textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
             textEditor.FileRenamed += TextEditor_OnFileRenamed;
+            textEditor.TextChanging += TextEditor_OnTextChanging;
 
             return textEditor;
         }
@@ -245,6 +247,7 @@ namespace Notepads.Core
             textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
             textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
             textEditor.FileRenamed -= TextEditor_OnFileRenamed;
+            textEditor.TextChanging -= TextEditor_OnTextChanging;
             textEditor.Dispose();
         }
 
@@ -572,6 +575,12 @@ namespace Notepads.Core
             if (item == null) return;
             item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
             TextEditorRenamed?.Invoke(this, textEditor);
+        }
+
+        private void TextEditor_OnTextChanging(object sender, EventArgs e)
+        {
+            if (!(sender is ITextEditor textEditor)) return;
+            TextEditorTextChanging?.Invoke(this, textEditor);
         }
 
         #region DragAndDrop
