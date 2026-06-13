@@ -514,7 +514,7 @@
     <comment>Print: PrintManager custom option "FooterText" title.</comment>
   </data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Kptekst</value>
+    <value>Koptekst</value>
     <comment>Print: PrintManager custom option "HeaderText" title.</comment>
   </data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
