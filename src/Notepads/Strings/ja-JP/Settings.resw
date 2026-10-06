@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,316 +117,83 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>使用・参照しているモジュール</value>
-    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
-    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>免責事項</value>
-    <comment>AboutPage Disclaimer Title display text.</comment>
-  </data>
-  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Jackie (Jiaqi) Liu がデザインと実装した、フリーなオープンソース テキストエディター</value>
-    <comment>AboutPage NotepadsShortDescription display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>作者の連絡先:</value>
-    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>問題の報告と機能追加依頼の連絡先:</value>
-    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>ソースコードはGithub にあります:</value>
-    <comment>AboutPage Notepads SourceCode Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>詳しくは公式サイトをご覧ください:</value>
-    <comment>AboutPage Notepads Website Title display text.</comment>
-  </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>プライバシーについて</value>
-    <comment>AboutPage PrivacyStatementTitle display text.</comment>
-  </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>このアプリについて</value>
-    <comment>AboutPage Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>ステータス バーを表示する</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>ステータス バーを表示する</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>ステータス バー</value>
-    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>詳細設定</value>
-    <comment>AdvancedPage Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>アクセント カラー</value>
-    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows のアクセント カラーを使う</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Windows のアクセント カラーを使う</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>アクリル背景の不透明度です。バッテリーセーバーモードがオンになっている場合や、Windowsの設定で透過効果をオフにしている場合は、アクリル効果が無効になるので注意してください。</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>背景色の不透明度</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>黒</value>
-    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>白</value>
-    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>テーマ</value>
-    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Windows の設定を使う</value>
-    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>個人用設定</value>
-    <comment>PersonalizationPage Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows コードページ)</value>
-    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>フォールバック設定は、ファイルのエンコードを認識できない場合に使用されます。</value>
-    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>フォールバック設定</value>
-    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8</value>
-    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>新規文書にのみ適用されます。</value>
-    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>既定のエンコード</value>
-    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>既定のフォントとサイズ</value>
-    <comment>TextAndEditorPage FontSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>新規文書にのみ適用されます。</value>
-    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>既定の行末</value>
-    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>タブ文字 (\t)</value>
-    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>ここで設定するタブ キーの挙動は、新規に入力されたタブにのみ適用されます。</value>
-    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>半角スペース 8文字</value>
-    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>半角スペース 4文字</value>
-    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>タブ キーの挙動</value>
-    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>半角スペース 2文字</value>
-    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>文字の折り返し</value>
-    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>単語で折り返す</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>単語で折り返す</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>テキストとエディター</value>
-    <comment>TextAndEditorPage Title display text.</comment>
-  </data>
-  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>変更履歴</value>
-    <comment>AboutPage Changelog Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads は次回起動時に備えて現在の状態を保存し、また定期的に内容をバックアップして明示的にファイルに保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。またこの機能はアプリの最初のウィンドウのみで動作し、シャドウ ウィンドウ（2番目以降のウィンドウ）では使用できません。</value>
-    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>セッション スナップショットを使用する</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>セッション スナップショットを使用する</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>セッション スナップショット設定</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>スペルミスした単語をハイライト</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>スペルミスした単語をハイライト</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>スペルチェック</value>
-    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>有効にすると、Notepads は新しいタブを作らず、常に新しいウィンドウでファイルを開くようになります。</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>常に新しいウィンドウで開く</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>常に新しいウィンドウで開く</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>起動時の設定</value>
-    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>現在行をハイライト</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>現在行をハイライト</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>既定の検索エンジン</value>
-    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>※https://www.example.com/search?q={0} という形式のURLを入力してください</value>
-    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>ウェブ検索時に使用される既定の検索エンジンの設定です。</value>
-    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>既定の検索エンジン</value>
-    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>自動検出 (推奨)</value>
-    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>表示</value>
-    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>文書内の行番号を表示します。</value>
-    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>行番号を表示</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>行番号を表示</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>既定のフォント スタイル</value>
-    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>既定のフォント ウェイト</value>
-    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Notepads が使用する言語（システム既定）を上書きするには、カスタム言語を選択してください。変更を反映するには再起動が必要です。</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>※変更を反映するには、Notepadsを再起動してください。</value>
-    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>言語設定</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>有効にすると、Notepads は選択したテキストをクリップボードにコピーする前に、先頭や末尾のスペース、タブ、空行などをスマートにトリミングします。</value>
-    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
-    <value>スマート コピーを有効にする</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
-    <value>スマート コピーを有効にする</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>スマート コピー設定</value>
-    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
-    <value>システム既定</value>
-    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve">
-    <value>最後のタブを閉じる時にアプリを終了する</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve">
-    <value>最後のタブを閉じる時にアプリを終了する</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
-  </data>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve"><value>使用・参照しているモジュール</value><comment>AboutPage DependenciesAndReferences Title display text.</comment></data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve"><value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value><comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment></data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve"><value>免責事項</value><comment>AboutPage Disclaimer Title display text.</comment></data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve"><value>Jiaqi (0x7c13) Liu がデザインと実装した、フリーなオープンソース テキストエディター</value><comment>AboutPage NotepadsShortDescription display text.</comment></data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve"><value>作者の連絡先:</value><comment>AboutPage Notepads AuthorContacts Title display text.</comment></data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve"><value>問題の報告と機能追加依頼の連絡先:</value><comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment></data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve"><value>ソースコードはGithub にあります:</value><comment>AboutPage Notepads SourceCode Title display text.</comment></data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve"><value>詳しくは公式サイトをご覧ください:</value><comment>AboutPage Notepads Website Title display text.</comment></data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve"><value>プライバシーについて</value><comment>AboutPage PrivacyStatementTitle display text.</comment></data>
+  <data name="AboutPage_Title.Content" xml:space="preserve"><value>このアプリについて</value><comment>AboutPage Title display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve"><value>ステータス バーを表示する</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve"><value>ステータス バーを表示する</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve"><value>ステータス バー</value><comment>AdvancedPage StatusBarSettings Title display text.</comment></data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve"><value>詳細設定</value><comment>AdvancedPage Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve"><value>アクセント カラー</value><comment>PersonalizationPage AccentColorSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve"><value>Windows のアクセント カラーを使う</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve"><value>Windows のアクセント カラーを使う</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve"><value>アクリル背景の不透明度です。バッテリーセーバーモードがオンになっている場合や、Windowsの設定で透過効果をオフにしている場合は、アクリル効果が無効になるので注意してください。</value><comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve"><value>背景色の不透明度</value><comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve"><value>黒</value><comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve"><value>白</value><comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve"><value>テーマ</value><comment>PersonalizationPage ThemeModeSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve"><value>Windows の設定を使う</value><comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve"><value>個人用設定</value><comment>PersonalizationPage Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve"><value>ANSI (Windows コードページ)</value><comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve"><value>フォールバック設定は、ファイルのエンコードを認識できない場合に使用されます。</value><comment>TextAndEditorPage DecodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve"><value>フォールバック設定</value><comment>TextAndEditorPage DecodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve"><value>UTF-8</value><comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve"><value>新規文書にのみ適用されます。</value><comment>TextAndEditorPage EncodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve"><value>既定のエンコード</value><comment>TextAndEditorPage EncodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve"><value>既定のフォントとサイズ</value><comment>TextAndEditorPage FontSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>新規文書にのみ適用されます。</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>既定の行末</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>タブ文字 (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>ここで設定するタブ キーの挙動は、新規に入力されたタブにのみ適用されます。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>半角スペース 8文字</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>半角スペース 4文字</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>タブ キーの挙動</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve"><value>半角スペース 2文字</value><comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve"><value>文字の折り返し</value><comment>TextAndEditorPage TextWrappingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>単語で折り返す</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>単語で折り返す</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve"><value>テキストとエディター</value><comment>TextAndEditorPage Title display text.</comment></data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve"><value>変更履歴</value><comment>AboutPage Changelog Title display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve"><value>Notepads は次回起動時に備えて現在の状態を保存し、また定期的に内容をバックアップして明示的にファイルに保存されていないデータの消失を防ぎます。この機能を使用する場合、Notepads はアプリ終了時にファイル保存の警告を行いません。またこの機能はアプリの最初のウィンドウのみで動作し、シャドウ ウィンドウ（2番目以降のウィンドウ）では使用できません。</value><comment>AdvancedPage SessionSnapshotSettings Description display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>セッション スナップショットを使用する</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>セッション スナップショットを使用する</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>セッション スナップショット設定</value><comment>AdvancedPage SessionSnapshotSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve"><value>スペルミスした単語をハイライト</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve"><value>スペルミスした単語をハイライト</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve"><value>スペルチェック</value><comment>TextAndEditorPage SpellingSettings Title display text.</comment></data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>有効にすると、Notepads は新しいタブを作らず、常に新しいウィンドウでファイルを開くようになります。</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>常に新しいウィンドウで開く</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>常に新しいウィンドウで開く</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve"><value>起動時の設定</value><comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>現在行をハイライト</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>現在行をハイライト</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve"><value>既定の検索エンジン</value><comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve"><value>※https://www.example.com/search?q={0} という形式のURLを入力してください</value><comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve"><value>ウェブ検索時に使用される既定の検索エンジンの設定です。</value><comment>TextAndEditorPage SearchEngineSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve"><value>既定の検索エンジン</value><comment>TextAndEditorPage SearchEngineSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve"><value>自動検出 (推奨)</value><comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve"><value>表示</value><comment>TextAndEditorPage DisplaySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>文書内の行番号を表示します。</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>行番号を表示</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>行番号を表示</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve"><value>既定のフォント スタイル</value><comment>TextAndEditorPage FontStyleSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve"><value>既定のフォント ウェイト</value><comment>TextAndEditorPage FontWeightSettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve"><value>Notepads が使用する言語（システム既定）を上書きするには、カスタム言語を選択してください。変更を反映するには再起動が必要です。</value><comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve"><value>※変更を反映するには、Notepadsを再起動してください。</value><comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve"><value>言語設定</value><comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve"><value>有効にすると、Notepads は選択したテキストをクリップボードにコピーする前に、先頭や末尾のスペース、タブ、空行などをスマートにトリミングします。</value><comment>AdvancedPage SmartCopySettings Description display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve"><value>スマート コピーを有効にする</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve"><value>スマート コピーを有効にする</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>スマート コピー設定</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>システム既定</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>最後のタブを閉じる時にアプリを終了する</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>最後のタブを閉じる時にアプリを終了する</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>このエディターではスペルチェックを利用できません。</value></data>
 </root>

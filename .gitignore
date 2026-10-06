@@ -353,3 +353,13 @@ healthchecksdb
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Local tooling and native editor build outputs
+.tools/
+_buildUwp/
+_buildWinUI3/
+**/_buildUwp/
+**/_buildWinUI3/
+
+# Local development plans and working notes
+/docs/

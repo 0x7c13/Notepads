@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,596 +117,180 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Peruuta</value>
-    <comment>AppCloseSaveReminderDialog: CloseButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Tiedostossa on tallentamattomia muutoksia.</value>
-    <comment>AppCloseSaveReminderDialog: "Content" display text.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Tallenna kaikki &amp; poistu</value>
-    <comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Hylkää &amp; poistu</value>
-    <comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment>
-  </data>
-  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Haluatko tallentaa muutokset?</value>
-    <comment>AppCloseSaveReminderDialog: "Title" display text.</comment>
-  </data>
-  <data name="ContentSharing_FailureDisplayText" xml:space="preserve">
-    <value>Jaettavaa ei ole, koska yhtään tekstiä ei ole valittu ja nykyinen tiedosto on tyhjä.</value>
-    <comment>ContentSharing: Failure message when user trying to share empty content.</comment>
-  </data>
-  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve">
-    <value>Muutostesi jälkeen</value>
-    <comment>DiffViewer: Header's text for new text (After changes).</comment>
-  </data>
-  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve">
-    <value>Muutoksiasi ennen</value>
-    <comment>DiffViewer: Header's text for old text (Before changes).</comment>
-  </data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve">
-    <value>Notepads ei tällä hetkellä tue tiedostoja, joiden koko on suurempi kuin 1MB.</value>
-    <comment>ErrorMessage: NotepadsFileSizeLimit text.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Content" xml:space="preserve">
-    <value>Tiedostoa "{0}" ei voitu avata: {1}</value>
-    <comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
-    <comment>FileOpenErrorDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileOpenErrorDialog_Title" xml:space="preserve">
-    <value>Virhe avattaessa tiedostoa</value>
-    <comment>FileOpenErrorDialog: "Title" display text.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Content" xml:space="preserve">
-    <value>Tiedostoa "{0}" ei voitu tallentaa: {1}</value>
-    <comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
-    <comment>FileSaveErrorDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileSaveErrorDialog_Title" xml:space="preserve">
-    <value>Virhe tallennettaessa tiedostoa</value>
-    <comment>FileSaveErrorDialog: "Title" display text.</comment>
-  </data>
-  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Sulje</value>
-    <comment>FindAndReplace: "Dismiss" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve">
-    <value>Etsi</value>
-    <comment>FindAndReplace: Find bar placeholder text.</comment>
-  </data>
-  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve">
-    <value>Ei löydetty</value>
-    <comment>FindAndReplace: Notification message when target not found.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Korvaa kaikki (Ctrl+Alt+Enter)</value>
-    <comment>FindAndReplace: "Replace All" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve">
-    <value>Korvaa</value>
-    <comment>FindAndReplace: Replace bar placeholder text.</comment>
-  </data>
-  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Korvaa (Alt+R)</value>
-    <comment>FindAndReplace: "Replace" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Etsi seuraava (F3)</value>
-    <comment>FindAndReplace: "Find Next" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Hakuasetukset</value>
-    <comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve">
-    <value>Sama kirjainkoko</value>
-    <comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve">
-    <value>Koko sana sama</value>
-    <comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Find.Text" xml:space="preserve">
-    <value>Etsi...</value>
-    <comment>MainMenu: "Find" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_New.Text" xml:space="preserve">
-    <value>Uusi</value>
-    <comment>MainMenu: "New" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Open.Text" xml:space="preserve">
-    <value>Avaa...</value>
-    <comment>MainMenu: "Open" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Print.Text" xml:space="preserve">
-    <value>Tulosta...</value>
-    <comment>MainMenu: "Print" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Replace.Text" xml:space="preserve">
-    <value>Korvaa...</value>
-    <comment>MainMenu: "Replace" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Save.Text" xml:space="preserve">
-    <value>Tallenna</value>
-    <comment>MainMenu: "Save" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve">
-    <value>Tallenna kaikki</value>
-    <comment>MainMenu: "Save All" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve">
-    <value>Tallenna nimellä...</value>
-    <comment>MainMenu: "Save As" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Settings.Text" xml:space="preserve">
-    <value>Asetukset</value>
-    <comment>MainMenu: "Settings" button display text.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve">
-    <value>Peruuta</value>
-    <comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve">
-    <value>Kaikki tekstin, rivinvaihdon ja koodauksen muutokset tiedostolle "{0}" perutaan!</value>
-    <comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Kyllä</value>
-    <comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve">
-    <value>Oletko varma, että haluat perua kaikki muutokset?</value>
-    <comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve">
-    <value>Peruuta</value>
-    <comment>SetCloseSaveReminderDialog: CloseButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve">
-    <value>Tallennetaanko tiedosto "{0}"?</value>
-    <comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Tallenna</value>
-    <comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve">
-    <value>Älä tallenna</value>
-    <comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment>
-  </data>
-  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve">
-    <value>Tallennetaanko muutoksesi?</value>
-    <comment>SetCloseSaveReminderDialog: "Title" display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve">
-    <value>Sulje</value>
-    <comment>Tab: ContextFlyout "Close" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve">
-    <value>Sulje muut</value>
-    <comment>Tab: ContextFlyout "Close Others" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve">
-    <value>Sulje oikealle</value>
-    <comment>Tab: ContextFlyout "Close to the Right" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve">
-    <value>Sulje tallennetut</value>
-    <comment>Tab: ContextFlyout "Close Saved" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve">
-    <value>Kopioi koko polku</value>
-    <comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve">
-    <value>Avaa sisältävä kansio</value>
-    <comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve">
-    <value>Kopioi</value>
-    <comment>TextEditor: ContextFlyout "Copy" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve">
-    <value>Leikkaa</value>
-    <comment>TextEditor: ContextFlyout "Cut" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve">
-    <value>Liitä</value>
-    <comment>TextEditor: ContextFlyout "Paste" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve">
-    <value>Vaihda esikatselu</value>
-    <comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve">
-    <value>Tee uudelleen</value>
-    <comment>TextEditor: ContextFlyout "Redo" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve">
-    <value>Valitse kaikki</value>
-    <comment>TextEditor: ContextFlyout "Select All" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve">
-    <value>Jaa</value>
-    <comment>TextEditor: ContextFlyout "Share" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve">
-    <value>Jaa valittu</value>
-    <comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve">
-    <value>Kumoa</value>
-    <comment>TextEditor: ContextFlyout "Undo" button display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve">
-    <value>Automaattinen rivitys</value>
-    <comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment>
-  </data>
-  <data name="TextEditor_DefaultNewFileName" xml:space="preserve">
-    <value>Nimetön.txt</value>
-    <comment>TextEditor: Default file name for new document.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve">
-    <value>Rv {0}, Sar {1} ({2} {3})</value>
-    <comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve">
-    <value>Rv {0}, Sar {1}</value>
-    <comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve">
-    <value>Esikatsele tekstimuutoksia</value>
-    <comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve">
-    <value>Peru kaikki muutokset</value>
-    <comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment>
-  </data>
-  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve">
-    <value>Muokattu</value>
-    <comment>TextEditor: ModificationIndicator display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve">
-    <value>Kopioitu</value>
-    <comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve">
-    <value>Tallennettu</value>
-    <comment>TextEditor: Notification message when file has been saved successfully.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve">
-    <value>Painamalla F11 poistua koko näytön tilasta</value>
-    <comment>TextEditor: Notification message when app entering full screen mode.</comment>
-  </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve">
-    <value>Lataa tiedosto uudelleen levyltä</value>
-    <comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve">
-    <value>Tiedostoa on muokattu ulkopuolella!</value>
-    <comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve">
-    <value>Tiedosto on siirretty, nimetty uudelleen tai poistettu!</value>
-    <comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve">
-    <value>Tiedosto on avattu uudelleen</value>
-    <comment>TextEditor: Notification message when file has been reloaded successfully.</comment>
-  </data>
-  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve">
-    <value>Kompakti päällystys</value>
-    <comment>App: "Compact Overlay" display text</comment>
-  </data>
-  <data name="App_EnterFullScreenMode_Text" xml:space="preserve">
-    <value>Koko näyttö</value>
-    <comment>App: "Full Screen" display text</comment>
-  </data>
-  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve">
-    <value>Poistu kompaktista päällystyksestä</value>
-    <comment>App: "Exit Compact Overlay" display text</comment>
-  </data>
-  <data name="App_ExitFullScreenMode_Text" xml:space="preserve">
-    <value>Poistu koko näytöstä</value>
-    <comment>App: "Exit Full Screen" display text</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve">
-    <value>valittu</value>
-    <comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment>
-  </data>
-  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve">
-    <value>valittu</value>
-    <comment>TextEditor: Singular form for the selected word count indicator.</comment>
-  </data>
-  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve">
-    <value>Siirrä välilehti tähän</value>
-    <comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment>
-  </data>
-  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve">
-    <value>Avaa Notepads-sovelluksella</value>
-    <comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment>
-  </data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve">
-    <value>Tämä on Notepads-sovelluksen varjoikkuna. Istunnon tilannevedos ja asetukset eivät ole käytössä.</value>
-    <comment>App: ShadowWindowIndicator Description display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve">
-    <value>Tiedosto on jo avattu!</value>
-    <comment>TextEditor: Notification message when file has been opened in current app instance.</comment>
-  </data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve">
-    <value>Avaa uusi ikkuna</value>
-    <comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment>
-  </data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve">
-    <value>Uusi ikkuna</value>
-    <comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment>
-  </data>
-  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve">
-    <value>Uusi ikkuna</value>
-    <comment>MainMenu: "New Window" button display text.</comment>
-  </data>
-  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve">
-    <value>Avaa äskettäin käytetyt</value>
-    <comment>MainMenu: "Open Recent" button display text.</comment>
-  </data>
-  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve">
-    <value>Siirry riville</value>
-    <comment>GoTo: Go to bar placeholder text.</comment>
-  </data>
-  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve">
-    <value>Siirry kohtaan:</value>
-    <comment>GoTo:Go to bar label</comment>
-  </data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve">
-    <value>Rivinumero ylittää kokonaisrivien määrän!</value>
-    <comment>GoTo: Notification message when input exceeds input limit.</comment>
-  </data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve">
-    <value>Voit kirjoittaa vain numeron!</value>
-    <comment>GoTo: Notification message when invalid input entered.</comment>
-  </data>
-  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Siirry riville</value>
-    <comment>GoTo: "Search" button tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve">
-    <value>Etsi verkosta</value>
-    <comment>TextEditor: ContextFlyout "Web Search" button display text.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve">
-    <value>Palauta oletuszoomaus</value>
-    <comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve">
-    <value>Zoomaa sisään</value>
-    <comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment>
-  </data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve">
-    <value>Zoomaa ulos</value>
-    <comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment>
-  </data>
-  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve">
-    <value>Käytä säännöllistä lauseketta</value>
-    <comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment>
-  </data>
-  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve">
-    <value>Tulosta kaikki...</value>
-    <comment>MainMenu: "Print All" button display text.</comment>
-  </data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve">
-    <value>Voi hyväksyä vain yhden desimaalin</value>
-    <comment>Print: Error message when decimal places for margin entry exceeds limit.</comment>
-  </data>
-  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve">
-    <value>Arvo alueen ulkopuolella</value>
-    <comment>Print: Error message when value for margin entry exceeds limit.</comment>
-  </data>
-  <data name="Print_FooterEntry_Title" xml:space="preserve">
-    <value>Alatunniste</value>
-    <comment>Print: PrintManager custom option "FooterText" title.</comment>
-  </data>
-  <data name="Print_HeaderEntry_Title" xml:space="preserve">
-    <value>Ylätunniste</value>
-    <comment>Print: PrintManager custom option "HeaderText" title.</comment>
-  </data>
-  <data name="Print_LeftMarginEntry_Title" xml:space="preserve">
-    <value>Vaakamarginaali (prosentteina)</value>
-    <comment>Print: PrintManager custom option "LeftMargin" title.</comment>
-  </data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve">
-    <value>Prosenttia paperin leveydestä</value>
-    <comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintError" xml:space="preserve">
-    <value>Virhe tulostettaessa:</value>
-    <comment>Print: Notification message when error occurs while showing print ui.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve">
-    <value>Tulostus epäonnistui</value>
-    <comment>Print: Notification message on print failure.</comment>
-  </data>
-  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve">
-    <value>Tulostusta ei tueta tällä laitteella</value>
-    <comment>Print: Notification message when printing attempted in a non-supported device.</comment>
-  </data>
-  <data name="Print_TopMarginEntry_Title" xml:space="preserve">
-    <value>Pystymarginaali (prosentteina)</value>
-    <comment>Print: PrintManager custom option "TopMargin" title.</comment>
-  </data>
-  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve">
-    <value>Tyhjennä äskettäin avatut</value>
-    <comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve">
-    <value>Lisää koodauksia</value>
-    <comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve">
-    <value>Avaa uudelleen koodauksella</value>
-    <comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve">
-    <value>Tallenna koodauksella</value>
-    <comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve">
-    <value>Virheellinen säännöllinen lauseke!</value>
-    <comment>FindAndReplace: Notification message when regular expression text is invalid.</comment>
-  </data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve">
-    <value>Arvaa koodaus automaattisesti</value>
-    <comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve">
-    <value>Koodausta ei voida määrittää</value>
-    <comment>TextEditor: Notification message when file's encoding cannot be determined.</comment>
-  </data>
-  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Etsi edellinen (Shift+F3)</value>
-    <comment>FindAndReplace: "Find Previous" button tool tip display text.</comment>
-  </data>
-  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Vaihda korvaustilaan</value>
-    <comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment>
-  </data>
-  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve">
-    <value>Tekstin lukujärjestys oikealta vasemmalle</value>
-    <comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment>
-  </data>
-  <data name="FontStyle_Italic" xml:space="preserve">
-    <value>Italic</value>
-    <comment>FontStyle: "Italic"</comment>
-  </data>
-  <data name="FontStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
-    <comment>FontStyle: "Normal"</comment>
-  </data>
-  <data name="FontStyle_Oblique" xml:space="preserve">
-    <value>Oblique</value>
-    <comment>FontStyle: "Oblique"</comment>
-  </data>
-  <data name="FontWeight_Black" xml:space="preserve">
-    <value>Black</value>
-    <comment>FontWeight: "Black"</comment>
-  </data>
-  <data name="FontWeight_Bold" xml:space="preserve">
-    <value>Bold</value>
-    <comment>FontWeight: "Bold"</comment>
-  </data>
-  <data name="FontWeight_ExtraBlack" xml:space="preserve">
-    <value>Extra Black</value>
-    <comment>FontWeight: "ExtraBlack"</comment>
-  </data>
-  <data name="FontWeight_ExtraBold" xml:space="preserve">
-    <value>Extra Bold</value>
-    <comment>FontWeight: "ExtraBold"</comment>
-  </data>
-  <data name="FontWeight_ExtraLight" xml:space="preserve">
-    <value>Extra Light</value>
-    <comment>FontWeight: "ExtraLight"</comment>
-  </data>
-  <data name="FontWeight_Light" xml:space="preserve">
-    <value>Light</value>
-    <comment>FontWeight: "Light"</comment>
-  </data>
-  <data name="FontWeight_Medium" xml:space="preserve">
-    <value>Medium</value>
-    <comment>FontWeight: "Medium"</comment>
-  </data>
-  <data name="FontWeight_Normal" xml:space="preserve">
-    <value>Normal</value>
-    <comment>FontWeight: "Normal"</comment>
-  </data>
-  <data name="FontWeight_SemiBold" xml:space="preserve">
-    <value>Semi Bold</value>
-    <comment>FontWeight: "SemiBold"</comment>
-  </data>
-  <data name="FontWeight_SemiLight" xml:space="preserve">
-    <value>Semi Light</value>
-    <comment>FontWeight: "SemiLight"</comment>
-  </data>
-  <data name="FontWeight_Thin" xml:space="preserve">
-    <value>Thin</value>
-    <comment>FontWeight: "Thin"</comment>
-  </data>
-  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve">
-    <value>Peruuta</value>
-    <comment>FileRenameDialog: CloseButtonText.</comment>
-  </data>
-  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Tallenna</value>
-    <comment>FileRenameDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="FileRenameDialog_Title" xml:space="preserve">
-    <value>Nimeä uudelleen</value>
-    <comment>FileRenameDialog: "Title" display text.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve">
-    <value>Tiedostonimen ei tule sisältää virheellisiä merkkejä</value>
-    <comment>InvalidFilenameError: Filename contains invalid characters.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve">
-    <value>Tiedostonimen ei tule sisältää alussa välilyöntejä</value>
-    <comment>InvalidFilenameError: Filename contains leading spaces.</comment>
-  </data>
-  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve">
-    <value>Tiedostonimen ei tule sisältää lopussa välilyöntejä</value>
-    <comment>InvalidFilenameError: Filename contains trailing spaces.</comment>
-  </data>
-  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve">
-    <value>Tiedostonimi ei voi olla tyhjä tai pelkkää välilyöntiä</value>
-    <comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment>
-  </data>
-  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve">
-    <value>Tiedostonimi on virheellinen tai ei sallittu</value>
-    <comment>InvalidFilenameError: Filename is invalid or not allowed.</comment>
-  </data>
-  <data name="InvalidFilenameError_TooLong" xml:space="preserve">
-    <value>Tiedostonimi ei voi olla yli 255 merkkiä pitkä</value>
-    <comment>InvalidFilenameError: Filename is longer than 255 characters.</comment>
-  </data>
-  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve">
-    <value>Nimeä uudelleen</value>
-    <comment>TextEditor: ContextFlyout "Rename" button display text.</comment>
-  </data>
-  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve">
-    <value>Uudelleennimetty</value>
-    <comment>TextEditor: Notification message when file has been renamed successfully.</comment>
-  </data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve">
-    <value>Tyhjää tiedostopäätettä ei tueta tällä hetkellä</value>
-    <comment>FileRenameError: Empty file extension is not currently supported.</comment>
-  </data>
-  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve">
-    <value>Tiedostopääte "{0}" ei ole tuettu tällä hetkellä</value>
-    <comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment>
-  </data>
-  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve">
-    <value>Sulje</value>
-    <comment>SessionCorruptionErrorDialog: CloseButtonText.</comment>
-  </data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve">
-    <value>Tietojen palauttaminen viime istunnosta epäonnistui korruptoituneiden tietojen vuoksi. Tee varmuuskopio kaikista tallentamattomista tiedostoistasi (*.txt) istunnon kansiosta.</value>
-    <comment>SessionCorruptionErrorDialog: "Content" display text.</comment>
-  </data>
-  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve">
-    <value>Avaa istunnon varmuuskopion kansio</value>
-    <comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment>
-  </data>
-  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve">
-    <value>Varoitus</value>
-    <comment>SessionCorruptionErrorDialog: "Title" display text.</comment>
-  </data>
+  <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Peruuta</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Tiedostossa on tallentamattomia muutoksia.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Tallenna kaikki &amp; poistu</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Hylkää &amp; poistu</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>Haluatko tallentaa muutokset?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
+  <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Jaettavaa ei ole, koska yhtään tekstiä ei ole valittu ja nykyinen tiedosto on tyhjä.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
+  <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Muutostesi jälkeen</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Muutoksiasi ennen</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
+  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads ei tällä hetkellä tue tiedostoja, joiden koko on suurempi kuin 1MB.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
+  <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Tiedostoa "{0}" ei voitu avata: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Virhe avattaessa tiedostoa</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
+  <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Tiedostoa "{0}" ei voitu tallentaa: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Virhe tallennettaessa tiedostoa</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
+  <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Sulje</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Etsi</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
+  <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve"><value>Ei löydetty</value><comment>FindAndReplace: Notification message when target not found.</comment></data>
+  <data name="FindAndReplace_ReplaceAllButton.ToolTipService.ToolTip" xml:space="preserve"><value>Korvaa kaikki (Ctrl+Alt+Enter)</value><comment>FindAndReplace: "Replace All" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve"><value>Korvaa</value><comment>FindAndReplace: Replace bar placeholder text.</comment></data>
+  <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve"><value>Korvaa (Alt+R)</value><comment>FindAndReplace: "Replace" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Etsi seuraava (F3)</value><comment>FindAndReplace: "Find Next" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>Hakuasetukset</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>Sama kirjainkoko</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>Koko sana sama</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
+  <data name="MainMenu_Button_Find.Text" xml:space="preserve"><value>Etsi...</value><comment>MainMenu: "Find" button display text.</comment></data>
+  <data name="MainMenu_Button_New.Text" xml:space="preserve"><value>Uusi</value><comment>MainMenu: "New" button display text.</comment></data>
+  <data name="MainMenu_Button_Open.Text" xml:space="preserve"><value>Avaa...</value><comment>MainMenu: "Open" button display text.</comment></data>
+  <data name="MainMenu_Button_Print.Text" xml:space="preserve"><value>Tulosta...</value><comment>MainMenu: "Print" button display text.</comment></data>
+  <data name="MainMenu_Button_Replace.Text" xml:space="preserve"><value>Korvaa...</value><comment>MainMenu: "Replace" button display text.</comment></data>
+  <data name="MainMenu_Button_Save.Text" xml:space="preserve"><value>Tallenna</value><comment>MainMenu: "Save" button display text.</comment></data>
+  <data name="MainMenu_Button_SaveAll.Text" xml:space="preserve"><value>Tallenna kaikki</value><comment>MainMenu: "Save All" button display text.</comment></data>
+  <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve"><value>Tallenna nimellä...</value><comment>MainMenu: "Save As" button display text.</comment></data>
+  <data name="MainMenu_Button_Settings.Text" xml:space="preserve"><value>Asetukset</value><comment>MainMenu: "Settings" button display text.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>Peruuta</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>Kaikki tekstin, rivinvaihdon ja koodauksen muutokset tiedostolle "{0}" perutaan!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>Kyllä</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Oletko varma, että haluat perua kaikki muutokset?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Peruuta</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
+  <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve"><value>Tallennetaanko tiedosto "{0}"?</value><comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Tallenna</value><comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Älä tallenna</value><comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
+  <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve"><value>Tallennetaanko muutoksesi?</value><comment>SetCloseSaveReminderDialog: "Title" display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve"><value>Sulje</value><comment>Tab: ContextFlyout "Close" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve"><value>Sulje muut</value><comment>Tab: ContextFlyout "Close Others" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve"><value>Sulje oikealle</value><comment>Tab: ContextFlyout "Close to the Right" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve"><value>Sulje tallennetut</value><comment>Tab: ContextFlyout "Close Saved" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve"><value>Kopioi koko polku</value><comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve"><value>Avaa sisältävä kansio</value><comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve"><value>Kopioi</value><comment>TextEditor: ContextFlyout "Copy" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve"><value>Leikkaa</value><comment>TextEditor: ContextFlyout "Cut" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve"><value>Liitä</value><comment>TextEditor: ContextFlyout "Paste" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve"><value>Vaihda esikatselu</value><comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve"><value>Tee uudelleen</value><comment>TextEditor: ContextFlyout "Redo" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve"><value>Valitse kaikki</value><comment>TextEditor: ContextFlyout "Select All" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve"><value>Jaa</value><comment>TextEditor: ContextFlyout "Share" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve"><value>Jaa valittu</value><comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>Kumoa</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>Automaattinen rivitys</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Nimetön.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>Rv {0}, Sar {1} ({2} {3})</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>Rv {0}, Sar {1}</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Esikatsele tekstimuutoksia</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
+  <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Peru kaikki muutokset</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Muokattu</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
+  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopioitu</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Tallennettu</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Painamalla F11 poistua koko näytön tilasta</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Lataa tiedosto uudelleen levyltä</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve"><value>Tiedostoa on muokattu ulkopuolella!</value><comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment></data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>Tiedosto on siirretty, nimetty uudelleen tai poistettu!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
+  <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>Tiedosto on avattu uudelleen</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve"><value>Kompakti päällystys</value><comment>App: "Compact Overlay" display text</comment></data>
+  <data name="App_EnterFullScreenMode_Text" xml:space="preserve"><value>Koko näyttö</value><comment>App: "Full Screen" display text</comment></data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>Poistu kompaktista päällystyksestä</value><comment>App: "Exit Compact Overlay" display text</comment></data>
+  <data name="App_ExitFullScreenMode_Text" xml:space="preserve"><value>Poistu koko näytöstä</value><comment>App: "Exit Full Screen" display text</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>valittu</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>valittu</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
+  <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Siirrä välilehti tähän</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
+  <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Avaa Notepads-sovelluksella</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Tämä on Notepads-sovelluksen varjoikkuna.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Tiedosto on jo avattu!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
+  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Avaa uusi ikkuna</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
+  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Uusi ikkuna</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
+  <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Uusi ikkuna</value><comment>MainMenu: "New Window" button display text.</comment></data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Avaa äskettäin käytetyt</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
+  <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Siirry riville</value><comment>GoTo: Go to bar placeholder text.</comment></data>
+  <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Siirry kohtaan:</value><comment>GoTo:Go to bar label</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Rivinumero ylittää kokonaisrivien määrän!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Voit kirjoittaa vain numeron!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Siirry riville</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Etsi verkosta</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Palauta oletuszoomaus</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>Zoomaa sisään</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Zoomaa ulos</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Käytä säännöllistä lauseketta</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
+  <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Tulosta kaikki...</value><comment>MainMenu: "Print All" button display text.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Voi hyväksyä vain yhden desimaalin</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Arvo alueen ulkopuolella</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
+  <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Alatunniste</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Ylätunniste</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
+  <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Vaakamarginaali (prosentteina)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Prosenttia paperin leveydestä</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Virhe tulostettaessa:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
+  <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Tulostus epäonnistui</value><comment>Print: Notification message on print failure.</comment></data>
+  <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Tulostusta ei tueta tällä laitteella</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
+  <data name="Print_TopMarginEntry_Title" xml:space="preserve"><value>Pystymarginaali (prosentteina)</value><comment>Print: PrintManager custom option "TopMargin" title.</comment></data>
+  <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve"><value>Tyhjennä äskettäin avatut</value><comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve"><value>Lisää koodauksia</value><comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve"><value>Avaa uudelleen koodauksella</value><comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>Tallenna koodauksella</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Virheellinen säännöllinen lauseke!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Arvaa koodaus automaattisesti</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
+  <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Koodausta ei voida määrittää</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Etsi edellinen (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Vaihda korvaustilaan</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>Tekstin lukujärjestys oikealta vasemmalle</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
+  <data name="FontStyle_Italic" xml:space="preserve"><value>Kursivoitu</value><comment>FontStyle: "Italic"</comment></data>
+  <data name="FontStyle_Normal" xml:space="preserve"><value>Normaali</value><comment>FontStyle: "Normal"</comment></data>
+  <data name="FontStyle_Oblique" xml:space="preserve"><value>Vino</value><comment>FontStyle: "Oblique"</comment></data>
+  <data name="FontWeight_Black" xml:space="preserve"><value>Paksu</value><comment>FontWeight: "Black"</comment></data>
+  <data name="FontWeight_Bold" xml:space="preserve"><value>Lihavoitu</value><comment>FontWeight: "Bold"</comment></data>
+  <data name="FontWeight_ExtraBlack" xml:space="preserve"><value>Erittäin paksu</value><comment>FontWeight: "ExtraBlack"</comment></data>
+  <data name="FontWeight_ExtraBold" xml:space="preserve"><value>Erittäin lihavoitu</value><comment>FontWeight: "ExtraBold"</comment></data>
+  <data name="FontWeight_ExtraLight" xml:space="preserve"><value>Erittäin kevyt</value><comment>FontWeight: "ExtraLight"</comment></data>
+  <data name="FontWeight_Light" xml:space="preserve"><value>Kevyt</value><comment>FontWeight: "Light"</comment></data>
+  <data name="FontWeight_Medium" xml:space="preserve"><value>Keskivahva</value><comment>FontWeight: "Medium"</comment></data>
+  <data name="FontWeight_Normal" xml:space="preserve"><value>Normaali</value><comment>FontWeight: "Normal"</comment></data>
+  <data name="FontWeight_SemiBold" xml:space="preserve"><value>Puolilihavoitu</value><comment>FontWeight: "SemiBold"</comment></data>
+  <data name="FontWeight_SemiLight" xml:space="preserve"><value>Puolikevyt</value><comment>FontWeight: "SemiLight"</comment></data>
+  <data name="FontWeight_Thin" xml:space="preserve"><value>Ohut</value><comment>FontWeight: "Thin"</comment></data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>Peruuta</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
+  <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve"><value>Tallenna</value><comment>FileRenameDialog: PrimaryButtonText.</comment></data>
+  <data name="FileRenameDialog_Title" xml:space="preserve"><value>Nimeä uudelleen</value><comment>FileRenameDialog: "Title" display text.</comment></data>
+  <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve"><value>Tiedostonimen ei tule sisältää virheellisiä merkkejä</value><comment>InvalidFilenameError: Filename contains invalid characters.</comment></data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>Tiedostonimen ei tule sisältää alussa välilyöntejä</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>Tiedostonimen ei tule sisältää lopussa välilyöntejä</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Tiedostonimi ei voi olla tyhjä tai pelkkää välilyöntiä</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
+  <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>Tiedostonimi on virheellinen tai ei sallittu</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>Tiedostonimi ei voi olla yli 255 merkkiä pitkä</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
+  <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve"><value>Nimeä uudelleen</value><comment>TextEditor: ContextFlyout "Rename" button display text.</comment></data>
+  <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>Uudelleennimetty</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Tyhjää tiedostopäätettä ei tueta tällä hetkellä</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Tiedostopääte "{0}" ei ole tuettu tällä hetkellä</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Sulje</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Tietojen palauttaminen viime istunnosta epäonnistui korruptoituneiden tietojen vuoksi. Tee varmuuskopio kaikista tallentamattomista tiedostoistasi (*.txt) istunnon kansiosta.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Avaa istunnon varmuuskopion kansio</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Varoitus</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Istunnon varmuuskopiointi epäonnistui. Tallenna tiedostot ja yritä uudelleen.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Joitakin välilehtiä ei voitu palauttaa. Niiden varmuuskopiot on säilytetty istunnon varmuuskopiokansiossa.</value></data>
+  <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Tiedosto tallennettiin paikallisesti. Pilvisynkronointi on vielä kesken.</value></data>
+  <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Korvaava teksti sisältää virheellistä tekstiä.</value></data>
+  <data name="FindAndReplace_NotificationMsg_SearchTimedOut" xml:space="preserve"><value>Haku kesti liian kauan. Kokeile yksinkertaisempaa lauseketta.</value></data>
+  <data name="FindAndReplace_NotificationMsg_SearchLimit" xml:space="preserve"><value>Haku tai korvaaminen ylitti käytettävissä olevat resurssit.</value></data>
+  <data name="FindAndReplace_NotificationMsg_SearchFailed" xml:space="preserve"><value>Hakua tai korvaamista ei voitu suorittaa loppuun.</value></data>
+  <data name="SessionBackup_NotificationMsg_MirrorRepaired" xml:space="preserve"><value>Istunnon hakemisto oli vioittunut. Sen tarkistettu varmuuskopio palautettiin.</value></data>
+  <data name="SessionBackup_NotificationMsg_OlderCheckpoint" xml:space="preserve"><value>Viimeisintä istuntoa ei voitu palauttaa. Vanhempi palautuspiste avattiin; viimeisimmät muokkaukset ja välilehtien sulkemiset saattavat puuttua.</value></data>
+  <data name="SessionBackup_NotificationMsg_Rescue" xml:space="preserve"><value>Istunnon hakemistoja ei voitu palauttaa. Tarkistetut asiakirjakopiot avattiin tallentamattomina välilehtinä. Säilytä ne käyttämällä Tallenna nimellä -toimintoa.</value></data>
+  <data name="SessionBackup_NotificationMsg_RecoveryBlocked" xml:space="preserve"><value>Istunnon palautus ei ole käytettävissä. Olemassa olevat palautustiedostot on säilytetty.</value></data>
+  <data name="SessionBackup_NotificationMsg_DocumentChangedDuringClose" xml:space="preserve"><value>Asiakirja muuttui sulkemisen aikana. Sulje välilehti uudelleen ja valitse, haluatko tallentaa sen.</value></data>
+  <data name="TextEditor_Language_Select" xml:space="preserve"><value>Valitse asiakirjan kieli</value></data>
+  <data name="TextEditor_Language_Automatic" xml:space="preserve"><value>Automaattinen</value></data>
+  <data name="TextEditor_Language_PlainText" xml:space="preserve"><value>Pelkkä teksti</value></data>
+  <data name="TextEditor_Language_HighlightingPaused" xml:space="preserve"><value>Syntaksin korostus on keskeytetty asiakirjan koon tai liian pitkien rivien vuoksi. Muokkaaminen ja tallentaminen ovat edelleen käytettävissä.</value></data>
+  <data name="TextEditor_Language_MemoryPaused" xml:space="preserve"><value>Korostus on keskeytetty muistin puutteen vuoksi. Valitse kieli uudelleen tai lataa asiakirja uudelleen ja yritä sitten uudestaan.</value></data>
+  <data name="DiffViewer_ChangeCount" xml:space="preserve"><value>Muutos {0}/{1}</value></data>
+  <data name="DiffViewer_Close" xml:space="preserve"><value>Palaa editoriin (Escape / Alt+D)</value></data>
+  <data name="DiffViewer_CoarseCount" xml:space="preserve"><value>Likimääräinen alue {0}/{1} — yksityiskohtainen vertailu ylitti rajansa</value></data>
+  <data name="DiffViewer_Loading" xml:space="preserve"><value>Verrataan tallennettua ja nykyistä tekstiä…</value></data>
+  <data name="DiffViewer_MetadataOnly" xml:space="preserve"><value>Ei tekstimuutoksia. Merkistökoodauksen tai rivinvaihtojen asetukset ovat muuttuneet.</value></data>
+  <data name="DiffViewer_NewDocument" xml:space="preserve"><value>Uusi teksti, nykyinen versio</value></data>
+  <data name="DiffViewer_Next" xml:space="preserve"><value>Seuraava muutos (F7)</value></data>
+  <data name="DiffViewer_NoChanges" xml:space="preserve"><value>Ei tekstimuutoksia</value></data>
+  <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Vanha teksti, tallennettu versio</value></data>
+  <data name="DiffViewer_Previous" xml:space="preserve"><value>Edellinen muutos (Shift+F7)</value></data>
+  <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Vertailua ei voitu valmistella käytettävissä olevilla resursseilla. Asiakirjaa ei ole muutettu.</value></data>
 </root>

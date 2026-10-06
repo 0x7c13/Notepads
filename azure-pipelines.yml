@@ -12,28 +12,49 @@ trigger:
     - '*'
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2025-vs2026'
 
 variables:
-  solution: '**/*.sln'
+  solution: 'src/Notepads/Notepads.csproj'
   buildPlatform: 'x86|x64|arm64'
   buildConfiguration: 'Production'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
+- task: UseDotNet@2
+  inputs:
+    useGlobalJson: true
+
+- powershell: .\scripts\Initialize-BuildTools.ps1 -InstallMissing
+  displayName: Ensure native UWP build tools
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: 'src/Notepads.sln'
 
 - task: VSBuild@1
   inputs:
     platform: 'x64'
+    vsVersion: '18.0'
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)"
+    msbuildArgs: '/restore /t:Publish
+                  /p:SolutionDir="$(Build.SourcesDirectory)\src\"
+                  /p:GenerateAppxPackageOnBuild=true
+                  /p:PublishAppxPackage=false
+                  /p:IncludePublishItemsOutputGroup=true
+                  /p:AppxBundlePlatforms="$(buildPlatform)"
                   /p:AppxPackageDir="$(appxPackageDir)"
                   /p:AppxBundle=Always
                   /p:UapAppxPackageBuildMode=StoreUpload
                   /p:AppxPackageSigningEnabled=false'
+
+- powershell: |
+    $uploads = @(Get-ChildItem '$(appxPackageDir)' -Recurse -Filter '*.msixupload')
+    if (!$uploads.Count) { throw 'Native AOT upload package was not generated.' }
+    foreach ($upload in $uploads) {
+      .\scripts\Test-AppPackage.ps1 -Path $upload.FullName -ExpectedArchitectures ('$(buildPlatform)' -split '\|')
+    }
+  displayName: Validate Native AOT packages

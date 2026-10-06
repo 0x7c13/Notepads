@@ -1,0 +1,31 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace WinUIEditor
+{
+	enum EditorSearchStatus
+	{
+		Found = 0,
+		NotFound = 1,
+		InvalidPattern = 2,
+		InvalidReplacement = 3,
+		TimedOut = 4,
+		ResourceLimit = 5,
+		ReadOnly = 6,
+		Stale = 7,
+		Canceled = 8,
+		Failed = 9
+	};
+	struct EditorSearchResult
+	{
+		EditorSearchStatus Status;
+		Int64 Start;
+		Int64 End;
+		UInt64 MatchCount;
+		UInt64 Revision;
+		Int32 ErrorOffset;
+		UInt64 SelectionRevision;
+	};
+}

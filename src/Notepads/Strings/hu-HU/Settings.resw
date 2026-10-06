@@ -117,316 +117,83 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Függőségek és Hivatkozások</value>
-    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
-    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Nyilatkozat</value>
-    <comment>AboutPage Disclaimer Title display text.</comment>
-  </data>
-  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Ingyenes és nyílt forráskódú szövegszerkesztő tervezve és létrehozva Jackie (Jiaqi) Liu által</value>
-    <comment>AboutPage NotepadsShortDescription display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>A készítőkkel való kapcsolatba lépéshez:</value>
-    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Probléma jelentések és funkció kérelmekhez:</value>
-    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>A forráskód elérhető GitHub-on:</value>
-    <comment>AboutPage Notepads SourceCode Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>További információért, látogassa meg a weboldalunkat:</value>
-    <comment>AboutPage Notepads Website Title display text.</comment>
-  </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Adatvédelmi Nyilatkozat</value>
-    <comment>AboutPage PrivacyStatementTitle display text.</comment>
-  </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>Névjegy</value>
-    <comment>AboutPage Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Állapotsor mutatása</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Állapotsor mutatása</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Állapotsor Beállítások</value>
-    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Haladó</value>
-    <comment>AdvancedPage Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Témaszín</value>
-    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Használja a Windows téma színét</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Használja a Windows téma színét</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Akril háttér homályosság. Az Akril effekt ki lesz kapcsolva ha az energiatakarékos mód be van kapcsolva vagy kikapcsoltad az átlátszósági effekteket a Windows beállításaiban.</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Háttér homályosság</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Sötét</value>
-    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Világos</value>
-    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Téma</value>
-    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Rendszerbeállítás használata</value>
-    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Testreszabás</value>
-    <comment>PersonalizationPage Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows kódlap)</value>
-    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Visszaeső dekódolás lesz használva ha a fájl kódolása nem felismerhető.</value>
-    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Visszaeső Dekódolás</value>
-    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8</value>
-    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Csak új dokumentumokra alkalmazva.</value>
-    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett Kódolás</value>
-    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett Szövegtipus &amp; Méret</value>
-    <comment>TextAndEditorPage FontSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Csak új dokumentumokra alkalmazva.</value>
-    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett Sor Végződés</value>
-    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Alapértelmezett (\t)</value>
-    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Tabulátor viselkedés csak a felhasználó által beillesztett új tabulátorokra lesz alkalmazva.</value>
-    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Szóköz</value>
-    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Szóköz</value>
-    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tabulátor Viselkedés</value>
-    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Szóköz</value>
-    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Szövegtördelés</value>
-    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Sortörés</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Sortörés</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Szöveg &amp; Szerkesztő</value>
-    <comment>TextAndEditorPage Title display text.</comment>
-  </data>
-  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Változások</value>
-    <comment>AboutPage Changelog Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>A Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva. A munkamenet mentés csak az első vagy fő Notepads ablakban működik.</value>
-    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Munkamenet mentés és visszaállítás bekapcsolása</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Munkamenet Mentési Beállítások</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Elgépelt szavak kiemelése</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Elgépelt szavak kiemelése</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>Helyesírás</value>
-    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Ha engedélyezve van, Notepads a fájlokat mindig új ablakban fogja megnyitni ahelyett hogy új fület nyitna.</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Mindig nyisson új ablakot</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Mindig nyisson új ablakot</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Indítási Beállítások</value>
-    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Aktuális sor kiemelése</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Aktuális sor kiemelése</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Egyéni Keresőmotor</value>
-    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*Írja be az url-t a következő formátumban https://www.pelda.com/search?q={0}</value>
-    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Beállítások az alapértelmezett keresőmotorhoz ami a weben való kereséskor lesz használva.</value>
-    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett Keresőmotor</value>
-    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Autómatikus kódolás kitalálás (Ajánlott)</value>
-    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Megjelenítés</value>
-    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Sorszámok mutatása a dokumentumban.</value>
-    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Sorszámok mutatása</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Sorszámok mutatása</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett formázás</value>
-    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Alapértelmezett kiemelés</value>
-    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Válasszon egy nyelvet hogy megváltoztassa az alapértelmezett nyelvet. Újraindítás szükséges.</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*Újraindítás szükséges.</value>
-    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Nyelvi preferenciák</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>Bekapcsolva a Notepads kiszedi a felesleges szóközöket, tabokat és az üres  sorokat, majd vágolapra másolja.</value>
-    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
-    <value>Okos másolás</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
-    <value>Okosmásolás</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>Okosmásolás Beállítások</value>
-    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
-    <value>Rendszer alapértelmezett</value>
-    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve">
-    <value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve">
-    <value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
-  </data>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve"><value>Függőségek és Hivatkozások</value><comment>AboutPage DependenciesAndReferences Title display text.</comment></data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve"><value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value><comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment></data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve"><value>Nyilatkozat</value><comment>AboutPage Disclaimer Title display text.</comment></data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve"><value>Ingyenes és nyílt forráskódú szövegszerkesztő tervezve és létrehozva Jiaqi (0x7c13) Liu által</value><comment>AboutPage NotepadsShortDescription display text.</comment></data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve"><value>A készítőkkel való kapcsolatba lépéshez:</value><comment>AboutPage Notepads AuthorContacts Title display text.</comment></data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve"><value>Probléma jelentések és funkció kérelmekhez:</value><comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment></data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve"><value>A forráskód elérhető GitHub-on:</value><comment>AboutPage Notepads SourceCode Title display text.</comment></data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve"><value>További információért, látogassa meg a weboldalunkat:</value><comment>AboutPage Notepads Website Title display text.</comment></data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve"><value>Adatvédelmi Nyilatkozat</value><comment>AboutPage PrivacyStatementTitle display text.</comment></data>
+  <data name="AboutPage_Title.Content" xml:space="preserve"><value>Névjegy</value><comment>AboutPage Title display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve"><value>Állapotsor mutatása</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve"><value>Állapotsor mutatása</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve"><value>Állapotsor Beállítások</value><comment>AdvancedPage StatusBarSettings Title display text.</comment></data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve"><value>Haladó</value><comment>AdvancedPage Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve"><value>Témaszín</value><comment>PersonalizationPage AccentColorSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve"><value>Használja a Windows téma színét</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve"><value>Használja a Windows téma színét</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve"><value>Akril háttér homályosság. Az Akril effekt ki lesz kapcsolva ha az energiatakarékos mód be van kapcsolva vagy kikapcsoltad az átlátszósági effekteket a Windows beállításaiban.</value><comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve"><value>Háttér homályosság</value><comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve"><value>Sötét</value><comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve"><value>Világos</value><comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve"><value>Téma</value><comment>PersonalizationPage ThemeModeSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve"><value>Rendszerbeállítás használata</value><comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve"><value>Testreszabás</value><comment>PersonalizationPage Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve"><value>ANSI (Windows kódlap)</value><comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve"><value>Visszaeső dekódolás lesz használva ha a fájl kódolása nem felismerhető.</value><comment>TextAndEditorPage DecodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve"><value>Visszaeső Dekódolás</value><comment>TextAndEditorPage DecodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve"><value>UTF-8</value><comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve"><value>Csak új dokumentumokra alkalmazva.</value><comment>TextAndEditorPage EncodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett Kódolás</value><comment>TextAndEditorPage EncodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett Szövegtipus &amp; Méret</value><comment>TextAndEditorPage FontSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>Csak új dokumentumokra alkalmazva.</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett Sor Végződés</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>Alapértelmezett (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Tabulátor viselkedés csak a felhasználó által beillesztett új tabulátorokra lesz alkalmazva.</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>8 Szóköz</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>4 Szóköz</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>Tabulátor Viselkedés</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve"><value>2 Szóköz</value><comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve"><value>Szövegtördelés</value><comment>TextAndEditorPage TextWrappingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Sortörés</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Sortörés</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve"><value>Szöveg &amp; Szerkesztő</value><comment>TextAndEditorPage Title display text.</comment></data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve"><value>Változások</value><comment>AboutPage Changelog Title display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve"><value>A Notepads emlékezni fog a jelenlegi munkamenetre a következő indításkor, és időközönként készít biztonsági mentést az esetleges adatvesztés elkerülése érdekében. Notepads NEM fog emlékeztetni hogy mentsd el a munkádat az alkalmazás bezárásakor, ha ez az opció be van kapcsolva. A munkamenet mentés csak az első vagy fő Notepads ablakban működik.</value><comment>AdvancedPage SessionSnapshotSettings Description display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>Munkamenet mentés és visszaállítás bekapcsolása</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>Munkamenet mentés és visszaállítás bekapcsolása</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>Munkamenet Mentési Beállítások</value><comment>AdvancedPage SessionSnapshotSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve"><value>Elgépelt szavak kiemelése</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve"><value>Elgépelt szavak kiemelése</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve"><value>Helyesírás</value><comment>TextAndEditorPage SpellingSettings Title display text.</comment></data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>Ha engedélyezve van, Notepads a fájlokat mindig új ablakban fogja megnyitni ahelyett hogy új fület nyitna.</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>Mindig nyisson új ablakot</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>Mindig nyisson új ablakot</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve"><value>Indítási Beállítások</value><comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Aktuális sor kiemelése</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Aktuális sor kiemelése</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve"><value>Egyéni Keresőmotor</value><comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve"><value>*Írja be az url-t a következő formátumban https://www.pelda.com/search?q={0}</value><comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve"><value>Beállítások az alapértelmezett keresőmotorhoz ami a weben való kereséskor lesz használva.</value><comment>TextAndEditorPage SearchEngineSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett Keresőmotor</value><comment>TextAndEditorPage SearchEngineSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve"><value>Autómatikus kódolás kitalálás (Ajánlott)</value><comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve"><value>Megjelenítés</value><comment>TextAndEditorPage DisplaySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>Sorszámok mutatása a dokumentumban.</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Sorszámok mutatása</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Sorszámok mutatása</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett formázás</value><comment>TextAndEditorPage FontStyleSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve"><value>Alapértelmezett kiemelés</value><comment>TextAndEditorPage FontWeightSettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve"><value>Válasszon egy nyelvet hogy megváltoztassa az alapértelmezett nyelvet. Újraindítás szükséges.</value><comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve"><value>*Újraindítás szükséges.</value><comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve"><value>Nyelvi preferenciák</value><comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve"><value>Bekapcsolva a Notepads kiszedi a felesleges szóközöket, tabokat és az üres  sorokat, majd vágolapra másolja.</value><comment>AdvancedPage SmartCopySettings Description display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve"><value>Okos másolás</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve"><value>Okosmásolás</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>Okosmásolás Beállítások</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Rendszer alapértelmezett</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Ebben a szerkesztőben nem érhető el helyesírás-ellenőrzés.</value></data>
 </root>

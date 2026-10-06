@@ -131,7 +131,7 @@ jobs:
 
   ci:
     needs: setup
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     outputs:
@@ -152,6 +152,8 @@ jobs:
       - name: Setup MSBuild
         id: setup_msbuild
         uses: microsoft/setup-msbuild@v3
+        with:
+          vs-version: "[18.0,19.0)"
 
       - name: Setup NuGet
         id: setup-nuget
@@ -163,6 +165,15 @@ jobs:
         with:
           fetch-depth: 50
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Ensure native UWP build tools
+        shell: pwsh
+        run: .\scripts\Initialize-BuildTools.ps1 -InstallMissing
 
       # Due to the insufficient memory allocated by default, CodeQL sometimes requires more to be manually allocated
       - if: matrix.runCodeqlAnalysis
@@ -258,7 +269,7 @@ jobs:
         id: restore_application
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME /t:Restore
+          msbuild $env:SOLUTION_NAME /t:Restore /p:Configuration=$env:CONFIGURATION /p:Platform=x64
           nuget restore $env:SOLUTION_NAME
 
       - if: matrix.runCodeqlAnalysis
@@ -273,7 +284,11 @@ jobs:
         id: build_app
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild src\Notepads\Notepads.csproj /t:Publish `
+          /p:SolutionDir="$env:DEFAULT_DIR\src\" `
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:PublishAppxPackage=false `
+          /p:IncludePublishItemsOutputGroup=true `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
@@ -283,6 +298,12 @@ jobs:
           /p:AppxPackageDir=$env:ARTIFACTS_DIR `
           /p:PackageCertificateKeyFile=$env:PACKAGE_CERTIFICATE_KEYFILE `
           /p:PackageCertificatePassword=$env:PACKAGE_CERTIFICATE_PASSWORD
+          if ($LASTEXITCODE -ne 0) { throw 'Native AOT publish failed.' }
+          $uploads = @(Get-ChildItem $env:ARTIFACTS_DIR -Recurse -Filter '*.msixupload')
+          if (!$uploads.Count) { throw 'Native AOT upload package was not generated.' }
+          foreach ($upload in $uploads) {
+            .\scripts\Test-AppPackage.ps1 -Path $upload.FullName -ExpectedArchitectures ($env:APPX_BUNDLE_PLATFORMS -split '\|')
+          }
         env:
           PLATFORM: x64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload
@@ -292,19 +313,23 @@ jobs:
           ARTIFACTS_DIR: ${{ github.workspace }}\Artifacts
           PACKAGE_CERTIFICATE_KEYFILE: ${{ github.workspace }}\cert.pfx
           PACKAGE_CERTIFICATE_PASSWORD: ${{ secrets.PACKAGE_CERTIFICATE_PWD }}
-          APP_CENTER_SECRET: ${{ secrets.APP_CENTER_SECRET }}
 
       - if: matrix.debug && !contains( matrix.appxBundlePlatforms, 'arm64' )
         name: Test ARM build in debug configuration
         id: build_app_arm_debug
         shell: pwsh
         run: |
-          msbuild $env:SOLUTION_NAME `
+          msbuild src\Notepads\Notepads.csproj /t:Publish `
+          /p:SolutionDir="$env:DEFAULT_DIR\src\" `
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:PublishAppxPackage=false `
+          /p:IncludePublishItemsOutputGroup=true `
           /p:Platform=$env:PLATFORM `
           /p:Configuration=$env:CONFIGURATION `
           /p:UapAppxPackageBuildMode=$env:UAP_APPX_PACKAGE_BUILD_MODE `
           /p:AppxBundle=$env:APPX_BUNDLE `
           /p:AppxBundlePlatforms=$env:APPX_BUNDLE_PLATFORMS
+          if ($LASTEXITCODE -ne 0) { throw 'ARM64 Native AOT publish failed.' }
         env:
           PLATFORM: ARM64
           UAP_APPX_PACKAGE_BUILD_MODE: StoreUpload

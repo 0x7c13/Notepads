@@ -1,0 +1,33 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace WinUIEditor
+{
+	enum EditorDiffStatus { Exact = 0, Coarse = 1, Unavailable = 2, Canceled = 3, Stale = 4, Failed = 5 };
+	enum EditorDiffReason { None = 0, Memory = 1, LineLimit = 2, TimeBudget = 3, WorkBudget = 4, RefinementBudget = 5 };
+	struct EditorDiffHunk
+	{
+		UInt32 OldStart;
+		UInt32 OldCount;
+		UInt32 NewStart;
+		UInt32 NewCount;
+		UInt64 DisplayRow;
+	};
+	[default_interface]
+	runtimeclass EditorDiffResult
+	{
+		EditorDiffStatus Status { get; };
+		EditorDiffReason Reason { get; };
+		UInt64 OldRevision { get; };
+		UInt64 NewRevision { get; };
+		UInt64 OldByteLength { get; };
+		UInt64 NewByteLength { get; };
+		UInt32 OldLineCount { get; };
+		UInt32 NewLineCount { get; };
+		UInt32 AddedLineCount { get; };
+		UInt32 DeletedLineCount { get; };
+		EditorDiffHunk[] GetHunks();
+	}
+}

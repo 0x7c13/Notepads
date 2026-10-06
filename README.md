@@ -47,7 +47,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+Num(1-9) to quickly switch to specified tab.
 * Ctrl+"+"/"-" for zooming. Ctrl+"0" to reset zooming to default.
-* Ctrl+L/R to change text flow direction. (LTR/RTL)
+* Ctrl+L/R changed text flow direction in V1. V2 keeps these commands disabled until native RTL paragraph layout is ready; mixed Arabic/Hebrew rendering remains enabled.
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
 

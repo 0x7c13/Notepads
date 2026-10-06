@@ -1,0 +1,146 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <UseUwp>true</UseUwp>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <CsWinRTGenerateProjection>false</CsWinRTGenerateProjection>
+    <Configurations>Debug;Release;Production</Configurations>
+    <OutputType>WinExe</OutputType>
+    <PublishAot>true</PublishAot>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <PublishAppxPackage>true</PublishAppxPackage>
+    <IncludePublishItemsOutputGroup Condition="'$(Configuration)' != 'Debug'">true</IncludePublishItemsOutputGroup>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxSymbolPackageEnabled>true</AppxSymbolPackageEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <AssemblyName>NotepadsEditorTests</AssemblyName>
+    <RootNamespace>NotepadsEditorTests</RootNamespace>
+    <EnableTypeInfoReflection>false</EnableTypeInfoReflection>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU'">
+    <RuntimeIdentifier>win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Production'">
+    <Optimize>true</Optimize>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
+    <PackageReference Include="UTF.Unknown" Version="2.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Notepads\Composition\SessionRegistry.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Storage\FutureAccessListUtility.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Runtime\InstanceCatalog.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Validation\SessionRecoveryReferences.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Preferences\FontSlant.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Theming\PreferenceValues.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Contracts\Legacy\NotepadsSessionData.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Contracts\Legacy\TextEditorSessionData.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\SessionService.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\SessionService.Recovery.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\SessionCapture.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\SessionSaveResult.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Recovery\PreparedRecoveryBatch.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Legacy\LegacySessionImporter.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Storage\FileStorage.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\SessionManifestStore.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\RecoveryRootStore.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\TransferRootReader.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Recovery\SessionRecoveryCatalog.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Validation\RecoveryRecordValidator.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Transfer\TransferRecoveryStore.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\LineEnding.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\DocumentLoadOptions.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\DocumentLimits.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\DocumentRecoveryState.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\DocumentMetadata.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Contracts\*.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\SessionDocumentStore.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Contracts\Recovery\SessionRecoverySource.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Recovery\SessionRecoveryGarbageCollector.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\SessionRecoveryTransaction.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Storage\FileLockLease.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\SessionScopeLease.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\RecoveryRecordStore.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\RecoveryStoragePaths.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\RecoveryStorageFaults.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Validation\RecoveryRecordCodec.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Validation\SessionRecoveryAuthority.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Recovery\SessionCheckpointRetention.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\IO\DocumentTextPipeline.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Text\DocumentTextCodec.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\DocumentDecodingMode.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\IO\DocumentEncodingPolicy.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Text\EncodingCatalog.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Storage\DocumentBaseline.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\DocumentSnapshot.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Storage\DocumentAssetLease.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Storage\DocumentJournal.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\ScintillaTextEditorCore*.cs">
+      <Link>Editor\%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\TextEditorCore.FontSize.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\TextEditorCore.Syntax.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\SyntaxLanguageProfile.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Theming\SyntaxColorPalette.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Theming\DiffColorPalette.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\TextEditorCore.Diff.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\DiffComparison.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\FileTypes\DocumentLanguage.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\FileTypes\DocumentLanguages.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Controls\FindAndReplace\SearchContext.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Input\KeyboardCommand*.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Input\IKeyboardCommand.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Input\ICommandHandler.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Input\CommandHandlerResult.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Text\LineEndingUtility.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Storage\AtomicFileWriter.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Diagnostics\OperationMetrics.cs" />
+    <Compile Include="..\..\src\Notepads\Infrastructure\Threading\WinRtAsyncExtensions.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\IO\DocumentFileWriter.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\IO\EditorDocumentStream.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Storage\SessionGenerationDraft.cs" />
+    <Compile Include="..\..\src\Notepads\Features\Sessions\Recovery\RecoveryRestorePipeline.cs" />
+    <Compile Include="..\..\src\Notepads\Features\WebSearch\SearchUrls.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Helpers\DispatcherExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="..\..\src\Notepads\Presentation\Theming\SyntaxThemes.xaml">
+      <Link>Theming\SyntaxThemes.xaml</Link>
+    </Page>
+    <Page Include="..\..\src\Notepads\Presentation\Theming\DiffThemes.xaml">
+      <Link>Theming\DiffThemes.xaml</Link>
+    </Page>
+    <Content Include="..\..\src\Notepads\Assets\StoreLogo.scale-200.png">
+      <Link>TestAssets\StoreLogo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\..\src\Notepads\Assets\Square150x150Logo.scale-200.png">
+      <Link>TestAssets\Square150x150Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\..\src\Notepads\Assets\Square44x44Logo.scale-200.png">
+      <Link>TestAssets\Square44x44Logo.scale-200.png</Link>
+    </Content>
+  </ItemGroup>
+</Project>

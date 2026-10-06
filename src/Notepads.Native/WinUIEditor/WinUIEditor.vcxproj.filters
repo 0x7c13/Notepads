@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2026 by Breece Walker
+  See src/Notepads.Native/LICENSE for the original WinUIEdit license.
+
+  Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for the Notepads modifications.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>accd3aa8-1ba0-4223-9bbe-0c431709210b</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{926ab91d-31b4-48c3-b9a4-e681349f27f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lexilla">
+      <UniqueIdentifier>{5d3db3b2-2f2c-4391-93b6-5a4bc55e954c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scintilla">
+      <UniqueIdentifier>{d2af1cc1-e66c-4161-aa1f-2dce16d662a7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutocompletionControl.cpp" />
+    <ClCompile Include="AutocompletionWrapper.cpp" />
+    <ClCompile Include="CallTipControl.cpp" />
+    <ClCompile Include="CallTipWrapper.cpp" />
+    <ClCompile Include="DummyPage.cpp" />
+    <ClCompile Include="EditorBaseControl.cpp" />
+    <ClCompile Include="EditorBaseControlAutomationPeer.cpp" />
+    <ClCompile Include="EditorExtensions.cpp" />
+    <ClCompile Include="EditorUtf8Reader.cpp" />
+    <ClCompile Include="EditorJournalCheckpoint.cpp" />
+    <ClCompile Include="EditorJournalExtensions.cpp" />
+    <ClCompile Include="NativeJournal.cpp" />
+    <ClCompile Include="..\lexilla\lexlib\Accessor.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\CharacterCategory.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\CharacterSet.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\DefaultLexer.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\InList.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexAccessor.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerBase.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerModule.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerSimple.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\PropSetSimple.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\StyleContext.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\WordList.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexBash.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexCPP.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexCSS.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexHTML.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexJSON.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexLua.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexMarkdown.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexPowerShell.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexPython.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexRust.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexSQL.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexTOML.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexYAML.cxx"><Filter>Lexilla</Filter></ClCompile>
+    <ClCompile Include="NativeSyntax.cpp" />
+    <ClCompile Include="EditorSyntax.cpp" />
+    <ClCompile Include="EditorWrapper.cpp" />
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="MainWrapper.cpp" />
+    <ClCompile Include="MuiResourceLoader.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="TextRangeProvider.cpp" />
+    <ClCompile Include="Wrapper.cpp" />
+    <ClCompile Include="..\scintilla\winui\ListBox.cxx" />
+    <ClCompile Include="..\scintilla\winui\PlatWin.cxx" />
+    <ClCompile Include="..\scintilla\winui\ScintillaWin.cxx" />
+    <ClCompile Include="..\scintilla\winui\SurfaceD2D.cxx" />
+    <ClCompile Include="..\scintilla\src\AutoComplete.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CallTip.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CaseConvert.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CaseFolder.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CellBuffer.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ChangeHistory.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharacterCategoryMap.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharacterType.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharClassify.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ContractionState.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\DBCS.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Decoration.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Document.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\EditModel.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Editor.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\EditView.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Geometry.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Indicator.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\KeyMap.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\LineMarker.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\MarginView.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\PerLine.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\PositionCache.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\RESearch.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\RunStyles.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ScintillaBase.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Selection.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Style.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UndoHistory.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UniConversion.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UniqueString.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ViewStyle.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\XPM.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\call\ScintillaCall.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AutocompletionControl.h" />
+    <ClInclude Include="AutocompletionWrapper.h" />
+    <ClInclude Include="CallTipControl.h" />
+    <ClInclude Include="CallTipWrapper.h" />
+    <ClInclude Include="ControlIncludes.h" />
+    <ClInclude Include="DummyPage.h" />
+    <ClInclude Include="EditorBaseControl.h" />
+    <ClInclude Include="EditorBaseControlAutomationPeer.h" />
+    <ClInclude Include="EditorExtensions.h" />
+    <ClInclude Include="EditorExtensionsState.h" />
+    <ClInclude Include="EditorUtf8Reader.h" />
+    <ClInclude Include="EditorJournalCheckpoint.h" />
+    <ClInclude Include="NativeJournal.h" />
+    <ClInclude Include="NativeSyntax.h" />
+    <ClInclude Include="EditorWrapper.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="MainWrapper.h" />
+    <ClInclude Include="MuiResourceLoader.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="TextRangeProvider.h" />
+    <ClInclude Include="Wrapper.h" />
+    <ClInclude Include="XamlStringIds.h" />
+    <ClInclude Include="..\scintilla\winui\ListBox.h" />
+    <ClInclude Include="..\scintilla\winui\PlatWin.h" />
+    <ClInclude Include="..\scintilla\winui\ScintillaWin.h" />
+    <ClInclude Include="..\scintilla\winui\SurfaceD2D.h" />
+    <ClInclude Include="..\scintilla\winui\WinTypes.h" />
+    <ClInclude Include="..\scintilla\include\ILexer.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ILoader.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\Sci_Position.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\Scintilla.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ScintillaCall.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ScintillaMessages.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ScintillaStructures.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ScintillaTypes.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\include\ScintillaWidget.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\AutoComplete.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CallTip.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CaseConvert.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CaseFolder.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CellBuffer.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\ChangeHistory.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CharacterCategoryMap.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CharacterType.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\CharClassify.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\ContractionState.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\DBCS.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Debugging.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Decoration.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Document.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\EditModel.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Editor.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\EditView.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\ElapsedPeriod.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Geometry.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Indicator.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\KeyMap.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\LineMarker.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\MarginView.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Partitioning.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\PerLine.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Platform.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Position.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\PositionCache.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\RESearch.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\RunStyles.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\ScintillaBase.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Selection.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\SparseVector.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\SplitVector.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\Style.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\UndoHistory.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\UniConversion.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\UniqueString.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\ViewStyle.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\src\XPM.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WinUIEditor.def" />
+    <None Include="packages.config" />
+    <None Include="Defines.idl" />
+    <None Include="EditorExtensions.idl.inc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml" />
+    <Page Include="DummyPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="AutocompletionControl.idl" />
+    <Midl Include="CallTipControl.idl" />
+    <Midl Include="DummyPage.idl" />
+    <Midl Include="EditorBaseControl.idl" />
+    <Midl Include="EditorBaseControlAutomationPeer.idl" />
+    <Midl Include="EditorWrapper.idl" />
+    <Midl Include="EditorUtf8Reader.idl" />
+    <Midl Include="EditorJournalCheckpoint.idl" />
+    <Midl Include="IEditorAccess.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorDiffResult.h" />
+    <ClInclude Include="NativeDiff.h" />
+    <ClInclude Include="DrainingAsyncOperation.h" />
+    <ClInclude Include="..\scintilla\src\DisplayLineMap.h" />
+    <ClCompile Include="EditorDiff.cpp" />
+    <ClCompile Include="EditorDiffResult.cpp" />
+    <ClCompile Include="NativeDiff.cpp" />
+    <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx" />
+    <Midl Include="EditorDiffResult.idl" />
+  </ItemGroup>
+</Project>

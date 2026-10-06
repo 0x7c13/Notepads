@@ -4,6 +4,7 @@
     xmlns:local="using:Notepads">
 
     <Style x:Key="CustomCheckBoxContentToLeftStyle" TargetType="CheckBox">
+        <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Background" Value="{ThemeResource CheckBoxBackgroundUnchecked}"/>
         <Setter Property="Foreground" Value="{ThemeResource CheckBoxForegroundUnchecked}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUnchecked}"/>

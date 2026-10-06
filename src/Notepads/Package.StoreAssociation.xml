@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
   <Publisher>CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804</Publisher>
-  <PublisherDisplayName>Jackie Liu</PublisherDisplayName>
+  <PublisherDisplayName>Jiaqi (0x7c13) Liu</PublisherDisplayName>
   <DeveloperAccountType>MSA</DeveloperAccountType>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>

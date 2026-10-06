@@ -1,0 +1,86 @@
+<!--
+  Copyright 2026 by Breece Walker
+  See src/Notepads.Native/LICENSE for the original WinUIEdit license.
+
+  Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for the Notepads modifications.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinUIEditor">
+
+    <Style TargetType="local:EditorBaseControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:EditorBaseControl">
+                    <Grid
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Keep the drawing surface out of the scrollbar row and column. -->
+                        <Border
+                            x:Name="ImageTarget"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            AllowDrop="True" />
+                        <ScrollBar
+                            x:Name="VerticalScrollBar"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            IndicatorMode="MouseIndicator"
+                            IsTabStop="False"
+                            Orientation="Vertical" />
+                        <ScrollBar
+                            x:Name="HorizontalScrollBar"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Visibility="Collapsed"
+                            IndicatorMode="MouseIndicator"
+                            IsTabStop="False"
+                            Orientation="Horizontal" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:AutocompletionControl">
+        <!-- winui todo: maybe <Setter Property="IsTabStop" Value="False" />-->
+        <Setter Property="Background" Value="{ThemeResource FlyoutPresenterBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource FlyoutBorderThemeBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+        <!--  todo: won't work on old versions or without winui resources  -->
+        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AutocompletionControl">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border.Resources>
+                            <x:Double x:Key="ListViewItemMinHeight">32</x:Double>
+                        </Border.Resources>
+                        <ListView
+                            x:Name="Suggestions"
+                            Padding="0,2"
+                            ItemContainerTransitions="{x:Null}"
+                            ItemsSource="{TemplateBinding ItemsSource}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

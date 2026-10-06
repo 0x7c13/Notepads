@@ -1,139 +1,145 @@
-﻿// ---------------------------------------------------------------------------------------------
-//  Copyright (c) 2019-2024, Jiaqi (0x7c13) Liu. All rights reserved.
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-namespace Notepads
-{
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Notepads.Services;
-    using Notepads.Settings;
-    using Windows.ApplicationModel;
-    using Windows.ApplicationModel.Activation;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Notepads.Composition;
+using Notepads.Features.Preferences;
+using Notepads.Infrastructure.Diagnostics;
+using Notepads.Infrastructure.Settings;
+using Notepads.Infrastructure.Storage;
+using Notepads.Presentation.Workspace.Activation;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 
-    public static class Program
+namespace Notepads;
+
+public static class Program
+{
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
 #if DEBUG
-            Task.Run(LoggingService.InitializeFileSystemLoggingAsync);
+        Task.Run(() => LoggingService.InitializeAsync(new FileLogSink()));
 #endif
 
-            IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
+        var bootstrap = new BootstrapContext();
+        IActivatedEventArgs activatedArgs = AppInstance.GetActivatedEventArgs();
 
-            //if (activatedArgs == null)
-            //{
-            //    // No activated event args, so this is not an activation via the multi-instance ID
-            //    // Just create a new instance and let App OnActivated resolve the launch
-            //    App.IsGameBarWidget = true;
-            //    App.IsPrimaryInstance = true;
-            //    Windows.UI.Xaml.Application.Start(p => new App());
-            //}
+        if (activatedArgs is FileActivatedEventArgs)
+        {
+            RedirectOrCreateNewInstance(bootstrap);
+        }
+        else if (activatedArgs is CommandLineActivatedEventArgs)
+        {
+            RedirectOrCreateNewInstance(bootstrap);
+        }
+        else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
+        {
+            LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
+            var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
+            if (protocol == NotepadsOperationProtocol.OpenNewInstance)
+            {
+                OpenNewInstance(bootstrap);
+            }
+            else
+            {
+                RedirectOrCreateNewInstance(bootstrap);
+            }
+        }
+        else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
+        {
+            bool handled = false;
 
-            if (activatedArgs is FileActivatedEventArgs)
+            if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
             {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is CommandLineActivatedEventArgs)
-            {
-                RedirectOrCreateNewInstance();
-            }
-            else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
-            {
-                LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-                var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
+                var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
                 if (protocol == NotepadsOperationProtocol.OpenNewInstance)
                 {
-                    OpenNewInstance();
-                }
-                else
-                {
-                    RedirectOrCreateNewInstance();
+                    handled = true;
+                    OpenNewInstance(bootstrap);
                 }
             }
-            else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
+
+            if (!handled)
             {
-                bool handled = false;
+                RedirectOrCreateNewInstance(bootstrap);
+            }
+        }
+        else
+        {
+            RedirectOrCreateNewInstance(bootstrap);
+        }
+    }
 
-                if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
-                {
-                    var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
-                    if (protocol == NotepadsOperationProtocol.OpenNewInstance)
-                    {
-                        handled = true;
-                        OpenNewInstance();
-                    }
-                }
+    private static void OpenNewInstance(BootstrapContext bootstrap)
+    {
+        AppInstance.FindOrRegisterInstanceForKey(bootstrap.InstanceId.ToString());
+        StartApplication(bootstrap);
+    }
 
-                if (!handled)
-                {
-                    RedirectOrCreateNewInstance();
-                }
+    private static void RedirectOrCreateNewInstance(BootstrapContext bootstrap)
+    {
+        var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(bootstrap.InstanceId.ToString()));
+
+        if (instance.IsCurrentInstance)
+        {
+            StartApplication(bootstrap);
+        }
+        else
+        {
+            // open new instance if user prefers to
+            if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
+            {
+                OpenNewInstance(bootstrap);
             }
             else
             {
-                RedirectOrCreateNewInstance();
+                instance.RedirectActivationTo();
             }
         }
+    }
 
-        private static void OpenNewInstance()
+    private static void StartApplication(BootstrapContext bootstrap)
+    {
+        Windows.UI.Xaml.Application.Start(_ =>
         {
-            AppInstance.FindOrRegisterInstanceForKey(App.InstanceId.ToString());
-            Windows.UI.Xaml.Application.Start(p => new App());
+            SynchronizationContext.SetSynchronizationContext(new Windows.System.DispatcherQueueSynchronizationContext(
+                Windows.System.DispatcherQueue.GetForCurrentThread()));
+            new App(bootstrap);
+        });
+    }
+
+    private static AppInstance GetLastActiveInstance()
+    {
+        var instances = AppInstance.GetInstances();
+
+        if (instances.Count == 0)
+        {
+            return null;
         }
-
-        private static void RedirectOrCreateNewInstance()
+        else if (instances.Count == 1)
         {
-            var instance = (GetLastActiveInstance() ?? AppInstance.FindOrRegisterInstanceForKey(App.InstanceId.ToString()));
-
-            if (instance.IsCurrentInstance)
-            {
-                Windows.UI.Xaml.Application.Start(p => new App());
-            }
-            else
-            {
-                // open new instance if user prefers to
-                if (ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is bool alwaysOpenNewWindowBool && alwaysOpenNewWindowBool)
-                {
-                    OpenNewInstance();
-                }
-                else
-                {
-                    instance.RedirectActivationTo();
-                }
-            }
-        }
-
-        private static AppInstance GetLastActiveInstance()
-        {
-            var instances = AppInstance.GetInstances();
-
-            if (instances.Count == 0)
-            {
-                return null;
-            }
-            else if (instances.Count == 1)
-            {
-                return instances.FirstOrDefault();
-            }
-
-            if (!(ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is string activeInstance))
-            {
-                return null;
-            }
-
-            foreach (var appInstance in instances)
-            {
-                if (appInstance.Key == activeInstance)
-                {
-                    return appInstance;
-                }
-            }
-
-            // activeInstance might be closed already, let's return the first instance in this case
             return instances.FirstOrDefault();
         }
+
+        if (ApplicationSettingsStore.Read(SettingsKey.ActiveInstanceIdStr) is not string activeInstance)
+        {
+            return null;
+        }
+
+        foreach (var appInstance in instances)
+        {
+            if (appInstance.Key == activeInstance)
+            {
+                return appInstance;
+            }
+        }
+
+        // activeInstance might be closed already, let's return the first instance in this case
+        return instances.FirstOrDefault();
     }
 }

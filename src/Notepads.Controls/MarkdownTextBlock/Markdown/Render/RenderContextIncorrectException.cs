@@ -3,25 +3,25 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/MarkdownTextBlock/Render
 
-namespace Notepads.Controls.Markdown
+
+using System;
+
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// An Exception that occurs when the Render Context is Incorrect.
+/// </summary>
+public class RenderContextIncorrectException : Exception
 {
-    using System;
-
-    /// <summary>
-    /// An Exception that occurs when the Render Context is Incorrect.
-    /// </summary>
-    public class RenderContextIncorrectException : Exception
+    internal RenderContextIncorrectException() : base("Markdown Render Context missing or incorrect.")
     {
-        internal RenderContextIncorrectException() : base("Markdown Render Context missing or incorrect.")
-        {
-        }
+    }
 
-        public RenderContextIncorrectException(string message) : base(message)
-        {
-        }
+    public RenderContextIncorrectException(string message) : base(message)
+    {
+    }
 
-        public RenderContextIncorrectException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+    public RenderContextIncorrectException(string message, Exception innerException) : base(message, innerException)
+    {
     }
 }

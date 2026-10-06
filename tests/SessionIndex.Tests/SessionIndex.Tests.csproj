@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Notepads/Infrastructure/Diagnostics/OperationMetrics.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordCodec.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryReferences.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordValidator.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryRecordStore.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStoragePaths.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStorageFaults.cs" />
+  </ItemGroup>
+</Project>

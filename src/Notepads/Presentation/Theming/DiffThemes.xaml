@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="DiffAddedLineColor">#30238836</Color>
+            <Color x:Key="DiffDeletedLineColor">#30D12F35</Color>
+            <Color x:Key="DiffAddedTextColor">#70238836</Color>
+            <Color x:Key="DiffDeletedTextColor">#70D12F35</Color>
+            <Color x:Key="DiffGapColor">#08000000</Color>
+            <Color x:Key="DiffGapHatchColor">#18000000</Color>
+            <Color x:Key="DiffAddedCountColor">#188038</Color>
+            <Color x:Key="DiffDeletedCountColor">#C42B1C</Color>
+            <Color x:Key="DiffToolbarBackgroundColor">#10000000</Color>
+            <Color x:Key="DiffSeparatorColor">#30000000</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="DiffAddedLineColor">#303FB950</Color>
+            <Color x:Key="DiffDeletedLineColor">#30F85149</Color>
+            <Color x:Key="DiffAddedTextColor">#703FB950</Color>
+            <Color x:Key="DiffDeletedTextColor">#70F85149</Color>
+            <Color x:Key="DiffGapColor">#08FFFFFF</Color>
+            <Color x:Key="DiffGapHatchColor">#18FFFFFF</Color>
+            <Color x:Key="DiffAddedCountColor">#3FB950</Color>
+            <Color x:Key="DiffDeletedCountColor">#F85149</Color>
+            <Color x:Key="DiffToolbarBackgroundColor">#18FFFFFF</Color>
+            <Color x:Key="DiffSeparatorColor">#40FFFFFF</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <StaticResource x:Key="DiffToolbarBackgroundColor" ResourceKey="SystemColorWindowColor"/>
+            <StaticResource x:Key="DiffSeparatorColor" ResourceKey="SystemColorWindowTextColor"/>
+            <StaticResource x:Key="DiffAddedCountColor" ResourceKey="SystemColorWindowTextColor"/>
+            <StaticResource x:Key="DiffDeletedCountColor" ResourceKey="SystemColorWindowTextColor"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+    <SolidColorBrush x:Key="DiffToolbarBackgroundBrush" Color="{ThemeResource DiffToolbarBackgroundColor}"/>
+    <SolidColorBrush x:Key="DiffSeparatorBrush" Color="{ThemeResource DiffSeparatorColor}"/>
+    <SolidColorBrush x:Key="DiffAddedCountBrush" Color="{ThemeResource DiffAddedCountColor}"/>
+    <SolidColorBrush x:Key="DiffDeletedCountBrush" Color="{ThemeResource DiffDeletedCountColor}"/>
+</ResourceDictionary>

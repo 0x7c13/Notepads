@@ -3,18 +3,18 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Inlines
 
-namespace Notepads.Controls.Markdown
-{
-    using System.Collections.Generic;
 
+using System.Collections.Generic;
+
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// Initializes a new instance of the <see cref="IInlineContainer"/> class.
+/// </summary>
+public interface IInlineContainer
+{
     /// <summary>
-    /// Initializes a new instance of the <see cref="IInlineContainer"/> class.
+    /// Gets or sets the contents of the inline.
     /// </summary>
-    public interface IInlineContainer
-    {
-        /// <summary>
-        /// Gets or sets the contents of the inline.
-        /// </summary>
-        IList<MarkdownInline> Inlines { get; set; }
-    }
+    IList<MarkdownInline> Inlines { get; set; }
 }

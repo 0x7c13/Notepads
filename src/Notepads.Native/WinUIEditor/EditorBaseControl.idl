@@ -1,0 +1,25 @@
+// Copyright 2026 by Breece Walker
+// See src/Notepads.Native/LICENSE for the original WinUIEdit license.
+//
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
+#include "Defines.idl"
+import "EditorWrapper.idl";
+import "IEditorAccess.idl";
+
+namespace WinUIEditor
+{
+	[default_interface]
+	[webhosthidden]
+	runtimeclass EditorBaseControl : DUX.Controls.Control, IEditorAccess
+	{
+		EditorBaseControl();
+		Editor Editor { get; };
+		// Hosts that own zoom policy can handle the unconsumed routed wheel event.
+		Boolean MouseWheelZoomEnabled;
+		// Unlike SCI_STYLESETBACK, this preserves alpha for XAML backdrops.
+		void SetBackgroundColor(Windows.UI.Color color);
+		event Windows.Foundation.EventHandler<Double> DpiChanged;
+	}
+}

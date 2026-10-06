@@ -1,0 +1,84 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+using System;
+using System.Linq;
+
+namespace Notepads.Features.Documents.FileTypes;
+
+public enum FileType
+{
+    Unknown = 0,
+    TextFile,
+    MarkdownFile,
+}
+
+public static class FileTypeUtility
+{
+    public static string GetFileExtension(string filename)
+    {
+        if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
+        {
+            return string.Empty;
+        }
+
+        return filename.Substring(filename.LastIndexOf(".", StringComparison.Ordinal));
+    }
+
+    public static FileType GetFileTypeByFileName(string filename)
+    {
+        if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
+        {
+            return FileType.Unknown;
+        }
+
+        return GetFileTypeByFileExtension(filename.Split(".").Last());
+    }
+
+    public static FileType GetFileTypeByFileExtension(string extension)
+    {
+        if (string.IsNullOrEmpty(extension))
+        {
+            return FileType.Unknown;
+        }
+
+        var ext = extension.ToLower();
+
+        if (ext == "txt")
+        {
+            return FileType.TextFile;
+        }
+
+        if (ext == "md" ||
+            ext == "markdown" ||
+            ext == "mkd" ||
+            ext == "mdwn" ||
+            ext == "mdown" ||
+            ext == "markdn" ||
+            ext == "mdtxt")
+        {
+            return FileType.MarkdownFile;
+        }
+
+        return FileType.Unknown;
+    }
+
+    public static bool IsPreviewSupported(FileType fileType)
+    {
+        // Preview rendering is suspended until the V2 renderers are implemented.
+        return false;
+    }
+
+    public static string GetDisplayText(FileType fileType)
+    {
+        return fileType switch
+        {
+            FileType.Unknown => string.Empty,
+            FileType.TextFile => "TXT",
+            FileType.MarkdownFile => "Markdown",
+            _ => string.Empty,
+        };
+    }
+}

@@ -1,0 +1,24 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+namespace WinUIEditor
+{
+	[default_interface]
+	runtimeclass EditorJournalCheckpoint : Windows.Foundation.IClosable
+	{
+		String FilePath { get; };
+		UInt64 BaseSequence { get; };
+		UInt64 CommittedSequence { get; };
+		UInt64 CommittedByteLength { get; };
+		UInt64 CommittedDocumentByteLength { get; };
+		String PrefixSha256 { get; };
+		EditorJournalCheckpoint Retain();
+		Windows.Foundation.IAsyncAction FlushAsync();
+		Windows.Foundation.IAsyncAction WriteBaselineAsync(Windows.Storage.Streams.IInputStream baseline, UInt64 baselineLength, Windows.Storage.Streams.IOutputStream output, UInt64 maximumDocumentBytes);
+		Windows.Foundation.IAsyncAction CloseAsync();
+		void PreserveForRecovery();
+		static Windows.Foundation.IAsyncOperation<EditorJournalCheckpoint> OpenAsync(String filePath, UInt64 baseSequence, UInt64 committedSequence, UInt64 committedByteLength, String prefixSha256);
+	}
+}

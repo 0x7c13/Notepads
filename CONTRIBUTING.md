@@ -1,4 +1,4 @@
-﻿# How to Contribute:
+# How to Contribute:
 
 You can contribute to Notepads project by:
 - Report issues and bugs [here](https://github.com/0x7c13/Notepads/issues)
@@ -24,12 +24,10 @@ Note: This repository follows [conventional commits](https://www.conventionalcom
 
 # How to Build and Run Notepads from source:
 * Make sure your machine is running on Windows 10 1903+.
-* Make sure you have Visual Studio 2019 16.2 or newer installed.
-* Make sure you have "Universal Windows Platform development" component installed for Visual Studio.
-* Make sure you installed "Windows 10 SDK (10.0.17763.0 + 10.0.19041.0)" as well.
-* Open src/Notepads.sln with Visual Studio and set Solution Platform to x64(amd64).
-* Once opened, right click on the solution and click on "Restore NuGet Packages".
-* Now you should be able to build and run Notepads on your machine. If it fails, try close the solution and reopen it again.
+* Install Visual Studio 2026 with UWP .NET tools, the SDK selected by `global.json`, Windows SDK 10.0.26100.0, and the latest C++ UWP tools (v145).
+* Open `src/Notepads.sln` and select Debug with x86, x64 or ARM64.
+* Restore NuGet packages, then build and run the app. Debug uses the managed runtime for debugging.
+* Publish Release or Production with Native AOT before testing changes to reflection, serialization, WinRT or XAML bindings. From a Visual Studio Developer PowerShell, run `msbuild src/Notepads/Notepads.csproj /restore /t:Publish /p:Configuration=Release /p:Platform=x64` (or choose x86/ARM64).
 
 # TL;DR:
 This is my first UWP project and I learn as I go. As a result, the code base is not well organized, and it is not well written. The philosophy here is to create a text editor that is easy to use, lightweight and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.

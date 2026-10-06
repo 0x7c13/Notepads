@@ -1,0 +1,166 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2020-2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Notepads.Infrastructure.Shell;
+using Notepads.Presentation.Theming;
+using Notepads.Presentation.Workspace;
+using Windows.Graphics.Printing;
+using Windows.Storage;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
+
+namespace Notepads.Presentation.Views.MainPage;
+
+public sealed partial class NotepadsMainPage
+{
+    private void InitializeMainMenu()
+    {
+        MainMenuButton.Click += (sender, args) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+
+        MenuCreateNewButton.Click += async (sender, args) => await CreateNewTextEditorAsync();
+        MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstanceAsync();
+        MenuOpenFileButton.Click += async (sender, args) => await OpenNewFilesAsync();
+        MenuSaveButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
+        MenuSaveAsButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
+        MenuSaveAllButton.Click += async (sender, args) => await SaveAllAsync(NotepadsCore.GetAllTextEditors());
+        MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
+        MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
+        MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
+        MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
+        MenuPrintButton.Click += async (sender, args) => await PrintAsync(NotepadsCore.GetSelectedTextEditor());
+        MenuPrintAllButton.Click += async (sender, args) => await PrintAllAsync(NotepadsCore.GetAllTextEditors());
+        MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
+
+        if (!_context.IsPrimaryInstance)
+        {
+            MainMenuButton.Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor);
+            MenuSettingsButton.IsEnabled = false;
+        }
+
+        if (!PrintManager.IsSupported())
+        {
+            MenuPrintButton.Visibility = Visibility.Collapsed;
+            MenuPrintAllButton.Visibility = Visibility.Collapsed;
+            MenuPrintSeparator.Visibility = Visibility.Collapsed;
+        }
+
+        MainMenuButtonFlyout.Opening += MainMenuButtonFlyout_Opening;
+    }
+
+    private void MainMenuButtonFlyout_Opening(object sender, object e)
+    {
+        var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+
+        if (selectedTextEditor == null)
+        {
+            MenuSaveButton.IsEnabled = false;
+            MenuSaveAsButton.IsEnabled = false;
+            MenuFindButton.IsEnabled = false;
+            MenuReplaceButton.IsEnabled = false;
+            MenuPrintButton.IsEnabled = false;
+            MenuPrintAllButton.IsEnabled = false;
+        }
+        else if (selectedTextEditor.IsEditorEnabled() == false)
+        {
+            MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
+            MenuSaveAsButton.IsEnabled = true;
+            MenuFindButton.IsEnabled = false;
+            MenuReplaceButton.IsEnabled = false;
+        }
+        else
+        {
+            MenuSaveButton.IsEnabled = selectedTextEditor.IsModified;
+            MenuSaveAsButton.IsEnabled = true;
+            MenuFindButton.IsEnabled = true;
+            MenuReplaceButton.IsEnabled = true;
+
+            if (PrintManager.IsSupported())
+            {
+                MenuPrintButton.IsEnabled = !selectedTextEditor.IsDocumentEmpty;
+                MenuPrintAllButton.IsEnabled = NotepadsCore.HaveNonemptyTextEditor();
+            }
+        }
+
+        MenuFullScreenButton.Text = _resourceLoader.GetString(
+            ApplicationView.GetForCurrentView().IsFullScreenMode
+                ? "App_ExitFullScreenMode_Text"
+                : "App_EnterFullScreenMode_Text");
+        MenuCompactOverlayButton.Text = _resourceLoader.GetString(
+            ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay
+                ? "App_ExitCompactOverlayMode_Text"
+                : "App_EnterCompactOverlayMode_Text");
+        MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
+    }
+
+    private async Task BuildOpenRecentButtonSubItemsAsync()
+    {
+        var openRecentSubItem = new MenuFlyoutSubItem
+        {
+            Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent/Text"),
+            Icon = new FontIcon { Glyph = "\xE81C" },
+            Name = "MenuOpenRecentlyUsedFileButton",
+        };
+
+        var MRUFileList = new HashSet<string>();
+
+        foreach (var item in await MRUService.GetMostRecentlyUsedListAsync(top: 10))
+        {
+            if (item is StorageFile file)
+            {
+                if (MRUFileList.Contains(file.Path))
+                {
+                    // MRU might contains files with same path (User opens a recently used file after renaming it)
+                    // So we need to do the decouple here
+                    continue;
+                }
+                var newItem = new MenuFlyoutItem()
+                {
+                    Text = file.Path
+                };
+                ToolTipService.SetToolTip(newItem, file.Path);
+                newItem.Click += async (sender, args) => { await OpenFileAsync(file); };
+                openRecentSubItem.Items?.Add(newItem);
+                MRUFileList.Add(file.Path);
+            }
+        }
+
+        var oldOpenRecentSubItem = MainMenuButtonFlyout.Items?.FirstOrDefault(i => i.Name == openRecentSubItem.Name);
+        if (oldOpenRecentSubItem != null)
+        {
+            MainMenuButtonFlyout.Items.Remove(oldOpenRecentSubItem);
+        }
+
+        openRecentSubItem.IsEnabled = false;
+        if (openRecentSubItem.Items?.Count > 0)
+        {
+            openRecentSubItem.Items?.Add(new MenuFlyoutSeparator());
+
+            var clearRecentlyOpenedSubItem = new MenuFlyoutItem()
+            {
+                Text = _resourceLoader.GetString("MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text")
+            };
+
+            clearRecentlyOpenedSubItem.Click += async (sender, args) =>
+            {
+                MRUService.ClearAll();
+                await BuildOpenRecentButtonSubItemsAsync();
+            };
+            openRecentSubItem.Items?.Add(clearRecentlyOpenedSubItem);
+            openRecentSubItem.IsEnabled = true;
+        }
+
+        if (MainMenuButtonFlyout.Items != null)
+        {
+            var indexToInsert = MainMenuButtonFlyout.Items.IndexOf(MenuOpenFileButton) + 1;
+            MainMenuButtonFlyout.Items.Insert(indexToInsert, openRecentSubItem);
+        }
+    }
+}

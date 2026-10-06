@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2026 by Breece Walker
+  See src/Notepads.Native/LICENSE for the original WinUIEdit license.
+
+  Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for the Notepads modifications.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="15.0">
+  <Import Project="..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <PropertyGroup Label="Globals">
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <ProjectGuid>{290647e3-d8cb-46b5-87ce-409f721e441a}</ProjectGuid>
+    <ProjectName>WinUIEditor</ProjectName>
+    <RootNamespace>WinUIEditor</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>18.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <WindowsTargetPlatformVersion Condition="'$(WindowsTargetPlatformVersion)' == ''">10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <UseCrtSDKReference>false</UseCrtSDKReference>
+  </PropertyGroup>
+  <PropertyGroup>
+    <UseCrtSDKReferenceStaticWarning>false</UseCrtSDKReferenceStaticWarning>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|arm64">
+      <Configuration>Debug</Configuration>
+      <Platform>arm64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|arm64">
+      <Configuration>Release</Configuration>
+      <Platform>arm64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|Win32">
+      <Configuration>Production</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|x64">
+      <Configuration>Production</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|arm64">
+      <Configuration>Production</Configuration>
+      <Platform>arm64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <LinkIncremental>true</LinkIncremental>
+    <UseDummyPage>true</UseDummyPage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'Production'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>..\scintilla\winui;..\scintilla\include;..\scintilla\src;..\lexilla\include;..\lexilla\lexlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+      <ModuleDefinitionFile>WinUIEditor.def</ModuleDefinitionFile>
+      <AdditionalDependencies>icuuc.lib;icuin.lib;muiload.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Platform)' == 'x64'">%(AdditionalLibraryDirectories);$(VC_LibraryPath_VC_x64_Desktop)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)' == 'Win32'">%(AdditionalLibraryDirectories);$(VC_LibraryPath_VC_x86_Desktop)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)' == 'ARM'">%(AdditionalLibraryDirectories);$(VC_LibraryPath_VC_arm_Desktop)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)' == 'arm64'">%(AdditionalLibraryDirectories);$(VC_LibraryPath_VC_arm64_Desktop)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)' == 'Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>USE_DUMMY_PAGE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries);libucrtd.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>%(AdditionalOptions) /defaultlib:ucrtd.lib</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'Production'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries);libucrt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>%(AdditionalOptions) /defaultlib:ucrt.lib</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AutocompletionControl.h">
+      <DependentUpon>AutocompletionControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AutocompletionWrapper.h" />
+    <ClInclude Include="CallTipControl.h">
+      <DependentUpon>CallTipControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="CallTipWrapper.h" />
+    <ClInclude Include="ControlIncludes.h" />
+    <ClInclude Include="DummyPage.h" Condition="'$(UseDummyPage)' == 'true'">
+      <DependentUpon>DummyPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="EditorExtensions.h" />
+    <ClInclude Include="EditorExtensionsState.h" />
+    <ClInclude Include="EditorUtf8Reader.h" />
+    <ClInclude Include="EditorJournalCheckpoint.h" />
+    <ClInclude Include="NativeJournal.h" />
+    <ClInclude Include="NativeRegex.h" />
+    <ClInclude Include="RegexText.h" />
+    <ClInclude Include="EditorWrapper.h">
+      <DependentUpon>EditorWrapper.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="EditorBaseControl.h">
+      <DependentUpon>EditorBaseControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="EditorBaseControlAutomationPeer.h">
+      <DependentUpon>EditorBaseControlAutomationPeer.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="MainWrapper.h" />
+    <ClInclude Include="MuiResourceLoader.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\scintilla\winui\ListBox.h" />
+    <ClInclude Include="..\scintilla\winui\PlatWin.h" />
+    <ClInclude Include="..\scintilla\winui\ScintillaWin.h" />
+    <ClInclude Include="..\scintilla\winui\SurfaceD2D.h" />
+    <ClInclude Include="..\scintilla\winui\WinTypes.h" />
+    <ClInclude Include="TextRangeProvider.h" />
+    <ClInclude Include="Wrapper.h" />
+    <ClInclude Include="XamlStringIds.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AutocompletionControl.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AutocompletionWrapper.cpp" />
+    <ClCompile Include="CallTipControl.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="CallTipWrapper.cpp" />
+    <ClCompile Include="DummyPage.cpp" Condition="'$(UseDummyPage)' == 'true'">
+      <DependentUpon>DummyPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="EditorExtensions.cpp" />
+    <ClCompile Include="EditorDiff.cpp" />
+    <ClCompile Include="EditorDiffResult.cpp" />
+    <ClCompile Include="NativeDiff.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="EditorUtf8Reader.cpp" />
+    <ClCompile Include="EditorJournalCheckpoint.cpp" />
+    <ClCompile Include="EditorJournalExtensions.cpp" />
+    <ClCompile Include="NativeJournal.cpp" />
+    <ClCompile Include="NativeRegex.cpp" />
+    <ClCompile Include="RegexText.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="EditorRegex.cpp" />
+    <ClCompile Include="EditorWrapper.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="EditorBaseControl.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="EditorBaseControlAutomationPeer.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="MainWrapper.cpp" />
+    <ClCompile Include="MuiResourceLoader.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="..\scintilla\winui\ListBox.cxx" />
+    <ClCompile Include="..\scintilla\winui\PlatWin.cxx" />
+    <ClCompile Include="..\scintilla\winui\ScintillaWin.cxx" />
+    <ClCompile Include="..\scintilla\winui\SurfaceD2D.cxx" />
+    <ClCompile Include="TextRangeProvider.cpp" />
+    <ClCompile Include="Wrapper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WinUIEditor.def" />
+    <None Include="packages.config" />
+    <None Include="Defines.idl" />
+    <None Include="EditorExtensions.idl.inc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="AutocompletionControl.idl">
+      <DependentUpon>AutocompletionControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="CallTipControl.idl">
+      <DependentUpon>CallTipControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="DummyPage.idl" Condition="'$(UseDummyPage)' == 'true'">
+      <DependentUpon>DummyPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="EditorWrapper.idl">
+      <DependentUpon>EditorWrapper.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="EditorJournalCheckpoint.idl">
+      <DependentUpon>EditorJournalCheckpoint.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="EditorSearch.idl" />
+    <Midl Include="EditorDiffResult.idl" />
+    <Midl Include="EditorUtf8Reader.idl">
+      <DependentUpon>EditorUtf8Reader.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="EditorBaseControl.idl">
+      <DependentUpon>EditorBaseControl.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="EditorBaseControlAutomationPeer.idl">
+      <DependentUpon>EditorBaseControlAutomationPeer.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="IEditorAccess.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="DummyPage.xaml" Condition="'$(UseDummyPage)' == 'true'">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\lexilla\lexlib\Accessor.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\CharacterCategory.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\CharacterSet.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\DefaultLexer.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\InList.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexAccessor.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerBase.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerModule.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\LexerSimple.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\PropSetSimple.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\StyleContext.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexlib\WordList.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexCPP.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexPython.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexJSON.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexHTML.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexCSS.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexPowerShell.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexSQL.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexYAML.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexMarkdown.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexRust.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexBash.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexLua.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\lexilla\lexers\LexTOML.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="NativeSyntax.cpp" />
+    <ClInclude Include="NativeSyntax.h" />
+    <ClCompile Include="EditorSyntax.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1839\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
+  </Target>
+  <ItemGroup>
+    <ClInclude Include="..\scintilla\include\ILexer.h" />
+    <ClInclude Include="..\scintilla\include\ILoader.h" />
+    <ClInclude Include="..\scintilla\include\Sci_Position.h" />
+    <ClInclude Include="..\scintilla\include\Scintilla.h" />
+    <ClInclude Include="..\scintilla\include\ScintillaCall.h" />
+    <ClInclude Include="..\scintilla\include\ScintillaMessages.h" />
+    <ClInclude Include="..\scintilla\include\ScintillaStructures.h" />
+    <ClInclude Include="..\scintilla\include\ScintillaTypes.h" />
+    <ClInclude Include="..\scintilla\include\ScintillaWidget.h" />
+    <ClInclude Include="..\scintilla\src\AutoComplete.h" />
+    <ClInclude Include="..\scintilla\src\CallTip.h" />
+    <ClInclude Include="..\scintilla\src\CaseConvert.h" />
+    <ClInclude Include="..\scintilla\src\CaseFolder.h" />
+    <ClInclude Include="..\scintilla\src\CellBuffer.h" />
+    <ClInclude Include="..\scintilla\src\ChangeHistory.h" />
+    <ClInclude Include="..\scintilla\src\CharacterCategoryMap.h" />
+    <ClInclude Include="..\scintilla\src\CharacterType.h" />
+    <ClInclude Include="..\scintilla\src\CharClassify.h" />
+    <ClInclude Include="..\scintilla\src\ContractionState.h" />
+    <ClInclude Include="..\scintilla\src\DBCS.h" />
+    <ClInclude Include="..\scintilla\src\Debugging.h" />
+    <ClInclude Include="..\scintilla\src\Decoration.h" />
+    <ClInclude Include="..\scintilla\src\Document.h" />
+    <ClInclude Include="..\scintilla\src\EditModel.h" />
+    <ClInclude Include="..\scintilla\src\Editor.h" />
+    <ClInclude Include="..\scintilla\src\EditView.h" />
+    <ClInclude Include="..\scintilla\src\ElapsedPeriod.h" />
+    <ClInclude Include="..\scintilla\src\Geometry.h" />
+    <ClInclude Include="..\scintilla\src\Indicator.h" />
+    <ClInclude Include="..\scintilla\src\KeyMap.h" />
+    <ClInclude Include="..\scintilla\src\LineMarker.h" />
+    <ClInclude Include="..\scintilla\src\MarginView.h" />
+    <ClInclude Include="..\scintilla\src\Partitioning.h" />
+    <ClInclude Include="..\scintilla\src\PerLine.h" />
+    <ClInclude Include="..\scintilla\src\Platform.h" />
+    <ClInclude Include="..\scintilla\src\Position.h" />
+    <ClInclude Include="..\scintilla\src\PositionCache.h" />
+    <ClInclude Include="..\scintilla\src\RESearch.h" />
+    <ClInclude Include="..\scintilla\src\RunStyles.h" />
+    <ClInclude Include="..\scintilla\src\ScintillaBase.h" />
+    <ClInclude Include="..\scintilla\src\Selection.h" />
+    <ClInclude Include="..\scintilla\src\SparseVector.h" />
+    <ClInclude Include="..\scintilla\src\SplitVector.h" />
+    <ClInclude Include="..\scintilla\src\Style.h" />
+    <ClInclude Include="..\scintilla\src\UndoHistory.h" />
+    <ClInclude Include="..\scintilla\src\UniConversion.h" />
+    <ClInclude Include="..\scintilla\src\UniqueString.h" />
+    <ClInclude Include="..\scintilla\src\ViewStyle.h" />
+    <ClInclude Include="..\scintilla\src\XPM.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\scintilla\src\AutoComplete.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CallTip.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CaseConvert.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CaseFolder.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CellBuffer.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ChangeHistory.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharacterCategoryMap.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharacterType.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\CharClassify.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ContractionState.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\DBCS.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Decoration.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Document.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\EditModel.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Editor.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\EditView.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Geometry.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Indicator.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\KeyMap.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\LineMarker.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\MarginView.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\PerLine.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\PositionCache.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\RESearch.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\RunStyles.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ScintillaBase.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Selection.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\Style.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UndoHistory.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UniConversion.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\UniqueString.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\ViewStyle.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\src\XPM.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\scintilla\call\ScintillaCall.cxx">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+</Project>

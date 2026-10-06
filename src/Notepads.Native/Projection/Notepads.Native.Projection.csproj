@@ -1,0 +1,31 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for license information.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <UseUwp>true</UseUwp>
+    <UseUwpTools>false</UseUwpTools>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Configurations>Debug;Release;Production</Configurations>
+    <LangVersion>14.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <!-- This project contains generated C# only. Preserve Scintilla's IDL type names, including troff. -->
+    <NoWarn>$(NoWarn);CS8981</NoWarn>
+    <CsWinRTIncludes>WinUIEditor;Microsoft.Services.Store.Engagement</CsWinRTIncludes>
+    <Platforms>x86;x64;ARM64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageReference Include="Microsoft.Services.Store.Engagement" Version="10.2307.3001" GeneratePathProperty="true" />
+    <ProjectReference Include="..\WinUIEditor\WinUIEditor.vcxproj">
+      <SetPlatform Condition="'$(Platform)' == 'x86'">Platform=Win32</SetPlatform>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CsWinRTInputs Include="$(PkgMicrosoft_Services_Store_Engagement)\SDK\Windows Kits\10\ExtensionSDKs\Microsoft.Services.Store.Engagement\10.0\References\CommonConfiguration\neutral\Microsoft.Services.Store.Engagement.winmd" />
+  </ItemGroup>
+</Project>

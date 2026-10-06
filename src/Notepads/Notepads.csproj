@@ -1,474 +1,99 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{99274932-9E86-480C-8142-38525F80007D}</ProjectGuid>
-    <OutputType>AppContainerExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Notepads</RootNamespace>
-    <AssemblyName>Notepads</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22621.0</TargetPlatformVersion>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxBundle>Always</AppxBundle>
-    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
-    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <UseUwp>true</UseUwp>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Copyright>Copyright © 2019-2026 Jiaqi (0x7c13) Liu</Copyright>
+    <Description>A modern, lightweight text editor with a minimalist design.</Description>
+    <CsWinRTGenerateProjection>false</CsWinRTGenerateProjection>
+    <Configurations>Debug;Release;Production</Configurations>
+    <OutputType>WinExe</OutputType>
+    <PublishAot>true</PublishAot>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <PublishAppxPackage>true</PublishAppxPackage>
+    <IncludePublishItemsOutputGroup Condition="'$(Configuration)' != 'Debug'">true</IncludePublishItemsOutputGroup>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxSymbolPackageEnabled>true</AppxSymbolPackageEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <AssemblyName>Notepads</AssemblyName>
     <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
     <DevLabel>-dev</DevLabel>
+    <RootNamespace>Notepads</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
+  <PropertyGroup Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU'">
+    <RuntimeIdentifier>win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)' == 'Production'">
     <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x86'">
-    <OutputPath>bin\x86\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <NoStdLib>true</NoStdLib>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>ARM64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
-    <OutputPath>bin\ARM64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|ARM64'">
-    <OutputPath>bin\ARM64\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x64'">
-    <OutputPath>bin\x64\Production\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Commands\IMouseCommand.cs" />
-    <Compile Include="Commands\IKeyboardCommand.cs" />
-    <Compile Include="Commands\ICommandHandler.cs" />
-    <Compile Include="Commands\CommandHandlerResult.cs" />
-    <Compile Include="Commands\MouseCommand.cs" />
-    <Compile Include="Commands\MouseCommandHandler.cs" />
-    <Compile Include="Commands\KeyboardCommand.cs" />
-    <Compile Include="Commands\KeyboardCommandHandler.cs" />
-    <Compile Include="Controls\Dialog\AppCloseSaveReminderDialog.cs" />
-    <Compile Include="Controls\Dialog\SessionCorruptionErrorDialog.cs" />
-    <Compile Include="Controls\Dialog\FileRenameDialog.cs" />
-    <Compile Include="Controls\Dialog\FileOpenErrorDialog.cs" />
-    <Compile Include="Controls\Dialog\FileSaveErrorDialog.cs" />
-    <Compile Include="Controls\Dialog\RevertAllChangesConfirmationDialog.cs" />
-    <Compile Include="Controls\Dialog\SetCloseSaveReminderDialog.cs" />
-    <Compile Include="Controls\FindAndReplace\FindAndReplaceControl.xaml.cs">
-      <DependentUpon>FindAndReplaceControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FindAndReplace\FindAndReplaceTextBox.cs" />
-    <Compile Include="Controls\FindAndReplace\SearchContext.cs" />
-    <Compile Include="Controls\GoTo\GoToControl.xaml.cs">
-      <DependentUpon>GoToControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GoTo\GoToEventArgs.cs" />
-    <Compile Include="Controls\Print\ContinuationPageFormat.xaml.cs">
-      <DependentUpon>ContinuationPageFormat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Print\PrintArgs.cs" />
-    <Compile Include="Controls\Print\PrintPageFormat.xaml.cs">
-      <DependentUpon>PrintPageFormat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TextEditor\TextEditorCore.JoinText.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.ExternalEventListener.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.LineHighlighter.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.LineNumbers.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.MoveText.cs" />
-    <Compile Include="Extensions\DispatcherExtensions.cs" />
-    <Compile Include="Extensions\ScrollViewerExtensions.cs" />
-    <Compile Include="Services\AnalyticsService.cs" />
-    <Compile Include="Utilities\FutureAccessListUtility.cs" />
-    <Compile Include="Utilities\LanguageUtility.cs" />
-    <Compile Include="Views\Settings\AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\AdvancedSettingsPage.xaml.cs">
-      <DependentUpon>AdvancedSettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPanel.xaml.cs">
-      <DependentUpon>SettingsPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\PersonalizationSettingsPage.xaml.cs">
-      <DependentUpon>PersonalizationSettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\TextAndEditorSettingsPage.xaml.cs">
-      <DependentUpon>TextAndEditorSettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TextEditor\ITextEditor.cs" />
-    <Compile Include="Controls\TextEditor\TextEditor.xaml.cs">
-      <DependentUpon>TextEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TextEditor\TextEditorCore.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorContextFlyout.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.DateTime.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.DuplicateText.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.FindAndReplace.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.FontSize.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.Indentation.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorCore.WebSearch.cs" />
-    <Compile Include="Controls\TextEditor\TextEditorStateMetaData.cs" />
-    <Compile Include="Core\INotepadsCore.cs" />
-    <Compile Include="Core\ISessionManager.cs" />
-    <Compile Include="Core\NotepadsCore.cs" />
-    <Compile Include="Core\SessionDataModels\NotepadsSessionData.cs" />
-    <Compile Include="Core\SessionManager.cs" />
-    <Compile Include="Core\TabContextFlyout.cs" />
-    <Compile Include="Controls\FindAndReplace\FindAndReplaceEventArgs.cs" />
-    <Compile Include="Core\SessionDataModels\TextEditorSessionData.cs" />
-    <Compile Include="Controls\DiffViewer\BrushFactory.cs" />
-    <Compile Include="Controls\DiffViewer\RichTextBlockDiffContext.cs" />
-    <Compile Include="Controls\DiffViewer\SideBySideDiffViewer.xaml.cs">
-      <DependentUpon>SideBySideDiffViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DiffViewer\ISideBySideDiffViewer.cs" />
-    <Compile Include="Controls\DiffViewer\ScrollViewerSynchronizer.cs" />
-    <Compile Include="Controls\DiffViewer\RichTextBlockDiffRenderer.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.MainMenu.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.Notification.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.Theme.cs" />
-    <Compile Include="Services\FileExtensionProvider.cs" />
-    <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.IO.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.StatusBar.cs" />
-    <Compile Include="Views\MainPage\NotepadsMainPage.ViewModes.cs" />
-    <Compile Include="Services\MRUService.cs" />
-    <Compile Include="Utilities\BrushUtility.cs" />
-    <Compile Include="Utilities\Downloader.cs" />
-    <Compile Include="Services\LoggingService.cs" />
-    <Compile Include="Services\NotepadsProtocolService.cs" />
-    <Compile Include="Services\NotificationCenter.cs" />
-    <Compile Include="Utilities\DialogManager.cs" />
-    <Compile Include="Utilities\FileTypeUtility.cs" />
-    <Compile Include="Extensions\INotepadsExtensionProvider.cs" />
-    <Compile Include="Extensions\IContentPreviewExtension.cs" />
-    <Compile Include="Controls\Markdown\MarkdownExtensionView.xaml.cs">
-      <DependentUpon>MarkdownExtensionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Extensions\NotepadsExtensionProvider.cs" />
-    <Compile Include="Services\ActivationService.cs" />
-    <Compile Include="Controls\FilePicker\FilePickerFactory.cs" />
-    <Compile Include="Settings\ApplicationSettings.cs" />
-    <Compile Include="Settings\SettingsKey.cs" />
-    <Compile Include="Utilities\FileSystemUtility.cs" />
-    <Compile Include="Utilities\FontUtility.cs" />
-    <Compile Include="Utilities\EncodingUtility.cs" />
-    <Compile Include="Brushes\HostBackdropAcrylicBrush.cs" />
-    <Compile Include="Utilities\LineEndingUtility.cs" />
-    <Compile Include="Services\AppSettingsService.cs" />
-    <Compile Include="Services\ThemeSettingsService.cs" />
-    <Compile Include="Controls\Dialog\NotepadsDialog.cs" />
-    <Compile Include="Utilities\SearchEngineUtility.cs" />
-    <Compile Include="Utilities\SessionUtility.cs" />
-    <Compile Include="Models\TextFile.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Utilities\ThreadUtility.cs" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
+    <PackageReference Include="Microsoft.Services.Store.Engagement" Version="10.2307.3001" />
+    <PackageReference Include="UTF.Unknown" Version="2.7.0" />
+    <PackageReference Include="Win2D.uwp" Version="1.28.3" />
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.Uwp.Helpers" Version="8.2.251219" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainPage\NotepadsMainPage.xaml.cs">
-      <DependentUpon>NotepadsMainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
-    <Content Include="Resource\Text Document.txt" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <Content Include="Assets\**\*$(DevLabel).png">
-      <Link>$([System.String]::new('%(Identity)').Replace('$(DevLabel)',''))</Link>
-    </Content>
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\*noise*.png" />
-    <Content Include="Assets\search_*.png" />
-    <Content Include="Assets\FileIcons\*.png" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Production'">
-    <Content Include="Assets\**\*.png" Exclude="Assets\**\*$(DevLabel).png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="Controls\FindAndReplace\FindAndReplaceControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GoTo\GoToControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Print\ContinuationPageFormat.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Print\PrintPageFormat.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\AboutPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\AdvancedSettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\PersonalizationSettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\TextAndEditorSettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TextEditor\TextEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TextEditor\TextEditorCore.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\DiffViewer\SideBySideDiffViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Markdown\MarkdownExtensionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainPage\NotepadsMainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\FindAndReplace\FindAndReplacePlaceholder.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomAppBarButtonStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomCheckBoxStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomNavigationViewItemStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\CustomRadioButtonStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\CustomSliderStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resource\CustomToggleSwitchStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\InAppNotificationNoDismissButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\CustomSplitViewStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\DismissButtonStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resource\TransparentTextBoxStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="DiffPlex">
-      <Version>1.7.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.14</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Services.Store.Engagement">
-      <Version>10.2307.3001</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>7.1.3</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Win32.Registry">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
-      <Version>2.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json">
-      <Version>9.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="UTF.Unknown">
-      <Version>2.5.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Notepads.Controls\Notepads.Controls.csproj">
-      <Project>{7aa5e631-b663-420e-a08f-002cd81df855}</Project>
-      <Name>Notepads.Controls</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="Strings\**\*.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Package.targets" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
+    <ProjectReference Include="..\Notepads.Controls\Notepads.Controls.csproj" />
     <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
       <Name>Microsoft Engagement Framework</Name>
     </SDKReference>
-    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
-      <Name>Visual C++ 2015-2019 Runtime for Universal Windows Platform Apps</Name>
-    </SDKReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
-    <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <ItemGroup>
+    <!-- The legacy Markdown renderer remains disabled pending its replacement. -->
+    <Compile Remove="Presentation\Controls\Markdown\**\*.cs" />
+    <Page Remove="Presentation\Controls\Markdown\**\*.xaml" />
+    <Page Update="Presentation\Theming\DiffThemes.xaml"><Link>Theming\DiffThemes.xaml</Link></Page>
+    <Page Update="Presentation\Theming\SyntaxThemes.xaml">
+      <Link>Theming\SyntaxThemes.xaml</Link>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Select the normal or development assets explicitly before mapping their package names. -->
+    <Content Remove="Assets\**\*" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+    <Content Include="Resource\Text Document.txt" />
+    <Content Include="Assets\**\*$(DevLabel).png" Condition="'$(Configuration)' != 'Production'">
+      <Link>$([System.String]::new('%(Identity)').Replace('$(DevLabel)',''))</Link>
+    </Content>
+    <Content Include="Assets\LockScreenLogo.scale-200.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\*noise*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\search_*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\FileIcons\*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\**\*.png" Exclude="Assets\**\*$(DevLabel).png" Condition="'$(Configuration)' == 'Production'" />
+    <Content Include="..\Notepads.Native\LICENSE">
+      <Link>ThirdPartyNotices\WinUIEdit.txt</Link>
+    </Content>
+    <Content Include="..\Notepads.Native\scintilla\License.txt">
+      <Link>ThirdPartyNotices\Scintilla.txt</Link>
+    </Content>
+    <Content Include="..\Notepads.Native\lexilla\License.txt">
+      <Link>ThirdPartyNotices\Lexilla.txt</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="Package.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

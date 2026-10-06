@@ -1,0 +1,12 @@
+#include "Defines.idl"
+
+namespace WinUIEditor
+{
+    [default_interface]
+    [webhosthidden]
+    runtimeclass AutocompletionControl : DUX.Controls.Control
+    {
+        Object ItemsSource { get; };
+        static DUX.DependencyProperty ItemsSourceProperty { get; };
+    }
+}

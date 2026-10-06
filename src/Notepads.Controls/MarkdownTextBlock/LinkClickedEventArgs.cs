@@ -3,23 +3,23 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/MarkdownTextBlock
 
-namespace Notepads.Controls
+
+using System;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// Arguments for the OnLinkClicked event which is fired then the user presses a link.
+/// </summary>
+public class LinkClickedEventArgs : EventArgs
 {
-    using System;
+    internal LinkClickedEventArgs(string link)
+    {
+        Link = link;
+    }
 
     /// <summary>
-    /// Arguments for the OnLinkClicked event which is fired then the user presses a link.
+    /// Gets the link that was tapped.
     /// </summary>
-    public class LinkClickedEventArgs : EventArgs
-    {
-        internal LinkClickedEventArgs(string link)
-        {
-            Link = link;
-        }
-
-        /// <summary>
-        /// Gets the link that was tapped.
-        /// </summary>
-        public string Link { get; }
-    }
+    public string Link { get; }
 }

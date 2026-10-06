@@ -13,7 +13,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItemPresenter">
-                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Height="40" Control.IsTemplateFocusTarget="True">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Height="40" CornerRadius="4" Control.IsTemplateFocusTarget="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
                                 <VisualState x:Name="Normal"/>
@@ -99,7 +99,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItemPresenter">
-                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Control.IsTemplateFocusTarget="True">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" CornerRadius="4" Control.IsTemplateFocusTarget="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
                                 <VisualState x:Name="Normal"/>
@@ -195,7 +195,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItemPresenter">
-                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Control.IsTemplateFocusTarget="True">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" CornerRadius="4" Control.IsTemplateFocusTarget="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisabledStates">
                                 <VisualState x:Name="Enabled"/>
@@ -259,7 +259,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItemPresenter">
-                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Height="40" Control.IsTemplateFocusTarget="True">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}" Height="40" CornerRadius="4" Control.IsTemplateFocusTarget="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
                                 <VisualState x:Name="Normal"/>

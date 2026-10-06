@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="Fixtures/*" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="..\..\src\Notepads\Features\Documents\Contracts\LineEnding.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguage.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguages.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryReferences.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordValidator.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" Link="LineEndingUtility.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" Link="DocumentTextCodec.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Operations/DocumentOperationCoordinator.cs" Link="DocumentOperationCoordinator.cs" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,316 +117,83 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve">
-    <value>Abhängigkeiten und Referenzen</value>
-    <comment>AboutPage DependenciesAndReferences Title display text.</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve">
-    <value>DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</value>
-    <comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment>
-  </data>
-  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve">
-    <value>Disclaimer</value>
-    <comment>AboutPage Disclaimer Title display text.</comment>
-  </data>
-  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve">
-    <value>Kostenloser Open-Source Texteditor entworfen und implementiert durch Jackie (Jiaqi) Liu</value>
-    <comment>AboutPage NotepadsShortDescription display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve">
-    <value>Autoren kontaktieren:</value>
-    <comment>AboutPage Notepads AuthorContacts Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve">
-    <value>Für Fehlermeldungen oder Featureanfrage:</value>
-    <comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve">
-    <value>Quellcode verfügbar auf Github:</value>
-    <comment>AboutPage Notepads SourceCode Title display text.</comment>
-  </data>
-  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve">
-    <value>Mehr Informationen auf unserer Website:</value>
-    <comment>AboutPage Notepads Website Title display text.</comment>
-  </data>
-  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve">
-    <value>Datenschutzerklärung</value>
-    <comment>AboutPage PrivacyStatementTitle display text.</comment>
-  </data>
-  <data name="AboutPage_Title.Content" xml:space="preserve">
-    <value>Über</value>
-    <comment>AboutPage Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve">
-    <value>Statusleiste anzeigen</value>
-    <comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve">
-    <value>Statusleisteneinstellungen</value>
-    <comment>AdvancedPage StatusBarSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_Title.Content" xml:space="preserve">
-    <value>Erweitert</value>
-    <comment>AdvancedPage Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve">
-    <value>Akzentfarbe</value>
-    <comment>PersonalizationPage AccentColorSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment>
-  </data>
-  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve">
-    <value>Windows Akzentfarbe verwenden</value>
-    <comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve">
-    <value>Opazität der Acryl-Hintergrundfarbe. Der Acryleffekt wird deaktiviert, wenn der Batteriesparmodus eingeschaltet ist oder wenn die Transparenzeffekte in den Windows-Einstellungen ausgeschaltet sind.</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment>
-  </data>
-  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve">
-    <value>Opazität der Hintergrundfarbe</value>
-    <comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve">
-    <value>Dunkel</value>
-    <comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve">
-    <value>Hell</value>
-    <comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve">
-    <value>Design Modus</value>
-    <comment>PersonalizationPage ThemeModeSettings Title display text.</comment>
-  </data>
-  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve">
-    <value>Windows Modus verwenden</value>
-    <comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment>
-  </data>
-  <data name="PersonalizationPage_Title.Content" xml:space="preserve">
-    <value>Personalisierung</value>
-    <comment>PersonalizationPage Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve">
-    <value>ANSI (Windows Zeichensatz)</value>
-    <comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve">
-    <value>Die Notfall-Dekodierung wird verwendet, wenn die Codierung einer Datei nicht erkannt wird.</value>
-    <comment>TextAndEditorPage DecodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve">
-    <value>Notfall-Dekodierung</value>
-    <comment>TextAndEditorPage DecodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve">
-    <value>UTF-8</value>
-    <comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
-    <comment>TextAndEditorPage EncodingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Codierung</value>
-    <comment>TextAndEditorPage EncodingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve">
-    <value>Standard Schriftart und Größe</value>
-    <comment>TextAndEditorPage FontSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve">
-    <value>Gilt nur für neue Dokumente.</value>
-    <comment>TextAndEditorPage LineEndingSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve">
-    <value>Standard Zeilenumbruch</value>
-    <comment>TextAndEditorPage LineEndingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve">
-    <value>Standard (\t)</value>
-    <comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Tabulatortaste, gilt nur für neu eingefügte Tabs.</value>
-    <comment>TextAndEditorPage TabKeySettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve">
-    <value>8 Leerzeichen</value>
-    <comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve">
-    <value>4 Leerzeichen</value>
-    <comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve">
-    <value>Tabulatortastenverhalten</value>
-    <comment>TextAndEditorPage TabKeySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve">
-    <value>2 Leerzeichen</value>
-    <comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve">
-    <value>Textumbruch</value>
-    <comment>TextAndEditorPage TextWrappingSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Wörter umbrechen</value>
-    <comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_Title.Content" xml:space="preserve">
-    <value>Text &amp; Editor</value>
-    <comment>TextAndEditorPage Title display text.</comment>
-  </data>
-  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve">
-    <value>Änderungsprotokoll</value>
-    <comment>AboutPage Changelog Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve">
-    <value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist. Sicherungen werden nur vom ersten oder vom Hauptfenster von Notepads erstellt.</value>
-    <comment>AdvancedPage SessionSnapshotSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve">
-    <value>Sitzungssicherung und Wiederherstellung aktivieren</value>
-    <comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve">
-    <value>Sitzungssicherungs-Einstellungen</value>
-    <comment>AdvancedPage SessionSnapshotSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve">
-    <value>Rechtschreibfehler hervorheben</value>
-    <comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve">
-    <value>Rechtschreibung</value>
-    <comment>TextAndEditorPage SpellingSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve">
-    <value>Wenn aktiviert, öffnet Notepads Dateien immer in einem neuen Fenster anstelle eines neuen Reiters.</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve">
-    <value>Immer neues Fenster öffnen</value>
-    <comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Startpräferenzen</value>
-    <comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Aktuelle Zeile hervorheben</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Aktuelle Zeile hervorheben</value>
-    <comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve">
-    <value>Benutzerdefinierte Suchmaschine</value>
-    <comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve">
-    <value>*URL Format beachten: https://www.example.com/search?q={0}</value>
-    <comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve">
-    <value>Einstellungen für die Standardsuchmaschine für die Websuche.</value>
-    <comment>TextAndEditorPage SearchEngineSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve">
-    <value>Standardsuchmaschine</value>
-    <comment>TextAndEditorPage SearchEngineSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve">
-    <value>Codierung automatisch erkennen (empfohlen)</value>
-    <comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve">
-    <value>Display</value>
-    <comment>TextAndEditorPage DisplaySettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve">
-    <value>Zeilennummern im Dokument anzeigen.</value>
-    <comment>TextAndEditorPage LineNumbersSettings Description display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve">
-    <value>Zeilennummern anzeigen</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve">
-    <value>Zeilennummern anzeigen</value>
-    <comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve">
-    <value>Standard-Schriftstil</value>
-    <comment>TextAndEditorPage FontStyleSettings Title display text.</comment>
-  </data>
-  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve">
-    <value>Standard-Schriftgewicht</value>
-    <comment>TextAndEditorPage FontWeightSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve">
-    <value>Wählen Sie eine benutzerdefinierte Sprache, um die standardmäßige Systemsprache in Notepads zu überschreiben. Ein Neustart ist erforderlich, um die Änderungen zu vervollständigen.</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve">
-    <value>*Neustart von Notepads, um Änderungen zu vervollständigen.</value>
-    <comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve">
-    <value>Spracheinstellungen</value>
-    <comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve">
-    <value>Einmal aktiviert, wird Notepads intelligent führende und nachfolgende Leerzeichen, Tabs und leere Zeilen entfernen, bevor der ausgewählte Text in die Zwischenablage kopiert wird.</value>
-    <comment>AdvancedPage SmartCopySettings Description display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve">
-    <value>Smart Copy aktivieren</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve">
-    <value>Smart Copy aktivieren</value>
-    <comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment>
-  </data>
-  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve">
-    <value>Einstellungen für Smart Copy</value>
-    <comment>AdvancedPage SmartCopySettings Title display text.</comment>
-  </data>
-  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve">
-    <value>Systemstandard</value>
-    <comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve">
-    <value>App schließen, wenn der letzte Tab geschlossen wird</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment>
-  </data>
-  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve">
-    <value>App schließen, wenn der letzte Tab geschlossen wird</value>
-    <comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment>
-  </data>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve"><value>Abhängigkeiten und Referenzen</value><comment>AboutPage DependenciesAndReferences Title display text.</comment></data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve"><value>DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</value><comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment></data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve"><value>Haftungsausschluss</value><comment>AboutPage Disclaimer Title display text.</comment></data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve"><value>Kostenloser Open-Source Texteditor entworfen und implementiert durch Jiaqi (0x7c13) Liu</value><comment>AboutPage NotepadsShortDescription display text.</comment></data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve"><value>Autoren kontaktieren:</value><comment>AboutPage Notepads AuthorContacts Title display text.</comment></data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve"><value>Für Fehlermeldungen oder Featureanfrage:</value><comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment></data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve"><value>Quellcode verfügbar auf Github:</value><comment>AboutPage Notepads SourceCode Title display text.</comment></data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve"><value>Mehr Informationen auf unserer Website:</value><comment>AboutPage Notepads Website Title display text.</comment></data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve"><value>Datenschutzerklärung</value><comment>AboutPage PrivacyStatementTitle display text.</comment></data>
+  <data name="AboutPage_Title.Content" xml:space="preserve"><value>Über</value><comment>AboutPage Title display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve"><value>Statusleiste anzeigen</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve"><value>Statusleiste anzeigen</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve"><value>Statusleisteneinstellungen</value><comment>AdvancedPage StatusBarSettings Title display text.</comment></data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve"><value>Erweitert</value><comment>AdvancedPage Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve"><value>Akzentfarbe</value><comment>PersonalizationPage AccentColorSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve"><value>Windows Akzentfarbe verwenden</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve"><value>Windows Akzentfarbe verwenden</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve"><value>Opazität der Acryl-Hintergrundfarbe. Der Acryleffekt wird deaktiviert, wenn der Batteriesparmodus eingeschaltet ist oder wenn die Transparenzeffekte in den Windows-Einstellungen ausgeschaltet sind.</value><comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve"><value>Opazität der Hintergrundfarbe</value><comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve"><value>Dunkel</value><comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve"><value>Hell</value><comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve"><value>Design Modus</value><comment>PersonalizationPage ThemeModeSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve"><value>Windows Modus verwenden</value><comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve"><value>Personalisierung</value><comment>PersonalizationPage Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve"><value>ANSI (Windows Zeichensatz)</value><comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve"><value>Die Notfall-Dekodierung wird verwendet, wenn die Codierung einer Datei nicht erkannt wird.</value><comment>TextAndEditorPage DecodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve"><value>Notfall-Dekodierung</value><comment>TextAndEditorPage DecodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve"><value>UTF-8</value><comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve"><value>Gilt nur für neue Dokumente.</value><comment>TextAndEditorPage EncodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve"><value>Standard Codierung</value><comment>TextAndEditorPage EncodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve"><value>Standard Schriftart und Größe</value><comment>TextAndEditorPage FontSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>Gilt nur für neue Dokumente.</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>Standard Zeilenumbruch</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>Standard (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Einstellungen für die Tabulatortaste, gilt nur für neu eingefügte Tabs.</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>8 Leerzeichen</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>4 Leerzeichen</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>Tabulatortastenverhalten</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve"><value>2 Leerzeichen</value><comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve"><value>Textumbruch</value><comment>TextAndEditorPage TextWrappingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Wörter umbrechen</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Wörter umbrechen</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve"><value>Text &amp; Editor</value><comment>TextAndEditorPage Title display text.</comment></data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve"><value>Änderungsprotokoll</value><comment>AboutPage Changelog Title display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve"><value>Notepads wird die aktuelle Sitzung für den nächsten Start beibehalten und periodische Sicherungen durchführen um versehentlichen Datenverlust zu verhindern. Notepads wird beim schließen NICHT zum speichern auffordern, wenn diese Option aktiviert ist. Sicherungen werden nur vom ersten oder vom Hauptfenster von Notepads erstellt.</value><comment>AdvancedPage SessionSnapshotSettings Description display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>Sitzungssicherung und Wiederherstellung aktivieren</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>Sitzungssicherung und Wiederherstellung aktivieren</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>Sitzungssicherungs-Einstellungen</value><comment>AdvancedPage SessionSnapshotSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve"><value>Rechtschreibfehler hervorheben</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve"><value>Rechtschreibfehler hervorheben</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve"><value>Rechtschreibung</value><comment>TextAndEditorPage SpellingSettings Title display text.</comment></data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>Wenn aktiviert, öffnet Notepads Dateien immer in einem neuen Fenster anstelle eines neuen Reiters.</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>Immer neues Fenster öffnen</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>Immer neues Fenster öffnen</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve"><value>Startpräferenzen</value><comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Aktuelle Zeile hervorheben</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Aktuelle Zeile hervorheben</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve"><value>Benutzerdefinierte Suchmaschine</value><comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve"><value>*URL Format beachten: https://www.example.com/search?q={0}</value><comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve"><value>Einstellungen für die Standardsuchmaschine für die Websuche.</value><comment>TextAndEditorPage SearchEngineSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve"><value>Standardsuchmaschine</value><comment>TextAndEditorPage SearchEngineSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve"><value>Codierung automatisch erkennen (empfohlen)</value><comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve"><value>Display</value><comment>TextAndEditorPage DisplaySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>Zeilennummern im Dokument anzeigen.</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Zeilennummern anzeigen</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Zeilennummern anzeigen</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve"><value>Standard-Schriftstil</value><comment>TextAndEditorPage FontStyleSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve"><value>Standard-Schriftgewicht</value><comment>TextAndEditorPage FontWeightSettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve"><value>Wählen Sie eine benutzerdefinierte Sprache, um die standardmäßige Systemsprache in Notepads zu überschreiben. Ein Neustart ist erforderlich, um die Änderungen zu vervollständigen.</value><comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve"><value>*Neustart von Notepads, um Änderungen zu vervollständigen.</value><comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve"><value>Spracheinstellungen</value><comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve"><value>Einmal aktiviert, wird Notepads intelligent führende und nachfolgende Leerzeichen, Tabs und leere Zeilen entfernen, bevor der ausgewählte Text in die Zwischenablage kopiert wird.</value><comment>AdvancedPage SmartCopySettings Description display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve"><value>Smart Copy aktivieren</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve"><value>Smart Copy aktivieren</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>Einstellungen für Smart Copy</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Systemstandard</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>App schließen, wenn der letzte Tab geschlossen wird</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>App schließen, wenn der letzte Tab geschlossen wird</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Die Rechtschreibprüfung ist in diesem Editor nicht verfügbar.</value></data>
 </root>

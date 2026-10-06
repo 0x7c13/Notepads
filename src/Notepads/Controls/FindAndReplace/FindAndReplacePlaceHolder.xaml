@@ -88,6 +88,7 @@
                                 <Grid Background="{TemplateBinding Background}" 
                                       BorderBrush="{TemplateBinding BorderBrush}" 
                                       BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="8"
                                       Padding="{TemplateBinding Padding}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />

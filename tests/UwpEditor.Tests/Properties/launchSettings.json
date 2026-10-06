@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "UwpEditor.Tests": {
+      "commandName": "MsixPackage"
+    }
+  }
+}

@@ -1,183 +1,183 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace Notepads.Controls
+
+using System;
+using Windows.Devices.Input;
+using Windows.System;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Input;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// Item Container for a <see cref="SetsView"/>.
+/// </summary>
+[TemplatePart(Name = SetCloseButtonName, Type = typeof(ButtonBase))]
+[TemplatePart(Name = SetLeftSideSeparatorName, Type = typeof(Border))]
+[TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
+[TemplatePart(Name = SetSelectionIndicatorName, Type = typeof(Rectangle))]
+public partial class SetsViewItem : ListViewItem
 {
-    using System;
-    using Windows.Devices.Input;
-    using Windows.System;
-    using Windows.UI;
-    using Windows.UI.Core;
-    using Windows.UI.Input;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Input;
-    using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Shapes;
+    private const string SetCloseButtonName = "CloseButton";
+
+    private const string SetLeftSideSeparatorName = "LeftSideSeparator";
+
+    private const string SetRightSideSeparatorName = "RightSideSeparator";
+
+    private const string SetSelectionIndicatorName = "SelectionIndicator";
+
+    private ButtonBase _setCloseButton;
+
+    private Border _setLeftSideSeparator;
+
+    private Border _setRightSideSeparator;
+
+    private Rectangle _setSelectionIndicator;
+
+    private bool _isMiddleClick;
 
     /// <summary>
-    /// Item Container for a <see cref="SetsView"/>.
+    /// Initializes a new instance of the <see cref="SetsViewItem"/> class.
     /// </summary>
-    [TemplatePart(Name = SetCloseButtonName, Type = typeof(ButtonBase))]
-    [TemplatePart(Name = SetLeftSideSeparatorName, Type = typeof(Border))]
-    [TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
-    [TemplatePart(Name = SetSelectionIndicatorName, Type = typeof(Rectangle))]
-    public partial class SetsViewItem : ListViewItem
+    public SetsViewItem()
     {
-        private const string SetCloseButtonName = "CloseButton";
+        DefaultStyleKey = typeof(SetsViewItem);
+    }
 
-        private const string SetLeftSideSeparatorName = "LeftSideSeparator";
+    /// <summary>
+    /// Fired when the Set's close button is clicked.
+    /// </summary>
+    public event EventHandler<SetClosingEventArgs> Closing;
 
-        private const string SetRightSideSeparatorName = "RightSideSeparator";
-
-        private const string SetSelectionIndicatorName = "SelectionIndicator";
-
-        private ButtonBase _setCloseButton;
-
-        private Border _setLeftSideSeparator;
-
-        private Border _setRightSideSeparator;
-
-        private Rectangle _setSelectionIndicator;
-
-        private bool _isMiddleClick;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SetsViewItem"/> class.
-        /// </summary>
-        public SetsViewItem()
+    public void ShowLeftSideSeparator()
+    {
+        if (_setLeftSideSeparator != null)
         {
-            DefaultStyleKey = typeof(SetsViewItem);
+            _setLeftSideSeparator.Visibility = Visibility.Visible;
+        }
+    }
+
+    public void HideLeftSideSeparator()
+    {
+        if (_setLeftSideSeparator != null)
+        {
+            _setLeftSideSeparator.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public void ShowRightSideSeparator()
+    {
+        if (_setRightSideSeparator != null)
+        {
+            _setRightSideSeparator.Visibility = Visibility.Visible;
+        }
+    }
+
+    public void HideRightSideSeparator()
+    {
+        if (_setRightSideSeparator != null)
+        {
+            _setRightSideSeparator.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    /// <inheritdoc/>
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+
+        if (_setCloseButton != null)
+        {
+            _setCloseButton.Click -= SetCloseButton_Click;
         }
 
-        /// <summary>
-        /// Fired when the Set's close button is clicked.
-        /// </summary>
-        public event EventHandler<SetClosingEventArgs> Closing;
+        _setCloseButton = GetTemplateChild(SetCloseButtonName) as ButtonBase;
 
-        public void ShowLeftSideSeparator()
+        if (_setCloseButton != null)
         {
-            if (_setLeftSideSeparator != null)
-            {
-                _setLeftSideSeparator.Visibility = Visibility.Visible;
-            }
+            _setCloseButton.Click += SetCloseButton_Click;
         }
 
-        public void HideLeftSideSeparator()
-        {
-            if (_setLeftSideSeparator != null)
-            {
-                _setLeftSideSeparator.Visibility = Visibility.Collapsed;
-            }
-        }
+        _setLeftSideSeparator = GetTemplateChild(SetLeftSideSeparatorName) as Border;
+        _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
+        _setSelectionIndicator = GetTemplateChild(SetSelectionIndicatorName) as Rectangle;
+    }
 
-        public void ShowRightSideSeparator()
-        {
-            if (_setRightSideSeparator != null)
-            {
-                _setRightSideSeparator.Visibility = Visibility.Visible;
-            }
-        }
+    /// <inheritdoc/>
+    protected override void OnPointerPressed(PointerRoutedEventArgs e)
+    {
+        _isMiddleClick = false;
 
-        public void HideRightSideSeparator()
+        if (e?.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
         {
-            if (_setRightSideSeparator != null)
-            {
-                _setRightSideSeparator.Visibility = Visibility.Collapsed;
-            }
-        }
+            PointerPoint pointerPoint = e.GetCurrentPoint(this);
 
-        /// <inheritdoc/>
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            if (_setCloseButton != null)
+            // Record if middle button is pressed
+            if (pointerPoint.Properties.IsMiddleButtonPressed)
             {
-                _setCloseButton.Click -= SetCloseButton_Click;
+                _isMiddleClick = true;
             }
 
-            _setCloseButton = GetTemplateChild(SetCloseButtonName) as ButtonBase;
-
-            if (_setCloseButton != null)
+            // Disable unwanted behaviour inherited by ListViewItem:
+            // Disable "Ctrl + Left click" to deselect tab
+            // Or variant like "Ctrl + Shift + Left click"
+            // Or "Ctrl + Alt + Left click"
+            if (pointerPoint.Properties.IsLeftButtonPressed)
             {
-                _setCloseButton.Click += SetCloseButton_Click;
-            }
-
-            _setLeftSideSeparator = GetTemplateChild(SetLeftSideSeparatorName) as Border;
-            _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
-            _setSelectionIndicator = GetTemplateChild(SetSelectionIndicatorName) as Rectangle;
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
-        {
-            _isMiddleClick = false;
-
-            if (e?.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
-            {
-                PointerPoint pointerPoint = e.GetCurrentPoint(this);
-
-                // Record if middle button is pressed
-                if (pointerPoint.Properties.IsMiddleButtonPressed)
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    _isMiddleClick = true;
-                }
-
-                // Disable unwanted behaviour inherited by ListViewItem:
-                // Disable "Ctrl + Left click" to deselect tab
-                // Or variant like "Ctrl + Shift + Left click"
-                // Or "Ctrl + Alt + Left click"
-                if (pointerPoint.Properties.IsLeftButtonPressed)
-                {
-                    var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                    if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        // return here so the event won't be picked up by the base class
-                        // but keep this event unhandled so it can be picked up further
-                        return;
-                    }
+                    // return here so the event won't be picked up by the base class
+                    // but keep this event unhandled so it can be picked up further
+                    return;
                 }
             }
-
-            base.OnPointerPressed(e);
         }
 
-        /// <inheritdoc/>
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        base.OnPointerPressed(e);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnPointerReleased(PointerRoutedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+
+        // Close on Middle-Click
+        if (_isMiddleClick)
         {
-            base.OnPointerReleased(e);
-
-            // Close on Middle-Click
-            if (_isMiddleClick)
-            {
-                SetCloseButton_Click(this, null);
-            }
-
-            _isMiddleClick = false;
+            SetCloseButton_Click(this, null);
         }
 
-        public void PrepareForClosing()
-        {
-            _setSelectionIndicator.Fill = new SolidColorBrush(Colors.Transparent);
-        }
+        _isMiddleClick = false;
+    }
 
-        public void Close()
-        {
-            if (IsClosable)
-            {
-                Closing?.Invoke(this, new SetClosingEventArgs(Content, this));
-            }
-        }
+    public void PrepareForClosing()
+    {
+        _setSelectionIndicator.Fill = new SolidColorBrush(Colors.Transparent);
+    }
 
-        private void SetCloseButton_Click(object sender, RoutedEventArgs e)
+    public void Close()
+    {
+        if (IsClosable)
         {
-            if (IsClosable)
-            {
-                Closing?.Invoke(this, new SetClosingEventArgs(Content, this));
-            }
+            Closing?.Invoke(this, new SetClosingEventArgs(Content, this));
+        }
+    }
+
+    private void SetCloseButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (IsClosable)
+        {
+            Closing?.Invoke(this, new SetClosingEventArgs(Content, this));
         }
     }
 }

@@ -3,16 +3,15 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Inlines
 
-namespace Notepads.Controls.Markdown
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// Initializes a new instance of the <see cref="IInlineLeaf"/> class.
+/// </summary>
+public interface IInlineLeaf
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="IInlineLeaf"/> class.
+    /// Gets or sets the text for this run.
     /// </summary>
-    public interface IInlineLeaf
-    {
-        /// <summary>
-        /// Gets or sets the text for this run.
-        /// </summary>
-        string Text { get; set; }
-    }
+    string Text { get; set; }
 }

@@ -1,24 +1,27 @@
-﻿<Application
+<Application
     x:Class="Notepads.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mux="using:Microsoft.UI.Xaml.Controls">
 
     <Application.Resources>
         <ResourceDictionary>
-
-            <!--<ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="NotepadsHyperlinkPointerOverColor">#99FFFFFF</Color>
+                    <Color x:Key="NotepadsHyperlinkPressedColor">#66FFFFFF</Color>
                 </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="NotepadsHyperlinkPointerOverColor">#99000000</Color>
+                    <Color x:Key="NotepadsHyperlinkPressedColor">#66000000</Color>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
-
+                    <StaticResource x:Key="NotepadsHyperlinkPointerOverColor" ResourceKey="SystemColorWindowTextColor" />
+                    <StaticResource x:Key="NotepadsHyperlinkPressedColor" ResourceKey="SystemColorHighlightColor" />
                 </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>-->
-
+            </ResourceDictionary.ThemeDictionaries>
             <ResourceDictionary.MergedDictionaries>
+                <mux:XamlControlsResources />
                 <ResourceDictionary Source="Notepads.Controls/Themes/Generic.xaml" />
                 <ResourceDictionary Source="Controls/TextEditor/TextEditorCore.xaml" />
                 <ResourceDictionary Source="Controls/FindAndReplace/FindAndReplacePlaceholder.xaml"></ResourceDictionary>
@@ -33,6 +36,10 @@
                 <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Direct entries override WinUI's merged brushes; themed colors preserve high contrast. -->
+            <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{ThemeResource NotepadsHyperlinkPointerOverColor}" />
+            <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{ThemeResource NotepadsHyperlinkPressedColor}" />
 
             <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
                 <Setter Property="FontSize" Value="18"/>
