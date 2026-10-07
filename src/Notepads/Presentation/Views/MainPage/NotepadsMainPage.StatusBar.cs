@@ -210,12 +210,8 @@ public sealed partial class NotepadsMainPage
         switch ((string)item.Tag)
         {
             case "PreviewTextChanges":
-                try { await selectedTextEditor.OpenSideBySideDiffViewerAsync(); }
-                catch (Exception ex)
-                {
-                    var errorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
-                    await DialogManager.OpenDialogAsync(errorDialog, awaitPreviousDialog: false);
-                }
+                // The diff viewer reports its own failures.
+                await selectedTextEditor.OpenSideBySideDiffViewerAsync();
                 break;
             case "RevertAllChanges":
                 var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;

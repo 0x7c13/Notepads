@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Avaa Notepads-sovelluksella</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Tämä on Notepads-sovelluksen varjoikkuna.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Tiedosto on jo avattu!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Avaa uusi ikkuna</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Uusi ikkuna</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Uusi ikkuna</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Avaa äskettäin käytetyt</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Siirry riville</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Tiedostopääte "{0}" ei ole tuettu tällä hetkellä</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Sulje</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Tietojen palauttaminen viime istunnosta epäonnistui korruptoituneiden tietojen vuoksi. Tee varmuuskopio kaikista tallentamattomista tiedostoistasi (*.txt) istunnon kansiosta.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Istunnon palautuksen estävät palautustiedostot, joita Notepads ei voi vahvistaa, joten tämä toiminto peruttiin asiakirjojesi suojaamiseksi. Avaa palautuskansio ja tee erillinen kopio ennen kuin korjaat tai poistat tiedostoja.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Avaa istunnon varmuuskopion kansio</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Varoitus</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Istunnon varmuuskopiointi epäonnistui. Tallenna tiedostot ja yritä uudelleen.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Istunnon palautuksen estävät palautustiedostot, joita Notepads ei voi vahvistaa. Avaa palautuskansio ja kopioi ne ennen kuin korjaat tai poistat mitään.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Joitakin välilehtiä ei voitu palauttaa. Niiden varmuuskopiot on säilytetty istunnon varmuuskopiokansiossa.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Tiedosto tallennettiin paikallisesti. Pilvisynkronointi on vielä kesken.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Korvaava teksti sisältää virheellistä tekstiä.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Vanha teksti, tallennettu versio</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Edellinen muutos (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Vertailua ei voitu valmistella käytettävissä olevilla resursseilla. Asiakirjaa ei ole muutettu.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Yli 1 MB:n asiakirjoja ei voi tulostaa.</value></data>
 </root>

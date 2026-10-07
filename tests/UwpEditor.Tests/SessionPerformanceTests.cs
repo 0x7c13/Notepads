@@ -115,6 +115,7 @@ internal static class SessionPerformanceTests
             await service.DisposeAsync();
             reopened = SessionTestProtocol.CreateService(owner);
             await Measure("metadata", () => reopened.EnsureMetadataRetainedAsync(CancellationToken.None));
+            var restoredIds = Array.Empty<Guid>();
             PreparedRecoveryBatch batch = null;
             try
             {
@@ -130,7 +131,7 @@ internal static class SessionPerformanceTests
                     }
                     finally { restored.AddRange(completed.Where(document => document != null)); }
                 });
-                var restoredIds = batch.Documents.Select(document => document.Id).ToArray();
+                restoredIds = batch.Documents.Select(document => document.Id).ToArray();
                 await Measure("restore-publication", async () =>
                 {
                     using var capture = SessionTestProtocol.CaptureDocuments(restored, restoredIds, batch.ExpectedStamp);
@@ -158,7 +159,18 @@ internal static class SessionPerformanceTests
                 SessionTestProtocol.Check(decoded.Baseline.Sha256 == saved.Sha256, "Atomic-save bytes differ from the canonical candidate.");
             }
             finally { saved?.Dispose(); }
-            await Measure("maintenance", () => reopened.FinishPublicationAsync(new SessionSaveResult(true, true), CancellationToken.None));
+            await Measure("maintenance", () => reopened.RunMaintenanceAsync(CancellationToken.None));
+            await Measure("tab-close", async () => SessionTestProtocol.Check(
+                await reopened.PrepareExplicitCloseAsync(new[] { restoredIds[0] }), "The measured tab close did not commit."));
+            if (foreignScopes != 0)
+            {
+                // A primary window reads every inactive scope at startup, all within one admitted catalog pass.
+                var primaryOwner = Guid.NewGuid();
+                foreignOwners.Add(primaryOwner);
+                var primary = SessionTestProtocol.CreateService(primaryOwner, primary: true);
+                try { await Measure("inactive-startup", () => primary.EnsureMetadataRetainedAsync(CancellationToken.None)); }
+                finally { await primary.DisposeAsync(); }
+            }
         }
         finally
         {

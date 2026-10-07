@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads के साथ खोलें</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>यह Notepads की शैडो विन्डों है।</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>दस्तावेज़ पहले से ही खोला!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>नया विन्डों</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>एक नई विन्डों खोलता है</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>नया विन्डों</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>इस लाइन पर चलें</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>लाइन संख्या लाइनों की कुल संख्या से परे है!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>फ़ाइल एक्सटेंशन "{0}" इस समय समर्थित नहीं है</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>बंद करें</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>अंतिम सत्र से डेटा पुनर्प्राप्त करने में विफल रहा क्योंकि डेटा भ्रष्ट हो गया था। कृपया अपनी सभी असहेजित फाइलों (*.txt) का बैकअप सत्र के फोल्डर में लें।</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>सत्र पुनर्प्राप्ति ऐसी पुनर्प्राप्ति फ़ाइलों के कारण अवरुद्ध है जिन्हें Notepads सत्यापित नहीं कर सकता, इसलिए आपके दस्तावेज़ों को सुरक्षित रखने के लिए यह कार्रवाई रद्द कर दी गई। किसी भी फ़ाइल को सुधारने या हटाने से पहले अलग प्रतिलिपि बनाने के लिए पुनर्प्राप्ति फ़ोल्डर खोलें।</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>सत्र बैकअप फोल्डर खोलें</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>चेतावनी</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>सत्र का बैकअप नहीं लिया जा सका। अपनी फ़ाइलें सहेजें और फिर कोशिश करें।</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>सत्र पुनर्प्राप्ति ऐसी पुनर्प्राप्ति फ़ाइलों के कारण अवरुद्ध है जिन्हें Notepads सत्यापित नहीं कर सकता। कुछ भी सुधारने या हटाने से पहले उन्हें कॉपी करने के लिए पुनर्प्राप्ति फ़ोल्डर खोलें।</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>कुछ टैब बहाल नहीं किए जा सके। उनके बैकअप सत्र के बैकअप फ़ोल्डर में सुरक्षित रखे गए हैं।</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>फ़ाइल स्थानीय रूप से सहेज दी गई है। क्लाउड सिंक्रोनाइज़ेशन अभी पूरा नहीं हुआ है।</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>प्रतिस्थापन में अमान्य पाठ है।</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>पुराना पाठ, सहेजा गया संस्करण</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>पिछला बदलाव (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>उपलब्ध संसाधनों के भीतर तुलना तैयार नहीं की जा सकी। आपका दस्तावेज़ बदला नहीं गया है।</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB से बड़े दस्तावेज़ प्रिंट नहीं किए जा सकते।</value></data>
 </root>

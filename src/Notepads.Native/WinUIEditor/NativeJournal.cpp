@@ -14,23 +14,15 @@ namespace WinUIEditor
 	{
 		constexpr size_t HeaderLength = 48;
 		constexpr size_t FrameLength = 56;
+		constexpr std::string_view HeaderMagic = "NPJRNL02";
+		constexpr uint32_t FormatVersion = 2;
+		constexpr uint32_t FrameMagic = 0x3246524e; // "NRF2"
 		constexpr size_t ChunkLength = 65536;
 		constexpr size_t QueueLimit = 4 * 1024 * 1024;
 		void CheckNt(NTSTATUS status)
 		{
 			if (status < 0)
 				winrt::throw_hresult(HRESULT_FROM_NT(status));
-		}
-		uint32_t Crc(std::string_view bytes, uint32_t value = 0)
-		{
-			value = ~value;
-			for (unsigned char byte : bytes)
-			{
-				value ^= byte;
-				for (int bit = 0; bit < 8; ++bit)
-					value = (value >> 1) ^ (0xedb88320u & (0u - (value & 1)));
-			}
-			return ~value;
 		}
 		void Put(std::vector<uint8_t> &bytes, size_t offset, uint64_t value, size_t width)
 		{
@@ -44,19 +36,23 @@ namespace WinUIEditor
 				result |= uint64_t{bytes[offset + i]} << (8 * i);
 			return result;
 		}
-		std::string_view View(std::vector<uint8_t> const &bytes)
-		{
-			return {reinterpret_cast<const char *>(bytes.data()), bytes.size()};
-		}
+		// Little-endian layouts as offset:width.
+		// Header: 0:8 magic, 8:4 version, 12:4 header length, 16:8 base sequence,
+		// 24:8 document length, 32:8 zero, 40:4 former CRC32, 44:4 zero.
+		// Frame: 0:4 magic, 4:4 kind, 8:8 sequence, 16:4 payload length, 20:4 zero,
+		// 24:8 position, 32:8 length, 40:8 document length, 48:4 former CRC32,
+		// 52:4 zero, then the payload.
+		// The former CRC32 fields are written as zero and ignored on read. The
+		// mandatory prefix SHA-256 and the structural checks in Inspect are the
+		// integrity boundary.
 		std::vector<uint8_t> Header(uint64_t sequence, uint64_t length)
 		{
 			std::vector<uint8_t> bytes(HeaderLength);
-			memcpy(bytes.data(), "NPJRNL02", 8);
-			Put(bytes, 8, 2, 4);
+			memcpy(bytes.data(), HeaderMagic.data(), HeaderMagic.size());
+			Put(bytes, 8, FormatVersion, 4);
 			Put(bytes, 12, HeaderLength, 4);
 			Put(bytes, 16, sequence, 8);
 			Put(bytes, 24, length, 8);
-			Put(bytes, 40, Crc(View(bytes).substr(0, 40)), 4);
 			return bytes;
 		}
 		std::vector<uint8_t> Frame(
@@ -65,7 +61,7 @@ namespace WinUIEditor
 			if (text.size() > ChunkLength)
 				winrt::throw_hresult(E_INVALIDARG);
 			std::vector<uint8_t> bytes(FrameLength + text.size());
-			Put(bytes, 0, 0x3246524e, 4);
+			Put(bytes, 0, FrameMagic, 4);
 			Put(bytes, 4, static_cast<uint32_t>(kind), 4);
 			Put(bytes, 8, sequence, 8);
 			Put(bytes, 16, text.size(), 4);
@@ -74,9 +70,6 @@ namespace WinUIEditor
 			Put(bytes, 40, documentLength, 8);
 			if (!text.empty())
 				memcpy(bytes.data() + FrameLength, text.data(), text.size());
-			auto checksum = Crc(View(bytes).substr(0, 48));
-			checksum = Crc(View(bytes).substr(FrameLength), checksum);
-			Put(bytes, 48, checksum, 4);
 			return bytes;
 		}
 		void WriteAll(HANDLE file, std::vector<uint8_t> const &bytes)
@@ -191,9 +184,10 @@ namespace WinUIEditor
 			FileHandle file(prefix.path);
 			Hasher hash;
 			auto header = ReadAll(file.value, HeaderLength);
-			if (memcmp(header.data(), "NPJRNL02", 8) || Get(header.data(), 8, 4) != 2 || Get(header.data(), 12, 4) != HeaderLength ||
+			if (memcmp(header.data(), HeaderMagic.data(), HeaderMagic.size()) || Get(header.data(), 8, 4) != FormatVersion ||
+				Get(header.data(), 12, 4) != HeaderLength ||
 				Get(header.data(), 16, 8) != prefix.baseSequence || Get(header.data(), 24, 8) > INT32_MAX || Get(header.data(), 32, 8) ||
-				Get(header.data(), 44, 4) || Get(header.data(), 40, 4) != Crc(View(header).substr(0, 40)))
+				Get(header.data(), 44, 4))
 				Corrupt();
 			hash.Add(header);
 			uint64_t length = Get(header.data(), 24, 8), beforeLength = length, sequence = prefix.baseSequence, consumed = HeaderLength;
@@ -211,12 +205,10 @@ namespace WinUIEditor
 				const auto kind = static_cast<JournalFrameKind>(Get(frame.data(), 4, 4));
 				const auto frameSequence = Get(frame.data(), 8, 8), count = Get(frame.data(), 16, 4);
 				const auto position = Get(frame.data(), 24, 8), amount = Get(frame.data(), 32, 8), postLength = Get(frame.data(), 40, 8);
-				if (Get(frame.data(), 0, 4) != 0x3246524e || count > ChunkLength || count > prefix.byteLength - consumed - FrameLength ||
+				if (Get(frame.data(), 0, 4) != FrameMagic || count > ChunkLength || count > prefix.byteLength - consumed - FrameLength ||
 					Get(frame.data(), 20, 4) || Get(frame.data(), 52, 4))
 					Corrupt();
 				auto payload = ReadAll(file.value, static_cast<size_t>(count));
-				if (Get(frame.data(), 48, 4) != Crc(View(payload), Crc(View(frame).substr(0, 48))))
-					Corrupt();
 				hash.Add(frame);
 				hash.Add(payload);
 				if (kind == JournalFrameKind::Abort)
@@ -523,8 +515,14 @@ namespace WinUIEditor
 			winrt::throw_hresult(_failure);
 		if (_writtenBytes < prefix.byteLength)
 			winrt::throw_hresult(RO_E_CLOSED);
-		if (_file != INVALID_HANDLE_VALUE && !FlushFileBuffers(_file))
-			winrt::throw_last_error();
+		// A successful flush covers every byte written through this handle
+		// before it, so a prefix inside the flushed range is already durable.
+		if (_file != INVALID_HANDLE_VALUE && _flushedBytes < prefix.byteLength)
+		{
+			if (!FlushFileBuffers(_file))
+				winrt::throw_last_error();
+			_flushedBytes = _writtenBytes;
+		}
 		prefix.sha256 = prefix.digest ? prefix.digest->value : prefix.sha256;
 		if (prefix.sha256.empty())
 			winrt::throw_hresult(E_FAIL);
@@ -537,17 +535,22 @@ namespace WinUIEditor
 		_stopping = true;
 		_changed.notify_all();
 	}
+	// Stopping proves only that the writer released its file. An earlier write failure
+	// stays observable through Capture, Flush and Faulted, and must not fault shutdown.
 	void NativeJournalFile::WaitStopped()
 	{
 		std::unique_lock guard(_mutex);
 		_changed.wait(guard, [&]() { return _stopped; });
-		if (FAILED(_failure))
-			winrt::throw_hresult(_failure);
 	}
 	bool NativeJournalFile::IsStopped()
 	{
 		std::lock_guard guard(_mutex);
 		return _stopped;
+	}
+	bool NativeJournalFile::Faulted()
+	{
+		std::lock_guard guard(_mutex);
+		return FAILED(_failure);
 	}
 
 	JournalPrefix NativeJournalFile::Validate(std::wstring path, uint64_t baseSequence, uint64_t sequence, uint64_t byteLength,
@@ -556,14 +559,15 @@ namespace WinUIEditor
 		return Inspect({std::move(path), baseSequence, sequence, byteLength, 0, sha256, {}}, {}, canceled);
 	}
 
+	// The prefix comes from a live writer or from Validate. Matching its SHA-256
+	// over the copied bytes proves they are that prefix, so no second Inspect.
 	std::shared_ptr<NativeJournalFile> NativeJournalFile::Import(
 		std::wstring path, JournalPrefix const &prefix, std::function<bool()> const &canceled)
 	{
-		const auto verified = Inspect(prefix, {}, canceled);
 		if (canceled && canceled())
 			throw winrt::hresult_canceled();
 		auto file =
-			std::shared_ptr<NativeJournalFile>(new NativeJournalFile(std::move(path), prefix.baseSequence, verified.documentByteLength));
+			std::shared_ptr<NativeJournalFile>(new NativeJournalFile(std::move(path), prefix.baseSequence, prefix.documentByteLength));
 		FileHandle source(prefix.path);
 		uint64_t copied = 0;
 		while (copied < prefix.byteLength)
@@ -575,15 +579,15 @@ namespace WinUIEditor
 			CheckNt(BCryptHashData(file->_hash, bytes.data(), static_cast<ULONG>(bytes.size()), 0));
 			copied += bytes.size();
 		}
-		if (file->CurrentHash() != verified.sha256)
+		if (file->CurrentHash() != prefix.sha256)
 			Corrupt();
 		if (canceled && canceled())
 			throw winrt::hresult_canceled();
 		if (!FlushFileBuffers(file->_file))
 			winrt::throw_last_error();
-		file->_writtenBytes = file->_logicalBytes = copied;
+		file->_writtenBytes = file->_logicalBytes = file->_flushedBytes = copied;
 		file->_writtenSequence = prefix.sequence;
-		file->_writtenDocumentLength = verified.documentByteLength;
+		file->_writtenDocumentLength = prefix.documentByteLength;
 		std::thread([file]() { file->Run(); }).detach();
 		return file;
 	}

@@ -6,12 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Infrastructure.Diagnostics;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace Notepads.Features.Documents.Storage;
 
@@ -21,8 +19,6 @@ namespace Notepads.Features.Documents.Storage;
 /// </summary>
 internal sealed class DocumentAssetLease : IDisposable
 {
-    internal static readonly Guid DefaultOwnerId = Guid.NewGuid();
-
     private static readonly object RegistrySync = new();
     private static readonly Dictionary<string, SharedAsset> Registry =
         new(StringComparer.OrdinalIgnoreCase);
@@ -98,26 +94,17 @@ internal sealed class DocumentAssetLease : IDisposable
         }
     }
 
-    public async Task<Stream> OpenReadStreamAsync(long byteLength, CancellationToken cancellationToken,
-        bool allowConcurrentWriters = false)
+    public async Task<Stream> OpenReadStreamAsync(long byteLength, CancellationToken cancellationToken)
     {
         if (byteLength < 0) throw new ArgumentOutOfRangeException(nameof(byteLength));
         cancellationToken.ThrowIfCancellationRequested();
         var lease = Retain();
         Stream stream = null;
-        IRandomAccessStream sharedStream = null;
         try
         {
             if (lease.File == null)
             {
                 stream = new MemoryStream([], writable: false);
-            }
-            else if (allowConcurrentWriters)
-            {
-                // Journal prefixes stay immutable while later operations append.
-                // Default WinRT readers may be invalidated by a concurrent writer.
-                sharedStream = await lease.File.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
-                stream = sharedStream.AsStreamForRead();
             }
             else
             {
@@ -126,16 +113,12 @@ internal sealed class DocumentAssetLease : IDisposable
 
             cancellationToken.ThrowIfCancellationRequested();
             if (stream.Length < byteLength) throw new EndOfStreamException("The document generation is shorter than its committed length.");
-            return new LeasedReadStream(stream, lease, byteLength, sharedStream);
+            return new LeasedReadStream(stream, lease, byteLength);
         }
         catch
         {
             try { stream?.Dispose(); }
-            finally
-            {
-                try { sharedStream?.Dispose(); }
-                finally { await lease.DisposeAsync().ConfigureAwait(false); }
-            }
+            finally { await lease.DisposeAsync().ConfigureAwait(false); }
             throw;
         }
     }
@@ -209,12 +192,6 @@ internal sealed class DocumentAssetLease : IDisposable
         return asset.Deleted;
     }
 
-    public static IReadOnlyList<string> GetLiveFilePaths()
-    {
-        lock (RegistrySync)
-            return Registry.Values.Where(asset => asset.LeaseCount != 0).Select(asset => asset.Path).ToArray();
-    }
-
     private static void ReserveDeletion(SharedAsset asset)
     {
         asset.DeletionReserved = true;
@@ -270,17 +247,15 @@ internal sealed class DocumentAssetLease : IDisposable
     {
         private readonly Stream _stream;
         private readonly DocumentAssetLease _lease;
-        private readonly IDisposable _streamOwner;
         private readonly long _length;
         private long _position;
         private int _disposed;
 
-        public LeasedReadStream(Stream stream, DocumentAssetLease lease, long length, IDisposable streamOwner)
+        public LeasedReadStream(Stream stream, DocumentAssetLease lease, long length)
         {
             _stream = stream;
             _lease = lease;
             _length = length;
-            _streamOwner = streamOwner;
         }
 
         public override bool CanRead => _stream.CanRead;
@@ -337,11 +312,7 @@ internal sealed class DocumentAssetLease : IDisposable
             if (disposing && Interlocked.Exchange(ref _disposed, 1) == 0)
             {
                 try { _stream.Dispose(); }
-                finally
-                {
-                    try { _streamOwner?.Dispose(); }
-                    finally { _lease.Dispose(); }
-                }
+                finally { _lease.Dispose(); }
             }
             base.Dispose(disposing);
         }

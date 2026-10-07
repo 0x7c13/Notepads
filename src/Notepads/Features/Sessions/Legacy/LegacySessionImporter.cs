@@ -28,7 +28,11 @@ internal static class LegacySessionImporter
             await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
         var lastSaved = data.LastSavedBackupFilePath;
         var pending = data.PendingBackupFilePath;
-        if (file == null && lastSaved == null && pending == null) return null;
+        if (lastSaved == null && pending == null)
+        {
+            return file == null ? null :
+                await PreparedRecoveryDocument.FromFileAsync(data.Id, data.StateMetaData, file, ownerId, defaults, cancellation);
+        }
 
         var prepared = new PreparedRecoveryDocument
         {
@@ -40,27 +44,16 @@ internal static class LegacySessionImporter
         try
         {
             var savedEncoding = EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding);
-            if (lastSaved == null && pending == null)
+            var backupEncoding = EncodingCatalog.GetEncodingByName(data.BackupEncoding ?? data.StateMetaData.LastSavedEncoding);
+            using (var saved = lastSaved == null ? DocumentBaseline.CreateEmpty(ownerId) :
+                await DecodeBaselineAsync(lastSaved, backupEncoding, defaults, ownerId, cancellation))
             {
-                var options = new DocumentLoadOptions(savedEncoding, defaults.GetInitialEncoding());
-                prepared.SavedSnapshot = await DocumentTextPipeline.DecodeFileAsync(file, options, ownerId,
-                    cancellationToken: cancellation);
-                prepared.InitializeFromFile = true;
-                prepared.FileNamePlaceholder = file.Name;
+                prepared.SavedSnapshot = new DocumentSnapshot(saved, savedEncoding,
+                    LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding),
+                    data.StateMetaData.DateModifiedFileTime);
             }
-            else
-            {
-                var backupEncoding = EncodingCatalog.GetEncodingByName(data.BackupEncoding ?? data.StateMetaData.LastSavedEncoding);
-                using (var saved = lastSaved == null ? DocumentBaseline.CreateEmpty(ownerId) :
-                    await DecodeBaselineAsync(lastSaved, backupEncoding, defaults, ownerId, cancellation))
-                {
-                    prepared.SavedSnapshot = new DocumentSnapshot(saved, savedEncoding,
-                        LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding),
-                        data.StateMetaData.DateModifiedFileTime);
-                }
-                if (pending != null)
-                    prepared.RecoveryBaseline = await DecodeBaselineAsync(pending, backupEncoding, defaults, ownerId, cancellation);
-            }
+            if (pending != null)
+                prepared.RecoveryBaseline = await DecodeBaselineAsync(pending, backupEncoding, defaults, ownerId, cancellation);
             return prepared;
         }
         catch

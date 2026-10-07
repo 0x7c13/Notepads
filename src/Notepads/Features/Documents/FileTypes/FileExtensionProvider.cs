@@ -116,7 +116,7 @@ public static class FileExtensionProvider
         //Map
         ".map",
         //Markdown
-        ".md", ".markdown", ".mkd", ".mdwn", ".mdown", ".markn", ".mdtxt",
+        ".md", ".markdown", ".mkd", ".mdwn", ".mdown", ".markdn", ".mdtxt",
         //NFO
         ".nfo",
         //NPM Config

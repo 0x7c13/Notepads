@@ -23,10 +23,8 @@ namespace Notepads.Presentation.Controls.TextEditor;
 public interface ITextEditor
 {
     event RoutedEventHandler Loaded;
-    event RoutedEventHandler Unloaded;
 
     event KeyEventHandler KeyDown;
-    event EventHandler ModeChanged;
     event EventHandler ModificationStateChanged;
     event EventHandler FileModificationStateChanged;
     event EventHandler LineEndingChanged;
@@ -44,7 +42,7 @@ public interface ITextEditor
     DocumentLanguage DocumentLanguage { get; }
     DocumentLanguage DetectedLanguage { get; }
     string LanguageOverride { get; }
-    int SyntaxHighlightingPauseReason { get; }
+    EditorSyntaxPauseReason SyntaxHighlightingPauseReason { get; }
     bool CanChangeLanguage { get; }
     void SetLanguageOverride(string id);
 
@@ -72,6 +70,9 @@ public interface ITextEditor
 
     bool IsDocumentEmpty { get; }
 
+    /// <summary>The document's UTF-8 byte length, read without copying text.</summary>
+    long DocumentLength { get; }
+
     FileModificationState FileModificationState { get; }
 
     TextEditorMode Mode { get; }
@@ -87,6 +88,8 @@ public interface ITextEditor
     ulong DocumentSequence { get; }
 
     DocumentRecoveryState CaptureRecoveryState();
+
+    Task RepairRecoveryJournalAsync(CancellationToken cancellationToken = default);
 
     Task MaintainRecoveryAsync(CancellationToken cancellationToken = default);
 
@@ -104,13 +107,9 @@ public interface ITextEditor
         DocumentJournal journal, EditorJournalCheckpoint checkpoint, StorageFile file,
         DocumentMetadata metadata, bool textDirty);
 
-    Task RenameAsync(string newFileName);
-
     Task RenameAsync(string newFileName, StorageFile expectedFile);
 
     string GetText();
-
-    Task<string> GetTextAsync();
 
     void StartCheckingFileStatusPeriodically();
 
@@ -168,7 +167,7 @@ public interface ITextEditor
 
     void Focus();
 
-    bool NoChangesSinceLastSaved(bool compareTextOnly = false);
+    bool NoChangesSinceLastSaved();
 
     void ShowFindAndReplaceControl(bool showReplaceBar);
 

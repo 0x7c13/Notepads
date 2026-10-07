@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Otwórz za pomocą Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Uruchomiono klon Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Plik jest już otworzony!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Nowe okno</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Otwiera nowe okno</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Nowe okno</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Ostatnio używane</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Numer lini</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Rozszerzenie "{0}" nie jest jeszcze wspierane</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Zamknij</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Nie udało się odzyskać danych z ostatniej sesji z powodu uszkodzonych danych. Proszę zrobić kopię zapasową wszystkich niezapisanych plików (*.txt) w folderze sesji.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Odzyskiwanie sesji jest zablokowane przez pliki odzyskiwania, których Notepads nie może zweryfikować, dlatego ta czynność została anulowana, aby chronić Twoje dokumenty. Otwórz folder odzyskiwania, aby utworzyć osobną kopię, zanim naprawisz lub usuniesz jakiekolwiek pliki.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Otwórz folder z kopią zapasową sesji</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Ostrzeżenie</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Nie można utworzyć kopii zapasowej sesji. Zapisz pliki i spróbuj ponownie.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Odzyskiwanie sesji jest zablokowane przez pliki odzyskiwania, których Notepads nie może zweryfikować. Otwórz folder odzyskiwania, aby je skopiować, zanim cokolwiek naprawisz lub usuniesz.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Nie udało się przywrócić niektórych kart. Ich kopie zachowano w folderze kopii zapasowych sesji.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Plik został zapisany lokalnie. Synchronizacja z chmurą jest nadal w toku.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Tekst zastępujący zawiera nieprawidłowy tekst.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Stary tekst, zapisana wersja</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Poprzednia zmiana (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Nie można przygotować porównania w ramach dostępnych zasobów. Dokument pozostaje niezmieniony.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Nie można drukować dokumentów większych niż 1 MB.</value></data>
 </root>

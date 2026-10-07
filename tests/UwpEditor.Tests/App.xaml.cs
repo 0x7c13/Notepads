@@ -4,11 +4,14 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Preferences;
 using Notepads.Presentation.Controls.FindAndReplace;
 using Notepads.Presentation.Controls.TextEditor;
@@ -48,6 +51,11 @@ public static class Program
 
 public sealed partial class App : Application
 {
+    private const int DefaultStyle = (int)WinUIEditor.StylesCommon.Default;
+    private const int LineNumberStyle = (int)WinUIEditor.StylesCommon.LineNumber;
+    private const int IllegalMethodCall = unchecked((int)0x8000000E); // E_ILLEGAL_METHOD_CALL
+    private const int ObjectClosed = unchecked((int)0x80000013); // RO_E_CLOSED
+
     public App()
     {
         UnhandledException += (_, e) => WriteDiagnostic("Unhandled: " + e.Message + "\n" + e.Exception);
@@ -87,7 +95,11 @@ public sealed partial class App : Application
                 await SessionStorageTests.RunAsync(log);
                 await SessionRecoveryTests.RunAsync(log);
                 await SessionServiceTests.RunAsync(log);
-                if (args.Arguments == "--persistence") await SessionRegistryTests.RunAsync(log);
+                if (args.Arguments == "--persistence")
+                {
+                    await SessionRegistryTests.RunAsync(log);
+                    await SessionControllerTests.RunAsync(log);
+                }
                 CompleteTests(log);
                 return;
             }
@@ -125,6 +137,9 @@ public sealed partial class App : Application
             var initialText = core.GetText();
             var nativeView = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
             var native = nativeView.Editor;
+            Check((native.StyleGetFore(LineNumberStyle) & 0xffffff) == 0x969696 &&
+                unchecked((uint)native.GetElementColour(WinUIEditor.Element.CaretLineBack)) == 0x18ffffff,
+                "the constructor colors a new editor from the Dark palette before any theme change");
             if (args.Arguments == "--diff")
             {
                 await DiffViewTests.RunAsync(log, core);
@@ -207,7 +222,8 @@ public sealed partial class App : Application
             var standaloneView = new WinUIEditor.EditorBaseControl();
             Check(standaloneView.MouseWheelZoomEnabled, "native wheel zoom stays enabled by default");
             await CheckNativeFinalizerReleaseAsync();
-            log.AppendLine("PASS: V2 native control release from managed finalizers with a live UI dispatcher.");
+            await CheckDisposeReleasesDocumentAsync();
+            log.AppendLine("PASS: V2 native control release from managed finalizers with a live UI dispatcher, and document release on Dispose.");
             await CheckNativeUtf8ContractsAsync();
             log.AppendLine("PASS: owned canonical UTF-8 stream loading, bounded native readers, edit leases, and atomic undo-preserving replacement.");
             await CheckNativeScrollWidthContractsAsync();
@@ -378,20 +394,26 @@ public sealed partial class App : Application
             native.RectangularSelectionAnchor = 0;
             native.RectangularSelectionCaret = 27;
             Check(native.Selections == 3, "rectangular selection creates one range per row");
+            CheckEditorPalette();
             ThemeSettingsService.SetTheme(ElementTheme.Light);
             await Task.Delay(100);
-            Check((native.StyleGetFore(32) & 0xffffff) == 0x000000,
+            Check((native.StyleGetFore(DefaultStyle) & 0xffffff) == 0x000000,
                 "light theme uses dark editor text");
-            Check((native.StyleGetFore(33) & 0xffffff) == 0x696969,
+            Check((native.StyleGetFore(LineNumberStyle) & 0xffffff) == 0x696969,
                 "light theme keeps line numbers dim");
+            Check(unchecked((uint)native.GetElementColour(WinUIEditor.Element.CaretLineBack)) == 0x18000000,
+                "light theme line highlight comes from theme resources");
             Check(unchecked((uint)native.GetElementColour(WinUIEditor.Element.SelectionText)) == 0xffffffff &&
                 unchecked((uint)native.GetElementColour(WinUIEditor.Element.SelectionInactiveText)) == 0xffffffff,
                 "light theme selections and inactive Find results use white text");
             CheckSelectionPalette(native, 0xff3834d2);
             ThemeSettingsService.SetTheme(ElementTheme.Dark);
             await Task.Delay(100);
-            Check((native.StyleGetFore(32) & 0xffffff) == 0xffffff,
+            Check((native.StyleGetFore(DefaultStyle) & 0xffffff) == 0xffffff,
                 "dark theme restores light editor text");
+            Check((native.StyleGetFore(LineNumberStyle) & 0xffffff) == 0x969696 &&
+                unchecked((uint)native.GetElementColour(WinUIEditor.Element.CaretLineBack)) == 0x18ffffff,
+                "dark theme line numbers and line highlight come from theme resources");
             Check(unchecked((uint)native.GetElementColour(WinUIEditor.Element.SelectionInactiveBack)) == 0xff3834d2,
                 "theme switches preserve inactive selection accent");
             Check(unchecked((uint)native.GetElementColour(WinUIEditor.Element.SelectionText)) == 0xffffffff &&
@@ -473,15 +495,40 @@ public sealed partial class App : Application
             Check(horizontalBar.Visibility == Visibility.Visible, "overflow shows horizontal scrollbar");
             native.XOffset = 140;
             var previousXOffset = native.XOffset;
-            var previousForeground = native.StyleGetFore(32);
-            native.StyleSetFore(32, previousForeground ^ 0x00FFFFFF);
-            native.StyleSetFore(32, previousForeground);
+            var previousForeground = native.StyleGetFore(DefaultStyle);
+            native.StyleSetFore(DefaultStyle, previousForeground ^ 0x00FFFFFF);
+            native.StyleSetFore(DefaultStyle, previousForeground);
             native.StyleClearAll();
             nativeView.SetBackgroundColor(Windows.UI.Colors.Transparent);
             native.FontQuality = native.FontQuality;
             await Task.Delay(100);
             Check(previousXOffset > 0 && native.XOffset == previousXOffset,
                 "color-only theme updates preserve the horizontal viewport after repaint");
+            native.DeleteRange(0, 1);
+            Check(horizontalBar.Visibility == Visibility.Visible && native.XOffset == previousXOffset,
+                "deleting text keeps the horizontal scrollbar and viewport");
+            await Task.Delay(150);
+            Check(horizontalBar.Visibility == Visibility.Visible && native.XOffset == previousXOffset,
+                "re-measuring after a deletion keeps the viewport while text still overflows");
+            native.DeleteRange(0, native.Length - 5);
+            await Task.Delay(150);
+            Check(native.XOffset == previousXOffset, "re-measuring after an edit never moves the horizontal viewport");
+            // At column 0, styling the lines below a long line must not shrink the width to theirs.
+            core.SetSyntaxLanguage(DocumentLanguages.Find("csharp"), "sample.cs");
+            await core.LoadTextAsync(new string('x', 800) + new StringBuilder().Insert(0, "\rint value = 1;", 400));
+            await Task.Delay(150);
+            var longLineWidth = native.ScrollWidth;
+            native.FirstVisibleLine = 200;
+            await Task.Delay(150);
+            Check(native.FirstVisibleLine == 200 && native.XOffset == 0 && native.ScrollWidth >= longLineWidth &&
+                horizontalBar.Visibility == Visibility.Visible, "paging a highlighted file past its long line keeps the horizontal scrollbar");
+            core.SetSyntaxLanguage(DocumentLanguages.Find("python"), "sample.py");
+            await Task.Delay(150);
+            Check(native.ScrollWidth >= longLineWidth && horizontalBar.Visibility == Visibility.Visible,
+                "a language reinstall that restyles the visible lines keeps the horizontal scrollbar");
+            core.SetSyntaxLanguage(DocumentLanguages.PlainText, "sample.txt");
+            core.SetText(new string('x', 800));
+            await Task.Delay(100);
             var imageTarget = FindNamedDescendant<Border>(nativeView, "ImageTarget");
             Check(imageTarget != null && horizontalBar.ActualHeight > 0, "horizontal scrollbar laid out");
             var textBottom = imageTarget.TransformToVisual(nativeView)
@@ -513,17 +560,17 @@ public sealed partial class App : Application
             await Task.Delay(50);
             var defaultLineHeight = core.GetSingleLineHeight();
             core.SetFontZoomFactor(510);
-            Check(core.GetFontZoomFactor() == 500 && native.StyleGetSizeFractional(32) == 5250,
+            Check(core.GetFontZoomFactor() == 500 && native.StyleGetSizeFractional(DefaultStyle) == 5250,
                 "zoom clamps at 500 percent with matching native font size");
             core.SetFontZoomFactor(500);
             Check(!nativeView.MouseWheelZoomEnabled && native.Zoom == 0 && core.GetFontZoomFactor() == 500 &&
-                native.StyleGetSizeFractional(32) == 5250,
+                native.StyleGetSizeFractional(DefaultStyle) == 5250,
                 "repeated upper-limit zoom keeps the application's percentage font size");
             core.SetFontZoomFactor(5);
-            Check(core.GetFontZoomFactor() == 10 && native.StyleGetSizeFractional(32) == 105,
+            Check(core.GetFontZoomFactor() == 10 && native.StyleGetSizeFractional(DefaultStyle) == 105,
                 "zoom clamps at 10 percent with matching native font size");
             core.SetFontZoomFactor(10);
-            Check(native.Zoom == 0 && core.GetFontZoomFactor() == 10 && native.StyleGetSizeFractional(32) == 105,
+            Check(native.Zoom == 0 && core.GetFontZoomFactor() == 10 && native.StyleGetSizeFractional(DefaultStyle) == 105,
                 "repeated lower-limit zoom keeps the application's percentage font size");
             core.FontSize = 1400;
             Check(core.GetFontZoomFactor() == 500 && core.FontSize == 70,
@@ -531,7 +578,7 @@ public sealed partial class App : Application
             core.SetFontZoomFactor(100);
             await Task.Delay(50);
             Check(native.Zoom == 0 && core.GetFontZoomFactor() == 100 &&
-                native.StyleGetSizeFractional(32) == 1050 && core.GetSingleLineHeight() == defaultLineHeight,
+                native.StyleGetSizeFractional(DefaultStyle) == 1050 && core.GetSingleLineHeight() == defaultLineHeight,
                 "reset restores actual default font metrics after percentage zoom");
             await Task.Delay(150);
             Check(horizontalBar.Visibility == Visibility.Visible,
@@ -556,6 +603,15 @@ public sealed partial class App : Application
             Check(horizontalBar.Visibility == Visibility.Collapsed && native.XOffset == 0,
                 "zoom reset hides scrollbar and clears offset when text fits again");
             core.SetText(new string('x', 800));
+            core.SetFontZoomFactor(300);
+            await Task.Delay(200);
+            var zoomedWidth = native.ScrollWidth;
+            native.XOffset = zoomedWidth;
+            core.SetFontZoomFactor(100);
+            await Task.Delay(200);
+            Check(horizontalBar.Visibility == Visibility.Visible && native.XOffset > 0 && native.XOffset < native.ScrollWidth &&
+                native.ScrollWidth < zoomedWidth, "zooming out while scrolled right keeps text in view");
+            native.XOffset = 0;
             core.SetFontZoomFactor(500);
             core.TextWrapping = TextWrapping.Wrap;
             await Task.Delay(200);
@@ -569,7 +625,13 @@ public sealed partial class App : Application
             native.FirstVisibleLine = 0;
             core.SetFontZoomFactor(100);
             core.TextWrapping = TextWrapping.NoWrap;
-            log.AppendLine("PASS: normalization, NUL, UTF-16, line index, BiDi caret/hit testing/replacement, Unicode search, undo/save points, recovery, UI Automation text ranges, selection colors, zoom limits/reset.");
+            using (var neverShown = new TextEditorCore())
+            {
+                neverShown.SetScrollViewerInitPosition(12, 345);
+                neverShown.GetScrollViewerPosition(out var pendingHorizontal, out var pendingVertical);
+                Check(pendingHorizontal == 12 && pendingVertical == 345, "a tab that was never shown keeps its restored scroll offsets");
+            }
+            log.AppendLine("PASS: normalization, NUL, UTF-16, line index, BiDi caret/hit testing/replacement, Unicode search, undo/save points, recovery, UI Automation text ranges, selection colors, zoom limits/reset, never-shown scroll offsets.");
 
             await core.LoadTextAsync("first😀\r\nsecond中文\nthird");
             Equal("first😀\rsecond中文\rthird", core.GetText(), "async loading applies V2 newline/Unicode normalization");
@@ -582,16 +644,24 @@ public sealed partial class App : Application
             Check((native.LineCharacterIndex & WinUIEditor.LineCharacterIndexType.Utf16) != 0,
                 "native document attachment retains the UTF-16 index");
             var textBeforeCancellation = core.GetText();
-            var canceledLoad = native.LoadTextAsync("cancelled candidate 😀\r\nsecond line");
-            bool rejectedOverlap = false;
-            try { await native.LoadTextAsync("overlapping candidate"); }
-            catch (Exception) { rejectedOverlap = true; }
-            Check(rejectedOverlap, "native loader rejects overlapping operations on one editor");
-            canceledLoad.Cancel();
-            bool observedCancellation = false;
-            try { await canceledLoad; }
-            catch (OperationCanceledException) { observedCancellation = true; }
-            Check(observedCancellation, "native loader reports cancellation");
+            using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("cancelled candidate 😀\rsecond line")))
+            using (var overlap = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("overlapping candidate")))
+            using (var input = stream.GetInputStreamAt(0))
+            using (var overlapInput = overlap.GetInputStreamAt(0))
+            {
+                var canceledLoad = native.LoadUtf8Async(input, stream.Size, false);
+                // Cancel() reports Canceled at once; this task waits until the worker stops reading the stream.
+                var canceledCompletion = canceledLoad.AsTask();
+                bool rejectedOverlap = false;
+                try { await native.LoadUtf8Async(overlapInput, overlap.Size, false); }
+                catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedOverlap = true; }
+                Check(rejectedOverlap, "native loader rejects overlapping operations on one editor");
+                canceledLoad.Cancel();
+                bool observedCancellation = false;
+                try { await canceledCompletion; }
+                catch (OperationCanceledException) { observedCancellation = true; }
+                Check(observedCancellation, "native loader reports cancellation");
+            }
             Equal(textBeforeCancellation, core.GetText(), "cancelled and overlapping loads keep the existing document");
             await core.LoadTextAsync("after cancellation😀\r\nend");
             Equal("after cancellation😀\rend", core.GetText(), "native loader restarts immediately after cancellation and retired loads cannot overwrite it");
@@ -601,6 +671,10 @@ public sealed partial class App : Application
             core.SetFontZoomFactor(100);
             Check(native.CaretLineLayer == WinUIEditor.Layer.UnderText, "highlight after theme/font changes");
             Check(lineNumberReveal.BorderThickness.Right == 0, "line-number border remains hidden after theme/font changes");
+            await CheckThemeAppliesOnlyOnChangeAsync(backdrop, core, native);
+            log.AppendLine("PASS: editor colors from theme resources; tab re-entry, repeated theme notifications and unchanged font sizes keep applied styles.");
+            await CheckDialogThemeResourcesAsync();
+            log.AppendLine("PASS: dialog background and hyperlink colors follow a dialog theme that differs from the application theme.");
             core.Focus(FocusState.Programmatic);
             if (args.Arguments == "--preview") await Task.Delay(20000);
             await SyntaxHighlightingTests.RunAsync(log, core);
@@ -611,6 +685,7 @@ public sealed partial class App : Application
             await SessionRecoveryTests.RunAsync(log);
             await SessionServiceTests.RunAsync(log);
             await SessionRegistryTests.RunAsync(log);
+            await SessionControllerTests.RunAsync(log);
             await DocumentFileWriterTests.RunAsync(log);
         }
         catch (Exception ex) { WriteDiagnostic(ex.ToString()); log.AppendLine("FAIL: " + ex); }
@@ -740,9 +815,9 @@ public sealed partial class App : Application
         {
             if ((modification.ModificationType & (int)WinUIEditor.ModificationFlags.BeforeDelete) == 0) return;
             try { sender.Allocate(sender.Length + 1048576); }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedCallbackAllocate = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedCallbackAllocate = true; }
             try { sender.EmptyUndoBuffer(); }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedCallbackUndoReset = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedCallbackUndoReset = true; }
         };
         editor.Modified += transactionCallback;
         using (var stream = await CreateUtf8StreamAsync(replacement))
@@ -816,15 +891,18 @@ public sealed partial class App : Application
         using (var stream = await CreateUtf8StreamAsync(bytes))
         using (var input = stream.GetInputStreamAt(0))
             await editor.LoadUtf8Async(input, (ulong)bytes.Length, false);
-        Check(editor.ScrollWidth == 1, "document attachment retires the previous tracked pixel width");
+        Check(editor.ScrollWidth < 9000, "document attachment retires the previous tracked pixel width");
         editor.ScrollWidth = 9000;
         editor.SelectAll();
         editor.Clear();
-        Check(editor.ScrollWidth == 1, "native deletion invalidates tracked width even without a host modification handler");
+        Check(editor.ScrollWidth == 9000, "native deletion keeps the published width until it is measured again");
+        await Task.Delay(150);
+        Check(editor.ScrollWidth == 1, "native deletion re-measures tracked width even without a host modification handler");
         editor.PasteText("editable");
         editor.ScrollWidth = 9000;
-        editor.StyleSetSizeFractional(32, editor.StyleGetSizeFractional(32) + 100);
-        Check(editor.ScrollWidth == 1, "native font-size changes retire stale tracked metrics");
+        editor.StyleSetSizeFractional(DefaultStyle, editor.StyleGetSizeFractional(DefaultStyle) + 100);
+        await Task.Delay(150);
+        Check(editor.ScrollWidth < 9000, "native font-size changes retire stale tracked metrics");
         editor.StyleClearAll();
         editor.ScrollWidth = 9000;
         editor.XOffset = 140;
@@ -852,24 +930,32 @@ public sealed partial class App : Application
         stylingEditor.ScrollWidth = 9000;
         stylingEditor.StartStyling(0, 0);
         stylingEditor.SetStyling(stylingEditor.Length, 2);
-        Check(stylingEditor.GetStyleAt(0) == 2 && stylingEditor.ScrollWidth == 1,
+        await Task.Delay(150);
+        Check(stylingEditor.GetStyleAt(0) == 2 && stylingEditor.ScrollWidth < 9000,
             "changing token runs from a wide font to a narrow font retires tracked metrics");
         stylingEditor.ScrollWidth = 9000;
         stylingEditor.StyleClearAll();
-        Check(stylingEditor.ScrollWidth == 1, "clearing styles with different font metrics retires tracked width");
+        await Task.Delay(150);
+        Check(stylingEditor.ScrollWidth < 9000, "clearing styles with different font metrics retires tracked width");
         editor.ScrollWidth = 9000;
         var replacement = Encoding.UTF8.GetBytes("replacement");
         using (var stream = await CreateUtf8StreamAsync(replacement))
         using (var input = stream.GetInputStreamAt(0))
             await editor.LoadUtf8Async(input, (ulong)replacement.Length, true);
-        Check(editor.ScrollWidth == 1, "undo-preserving publication resets tracked width on the existing document");
+        Check(editor.ScrollWidth < 9000, "undo-preserving publication resets tracked width on the existing document");
+        editor.ScrollWidth = 9000;
+        editor.SelectAll();
+        editor.Clear();
+        editor.ScrollWidth = 9000;
+        await Task.Delay(150);
+        Check(editor.ScrollWidth == 9000, "a fixed width cancels a pending re-measure from the tracking policy");
 
         editor.ScrollWidthTracking = false;
         editor.ScrollWidth = 9000;
         editor.SelectAll();
         editor.Clear();
         Check(editor.ScrollWidth == 9000, "native deletion preserves an explicitly fixed scroll width");
-        editor.StyleSetSizeFractional(32, 1100);
+        editor.StyleSetSizeFractional(DefaultStyle, 1100);
         Check(editor.ScrollWidth == 9000, "font invalidation preserves an explicitly fixed scroll width");
         using (var stream = await CreateUtf8StreamAsync(bytes))
         using (var input = stream.GetInputStreamAt(0))
@@ -889,7 +975,7 @@ public sealed partial class App : Application
     {
         var fixture = new WinUIEditor.EditorBaseControl();
         var editor = fixture.Editor;
-        editor.CodePage = 65001;
+        editor.CodePage = (int)WinUIEditor.EditorConstants.ScCpUtf8;
         WinUIEditor.ModifiedEventArgs borrowed = null, owned = null;
         WinUIEditor.ModifiedHandler borrowHandler = (sender, modification) =>
         {
@@ -901,10 +987,10 @@ public sealed partial class App : Application
         Check(borrowed != null && borrowed.Length > 0, "notification metadata remains readable after dispatch");
         var rejectedLateText = false;
         try { var late = borrowed.Text; }
-        catch (Exception ex) when (ex is ObjectDisposedException || ex.HResult == unchecked((int)0x80000013)) { rejectedLateText = true; }
+        catch (Exception ex) when (ex is ObjectDisposedException || ex.HResult == ObjectClosed) { rejectedLateText = true; }
         var rejectedLateBuffer = false;
         try { var late = borrowed.TextAsBuffer; }
-        catch (Exception ex) when (ex is ObjectDisposedException || ex.HResult == unchecked((int)0x80000013)) { rejectedLateBuffer = true; }
+        catch (Exception ex) when (ex is ObjectDisposedException || ex.HResult == ObjectClosed) { rejectedLateBuffer = true; }
         Check(rejectedLateText && rejectedLateBuffer, "unmaterialized borrowed payload cannot be dereferenced after its native notification");
         WinUIEditor.ModifiedHandler ownHandler = (sender, modification) =>
         {
@@ -929,9 +1015,9 @@ public sealed partial class App : Application
         {
             if ((modification.ModificationType & (int)WinUIEditor.ModificationFlags.InsertText) == 0) return;
             try { editor.EmptyUndoBuffer(); }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedUndoRetirement = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedUndoRetirement = true; }
             try { using (var midEdit = editor.AcquireUtf8Reader()) { } }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedMidEditReader = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedMidEditReader = true; }
         };
         WinUIEditor.ModifiedHandler inspectHandler = (sender, modification) =>
         {
@@ -971,10 +1057,10 @@ public sealed partial class App : Application
             editor.StartJournal(journal.Path, 0);
             var rejectedEolPolicy = false;
             try { editor.EOLMode = WinUIEditor.EndOfLine.CrLf; }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedEolPolicy = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedEolPolicy = true; }
             var rejectedEolConversion = false;
             try { editor.ConvertEOLs(WinUIEditor.EndOfLine.Lf); }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x8000000E)) { rejectedEolConversion = true; }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedEolConversion = true; }
             Check(rejectedEolPolicy && rejectedEolConversion && editor.EOLMode == WinUIEditor.EndOfLine.Cr,
                 "active journal prevents conflicting native EOL policy and conversion");
             editor.BeginUndoAction();
@@ -995,6 +1081,11 @@ public sealed partial class App : Application
             using (var input = stream.GetInputStreamAt(0))
                 await editor.LoadUtf8Async(input, (ulong)replacement.Length, true);
             Check(editor.DocumentSequence == 4, "an atomic whole-document replacement commits one journal sequence");
+            // Reload/Revert journal rotation relies on identical content also committing exactly one step.
+            using (var stream = await CreateUtf8StreamAsync(replacement))
+            using (var input = stream.GetInputStreamAt(0))
+                await editor.LoadUtf8Async(input, (ulong)replacement.Length, true);
+            Check(editor.DocumentSequence == 5, "an identical whole-document replacement still commits one journal sequence");
             latest = editor.AcquireJournalCheckpoint();
             await latest.FlushAsync();
             await first.FlushAsync();
@@ -1087,6 +1178,8 @@ public sealed partial class App : Application
             using (var unchanged = restored.AcquireJournalCheckpoint())
                 Check(unchanged.BaseSequence == 2 && unchanged.CommittedSequence == 3, "failed rotation retains the prior active writer");
             await CheckContainerJournalContractsAsync(folder);
+            await CheckFaultedJournalRecoveryAsync(folder);
+            await CheckJournalFlushFormatAndImportAsync(folder);
         }
         finally
         {
@@ -1096,6 +1189,138 @@ public sealed partial class App : Application
             await Task.WhenAll(firstStop.AsTask(), repeatedStop.AsTask());
             first?.Dispose(); latest?.Dispose(); reopened?.Dispose();
             await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            GC.KeepAlive(fixture);
+            GC.KeepAlive(restoredFixture);
+        }
+    }
+
+    private static async Task CheckFaultedJournalRecoveryAsync(StorageFolder folder)
+    {
+        var fixture = new WinUIEditor.EditorBaseControl();
+        var editor = fixture.Editor;
+        try
+        {
+            editor.PasteText("base");
+            // The sequence overflow guard is a real writer failure: the next edit latches it.
+            var faulted = await folder.CreateFileAsync("faulted.npj");
+            editor.StartJournal(faulted.Path, ulong.MaxValue);
+            editor.GotoPos(editor.Length);
+            editor.PasteText("X");
+            Check(editor.JournalFaulted, "a failed journal write is observable");
+            var captureFailed = false;
+            try { using (editor.AcquireJournalCheckpoint()) { } }
+            catch (Exception) { captureFailed = true; }
+            Check(captureFailed, "a faulted journal cannot publish a recovery checkpoint");
+            using (var reader = editor.AcquireUtf8Reader())
+            {
+                var rebased = await folder.CreateFileAsync("rebased.npj");
+                await editor.RotateJournalAsync(rebased.Path, reader.Sequence);
+            }
+            Check(!editor.JournalFaulted, "rotating to a fresh baseline clears the journal fault");
+            using (var checkpoint = editor.AcquireJournalCheckpoint()) await checkpoint.FlushAsync();
+            // The retired writer's earlier failure must not fault shutdown.
+            await editor.StopJournalAsync();
+        }
+        finally
+        {
+            await editor.StopJournalAsync();
+            GC.KeepAlive(fixture);
+        }
+    }
+
+    private static async Task CheckJournalFlushFormatAndImportAsync(StorageFolder folder)
+    {
+        var fixture = new WinUIEditor.EditorBaseControl();
+        var editor = fixture.Editor;
+        var restoredFixture = new WinUIEditor.EditorBaseControl();
+        var restored = restoredFixture.Editor;
+        var baseline = Encoding.UTF8.GetBytes("base");
+        const string edited = "baseX😀Y";
+        try
+        {
+            editor.PasteText("base");
+            var journal = await folder.CreateFileAsync("flush-format.npj");
+            editor.StartJournal(journal.Path, 0);
+            editor.GotoPos(editor.Length);
+            editor.PasteText("X😀");
+            ulong committedSequence, committedLength;
+            using (var first = editor.AcquireJournalCheckpoint())
+            {
+                await first.FlushAsync();
+                var firstHash = first.PrefixSha256;
+                await first.FlushAsync();
+                Check(first.PrefixSha256 == firstHash, "flushing an already flushed prefix returns the same verified prefix");
+                editor.GotoPos(editor.Length);
+                editor.PasteText("Y");
+                using (var second = editor.AcquireJournalCheckpoint())
+                {
+                    await first.FlushAsync();
+                    await second.FlushAsync();
+                    Check(second.CommittedByteLength > first.CommittedByteLength && first.PrefixSha256 == firstHash,
+                        "a longer prefix beyond the flushed range is flushed on its own");
+                    using (var onDisk = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(second.FilePath, second.BaseSequence,
+                        second.CommittedSequence, second.CommittedByteLength, second.PrefixSha256))
+                        Check(onDisk.CommittedDocumentByteLength == second.CommittedDocumentByteLength,
+                            "a flushed prefix validates from the file after an earlier skipped flush");
+                    committedSequence = second.CommittedSequence;
+                    committedLength = second.CommittedByteLength;
+                }
+            }
+            await editor.StopJournalAsync();
+
+            var bytes = (await FileIO.ReadBufferAsync(journal)).ToArray();
+            Check((ulong)bytes.Length == committedLength, "the stopped journal holds exactly the committed prefix");
+            // Offsets follow the header and frame layouts documented in NativeJournal.cpp.
+            var zeroed = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(40)) == 0;
+            // Pre-D7 writers stored CRC32 values in these fields; readers now ignore whatever they hold.
+            var legacy = (byte[])bytes.Clone();
+            BinaryPrimitives.WriteUInt32LittleEndian(legacy.AsSpan(40), 0xFFFFFFFF);
+            var lastPayload = 0;
+            for (var offset = 48; offset < legacy.Length;)
+            {
+                var count = (int)BinaryPrimitives.ReadUInt32LittleEndian(legacy.AsSpan(offset + 16));
+                zeroed &= BinaryPrimitives.ReadUInt32LittleEndian(legacy.AsSpan(offset + 48)) == 0;
+                BinaryPrimitives.WriteUInt32LittleEndian(legacy.AsSpan(offset + 48), 0xFFFFFFFF);
+                if (count != 0) lastPayload = offset + 56;
+                offset += 56 + count;
+            }
+            Check(zeroed, "journal writers store zero in the retired header and frame CRC fields");
+
+            using (var current = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(journal.Path, 0, committedSequence,
+                committedLength, Convert.ToHexStringLower(SHA256.HashData(bytes))))
+            using (var stream = await CreateUtf8StreamAsync(baseline))
+            using (var input = stream.GetInputStreamAt(0))
+                await restored.RestoreUtf8Async(input, (ulong)baseline.Length, current);
+            Equal(edited, restored.GetText(restored.Length + 1), "a journal with zero CRC fields validates and replays");
+
+            var legacyFile = await folder.CreateFileAsync("legacy-crc.npj");
+            await FileIO.WriteBytesAsync(legacyFile, legacy);
+            using (var checkpoint = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(legacyFile.Path, 0, committedSequence,
+                committedLength, Convert.ToHexStringLower(SHA256.HashData(legacy))))
+            {
+                using (var stream = await CreateUtf8StreamAsync(baseline))
+                using (var input = stream.GetInputStreamAt(0))
+                    await restored.RestoreUtf8Async(input, (ulong)baseline.Length, checkpoint);
+                Equal(edited, restored.GetText(restored.Length + 1), "a legacy journal with nonzero CRC fields validates and replays");
+
+                // Change validated bytes without breaking structure: only the prefix hash can catch it.
+                legacy[lastPayload] ^= 0x01;
+                await FileIO.WriteBytesAsync(legacyFile, legacy);
+                var candidate = await folder.CreateFileAsync("rejected-import.npj");
+                var rejectedImport = false;
+                try { await restored.StartJournalFromCheckpointAsync(candidate.Path, checkpoint); }
+                catch (Exception) { rejectedImport = true; }
+                var adopted = true;
+                try { using (restored.AcquireJournalCheckpoint()) { } }
+                catch (Exception) { adopted = false; }
+                Check(rejectedImport && !adopted, "journal import rejects a prefix whose bytes no longer match its hash");
+                Equal(edited, restored.GetText(restored.Length + 1), "a rejected import leaves the document unchanged");
+            }
+        }
+        finally
+        {
+            await editor.StopJournalAsync();
+            await restored.StopJournalAsync();
             GC.KeepAlive(fixture);
             GC.KeepAlive(restoredFixture);
         }
@@ -1150,7 +1375,9 @@ public sealed partial class App : Application
                 try { await import; }
                 catch (OperationCanceledException) { }
                 Check(!canceled.ReadOnly, "canceling journal preparation leaves no private edit freeze");
-                await canceled.LoadTextAsync("after canceled import");
+                using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("after canceled import")))
+                using (var input = stream.GetInputStreamAt(0))
+                    await canceled.LoadUtf8Async(input, stream.Size, false);
                 Equal("after canceled import", canceled.GetText(canceled.Length + 1),
                     "a replacement can immediately follow canceled journal preparation");
             }
@@ -1177,6 +1404,24 @@ public sealed partial class App : Application
             "native editor wrappers can be collected while owning UI remains active");
         WriteDiagnostic("Native lifecycle: finalizer-thread release completed");
     }
+
+    private static async Task CheckDisposeReleasesDocumentAsync()
+    {
+        var closed = new TextEditorCore();
+        await closed.LoadTextAsync("closed tab😀\r");
+        var native = ((WinUIEditor.EditorBaseControl)((Grid)closed.Content).Children[0]).Editor;
+        Check(native.Length != 0, "the disposal fixture has text");
+        closed.Dispose();
+        Check(native.Length == 0 && closed.GetText().Length == 0, "Dispose releases the native document");
+        closed.Dispose();
+
+        var leased = new TextEditorCore();
+        await leased.LoadTextAsync("leased tab\r");
+        var leasedNative = ((WinUIEditor.EditorBaseControl)((Grid)leased.Content).Children[0]).Editor;
+        using (leasedNative.AcquireUtf8Reader()) leased.Dispose();
+        Check(leasedNative.Length != 0, "Dispose keeps a document that a reader still leases");
+    }
+
     private static void Equal(string expected, string actual, string test)
     {
         Check(expected == actual,
@@ -1207,6 +1452,51 @@ public sealed partial class App : Application
         }
     }
 
+    // EditorThemes.xaml keeps the editor colors that were previously hard-coded.
+    private static void CheckEditorPalette()
+    {
+        var light = EditorColorPalette.ForTheme(ElementTheme.Light, highContrast: false);
+        var dark = EditorColorPalette.ForTheme(ElementTheme.Dark, highContrast: false);
+        Check(light[EditorColorRole.Background] == Windows.UI.Colors.Transparent &&
+            dark[EditorColorRole.Background] == Windows.UI.Colors.Transparent, "editor background stays transparent");
+        Check(light[EditorColorRole.Foreground] == Windows.UI.Colors.Black &&
+            dark[EditorColorRole.Foreground] == Windows.UI.Colors.White, "editor foreground resources");
+        Check(light[EditorColorRole.LineNumber] == Windows.UI.Color.FromArgb(255, 105, 105, 105) &&
+            dark[EditorColorRole.LineNumber] == Windows.UI.Color.FromArgb(255, 150, 150, 150), "line number resources");
+        Check(light[EditorColorRole.CaretLine] == Windows.UI.Color.FromArgb(24, 0, 0, 0) &&
+            dark[EditorColorRole.CaretLine] == Windows.UI.Color.FromArgb(24, 255, 255, 255), "line highlight resources");
+        Check(light[EditorColorRole.SelectionText] == Windows.UI.Colors.White &&
+            dark[EditorColorRole.SelectionText] == Windows.UI.Colors.White, "selected text resources");
+    }
+
+    // Restyling re-wraps a wrapped document. A tab switch, a repeated theme
+    // notification or an unchanged font size must keep the applied styles.
+    private static async Task CheckThemeAppliesOnlyOnChangeAsync(Panel host, TextEditorCore core, WinUIEditor.Editor native)
+    {
+        const int sentinel = 0x123456;
+        native.StyleSetFore(LineNumberStyle, sentinel);
+        var loaded = new TaskCompletionSource();
+        void OnReloaded(object sender, RoutedEventArgs args) => loaded.TrySetResult();
+        core.Loaded += OnReloaded;
+        host.Children.Remove(core);
+        await Task.Delay(50);
+        host.Children.Add(core);
+        await Task.WhenAny(loaded.Task, Task.Delay(2000));
+        core.Loaded -= OnReloaded;
+        Check(loaded.Task.IsCompleted && native.StyleGetFore(LineNumberStyle) == sentinel, "re-entering the visual tree keeps the applied styles");
+        var requestedTheme = core.RequestedTheme;
+        core.RequestedTheme = ThemeSettingsService.ThemeMode == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
+        await Task.Delay(50);
+        core.RequestedTheme = requestedTheme;
+        await Task.Delay(50);
+        Check(native.StyleGetFore(LineNumberStyle) == sentinel, "an unchanged app theme skips ActualThemeChanged restyling");
+        core.SetFontZoomFactor(core.GetFontZoomFactor());
+        Check(native.StyleGetFore(LineNumberStyle) == sentinel, "an unchanged font size skips restyling");
+        core.SetFontZoomFactor(core.GetFontZoomFactor() + 10);
+        Check(native.StyleGetFore(LineNumberStyle) != sentinel, "a font size change restyles");
+        core.SetFontZoomFactor(core.GetFontZoomFactor() - 10);
+    }
+
     private static async Task CheckLoadedIndentationAsync(WinUIEditor.Editor editor)
     {
         var tabWidth = editor.TabWidth;
@@ -1223,24 +1513,13 @@ public sealed partial class App : Application
             foreach (var size in new[] { 0, 2 })
             {
                 editor.Indent = size;
-                foreach (var streamed in new[] { false, true })
-                {
-                    if (streamed)
-                    {
-                        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("    x"));
-                        using var input = stream.AsInputStream();
-                        await editor.LoadUtf8Async(input, (ulong)stream.Length, false);
-                    }
-                    else
-                    {
-                        await editor.LoadTextAsync("    x");
-                    }
-
-                    editor.SetSel(4, 4);
-                    editor.DeleteBack();
-                    Equal(size == 0 ? "x" : "  x", editor.GetText(editor.Length + 1),
-                        "loaded documents retain actual backspace indentation with implicit and explicit indent size");
-                }
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes("    x"));
+                using var input = stream.AsInputStream();
+                await editor.LoadUtf8Async(input, (ulong)stream.Length, false);
+                editor.SetSel(4, 4);
+                editor.DeleteBack();
+                Equal(size == 0 ? "x" : "  x", editor.GetText(editor.Length + 1),
+                    "loaded documents retain actual backspace indentation with implicit and explicit indent size");
             }
         }
         finally
@@ -1395,6 +1674,15 @@ public sealed partial class App : Application
         Check(((await core.FindAsync(wholeWord, false, false)).Status == WinUIEditor.EditorSearchStatus.Found), "whole-word next search");
         core.GetTextSelectionPosition(out var start, out var end);
         Check(start == 11 && end == 15, "Scintilla whole-word search treats underscore as part of a word");
+        foreach (var previous in new[] { false, true })
+        {
+            core.SetText("a needle b");
+            core.SetTextSelectionPosition(5, 5);
+            Check((await core.FindAsync(new SearchContext("needle"), previous, false)).Status == WinUIEditor.EditorSearchStatus.Found,
+                $"wrapped search finds the sole match around the caret (previous: {previous})");
+            core.GetTextSelectionPosition(out start, out end);
+            Check(start == 2 && end == 8, $"wrapped search selects the sole match around the caret (previous: {previous})");
+        }
         core.SetText("test TEST tester test_value");
         Check(((await core.ReplaceAllAsync(new SearchContext("test", matchCase: true, matchWholeWord: true), "X")).Status == WinUIEditor.EditorSearchStatus.Found), "combined case-sensitive whole-word replacement");
         Equal("X TEST tester test_value", core.GetText(), "case-sensitive whole-word replacement result");
@@ -1463,6 +1751,22 @@ public sealed partial class App : Application
         core.SetTextSelectionPosition(0, 0);
         Check(((await core.ReplaceAsync(regex, "$1", false)).Status == WinUIEditor.EditorSearchStatus.Found), "single regex replacement");
         Equal("$1\ra2", core.GetText(), "v1 single regex replacement preserves literal capture syntax");
+        core.SetText("x a1 y\ra2 tail");
+        core.SetTextSelectionPosition(0, 0);
+        Check(((await core.ReplaceAsync(new SearchContext("a(\\d)", useRegex: true), "b", false)).Status == WinUIEditor.EditorSearchStatus.Found),
+            "single regex replacement before undo");
+        Equal("x b y\ra2 tail", core.GetText(), "single regex replacement edits only its match");
+        core.Undo();
+        Equal("x a1 y\ra2 tail", core.GetText(), "undo restores a single regex replacement");
+        Check(native.CurrentPos <= 4, "undoing a single regex replacement keeps the caret at the match, not the document end");
+        core.SetText("a1 x a2");
+        core.SetTextSelectionPosition(7, 7);
+        Check(((await core.ReplaceAsync(new SearchContext("a(\\d)", useRegex: true), "b", true)).Status == WinUIEditor.EditorSearchStatus.Found),
+            "single backward regex replacement");
+        Equal("a1 x b", core.GetText(), "single backward regex replacement edits only the previous match");
+        core.Undo();
+        Equal("a1 x a2", core.GetText(), "undo restores a single backward regex replacement");
+        Check(native.CurrentPos >= 5, "undoing a single backward regex replacement keeps the caret at the match, not the document start");
         core.SetText("a1\ra2");
         Check(((await core.ReplaceAllAsync(regex, "$1\\tX\\n")).Status == WinUIEditor.EditorSearchStatus.Found), "regex replacement escapes");
         Equal("1\tX\r\r2\tX\r", core.GetText(), "regex capture and tab/newline expansion");
@@ -1472,6 +1776,18 @@ public sealed partial class App : Application
         Check((await core.FindAsync(invalidRegex)).Status == WinUIEditor.EditorSearchStatus.InvalidPattern, "invalid regex search reports error");
         Check((await core.ReplaceAllAsync(invalidRegex, "X")).Status == WinUIEditor.EditorSearchStatus.InvalidPattern, "invalid regex replacement reports error");
         Equal("unchanged", core.GetText(), "invalid regex leaves document unchanged");
+
+        WriteDiagnostic("Search behavior: bounded Find seed");
+        var longWord = new string('x', (int)TextEditorCore.SearchPatternLimit + 1);
+        core.SetText("seed " + longWord);
+        core.SetTextSelectionPosition(0, 4);
+        Equal("seed", core.GetSearchString(), "a normal selection seeds Find");
+        core.SetTextSelectionPosition(0, 5 + longWord.Length);
+        Equal(string.Empty, core.GetSearchString(), "a selection over the pattern cap does not seed Find");
+        core.SetTextSelectionPosition(2, 2);
+        Equal("seed", core.GetSearchString(), "the caret word seeds Find");
+        core.SetTextSelectionPosition(10, 10);
+        Equal(string.Empty, core.GetSearchString(), "a caret word over the pattern cap does not seed Find");
         await CheckNativeRegexBehaviorAsync(core);
     }
 
@@ -1538,7 +1854,7 @@ public sealed partial class App : Application
             "previous search excludes a full-input match spanning the origin");
 
         editor.SetText("unchanged");
-        var limited = await editor.FindRegexAsync(new string('a', 32769), true, 0, false, false, -1);
+        var limited = await editor.FindRegexAsync(new string('a', (int)TextEditorCore.SearchPatternLimit + 1), true, 0, false, false, -1);
         Check(limited.Status == WinUIEditor.EditorSearchStatus.ResourceLimit, "bounded pattern reports a distinct resource limit");
         editor.SetText(new string('a', 4096) + "!");
         var timeout = await editor.FindRegexAsync("(a+)+$", true, 0, false, false, -1);
@@ -1633,6 +1949,41 @@ public sealed partial class App : Application
             await editor.StopJournalAsync();
             await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
             GC.KeepAlive(fixture);
+        }
+    }
+
+    // NotepadsDialog takes its theme from the app setting, while the application theme follows Windows.
+    // The host's App.xaml copies the app's dialog and hyperlink resources; each must follow the dialog's theme.
+    private static async Task CheckDialogThemeResourcesAsync()
+    {
+        foreach (var theme in new[] { ElementTheme.Light, ElementTheme.Dark })
+        {
+            // Native AOT needs WinRT casts for objects the framework creates.
+            var probes = WinRT.CastExtensions.As<StackPanel>(Windows.UI.Xaml.Markup.XamlReader.Load(
+                "<StackPanel xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border Background='{ThemeResource HyperlinkForegroundPointerOver}'/>" +
+                "<Border Background='{ThemeResource HyperlinkForegroundPressed}'/></StackPanel>"));
+            var dialog = new ContentDialog { RequestedTheme = theme, Content = probes, CloseButtonText = "Close" };
+            var shown = dialog.ShowAsync().AsTask();
+            // Opened can precede the template, so wait for the template's background element.
+            Border element = null;
+            for (var attempt = 0; element == null && attempt < 250; attempt++)
+            {
+                await Task.Delay(20);
+                element = FindNamedDescendant<Border>(dialog, "BackgroundElement");
+            }
+            static Windows.UI.Color? ColorOf(object border) =>
+                border == null ? null : WinRT.CastExtensions.As<SolidColorBrush>(WinRT.CastExtensions.As<Border>(border).Background).Color;
+            var background = ColorOf(element);
+            var pointerOver = ColorOf(probes.Children[0]);
+            var pressed = ColorOf(probes.Children[1]);
+            dialog.Hide();
+            await shown;
+            var ink = theme == ElementTheme.Light ? (byte)0 : (byte)255;
+            Check(background == (theme == ElementTheme.Light ? Windows.UI.Colors.White : Windows.UI.Color.FromArgb(255, 16, 16, 16)) &&
+                pointerOver == Windows.UI.Color.FromArgb(0x99, ink, ink, ink) && pressed == Windows.UI.Color.FromArgb(0x66, ink, ink, ink),
+                $"a {theme} dialog under the {Application.Current.RequestedTheme} application theme uses its own theme's background " +
+                $"and hyperlink colors (background {background}, pointer over {pointerOver}, pressed {pressed})");
         }
     }
 

@@ -4,9 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using Notepads.Presentation.Helpers;
-using Notepads.Presentation.Input;
 using Notepads.Presentation.Theming;
 using Windows.System;
 using Windows.UI;
@@ -24,16 +22,6 @@ public sealed partial class FindAndReplaceControl : UserControl
     public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
     public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
     public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
-
-    private readonly IList<KeyboardCommand<bool>> _nativeKeyboardCommands = new List<KeyboardCommand<bool>>
-    {
-        new(VirtualKey.F3, null),
-        new(false, false, true, VirtualKey.F3, null),
-        new(false, true, false, VirtualKey.E, null),
-        new(false, true, false, VirtualKey.R, null),
-        new(false, true, false, VirtualKey.W, null),
-        new(true, true, false, VirtualKey.Enter, null)
-    };
 
     //When enter key is pressed focus is returned to control
     //This variable is used to remove flicker in text selection
@@ -282,22 +270,8 @@ public sealed partial class FindAndReplaceControl : UserControl
 
     private void FindAndReplaceRootGrid_KeyDown(object sender, KeyRoutedEventArgs e)
     {
-        var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-        var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-        var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-
-        var isNativeKeyboardCommand = false;
-
-        foreach (var keyboardCommand in _nativeKeyboardCommands)
-        {
-            if (keyboardCommand.Hit(ctrlDown, altDown, shiftDown, e.Key))
-            {
-                isNativeKeyboardCommand = true;
-                break;
-            }
-        }
-
-        if (!isNativeKeyboardCommand && !e.Handled)
+        // The editor's shortcut handler leaves F3 and Shift+F3 to this panel's accelerators.
+        if (!e.Handled)
         {
             OnFindReplaceControlKeyDown?.Invoke(sender, e);
         }

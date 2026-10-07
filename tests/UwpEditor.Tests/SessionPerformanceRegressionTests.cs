@@ -96,7 +96,7 @@ internal static class SessionPerformanceRegressionTests
             documents.Clear();
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
-            SessionTestProtocol.Check(await service.PrepareExplicitCloseAsync(identities[1]),
+            SessionTestProtocol.Check(await service.PrepareExplicitCloseAsync(new[] { identities[1] }),
                 "Explicit close must initialize authority in a fresh service after reset.");
             using (await SessionRecoveryTransaction.EnterAsync())
             {

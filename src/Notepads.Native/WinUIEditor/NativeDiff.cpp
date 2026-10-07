@@ -8,11 +8,14 @@
 #include <cstring>
 #include <limits>
 #include <numeric>
+#include <string>
+#include "UniConversion.h"
 
 namespace WinUIEditor
 {
 	namespace
 	{
+		using Scintilla::Internal::UTF8IsTrailByte;
 		struct WorkExhausted { DiffReason reason{DiffReason::WorkBudget}; };
 		struct Line { uint32_t start{}, length{}; uint64_t hash{}; };
 		struct Match { uint32_t oldLine{}, newLine{}; };
@@ -166,7 +169,9 @@ namespace WinUIEditor
 				Charge();
 				if (oldStart == oldEnd || newStart == newEnd) { Add(oldStart, oldEnd, newStart, newEnd); return; }
 				const auto n = static_cast<int>(oldEnd - oldStart), m = static_cast<int>(newEnd - newStart);
-				const auto limit = static_cast<int>(std::min(_options.maximumEdits, uint32_t{256}));
+				// Bounds the O(D^2) trace even when options allow more edits.
+				constexpr uint32_t MaximumTraceEdits = 256;
+				const auto limit = static_cast<int>(std::min(_options.maximumEdits, MaximumTraceEdits));
 				if (std::abs(n - m) > limit)
 				{
 					_result.coarse = true;
@@ -229,10 +234,10 @@ namespace WinUIEditor
 						if (a.length > 16384 || b.length > 16384) continue;
 						uint32_t prefix = 0, suffix = 0;
 						while (prefix < std::min(a.length, b.length) && _old.At(a.start + prefix) == _new.At(b.start + prefix)) { Charge(); ++prefix; }
-						while (prefix && ((prefix < a.length && (_old.At(a.start + prefix) & 0xc0) == 0x80) ||
-							(prefix < b.length && (_new.At(b.start + prefix) & 0xc0) == 0x80))) --prefix;
+						while (prefix && ((prefix < a.length && UTF8IsTrailByte(_old.At(a.start + prefix))) ||
+							(prefix < b.length && UTF8IsTrailByte(_new.At(b.start + prefix))))) --prefix;
 						while (suffix < std::min(a.length, b.length) - prefix && _old.At(a.start + a.length - 1 - suffix) == _new.At(b.start + b.length - 1 - suffix)) { Charge(); ++suffix; }
-						while (suffix && (((_old.At(a.start + a.length - suffix) & 0xc0) == 0x80) || ((_new.At(b.start + b.length - suffix) & 0xc0) == 0x80))) --suffix;
+						while (suffix && (UTF8IsTrailByte(_old.At(a.start + a.length - suffix)) || UTF8IsTrailByte(_new.At(b.start + b.length - suffix)))) --suffix;
 						if (prefix + suffix == a.length && prefix + suffix == b.length) continue;
 						_result.inlineRanges.push_back({a.start + prefix, a.length - prefix - suffix, b.start + prefix, b.length - prefix - suffix});
 					}

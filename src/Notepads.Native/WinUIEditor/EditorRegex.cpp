@@ -7,6 +7,7 @@
 #include "NativeRegex.h"
 #include "EditorWrapper.h"
 #include "EditorBaseControl.h"
+#include "DrainingAsyncOperation.h"
 #include "NativeJournal.h"
 #include "Helpers.h"
 
@@ -17,93 +18,16 @@ namespace winrt::WinUIEditor::implementation
 	{
 		using SearchResult = WinUIEditor::EditorSearchResult;
 		using SearchOperation = Windows::Foundation::IAsyncOperation<SearchResult>;
-		using CompletionHandler = Windows::Foundation::AsyncOperationCompletedHandler<SearchResult>;
-		using AsyncStatus = Windows::Foundation::AsyncStatus;
-
-		// Cancellation requests stop the worker. Completion is published only after
-		// its read lease and staged journal transaction have both been drained.
-		struct RegexOperation : implements<RegexOperation, SearchOperation, Windows::Foundation::IAsyncInfo>
-		{
-			explicit RegexOperation(std::shared_ptr<::WinUIEditor::RegexJob> job) : _job(std::move(job)) {}
-
-			uint32_t Id() const noexcept { return 1; }
-			AsyncStatus Status() const noexcept
-			{
-				std::lock_guard guard(_mutex);
-				return _status;
-			}
-			hresult ErrorCode() const noexcept
-			{
-				std::lock_guard guard(_mutex);
-				return _error;
-			}
-			void Cancel() noexcept
-			{
-				std::lock_guard guard(_mutex);
-				if (_status == AsyncStatus::Started) _job->canceled.store(true);
-			}
-			void Close() const noexcept {}
-			SearchResult GetResults() const
-			{
-				std::lock_guard guard(_mutex);
-				if (_status == AsyncStatus::Started) throw_hresult(E_ILLEGAL_METHOD_CALL);
-				check_hresult(_error);
-				return _result;
-			}
-			CompletionHandler Completed() const
-			{
-				std::lock_guard guard(_mutex);
-				return _completed ? _completed.get() : nullptr;
-			}
-			void Completed(CompletionHandler const &handler)
-			{
-				AsyncStatus status;
-				{
-					std::lock_guard guard(_mutex);
-					if (_handlerAssigned) throw_hresult(E_ILLEGAL_DELEGATE_ASSIGNMENT);
-					_handlerAssigned = true;
-					status = _status;
-					if (status == AsyncStatus::Started)
-					{
-						_completed = handler ? make_agile(handler) : nullptr;
-						return;
-					}
-				}
-				if (handler) handler(*this, status);
-			}
-			void Finish(SearchResult result, hresult error = S_OK) noexcept
-			{
-				CompletionHandler handler{nullptr};
-				AsyncStatus status;
-				{
-					std::lock_guard guard(_mutex);
-					_result = result;
-					_error = result.Status == Status::Canceled ? hresult{HRESULT_FROM_WIN32(ERROR_CANCELLED)} : error;
-					_status = _error == HRESULT_FROM_WIN32(ERROR_CANCELLED) ? AsyncStatus::Canceled
-						: FAILED(_error) ? AsyncStatus::Error : AsyncStatus::Completed;
-					status = _status;
-					try { if (_completed) handler = _completed.get(); }
-					catch (...) {}
-					_completed = nullptr;
-				}
-				try { if (handler) handler(*this, status); }
-				catch (...) {}
-			}
-
-		private:
-			std::shared_ptr<::WinUIEditor::RegexJob> _job;
-			mutable std::mutex _mutex;
-			AsyncStatus _status{AsyncStatus::Started};
-			hresult _error{S_OK};
-			SearchResult _result{};
-			agile_ref<CompletionHandler> _completed;
-			bool _handlerAssigned{};
-		};
+		using RegexOperation = DrainingAsyncOperation<SearchResult, ::WinUIEditor::RegexJob>;
 
 		fire_and_forget CompleteRegexAsync(com_ptr<RegexOperation> operation, SearchOperation worker)
 		{
-			try { operation->Finish(co_await worker); }
-			catch (...) { operation->Finish({Status::Failed, -1, -1, 0, 0, -1}, to_hresult()); }
+			try
+			{
+				auto result = co_await worker;
+				operation->Finish(result, result.Status == Status::Canceled ? hresult{HRESULT_FROM_WIN32(ERROR_CANCELLED)} : hresult{S_OK});
+			}
+			catch (...) { operation->Finish(::WinUIEditor::StatusResult(Status::Failed), to_hresult()); }
 		}
 
 		struct ComScope
@@ -118,14 +42,12 @@ namespace winrt::WinUIEditor::implementation
 		}
 		void CheckMemory(uint64_t required)
 		{
-			const auto limit = Windows::System::MemoryManager::AppMemoryUsageLimit();
-			const auto used = Windows::System::MemoryManager::AppMemoryUsage();
-			const auto headroom = std::max(uint64_t{32 * 1024 * 1024}, limit / 8);
-			if (used >= limit || headroom >= limit - used || required > limit - used - headroom)
+			if (!::WinUIEditor::HasMemoryHeadroom(required))
 				throw ::WinUIEditor::RegexFailure{Status::ResourceLimit};
 		}
 		struct Candidate
 		{
+			static constexpr size_t BlockBytes = 65536;
 			std::unique_ptr<Scintilla::Internal::Document> document;
 			std::unique_ptr<Scintilla::Internal::IContractionState> contraction;
 			std::string previousText;
@@ -141,7 +63,7 @@ namespace winrt::WinUIEditor::implementation
 				document->SetUndoCollection(false);
 				document->eolMode = Scintilla::EndOfLine::Cr;
 				document->AllocateLineCharacterIndex(Scintilla::LineCharacterIndexType::Utf16);
-				pending.reserve(65540);
+				pending.reserve(BlockBytes + Scintilla::Internal::UTF8MaxBytes);
 			}
 			void Flush(bool final, ::WinUIEditor::RegexJob const &job)
 			{
@@ -149,13 +71,13 @@ namespace winrt::WinUIEditor::implementation
 				size_t count = pending.size();
 				if (!final)
 				{
-					count = std::min(count, size_t{65536});
-					while (count < pending.size() && count && (static_cast<uint8_t>(pending[count]) & 0xc0) == 0x80) --count;
+					count = std::min(count, BlockBytes);
+					while (count < pending.size() && count && Scintilla::Internal::UTF8IsTrailByte(pending[count])) --count;
 					// A block may end inside a scalar. Keep that scalar for the next span.
 					if (count == pending.size() && count)
 					{
 						auto start = count - 1;
-						while (start && (static_cast<uint8_t>(pending[start]) & 0xc0) == 0x80) --start;
+						while (start && Scintilla::Internal::UTF8IsTrailByte(pending[start])) --start;
 						auto lead = static_cast<uint8_t>(pending[start]);
 						auto width = lead < 0x80 ? 1u : lead < 0xe0 ? 2u : lead < 0xf0 ? 3u : 4u;
 						if (count - start < width) count = start;
@@ -177,10 +99,10 @@ namespace winrt::WinUIEditor::implementation
 				while (!bytes.empty())
 				{
 					job.Check();
-					auto count = std::min(bytes.size(), size_t{65536} - pending.size());
+					auto count = std::min(bytes.size(), BlockBytes - pending.size());
 					pending.append(bytes.data(), count);
 					bytes.remove_prefix(count);
-					if (pending.size() == 65536) Flush(false, job);
+					if (pending.size() == BlockBytes) Flush(false, job);
 				}
 			}
 			void Prepare(Scintilla::Internal::Document const &source, ::WinUIEditor::RegexJob const &job)
@@ -223,9 +145,9 @@ namespace winrt::WinUIEditor::implementation
 	{
 		auto job = std::make_shared<::WinUIEditor::RegexJob>();
 		auto operation = make_self<RegexOperation>(job);
-		if (pattern.size() > 32768)
+		if (pattern.size() > ::WinUIEditor::MaximumRegexInput)
 		{
-			operation->Finish({Status::ResourceLimit, -1, -1, 0, 0, -1});
+			operation->Finish(::WinUIEditor::StatusResult(Status::ResourceLimit));
 			return operation.as<SearchOperation>();
 		}
 		::WinUIEditor::RegexRequest request{std::wstring(pattern), {}, matchCase, previous, wrap, false, false, origin, excludedEmpty};
@@ -237,9 +159,9 @@ namespace winrt::WinUIEditor::implementation
 	{
 		auto job = std::make_shared<::WinUIEditor::RegexJob>();
 		auto operation = make_self<RegexOperation>(job);
-		if (pattern.size() > 32768 || replacement.size() > 32768)
+		if (pattern.size() > ::WinUIEditor::MaximumRegexInput || replacement.size() > ::WinUIEditor::MaximumRegexInput)
 		{
-			operation->Finish({Status::ResourceLimit, -1, -1, 0, 0, -1});
+			operation->Finish(::WinUIEditor::StatusResult(Status::ResourceLimit));
 			return operation.as<SearchOperation>();
 		}
 		::WinUIEditor::RegexRequest request{std::wstring(pattern), std::wstring(replacement), matchCase, previous, false, true, replaceAll, origin};
@@ -252,11 +174,11 @@ namespace winrt::WinUIEditor::implementation
 	{
 		auto lifetime = get_strong();
 		auto view = _editor.get();
-		WinUIEditor::EditorSearchResult result{Status::Stale, -1, -1, 0, 0, -1};
+		auto result = ::WinUIEditor::StatusResult(Status::Stale);
 		if (!view || view->IsFinalized()) co_return result;
 		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
 		if (_regexJob || _textLoadState) co_return result;
-		if (CodePage() != 65001 || request.origin < 0 || request.origin > Length()) throw hresult_invalid_argument();
+		if (CodePage() != Scintilla::CpUtf8 || request.origin < 0 || request.origin > Length()) throw hresult_invalid_argument();
 		if (request.replace && (ReadOnly() || !view->IsEnabled())) { result.Status = Status::ReadOnly; co_return result; }
 		_regexJob = job;
 		struct ActiveJob
@@ -274,8 +196,15 @@ namespace winrt::WinUIEditor::implementation
 			com_ptr<EditorBaseControl> view;
 			DWORD ownerThread;
 			bool &disconnected;
+			bool held{true};
+			void Release()
+			{
+				held = false;
+				view->ReleaseReadLease();
+			}
 			~ReadLease()
 			{
+				if (!held) return;
 				if (GetCurrentThreadId() != ownerThread && !disconnected) std::terminate();
 				view->ReleaseReadLease();
 			}
@@ -286,23 +215,29 @@ namespace winrt::WinUIEditor::implementation
 		if (document.LengthNoExcept() > INT32_MAX) { result.Status = Status::ResourceLimit; co_return result; }
 		auto source = Split(document.AllView());
 		std::shared_ptr<::WinUIEditor::NativeDocumentJournal> journal;
-		if (request.replace) journal = view->PrepareJournalReplacement();
+		if (request.replaceAll) journal = view->PrepareJournalReplacement();
 		struct JournalPreparation
 		{
 			std::shared_ptr<::WinUIEditor::NativeDocumentJournal> journal;
 			~JournalPreparation() { if (journal && journal->PreparingReplacement()) journal->AbandonReplacement(); }
 		} preparation{journal};
 		std::unique_ptr<Candidate> candidate;
+		std::string replacementText;
 		co_await resume_background();
 		try
 		{
 			ComScope com;
 			result = ::WinUIEditor::RunRegex(source, request, *job, [&](auto bytes)
 			{
+				if (!request.replaceAll)
+				{
+					replacementText.append(bytes);
+					return;
+				}
 				if (!candidate) candidate = std::make_unique<Candidate>(document);
 				candidate->Emit(bytes, *job);
 			});
-			if (request.replace && result.Status == Status::Found)
+			if (request.replaceAll && result.Status == Status::Found)
 			{
 				if (!candidate) candidate = std::make_unique<Candidate>(document);
 				candidate->Prepare(document, *job);
@@ -322,14 +257,28 @@ namespace winrt::WinUIEditor::implementation
 			if (job->canceled.load()) result.Status = Status::Canceled;
 			else if (view->IsFinalized() || revision != view->DocumentRevision() || selectionRevision != view->SelectionRevision()) result.Status = Status::Stale;
 			else if (request.replace && !view->IsEnabled()) result.Status = Status::ReadOnly;
-			else if (result.Status == Status::Found && job->Interruption() != Status::Found) result.Status = job->Interruption();
-			if (request.replace && result.Status == Status::Found)
+			if (request.replaceAll && result.Status == Status::Found)
 			{
 				view->PublishPreparedReplacement(*candidate->document, candidate->previousText.data(), std::move(candidate->contraction), true);
 				committed = true;
 				if (journal) journal->CommitReplacement();
 				result.Revision = view->DocumentRevision();
 				result.SelectionRevision = view->SelectionRevision();
+			}
+			else if (request.replace && result.Status == Status::Found)
+			{
+				// One ordinary range edit: undone in place and journaled like typing.
+				lease.Release();
+				if (ReadOnly()) result.Status = Status::ReadOnly;
+				else
+				{
+					auto call = view->Call();
+					call->SetTargetRange(result.Start, result.End);
+					call->ReplaceTarget(static_cast<Scintilla::Position>(replacementText.size()), replacementText.data());
+					result.End = result.Start + static_cast<int64_t>(replacementText.size());
+					result.Revision = view->DocumentRevision();
+					result.SelectionRevision = view->SelectionRevision();
+				}
 			}
 		}
 		catch (hresult_error const &error)

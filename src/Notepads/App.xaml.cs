@@ -221,10 +221,12 @@ public sealed partial class App : Application
     private async void OnSuspending(object sender, SuspendingEventArgs args)
     {
         var deferral = args.SuspendingOperation.GetDeferral();
+        // Reserved before the deadline so the deferral still completes in time.
+        var margin = TimeSpan.FromMilliseconds(250);
 
         try
         {
-            var remaining = args.SuspendingOperation.Deadline - DateTimeOffset.Now - TimeSpan.FromMilliseconds(250);
+            var remaining = args.SuspendingOperation.Deadline - DateTimeOffset.Now - margin;
             using (var cancellation = new System.Threading.CancellationTokenSource())
             {
                 if (remaining <= TimeSpan.Zero) cancellation.Cancel();
@@ -234,7 +236,7 @@ public sealed partial class App : Application
             // Here we flush the Clipboard again to make sure content in clipboard to remain available
             // after the application shuts down.
             Clipboard.Flush();
-            await LoggingService.FlushUntilAsync(args.SuspendingOperation.Deadline - TimeSpan.FromMilliseconds(250));
+            await LoggingService.FlushUntilAsync(args.SuspendingOperation.Deadline - margin);
         }
         catch (Exception)
         {
@@ -297,28 +299,4 @@ public sealed partial class App : Application
         titleBar.ButtonBackgroundColor = Colors.Transparent;
         titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
     }
-
-    //private static void UpdateAppVersion()
-    //{
-    //    var packageVer = Package.Current.Id.Version;
-    //    string oldVer = ApplicationSettingsStore.Read(SettingsKey.AppVersionStr) as string ?? "";
-    //    string currentVer = $"{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}.{packageVer.Revision}";
-
-    //    if (currentVer != oldVer)
-    //    {
-    //        JumpListService.IsJumpListOutOfDate = true;
-    //        ApplicationSettingsStore.Write(SettingsKey.AppVersionStr, currentVer);
-    //    }
-    //}
-
-    //private static async Task UpdateJumpListAsync()
-    //{
-    //    if (JumpListService.IsJumpListOutOfDate)
-    //    {
-    //        if (await JumpListService.UpdateJumpListAsync())
-    //        {
-    //            JumpListService.IsJumpListOutOfDate = false;
-    //        }
-    //    }
-    //}
 }

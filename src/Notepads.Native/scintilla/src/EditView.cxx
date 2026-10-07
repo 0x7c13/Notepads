@@ -281,7 +281,7 @@ void EditView::DropGraphics() noexcept {
 }
 
 void EditView::DrawDisplayGap(Surface *surfaceWindow, Surface *surface, PRectangle rcGap,
-	ColourRGBA back, ColourRGBA gap, ColourRGBA hatch, XYPOSITION screenOffset) {
+	ColourRGBA back, ColourRGBA gap, ColourRGBA hatch) {
 	const int dpi = surfaceWindow->LogPixelsY();
 	if (!pixmapDiffGap || back != diffGapBack || gap != diffGapColour || hatch != diffGapHatch || dpi != diffGapDpi) {
 		// One small repeating tile, independent of document or viewport size.
@@ -306,9 +306,7 @@ void EditView::DrawDisplayGap(Surface *surfaceWindow, Surface *surface, PRectang
 		}
 	}
 	if (pixmapDiffGap) {
-		// Pattern origin is in target coordinates. Buffered rows compensate for
-		// their screen offset so diagonal strokes stay continuous across rows.
-		surface->FillRectangle(rcGap, *pixmapDiffGap, Point(0, -screenOffset));
+		surface->FillRectangle(rcGap, *pixmapDiffGap);
 	} else {
 		surface->FillRectangleAligned(rcGap, back);
 		if (gap.GetAlpha()) surface->FillRectangleAligned(rcGap, gap);
@@ -2589,8 +2587,7 @@ void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const V
 					if (FlagSet(phase, DrawPhase::back)) {
 						DrawDisplayGap(surfaceWindow, surface, rcGap, vsDraw.styles[StyleDefault].back,
 							ColourRGBA(static_cast<int>(model.pcs->DisplayGapColour())),
-							ColourRGBA(static_cast<int>(model.pcs->DisplayGapHatchColour())),
-							static_cast<XYPOSITION>(yposScreen - ypos));
+							ColourRGBA(static_cast<int>(model.pcs->DisplayGapHatchColour())));
 					}
 					if (bufferedDraw) {
 						const Point from = Point::FromInts(vsDraw.textStart - leftTextOverlap, 0);

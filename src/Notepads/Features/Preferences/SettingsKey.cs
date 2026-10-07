@@ -8,8 +8,6 @@ namespace Notepads.Features.Preferences;
 internal static class SettingsKey
 {
     // App related
-    internal static string AppVersionStr = "AppVersionStr";
-    internal static string IsJumpListOutOfDateBool = "IsJumpListOutOfDateBool";
     internal static string ActiveInstanceIdStr = "ActiveInstanceIdStr";
     internal static string ExitWhenLastTabClosed = "ExitWhenLastTabClosed";
     internal static string AlwaysOpenNewWindowBool = "AlwaysOpenNewWindowBool";

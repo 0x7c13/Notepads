@@ -357,6 +357,14 @@ public static class ApplicationPreferences
         }
     }
 
+    // Each window is its own process: pick up a change another window stored. Returns whether it changed.
+    public static bool RefreshSessionSnapshotSetting()
+    {
+        var cached = _isSessionSnapshotEnabled;
+        InitializeSessionSnapshotSettings();
+        return _isSessionSnapshotEnabled != cached;
+    }
+
     private static void InitializeLineEndingSettings()
     {
         if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultLineEndingStr) is string lineEndingStr &&

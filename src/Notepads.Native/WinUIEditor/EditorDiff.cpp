@@ -16,13 +16,9 @@ namespace winrt::WinUIEditor::implementation
 	namespace
 	{
 		using DiffOperation = DrainingAsyncOperation<WinUIEditor::EditorDiffResult, ::WinUIEditor::DiffJob>;
-		bool HasMemory(uint64_t required)
-		{
-			const auto limit = Windows::System::MemoryManager::AppMemoryUsageLimit();
-			const auto used = Windows::System::MemoryManager::AppMemoryUsage();
-			const auto reserve = std::max(uint64_t{32 * 1024 * 1024}, limit / 8);
-			return used < limit && reserve < limit - used && required <= limit - used - reserve;
-		}
+		constexpr uint64_t DiffScratchBytes = 64 * 1024 * 1024;
+		// A container indicator slot (8..31); lexers own 0..7.
+		constexpr int DiffInlineIndicator = 25;
 		::WinUIEditor::DiffText Split(Scintilla::Internal::SplitView view) noexcept
 		{
 			return {{view.segment1, view.length1}, {view.segment2 + view.length1, view.length - view.length1}};
@@ -44,13 +40,13 @@ namespace winrt::WinUIEditor::implementation
 		auto view = _editor.get();
 		if (!view || view->IsFinalized()) throw_hresult(RO_E_CLOSED);
 		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
-		if (savedByteLength > INT32_MAX || savedLines == 0 || savedLines > 1000000 ||
-			static_cast<uint64_t>(LineCount()) > 1000000 - savedLines || Length() > INT32_MAX) return false;
+		if (savedByteLength > INT32_MAX || savedLines == 0 || savedLines > ::WinUIEditor::MaximumDiffLines ||
+			static_cast<uint64_t>(LineCount()) > ::WinUIEditor::MaximumDiffLines - savedLines || Length() > INT32_MAX) return false;
 		// Candidate text/gap capacity, optional styles, UTF-16/contraction indices,
 		// bounded comparison scratch, projected results and rendering maps.
 		const auto bytes = savedByteLength + static_cast<uint64_t>(Length());
 		const auto lines = savedLines + static_cast<uint64_t>(LineCount());
-		return HasMemory(bytes * 4 + lines * 160 + 64 * 1024 * 1024);
+		return ::WinUIEditor::HasMemoryHeadroom(bytes * 4 + lines * 160 + DiffScratchBytes);
 	}
 	Windows::Foundation::IAsyncOperation<WinUIEditor::EditorDiffResult> Editor::CompareAsync(WinUIEditor::Editor other)
 	{
@@ -68,7 +64,7 @@ namespace winrt::WinUIEditor::implementation
 		auto left = _editor.get(), right = opposite->_editor.get();
 		if (!left || !right || left->IsFinalized() || right->IsFinalized()) throw_hresult(RO_E_CLOSED);
 		if (!left->Dispatcher().HasThreadAccess() || !right->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
-		if (CodePage() != 65001 || opposite->CodePage() != 65001 || _textLoadState || opposite->_textLoadState)
+		if (CodePage() != Scintilla::CpUtf8 || opposite->CodePage() != Scintilla::CpUtf8 || _textLoadState || opposite->_textLoadState)
 			throw hresult_invalid_argument();
 		auto owner = apartment_context();
 		const auto ownerThread = GetCurrentThreadId();
@@ -87,7 +83,7 @@ namespace winrt::WinUIEditor::implementation
 		DiffStatus status = DiffStatus::Unavailable;
 		::WinUIEditor::DiffResult data;
 		data.reason = ::WinUIEditor::DiffReason::Memory;
-		if (HasMemory(64 * 1024 * 1024))
+		if (::WinUIEditor::HasMemoryHeadroom(DiffScratchBytes))
 		{
 			co_await resume_background();
 			try
@@ -122,7 +118,7 @@ namespace winrt::WinUIEditor::implementation
 			!get_self<implementation::EditorDiffResult>(result)->Matches(view.get(), oldSide) ||
 			view->DocumentRevision() != (oldSide ? result.OldRevision() : result.NewRevision()) ||
 			static_cast<uint64_t>(Length()) != (oldSide ? result.OldByteLength() : result.NewByteLength())) throw hresult_invalid_argument();
-		if (!HasMemory(4 * 1024 * 1024)) throw_hresult(E_OUTOFMEMORY);
+		if (!::WinUIEditor::HasMemoryHeadroom(4 * 1024 * 1024)) throw_hresult(E_OUTOFMEMORY);
 		auto const &data = get_self<implementation::EditorDiffResult>(result)->Data();
 		std::vector<Scintilla::Internal::DisplayGap> gaps;
 		std::vector<Scintilla::Internal::TintedLineRange> tints;
@@ -139,10 +135,10 @@ namespace winrt::WinUIEditor::implementation
 			if (oppositeCount > count) gaps.push_back({static_cast<Sci::Line>(start + count), static_cast<Sci::Line>(oppositeCount - count)});
 		}
 		view->SetDisplayLineMap(std::move(gaps), std::move(tints));
-		IndicatorCurrent(25);
+		IndicatorCurrent(DiffInlineIndicator);
 		IndicatorClearRange(0, Length());
-		IndicSetStyle(25, WinUIEditor::IndicatorStyle::StraightBox);
-		IndicSetUnder(25, true);
+		IndicSetStyle(DiffInlineIndicator, WinUIEditor::IndicatorStyle::StraightBox);
+		IndicSetUnder(DiffInlineIndicator, true);
 		for (auto const &range : data.inlineRanges)
 		{
 			const auto start = oldSide ? range.oldStart : range.newStart;
@@ -156,19 +152,19 @@ namespace winrt::WinUIEditor::implementation
 		if (!view || view->IsFinalized()) throw_hresult(RO_E_CLOSED);
 		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
 		view->SetDisplayColours(static_cast<unsigned int>(line), static_cast<unsigned int>(gap), static_cast<unsigned int>(gapHatch));
-		IndicSetFore(25, inlineColour & 0xffffff);
+		IndicSetFore(DiffInlineIndicator, inlineColour & 0xffffff);
 		const auto alpha = static_cast<WinUIEditor::Alpha>(static_cast<uint32_t>(inlineColour) >> 24);
-		IndicSetAlpha(25, alpha);
-		IndicSetOutlineAlpha(25, alpha);
+		IndicSetAlpha(DiffInlineIndicator, alpha);
+		IndicSetOutlineAlpha(DiffInlineIndicator, alpha);
 	}
-	void Editor::ReleaseDiffDocument()
+	void Editor::DetachDocument()
 	{
 		auto view = _editor.get();
 		if (!view || view->IsFinalized()) return;
 		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
 		if (_textLoadState) throw_hresult(E_ILLEGAL_METHOD_CALL);
-		// SetDocPointer performs the native read-lease check and retires the owned
-		// document, lexer and display map. Large preview buffers need not wait for GC.
+		// SetDocPointer performs the native read-lease and journal checks and retires
+		// the owned document, lexer and display map. Large buffers need not wait for GC.
 		view->PublicWndProc(Scintilla::Message::SetDocPointer, 0, 0);
 	}
 }

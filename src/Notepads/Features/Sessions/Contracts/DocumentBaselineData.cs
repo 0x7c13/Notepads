@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using Notepads.Features.Documents.Contracts;
 
 namespace Notepads.Features.Sessions.Contracts;
@@ -30,7 +29,7 @@ internal sealed class DocumentBaselineData
     public void Validate()
     {
         if (GenerationId == Guid.Empty || ByteLength < 0 || ByteLength > DocumentLimits.MaximumCanonicalByteLength ||
-            Sha256 == null || Sha256.Length != 64 || Sha256.Any(character => !IsHexadecimal(character)))
+            !Sha256Hex.IsValid(Sha256))
         {
             throw new InvalidDataException("Invalid immutable document baseline identity.");
         }
@@ -49,7 +48,4 @@ internal sealed class DocumentBaselineData
             throw new InvalidDataException("A document baseline references an invalid owned file name.");
         }
     }
-
-    private static bool IsHexadecimal(char character) =>
-        character >= '0' && character <= '9' || character >= 'a' && character <= 'f' || character >= 'A' && character <= 'F';
 }

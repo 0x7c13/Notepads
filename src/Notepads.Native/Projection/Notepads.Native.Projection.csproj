@@ -19,8 +19,8 @@
     <Platforms>x86;x64;ARM64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <PackageReference Include="Microsoft.Services.Store.Engagement" Version="10.2307.3001" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+    <PackageReference Include="Microsoft.Services.Store.Engagement" GeneratePathProperty="true" />
     <ProjectReference Include="..\WinUIEditor\WinUIEditor.vcxproj">
       <SetPlatform Condition="'$(Platform)' == 'x86'">Platform=Win32</SetPlatform>
     </ProjectReference>

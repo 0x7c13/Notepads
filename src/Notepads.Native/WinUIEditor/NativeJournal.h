@@ -51,6 +51,7 @@ namespace WinUIEditor
 		void Stop() noexcept;
 		void WaitStopped();
 		bool IsStopped();
+		bool Faulted();
 		static JournalPrefix Validate(std::wstring path, uint64_t baseSequence, uint64_t sequence, uint64_t byteLength,
 			std::string const &sha256, std::function<bool()> const &canceled = {});
 		static std::shared_ptr<NativeJournalFile> Import(
@@ -82,6 +83,7 @@ namespace WinUIEditor
 		uint64_t _baseSequence{};
 		uint64_t _logicalBytes{};
 		uint64_t _writtenBytes{};
+		uint64_t _flushedBytes{};
 		uint64_t _writtenSequence{};
 		uint64_t _writtenDocumentLength{};
 		std::map<uint64_t, std::weak_ptr<JournalDigest>> _requestedHashes;

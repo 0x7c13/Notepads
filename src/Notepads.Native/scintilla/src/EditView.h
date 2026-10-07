@@ -140,7 +140,7 @@ public:
 
 private:
 	void DrawDisplayGap(Surface *surfaceWindow, Surface *surface, PRectangle rcGap,
-		ColourRGBA back, ColourRGBA gap, ColourRGBA hatch, XYPOSITION screenOffset);
+		ColourRGBA back, ColourRGBA gap, ColourRGBA hatch);
 	void UpdateMaxWidth(XYPOSITION width) noexcept;
 	void DrawEOL(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 		Sci::Line line, int xStart, PRectangle rcLine, int subLine, Sci::Position lineEnd, XYPOSITION subLineStart, ColourOptional background);

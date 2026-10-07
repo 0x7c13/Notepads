@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Отвори помоћу Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ово је копија прозора Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Датотека је већ отворена!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Нови прозор</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Отвара нови прозор</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Нови прозор</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Отвори недавне</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Иди на ред</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Екстензија датотеке "{0}" тренутно није подржана</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Затворите</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Неуспешно је опорављање података из последње сесије због оштећених података. Молимо вас да направите резервну копију свих ваших несачуваних фајлова (*.txt) у фасцикли сесије.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Опоравак сесије блокирају датотеке за опоравак које Notepads не може да провери, па је ова радња отказана да би ваши документи остали безбедни. Отворите фасциклу за опоравак и направите засебну копију пре него што поправите или уклоните било коју датотеку.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Отворите фасциклу за резервну копију сесије</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Упозорење</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Није могуће направити резервну копију сесије. Сачувајте датотеке и покушајте поново.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Опоравак сесије блокирају датотеке за опоравак које Notepads не може да провери. Отворите фасциклу за опоравак и копирајте их пре него што било шта поправите или уклоните.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Неке картице није било могуће вратити. Њихове резервне копије сачуване су у фасцикли резервних копија сесије.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Датотека је сачувана локално. Синхронизација са облаком још није завршена.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Замена садржи неважећи текст.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Стари текст, сачувана верзија</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Претходна измена (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Поређење није могуће припремити са доступним ресурсима. Документ није промењен.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документи већи од 1 МБ не могу да се одштампају.</value></data>
 </root>

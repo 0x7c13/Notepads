@@ -15,31 +15,37 @@ using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Validation;
 using Notepads.Infrastructure.Diagnostics;
-using Windows.Storage;
 
 namespace Notepads.Features.Sessions.Recovery;
 
 /// <summary>Interprets immutable content roots separately from durable lifecycle decisions.</summary>
 internal static class SessionRecoveryCatalog
 {
-    // Callers hold store admission throughout all catalog reads and repairs.
+    // Callers hold store admission throughout all catalog reads and repairs. A pass shares
+    // lifecycle reads between the catalog reads of that one admission.
     public static async Task<RecoveryScopeSnapshot> ReadScopeAsync(Guid scopeId,
-        CancellationToken cancellation = default, bool content = true)
+        CancellationToken cancellation = default, bool content = true, RecoveryCatalogPass pass = null)
     {
         using var measurement = OperationMetrics.Measure("session.catalog");
         var store = RecoveryRootStore.CreateStore();
-        var result = await ReadControlAsync(store, scopeId, cancellation);
+        pass ??= new RecoveryCatalogPass();
+        // Copy the shared control's verdict; the pass keeps exactly what was read.
+        var control = await ReadControlAsync(store, scopeId, pass, cancellation);
+        var result = new RecoveryScopeSnapshot { Stamp = SessionRecoveryAuthority.CopyStamp(control.Stamp) };
+        result.Decisions.AddRange(control.Decisions);
+        if (control.Blocked) Block(result, control.AttentionReason);
         if (!store.ScanLayout().IsComplete) Block(result, "The recovery layout contains unrecognized roots.");
         var scopes = store.EnumerateScopeIds();
         if (!scopes.IsComplete) Block(result, "The recovery scope directory cannot be enumerated reliably.");
         foreach (var owner in scopes.Entries.Where(owner => owner != scopeId))
         {
-            var other = await ReadControlAsync(store, owner, cancellation);
+            var other = await ReadControlAsync(store, owner, pass, cancellation);
             // A missing foreign consumption decision can resurrect this source.
             if (other.Blocked) Block(result, "A recovery lifecycle decision cannot be verified.");
             result.GlobalRecords.AddRange(other.Decisions);
         }
-        result.GlobalRecords.AddRange(await ReadGlobalAsync(store, RecoveryAreaKind.Transfers, cancellation));
+        pass.Transfers ??= await ReadGlobalAsync(store, RecoveryAreaKind.Transfers, cancellation);
+        result.GlobalRecords.AddRange(pass.Transfers);
         if (result.GlobalRecords.Any(read => read.State != RecoveryReadState.Valid))
             Block(result, "A transfer lifecycle decision cannot be verified.");
         if (!content || result.Blocked) return result;
@@ -63,7 +69,6 @@ internal static class SessionRecoveryCatalog
         result.SelectedCheckpoint = result.Checkpoints.Where(read => read.State == RecoveryReadState.Valid &&
             SessionRecoveryAuthority.SameEpoch(read.Record.Stamp, result.Stamp))
             .OrderByDescending(read => read.Address.Ordinal).FirstOrDefault();
-        result.HasCheckpointEvidence = result.Checkpoints.Count != 0;
         result.Session = result.SelectedCheckpoint == null ? new NotepadsSessionDataV2() :
             CloneSession(result.SelectedCheckpoint.Record.Session);
         result.Session.Scope ??= new SessionScopeData
@@ -132,6 +137,14 @@ internal static class SessionRecoveryCatalog
     }
 
     private static async Task<RecoveryScopeSnapshot> ReadControlAsync(RecoveryRecordStore store, Guid scopeId,
+        RecoveryCatalogPass pass, CancellationToken cancellation)
+    {
+        if (!pass.Controls.TryGetValue(scopeId, out var control))
+            pass.Controls[scopeId] = control = await ReadControlAsync(store, scopeId, cancellation);
+        return control;
+    }
+
+    private static async Task<RecoveryScopeSnapshot> ReadControlAsync(RecoveryRecordStore store, Guid scopeId,
         CancellationToken cancellation)
     {
         var result = new RecoveryScopeSnapshot { Stamp = new RecoveryStamp { ScopeId = scopeId, EpochId = scopeId } };
@@ -142,8 +155,10 @@ internal static class SessionRecoveryCatalog
         foreach (var address in scan.Entries.OrderBy(address => address.Ordinal))
         {
             var read = await store.ReadAsync(address, true, cancellation);
-            var intent = await store.ReadResetIntentAsync(address, cancellation);
-            if (intent.State != RecoveryReadState.Absent)
+            // Only an intent copy the scan saw can exist under admission; an incomplete scan probes every decision.
+            var intent = !scan.IsComplete || scan.ResetIntents.Contains(address) ?
+                await store.ReadResetIntentAsync(address, cancellation) : null;
+            if (intent != null && intent.State != RecoveryReadState.Absent)
             {
                 if (intent.State != RecoveryReadState.Valid)
                 {
@@ -211,9 +226,11 @@ internal static class SessionRecoveryCatalog
     }
 
     public static async Task<IReadOnlyList<SessionRecoverySource>> ReadInactiveSourcesAsync(Guid currentOwnerId,
-        ISet<Guid> liveInstances, CancellationToken cancellationToken = default)
+        ISet<Guid> liveInstances, CancellationToken cancellationToken = default, RecoveryCatalogPass pass = null)
     {
         var store = RecoveryRootStore.CreateStore();
+        // Every inactive scope's catalog read needs every scope's decisions; read them once.
+        pass ??= new RecoveryCatalogPass();
         var sources = new List<SessionRecoverySource>();
         var scan = store.EnumerateScopeIds();
         if (!scan.IsComplete) throw new InvalidDataException("Inactive recovery scopes cannot be enumerated reliably.");
@@ -229,7 +246,7 @@ internal static class SessionRecoveryCatalog
                 try
                 {
                     reader = SessionScopeLease.AcquireReader(owner);
-                    var snapshot = await ReadScopeAsync(owner, cancellationToken);
+                    var snapshot = await ReadScopeAsync(owner, cancellationToken, pass: pass);
                     if (snapshot.Blocked)
                     {
                         // The primary catalog has already verified every
@@ -290,19 +307,20 @@ internal static class SessionRecoveryCatalog
         catch { foreach (var source in sources) source.Dispose(); throw; }
     }
 
-    public static async Task<SessionRecoveryReferences> ReadReferencesAsync(string backupFolderName,
-        CancellationToken cancellationToken = default)
+    public static async Task<SessionRecoveryReferences> ReadReferencesAsync(
+        CancellationToken cancellationToken = default, RecoveryCatalogPass pass = null)
     {
         var store = RecoveryRootStore.CreateStore();
+        pass ??= new RecoveryCatalogPass();
         var references = new SessionRecoveryReferences();
         if (!store.ScanLayout().IsComplete) references.BlocksGlobalCollection = true;
         var scopes = store.EnumerateScopeIds();
         if (!scopes.IsComplete) references.BlocksGlobalCollection = true;
         var controls = new Dictionary<Guid, RecoveryScopeSnapshot>();
-        var transfers = await ReadGlobalAsync(store, RecoveryAreaKind.Transfers, cancellationToken);
+        var transfers = pass.Transfers ??= await ReadGlobalAsync(store, RecoveryAreaKind.Transfers, cancellationToken);
         foreach (var owner in scopes.Entries)
         {
-            var control = await ReadControlAsync(store, owner, cancellationToken);
+            var control = await ReadControlAsync(store, owner, pass, cancellationToken);
             controls[owner] = control;
             if (control.Blocked) references.BlockedOwners.Add(owner);
         }
@@ -326,17 +344,6 @@ internal static class SessionRecoveryCatalog
         foreach (var read in transfers) IncludeContentReferences(references, read, controls, decisions);
         foreach (var read in await ReadGlobalAsync(store, RecoveryAreaKind.Archives, cancellationToken))
             IncludeContentReferences(references, read, controls, decisions);
-        foreach (var file in await ApplicationData.Current.LocalFolder.GetFilesAsync())
-        {
-            if (file.Name != "NotepadsSessionData.json" && !SessionScopeData.TryGetSecondaryOwner(file.Name, out _)) continue;
-            try
-            {
-                var (legacy, _, error) = await SessionManifestStore.ReadLegacyAsync(file.Name, cancellationToken);
-                if (error != null) references.BlocksGlobalCollection = true;
-                else if (legacy != null) references.Include(legacy);
-            }
-            catch (Exception) { references.BlocksGlobalCollection = true; }
-        }
         return references;
     }
 
@@ -396,4 +403,17 @@ internal static class SessionRecoveryCatalog
     {
         result.Blocked = true; result.Outcome = SessionRecoveryOutcome.Blocked; result.AttentionReason ??= reason;
     }
+}
+
+/// <summary>
+/// Lifecycle controls and transfer roots read once for one admitted operation. Create it under that
+/// admission and drop it with it, so authority is never cached across admissions.
+/// </summary>
+internal sealed class RecoveryCatalogPass
+{
+    internal Dictionary<Guid, RecoveryScopeSnapshot> Controls { get; } = [];
+    internal List<RecoveryReadResult> Transfers { get; set; }
+
+    /// <summary>A caller that publishes a decision in this pass must invalidate that scope.</summary>
+    public void Invalidate(Guid scopeId) => Controls.Remove(scopeId);
 }

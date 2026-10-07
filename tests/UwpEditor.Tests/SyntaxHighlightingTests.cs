@@ -19,6 +19,9 @@ namespace NotepadsEditorTests;
 
 internal static class SyntaxHighlightingTests
 {
+    // Owns this test's temporary baselines; each is deleted when its last lease closes.
+    private static readonly Guid BaselineOwner = Guid.NewGuid();
+
     private static readonly (string Id, string Text, string Token, SyntaxColorRole Role)[] Samples =
     [
         ("cpp", "// note\rint count = 42;\rconst char* message = \"hi\";\r", "int", SyntaxColorRole.Keyword),
@@ -122,9 +125,11 @@ internal static class SyntaxHighlightingTests
         core.SetSyntaxLanguage(DocumentLanguages.PlainText, "sample.txt");
         native.Colourise(0, -1);
         foreach (var style in ReadStyles(native)) Check(style == 0, "Plain Text clears stale lexical styles");
+        Check(native.IdleStyling == WinUIEditor.IdleStyling.None, "Plain Text stops idle styling");
 
         core.SetSyntaxLanguage(DocumentLanguages.Find("csharp"), "sample.cs");
         native.Colourise(0, -1);
+        Check(native.IdleStyling == WinUIEditor.IdleStyling.ToVisible, "an installed lexer resumes idle styling");
         ThemeSettingsService.SetTheme(ElementTheme.Light);
         core.RequestedTheme = ElementTheme.Light;
         await Task.Delay(100);
@@ -166,7 +171,7 @@ internal static class SyntaxHighlightingTests
     {
         core.SetSyntaxLanguage(DocumentLanguages.Find("json"), "sample.json");
         var bytes = Encoding.UTF8.GetBytes("{\"ok\":true}\r");
-        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask());
+        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
         await core.LoadBaselineAsync(baseline, false);
         native.Colourise(0, -1);
         Check(native.GetStyleAt(6) == 11, "streamed baseline attaches optional style storage");
@@ -183,40 +188,44 @@ internal static class SyntaxHighlightingTests
     }
 
 #if DEBUG
+    // Debug-only PrivateLexerCall opcodes handled in ScintillaWin.cxx.
+    private const int FailStyleAllocation = 0x4E500001;
+    private const int FailSyntaxAllocation = 0x4E500002;
+
     private static async Task CheckStyleAllocationFailureAsync(TextEditorCore core, WinUIEditor.Editor native)
     {
-        const int faultOperation = 0x4E500001;
         core.SetSyntaxLanguage(DocumentLanguages.Find("json"), "sample.json");
         var bytes = Encoding.UTF8.GetBytes("{\"ok\":true}\r");
-        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask());
-        native.PrivateLexerCall(faultOperation, 1);
+        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
+        native.PrivateLexerCall(FailStyleAllocation, 1);
         await core.LoadBaselineAsync(baseline, false);
-        Check(native.SyntaxHighlightingPauseReason == 4 && core.GetText() == "{\"ok\":true}\r",
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && core.GetText() == "{\"ok\":true}\r",
             "optional allocation failure after streamed publication preserves a successful load");
         native.SetSel(native.Length, native.Length);
         native.PasteText(" ");
         native.Colourise(0, -1);
-        Check(native.SyntaxHighlightingPauseReason == 4, "memory pause is latched through ordinary editing/painting");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.IdleStyling == WinUIEditor.IdleStyling.None,
+            "memory pause is latched through ordinary editing/painting and stops idle styling");
         core.RetrySyntaxHighlighting();
-        Check(native.SyntaxHighlightingPauseReason == 0, "explicit language retry resumes after memory pressure");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "explicit language retry resumes after memory pressure");
 
         native.BeginUndoAction();
-        native.PrivateLexerCall(faultOperation, 2);
+        native.PrivateLexerCall(FailStyleAllocation, 2);
         native.PasteText(" ");
         native.EndUndoAction();
-        Check(native.SyntaxHighlightingPauseReason == 4 && core.GetText().EndsWith("  ", StringComparison.Ordinal),
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && core.GetText().EndsWith("  ", StringComparison.Ordinal),
             "optional style growth failure does not fail text insertion");
         native.Undo();
-        Check(core.GetText().EndsWith(" ", StringComparison.Ordinal) && native.SyntaxHighlightingPauseReason == 4,
+        Check(core.GetText().EndsWith(" ", StringComparison.Ordinal) && native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory,
             "memory fallback retains undo and avoids allocation retries");
         native.Redo();
         Check(core.GetText().EndsWith("  ", StringComparison.Ordinal), "memory fallback retains redo");
 
         await core.LoadBaselineAsync(baseline, false);
-        Check(native.SyntaxHighlightingPauseReason == 0, "complete reload retries optional syntax memory");
-        native.PrivateLexerCall(faultOperation, 1);
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "complete reload retries optional syntax memory");
+        native.PrivateLexerCall(FailStyleAllocation, 1);
         await core.LoadBaselineAsync(baseline, true);
-        Check(native.SyntaxHighlightingPauseReason == 4 && native.CanUndo() && core.GetText() == "{\"ok\":true}\r",
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.CanUndo() && core.GetText() == "{\"ok\":true}\r",
             "post-publication style allocation failure preserves a successful replacement and undo");
         core.RetrySyntaxHighlighting();
     }
@@ -225,7 +234,7 @@ internal static class SyntaxHighlightingTests
     {
         core.SetSyntaxLanguage(DocumentLanguages.Find("json"), "sample.json");
         var bytes = Encoding.UTF8.GetBytes("{\"ok\":true}\r");
-        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask());
+        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
         await core.LoadBaselineAsync(baseline, false);
         var folder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync(
             "SyntaxJournal-" + Guid.NewGuid().ToString("N"));
@@ -233,23 +242,24 @@ internal static class SyntaxHighlightingTests
         {
             var file = await folder.CreateFileAsync("active.npj");
             native.StartJournal(file.Path, 0);
-            native.PrivateLexerCall(0x4E500001, 2);
+            native.PrivateLexerCall(FailStyleAllocation, 2);
             native.SetSel(native.Length, native.Length);
             native.PasteText(" ");
-            Check(native.SyntaxHighlightingPauseReason == 4 && native.DocumentSequence == 1,
+            Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.DocumentSequence == 1,
                 "optional growth failure does not interrupt journal commit");
             native.Undo();
             Check(native.DocumentSequence == 2 && core.GetText() == "{\"ok\":true}\r",
                 "journal undo remains consistent after optional allocation failure");
-            native.PrivateLexerCall(0x4E500001, 1);
+            native.PrivateLexerCall(FailStyleAllocation, 1);
             await core.LoadBaselineAsync(baseline, true);
-            Check(native.SyntaxHighlightingPauseReason == 4 && native.DocumentSequence == 3,
+            Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.DocumentSequence == 3,
                 "optional post-publication failure does not interrupt replacement journal commit");
+            // Points 1-5: shared state, factory, lex interface, keywords and properties.
             for (var point = 1; point <= 5; point++)
             {
-                native.PrivateLexerCall(0x4E500002, (ulong)point);
+                native.PrivateLexerCall(FailSyntaxAllocation, (ulong)point);
                 await core.LoadBaselineAsync(baseline, true);
-                Check(native.SyntaxHighlightingPauseReason == 4 && native.DocumentSequence == (ulong)(3 + point),
+                Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.DocumentSequence == (ulong)(3 + point),
                     "complete optional configuration failure preserves journal commit at point " + point);
             }
             using var checkpoint = native.AcquireJournalCheckpoint();
@@ -269,30 +279,29 @@ internal static class SyntaxHighlightingTests
 
     private static async Task CheckLexerAllocationFailureAsync(TextEditorCore core, WinUIEditor.Editor native)
     {
-        const int faultOperation = 0x4E500002;
         core.SetSyntaxLanguage(DocumentLanguages.Find("json"), "sample.json");
         var bytes = Encoding.UTF8.GetBytes("{\"ok\":true}\r");
-        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask());
+        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
+        // Points 1-5: shared state, factory, lex interface, keywords and properties are optional.
         for (var point = 1; point <= 5; point++)
         {
-            // Shared state, factory, lex interface, keywords and properties are optional.
             var version = core.ContentVersion;
             var textChanged = 0;
             void OnTextChanged(object sender, RoutedEventArgs args) => textChanged++;
             core.TextChanged += OnTextChanged;
             try
             {
-                native.PrivateLexerCall(faultOperation, (ulong)point);
+                native.PrivateLexerCall(FailSyntaxAllocation, (ulong)point);
                 await core.LoadBaselineAsync(baseline, false);
-                Check(native.SyntaxHighlightingPauseReason == 4 && core.GetText() == "{\"ok\":true}\r" &&
+                Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && core.GetText() == "{\"ok\":true}\r" &&
                     core.ContentVersion > version && textChanged == 1,
                     "post-publication configuration failure preserves successful load and notification at point " + point);
                 native.SetSel(native.Length, native.Length);
                 native.PasteText(" ");
-                Check(native.SyntaxHighlightingPauseReason == 4, "configuration failure is latched through edits");
+                Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory, "configuration failure is latched through edits");
                 core.RetrySyntaxHighlighting();
                 native.Colourise(0, -1);
-                Check(native.SyntaxHighlightingPauseReason == 0 && native.GetStyleAt(6) == 11,
+                Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None && native.GetStyleAt(6) == 11,
                     "explicit retry restores a complete configuration after point " + point);
             }
             finally { core.TextChanged -= OnTextChanged; }
@@ -300,25 +309,26 @@ internal static class SyntaxHighlightingTests
 
         core.SetSyntaxLanguage(DocumentLanguages.Find("cpp"), "sample.cpp");
         await core.LoadTextAsync("int before;\r/* note */\rint after;\r");
+        // Points 6-7: Lex and Fold.
         for (var point = 6; point <= 7; point++)
         {
-            native.PrivateLexerCall(faultOperation, (ulong)point);
+            native.PrivateLexerCall(FailSyntaxAllocation, (ulong)point);
             native.Colourise(0, -1);
-            Check(native.SyntaxHighlightingPauseReason == 4 && native.EndStyled == native.Length,
+            Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.EndStyled == native.Length,
                 "Lex/Fold allocation failure pauses with complete plain styling at point " + point);
             foreach (var style in ReadStyles(native)) Check(style == 0, "OOM clears partially colored styles");
             await Task.Delay(50);
             core.RetrySyntaxHighlighting();
             native.Colourise(0, -1);
-            Check(native.SyntaxHighlightingPauseReason == 0 && native.GetStyleAt(0) == 5,
+            Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None && native.GetStyleAt(0) == 5,
                 "Lex/Fold failure leaves styling reentrancy state reusable at point " + point);
         }
 
-        native.PrivateLexerCall(faultOperation, 6);
+        native.PrivateLexerCall(FailSyntaxAllocation, 6);
         native.InsertText(native.PositionFromLine(1), " ");
         var timer = Stopwatch.StartNew();
-        while (native.SyntaxHighlightingPauseReason != 4 && timer.ElapsedMilliseconds < 10000) await Task.Delay(16);
-        Check(native.SyntaxHighlightingPauseReason == 4 && native.EndStyled == native.Length,
+        while (native.SyntaxHighlightingPauseReason != WinUIEditor.EditorSyntaxPauseReason.Memory && timer.ElapsedMilliseconds < 10000) await Task.Delay(16);
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.EndStyled == native.Length,
             "idle Lex allocation failure is contained before returning through the timer ABI");
         core.RetrySyntaxHighlighting();
         native.Colourise(0, -1);
@@ -334,13 +344,14 @@ internal static class SyntaxHighlightingTests
         var wrappedLines = native.WrapCount(0);
         Check(wrappedLines > 1, "OOM wrap fixture establishes multiline layout");
         Check(native.GetStyleAt(native.PositionFromLine(199)) == 5, "distant fixture starts fully colored");
+        // Points 6-7: Lex and Fold.
         for (var point = 6; point <= 7; point++)
         {
-            native.PrivateLexerCall(faultOperation, (ulong)point);
+            native.PrivateLexerCall(FailSyntaxAllocation, (ulong)point);
             native.InsertText(0, " ");
             var wait = Stopwatch.StartNew();
-            while (native.SyntaxHighlightingPauseReason != 4 && wait.ElapsedMilliseconds < 10000) await Task.Delay(16);
-            Check(native.SyntaxHighlightingPauseReason == 4 && native.EndStyled == native.Length && native.Lexer == 0,
+            while (native.SyntaxHighlightingPauseReason != WinUIEditor.EditorSyntaxPauseReason.Memory && wait.ElapsedMilliseconds < 10000) await Task.Delay(16);
+            Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.Memory && native.EndStyled == native.Length && native.Lexer == 0,
                 "paint/idle failure retires the failed lexer at point " + point);
             foreach (var style in ReadStyles(native)) Check(style == 0, "idle OOM clears all previous regions");
             Check(native.WrapCount(0) == wrappedLines, "OOM cleanup preserves word-wrap heights and scroll mapping");
@@ -375,7 +386,7 @@ internal static class SyntaxHighlightingTests
         var source = new StringBuilder();
         for (var line = 0; line < 25000; line++) source.Append("int value = 42; /* note */\r");
         var bytes = Encoding.UTF8.GetBytes(source.ToString());
-        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask());
+        using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
         var memory = Windows.System.MemoryManager.AppMemoryUsage;
         var timer = Stopwatch.StartNew();
         await core.LoadBaselineAsync(baseline, false);
@@ -404,46 +415,46 @@ internal static class SyntaxHighlightingTests
         Configure(native, SyntaxLanguageProfile.Create("json", "sample.json"));
         var longLine = new string('x', 65537);
         native.SetText("{}\r" + longLine + "\r{}\r" + longLine + "\r{}");
-        Check(native.SyntaxHighlightingPauseReason == 3, "multiple long lines pause coloring");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LongLine, "multiple long lines pause coloring");
         native.Colourise(0, -1);
         Check(native.GetStyleAt(0) == 0, "paused lexer supplies plain styles");
         native.InsertText(0, "{}\r");
-        Check(native.SyntaxHighlightingPauseReason == 3, "insertion before long lines retains pause");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LongLine, "insertion before long lines retains pause");
         var first = native.PositionFromLine(2);
         native.DeleteRange(first, 3);
-        Check(native.SyntaxHighlightingPauseReason == 3, "repairing one of multiple long lines retains pause");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LongLine, "repairing one of multiple long lines retains pause");
         var second = native.PositionFromLine(4);
         native.DeleteRange(second, 3);
-        Check(native.SyntaxHighlightingPauseReason == 0, "repairing every long line resumes coloring");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "repairing every long line resumes coloring");
         native.Undo();
-        Check(native.SyntaxHighlightingPauseReason == 3, "undo restores admission pause");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LongLine, "undo restores admission pause");
         native.Redo();
-        Check(native.SyntaxHighlightingPauseReason == 0, "redo resumes coloring");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "redo resumes coloring");
         native.DeleteRange(0, 3);
-        Check(native.SyntaxHighlightingPauseReason == 0, "line deletion before repaired offenders shifts admission indices");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "line deletion before repaired offenders shifts admission indices");
 
         native.SetText(new string('x', 40000) + "\r" + new string('x', 40000));
-        Check(native.SyntaxHighlightingPauseReason == 0, "individual eligible lines remain admitted");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "individual eligible lines remain admitted");
         native.DeleteRange(40000, 1);
-        Check(native.SyntaxHighlightingPauseReason == 3, "line merging pauses before lexing the merged long line");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LongLine, "line merging pauses before lexing the merged long line");
         native.Undo();
-        Check(native.SyntaxHighlightingPauseReason == 0, "undo split restores admission");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "undo split restores admission");
 
         native.UndoCollection = false;
         Checkpoint("Admission: line-count boundary");
         native.SetText(new string('\r', 200000));
-        Check(native.SyntaxHighlightingPauseReason == 2, "native line-count budget pauses coloring");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.LineCount, "native line-count budget pauses coloring");
         native.DeleteRange(0, 1);
-        Check(native.SyntaxHighlightingPauseReason == 0, "native line-count budget resumes after repair");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "native line-count budget resumes after repair");
         Checkpoint("Admission: byte-count boundary with bounded lines");
         var fixture = new StringBuilder(32 * 1024 * 1024 + 1);
         var line = new string('x', 1023) + "\r";
         for (var index = 0; index < 32768; index++) fixture.Append(line);
         fixture.Append('x');
         native.SetText(fixture.ToString());
-        Check(native.SyntaxHighlightingPauseReason == 1, "canonical byte budget pauses before line scan");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.DocumentSize, "canonical byte budget pauses before line scan");
         native.SetText("{\"ok\":true}");
-        Check(native.SyntaxHighlightingPauseReason == 0, "small replacement resumes a paused lexer");
+        Check(native.SyntaxHighlightingPauseReason == WinUIEditor.EditorSyntaxPauseReason.None, "small replacement resumes a paused lexer");
         native.Colourise(0, -1);
         Check(native.GetStyleAt(6) == 11, "resumed lexer retains keyword configuration");
         native.UndoCollection = true;

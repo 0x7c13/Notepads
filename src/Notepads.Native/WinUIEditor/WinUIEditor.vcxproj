@@ -272,6 +272,7 @@
     </Midl>
     <Midl Include="EditorSearch.idl" />
     <Midl Include="EditorDiffResult.idl" />
+    <Midl Include="EditorSyntax.idl" />
     <Midl Include="EditorUtf8Reader.idl">
       <DependentUpon>EditorUtf8Reader.cpp</DependentUpon>
       <SubType>Code</SubType>

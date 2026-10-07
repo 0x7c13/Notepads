@@ -10,14 +10,17 @@
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="NotepadsHyperlinkPointerOverColor">#99FFFFFF</Color>
                     <Color x:Key="NotepadsHyperlinkPressedColor">#66FFFFFF</Color>
+                    <Color x:Key="NotepadsDialogBackgroundColor">#101010</Color>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="NotepadsHyperlinkPointerOverColor">#99000000</Color>
                     <Color x:Key="NotepadsHyperlinkPressedColor">#66000000</Color>
+                    <Color x:Key="NotepadsDialogBackgroundColor">White</Color>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <StaticResource x:Key="NotepadsHyperlinkPointerOverColor" ResourceKey="SystemColorWindowTextColor" />
                     <StaticResource x:Key="NotepadsHyperlinkPressedColor" ResourceKey="SystemColorHighlightColor" />
+                    <StaticResource x:Key="NotepadsDialogBackgroundColor" ResourceKey="SystemColorWindowColor" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <ResourceDictionary.MergedDictionaries>
@@ -34,12 +37,12 @@
                 <ResourceDictionary Source="Resource/CustomToggleSwitchStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomNavigationViewItemStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Resource/CustomAppBarButtonStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Resource/CustomCheckBoxStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Direct entries override WinUI's merged brushes; themed colors preserve high contrast. -->
             <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{ThemeResource NotepadsHyperlinkPointerOverColor}" />
             <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{ThemeResource NotepadsHyperlinkPressedColor}" />
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="{ThemeResource NotepadsDialogBackgroundColor}" />
 
             <Style x:Key="CompactSubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
                 <Setter Property="FontSize" Value="18"/>

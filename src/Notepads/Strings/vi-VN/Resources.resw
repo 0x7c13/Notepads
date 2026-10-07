@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Mở bằng Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Đây là cửa sổ bổ sung của Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Tệp đã được mở rồi!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Mở trong cửa sổ mới</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Cửa sổ mới</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Cửa sổ mới</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Tệp đã mở gần đây</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Đi đến dòng</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Chưa hỗ trợ định dạng "{0}" tại thời điểm này</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Đóng</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Không thể khôi phục dữ liệu từ phiên trước do dữ liệu bị hỏng. Vui lòng sao lưu tất cả các tệp chưa lưu (*.txt) trong thư mục phiên làm việc.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Khôi phục phiên đang bị chặn bởi các tệp khôi phục mà Notepads không thể xác minh, vì vậy thao tác này đã bị hủy để giữ an toàn cho tài liệu của bạn. Hãy mở thư mục khôi phục để tạo một bản sao riêng trước khi sửa chữa hoặc xóa bất kỳ tệp nào.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Mở thư mục sao lưu phiên làm việc</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Cảnh báo</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Không thể sao lưu phiên. Hãy lưu các tệp rồi thử lại.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Khôi phục phiên đang bị chặn bởi các tệp khôi phục mà Notepads không thể xác minh. Hãy mở thư mục khôi phục để sao chép chúng trước khi sửa chữa hoặc xóa bất cứ thứ gì.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Không thể khôi phục một số thẻ. Bản sao lưu của chúng vẫn được giữ trong thư mục sao lưu phiên.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Tệp đã được lưu cục bộ. Đồng bộ hóa với đám mây vẫn chưa hoàn tất.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Nội dung thay thế chứa văn bản không hợp lệ.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Văn bản cũ, phiên bản đã lưu</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Thay đổi trước (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Không thể chuẩn bị so sánh với tài nguyên hiện có. Tài liệu của bạn không bị thay đổi.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Không thể in tài liệu lớn hơn 1 MB.</value></data>
 </root>

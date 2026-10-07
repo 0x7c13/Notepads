@@ -11,6 +11,9 @@ namespace Notepads.Features.Documents.Text;
 
 internal static class CanonicalLineCounter
 {
+    // Mirrors the native MaximumDiffLines (NativeDiff.h); diff admission rejects any larger count.
+    private const long MaximumDiffLines = 1_000_000;
+
     // Counted streaming admission; no strings or per-line allocations.
     internal static async Task<long> CountAsync(Stream stream, CancellationToken cancellationToken)
     {
@@ -22,7 +25,7 @@ internal static class CanonicalLineCounter
             if (count == 0) return lines;
             for (var i = 0; i < count; i++)
                 if (buffer[i] == '\r') lines++;
-            if (lines > 1_000_000) return lines;
+            if (lines > MaximumDiffLines) return lines;
         }
     }
 }

@@ -3,7 +3,6 @@
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Notepads.Features.Sessions.Contracts.Legacy;
 
@@ -16,5 +15,4 @@ namespace Notepads.Features.Sessions.Contracts;
 [JsonSerializable(typeof(RecoveryRecord))]
 internal sealed partial class SessionJsonContext : JsonSerializerContext
 {
-    internal static SessionJsonContext Indented { get; } = new(new JsonSerializerOptions { WriteIndented = true });
 }

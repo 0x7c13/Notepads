@@ -88,7 +88,7 @@ internal static class RecoveryRecordCodec
                         throw new InvalidDataException("Unknown recovery envelope field.");
                 }
             }
-            if (version != FormatVersion || !IsSha256(hash) || payload.IsEmpty)
+            if (version != FormatVersion || !Sha256Hex.IsValid(hash) || payload.IsEmpty)
                 throw new InvalidDataException("Invalid recovery envelope version, hash or payload.");
             var actualHash = Convert.ToHexStringLower(SHA256.HashData(payload));
             if (!string.Equals(hash, actualHash, StringComparison.OrdinalIgnoreCase))
@@ -101,14 +101,6 @@ internal static class RecoveryRecordCodec
         {
             throw new InvalidDataException("Invalid recovery envelope.", error);
         }
-    }
-
-    internal static bool IsSha256(string value)
-    {
-        if (value?.Length != 64) return false;
-        foreach (var character in value)
-            if (!(character is >= '0' and <= '9' or >= 'a' and <= 'f' or >= 'A' and <= 'F')) return false;
-        return true;
     }
 
     public static void ValidateJson(ReadOnlySpan<byte> json)
@@ -178,7 +170,7 @@ internal static class RecoveryRecordCodec
         {
             if (consumption == null || !Enum.IsDefined(consumption.Kind) || consumption.SourceEditorId == Guid.Empty ||
                 consumption.SourceCaptureRevision < 0 || consumption.SourceCaptureRevision == long.MaxValue ||
-                consumption.Kind == RecoveryConsumptionKind.Legacy && !IsSha256(consumption.LegacyFingerprint) ||
+                consumption.Kind == RecoveryConsumptionKind.Legacy && !Sha256Hex.IsValid(consumption.LegacyFingerprint) ||
                 consumption.Kind == RecoveryConsumptionKind.Inactive && (consumption.SourceScopeId == Guid.Empty || consumption.SourceEpochId == Guid.Empty))
             {
                 throw new InvalidDataException("Invalid source consumption identity.");
@@ -190,7 +182,7 @@ internal static class RecoveryRecordCodec
         var fingerprints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var fingerprint in record.ResetAcceptedLegacySources)
         {
-            if (!IsSha256(fingerprint) || !fingerprints.Add(fingerprint))
+            if (!Sha256Hex.IsValid(fingerprint) || !fingerprints.Add(fingerprint))
                 throw new InvalidDataException("Invalid or duplicate legacy source suppression.");
         }
 
@@ -210,7 +202,7 @@ internal static class RecoveryRecordCodec
             throw new InvalidDataException("An adoption must bind its exact source consumption identity.");
         }
 
-        if (record.TargetReceiptSha256 != null && !IsSha256(record.TargetReceiptSha256))
+        if (record.TargetReceiptSha256 != null && !Sha256Hex.IsValid(record.TargetReceiptSha256))
             throw new InvalidDataException("Invalid target receipt checksum.");
         var localOwner = address.Area.AllowsForeignOwners ? Guid.Empty : stamp.ScopeId;
         if (record.Session != null)
@@ -306,7 +298,7 @@ internal static class RecoveryRecordCodec
         {
             if (record.SourceEditor == null || record.SourceEditor.Journal.OwnerId != record.SourceStamp.ScopeId ||
                 record.SourceEditor.SavedBaseline.OwnerId != record.SourceStamp.ScopeId || record.SourceEditor.RecoveryBaseline.OwnerId != record.SourceStamp.ScopeId ||
-                record.SourceEditor.Id != source.SourceEditorId || record.TargetReceiptOperationId == Guid.Empty || !IsSha256(record.TargetReceiptSha256) ||
+                record.SourceEditor.Id != source.SourceEditorId || record.TargetReceiptOperationId == Guid.Empty || !Sha256Hex.IsValid(record.TargetReceiptSha256) ||
                 !string.Equals(record.SourceEditor.ComputeSha256(), source.DescriptorSha256, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidDataException("A source move does not bind its source capture and durable target receipt.");

@@ -21,7 +21,7 @@ internal static class DocumentTextPipeline
     public static async Task<DocumentSnapshot> DecodeFileAsync(
         StorageFile file,
         DocumentLoadOptions options,
-        Guid? ownerId = null,
+        Guid ownerId,
         IProgress<DocumentTextProgress> progress = null,
         CancellationToken cancellationToken = default)
     {
@@ -99,7 +99,7 @@ internal static class DocumentTextPipeline
                 {
                     decoded = await DocumentTextCodec.DecodeToCanonicalUtf8Async(source, canonical,
                         effectiveEncoding, preambleLength, progress, cancellationToken).ConfigureAwait(false);
-                }, cancellationToken, ownerId).ConfigureAwait(false);
+                }, ownerId, cancellationToken).ConfigureAwait(false);
                 try
                 {
                     await ValidateSourceAsync().ConfigureAwait(false);

@@ -120,7 +120,9 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            ApplySelectionAppearance();
+            // A contrast-scheme switch also arrives here: refresh every system color, not only the selection.
+            if (_accessibility.HighContrast) ApplyTheme();
+            else ApplySelectionAppearance();
         });
     }
 }

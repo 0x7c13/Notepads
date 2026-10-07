@@ -18,6 +18,8 @@ namespace Notepads.Presentation.Controls.TextEditor;
 
 public sealed partial class TextEditorCore
 {
+    // Mirrors the native MaximumRegexInput (NativeRegex.h).
+    internal const long SearchPatternLimit = 32 * 1024;
     private string _emptyMatchPattern;
     private bool _emptyMatchCase;
     private bool _emptyMatchPrevious;
@@ -27,8 +29,14 @@ public sealed partial class TextEditorCore
 
     public string GetSearchString()
     {
-        var text = HasSelection ? GetSelectedText().Trim() : ReadRange(
-            Native.WordStartPosition(Native.CurrentPos, true), Native.WordEndPosition(Native.CurrentPos, true));
+        var selection = HasSelection;
+        var start = selection ? Native.SelectionStart : Native.WordStartPosition(Native.CurrentPos, true);
+        var end = selection ? Native.SelectionEnd : Native.WordEndPosition(Native.CurrentPos, true);
+        // Check before reading: the native regex rejects longer patterns, and a
+        // range's UTF-8 bytes never undercount its UTF-16 units.
+        if (end - start > SearchPatternLimit) return string.Empty;
+        var text = ReadRange(start, end);
+        if (selection) text = text.Trim();
         return text.Contains("\r") ? string.Empty : text;
     }
 
@@ -75,8 +83,9 @@ public sealed partial class TextEditorCore
         else
         {
             var found = FindLiteral(context, origin, previous ? 0 : Native.Length);
+            // Wrap over the whole document, so a sole match around the caret is found.
             if (found < 0 && !stopAtBoundary)
-                found = FindLiteral(context, previous ? Native.Length : 0, origin);
+                found = FindLiteral(context, previous ? Native.Length : 0, previous ? 0 : Native.Length);
             result = SearchResult(found >= 0 ? EditorSearchStatus.Found : EditorSearchStatus.NotFound);
             if (found >= 0)
             {
@@ -116,8 +125,8 @@ public sealed partial class TextEditorCore
             {
                 return result;
             }
-            // Prepared publication resets the caret. Continue from the edit,
-            // preserving V1's selection of the following/preceding match.
+            // Continue from the edit, preserving V1's selection of the
+            // following/preceding match.
             var caret = previous ? result.Start : result.End;
             try { Native.SetSel(caret, caret); }
             catch (Exception error)

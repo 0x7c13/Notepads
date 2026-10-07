@@ -16,5 +16,4 @@ internal sealed class SettingsContext
     }
     public WindowContext Window { get; }
     public string ApplicationName => Window.ApplicationName;
-    public bool IsPrimaryInstance => Window.IsPrimaryInstance;
 }

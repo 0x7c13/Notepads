@@ -5,9 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Notepads.Features.Documents;
 using Notepads.Features.Documents.Contracts;
+using Notepads.Features.Documents.IO;
 using Notepads.Features.Documents.Storage;
+using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
 using Windows.Storage;
 using WinUIEditor;
@@ -49,6 +53,23 @@ internal sealed class PreparedRecoveryDocument : IDisposable
     public EditorJournalCheckpoint Checkpoint { get; set; }
     public bool TextDirty { get; set; }
     public bool InitializeFromFile { get; set; }
+
+    /// <summary>Reopen a clean tab from its file, as V1 did: the file may have changed since capture.</summary>
+    public static async Task<PreparedRecoveryDocument> FromFileAsync(Guid id, DocumentMetadata metadata,
+        StorageFile file, Guid ownerId, DocumentLoadOptions defaults, CancellationToken cancellation)
+    {
+        var options = new DocumentLoadOptions(EncodingCatalog.GetEncodingByName(metadata.LastSavedEncoding),
+            defaults.GetInitialEncoding());
+        return new PreparedRecoveryDocument
+        {
+            Id = id,
+            Metadata = metadata,
+            EditingFile = file,
+            FileNamePlaceholder = file.Name,
+            SavedSnapshot = await DocumentTextPipeline.DecodeFileAsync(file, options, ownerId, cancellationToken: cancellation),
+            InitializeFromFile = true
+        };
+    }
 
     public void Dispose()
     {

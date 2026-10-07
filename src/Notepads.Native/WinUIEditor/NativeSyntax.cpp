@@ -14,22 +14,22 @@ extern const Lexilla::LexerModule lmCPP, lmPython, lmJSON, lmHTML, lmXML, lmCss,
 namespace WinUIEditor
 {
 #ifdef _DEBUG
-	static thread_local int syntaxAllocationFailurePoint;
-	void FailSyntaxAllocationForTesting(int point) noexcept { syntaxAllocationFailurePoint = point; }
-	void CheckSyntaxAllocationForTesting(int point)
+	static thread_local SyntaxFaultPoint syntaxAllocationFailurePoint;
+	void FailSyntaxAllocationForTesting(SyntaxFaultPoint point) noexcept { syntaxAllocationFailurePoint = point; }
+	void CheckSyntaxAllocationForTesting(SyntaxFaultPoint point)
 	{
 		if (syntaxAllocationFailurePoint == point)
 		{
-			syntaxAllocationFailurePoint = 0;
+			syntaxAllocationFailurePoint = {};
 			throw std::bad_alloc();
 		}
 	}
 #endif
-	int SyntaxHighlightingState::SizeReason(Scintilla::Internal::Document const &document) const noexcept
+	EditorSyntaxPauseReason SyntaxHighlightingState::SizeReason(Scintilla::Internal::Document const &document) const noexcept
 	{
-		if (document.Length() > MaxBytes) return 1;
-		if (document.LinesTotal() > MaxLines) return 2;
-		return 0;
+		if (document.Length() > MaxBytes) return EditorSyntaxPauseReason::DocumentSize;
+		if (document.LinesTotal() > MaxLines) return EditorSyntaxPauseReason::LineCount;
+		return EditorSyntaxPauseReason::None;
 	}
 
 	void SyntaxHighlightingState::CheckLines(Scintilla::Internal::Document const &document, Sci_Position first, Sci_Position last)
@@ -44,11 +44,11 @@ namespace WinUIEditor
 		if (_memoryPaused) return;
 		_longLines.clear();
 		_pauseReason = SizeReason(document);
-		_indexed = _pauseReason == 0;
+		_indexed = _pauseReason == EditorSyntaxPauseReason::None;
 		if (_indexed)
 		{
 			CheckLines(document, 0, document.LinesTotal() - 1);
-			if (!_longLines.empty()) _pauseReason = 3;
+			if (!_longLines.empty()) _pauseReason = EditorSyntaxPauseReason::LongLine;
 		}
 	}
 
@@ -57,7 +57,7 @@ namespace WinUIEditor
 		if (_memoryPaused) return false;
 		const auto previous = _pauseReason;
 		const auto sizeReason = SizeReason(document);
-		if (sizeReason != 0)
+		if (sizeReason != EditorSyntaxPauseReason::None)
 		{
 			_pauseReason = sizeReason;
 			_indexed = false;
@@ -78,7 +78,7 @@ namespace WinUIEditor
 				_longLines.swap(shifted);
 			}
 			CheckLines(document, first, first + std::max<Sci_Position>(0, change.linesAdded));
-			_pauseReason = _longLines.empty() ? 0 : 3;
+			_pauseReason = _longLines.empty() ? EditorSyntaxPauseReason::None : EditorSyntaxPauseReason::LongLine;
 		}
 		return previous != _pauseReason;
 	}
@@ -101,37 +101,27 @@ namespace WinUIEditor
 			const char *SCI_METHOD DescribeProperty(const char *name) override { return _inner->DescribeProperty(name); }
 			Sci_Position SCI_METHOD PropertySet(const char *key, const char *value) override
 			{
-				if (_state->PauseReason() == 4) return -1;
-				try
-				{
 #ifdef _DEBUG
-					CheckSyntaxAllocationForTesting(5);
+				CheckSyntaxAllocationForTesting(SyntaxFaultPoint::Properties);
 #endif
-					return _inner->PropertySet(key, value);
-				}
-				catch (const std::bad_alloc &) { _state->PauseForMemory(); return -1; }
+				return _inner->PropertySet(key, value);
 			}
 			const char *SCI_METHOD DescribeWordListSets() override { return _inner->DescribeWordListSets(); }
 			Sci_Position SCI_METHOD WordListSet(int index, const char *words) override
 			{
-				if (_state->PauseReason() == 4) return -1;
-				try
-				{
 #ifdef _DEBUG
-					CheckSyntaxAllocationForTesting(4);
+				CheckSyntaxAllocationForTesting(SyntaxFaultPoint::Keywords);
 #endif
-					return _inner->WordListSet(index, words);
-				}
-				catch (const std::bad_alloc &) { _state->PauseForMemory(); return -1; }
+				return _inner->WordListSet(index, words);
 			}
 			void SCI_METHOD Lex(Sci_PositionU start, Sci_Position length, int style, Scintilla::IDocument *document) override
 			{
-				if (_state->PauseReason() == 0)
+				if (_state->PauseReason() == EditorSyntaxPauseReason::None)
 				{
 					try
 					{
 #ifdef _DEBUG
-						CheckSyntaxAllocationForTesting(6);
+						CheckSyntaxAllocationForTesting(SyntaxFaultPoint::Lex);
 #endif
 						_inner->Lex(start, length, style, document);
 						return;
@@ -145,12 +135,12 @@ namespace WinUIEditor
 			}
 			void SCI_METHOD Fold(Sci_PositionU start, Sci_Position length, int style, Scintilla::IDocument *document) override
 			{
-				if (_state->PauseReason() == 0)
+				if (_state->PauseReason() == EditorSyntaxPauseReason::None)
 				{
 					try
 					{
 #ifdef _DEBUG
-						CheckSyntaxAllocationForTesting(7);
+						CheckSyntaxAllocationForTesting(SyntaxFaultPoint::Fold);
 #endif
 						_inner->Fold(start, length, style, document);
 					}
@@ -188,7 +178,7 @@ namespace WinUIEditor
 			if (name == module->languageName)
 			{
 #ifdef _DEBUG
-				CheckSyntaxAllocationForTesting(2);
+				CheckSyntaxAllocationForTesting(SyntaxFaultPoint::Factory);
 #endif
 				OwnedLexer inner{ module->Create() };
 				if (!inner) throw std::bad_alloc();

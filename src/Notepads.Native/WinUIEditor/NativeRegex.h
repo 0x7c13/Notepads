@@ -14,6 +14,13 @@
 
 namespace WinUIEditor
 {
+	// UTF-16 units in a pattern or replacement.
+	constexpr size_t MaximumRegexInput = 32768;
+	// A result that carries only a status, like the managed SearchResult(status).
+	inline winrt::WinUIEditor::EditorSearchResult StatusResult(winrt::WinUIEditor::EditorSearchStatus status) noexcept
+	{
+		return {status, -1, -1, 0, 0, -1};
+	}
 	struct RegexJob
 	{
 		std::atomic<bool> canceled{false};

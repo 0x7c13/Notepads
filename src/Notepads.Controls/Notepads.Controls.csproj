@@ -24,9 +24,9 @@
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
-    <PackageReference Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
-    <PackageReference Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
+    <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
+    <PackageReference Include="CommunityToolkit.Uwp.Converters" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="MarkdownTextBlock\**\*.cs" />

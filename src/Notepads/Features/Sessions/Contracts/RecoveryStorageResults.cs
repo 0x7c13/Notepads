@@ -54,7 +54,8 @@ internal sealed record RecoveryDirectoryScan<T>(
     IReadOnlyList<T> Entries,
     IReadOnlyList<string> UnrecognizedPaths,
     Exception Error = null,
-    ulong HighestOccupiedOrdinal = 0)
+    ulong HighestOccupiedOrdinal = 0,
+    IReadOnlySet<T> ResetIntents = null)
 {
     public bool IsComplete => Error == null && UnrecognizedPaths.Count == 0;
 }

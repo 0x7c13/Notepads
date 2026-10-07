@@ -10,10 +10,10 @@ namespace Notepads.Presentation.Controls.Dialog;
 
 public sealed partial class SessionCorruptionErrorDialog : NotepadsDialog
 {
-    public SessionCorruptionErrorDialog(Action recoveryAction)
+    public SessionCorruptionErrorDialog(Action recoveryAction, bool recoveryBlocked = false)
     {
         Title = ResourceLoader.GetString("SessionCorruptionErrorDialog_Title");
-        Content = ResourceLoader.GetString("SessionCorruptionErrorDialog_Content");
+        Content = ResourceLoader.GetString(recoveryBlocked ? "SessionCorruptionErrorDialog_BlockedContent" : "SessionCorruptionErrorDialog_Content");
         PrimaryButtonText = ResourceLoader.GetString("SessionCorruptionErrorDialog_PrimaryButtonText");
         CloseButtonText = ResourceLoader.GetString("SessionCorruptionErrorDialog_CloseButtonText");
         PrimaryButtonStyle = GetButtonStyle(Color.FromArgb(255, 255, 69, 0));

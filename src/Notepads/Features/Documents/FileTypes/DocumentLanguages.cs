@@ -27,7 +27,7 @@ public static class DocumentLanguages
         new("javascript", "JavaScript", ".js", ".mjs", ".cjs", ".jsx"),
         new("json", "JSON", ".json", ".jsonc", ".jsonl"),
         new("lua", "Lua", ".lua"),
-        new("markdown", "Markdown", ".md", ".markdown"),
+        new("markdown", "Markdown", ".md", ".markdown", ".mkd", ".mdwn", ".mdown", ".markdn", ".mdtxt"),
         new("powershell", "PowerShell", ".ps1", ".psm1", ".psd1"),
         new("python", "Python", ".py", ".pyw", ".pyi"),
         new("rust", "Rust", ".rs"),

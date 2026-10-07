@@ -20,6 +20,7 @@ internal static class DocumentLanguageTests
         Check("cpp", "header.H");
         Check("xml", "Notepads.csproj");
         Check("json", "settings.jsonc");
+        Check("markdown", "README.mdown");
         Check("toml", "Cargo.lock");
         Check("python", "Untitled.txt", "#!/usr/bin/env -S python3.12 -u\rprint('hello')");
         Check("bash", "no-extension", "#!/bin/bash\r# comment");

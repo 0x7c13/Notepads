@@ -8,6 +8,7 @@ using Notepads.Features.Documents.FileTypes;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Theming;
 using Windows.UI.Core;
+using WinUIEditor;
 
 namespace Notepads.Presentation.Controls.TextEditor;
 
@@ -16,10 +17,10 @@ public sealed partial class TextEditorCore
     private SyntaxLanguageProfile _syntaxProfile;
     private string _syntaxProfileKey;
     private bool _languageDetectionQueued;
-    private int _syntaxPauseReason;
+    private EditorSyntaxPauseReason _syntaxPauseReason;
     internal event EventHandler LanguageDetectionRequested;
     internal event EventHandler SyntaxStatusChanged;
-    internal int SyntaxPauseReason => _syntaxPauseReason;
+    internal EditorSyntaxPauseReason SyntaxPauseReason => _syntaxPauseReason;
 
     internal void SetSyntaxLanguage(DocumentLanguage language, string fileName)
     {
@@ -48,7 +49,10 @@ public sealed partial class TextEditorCore
 
     internal void RetrySyntaxHighlighting()
     {
-        if (!_disposed && !_settingText && _syntaxPauseReason == 4) InstallSyntaxProfile();
+        if (_disposed || _settingText) return;
+        // A pause during idle styling may not have raised a notification yet.
+        UpdateSyntaxStatus();
+        if (_syntaxPauseReason == EditorSyntaxPauseReason.Memory) InstallSyntaxProfile();
     }
 
     private void ApplySyntaxColors()
@@ -57,11 +61,11 @@ public sealed partial class TextEditorCore
         var palette = _accessibility.HighContrast ? null : SyntaxColorPalette.ForTheme(ThemeSettingsService.ThemeMode);
         var foreground = palette != null && _syntaxProfile.Lexer.Length != 0
             ? ToScintillaColor(palette[SyntaxColorRole.Default])
-            : Native.StyleGetFore((int)WinUIEditor.StylesCommon.Default);
+            : Native.StyleGetFore((int)StylesCommon.Default);
         for (var style = 0; style < _syntaxProfile.Tokens.Length; style++)
         {
             // Scintilla reserves 32..39 for default, margins and UI styles.
-            if (style is >= 32 and <= 39) continue;
+            if (style is >= (int)StylesCommon.Default and <= (int)StylesCommon.LastPredefined) continue;
             var token = _syntaxProfile.Tokens[style];
             Native.StyleSetFore(style, palette == null || token == SyntaxColorRole.Default
                 ? foreground : ToScintillaColor(palette[token]));

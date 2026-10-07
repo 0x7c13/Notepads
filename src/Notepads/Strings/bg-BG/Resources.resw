@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Отвори с Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Това е прозорец за сянка на Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Файлът вече е отворен!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Нов прозорец</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Отваря нов прозорец</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Нов прозорец</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Отвори последните</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Отидете на линия</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Разширение на файла "{0}" не се поддържа в момента</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Затвори</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Неуспешно възстановяване на данните от последната сесия поради повредени данни. Моля, направете резервно копие на всички незапазени файлове (*.txt) в папката на сесията.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Възстановяването на сесията е блокирано от файлове за възстановяване, които Notepads не може да провери, затова това действие беше отменено, за да са документите ви в безопасност. Отворете папката за възстановяване, за да направите отделно копие, преди да поправяте или премахвате файлове.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Отворете папката за резервно копие на сесията</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Предупреждение</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Не може да се архивира сесията. Запазете файловете си и опитайте отново.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Възстановяването на сесията е блокирано от файлове за възстановяване, които Notepads не може да провери. Отворете папката за възстановяване, за да ги копирате, преди да поправяте или премахвате каквото и да е.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Някои раздели не могат да бъдат възстановени. Архивите им са запазени в папката за архиви на сесията.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Файлът е запазен локално. Синхронизирането с облака все още предстои.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Заместващият текст съдържа невалиден текст.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Стар текст, запазена версия</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Предишна промяна (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Сравнението не може да бъде подготвено с наличните ресурси. Документът ви не е променен.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документи, по-големи от 1 MB, не могат да бъдат отпечатани.</value></data>
 </root>

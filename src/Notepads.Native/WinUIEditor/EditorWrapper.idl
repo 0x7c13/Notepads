@@ -8,6 +8,7 @@ import "EditorUtf8Reader.idl";
 import "EditorJournalCheckpoint.idl";
 import "EditorSearch.idl";
 import "EditorDiffResult.idl";
+import "EditorSyntax.idl";
 
 namespace WinUIEditor
 {

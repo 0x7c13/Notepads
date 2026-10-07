@@ -13,7 +13,6 @@ namespace WinUIEditor
 	namespace
 	{
 		using Matcher = std::unique_ptr<URegularExpression, decltype(&uregex_close)>;
-		constexpr size_t MaximumInput = 32768;
 		constexpr int32_t MaximumGroups = 1024;
 		struct CacheEntry
 		{
@@ -35,7 +34,7 @@ namespace WinUIEditor
 		}
 		Matcher Compile(RegexRequest const &request, RegexJob const &job)
 		{
-			if (request.pattern.size() > MaximumInput || request.replacement.size() > MaximumInput)
+			if (request.pattern.size() > MaximumRegexInput || request.replacement.size() > MaximumRegexInput)
 				throw RegexFailure{Status::ResourceLimit};
 			UErrorCode error = U_ZERO_ERROR;
 			{
@@ -70,9 +69,17 @@ namespace WinUIEditor
 		{
 			return static_cast<RegexJob const *>(context)->Interruption() == Status::Found;
 		}
+		struct ScanProgress
+		{
+			RegexJob const &job;
+			mutable uint32_t calls{};
+		};
 		UBool U_CALLCONV FindCallback(const void *context, int64_t) noexcept
 		{
-			return static_cast<RegexJob const *>(context)->Interruption() == Status::Found;
+			// ICU calls this per scanned start position, so the clock is read every 1024 calls.
+			auto const &progress = *static_cast<ScanProgress const *>(context);
+			if (progress.job.canceled.load()) return false;
+			return ++progress.calls % 1024 != 0 || progress.job.Interruption() == Status::Found;
 		}
 		struct Token
 		{
@@ -250,11 +257,12 @@ namespace WinUIEditor
 		auto closeText = std::unique_ptr<UText, decltype(&utext_close)>(&text, utext_close);
 		uregex_setUText(matcher.get(), &text, &error);
 		uregex_setMatchCallback(matcher.get(), MatchCallback, &job, &error);
-		uregex_setFindProgressCallback(matcher.get(), FindCallback, &job, &error);
+		ScanProgress progress{job};
+		uregex_setFindProgressCallback(matcher.get(), FindCallback, &progress, &error);
 		uregex_setTimeLimit(matcher.get(), 2000, &error);
 		uregex_setStackLimit(matcher.get(), 8 * 1024 * 1024, &error);
 		CheckIcu(error, job);
-		winrt::WinUIEditor::EditorSearchResult result{Status::NotFound, -1, -1, 0, 0, -1};
+		auto result = StatusResult(Status::NotFound);
 		std::vector<Token> tokens;
 		if (request.replace) tokens = ParseTemplate(matcher.get(), request.replacement, request.replaceAll, job);
 		int64_t tail = 0;
@@ -290,22 +298,15 @@ namespace WinUIEditor
 			enumerate(request.previous ? source.Length() : 0, request.previous, false);
 		if (request.replace && result.Status == Status::Found)
 		{
-			if (!request.replaceAll)
+			if (request.replaceAll)
+				EmitRange(source, tail, source.Length(), job, emit);
+			else
 			{
-				// Re-establish the chosen match after backward enumeration advanced.
-				if (!uregex_find64(matcher.get(), result.Start, &error)) CheckIcu(error, job);
-				EmitRange(source, 0, result.Start, job, emit);
-				int64_t insertedBytes = 0;
-				Expand(matcher.get(), source, tokens, job, [&](auto bytes)
-				{
-					insertedBytes += static_cast<int64_t>(bytes.size());
-					emit(bytes);
-				});
-				tail = result.End;
-				result.End = result.Start + insertedBytes;
+				// A single replacement is one literal token and emits only its text;
+				// the caller edits [Start, End).
+				Expand(matcher.get(), source, tokens, job, emit);
 				result.MatchCount = 1;
 			}
-			EmitRange(source, tail, source.Length(), job, emit);
 		}
 		job.Check();
 		if (!request.replace && result.Status == Status::Found) result.MatchCount = 1;

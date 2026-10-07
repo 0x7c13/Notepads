@@ -24,7 +24,7 @@ internal sealed class SyntaxLanguageProfile
     public Dictionary<string, string> Properties { get; } = new(StringComparer.Ordinal);
     public string[] PropertyNames { get; private set; }
     public string[] PropertyValues { get; private set; }
-    public SyntaxColorRole[] Tokens { get; } = new SyntaxColorRole[256];
+    public SyntaxColorRole[] Tokens { get; } = new SyntaxColorRole[(int)WinUIEditor.StylesCommon.Max + 1];
 
     // Style IDs are the pinned Lexilla 5.5.4 SciLexer.h definitions.
     public static SyntaxLanguageProfile Create(string id, string fileName)

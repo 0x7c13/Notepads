@@ -92,7 +92,7 @@ internal static class SessionRecoveryTests
                 SessionTestProtocol.Check(await TransferRecoveryStore.HasReceiptAsync(token), "The target receipt was not verifiable.");
                 if (closeBeforeAck)
                 {
-                    SessionTestProtocol.Check(await targetService.PrepareExplicitCloseAsync(targetId), "Receiver close did not persist.");
+                    SessionTestProtocol.Check(await targetService.PrepareExplicitCloseAsync(new[] { targetId }), "Receiver close did not persist.");
                     await AssertThrowsAsync<InvalidDataException>(() => TransferRecoveryStore.MarkSourceAcknowledgedAsync(token, sourceData.CaptureRevision));
                     SessionTestProtocol.Check(!await TransferRecoveryStore.HasReceiptAsync(token), "Closed receiver still authorized source removal.");
                 }
@@ -100,7 +100,7 @@ internal static class SessionRecoveryTests
                 {
                     await TransferRecoveryStore.MarkSourceAcknowledgedAsync(token, sourceData.CaptureRevision);
                     await TransferRecoveryStore.MarkSourceAcknowledgedAsync(token, sourceData.CaptureRevision);
-                    SessionTestProtocol.Check(await targetService.PrepareExplicitCloseAsync(targetId), "Acknowledged receiver close did not persist.");
+                    SessionTestProtocol.Check(await targetService.PrepareExplicitCloseAsync(new[] { targetId }), "Acknowledged receiver close did not persist.");
                 }
                 using (await SessionRecoveryTransaction.EnterAsync())
                 {
@@ -110,7 +110,7 @@ internal static class SessionRecoveryTests
                         "Receiver close reversed an ACK or an unacknowledged close discarded the source.");
                     SessionTestProtocol.Check(targetAfter.Session.TextEditors.All(editor => editor.Id != targetId),
                         "A receipt resurrected its explicitly closed target.");
-                    var references = await SessionRecoveryCatalog.ReadReferencesAsync("BackupFiles");
+                    var references = await SessionRecoveryCatalog.ReadReferencesAsync();
                     SessionTestProtocol.Check(!references.JournalFileNames.Contains(targetData.Journal.FileName),
                         "A durable receiver close kept its full target assets rooted forever.");
                     SessionTestProtocol.Check(references.JournalFileNames.Contains(sourceData.Journal.FileName) == closeBeforeAck,

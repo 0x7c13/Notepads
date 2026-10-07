@@ -3,14 +3,11 @@
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-using CommunityToolkit.WinUI;
-using CommunityToolkit.WinUI.Helpers;
 using Notepads.Presentation.Theming;
 using Windows.ApplicationModel.Resources;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Notepads.Presentation.Controls.Dialog;
 
@@ -18,9 +15,7 @@ public partial class NotepadsDialog : ContentDialog
 {
     public bool IsAborted = false;
 
-    private readonly SolidColorBrush _darkModeBackgroundBrush = new("#101010".ToColor());
-    private readonly SolidColorBrush _lightModeBackgroundBrush = new(Colors.White);
-
+    // The background comes from ContentDialogBackground in App.xaml theme resources.
     public NotepadsDialog()
     {
         RequestedTheme = ThemeSettingsService.ThemeMode;
@@ -28,18 +23,6 @@ public partial class NotepadsDialog : ContentDialog
         PrimaryButtonStyle = CreateRoundedButtonStyle();
         SecondaryButtonStyle = CreateRoundedButtonStyle();
         CloseButtonStyle = CreateRoundedButtonStyle();
-        Background = ThemeSettingsService.ThemeMode == ElementTheme.Dark
-            ? _darkModeBackgroundBrush
-            : _lightModeBackgroundBrush;
-
-        ActualThemeChanged += NotepadsDialog_ActualThemeChanged;
-    }
-
-    private void NotepadsDialog_ActualThemeChanged(FrameworkElement sender, object args)
-    {
-        Background = ActualTheme == ElementTheme.Dark
-            ? _darkModeBackgroundBrush
-            : _lightModeBackgroundBrush;
     }
 
     internal readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();

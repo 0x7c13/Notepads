@@ -236,13 +236,49 @@ void Editor::DropGraphics() noexcept {
 	view.DropGraphics();
 }
 
-void Editor::InvalidateTrackedScrollWidth() noexcept {
+void Editor::InvalidateTrackedScrollWidth(bool metrics) noexcept {
 	if (trackLineWidth) {
-		// Measured widths belong to the current document and font/layout.
-		// Repaint measures visible lines; invalidation never scans the document.
+		// Keep the published width until the widen tick measures the visible lines,
+		// so deletes and restyles never collapse the scrollbar or reset the view.
+		view.lineWidthMaxSeen = 0;
+		if (metrics || pendingWidthMeasure == WidthMeasure::none)
+			pendingWidthMeasure = metrics ? WidthMeasure::metrics : WidthMeasure::content;
+		try {
+			if (!FineTickerRunning(TickReason::widen))
+				FineTickerStart(TickReason::widen, 50, 5);
+		} catch (...) {
+			// A later paint that widens starts the tick instead.
+		}
+	}
+}
+
+void Editor::ResetTrackedScrollWidth() noexcept {
+	if (trackLineWidth) {
+		// Nothing measured for a previous document or width policy applies.
 		view.lineWidthMaxSeen = 0;
 		scrollWidth = 1;
+		pendingWidthMeasure = WidthMeasure::none;
 	}
+}
+
+int Editor::MeasureVisibleLineWidth() {
+	// Measure as PaintText does: the laid-out width of each visible text row.
+	RefreshStyleData();
+	AutoSurface surface(this);
+	if (!surface)
+		return 0;
+	int width = 0;
+	const Sci::Line end = std::min(topLine + LinesOnScreen() + 1, pcs->LinesDisplayed());
+	for (Sci::Line visible = topLine; visible < end; visible++) {
+		if (pcs->IsDisplayGap(visible))
+			continue;
+		std::shared_ptr<LineLayout> ll = view.RetrieveLineLayout(pcs->DocFromDisplay(visible), *this);
+		if (!ll)
+			continue;
+		view.LayoutLine(*this, surface, vs, ll.get(), wrapWidth);
+		width = std::max(width, static_cast<int>(ll->positions[ll->numCharsInLine]));
+	}
+	return width;
 }
 
 void Editor::InvalidateStyleData() noexcept {
@@ -256,16 +292,16 @@ void Editor::InvalidateStyleData() noexcept {
 void Editor::InvalidateStyleRedraw(bool invalidateWidth) {
 	NeedWrapping();
 	InvalidateStyleData();
-	if (invalidateWidth) {
-		InvalidateTrackedScrollWidth();
-		if (trackLineWidth) SetScrollBars();
-	}
+	if (invalidateWidth)
+		InvalidateTrackedScrollWidth(true);
 	Redraw();
 }
 
 void Editor::RefreshStyleData() {
 	if (!stylesValid) {
 		stylesValid = true;
+		uniformStyleMetrics = std::all_of(vs.styles.cbegin(), vs.styles.cend(),
+			[&](const Style &style) noexcept { return style.EquivalentMetrics(vs.styles[StyleDefault]); });
 		AutoSurface surface(this);
 		if (surface) {
 			vs.Refresh(*surface, pdoc->tabInChars);
@@ -2816,9 +2852,10 @@ constexpr Sci::Position MovePositionForDeletion(Sci::Position position, Sci::Pos
 }
 
 void Editor::NotifyModified(Document *, DocModification mh, void *) {
-	const bool trackedWidthChanged = trackLineWidth && FlagSet(mh.modificationType,
-		ModificationFlags::DeleteText | ModificationFlags::ChangeStyle | ModificationFlags::ChangeTabStops);
-	if (trackedWidthChanged) InvalidateTrackedScrollWidth();
+	// Restyling keeps widths while every style measures alike, as colour-only palettes do.
+	const ModificationFlags widthFlags = ModificationFlags::DeleteText | ModificationFlags::ChangeTabStops |
+		(stylesValid && uniformStyleMetrics ? ModificationFlags::None : ModificationFlags::ChangeStyle);
+	if (trackLineWidth && FlagSet(mh.modificationType, widthFlags)) InvalidateTrackedScrollWidth();
 	ContainerNeedsUpdate(Update::Content);
 	if (paintState == PaintState::painting) {
 		CheckForChangeOutsidePaint(Range(mh.position, mh.position + mh.length));
@@ -2958,7 +2995,7 @@ void Editor::NotifyModified(Document *, DocModification mh, void *) {
 		}
 	}
 
-	if ((mh.linesAdded != 0 || trackedWidthChanged) && !CanDeferToLastStep(mh)) {
+	if (mh.linesAdded != 0 && !CanDeferToLastStep(mh)) {
 		SetScrollBars();
 	}
 
@@ -5355,6 +5392,28 @@ void Editor::TickFor(TickReason reason) {
 			}
 			break;
 		case TickReason::widen:
+			if (pendingWidthMeasure != WidthMeasure::none) {
+				// Publish what the visible lines measure now; this may shrink the width.
+				const bool metrics = pendingWidthMeasure == WidthMeasure::metrics;
+				pendingWidthMeasure = WidthMeasure::none;
+				int measured = scrollWidth;
+				try {
+					measured = MeasureVisibleLineWidth();
+				} catch (...) {
+					// Keep the published width when layout fails.
+				}
+				scrollWidth = std::max({measured, view.lineWidthMaxSeen, 1});
+				const int textWidth = static_cast<int>(GetTextRectangle().Width());
+				if (metrics) {
+					// A pixel offset from the previous font size can lie beyond the narrower text.
+					const int maxOffset = std::max(0, scrollWidth - textWidth);
+					if (xOffset > maxOffset)
+						HorizontalScrollTo(maxOffset);
+				} else if (xOffset > 0) {
+					// Edits and restyles never move the viewport: keep the extent it shows.
+					scrollWidth = std::max(scrollWidth, xOffset + textWidth);
+				}
+			}
 			SetScrollBars();
 			FineTickerCancel(TickReason::widen);
 			break;
@@ -5663,7 +5722,7 @@ void Editor::SetDocPointer(Document *document) {
 
 	view.ClearAllTabstops();
 
-	InvalidateTrackedScrollWidth();
+	ResetTrackedScrollWidth();
 	SetScrollBars();
 	Redraw();
 }
@@ -7385,6 +7444,8 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case Message::SetScrollWidth:
 		PLATFORM_ASSERT(wParam > 0);
+		if (wParam > 0)
+			pendingWidthMeasure = WidthMeasure::none;
 		if ((wParam > 0) && (wParam != static_cast<unsigned int>(scrollWidth))) {
 			view.lineWidthMaxSeen = 0;
 			scrollWidth = static_cast<int>(wParam);
@@ -7398,8 +7459,9 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 	case Message::SetScrollWidthTracking:
 		if (trackLineWidth != (wParam != 0)) {
 			trackLineWidth = wParam != 0;
+			pendingWidthMeasure = WidthMeasure::none;
 			if (trackLineWidth) {
-				InvalidateTrackedScrollWidth();
+				ResetTrackedScrollWidth();
 				SetScrollBars();
 				Redraw();
 			}

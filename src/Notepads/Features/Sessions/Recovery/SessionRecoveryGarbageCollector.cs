@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,59 +21,68 @@ namespace Notepads.Features.Sessions.Recovery;
 /// <summary>Reclaim only this writer's resources after its complete durable reference graph is known.</summary>
 internal static class SessionRecoveryGarbageCollector
 {
+    // Caller holds admission from the reference scan through every delete.
     public static async Task CollectAsync(Guid ownerId, string futureAccessTokenPrefix,
         Func<CancellationToken, Task<SessionRecoveryReferences>> readReferencesAsync,
-        CancellationToken cancellationToken = default,
-        Func<SessionRecoveryReferences, CancellationToken, Task> collectLegacyBackupsAsync = null)
+        CancellationToken cancellationToken = default, RecoveryCatalogPass pass = null)
     {
         if (ownerId == Guid.Empty) throw new ArgumentException("Recovery GC requires an owned scope.", nameof(ownerId));
         if (string.IsNullOrEmpty(futureAccessTokenPrefix))
             throw new ArgumentException("Recovery GC requires a scoped permission prefix.", nameof(futureAccessTokenPrefix));
         if (readReferencesAsync == null) throw new ArgumentNullException(nameof(readReferencesAsync));
-        using (await SessionRecoveryTransaction.EnterAsync(cancellationToken))
+        var references = await readReferencesAsync(cancellationToken);
+        if (references == null) throw new InvalidOperationException("Recovery GC has no reference graph.");
+        if (references.BlocksGlobalCollection || references.BlockedOwners.Contains(ownerId) ||
+            !SessionScopeLease.HasWriterLease(ownerId))
         {
-            var references = await readReferencesAsync(cancellationToken);
-            if (references == null) throw new InvalidOperationException("Recovery GC has no reference graph.");
-            if (references.BlocksGlobalCollection || references.BlockedOwners.Contains(ownerId) ||
-                !SessionScopeLease.HasWriterLease(ownerId))
-            {
-                return;
-            }
+            return;
+        }
 
-            using var readers = SessionScopeLease.TryAcquireExclusiveReaders(ownerId);
-            if (readers == null) return;
-            if (collectLegacyBackupsAsync != null) await collectLegacyBackupsAsync(references, cancellationToken);
-            await CollectOwnedResourcesAsync(ownerId, futureAccessTokenPrefix, references, cancellationToken);
-            // Foreign lifetime is proved by OS leases, never by process
-            // enumeration or a descriptor that happens to name another owner.
-            var scopes = RecoveryRootStore.CreateStore().EnumerateScopeIds();
-            if (!scopes.IsComplete) return;
-            foreach (var retired in scopes.Entries.Where(scope => scope != ownerId && !SessionScopeData.IsReservedOwner(scope)))
-            {
-                if (references.BlockedOwners.Contains(retired)) continue;
-                using var writer = SessionScopeLease.TryAcquireInactiveWriter(retired);
-                if (writer == null) continue;
-                using var foreignReaders = SessionScopeLease.TryAcquireExclusiveReaders(retired);
-                if (foreignReaders == null) continue;
-                await CollectOwnedResourcesAsync(retired, SessionDocumentStore.GetFutureAccessTokenPrefix(retired), references, cancellationToken);
-            }
+        using var readers = SessionScopeLease.TryAcquireExclusiveReaders(ownerId);
+        if (readers == null) return;
+        // One listing serves this owner and every retired scope; anything added after it waits for a later pass.
+        var assets = await ListAssetsAsync();
+        await CollectOwnedResourcesAsync(ownerId, futureAccessTokenPrefix, references, assets, cancellationToken);
+        // Foreign lifetime is proved by OS leases, never by process
+        // enumeration or a descriptor that happens to name another owner.
+        var scopes = RecoveryRootStore.CreateStore().EnumerateScopeIds();
+        if (!scopes.IsComplete) return;
+        foreach (var retired in scopes.Entries.Where(scope => scope != ownerId && !SessionScopeData.IsReservedOwner(scope)))
+        {
+            if (references.BlockedOwners.Contains(retired)) continue;
+            using var writer = SessionScopeLease.TryAcquireInactiveWriter(retired);
+            if (writer == null) continue;
+            using var foreignReaders = SessionScopeLease.TryAcquireExclusiveReaders(retired);
+            if (foreignReaders == null) continue;
+            // The reference graph predates this prune, so assets that only the pruned checkpoints
+            // referenced stay protected until the next pass reads the graph again.
+            await SessionCheckpointRetention.PruneRetiredAsync(retired, cancellationToken, pass);
+            await CollectOwnedResourcesAsync(retired, SessionDocumentStore.GetFutureAccessTokenPrefix(retired), references, assets, cancellationToken);
         }
     }
 
-    private static async Task CollectOwnedResourcesAsync(Guid ownerId, string futureAccessTokenPrefix,
-        SessionRecoveryReferences references, CancellationToken cancellationToken)
+    private static async Task<AssetListing> ListAssetsAsync()
     {
+        static async Task<IReadOnlyList<StorageFile>> ListFilesAsync(string folderName) =>
+            await ApplicationData.Current.LocalFolder.TryGetItemAsync(folderName) is StorageFolder folder ?
+                await folder.GetFilesAsync() : Array.Empty<StorageFile>();
+        return new(await ListFilesAsync("DocumentBaselines"), await ListFilesAsync("DocumentJournals"),
+            StorageApplicationPermissions.FutureAccessList.Entries.Select(entry => entry.Token).ToArray());
+    }
 
+    private static async Task CollectOwnedResourcesAsync(Guid ownerId, string futureAccessTokenPrefix,
+        SessionRecoveryReferences references, AssetListing assets, CancellationToken cancellationToken)
+    {
         // Referencing a foreign generation does not grant permission to delete
         // that owner's other files. Historical unknown owners remain intact.
-        foreach (var folderName in new[] { "DocumentBaselines", "DocumentJournals" })
+        foreach (var (files, referenced, extension) in new[]
+        {
+            (assets.Baselines, references.BaselineFileNames, ".utf8"),
+            (assets.Journals, references.JournalFileNames, ".npj")
+        })
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var folder = await ApplicationData.Current.LocalFolder.TryGetItemAsync(folderName) as StorageFolder;
-            if (folder == null) continue;
-            var referenced = folderName == "DocumentBaselines" ? references.BaselineFileNames : references.JournalFileNames;
-            var extension = folderName == "DocumentBaselines" ? ".utf8" : ".npj";
-            foreach (var file in await folder.GetFilesAsync())
+            foreach (var file in files)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (referenced.Contains(file.Name) || !file.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase)) continue;
@@ -89,9 +99,8 @@ internal static class SessionRecoveryGarbageCollector
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        var tokens = StorageApplicationPermissions.FutureAccessList.Entries
-            .Where(entry => entry.Token.StartsWith(futureAccessTokenPrefix, StringComparison.Ordinal) &&
-                !references.FutureAccessTokens.Contains(entry.Token)).Select(entry => entry.Token).ToArray();
+        var tokens = assets.PermissionTokens.Where(token => token.StartsWith(futureAccessTokenPrefix, StringComparison.Ordinal) &&
+            !references.FutureAccessTokens.Contains(token)).ToArray();
         foreach (var token in tokens)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -104,4 +113,7 @@ internal static class SessionRecoveryGarbageCollector
         // Unscoped V1 tokens need a global manifest graph to establish sole
         // ownership. Loading such a token never makes it safe to reclaim here.
     }
+
+    private sealed record AssetListing(IReadOnlyList<StorageFile> Baselines, IReadOnlyList<StorageFile> Journals,
+        IReadOnlyList<string> PermissionTokens);
 }

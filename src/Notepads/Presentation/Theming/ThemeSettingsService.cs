@@ -4,11 +4,13 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using Notepads.Controls.Helpers;
 using Notepads.Features.Preferences;
 using Notepads.Infrastructure.Diagnostics;
+using Notepads.Infrastructure.Resources;
 using Notepads.Presentation.Controls.Dialog;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -283,7 +285,30 @@ public static class ThemeSettingsService
                 hostBackdropAcrylicBrush.TintOpacity = (float)AppBackgroundPanelTintOpacity;
                 return _currentAppBackgroundBrush;
             }
-            return _currentAppBackgroundBrush = BrushUtility.GetHostBackdropAcrylicBrushAsync(baseColor, (float)AppBackgroundPanelTintOpacity).Result;
+            return _currentAppBackgroundBrush = CreateHostBackdropAcrylicBrush(baseColor, (float)AppBackgroundPanelTintOpacity);
+        }
+    }
+
+    private static Brush CreateHostBackdropAcrylicBrush(Color color, float tintOpacity)
+    {
+        try
+        {
+            return new HostBackdropAcrylicBrush()
+            {
+                FallbackColor = color,
+                LuminosityColor = color,
+                TintOpacity = tintOpacity,
+                NoiseTextureUri = "/Assets/noise_high.png".ToAppxUri(),
+            };
+        }
+        catch (Exception ex)
+        {
+            AnalyticsService.TrackEvent("FailedToCreateAcrylicBrush", new Dictionary<string, string>
+            {
+                { "Exception", ex.ToString() },
+                { "Message", ex.Message },
+            });
+            return new SolidColorBrush(color);
         }
     }
 

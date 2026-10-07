@@ -3,9 +3,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mux="using:Microsoft.UI.Xaml.Controls"
     xmlns:editor="using:Notepads.Presentation.Controls.TextEditor">
-    <Application.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries>
-        <mux:XamlControlsResources />
-    </ResourceDictionary.MergedDictionaries>
+    <Application.Resources><ResourceDictionary>
+        <!-- The dialog and hyperlink resources of src/Notepads/App.xaml, set up the same way. -->
+        <ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary x:Key="Default">
+                <Color x:Key="NotepadsHyperlinkPointerOverColor">#99FFFFFF</Color>
+                <Color x:Key="NotepadsHyperlinkPressedColor">#66FFFFFF</Color>
+                <Color x:Key="NotepadsDialogBackgroundColor">#101010</Color>
+            </ResourceDictionary>
+            <ResourceDictionary x:Key="Light">
+                <Color x:Key="NotepadsHyperlinkPointerOverColor">#99000000</Color>
+                <Color x:Key="NotepadsHyperlinkPressedColor">#66000000</Color>
+                <Color x:Key="NotepadsDialogBackgroundColor">White</Color>
+            </ResourceDictionary>
+            <ResourceDictionary x:Key="HighContrast">
+                <StaticResource x:Key="NotepadsHyperlinkPointerOverColor" ResourceKey="SystemColorWindowTextColor" />
+                <StaticResource x:Key="NotepadsHyperlinkPressedColor" ResourceKey="SystemColorHighlightColor" />
+                <StaticResource x:Key="NotepadsDialogBackgroundColor" ResourceKey="SystemColorWindowColor" />
+            </ResourceDictionary>
+        </ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary.MergedDictionaries>
+            <mux:XamlControlsResources />
+        </ResourceDictionary.MergedDictionaries>
+        <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{ThemeResource NotepadsHyperlinkPointerOverColor}" />
+        <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{ThemeResource NotepadsHyperlinkPressedColor}" />
+        <SolidColorBrush x:Key="ContentDialogBackground" Color="{ThemeResource NotepadsDialogBackgroundColor}" />
         <Style TargetType="editor:TextEditorCore"><Setter Property="HorizontalAlignment" Value="Stretch" /></Style>
     </ResourceDictionary></Application.Resources>
 </Application>

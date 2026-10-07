@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 
 namespace Notepads.Features.Sessions.Contracts;
 
@@ -28,8 +27,7 @@ internal sealed class TransferToken
     public void Validate()
     {
         if (TransferId == Guid.Empty || SourceInstanceId == Guid.Empty || SourceEditorId == Guid.Empty || SourceOwnerId == Guid.Empty || SourceEpochId == Guid.Empty || Nonce == Guid.Empty ||
-            DescriptorSha256 == null || DescriptorSha256.Length != 64 || DescriptorSha256.Any(character =>
-                !(character >= '0' && character <= '9' || character >= 'a' && character <= 'f' || character >= 'A' && character <= 'F')))
+            !Sha256Hex.IsValid(DescriptorSha256))
         {
             throw new InvalidDataException("Invalid document transfer token.");
         }

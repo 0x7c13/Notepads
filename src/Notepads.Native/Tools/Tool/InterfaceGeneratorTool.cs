@@ -217,7 +217,7 @@ public partial class InterfaceGeneratorTool
             throw new InvalidOperationException("Missing or extra getters or setters");
         }
 
-        var idlSB = new StringBuilder(GeneratedSourceHeader + "import \"EditorUtf8Reader.idl\";" + End + "import \"EditorJournalCheckpoint.idl\";" + End + "import \"EditorSearch.idl\";" + End + "import \"EditorDiffResult.idl\";" + End + End + "namespace WinUIEditor" + End + "{" + End);
+        var idlSB = new StringBuilder(GeneratedSourceHeader + "import \"EditorUtf8Reader.idl\";" + End + "import \"EditorJournalCheckpoint.idl\";" + End + "import \"EditorSearch.idl\";" + End + "import \"EditorDiffResult.idl\";" + End + "import \"EditorSyntax.idl\";" + End + End + "namespace WinUIEditor" + End + "{" + End);
         var cppSB = new StringBuilder(
             GeneratedSourceHeader + "#include \"pch.h\"" + End + "#include \"EditorBaseControl.h\"" + End + "#include \"EditorWrapper.h\"" + End + "#include \"Editor.g.cpp\"" + End
             + End

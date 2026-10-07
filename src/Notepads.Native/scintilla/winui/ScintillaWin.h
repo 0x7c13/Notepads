@@ -14,6 +14,7 @@
 #include "MainWrapper.h"
 #include "CallTipWrapper.h"
 #include "DisplayLineMap.h"
+#include <winrt/WinUIEditor.h>
 
 namespace WinUIEditor { class NativeDocumentJournal; class NativeJournalFile; struct JournalPrefix; }
 namespace WinUIEditor { class SyntaxHighlightingState; }
@@ -91,7 +92,7 @@ namespace Scintilla::Internal {
 		void ResumeIdleWork();
 		void SetSyntaxLexer(winrt::hstring const &name, winrt::array_view<winrt::hstring const> keywords,
 			winrt::array_view<winrt::hstring const> propertyNames, winrt::array_view<winrt::hstring const> propertyValues);
-		int SyntaxHighlightingPauseReason() const noexcept;
+		winrt::WinUIEditor::EditorSyntaxPauseReason SyntaxHighlightingPauseReason() const noexcept;
 		void Finalize();
 		void FinalizeAfterApartmentClosed() noexcept;
 		void AcquireReadLease();
@@ -173,7 +174,6 @@ namespace Scintilla::Internal {
 		void ProcessNotifyMessage(uptr_t wParam, NotificationData const &notificationData, bool notifyTsf, Sci::Position deletedUtf16Length);
 		void NotifyModified(Document *document, DocModification modification, void *userData) override;
 		Sci::Position _deletedUtf16Length{ 0 };
-		unsigned int _notificationPayloadDepth{};
 		void ProcessCharacterReceivedMessage(char16_t character);
 		winrt::DUI::PointerPoint _dragPointer{ nullptr };
 

@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Infrastructure.Storage;
-using Notepads.Presentation.Controls.Dialog;
 using Notepads.Presentation.Controls.TextEditor;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -34,13 +33,15 @@ public sealed partial class TabContextFlyout : MenuFlyout
 
     private readonly INotepadsCore _notepadsCore;
     private readonly ITextEditor _textEditor;
+    private readonly Func<ITextEditor, Task> _renameAsync;
 
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-    public TabContextFlyout(INotepadsCore notepadsCore, ITextEditor textEditor)
+    public TabContextFlyout(INotepadsCore notepadsCore, ITextEditor textEditor, Func<ITextEditor, Task> renameAsync)
     {
         _notepadsCore = notepadsCore;
         _textEditor = textEditor;
+        _renameAsync = renameAsync;
 
         Items.Add(Close);
         Items.Add(CloseOthers);
@@ -240,26 +241,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
             _rename.Click += async (sender, args) =>
             {
                 _notepadsCore.SwitchTo(_textEditor);
-
-                await Task.Delay(10); // Give notepads core enough time to switch to the selected editor
-
-                var fileRenameDialog = new FileRenameDialog(_textEditor.EditingFileName ?? _textEditor.FileNamePlaceholder,
-                    fileExists: _textEditor.EditingFile != null,
-                    confirmedAction: async (newFilename) =>
-                    {
-                        try
-                        {
-                            await _textEditor.RenameAsync(newFilename);
-                            _notepadsCore.FocusOnSelectedTextEditor();
-                            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
-                        }
-                        catch (Exception ex)
-                        {
-                            var errorMessage = ex.Message?.TrimEnd('\r', '\n');
-                            NotificationCenter.Instance.PostNotification(errorMessage, 3500); // TODO: Use Content Dialog to display error message
-                        }
-                    });
-                await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
+                await _renameAsync(_textEditor);
             };
             return _rename;
         }

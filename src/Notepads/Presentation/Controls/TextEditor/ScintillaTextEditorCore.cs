@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
+using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Documents.Text;
 using Notepads.Features.Preferences;
@@ -22,7 +23,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -48,11 +48,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private readonly GradientStop _lineNumberGlowStart;
     private readonly GradientStop _lineNumberGlowCenter;
     private readonly GradientStop _lineNumberGlowEnd;
-    private Color _lineNumberGlowColor;
+    private EditorColorPalette _palette;
     private double _dpiScale = 1;
     private readonly AccessibilitySettings _accessibility = new();
     private Editor Native => _view.Editor;
-    private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
+    private readonly KeyboardCommandHandler _keyboardCommandHandler;
     private bool _disposed;
     private bool _settingText;
     private bool _displayLineNumbers;
@@ -62,6 +62,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private double _fontZoomFactor = 100;
     private const double _minimumZoomFactor = 10;
     private const double _maximumZoomFactor = 500;
+    private const ModificationFlags TextModifications = ModificationFlags.InsertText | ModificationFlags.DeleteText;
     private double _horizontalOffset;
     private double _verticalOffset;
     private bool _restoreScroll;
@@ -81,6 +82,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     public bool HasSelection => !Native.SelectionEmpty;
     public bool IsDocumentEmpty => Native.Length == 0;
+    public long DocumentLength => Native.Length;
     public bool IsDocumentModified => Native.Modify;
     public bool CanUndo => Native.CanUndo();
     public bool CanRedo => Native.CanRedo();
@@ -105,10 +107,14 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         set
         {
             if (double.IsNaN(value) || double.IsInfinity(value)) return;
-            _fontSize = Math.Max(_minimumZoomFactor * ApplicationPreferences.EditorFontSize / 100,
+            var fontSize = Math.Max(_minimumZoomFactor * ApplicationPreferences.EditorFontSize / 100,
                 Math.Min(_maximumZoomFactor * ApplicationPreferences.EditorFontSize / 100, value));
-            base.FontSize = _fontSize;
-            ApplyFont();
+            if (fontSize != _fontSize)
+            {
+                _fontSize = fontSize;
+                base.FontSize = fontSize;
+                ApplyFont();
+            }
             FontSizeChanged?.Invoke(this, _fontSize);
             var zoom = Math.Round(_fontSize * 100 / ApplicationPreferences.EditorFontSize);
             if (Math.Abs(zoom - _fontZoomFactor) >= 1)
@@ -163,7 +169,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         // UserControl. Pass the app flyout to the native control explicitly.
         RegisterPropertyChangedCallback(ContextFlyoutProperty, (_, __) => _view.ContextFlyout = ContextFlyout);
         _view.DpiChanged += OnNativeDpiChanged;
-        Native.CodePage = 65001;
+        Native.CodePage = (int)EditorConstants.ScCpUtf8;
         // DirectWrite supports mixed RTL/LTR text with an LTR paragraph base.
         // This does not request the unimplemented default-RTL paragraph mode.
         Native.Bidirectional = Bidirectional.L2r;
@@ -171,7 +177,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         // One CR is also the old RichEdit/session representation. Import/export
         // converts CRLF/LF at the boundary, never on the typing path.
         Native.EOLMode = EndOfLine.Cr;
-        Native.ModEventMask = ModificationFlags.InsertText | ModificationFlags.DeleteText;
+        Native.ModEventMask = TextModifications;
         Native.TabWidth = 4;
         Native.MultiPaste = MultiPaste.Each;
         // Scintilla defaults to a 2000-pixel document width, which displays a
@@ -184,11 +190,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         FontFamily = new FontFamily(ApplicationPreferences.EditorFontFamily);
         FontStyle = ApplicationPreferences.EditorFontStyle.ToFontStyle();
         FontWeight = ApplicationPreferences.EditorFontWeight.ToFontWeight();
+        // Sets the font and the theme palette; must precede DisplayLineHighlighter.
         FontSize = ApplicationPreferences.EditorFontSize;
         TextWrapping = ApplicationPreferences.EditorDefaultWordWrap.ToTextWrapping();
         DisplayLineNumbers = ApplicationPreferences.EditorDisplayLineNumbers;
         DisplayLineHighlighter = ApplicationPreferences.EditorDisplayLineHighlighter;
-        ApplyTheme();
         Native.Modified += OnNativeModified;
         Native.UpdateUI += OnNativeUpdateUI;
         Native.SavePointReached += OnSavePointReached;
@@ -206,11 +212,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         HookExternalEvents();
     }
 
+    // Loaded runs on every tab switch. Font and theme apply when they change;
+    // restyling here would re-wrap the whole document each time.
     private void OnLoaded(object sender, RoutedEventArgs args)
     {
         ApplyEditorPadding();
-        ApplyFont();
-        ApplyTheme();
         if (_restoreScroll) RestoreScroll();
     }
 
@@ -238,22 +244,20 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     }
 
     private async void OnHighContrastChanged(AccessibilitySettings sender, object args) =>
-        await Dispatcher.CallOnUIThreadAsync(ApplyTheme);
+        await Dispatcher.CallOnUIThreadAsync(() => ApplyTheme());
 
     private static int ToScintillaColor(Color color) => color.R | color.G << 8 | color.B << 16;
 
-    private void ApplyTheme()
+    private void ApplyTheme(bool force = false)
     {
-        bool dark = ThemeSettingsService.ThemeMode == ElementTheme.Dark;
-        var foreground = dark ? Colors.White : Colors.Black;
-        var background = Colors.Transparent;
-        if (_accessibility.HighContrast)
-        {
-            var systemColors = new UISettings();
-            foreground = systemColors.GetColorValue(UIColorType.Foreground);
-            background = systemColors.GetColorValue(UIColorType.Background);
-        }
-        Native.StyleSetFore(32, ToScintillaColor(foreground));
+        var palette = EditorColorPalette.ForTheme(ThemeSettingsService.ThemeMode, _accessibility.HighContrast);
+        // Restyling re-wraps the whole document. Light and dark palettes are shared,
+        // so a repeated theme notification skips it; high contrast always reapplies.
+        if (!force && palette == _palette) return;
+        _palette = palette;
+        var foreground = ToScintillaColor(palette[EditorColorRole.Foreground]);
+        var background = palette[EditorColorRole.Background];
+        Native.StyleSetFore((int)StylesCommon.Default, foreground);
         // The main page already owns the acrylic/solid backdrop brush.
         // Keep the native text surface and margins transparent above it.
         _view.SetBackgroundColor(background);
@@ -262,22 +266,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         // Restore alpha after copying the default style.
         _view.SetBackgroundColor(background);
         ApplySyntaxColors();
-        Native.StyleSetFore(33, ToScintillaColor(_accessibility.HighContrast ? foreground :
-            dark ? Color.FromArgb(255, 150, 150, 150) : Color.FromArgb(255, 105, 105, 105)));
+        Native.StyleSetFore((int)StylesCommon.LineNumber, ToScintillaColor(palette[EditorColorRole.LineNumber]));
         Native.FontQuality = WinUIEditor.FontQuality.QualityAntialiased;
-        Native.CaretFore = ToScintillaColor(foreground);
+        Native.CaretFore = foreground;
         ApplyCaretLineAppearance();
-        if (_accessibility.HighContrast)
-        {
-            HideLineNumberGlow();
-            _lineNumberReveal.BorderBrush = null;
-        }
-        else
-        {
-            _lineNumberGlowColor = dark ? Colors.White : Colors.Black;
-            HideLineNumberGlow();
-            _lineNumberReveal.BorderBrush = _lineNumberGlow;
-        }
+        HideLineNumberGlow();
+        _lineNumberReveal.BorderBrush = _accessibility.HighContrast ? null : _lineNumberGlow;
         ApplySelectionAppearance();
         UpdateLineNumberMargin();
         AppearanceChanged?.Invoke(this, EventArgs.Empty);
@@ -288,11 +282,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         var color = _accessibility.HighContrast
             ? (Color)Application.Current.Resources["SystemColorHighlightColor"]
             : ThemeSettingsService.AppAccentColor;
-        var textColor = _accessibility.HighContrast
-            ? (Color)Application.Current.Resources["SystemColorHighlightTextColor"]
-            : Colors.White;
         var background = unchecked((int)(0xff000000u | (uint)ToScintillaColor(color)));
-        var foreground = unchecked((int)(0xff000000u | (uint)ToScintillaColor(textColor)));
+        var foreground = unchecked((int)(0xff000000u | (uint)ToScintillaColor(_palette[EditorColorRole.SelectionText])));
         // Rectangular selection uses an additional range for each other row.
         // Keep all ranges consistent, including when Find holds focus.
         Native.SetElementColour(Element.SelectionBack, background);
@@ -311,31 +302,34 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         // Scintilla's Base layer forces caret-line colors to full opacity.
         Native.CaretLineLayer = Layer.UnderText;
-        Native.SetElementColour(Element.CaretLineBack,
-            ToScintillaColor(ThemeSettingsService.ThemeMode == ElementTheme.Dark ? Colors.White : Colors.Black) | (24 << 24));
+        var color = _palette[EditorColorRole.CaretLine];
+        Native.SetElementColour(Element.CaretLineBack, ToScintillaColor(color) | color.A << 24);
         Native.CaretLineVisible = _displayLineHighlighter && !_accessibility.HighContrast;
     }
 
     private void ApplyFont()
     {
         if (_view == null) return;
-        Native.StyleSetFont(32, FontFamily.Source);
-        Native.StyleSetSizeFractional(32, (int)Math.Round(_fontSize * 75)); // XAML DIPs -> points
-        Native.StyleSetItalic(32, FontStyle != FontStyle.Normal);
-        Native.StyleSetWeight(32, (WinUIEditor.FontWeight)FontWeight.Weight);
-        ApplyTheme();
+        Native.StyleSetFont((int)StylesCommon.Default, FontFamily.Source);
+        Native.StyleSetSizeFractional((int)StylesCommon.Default, (int)Math.Round(_fontSize * 75)); // XAML DIPs -> points
+        Native.StyleSetItalic((int)StylesCommon.Default, FontStyle != FontStyle.Normal);
+        Native.StyleSetWeight((int)StylesCommon.Default, (WinUIEditor.FontWeight)FontWeight.Weight);
+        // StyleClearAll copies the new default font to every style.
+        ApplyTheme(force: true);
     }
 
     private void UpdateLineNumberMargin()
     {
-        _lineNumberDigits = Math.Max(2, Native.LineCount.ToString().Length);
-        var width = _displayLineNumbers ? Native.TextWidth(33, new string('9', _lineNumberDigits)) + (int)Math.Round(12 * _dpiScale) : 0;
+        _lineNumberDigits = LineNumberDigits();
+        var width = _displayLineNumbers ? Native.TextWidth((int)StylesCommon.LineNumber, new string('9', _lineNumberDigits)) + (int)Math.Round(12 * _dpiScale) : 0;
         Native.SetMarginWidthN(0, width);
         Native.MarginLeft = (int)Math.Round(6 * _dpiScale);
         _lineNumberReveal.Width = width / _dpiScale;
         _lineNumberReveal.Visibility = _displayLineNumbers ? Visibility.Visible : Visibility.Collapsed;
         if (!_displayLineNumbers) HideLineNumberGlow();
     }
+
+    private int LineNumberDigits() => Math.Max(2, Native.LineCount.ToString().Length);
 
     private void OnEditorPointerMoved(object sender, PointerRoutedEventArgs args)
     {
@@ -364,8 +358,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _lineNumberGlowCenter.Offset = center;
         _lineNumberGlowEnd.Offset = Math.Min(1, center + spread);
         var alpha = (byte)Math.Round(150 * (1 - distance / radius));
-        _lineNumberGlowCenter.Color = Color.FromArgb(alpha,
-            _lineNumberGlowColor.R, _lineNumberGlowColor.G, _lineNumberGlowColor.B);
+        var glow = _palette[EditorColorRole.Foreground];
+        _lineNumberGlowCenter.Color = Color.FromArgb(alpha, glow.R, glow.G, glow.B);
         if (_lineNumberReveal.BorderThickness.Right == 0)
             _lineNumberReveal.BorderThickness = new Thickness(0, 0, 1, 0);
     }
@@ -374,12 +368,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnNativeModified(Editor sender, ModifiedEventArgs args)
     {
-        if ((args.ModificationType & 3) == 0) return;
+        if ((args.ModificationType & (int)TextModifications) == 0) return;
         ContentVersion++;
         if (_settingText) return;
         UpdateSyntaxStatus();
-        if (args.Position <= 1024) QueueLanguageDetection();
-        if (args.LinesAdded != 0 && Math.Max(2, Native.LineCount.ToString().Length) != _lineNumberDigits)
+        if (args.Position <= DocumentLanguages.DetectionSampleBytes) QueueLanguageDetection();
+        if (args.LinesAdded != 0 && LineNumberDigits() != _lineNumberDigits)
             UpdateLineNumberMargin();
         TextChanging?.Invoke(this, EventArgs.Empty);
         TextChanged?.Invoke(this, new RoutedEventArgs());
@@ -391,8 +385,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         // Scintilla reports a content update without a separate selection flag
         // when typing replaces a selection. The status bar still needs the
         // final caret/selection after that edit.
-        if ((args.Updated & 3) != 0) SelectionChanged?.Invoke(this, new RoutedEventArgs());
-        if ((args.Updated & 12) != 0) ViewportChanged?.Invoke(this, EventArgs.Empty);
+        if ((args.Updated & (int)(Update.Content | Update.Selection)) != 0) SelectionChanged?.Invoke(this, new RoutedEventArgs());
+        if ((args.Updated & (int)(Update.VScroll | Update.HScroll)) != 0) ViewportChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnSavePointReached(Editor sender, SavePointReachedEventArgs args) => ModificationStateChanged?.Invoke(this, EventArgs.Empty);
@@ -416,24 +410,6 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         }
         finally { Native.UndoCollection = true; _settingText = false; }
         TextChanged?.Invoke(this, new RoutedEventArgs());
-    }
-
-    public async Task LoadTextAsync(string text)
-    {
-        _settingText = true;
-        var enabled = IsEnabled;
-        IsEnabled = false;
-        try
-        {
-            await Native.LoadTextAsync(text);
-            if (_disposed) return;
-            InstallSyntaxProfile();
-            Native.SetSel(0, 0);
-            ContentVersion++;
-            UpdateLineNumberMargin();
-        }
-        finally { if (!_disposed) IsEnabled = enabled; _settingText = false; }
-        if (!_disposed) TextChanged?.Invoke(this, new RoutedEventArgs());
     }
 
     internal Task LoadBaselineAsync(DocumentBaseline baseline, bool preserveUndo,
@@ -495,6 +471,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     internal Task StopJournalAsync() => Native.StopJournalAsync().AsTask();
 
+    internal bool IsJournalFaulted => Native.JournalFaulted;
+
     internal Task StartJournalFromCheckpointAsync(DocumentJournal journal, EditorJournalCheckpoint checkpoint,
         CancellationToken cancellationToken) => Native.StartJournalFromCheckpointAsync(journal.File.Path, checkpoint)
             .AsCompletionTask(cancellationToken);
@@ -503,25 +481,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         CancellationToken cancellationToken) => Native.RotateJournalAsync(journal.File.Path, expectedSequence)
             .AsCompletionTask(cancellationToken);
 
-    public void ReplaceText(string text)
-    {
-        Native.BeginUndoAction();
-        try { ReplaceRange(0, Native.Length, LineEndingUtility.ApplyLineEnding(text, LineEnding.Cr)); }
-        finally { Native.EndUndoAction(); }
-        Native.SetSel(0, 0);
-    }
-
-    // UI-thread only: callers performing background work must capture a snapshot
-    // through GetTextAsync instead of accessing the native document concurrently.
     public string GetText() => Native.GetText(Native.Length + 1);
-
-    public async Task<string> GetTextAsync()
-    {
-        if (Dispatcher.HasThreadAccess) return GetText();
-        string text = null;
-        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => text = GetText());
-        return text;
-    }
 
     private string ReadRange(long start, long end)
     {
@@ -628,6 +588,13 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
     {
+        // A tab that was never shown keeps the offsets it was restored with.
+        if (_restoreScroll)
+        {
+            horizontalOffset = _horizontalOffset;
+            verticalOffset = _verticalOffset;
+            return;
+        }
         horizontalOffset = Native.XOffset / _dpiScale;
         verticalOffset = Native.FirstVisibleLine * GetSingleLineHeight() / _dpiScale;
     }
@@ -691,9 +658,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnEditorPreviewKeyDown(object sender, KeyRoutedEventArgs args)
     {
-        if (args.Handled) return;
-        var result = _keyboardCommandHandler.Handle(args);
-        if (result.ShouldHandle || result.ShouldSwallow) args.Handled = true;
+        if (!args.Handled && _keyboardCommandHandler.Handle(args)) args.Handled = true;
     }
 
     private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs args)
@@ -729,6 +694,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         ActualThemeChanged -= OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged -= OnAppThemeChanged;
         _accessibility.HighContrastChanged -= OnHighContrastChanged;
-        if (_diffPreview) Native.ReleaseDiffDocument();
+        // Free the text now, not at the next GC. A read lease or journal refuses this.
+        try { Native.DetachDocument(); }
+        catch (Exception ex) { LoggingService.LogError($"[{nameof(TextEditorCore)}] Document release failed: {ex.Message}"); }
     }
 }

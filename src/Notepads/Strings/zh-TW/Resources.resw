@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>在 Notepads 中打開</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>這是 Notepads 的附加視窗。</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>檔案已經被開啟了！</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>新增視窗</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>開啟一個新視窗</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>新增視窗</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>開啟最近的檔案</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>跳至此行</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,6 +261,7 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>目前尚未支援「{0}」副檔名</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>關閉</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>由於數據損壞，無法從上一個會話中恢復數據。請在會話文件夾中備份所有未保存的文件（*.txt）。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>工作階段復原遭到 Notepads 無法驗證的復原檔案封鎖，因此已取消此動作以確保文件安全。請先開啟復原資料夾另外複製一份，再修復或移除任何檔案。</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>打開會話備份文件夾</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>警告</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>取代內容包含無效文字。</value></data>
@@ -275,6 +274,7 @@
   <data name="TextEditor_Language_HighlightingPaused" xml:space="preserve"><value>語法醒目提示已因文件大小或超長行而暫停。文字編輯和儲存仍然可用。</value></data>
   <data name="TextEditor_Language_MemoryPaused" xml:space="preserve"><value>語法醒目提示已因記憶體不足而暫停。重新選擇語言或重新載入文件可重試。</value></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>無法備份目前的工作階段。請儲存檔案後重試。</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>工作階段復原遭到 Notepads 無法驗證的復原檔案封鎖。請先開啟復原資料夾複製這些檔案，再進行任何修復或移除。</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>部分索引標籤無法還原，其備份已保留在工作階段備份資料夾中。</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>檔案已儲存至本機，雲端同步仍待完成。</value></data>
   <data name="SessionBackup_NotificationMsg_MirrorRepaired" xml:space="preserve"><value>工作階段索引已損毀，已從驗證通過的備份還原。</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>舊文字，上次儲存的版本</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>上一處變更 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>目前資源不足，無法準備文字比較。文件內容未變更。</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>無法列印大於 1 MB 的文件。</value></data>
 </root>

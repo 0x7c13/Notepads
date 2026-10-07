@@ -34,11 +34,10 @@ internal static class DocumentBaselineTests
             await CheckFailedCandidatesAsync(folder, owner);
             await CheckRecoveryOwnershipAsync(folder, owner);
             await CheckPreparedGenerationOwnershipAsync(folder, owner);
-            await CheckJournalPrefixOwnershipAsync(owner);
+            CheckJournalCompactionPolicy();
             await CheckEmptyGenerationAsync(owner);
-            await CheckPreparedSnapshotAsync(owner);
             await CheckFileDecodingPolicyAsync(owner);
-            log.AppendLine("PASS: document baselines retain immutable canonical text, independent readers, metadata, and recovery ownership; failed candidates are removed.");
+            log.AppendLine("PASS: document baselines retain immutable canonical text, independent readers, metadata, and recovery ownership; failed candidates are removed; journal compaction follows document size.");
         }
         finally
         {
@@ -216,7 +215,7 @@ internal static class DocumentBaselineTests
             {
                 await stream.WriteAsync([65], 0, 1);
                 cancellation.Cancel();
-            }, cancellation.Token, owner));
+            }, owner, cancellation.Token));
         }
         Assert(!(await folder.GetFilesAsync()).Any(file => file.Name.StartsWith(
             owner.ToString("N") + "-", StringComparison.Ordinal)),
@@ -274,42 +273,15 @@ internal static class DocumentBaselineTests
         }
     }
 
-    private static async Task CheckJournalPrefixOwnershipAsync(Guid owner)
+    private static void CheckJournalCompactionPolicy()
     {
-        var journal = await DocumentJournal.CreateAsync(owner);
-        Stream reader = null;
-        try
-        {
-            using (var sharedWriter = await journal.File.OpenAsync(FileAccessMode.ReadWrite, StorageOpenOptions.AllowReadersAndWriters))
-            using (var output = sharedWriter.AsStreamForWrite())
-            {
-                await output.WriteAsync([65, 66, 67], 0, 3);
-                await output.FlushAsync();
-                reader = await journal.OpenReadPrefixAsync(3);
-                var bytes = new byte[8];
-                Assert(await reader.ReadAsync(bytes, 0, 1) == 1 && bytes[0] == 65,
-                    "A prefix reader could not coexist with its append writer.");
-                await output.WriteAsync([68, 69, 70], 0, 3);
-                await output.FlushAsync();
-                Assert(await reader.ReadAsync(bytes, 0, bytes.Length) == 2 && bytes[1] == 67,
-                    "Appending future operations invalidated a committed prefix reader.");
-            }
-            Assert(reader.Length == 3, "A checkpoint exposed later uncommitted journal bytes.");
-            await journal.DisposeAsync();
-            var trailing = new byte[8];
-            Assert(await reader.ReadAsync(trailing, 0, trailing.Length) == 0,
-                "A journal prefix reader lost its lease or read beyond its committed boundary.");
-            await AssertThrowsAsync<IOException>(() =>
-            {
-                reader.Seek(1, SeekOrigin.End);
-                return Task.CompletedTask;
-            });
-        }
-        finally
-        {
-            reader?.Dispose();
-            await journal.DisposeAsync();
-        }
+        const ulong MiB = 1024 * 1024;
+        Assert(DocumentJournal.ShouldCompact(4 * MiB, 1024) && DocumentJournal.ShouldCompact(4 * MiB, MiB) &&
+            DocumentJournal.ShouldCompact(5 * MiB, 0), "A small document with a large journal was not compacted.");
+        Assert(!DocumentJournal.ShouldCompact(4 * MiB - 1, 0), "A journal below the 4 MiB floor was compacted.");
+        Assert(!DocumentJournal.ShouldCompact(4 * MiB, MiB + 1) && !DocumentJournal.ShouldCompact(64 * MiB - 1, 20 * MiB),
+            "A large document whose journal is under four times its size was compacted.");
+        Assert(DocumentJournal.ShouldCompact(64 * MiB, 100 * MiB), "A 64 MiB journal was not compacted.");
     }
 
     private static async Task CheckEmptyGenerationAsync(Guid owner)
@@ -332,23 +304,6 @@ internal static class DocumentBaselineTests
     {
         using (var hash = SHA256.Create())
             return BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-", string.Empty).ToLowerInvariant();
-    }
-
-    private static async Task CheckPreparedSnapshotAsync(Guid owner)
-    {
-        using (var baseline = DocumentBaseline.CreateEmpty(owner))
-        using (var snapshot = DocumentSnapshot.PrepareFileWrite(baseline, Encoding.UTF8, LineEnding.Crlf))
-        {
-            await AssertThrowsAsync<InvalidOperationException>(() => Task.FromResult(snapshot.Retain()));
-            snapshot.CompleteFileWrite(4567);
-            using (var retained = snapshot.Retain())
-                Assert(retained.DateModifiedFileTime == 4567, "A completed save lost its file timestamp.");
-            await AssertThrowsAsync<InvalidOperationException>(() =>
-            {
-                snapshot.CompleteFileWrite(8901);
-                return Task.CompletedTask;
-            });
-        }
     }
 
     private static async Task<bool> ExistsAsync(StorageFolder folder, string name)

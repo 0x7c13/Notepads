@@ -13,6 +13,10 @@ namespace Notepads.Infrastructure.Storage;
 /// <summary>A process-released Windows file-sharing lease, independent of application policy.</summary>
 internal sealed class FileLockLease : IDisposable
 {
+    private const int FileExists = 80;
+    private const int AlreadyExists = 183;
+    private const int SharingViolation = 32;
+    private const int LockViolation = 33;
     private FileStream _handle;
 
     private FileLockLease(FileStream handle) => _handle = handle;
@@ -49,7 +53,7 @@ internal sealed class FileLockLease : IDisposable
                     using var created = new FileStream(path, FileMode.CreateNew,
                         FileAccess.ReadWrite, FileShare.ReadWrite);
                 }
-                catch (IOException ex) when ((ex.HResult & 0xffff) == 80 || (ex.HResult & 0xffff) == 183)
+                catch (IOException ex) when (Win32Code(ex) is FileExists or AlreadyExists)
                 {
                     // Another creator completed the permanent lock-file identity.
                 }
@@ -59,11 +63,13 @@ internal sealed class FileLockLease : IDisposable
                 sharedReaders ? FileAccess.Read : FileAccess.ReadWrite,
                 sharedReaders ? FileShare.Read : FileShare.None));
         }
-        catch (IOException ex) when ((ex.HResult & 0xffff) == 32 || (ex.HResult & 0xffff) == 33)
+        catch (IOException ex) when (Win32Code(ex) is SharingViolation or LockViolation)
         {
             return null;
         }
     }
+
+    private static int Win32Code(IOException exception) => exception.HResult & 0xffff;
 
     public void Dispose() => Interlocked.Exchange(ref _handle, null)?.Dispose();
 }

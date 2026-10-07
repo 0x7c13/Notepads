@@ -5,6 +5,7 @@
 
 using System;
 using Notepads.Features.Documents.FileTypes;
+using WinUIEditor;
 
 namespace Notepads.Presentation.Controls.TextEditor;
 
@@ -16,7 +17,7 @@ public sealed partial class TextEditor
     public DocumentLanguage DetectedLanguage => DocumentLanguages.Detect(EditingFileName ?? FileNamePlaceholder,
         TextEditorCore.GetLanguageDetectionSample());
     public string LanguageOverride { get; private set; }
-    public int SyntaxHighlightingPauseReason => TextEditorCore.SyntaxPauseReason;
+    public EditorSyntaxPauseReason SyntaxHighlightingPauseReason => TextEditorCore.SyntaxPauseReason;
     public bool CanChangeLanguage => !_disposed && !_recoveryTransition && !_transferCommitInProgress && TextEditorCore.IsEnabled;
 
     public void SetLanguageOverride(string id)

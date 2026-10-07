@@ -54,7 +54,8 @@ internal static class LayerRules
             if (source == "Presentation")
             {
                 return sourceType.StartsWith("Notepads.Presentation.Controls.TextEditor.") ||
-                    sourceType.StartsWith("Notepads.Presentation.Workspace.") && targetType.Contains("EditorJournalCheckpoint");
+                    sourceType.StartsWith("Notepads.Presentation.Workspace.") && targetType.Contains("EditorJournalCheckpoint") ||
+                    targetType == "WinUIEditor.EditorSyntaxPauseReason";
             }
 
             if (source.StartsWith("Documents"))

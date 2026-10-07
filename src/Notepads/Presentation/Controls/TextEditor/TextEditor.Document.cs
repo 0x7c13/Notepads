@@ -94,8 +94,6 @@ public sealed partial class TextEditor
         return committed;
     }
 
-    public Task RenameAsync(string newFileName) => RenameAsync(newFileName, EditingFile);
-
     public Task RenameAsync(string newFileName, StorageFile expectedFile)
     {
         return RunDocumentOperationAsync(async cancellation =>
@@ -255,8 +253,13 @@ public sealed partial class TextEditor
                 TextEditorCore.IsEnabled = false;
                 try
                 {
+                    var sequence = TextEditorCore.DocumentSequence;
                     await TextEditorCore.LoadBaselineAsync(content, preserveUndo, cancellationToken);
                     if (_disposed) return;
+                    // An undoable load that inserts text commits exactly one journal operation. If no
+                    // other operation committed meanwhile, the document is this baseline at that sequence.
+                    var loadedSequence = TextEditorCore.DocumentSequence;
+                    var rebaseRecovery = preserveUndo && content.ByteLength > 0 && loadedSequence == sequence + 1;
                     if (!preserveUndo)
                         await InitializeRecoveryJournalAsync(content, cancellationToken);
                     if (_disposed) return;
@@ -265,6 +268,9 @@ public sealed partial class TextEditor
                     adopted = true;
                     AdoptSnapshot(prepared, file, contentModified);
                     if (metadata != null) ResetEditorState(metadata);
+                    // Drop the whole-document replacement from the journal. Files over the
+                    // compaction budget would otherwise keep it until the next explicit save.
+                    if (rebaseRecovery) await TryRotateRecoveryJournalAsync(content, loadedSequence);
                 }
                 catch
                 {
@@ -429,8 +435,8 @@ public sealed partial class TextEditor
         }
         catch (Exception ex)
         {
-            // The existing journal still protects this successful save.
-            // Checkpoint maintenance cannot turn a file commit into failure.
+            // The existing journal still protects the current text. Checkpoint
+            // maintenance cannot turn a committed save or load into failure.
             LoggingService.LogError($"[{nameof(TextEditor)}] Recovery checkpoint rotation deferred: {ex.Message}");
         }
         finally
@@ -444,18 +450,40 @@ public sealed partial class TextEditor
         }
     }
 
+    /// <summary>
+    /// Rebase a journal whose writer failed (for example, the disk filled) on the current text.
+    /// If the disk is still full this fails again, and the next session capture reports it.
+    /// </summary>
+    public Task RepairRecoveryJournalAsync(CancellationToken cancellationToken = default)
+    {
+        if (_disposed || !TextEditorCore.IsJournalFaulted) return Task.CompletedTask;
+        return _documentOperations.RunAsync(async cancellation =>
+        {
+            if (_disposed || !_loaded || _documentJournal == null || _recoveryTransition || !TextEditorCore.IsJournalFaulted) return;
+            using (var reader = TextEditorCore.AcquireDocumentReader())
+            {
+                using (var source = new EditorDocumentStream(reader, ownsReader: false))
+                using (var baseline = await DocumentBaseline.CreateAsync(output => source.CopyToAsync(output, 65536, cancellation),
+                    DocumentOwnerId, cancellation))
+                {
+                    if (!_disposed) await TryRotateRecoveryJournalAsync(baseline, reader.Sequence);
+                }
+            }
+        }, cancellationToken);
+    }
+
     public Task MaintainRecoveryAsync(CancellationToken cancellationToken = default)
     {
         return _documentOperations.RunAsync(async cancellation =>
         {
-            const ulong compactionThreshold = 64UL * 1024 * 1024;
             const ulong candidateBudget = 128UL * 1024 * 1024;
             if (_disposed || !_loaded || _documentJournal == null || _recoveryTransition) return;
             using (var recovery = CaptureRecoveryState())
             {
                 // Recovery remains valid when the candidate would exceed our
                 // native memory budget. Explicit saves rotate every size.
-                if (recovery.Checkpoint.CommittedByteLength < compactionThreshold ||
+                if (!DocumentJournal.ShouldCompact(recovery.Checkpoint.CommittedByteLength,
+                        recovery.Checkpoint.CommittedDocumentByteLength) ||
                     recovery.Checkpoint.CommittedDocumentByteLength > candidateBudget ||
                     checked((ulong)recovery.RecoveryBaseline.ByteLength) > candidateBudget)
                 {
@@ -467,7 +495,7 @@ public sealed partial class TextEditor
                 using (var baseline = await DocumentBaseline.CreateAsync(output =>
                     recovery.Checkpoint.WriteBaselineAsync(input.AsInputStream(),
                         checked((ulong)recovery.RecoveryBaseline.ByteLength), output.AsOutputStream(), candidateBudget)
-                        .AsCompletionTask(cancellation), cancellation, DocumentOwnerId))
+                        .AsCompletionTask(cancellation), DocumentOwnerId, cancellation))
                 {
                     cancellation.ThrowIfCancellationRequested();
                     if (_disposed || TextEditorCore.DocumentSequence != recovery.Checkpoint.CommittedSequence) return;
@@ -556,8 +584,7 @@ public sealed partial class TextEditor
     {
         if (Mode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
         var version = TextEditorCore.ContentVersion;
-        DocumentSnapshot prepared = null;
-        var adopted = false;
+        DocumentBaseline savedBaseline = null;
         var encoding = GetEncoding();
         var lineEnding = GetLineEnding();
         try
@@ -569,19 +596,18 @@ public sealed partial class TextEditor
                 {
                     // A retriable transaction starts again over the same frozen
                     // native revision, with a fresh destination and baseline.
-                    prepared?.Dispose();
-                    prepared = null;
+                    savedBaseline?.Dispose();
+                    savedBaseline = null;
                     using (var source = new EditorDocumentStream(reader, ownsReader: false))
-                    using (var baseline = await DocumentBaseline.CreateAsync(canonical =>
-                        DocumentTextCodec.CopyFromNativeAsync(source, canonical, destination,
-                            encoding, lineEnding, cancellationToken: cancellationToken),
-                        cancellationToken, DocumentOwnerId))
                     {
-                        prepared = DocumentSnapshot.PrepareFileWrite(baseline, encoding, lineEnding);
+                        savedBaseline = await DocumentBaseline.CreateAsync(canonical =>
+                            DocumentTextCodec.CopyFromNativeAsync(source, canonical, destination,
+                                encoding, lineEnding, cancellationToken: cancellationToken),
+                            DocumentOwnerId, cancellationToken);
                     }
                 }, cancellationToken);
                 if (!_disposed)
-                    await TryRotateRecoveryJournalAsync(prepared.Baseline, reader.Sequence);
+                    await TryRotateRecoveryJournalAsync(savedBaseline, reader.Sequence);
             }
 
             long modifiedTime = -1;
@@ -590,7 +616,6 @@ public sealed partial class TextEditor
             {
                 LoggingService.LogError($"[{nameof(TextEditor)}] Saved file time could not be queried: {ex.Message}");
             }
-            prepared.CompleteFileWrite(modifiedTime);
             if (_disposed) return;
 
             // Encoding/EOL controls remain available during a save. Preserve
@@ -598,8 +623,8 @@ public sealed partial class TextEditor
             var currentEncoding = GetEncoding();
             var currentLineEnding = GetLineEnding();
             var previous = LastSavedSnapshot;
-            LastSavedSnapshot = prepared;
-            adopted = true;
+            // The saved snapshot exists only once its file has committed.
+            LastSavedSnapshot = new DocumentSnapshot(savedBaseline, encoding, lineEnding, modifiedTime);
             previous.Dispose();
             FileModificationState = FileModificationState.Untouched;
             EditingFile = result.File;
@@ -619,7 +644,8 @@ public sealed partial class TextEditor
         }
         finally
         {
-            if (!adopted) prepared?.Dispose();
+            // The adopted snapshot holds its own lease; this releases the creation lease.
+            savedBaseline?.Dispose();
         }
     }
 }

@@ -10,6 +10,9 @@
 namespace winrt::WinUIEditor::implementation
 {
 	struct EditorBaseControl;
+	// Reason() casts the native reason to the projected enum.
+	static_assert(static_cast<int>(::WinUIEditor::DiffReason::RefinementBudget) ==
+		static_cast<int>(WinUIEditor::EditorDiffReason::RefinementBudget));
 	struct EditorDiffResult : EditorDiffResultT<EditorDiffResult>
 	{
 		EditorDiffResult(WinUIEditor::EditorDiffStatus status, ::WinUIEditor::DiffResult data,

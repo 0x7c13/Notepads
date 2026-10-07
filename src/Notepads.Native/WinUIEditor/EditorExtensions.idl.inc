@@ -8,13 +8,10 @@
 		Windows.Foundation.IAsyncOperation<EditorDiffResult> CompareAsync(Editor other);
 		void ApplyDiffPresentation(EditorDiffResult result, Boolean oldSide);
 		void SetDiffColours(Int32 line, Int32 inlineColour, Int32 gap, Int32 gapHatch);
-		void ReleaseDiffDocument();
+		void DetachDocument();
 		// Installs a complete compiled lexer configuration; optional OOM pauses coloring.
 		void SetLexerLanguage(String name, String[] keywords, String[] propertyNames, String[] propertyValues);
-		// 0: enabled/plain text; 1: bytes; 2: line count; 3: long line; 4: memory.
-		Int32 SyntaxHighlightingPauseReason { get; };
-		// Build an unattached document on the pool, then attach on UI.
-		Windows.Foundation.IAsyncAction LoadTextAsync(String text);
+		EditorSyntaxPauseReason SyntaxHighlightingPauseReason { get; };
 		// Counted plain-text insertion using the native selection/paste rules.
 		void PasteText(String text);
 		// Canonical UTF-8 with CR line endings; the stream remains caller-owned.
@@ -31,4 +28,6 @@
 		Windows.Foundation.IAsyncAction RotateJournalAsync(String localPath, UInt64 expectedSequence);
 		EditorJournalCheckpoint AcquireJournalCheckpoint();
 		Windows.Foundation.IAsyncAction StopJournalAsync();
+		// The active journal's writer failed; rotate to a fresh baseline to resume recovery.
+		Boolean JournalFaulted { get; };
 		Windows.Foundation.IAsyncActionWithProgress<UInt64> RestoreUtf8Async(Windows.Storage.Streams.IInputStream baselineStream, UInt64 baselineLength, EditorJournalCheckpoint checkpoint);

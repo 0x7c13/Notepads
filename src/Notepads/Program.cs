@@ -3,7 +3,6 @@
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,31 +39,12 @@ public static class Program
         else if (activatedArgs is ProtocolActivatedEventArgs protocolActivatedEventArgs)
         {
             LoggingService.LogInfo($"[{nameof(Main)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
-            var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri, out _);
+            var protocol = NotepadsProtocolService.GetOperationProtocol(protocolActivatedEventArgs.Uri);
             if (protocol == NotepadsOperationProtocol.OpenNewInstance)
             {
                 OpenNewInstance(bootstrap);
             }
             else
-            {
-                RedirectOrCreateNewInstance(bootstrap);
-            }
-        }
-        else if (activatedArgs is LaunchActivatedEventArgs launchActivatedEventArgs)
-        {
-            bool handled = false;
-
-            if (!string.IsNullOrEmpty(launchActivatedEventArgs.Arguments))
-            {
-                var protocol = NotepadsProtocolService.GetOperationProtocol(new Uri(launchActivatedEventArgs.Arguments), out _);
-                if (protocol == NotepadsOperationProtocol.OpenNewInstance)
-                {
-                    handled = true;
-                    OpenNewInstance(bootstrap);
-                }
-            }
-
-            if (!handled)
             {
                 RedirectOrCreateNewInstance(bootstrap);
             }

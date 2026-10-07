@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Notepads.Features.Documents;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Infrastructure.Diagnostics;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 
@@ -26,14 +27,23 @@ internal static class SessionDocumentStore
         return "Notepads:DocumentOwner:" + ownerId.ToString("N") + ":";
     }
 
-    public static string RegisterFileAccess(Guid editorId, StorageFile file, Guid ownerId, SessionGenerationDraft draft)
+    /// <summary>
+    /// Grant recovery access to the editing file. A refused grant (deleted, offline or over quota)
+    /// returns null, so recovery restores the content without its file association.
+    /// </summary>
+    public static string TryRegisterFileAccess(Guid editorId, StorageFile file, Guid ownerId, SessionGenerationDraft draft)
     {
         if (editorId == Guid.Empty) throw new ArgumentException("A file permission requires an editor identity.", nameof(editorId));
         if (file == null) throw new ArgumentNullException(nameof(file));
         if (draft == null) throw new ArgumentNullException(nameof(draft));
         var token = GetFutureAccessTokenPrefix(ownerId) + editorId.ToString("N") + "-" + Guid.NewGuid().ToString("N");
         draft.RegisterAccessToken(token);
-        StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
+        try { StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file); }
+        catch (Exception ex)
+        {
+            LoggingService.LogError($"[{nameof(SessionDocumentStore)}] The editing file grant was refused: {ex.Message}");
+            return null;
+        }
         return token;
     }
 
@@ -83,7 +93,7 @@ internal static class SessionDocumentStore
         using (var stream = await source.OpenReadStreamAsync(cancellationToken).ConfigureAwait(false))
         {
             return await DocumentBaseline.CreateAsync(output => stream.CopyToAsync(output, 65536, cancellationToken),
-                cancellationToken, ownerId).ConfigureAwait(false);
+                ownerId, cancellationToken).ConfigureAwait(false);
         }
     }
 

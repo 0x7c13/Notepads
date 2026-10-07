@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 
 namespace Notepads.Features.Sessions.Contracts;
 
@@ -26,9 +25,8 @@ internal sealed class TransferReceiptData
     {
         if (Source == null) throw new InvalidDataException("A transfer receipt has no source token.");
         Source.Validate();
-        if (TargetRootId == Guid.Empty || TargetInstanceId == Guid.Empty || TargetOwnerId == Guid.Empty || TargetEpochId == Guid.Empty || TargetDescriptorSha256 == null || TargetDescriptorSha256.Length != 64 ||
-            TargetDescriptorSha256.Any(character =>
-                !(character >= '0' && character <= '9' || character >= 'a' && character <= 'f' || character >= 'A' && character <= 'F')))
+        if (TargetRootId == Guid.Empty || TargetInstanceId == Guid.Empty || TargetOwnerId == Guid.Empty || TargetEpochId == Guid.Empty ||
+            !Sha256Hex.IsValid(TargetDescriptorSha256))
         {
             throw new InvalidDataException("Invalid durable document transfer receipt.");
         }

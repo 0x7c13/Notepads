@@ -36,25 +36,10 @@ using Windows.UI.Xaml.Input;
 
 namespace Notepads.Presentation.Controls.TextEditor;
 
-public enum TextEditorMode
-{
-    Editing = 0,
-    DiffPreview
-}
-
-public enum FileModificationState
-{
-    Untouched,
-    Modified,
-    RenamedMovedOrDeleted
-}
-
 public sealed partial class TextEditor : ITextEditor, IDisposable
 {
     public new event RoutedEventHandler Loaded;
-    public new event RoutedEventHandler Unloaded;
     public new event KeyEventHandler KeyDown;
-    public event EventHandler ModeChanged;
     public event EventHandler ModificationStateChanged;
     public event EventHandler FileModificationStateChanged;
     public event EventHandler LineEndingChanged;
@@ -130,6 +115,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     public bool IsDocumentEmpty => TextEditorCore.IsDocumentEmpty;
 
+    public long DocumentLength => TextEditorCore.DocumentLength;
+
     public bool IsModified
     {
         get => _isModified;
@@ -176,25 +163,11 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     private readonly SemaphoreSlim _fileStatusSemaphoreSlim = new(1, 1);
     private bool _disposed;
 
-    private TextEditorMode _mode = TextEditorMode.Editing;
+    private readonly KeyboardCommandHandler _keyboardCommandHandler;
 
-    private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
-
-    private IContentPreviewExtension _contentPreviewExtension;
     private SearchContext _lastSearchContext = new(string.Empty);
 
-    public TextEditorMode Mode
-    {
-        get => _mode;
-        private set
-        {
-            if (_mode != value)
-            {
-                _mode = value;
-                ModeChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-    }
+    public TextEditorMode Mode { get; private set; } = TextEditorMode.Editing;
 
     public bool DisplayLineNumbers
     {
@@ -301,8 +274,6 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             TextEditorCore.ContextFlyout = null;
         }
 
-        Unloaded?.Invoke(this, new RoutedEventArgs());
-
         base.Loaded -= TextEditor_Loaded;
         base.Unloaded -= TextEditor_Unloaded;
         base.PreviewKeyDown -= TextEditor_PreviewKeyDown;
@@ -310,11 +281,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
         TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
-        _contentPreviewExtension?.Dispose();
-
         if (SplitPanel != null)
         {
-            SplitPanel.KeyDown -= SplitPanel_OnKeyDown;
             UnloadObject(SplitPanel);
         }
 
@@ -346,8 +314,6 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         return TextEditorCore.GetText();
     }
-
-    public Task<string> GetTextAsync() => TextEditorCore.GetTextAsync();
 
     // Capture on the owning UI thread before asynchronous persistence work.
     public DocumentMetadata GetTextEditorStateMetaData()
@@ -401,7 +367,6 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
     {
-        Unloaded?.Invoke(this, e);
         StopCheckingFileStatus();
     }
 
@@ -505,30 +470,19 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private KeyboardCommandHandler GetKeyboardCommandHandler()
     {
-        return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
-        {
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: false)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.F, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.H, (args) => ShowFindAndReplaceControl(showReplaceBar: true)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.G, (args) => ShowGoToControl()),
-            new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F3, async (args) =>
-                await InitiateFindAndReplaceAsync(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.F3, async (args) =>
-                await InitiateFindAndReplaceAsync(new FindAndReplaceEventArgs (_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
-            new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Escape, (args) => { OnEscapeKeyDown(); }, shouldHandle: false, shouldSwallow: true)
-        });
-    }
-
-    private void OpenSplitView(IContentPreviewExtension extension)
-    {
-        _contentPreviewExtension = extension;
-        SplitPanel.Content = extension;
-        SplitPanelColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
-        SplitPanelColumnDefinition.MinWidth = 100.0f;
-        SplitPanel.Visibility = Visibility.Visible;
-        GridSplitter.Visibility = Visibility.Visible;
-        AnalyticsService.TrackEvent("MarkdownContentPreview_Opened");
-        _isContentPreviewPanelOpened = true;
+        return new KeyboardCommandHandler(
+        [
+            new(VirtualKeyModifiers.Control, VirtualKey.F, () => ShowFindAndReplaceControl(showReplaceBar: false)),
+            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.F, () => ShowFindAndReplaceControl(showReplaceBar: true)),
+            new(VirtualKeyModifiers.Control, VirtualKey.H, () => ShowFindAndReplaceControl(showReplaceBar: true)),
+            new(VirtualKeyModifiers.Control, VirtualKey.G, () => ShowGoToControl()),
+            new(VirtualKeyModifiers.None, VirtualKey.F3, async () =>
+                await InitiateFindAndReplaceAsync(new FindAndReplaceEventArgs(_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Next))),
+            new(VirtualKeyModifiers.Shift, VirtualKey.F3, async () =>
+                await InitiateFindAndReplaceAsync(new FindAndReplaceEventArgs(_lastSearchContext, string.Empty, FindAndReplaceMode.FindOnly, SearchDirection.Previous))),
+            // Leave Escape unhandled so it still bubbles to the page's shortcuts.
+            new(VirtualKeyModifiers.None, VirtualKey.Escape, () => OnEscapeKeyDown(), Handled: false),
+        ]);
     }
 
     private void CloseSplitView()
@@ -673,22 +627,19 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         }
     }
 
-    public bool NoChangesSinceLastSaved(bool compareTextOnly = false)
+    public bool NoChangesSinceLastSaved()
     {
         if (!_loaded) return true;
 
-        if (!compareTextOnly)
+        if (_requiresSaveAs) return false;
+        if (RequestedLineEnding != null)
         {
-            if (_requiresSaveAs) return false;
-            if (RequestedLineEnding != null)
-            {
-                return false;
-            }
+            return false;
+        }
 
-            if (_requestedEncoding != null)
-            {
-                return false;
-            }
+        if (_requestedEncoding != null)
+        {
+            return false;
         }
 
         return !TextEditorCore.IsDocumentModified;
@@ -714,26 +665,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         }
         else if (_isContentPreviewPanelOpened)
         {
-            _contentPreviewExtension.IsExtensionEnabled = false;
             CloseSplitView();
-        }
-    }
-
-    private void LoadSplitView()
-    {
-        FindName("SplitPanel");
-        FindName("GridSplitter");
-        SplitPanel.Visibility = Visibility.Collapsed;
-        GridSplitter.Visibility = Visibility.Collapsed;
-        SplitPanel.KeyDown += SplitPanel_OnKeyDown;
-    }
-
-    private void SplitPanel_OnKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        var result = _keyboardCommandHandler.Handle(e);
-        if (result.ShouldHandle)
-        {
-            e.Handled = true;
         }
     }
 
@@ -760,16 +692,12 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             }
         }
 
-        var result = _keyboardCommandHandler.Handle(e);
-        if (result.ShouldHandle)
-        {
-            e.Handled = true;
-        }
+        if (_keyboardCommandHandler.Handle(e)) e.Handled = true;
     }
 
     private void TextEditorCore_OnModificationStateChanged(object sender, EventArgs args)
     {
-        if (_loaded) IsModified = TextEditorCore.IsDocumentModified || _requestedEncoding != null || RequestedLineEnding != null;
+        if (_loaded) IsModified = !NoChangesSinceLastSaved();
     }
 
     private void TextEditorCore_OnTextChanging(object textEditor, EventArgs args)

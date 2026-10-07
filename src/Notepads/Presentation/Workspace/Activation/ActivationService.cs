@@ -44,14 +44,10 @@ public static class ActivationService
     {
         LoggingService.LogInfo($"[{nameof(ActivationService)}] [ProtocolActivated] Protocol: {protocolActivatedEventArgs.Uri}");
 
-        switch (rootFrame.Content)
+        // A notepads:// URI carries no workspace payload; it only selects the instance in Program.Main.
+        if (rootFrame.Content == null)
         {
-            case null:
-                rootFrame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, protocolActivatedEventArgs));
-                break;
-            case NotepadsMainPage mainPage:
-                mainPage.ExecuteProtocol(protocolActivatedEventArgs.Uri);
-                break;
+            rootFrame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, null));
         }
     }
 

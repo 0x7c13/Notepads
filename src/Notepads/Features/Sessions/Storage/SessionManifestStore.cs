@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -15,24 +14,12 @@ using System.Threading.Tasks;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
 using Notepads.Features.Sessions.Validation;
-using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Sessions.Storage;
 
 internal static class SessionManifestStore
 {
-    public static async Task<StorageFolder> GetBackupFolderAsync(string backupFolderName)
-    {
-        return await FileStorage.GetOrCreateAppFolderAsync(backupFolderName);
-    }
-
-    public static async Task<IReadOnlyList<StorageFile>> GetAllFilesInBackupFolderAsync(string backupFolderName)
-    {
-        StorageFolder backupFolder = await GetBackupFolderAsync(backupFolderName);
-        return await backupFolder.GetFilesAsync();
-    }
-
     internal static async Task<(NotepadsSessionDataV1 Session, string Fingerprint, Exception Error)> ReadLegacyAsync(
         string fileName, CancellationToken cancellation)
     {

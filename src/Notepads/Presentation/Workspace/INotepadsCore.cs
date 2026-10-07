@@ -20,7 +20,6 @@ namespace Notepads.Presentation.Workspace;
 public interface INotepadsCore : IDisposable, IAsyncDisposable
 {
     event EventHandler<ITextEditor> TextEditorLoaded;
-    event EventHandler<ITextEditor> TextEditorUnloaded;
     event EventHandler<ITextEditor> TextEditorOpened;
     event EventHandler<ITextEditor> TextEditorLanguageChanged;
     event EventHandler<ITextEditor> TextEditorClosed;
@@ -33,7 +32,6 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
     event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
     event EventHandler<ITextEditor> TextEditorEncodingChanged;
     event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-    event EventHandler<ITextEditor> TextEditorModeChanged;
     event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
     event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
     event KeyEventHandler TextEditorKeyDown;

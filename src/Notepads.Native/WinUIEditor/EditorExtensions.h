@@ -10,11 +10,10 @@
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorDiffResult> RunDiffAsync(WinUIEditor::Editor other, std::shared_ptr<::WinUIEditor::DiffJob> job);
 		void ApplyDiffPresentation(WinUIEditor::EditorDiffResult const &result, bool oldSide);
 		void SetDiffColours(int32_t line, int32_t inlineColour, int32_t gap, int32_t gapHatch);
-		void ReleaseDiffDocument();
+		void DetachDocument();
 		void SetLexerLanguage(hstring const &name, array_view<hstring const> keywords,
 			array_view<hstring const> propertyNames, array_view<hstring const> propertyValues);
-		int32_t SyntaxHighlightingPauseReason();
-		Windows::Foundation::IAsyncAction LoadTextAsync(hstring text);
+		WinUIEditor::EditorSyntaxPauseReason SyntaxHighlightingPauseReason();
 		void PasteText(hstring const &text);
 		Windows::Foundation::IAsyncActionWithProgress<uint64_t> LoadUtf8Async(Windows::Storage::Streams::IInputStream stream, uint64_t byteLength, bool preserveUndo);
 		Windows::Storage::Streams::IBuffer ReadUtf8Range(int64_t offset, int32_t maxBytes);
@@ -29,4 +28,5 @@
 		Windows::Foundation::IAsyncAction RotateJournalAsync(hstring localPath, uint64_t expectedSequence);
 		WinUIEditor::EditorJournalCheckpoint AcquireJournalCheckpoint();
 		Windows::Foundation::IAsyncAction StopJournalAsync();
+		bool JournalFaulted();
 		Windows::Foundation::IAsyncActionWithProgress<uint64_t> RestoreUtf8Async(Windows::Storage::Streams::IInputStream baselineStream, uint64_t baselineLength, WinUIEditor::EditorJournalCheckpoint checkpoint);

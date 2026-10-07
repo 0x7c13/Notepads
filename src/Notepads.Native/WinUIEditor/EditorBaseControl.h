@@ -31,7 +31,7 @@ namespace winrt::WinUIEditor::implementation
 		void SetSyntaxLexer(hstring const &name, array_view<hstring const> keywords,
 			array_view<hstring const> propertyNames, array_view<hstring const> propertyValues)
 		{ _scintilla->SetSyntaxLexer(name, keywords, propertyNames, propertyValues); }
-		int SyntaxHighlightingPauseReason() const noexcept { return _scintilla->SyntaxHighlightingPauseReason(); }
+		WinUIEditor::EditorSyntaxPauseReason SyntaxHighlightingPauseReason() const noexcept { return _scintilla->SyntaxHighlightingPauseReason(); }
 		void FinalizeAfterApartmentClosed() noexcept;
 		void AcquireReadLease();
 		void ReleaseReadLease() noexcept;

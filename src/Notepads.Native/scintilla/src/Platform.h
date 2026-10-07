@@ -6,9 +6,6 @@
 // Copyright 1998-2009 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
-// See LICENSE.txt in the project root for the Notepads modifications.
-
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
@@ -224,7 +221,7 @@ public:
 	virtual void RectangleFrame(PRectangle rc, Stroke stroke)=0;
 	virtual void FillRectangle(PRectangle rc, Fill fill)=0;
 	virtual void FillRectangleAligned(PRectangle rc, Fill fill)=0;
-	virtual void FillRectangle(PRectangle rc, Surface &surfacePattern, Point origin = Point(0, 0))=0;
+	virtual void FillRectangle(PRectangle rc, Surface &surfacePattern)=0;
 	virtual void RoundedRectangle(PRectangle rc, FillStroke fillStroke)=0;
 	virtual void AlphaRectangle(PRectangle rc, XYPOSITION cornerSize, FillStroke fillStroke)=0;
 	enum class GradientOptions { leftToRight, topToBottom };

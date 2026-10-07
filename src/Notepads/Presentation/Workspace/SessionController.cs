@@ -38,8 +38,13 @@ namespace Notepads.Presentation.Workspace;
 internal sealed class SessionController : ISessionController, ISessionPersistenceParticipant
 {
     private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
+    private static readonly TimeSpan MaintenanceInterval = TimeSpan.FromSeconds(60);
     private readonly INotepadsCore _notepadsCore;
     private readonly CoreDispatcher _dispatcher;
+    // Each step starts on the UI thread and runs its SessionService call on the pool with one awaited
+    // Task.Run, so session file I/O never blocks the UI. Editor capture, restoration and capture disposal
+    // stay on the UI thread around that hop. Steps serialize every SessionService call and mutation; UI
+    // reads outside steps are limited to single-field snapshots (stamp, flags, counts).
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed",
         Justification = "Dispose stops the coordinator; DrainAsync waits for its Completion before releasing session ownership.")]
     private readonly DocumentOperationCoordinator _sessionOperations = new();
@@ -48,6 +53,10 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
     private readonly SessionService _service;
     private bool _loaded;
     private bool _disposed;
+    // Maintenance state is only touched on the UI thread: saves, the startup pass and the timer's UI step.
+    private bool _startupMaintenanceQueued;
+    private bool _maintenanceDue;
+    private long _lastMaintenance;
     private readonly object _timerSync = new();
     private Task _timerWork = Task.CompletedTask;
     private Timer _timer;
@@ -83,8 +92,10 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
 
     public SessionRecoveryOutcome RecoveryOutcome => _service.RecoveryOutcome;
 
+    public bool IsRecoveryBlocked => _service.IsRecoveryBlocked;
+
     public Task InitializeAuthorityAsync() => _sessionOperations.RunAsync(
-        cancellation => _service.InitializeAuthorityAsync(cancellation));
+        cancellation => Task.Run(() => _service.InitializeAuthorityAsync(cancellation)));
 
     public async Task<int> LoadLastSessionAsync()
     {
@@ -97,7 +108,7 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
     {
         if (_loaded) return 0;
         var options = new DocumentLoadOptions(configuredDefaultEncoding: ApplicationPreferences.EditorDefaultDecoding);
-        using (var batch = await _service.PrepareRecoveryAsync(options, cancellation))
+        using (var batch = await Task.Run(() => _service.PrepareRecoveryAsync(options, cancellation)))
         {
             var recovered = new ITextEditor[batch.Documents.Count];
             try
@@ -144,7 +155,7 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
                 if (attachedIds.Length != 0)
                 {
                     using var capture = CaptureSession(_notepadsCore.GetAllTextEditors(), batch.ExpectedStamp);
-                    await _service.CommitAttachedAsync(capture, attachedIds, cancellation);
+                    await Task.Run(() => _service.CommitAttachedAsync(capture, attachedIds, cancellation));
                 }
                 if (!_disposed && !_notepadsCore.IsClosing)
                     _notepadsCore.SetTabScrollViewerHorizontalOffset(batch.TabScrollOffset);
@@ -158,13 +169,6 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
                     if (!attached.Contains(editor)) editor.Dispose();
             }
         }
-    }
-
-    public async Task<int> RecoverBackupFilesAsync()
-    {
-        var count = 0;
-        await _sessionOperations.RunAsync(async cancellation => count = await _service.RecoverBackupFilesAsync(cancellation));
-        return count;
     }
 
     public async Task OpenSessionBackupFolderAsync()
@@ -181,7 +185,7 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         try
         {
             // Timer callbacks run on the pool. Native editor state must be captured
-            // on its owning UI thread; async file operations yield back to the UI.
+            // on its owning UI thread; only the persistence calls hop to the pool.
             if (!_dispatcher.HasThreadAccess)
             {
                 var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -228,7 +232,12 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         {
             cancellation.ThrowIfCancellationRequested();
             if (!IsBackupEnabled || _disposed) return false;
-            await _service.EnsureMetadataRetainedAsync(cancellation);
+            await Task.Run(() => _service.EnsureMetadataRetainedAsync(cancellation));
+            cancellation.ThrowIfCancellationRequested();
+            if (!IsBackupEnabled || _disposed) return false;
+            // A journal whose writer failed would fail every capture; rebase it first.
+            foreach (var editor in _notepadsCore.GetAllTextEditors() ?? [])
+                await editor.RepairRecoveryJournalAsync(cancellation);
             cancellation.ThrowIfCancellationRequested();
             if (!IsBackupEnabled || _disposed) return false;
             var editors = _notepadsCore.GetAllTextEditors() ?? [];
@@ -238,9 +247,11 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
             capture.SelectedEditorId = selected?.Id;
             capture.TabScrollOffset = _notepadsCore.GetTabScrollViewerHorizontalOffset();
             AddCapturedDocuments(capture, editors);
-            var result = await _service.SaveAsync(capture, cancellation);
+            var result = await Task.Run(() => _service.SaveAsync(capture, cancellation));
             if (!result.Succeeded) return false;
-            await _service.FinishPublicationAsync(result, cancellation);
+            // Saves never prune or collect, so close, exit and suspension stay fast. The timer
+            // runs maintenance after a change, and the next startup pass covers terminal saves.
+            _maintenanceDue |= result.Changed;
             if (actionAfterSaving != null)
             {
                 var currentEditors = _notepadsCore.GetAllTextEditors();
@@ -314,17 +325,14 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         }
     }
 
-    public async Task<bool> PrepareExplicitCloseAsync(Guid editorId)
+    public async Task<bool> PrepareExplicitCloseAsync(IReadOnlyCollection<Guid> editorIds, ICollection<Guid> closed = null)
     {
         if (_disposed) return false;
         var succeeded = false;
         try
         {
             await _sessionOperations.RunAsync(async cancellation =>
-            {
-                await _service.InitializeAuthorityAsync(cancellation);
-                succeeded = await _service.PrepareExplicitCloseAsync(editorId, cancellation);
-            });
+                succeeded = await Task.Run(() => _service.PrepareExplicitCloseAsync(editorIds, closed, cancellation)));
             return succeeded;
         }
         catch (Exception ex)
@@ -378,12 +386,44 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
                     foreach (var editor in _notepadsCore.GetAllTextEditors())
                     {
                         if (_disposed || !IsBackupEnabled || _notepadsCore.IsClosing) break;
-                        await editor.MaintainRecoveryAsync();
+                        // One editor's failed compaction must not stall the others or the maintenance pass.
+                        try { await editor.MaintainRecoveryAsync(); }
+                        catch (Exception ex) when (ex is not OperationCanceledException)
+                        {
+                            LoggingService.LogError($"[{nameof(SessionController)}] Journal compaction deferred for [{editor.Id}]: {ex.Message}");
+                        }
                     }
+                    // Idle windows publish nothing new, so they skip maintenance; busy ones run it once a minute.
+                    if (_maintenanceDue && Stopwatch.GetElapsedTime(_lastMaintenance) >= MaintenanceInterval)
+                        await RunMaintenanceAsync();
                 });
             }
         }
         catch (Exception ex) { LoggingService.LogError($"[{nameof(SessionController)}] Background backup failed: {ex}"); }
+    }
+
+    public Task RunStartupMaintenanceAsync()
+    {
+        if (_startupMaintenanceQueued) return Task.CompletedTask;
+        _startupMaintenanceQueued = true;
+        return RunMaintenanceAsync();
+    }
+
+    // A queued step of its own, never part of a save; a pass still queued when the window starts closing is skipped.
+    private async Task RunMaintenanceAsync()
+    {
+        try
+        {
+            await _sessionOperations.RunAsync(async cancellation =>
+            {
+                if (_disposed || _notepadsCore.IsClosing) return;
+                _maintenanceDue = false;
+                _lastMaintenance = Stopwatch.GetTimestamp();
+                await Task.Run(() => _service.RunMaintenanceAsync(cancellation));
+            });
+        }
+        catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException) { }
+        catch (Exception ex) { LoggingService.LogError($"[{nameof(SessionController)}] Recovery maintenance was deferred: {ex}"); }
     }
 
     public void StopSessionBackup()
@@ -416,7 +456,7 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
             await _sessionOperations.RunAsync(async cancellation =>
             {
                 cancellation.ThrowIfCancellationRequested();
-                await _service.ClearSessionDataAsync(cancellation);
+                await Task.Run(() => _service.ClearSessionDataAsync(cancellation));
             });
         }
         catch (Exception ex)
@@ -456,8 +496,6 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         textEditor.LanguageOverrideChanged -= OnEditorDocumentStateChanged;
         _editorRevisions.TryRemove(textEditor.Id, out _);
     }
-
-    // Cleanup orphaned/dangling backup files
 
     private void OnEditorDocumentStateChanged(object sender, EventArgs e)
     {

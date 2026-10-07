@@ -5,9 +5,6 @@
 // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
-// See LICENSE.txt in the project root for the Notepads modifications.
-
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
@@ -32,15 +29,8 @@ static const char styleSubable[] = { 0 };
 
 LexerBase::LexerBase(const LexicalClass *lexClasses_, size_t nClasses_) :
 	lexClasses(lexClasses_), nClasses(nClasses_) {
-	try {
-		for (int wl = 0; wl < numWordLists; wl++)
-			keyWordLists[wl] = new WordList;
-	} catch (...) {
-		// A failed constructor does not run ~LexerBase. Retire completed lists.
-		for (WordList *wordList : keyWordLists)
-			delete wordList;
-		throw;
-	}
+	for (int wl = 0; wl < numWordLists; wl++)
+		keyWordLists[wl] = new WordList;
 	keyWordLists[numWordLists] = nullptr;
 }
 

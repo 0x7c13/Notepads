@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads ile aç</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Bu bir Notepads gölge penceresidir.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Dosya zaten açık!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Yeni pencere aç</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Yeni pencere</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Yeni Pencere</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>En Son Açılanlar</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Satıra Git</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>"{0}" dosya uzantısı şu anda desteklenmiyor</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Kapat</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Veri bozulması nedeniyle son oturumdan veri kurtarılamadı. Lütfen oturumun klasöründe bulunan tüm kaydedilmemiş dosyalarınızı (*.txt) yedekleyin.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Oturum kurtarma, Notepads'in doğrulayamadığı kurtarma dosyaları tarafından engellendiğinden belgelerinizi korumak için bu işlem iptal edildi. Herhangi bir dosyayı onarmadan veya kaldırmadan önce ayrı bir kopya oluşturmak için kurtarma klasörünü açın.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Oturum yedekleme klasörünü aç</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Uyarı</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Oturum yedeklenemedi. Dosyalarınızı kaydedip yeniden deneyin.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Oturum kurtarma, Notepads'in doğrulayamadığı kurtarma dosyaları tarafından engelleniyor. Herhangi bir şeyi onarmadan veya kaldırmadan önce bunları kopyalamak için kurtarma klasörünü açın.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Bazı sekmeler geri yüklenemedi. Yedekleri oturum yedekleme klasöründe korundu.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Dosya yerel olarak kaydedildi. Bulut eşitlemesi henüz tamamlanmadı.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Yerine konacak metin geçersiz metin içeriyor.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Eski metin, kaydedilmiş sürüm</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Önceki değişiklik (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Karşılaştırma kullanılabilir kaynaklarla hazırlanamadı. Belgeniz değişmedi.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB'tan büyük belgeler yazdırılamaz.</value></data>
 </root>

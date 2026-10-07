@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>გახსენი Notepads-ით</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>ეს არის Notepads-ის ჩრდილი ფანჯარა.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>ფაილი უკვე გახსნილია!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>ახალი ფანჯარა</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>ხსნის ახალ ფანჯარაში</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>ახალი ფანჯარა</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>გახსენი ბოლო</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>გადადი ხაზზე</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>ფაილის გაფართოება "{0}" ამ მომენტში არ მხარდაჭერია</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>დახურვა</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>ბოლო სესიიდან მონაცემთა აღდგენა ჩავარდნილი მონაცემების გამო ვერ მოხერხდა. გთხოვთ, გააკეთეთ ბექაფი თქვენი შეუნახავი ფაილების (*.txt) სესიის ფოლდერში.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>სესიის აღდგენა დაბლოკილია აღდგენის ფაილებით, რომლებსაც Notepads ვერ ამოწმებს, ამიტომ ეს მოქმედება გაუქმდა თქვენი დოკუმენტების დასაცავად. ფაილების შეკეთებამდე ან წაშლამდე გახსენით აღდგენის საქაღალდე და შექმენით ცალკე ასლი.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>გახსენით სესიის ბექაფის ფოლდერი</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>გაფრთხილება</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>სესიის სარეზერვო ასლის შექმნა ვერ მოხერხდა. შეინახეთ ფაილები და სცადეთ ხელახლა.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>სესიის აღდგენა დაბლოკილია აღდგენის ფაილებით, რომლებსაც Notepads ვერ ამოწმებს. რაიმეს შეკეთებამდე ან წაშლამდე გახსენით აღდგენის საქაღალდე და დააკოპირეთ ისინი.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>ზოგიერთი ჩანართის აღდგენა ვერ მოხერხდა. მათი სარეზერვო ასლები შენარჩუნებულია სესიის სარეზერვო ასლების საქაღალდეში.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>ფაილი შენახულია ადგილობრივად. ღრუბელთან სინქრონიზაცია ჯერ არ დასრულებულა.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>ჩასანაცვლებელი ტექსტი შეიცავს არასწორ ტექსტს.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>ძველი ტექსტი, შენახული ვერსია</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>წინა ცვლილება (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>შედარების მომზადება ხელმისაწვდომი რესურსებით ვერ მოხერხდა. თქვენი დოკუმენტი არ შეცვლილა.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB-ზე დიდი დოკუმენტების დაბეჭდვა შეუძლებელია.</value></data>
 </root>

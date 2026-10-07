@@ -232,6 +232,10 @@ internal static class Program
             "verified intent can finish a reset whose interrupted final copies are both corrupt");
         var result = await fixture.Store.PublishAsync(area, reset);
         Check(result.IsCommitted && result.PayloadSha256 == intent.PayloadSha256, "matching decision commits the exact reset payload");
+        var closed = new RecoveryRecord
+        { Kind = RecoveryRecordKind.Closed, ClosedEditorId = Guid.NewGuid(), Stamp = fixture.Store.CreatePublicationStamp(area, reset.Stamp) };
+        Check((await fixture.Store.PublishAsync(area, closed)).IsCommitted && fixture.Store.Enumerate(area).ResetIntents.SetEquals(new[] { intent.Address }),
+            "enumeration reports a reset intent copy only for the operation that holds one");
         File.WriteAllText(fixture.Store.Paths.CopyPath(intent.Address, "intent"), "damaged intent");
         Check((await fixture.Store.ReadResetIntentAsync(intent.Address)).State == RecoveryReadState.Corrupt, "unreadable intent remains a distinct barrier condition");
         foreach (var point in new[] { RecoveryStorageStep.BeforeRename, RecoveryStorageStep.AfterRename })
@@ -367,31 +371,36 @@ internal static class Program
     {
         using var fixture = new StoreFixture();
         var probes = new List<string>();
-        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var paths = new RecoveryStoragePaths(fixture.Root, path =>
         {
-            if (!string.Equals(path, fixture.Root, comparison) && !path.StartsWith(fixture.Root + Path.DirectorySeparatorChar, comparison))
-                throw new UnauthorizedAccessException("The packaged process cannot inspect ancestors of its app-private root.");
             probes.Add(path);
             return File.GetAttributes(path);
         });
-        var descendant = paths.UnderRoot("Scopes", fixture.Owner.ToString("N"), "Checkpoints");
-        Check(probes.Contains(fixture.Root) && probes.Contains(descendant) &&
-            probes.All(path => string.Equals(path, fixture.Root, comparison) || path.StartsWith(fixture.Root + Path.DirectorySeparatorChar, comparison)),
-            "path safety checks the trusted root and descendants without probing inaccessible ancestors");
-        var deniedPaths = new RecoveryStoragePaths(fixture.Root, path =>
-        {
-            if (!string.Equals(path, fixture.Root, comparison)) throw new UnauthorizedAccessException("Denied within the app-private root.");
-            return File.GetAttributes(path);
-        });
-        Throws<UnauthorizedAccessException>(() => deniedPaths.UnderRoot("Scopes"),
-            "access denial within Recovery is preserved rather than treated as an absent path");
-        var reparsePaths = new RecoveryStoragePaths(fixture.Root, path =>
-            string.Equals(path, fixture.Root, comparison) ? File.GetAttributes(path) : FileAttributes.Directory | FileAttributes.ReparsePoint);
-        Throws<InvalidDataException>(() => reparsePaths.UnderRoot("Scopes"),
-            "a reparse point below the trusted root remains unsafe");
+        paths.TemporaryPath(new RecoveryAddress(fixture.Area, 1, Guid.NewGuid()), "a");
+        Check(probes.SequenceEqual([paths.RootPath]),
+            "path safety probes only the trusted root, never its inaccessible ancestors or the descendants it builds");
         Throws<InvalidDataException>(() => new RecoveryStoragePaths(fixture.Root, path => FileAttributes.Directory | FileAttributes.ReparsePoint),
             "the configured recovery root itself cannot be a reparse point");
+        var entry = fixture.Store.Paths.ScopePath(Guid.NewGuid());
+        Throws<InvalidDataException>(() => fixture.Store.Paths.EnsureSafeEntry(entry, FileAttributes.Directory | FileAttributes.ReparsePoint),
+            "an enumerated entry below the trusted root cannot be a reparse point");
+        fixture.Store.Paths.EnsureSafeEntry(entry, FileAttributes.Directory);
+
+        using var outside = new StoreFixture();
+        var link = Path.Combine(fixture.Store.Paths.ScopesPath, Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(fixture.Store.Paths.ScopesPath);
+        try { Directory.CreateSymbolicLink(link, outside.Root); }
+        catch (Exception error) when (error is UnauthorizedAccessException or IOException)
+        {
+            Console.WriteLine($"SKIP: a reparse point below the trusted root (cannot create a directory link: {error.Message})");
+            return;
+        }
+        try
+        {
+            var scan = fixture.Store.EnumerateScopeIds();
+            Check(scan.Error is InvalidDataException && scan.Entries.Count == 0, "a scan refuses a reparse point below the trusted root");
+        }
+        finally { Directory.Delete(link); }
     }
 
     private static async Task TestTransferShapeAsync()

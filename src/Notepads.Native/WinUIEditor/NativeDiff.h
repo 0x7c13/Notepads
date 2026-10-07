@@ -29,9 +29,10 @@ namespace WinUIEditor
 	struct DiffHunk { uint32_t oldStart{}, oldCount{}, newStart{}, newCount{}; };
 	enum class DiffReason { None, Memory, LineLimit, TimeBudget, WorkBudget, RefinementBudget };
 	struct DiffInlineRange { uint32_t oldStart{}, oldLength{}, newStart{}, newLength{}; };
+	constexpr uint32_t MaximumDiffLines = 1000000;
 	struct DiffOptions
 	{
-		uint32_t maximumLines{1000000}; // Combined, including terminal logical lines.
+		uint32_t maximumLines{MaximumDiffLines}; // Combined, including terminal logical lines.
 		uint32_t maximumHunks{8192};
 		uint32_t maximumEdits{256};
 		uint64_t maximumWork{40000000};

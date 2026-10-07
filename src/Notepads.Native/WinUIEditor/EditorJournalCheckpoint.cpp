@@ -131,7 +131,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (state->canceled.load())
 				throw hresult_canceled();
-			const auto request = static_cast<uint32_t>(std::min(uint64_t{65536}, baselineLength - consumed));
+			const auto request = static_cast<uint32_t>(std::min(uint64_t{buffer.Capacity()}, baselineLength - consumed));
 			auto received = co_await baseline.ReadAsync(buffer, request, Windows::Storage::Streams::InputStreamOptions::Partial);
 			const auto count = received.Length();
 			if (!count || count > request)
@@ -152,7 +152,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (state->canceled.load())
 				throw hresult_canceled();
-			const auto count = static_cast<uint32_t>(std::min(Sci::Position{65536}, document->Length() - offset));
+			const auto count = static_cast<uint32_t>(std::min(static_cast<Sci::Position>(buffer.Capacity()), document->Length() - offset));
 			document->GetCharRange(reinterpret_cast<char *>(buffer.data()), offset, count);
 			buffer.Length(count);
 			uint32_t written = 0;

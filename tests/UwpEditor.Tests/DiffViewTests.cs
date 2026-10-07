@@ -26,6 +26,7 @@ internal static class DiffViewTests
 
     internal static async Task RunAsync(StringBuilder log, TextEditorCore source)
     {
+        var owner = Guid.NewGuid();
         using var old = new TextEditorCore();
         using var current = new TextEditorCore();
         old.ConfigureDiffPreview();
@@ -43,7 +44,7 @@ internal static class DiffViewTests
         foreach (var unchangedText in new[] { string.Empty, "unchanged\r你好😀\r" })
         {
             source.SetText(unchangedText);
-            using var unchangedBaseline = unchangedText.Length == 0 ? DocumentBaseline.CreateEmpty() : await DocumentBaseline.FromTextAsync(unchangedText);
+            using var unchangedBaseline = unchangedText.Length == 0 ? DocumentBaseline.CreateEmpty(owner) : await DocumentBaseline.FromTextAsync(unchangedText, owner);
             await source.LoadDiffSnapshotsAsync(unchangedBaseline, old, current, CancellationToken.None);
             old.MakeDiffReadOnly();
             current.MakeDiffReadOnly();
@@ -63,7 +64,7 @@ internal static class DiffViewTests
         var originalText = source.GetText();
         var originalRevision = Native(source).DocumentRevision;
         var originalUndo = source.CanUndo;
-        using var baseline = await DocumentBaseline.FromTextAsync("one\rtwo\rthree\r");
+        using var baseline = await DocumentBaseline.FromTextAsync("one\rtwo\rthree\r", owner);
         await source.LoadDiffSnapshotsAsync(baseline, old, current, CancellationToken.None);
         Require(!Native(source).ReadOnly, "original capture lease drained on UI");
         old.MakeDiffReadOnly();

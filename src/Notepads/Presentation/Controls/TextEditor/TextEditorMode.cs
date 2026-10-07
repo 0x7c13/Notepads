@@ -3,14 +3,10 @@
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-using System.Linq;
+namespace Notepads.Presentation.Controls.TextEditor;
 
-namespace Notepads.Presentation.Controls.GoTo;
-
-internal static class GoToInput
+public enum TextEditorMode
 {
-    public static bool ContainsAllowableCharactersOnly(this string str, params char[] allowableCharacters)
-    {
-        return str.All(allowableCharacters.Contains);
-    }
+    Editing = 0,
+    DiffPreview
 }

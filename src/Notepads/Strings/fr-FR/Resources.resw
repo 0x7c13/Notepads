@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Ouvrir avec Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ceci est une fenêtre secondaire de Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Fichier déjà ouvert !</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Ouvre une nouvelle fenêtre</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Nouvelle fenêtre</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Nouvelle fenêtre</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Ouvrir un élément récent</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Aller à la ligne</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>L'extension de fichier "{0}" n'est pas prise en charge pour le moment.</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Fermer</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Échec de la récupération des données de la dernière session en raison de données corrompues. Veuillez sauvegarder tous vos fichiers non enregistrés (*.txt) dans le dossier de la session.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>La récupération de session est bloquée par des fichiers de récupération que Notepads ne peut pas vérifier. Cette action a donc été annulée pour protéger vos documents. Ouvrez le dossier de récupération pour en faire une copie distincte avant de réparer ou de supprimer des fichiers.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ouvrir le dossier de sauvegarde de la session</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Avertissement</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Impossible de sauvegarder la session. Enregistrez vos fichiers et réessayez.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>La récupération de session est bloquée par des fichiers de récupération que Notepads ne peut pas vérifier. Ouvrez le dossier de récupération pour les copier avant de réparer ou de supprimer quoi que ce soit.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Certains onglets n’ont pas pu être restaurés. Leurs sauvegardes ont été conservées dans le dossier de sauvegarde de la session.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>Le fichier a été enregistré localement. La synchronisation dans le cloud est toujours en attente.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>Le remplacement contient du texte non valide.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Ancien texte, version enregistrée</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Modification précédente (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>La comparaison n’a pas pu être préparée avec les ressources disponibles. Votre document est inchangé.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Les documents de plus de 1 Mo ne peuvent pas être imprimés.</value></data>
 </root>

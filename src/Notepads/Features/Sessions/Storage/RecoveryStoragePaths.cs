@@ -13,8 +13,6 @@ namespace Notepads.Features.Sessions.Storage;
 /// <summary>Construct paths only from validated identities, never document-supplied relative paths.</summary>
 internal sealed class RecoveryStoragePaths
 {
-    private readonly Func<string, FileAttributes> getAttributes;
-
     public RecoveryStoragePaths(string rootPath) : this(rootPath, File.GetAttributes)
     {
     }
@@ -23,9 +21,16 @@ internal sealed class RecoveryStoragePaths
     {
         if (string.IsNullOrWhiteSpace(rootPath)) throw new ArgumentException("A recovery root is required.", nameof(rootPath));
         ArgumentNullException.ThrowIfNull(getAttributes);
-        this.getAttributes = getAttributes;
         RootPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(rootPath));
-        EnsureSafePath(RootPath);
+        // The OS-supplied app-private root is our trust boundary. Inspect that root once; scans refuse
+        // reparse points below it, and a packaged process has no authority to inspect its ancestors.
+        try
+        {
+            if ((getAttributes(RootPath) & FileAttributes.ReparsePoint) != 0)
+                throw new InvalidDataException("Recovery paths cannot traverse reparse points.");
+        }
+        catch (FileNotFoundException) { }
+        catch (DirectoryNotFoundException) { }
     }
 
     public string RootPath { get; }
@@ -69,28 +74,21 @@ internal sealed class RecoveryStoragePaths
         return EnsureSafePath(path);
     }
 
-    public string EnsureSafePath(string path)
+    private string EnsureSafePath(string path)
     {
         path = Path.GetFullPath(path);
         var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         if (!string.Equals(path, RootPath, comparison) && !path.StartsWith(RootPath + Path.DirectorySeparatorChar, comparison))
             throw new InvalidDataException("A recovery path escaped its configured root.");
-        // The OS-supplied app-private root is our trust boundary. Inspect that root and
-        // its descendants; a packaged process has no authority to inspect its ancestors.
-        var current = path;
-        while (current != null)
-        {
-            try
-            {
-                if ((getAttributes(current) & FileAttributes.ReparsePoint) != 0)
-                    throw new InvalidDataException("Recovery paths cannot traverse reparse points.");
-            }
-            catch (FileNotFoundException) { }
-            catch (DirectoryNotFoundException) { }
-            if (string.Equals(current, RootPath, comparison)) break;
-            current = Path.GetDirectoryName(current);
-        }
         return path;
+    }
+
+    /// <summary>Check an enumerated entry using the attributes its enumeration already returned.</summary>
+    public void EnsureSafeEntry(string fullName, FileAttributes attributes)
+    {
+        EnsureSafePath(fullName);
+        if ((attributes & FileAttributes.ReparsePoint) != 0)
+            throw new InvalidDataException("Recovery paths cannot traverse reparse points.");
     }
 
     public static void ValidateArea(RecoveryArea area)
@@ -117,20 +115,22 @@ internal sealed class RecoveryStoragePaths
 
     internal static bool TryParseFileName(RecoveryArea area, string name, out RecoveryAddress address, out string copy, out bool temporary)
     {
+        // Names start with RecoveryAddress.Stem, "{Ordinal:D20}-{OperationId:N}".
+        const int OrdinalDigits = 20, GuidDigits = 32, StemLength = OrdinalDigits + 1 + GuidDigits;
         address = null;
         copy = null;
         temporary = false;
-        if (name == null || name.Length < 53 || name[20] != '-' ||
-            !ulong.TryParse(name.AsSpan(0, 20), NumberStyles.None, CultureInfo.InvariantCulture, out var ordinal) || ordinal == 0 ||
-            !Guid.TryParseExact(name.AsSpan(21, 32), "N", out var operation) || operation == Guid.Empty)
+        if (name == null || name.Length < StemLength || name[OrdinalDigits] != '-' ||
+            !ulong.TryParse(name.AsSpan(0, OrdinalDigits), NumberStyles.None, CultureInfo.InvariantCulture, out var ordinal) || ordinal == 0 ||
+            !Guid.TryParseExact(name.AsSpan(OrdinalDigits + 1, GuidDigits), "N", out var operation) || operation == Guid.Empty)
         {
             return false;
         }
 
-        var suffix = name.Substring(53);
-        if (suffix.StartsWith(".a.json", StringComparison.Ordinal)) { copy = "a"; suffix = suffix.Substring(7); }
-        else if (suffix.StartsWith(".b.json", StringComparison.Ordinal)) { copy = "b"; suffix = suffix.Substring(7); }
-        else if (suffix.StartsWith(".reset.intent", StringComparison.Ordinal)) { copy = "intent"; suffix = suffix.Substring(13); }
+        var suffix = name.Substring(StemLength);
+        if (suffix.StartsWith(".a.json", StringComparison.Ordinal)) { copy = "a"; suffix = suffix.Substring(".a.json".Length); }
+        else if (suffix.StartsWith(".b.json", StringComparison.Ordinal)) { copy = "b"; suffix = suffix.Substring(".b.json".Length); }
+        else if (suffix.StartsWith(".reset.intent", StringComparison.Ordinal)) { copy = "intent"; suffix = suffix.Substring(".reset.intent".Length); }
         else
         {
             return false;
@@ -138,8 +138,9 @@ internal sealed class RecoveryStoragePaths
 
         if (suffix.Length != 0)
         {
-            if (suffix.Length != 37 || suffix[0] != '.' || !suffix.EndsWith(".tmp", StringComparison.Ordinal) ||
-                !Guid.TryParseExact(suffix.AsSpan(1, 32), "N", out _))
+            // Temporary copies append ".{Guid:N}.tmp".
+            if (suffix.Length != 1 + GuidDigits + ".tmp".Length || suffix[0] != '.' || !suffix.EndsWith(".tmp", StringComparison.Ordinal) ||
+                !Guid.TryParseExact(suffix.AsSpan(1, GuidDigits), "N", out _))
             {
                 return false;
             }

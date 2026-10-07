@@ -13,6 +13,16 @@ namespace WinUIEditor
 		return result == RPC_E_DISCONNECTED || result == RO_E_CLOSED || result == CO_E_OBJNOTCONNECTED;
 	}
 
+	// Admits work only while the app keeps max(32 MiB, limit / 8) free.
+	inline bool HasMemoryHeadroom(uint64_t required)
+	{
+		constexpr uint64_t MinimumReserve = 32 * 1024 * 1024;
+		const auto limit = winrt::Windows::System::MemoryManager::AppMemoryUsageLimit();
+		const auto used = winrt::Windows::System::MemoryManager::AppMemoryUsage();
+		const auto reserve = std::max(MinimumReserve, limit / 8);
+		return used < limit && reserve < limit - used && required <= limit - used - reserve;
+	}
+
 	int ConvertFromDipToPixelUnit(float val, float dpiAdjustmentRatio, bool rounded = true);
 	bool IsClassicWindow();
 	winrt::Windows::System::VirtualKeyModifiers GetKeyModifiersForCurrentThread();

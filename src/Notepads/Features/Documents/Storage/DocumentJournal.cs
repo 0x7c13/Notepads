@@ -34,16 +34,16 @@ public sealed class DocumentJournal : IDisposable
 
     public StorageFile File => _asset.File;
 
-    public static async Task<DocumentJournal> CreateAsync(Guid? ownerId = null, CancellationToken cancellationToken = default)
+    public static async Task<DocumentJournal> CreateAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
+        if (ownerId == Guid.Empty) throw new ArgumentException("A document asset requires its owning scope.", nameof(ownerId));
         cancellationToken.ThrowIfCancellationRequested();
-        var owner = ownerId ?? DocumentAssetLease.DefaultOwnerId;
         var generation = Guid.NewGuid();
         var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
             "DocumentJournals", CreationCollisionOption.OpenIfExists);
         var asset = await DocumentAssetLease.CreateNewAsync(folder,
-            owner.ToString("N") + "-" + generation.ToString("N") + ".npj", cancellationToken);
-        return new DocumentJournal(asset, owner, generation);
+            ownerId.ToString("N") + "-" + generation.ToString("N") + ".npj", cancellationToken);
+        return new DocumentJournal(asset, ownerId, generation);
     }
 
     /// <summary>Retain before awaiting native checkpoint validation of this committed file.</summary>
@@ -61,6 +61,14 @@ public sealed class DocumentJournal : IDisposable
 
     public DocumentJournal Retain() => new(_asset.Retain(), OwnerId, GenerationId);
 
+    /// <summary>
+    /// Compact once the committed prefix reaches 64 MiB, or 4 MiB and four times the document,
+    /// so journal size and restore time follow the document rather than its edit history.
+    /// </summary>
+    public static bool ShouldCompact(ulong committedByteLength, ulong documentByteLength) =>
+        committedByteLength >= 64UL * 1024 * 1024 ||
+        (committedByteLength >= 4UL * 1024 * 1024 && committedByteLength / 4 >= documentByteLength);
+
     public async Task<EditorJournalCheckpoint> OpenCheckpointAsync(ulong baselineSequence,
         ulong committedSequence, long committedByteLength, string prefixSha256, long documentByteLength)
     {
@@ -77,10 +85,6 @@ public sealed class DocumentJournal : IDisposable
             return checkpoint;
         }
     }
-
-    /// <summary>Expose only the committed prefix, even while the native writer appends future operations.</summary>
-    public Task<Stream> OpenReadPrefixAsync(long committedByteLength, CancellationToken cancellationToken = default) =>
-        _asset.OpenReadStreamAsync(committedByteLength, cancellationToken, allowConcurrentWriters: true);
 
     public void PreserveForRecovery() => _asset.PreserveForRecovery();
 

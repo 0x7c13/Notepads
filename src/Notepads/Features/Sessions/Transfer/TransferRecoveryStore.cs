@@ -37,7 +37,7 @@ internal static class TransferRecoveryStore
                 await RequireOpenAsync(expected, editor.Id, cancellationToken);
                 if (editor.Journal.OwnerId != expected.ScopeId) throw new InvalidDataException("The transfer capture has a different source owner.");
                 editor.EditingFileFutureAccessToken = editingFile == null ? null :
-                    SessionDocumentStore.RegisterFileAccess(editor.Id, editingFile, expected.ScopeId, draft);
+                    SessionDocumentStore.TryRegisterFileAccess(editor.Id, editingFile, expected.ScopeId, draft);
                 var token = new TransferToken
                 {
                     TransferId = transferId,
@@ -98,7 +98,7 @@ internal static class TransferRecoveryStore
                 if (target.Journal.OwnerId != expected.ScopeId) throw new InvalidDataException("The target capture has a different recovery owner.");
                 await RequireAbsentAsync(token.TransferId, RecoveryRecordKind.TransferReceipt, cancellationToken);
                 target.EditingFileFutureAccessToken = editingFile == null ? null :
-                    SessionDocumentStore.RegisterFileAccess(target.Id, editingFile, expected.ScopeId, draft);
+                    SessionDocumentStore.TryRegisterFileAccess(target.Id, editingFile, expected.ScopeId, draft);
                 var session = RecoveryRecordValidator.CreateEditorRoot(target);
                 session.Scope = RecoveryRecordValidator.GetProvenScope(expected.ScopeId, targetInstanceId);
                 session.TransferReceipt = new TransferReceiptData
@@ -182,33 +182,6 @@ internal static class TransferRecoveryStore
                     TargetReceiptOperationId = receipt.Address.OperationId,
                     TargetReceiptSha256 = receipt.PayloadSha256
                 }, cancellationToken));
-        }
-    }
-
-    public static async Task DeleteReceiptAsync(TransferToken token)
-    {
-        // An explicitly closed receiver is a durable lifecycle operation.
-        // Receipt and ACK evidence remain immutable until proven compaction.
-        using (await SessionRecoveryTransaction.EnterAsync())
-        {
-            try
-            {
-                var receipt = await TransferRootReader.ReadReceiptAsync(token);
-                var targetStamp = receipt.Record.TargetStamp;
-                var current = await SessionRecoveryCatalog.ReadScopeAsync(targetStamp.ScopeId, content: false);
-                if (!SessionRecoveryAuthority.SameEpoch(targetStamp, current.Stamp)) return;
-                if (current.Blocked) throw new InvalidDataException(current.AttentionReason);
-                if (SessionRecoveryAuthority.IsClosed(targetStamp, receipt.Record.Editor.Id, current.Decisions.Select(read => read.Record))) return;
-                var store = RecoveryRootStore.CreateStore();
-                var area = store.GetScopeArea(targetStamp.ScopeId, RecoveryAreaKind.Decisions);
-                RecoveryRootStore.RequireCommitted(await store.PublishAsync(area, new RecoveryRecord
-                {
-                    Kind = RecoveryRecordKind.Closed,
-                    Stamp = store.CreatePublicationStamp(area, targetStamp),
-                    ClosedEditorId = receipt.Record.Editor.Id
-                }));
-            }
-            catch (FileNotFoundException) { }
         }
     }
 

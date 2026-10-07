@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Notepads.Features.Documents;
 using Notepads.Features.Sessions.Contracts;
 using Windows.Storage;
@@ -23,11 +22,6 @@ internal sealed class SessionCapture : IDisposable
     public void Dispose()
     {
         foreach (var document in Documents) document.Recovery.Dispose();
-    }
-
-    public async Task DisposeAsync()
-    {
-        foreach (var document in Documents) await document.Recovery.DisposeAsync();
     }
 }
 

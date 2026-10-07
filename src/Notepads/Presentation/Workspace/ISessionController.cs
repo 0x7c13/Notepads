@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Sessions.Contracts;
@@ -18,9 +19,20 @@ internal interface ISessionController : IDisposable
 
     SessionRecoveryOutcome RecoveryOutcome { get; }
 
+    /// <summary>
+    /// Whether the latest authority read (startup, save, adoption, close or clear) found recovery blocked by files it cannot verify.
+    /// </summary>
+    bool IsRecoveryBlocked { get; }
+
     Task InitializeAuthorityAsync();
 
     Task<int> LoadLastSessionAsync();
+
+    /// <summary>
+    /// Queue one recovery maintenance pass (retention, then orphaned-asset collection) after the initial load,
+    /// whatever the snapshot preference. Runs once per controller; failures are logged, never thrown.
+    /// </summary>
+    Task RunStartupMaintenanceAsync();
 
     Task<bool> SaveSessionAsync(Action actionAfterSaving = null, CancellationToken cancellationToken = default);
 
@@ -32,9 +44,7 @@ internal interface ISessionController : IDisposable
 
     Task ClearSessionDataAsync();
 
-    Task<bool> PrepareExplicitCloseAsync(Guid editorId);
-
-    Task<int> RecoverBackupFilesAsync();
+    Task<bool> PrepareExplicitCloseAsync(IReadOnlyCollection<Guid> editorIds, ICollection<Guid> closed = null);
 
     Task OpenSessionBackupFolderAsync();
 }

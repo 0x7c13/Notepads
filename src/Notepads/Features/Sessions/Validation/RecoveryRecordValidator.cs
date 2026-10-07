@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using Notepads.Features.Sessions.Contracts;
 
 namespace Notepads.Features.Sessions.Validation;
@@ -118,17 +117,4 @@ internal static class RecoveryRecordValidator
 
     internal static SessionScopeData GetRetiredSecondaryScope(Guid ownerId, Guid instanceId) => ownerId == instanceId && !SessionScopeData.IsReservedOwner(ownerId) ?
         new SessionScopeData { OwnerId = ownerId, InstanceId = instanceId, Kind = SessionScopeData.Secondary } : null;
-
-    internal static void ValidateSessionRecords(NotepadsSessionDataV2 session)
-    {
-        if (session?.Version != 2 || session.TextEditors == null || session.UnrecoveredLegacyEditors == null ||
-            session.TextEditors.Any(editor => editor?.StateMetaData == null || editor.Id == Guid.Empty) ||
-            session.UnrecoveredLegacyEditors.Any(editor => editor?.StateMetaData == null || editor.Id == Guid.Empty) ||
-            session.TextEditors.Select(editor => editor.Id).Concat(session.UnrecoveredLegacyEditors.Select(editor => editor.Id))
-                .Distinct().Count() != session.TextEditors.Count + session.UnrecoveredLegacyEditors.Count)
-        {
-            throw new InvalidDataException("Invalid inactive session records.");
-        }
-    }
-
 }

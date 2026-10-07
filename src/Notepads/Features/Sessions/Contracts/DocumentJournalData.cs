@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using Notepads.Features.Documents.Contracts;
 
 namespace Notepads.Features.Sessions.Contracts;
@@ -34,8 +33,7 @@ internal sealed class DocumentJournalData
     {
         if (FormatVersion != 1 || GenerationId == Guid.Empty || CommittedSequence < BaselineSequence ||
             CommittedByteLength < 0 || DocumentByteLength < 0 || DocumentByteLength > DocumentLimits.MaximumCanonicalByteLength ||
-            PrefixSha256 == null || PrefixSha256.Length != 64 || PrefixSha256.Any(character =>
-                !(character >= '0' && character <= '9' || character >= 'a' && character <= 'f' || character >= 'A' && character <= 'F')) ||
+            !Sha256Hex.IsValid(PrefixSha256) ||
             !string.Equals(FileName, OwnerId.ToString("N") + "-" + GenerationId.ToString("N") + ".npj",
                 StringComparison.OrdinalIgnoreCase))
         {

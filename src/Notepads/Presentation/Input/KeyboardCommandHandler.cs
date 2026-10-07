@@ -3,7 +3,6 @@
 //  See LICENSE file in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -11,54 +10,36 @@ using Windows.UI.Xaml.Input;
 
 namespace Notepads.Presentation.Input;
 
-public sealed class KeyboardCommandHandler : ICommandHandler<KeyRoutedEventArgs>
+internal sealed class KeyboardCommandHandler
 {
-    public readonly ICollection<IKeyboardCommand<KeyRoutedEventArgs>> Commands;
+    private readonly KeyboardCommand[] _commands;
 
-    private IKeyboardCommand<KeyRoutedEventArgs> _lastCommand;
-
-    public KeyboardCommandHandler(ICollection<IKeyboardCommand<KeyRoutedEventArgs>> commands)
+    public KeyboardCommandHandler(KeyboardCommand[] commands)
     {
-        Commands = commands;
+        _commands = commands;
     }
 
-    public CommandHandlerResult Handle(KeyRoutedEventArgs args)
+    /// <summary>
+    /// Runs the first command that matches the key and the current Ctrl, Alt and Shift state.
+    /// Returns whether the caller should mark the key handled.
+    /// </summary>
+    public bool Handle(KeyRoutedEventArgs args)
     {
-        var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-        var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-        var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-        var shouldHandle = false;
-        var shouldSwallow = false;
+        var window = Window.Current.CoreWindow;
+        var modifiers = VirtualKeyModifiers.None;
+        if (window.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down)) modifiers |= VirtualKeyModifiers.Control;
+        if (window.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down)) modifiers |= VirtualKeyModifiers.Menu;
+        if (window.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down)) modifiers |= VirtualKeyModifiers.Shift;
 
-        foreach (var command in Commands)
+        foreach (var command in _commands)
         {
-            if (command.Hit(ctrlDown, altDown, shiftDown, args.Key))
+            if (command.Key == args.Key && command.Modifiers == modifiers)
             {
-                if (command.ShouldExecute(_lastCommand))
-                {
-                    command.Execute(args);
-                }
-
-                if (command.ShouldSwallowAfterExecution())
-                {
-                    shouldSwallow = true;
-                }
-
-                if (command.ShouldHandleAfterExecution())
-                {
-                    shouldHandle = true;
-                }
-
-                _lastCommand = command;
-                break;
+                command.Action();
+                return command.Handled;
             }
         }
 
-        if (!shouldHandle)
-        {
-            _lastCommand = null;
-        }
-
-        return new CommandHandlerResult(shouldHandle, shouldSwallow);
+        return false;
     }
 }

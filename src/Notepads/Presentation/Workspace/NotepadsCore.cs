@@ -18,7 +18,6 @@ using Notepads.Features.Preferences;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Diagnostics;
-using Notepads.Infrastructure.Threading;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.PreviewExtensions;
@@ -26,7 +25,6 @@ using Notepads.Presentation.Theming;
 using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
@@ -41,7 +39,6 @@ namespace Notepads.Presentation.Workspace;
 public sealed partial class NotepadsCore : INotepadsCore
 {
     public event EventHandler<ITextEditor> TextEditorLoaded;
-    public event EventHandler<ITextEditor> TextEditorUnloaded;
     public event EventHandler<ITextEditor> TextEditorOpened;
     public event EventHandler<ITextEditor> TextEditorClosed;
     public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
@@ -54,7 +51,6 @@ public sealed partial class NotepadsCore : INotepadsCore
     public event EventHandler<ITextEditor> TextEditorLanguageChanged;
     public event EventHandler<ITextEditor> TextEditorEncodingChanged;
     public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
-    public event EventHandler<ITextEditor> TextEditorModeChanged;
     public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
     public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
 
@@ -64,9 +60,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private readonly INotepadsExtensionProvider _extensionProvider;
 
-    private ITextEditor _selectedTextEditor;
-
-    private ITextEditor[] _allTextEditors;
+    private readonly Func<ITextEditor, Task> _renameTextEditorAsync;
 
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
@@ -84,11 +78,10 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     public NotepadsCore(SetsView sets,
         INotepadsExtensionProvider extensionProvider,
-        CoreDispatcher dispatcher, WindowContext context)
+        CoreDispatcher dispatcher, WindowContext context,
+        Func<ITextEditor, Task> renameTextEditorAsync)
     {
         _sets = sets;
-        _sets.SelectionChanged += SetsView_OnSelectionChanged;
-        _sets.Items.VectorChanged += SetsView_OnItemsChanged;
         _sets.SetClosing += SetsView_OnSetClosing;
         _sets.SetTapped += SetsView_OnSetTapped;
         _sets.SetDraggedOutside += Sets_SetDraggedOutside;
@@ -100,6 +93,8 @@ public sealed partial class NotepadsCore : INotepadsCore
         _dispatcher = dispatcher;
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _extensionProvider = extensionProvider;
+        // The page owns the guarded rename flow; tab menus route to it.
+        _renameTextEditorAsync = renameTextEditorAsync ?? throw new ArgumentNullException(nameof(renameTextEditorAsync));
 
         ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
     }
@@ -110,8 +105,6 @@ public sealed partial class NotepadsCore : INotepadsCore
         var items = _sets.Items?.Cast<SetsViewItem>().ToArray() ?? [];
         _disposed = true;
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
-        _sets.SelectionChanged -= SetsView_OnSelectionChanged;
-        if (_sets.Items != null) _sets.Items.VectorChanged -= SetsView_OnItemsChanged;
         _sets.SetClosing -= SetsView_OnSetClosing;
         _sets.SetTapped -= SetsView_OnSetTapped;
         _sets.SetDraggedOutside -= Sets_SetDraggedOutside;
@@ -137,8 +130,6 @@ public sealed partial class NotepadsCore : INotepadsCore
             try { DisposeTextEditor(editor); }
             catch (Exception ex) { _shutdownFailure ??= ex; LoggingService.LogException(ex); }
         }
-        _selectedTextEditor = null;
-        _allTextEditors = [];
         _ = CompleteDisposalAsync();
     }
 
@@ -350,13 +341,11 @@ public sealed partial class NotepadsCore : INotepadsCore
         textEditor.InitEmpty(ApplicationPreferences.EditorDefaultEncoding,
             ApplicationPreferences.EditorDefaultLineEnding, editingFile);
         textEditor.Loaded += TextEditor_Loaded;
-        textEditor.Unloaded += TextEditor_Unloaded;
         textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
         textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
         textEditor.LanguageChanged += TextEditor_OnLanguageChanged;
         textEditor.KeyDown += TextEditor_OnKeyDown;
         textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
-        textEditor.ModeChanged += TextEditor_OnModeChanged;
         textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
         textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
         textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
@@ -404,13 +393,11 @@ public sealed partial class NotepadsCore : INotepadsCore
     private void DisposeTextEditor(ITextEditor textEditor)
     {
         textEditor.Loaded -= TextEditor_Loaded;
-        textEditor.Unloaded -= TextEditor_Unloaded;
         textEditor.KeyDown -= TextEditor_OnKeyDown;
         textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
         textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
         textEditor.LanguageChanged -= TextEditor_OnLanguageChanged;
         textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
-        textEditor.ModeChanged -= TextEditor_OnModeChanged;
         textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
         textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
         textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
@@ -512,18 +499,12 @@ public sealed partial class NotepadsCore : INotepadsCore
     public ITextEditor GetSelectedTextEditor()
     {
         if (_disposed) return null;
-        if (ThreadUtility.IsOnUIThread())
-        {
-            if (((_sets.SelectedItem as SetsViewItem)?.Content is not ITextEditor textEditor)) return null;
-            return textEditor;
-        }
-        return _selectedTextEditor;
+        return (_sets.SelectedItem as SetsViewItem)?.Content as ITextEditor;
     }
 
     public ITextEditor[] GetAllTextEditors()
     {
         if (_disposed) return [];
-        if (!ThreadUtility.IsOnUIThread()) return _allTextEditors;
         if (_sets.Items == null) return [];
         var editors = new List<ITextEditor>();
         foreach (SetsViewItem item in _sets.Items)
@@ -594,7 +575,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         }
 
         textEditorSetsViewItem.Icon.Visibility = textEditor.IsModified ? Visibility.Visible : Visibility.Collapsed;
-        textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor);
+        textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor, _renameTextEditorAsync);
 
         return textEditorSetsViewItem;
     }
@@ -650,11 +631,6 @@ public sealed partial class NotepadsCore : INotepadsCore
         }
     }
 
-    private void SetsView_OnSelectionChanged(object sender, RoutedEventArgs e)
-    {
-        _selectedTextEditor = GetSelectedTextEditor();
-    }
-
     private void SetsView_OnSetTapped(object sender, SetSelectedEventArgs e)
     {
         FocusOnTextEditor(e.Item as ITextEditor);
@@ -663,11 +639,6 @@ public sealed partial class NotepadsCore : INotepadsCore
     private void TextEditor_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (!_disposed) TextEditorKeyDown?.Invoke(sender, e);
-    }
-
-    private void SetsView_OnItemsChanged(object sender, IVectorChangedEventArgs e)
-    {
-        _allTextEditors = GetAllTextEditors();
     }
 
     private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
@@ -685,12 +656,6 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         if (sender is not ITextEditor textEditor) return;
         TextEditorLoaded?.Invoke(this, textEditor);
-    }
-
-    private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is not ITextEditor textEditor) return;
-        TextEditorUnloaded?.Invoke(this, textEditor);
     }
 
     private void TextEditor_OnSelectionChanged(object sender, EventArgs e)
@@ -717,12 +682,6 @@ public sealed partial class NotepadsCore : INotepadsCore
             MarkTextEditorSetSaved(textEditor);
         }
         TextEditorEditorModificationStateChanged?.Invoke(this, textEditor);
-    }
-
-    private void TextEditor_OnModeChanged(object sender, EventArgs e)
-    {
-        if (sender is not ITextEditor textEditor) return;
-        TextEditorModeChanged?.Invoke(this, textEditor);
     }
 
     private void TextEditor_OnFileModificationStateChanged(object sender, EventArgs e)

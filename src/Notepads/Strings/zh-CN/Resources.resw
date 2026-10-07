@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>在Notepads中打开</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>这是 Notepads 的附加窗口。</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>文件已打开！</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>打开一个新窗口</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>新建窗口</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>新建窗口</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>打开最近的文件</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>转到此行</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Notepads暂时不支持文件后缀名 "{0}"</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>关闭</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>由于数据损坏，无法从上次会话中恢复数据。请将快照备份文件夹中的所有文件（*.txt）备份以免丢失重要文档。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>会话恢复被 Notepads 无法验证的恢复文件阻止，因此已取消此操作以保护文档安全。请先打开恢复文件夹另行复制一份，再修复或删除任何文件。</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>打开快照备份文件夹</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>警告</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>无法备份当前会话。请保存文件后重试。</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>会话恢复被 Notepads 无法验证的恢复文件阻止。请先打开恢复文件夹复制这些文件，再进行任何修复或删除。</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>部分标签页未能恢复，其备份已保留在会话快照备份文件夹中。</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>文件已保存到本地，云同步仍待完成。</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>替换内容包含无效文本。</value></data>
@@ -293,4 +293,5 @@
   <data name="SessionBackup_NotificationMsg_Rescue" xml:space="preserve"><value>无法恢复会话索引，已将验证通过的文档副本作为未保存的标签页打开。请使用“另存为”保存这些文档。</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryBlocked" xml:space="preserve"><value>会话恢复当前不可用。已有的恢复文件已保留。</value></data>
   <data name="SessionBackup_NotificationMsg_DocumentChangedDuringClose" xml:space="preserve"><value>文档在关闭过程中发生了变化。请再次关闭标签页，选择是否保存。</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>无法打印大于 1 MB 的文档。</value></data>
 </root>

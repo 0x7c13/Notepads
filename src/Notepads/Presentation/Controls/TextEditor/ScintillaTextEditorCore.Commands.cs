@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +13,6 @@ using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Input;
 using Windows.System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Input;
 
 namespace Notepads.Presentation.Controls.TextEditor;
 
@@ -22,40 +20,40 @@ public sealed partial class TextEditorCore
 {
     private KeyboardCommandHandler GetKeyboardCommandHandler()
     {
-        return new KeyboardCommandHandler(new List<IKeyboardCommand<KeyRoutedEventArgs>>
-        {
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Z, args => Undo()),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, true, VirtualKey.Z, args => Redo()),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.C, args => CopyTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.X, args => CutSelectedTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.V, async args => await PastePlainTextFromWindowsClipboardAsync(null)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Insert, async args => await PastePlainTextFromWindowsClipboardAsync(null)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Insert, args => CopyTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Delete, args => CutSelectedTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Z, args => TextWrapping = TextWrapping == TextWrapping.NoWrap ? TextWrapping.Wrap : TextWrapping.NoWrap),
+        return new KeyboardCommandHandler(
+        [
+            new(VirtualKeyModifiers.Control, VirtualKey.Z, () => Undo()),
+            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.Z, () => Redo()),
+            new(VirtualKeyModifiers.Control, VirtualKey.C, () => CopyTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
+            new(VirtualKeyModifiers.Control, VirtualKey.X, () => CutSelectedTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
+            new(VirtualKeyModifiers.Control, VirtualKey.V, async () => await PastePlainTextFromWindowsClipboardAsync(null)),
+            new(VirtualKeyModifiers.Shift, VirtualKey.Insert, async () => await PastePlainTextFromWindowsClipboardAsync(null)),
+            new(VirtualKeyModifiers.Control, VirtualKey.Insert, () => CopyTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
+            new(VirtualKeyModifiers.Shift, VirtualKey.Delete, () => CutSelectedTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
+            new(VirtualKeyModifiers.Menu, VirtualKey.Z, () => TextWrapping = TextWrapping == TextWrapping.NoWrap ? TextWrapping.Wrap : TextWrapping.NoWrap),
             // Reserve the old reading-order shortcuts until default-RTL layout
             // is implemented. Ctrl+L would otherwise cut the current line.
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.L, args => { }),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.R, args => { }),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Add, args => IncreaseFontSize(0.1)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, (VirtualKey)187, args => IncreaseFontSize(0.1)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Subtract, args => DecreaseFontSize(0.1)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, (VirtualKey)189, args => DecreaseFontSize(0.1)),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.Number0, args => ResetFontSizeToDefault()),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.NumberPad0, args => ResetFontSizeToDefault()),
-            new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.F5, args => TypeText(DateTime.Now.ToString(CultureInfo.CurrentCulture))),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.E, async args => await SearchInWebAsync()),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.D, args => Native.SelectionDuplicate()),
-            new KeyboardCommand<KeyRoutedEventArgs>(true, false, false, VirtualKey.J, args => JoinText()),
-            new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Tab, args => ChangeIndentation(false)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Tab, args => ChangeIndentation(true)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Up, args => Native.MoveSelectedLinesUp()),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Down, args => Native.MoveSelectedLinesDown()),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Left, args => MoveWords(false)),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, true, false, VirtualKey.Right, args => MoveWords(true)),
-            new KeyboardCommand<KeyRoutedEventArgs>(VirtualKey.Enter, args => EnterWithAutoIndentation()),
-            new KeyboardCommand<KeyRoutedEventArgs>(false, false, true, VirtualKey.Enter, args => EnterWithAutoIndentation()),
-        });
+            new(VirtualKeyModifiers.Control, VirtualKey.L, () => { }),
+            new(VirtualKeyModifiers.Control, VirtualKey.R, () => { }),
+            new(VirtualKeyModifiers.Control, VirtualKey.Add, () => IncreaseFontSize(0.1)),
+            new(VirtualKeyModifiers.Control, (VirtualKey)187, () => IncreaseFontSize(0.1)),
+            new(VirtualKeyModifiers.Control, VirtualKey.Subtract, () => DecreaseFontSize(0.1)),
+            new(VirtualKeyModifiers.Control, (VirtualKey)189, () => DecreaseFontSize(0.1)),
+            new(VirtualKeyModifiers.Control, VirtualKey.Number0, () => ResetFontSizeToDefault()),
+            new(VirtualKeyModifiers.Control, VirtualKey.NumberPad0, () => ResetFontSizeToDefault()),
+            new(VirtualKeyModifiers.None, VirtualKey.F5, () => TypeText(DateTime.Now.ToString(CultureInfo.CurrentCulture))),
+            new(VirtualKeyModifiers.Control, VirtualKey.E, async () => await SearchInWebAsync()),
+            new(VirtualKeyModifiers.Control, VirtualKey.D, () => Native.SelectionDuplicate()),
+            new(VirtualKeyModifiers.Control, VirtualKey.J, () => JoinText()),
+            new(VirtualKeyModifiers.None, VirtualKey.Tab, () => ChangeIndentation(false)),
+            new(VirtualKeyModifiers.Shift, VirtualKey.Tab, () => ChangeIndentation(true)),
+            new(VirtualKeyModifiers.Menu, VirtualKey.Up, () => Native.MoveSelectedLinesUp()),
+            new(VirtualKeyModifiers.Menu, VirtualKey.Down, () => Native.MoveSelectedLinesDown()),
+            new(VirtualKeyModifiers.Menu, VirtualKey.Left, () => MoveWords(false)),
+            new(VirtualKeyModifiers.Menu, VirtualKey.Right, () => MoveWords(true)),
+            new(VirtualKeyModifiers.None, VirtualKey.Enter, () => EnterWithAutoIndentation()),
+            new(VirtualKeyModifiers.Shift, VirtualKey.Enter, () => EnterWithAutoIndentation()),
+        ]);
     }
 
     private void ChangeIndentation(bool remove)

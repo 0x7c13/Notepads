@@ -71,44 +71,49 @@ internal sealed class RecoveryRecordStore
     public RecoveryDirectoryScan<RecoveryAddress> Enumerate(RecoveryArea area)
     {
         var addresses = new HashSet<RecoveryAddress>();
+        var intents = new HashSet<RecoveryAddress>();
         var unknown = new List<string>();
         ulong occupied = 0;
         try
         {
             var path = Paths.AreaPath(area);
-            foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+            foreach (var entry in new DirectoryInfo(path).EnumerateFileSystemInfos())
             {
-                Paths.EnsureSafePath(entry);
-                if (IsDirectory(entry))
+                Paths.EnsureSafeEntry(entry.FullName, entry.Attributes);
+                if (entry is DirectoryInfo)
                 {
                     if (area.DocumentId == Guid.Empty && area.Kind is RecoveryAreaKind.Rescue or RecoveryAreaKind.Pending &&
-                        TryIdentity(Path.GetFileName(entry), out _))
+                        TryIdentity(entry.Name, out _))
                     {
                         continue;
                     }
 
-                    if (area.AllowsForeignOwners && area.RootId == Guid.Empty && TryIdentity(Path.GetFileName(entry), out _)) continue;
-                    unknown.Add(entry);
+                    if (area.AllowsForeignOwners && area.RootId == Guid.Empty && TryIdentity(entry.Name, out _)) continue;
+                    unknown.Add(entry.FullName);
                 }
-                else if (RecoveryStoragePaths.TryParseFileName(area, Path.GetFileName(entry), out var address, out var copy, out var temporary))
+                else if (RecoveryStoragePaths.TryParseFileName(area, entry.Name, out var address, out var copy, out var temporary))
                 {
                     occupied = Math.Max(occupied, address.Ordinal);
-                    if (copy == "intent" && area.Kind != RecoveryAreaKind.Decisions) unknown.Add(entry);
-                    else if (!temporary) addresses.Add(address);
+                    if (copy == "intent" && area.Kind != RecoveryAreaKind.Decisions) unknown.Add(entry.FullName);
+                    else if (!temporary)
+                    {
+                        addresses.Add(address);
+                        if (copy == "intent") intents.Add(address);
+                    }
                 }
                 else
                 {
-                    unknown.Add(entry);
+                    unknown.Add(entry.FullName);
                 }
             }
             var collision = addresses.GroupBy(address => address.Ordinal).FirstOrDefault(group => group.Count() > 1);
             var error = collision == null ? null : new InvalidDataException("Distinct recovery operations occupy the same ordinal.");
-            return new(addresses.OrderBy(address => address.Ordinal).ThenBy(address => address.OperationId).ToArray(), unknown, error, occupied);
+            return new(addresses.OrderBy(address => address.Ordinal).ThenBy(address => address.OperationId).ToArray(), unknown, error, occupied, intents);
         }
         catch (DirectoryNotFoundException) when (addresses.Count == 0 && unknown.Count == 0) { return new(Array.Empty<RecoveryAddress>(), Array.Empty<string>()); }
         catch (Exception error) when (IsStorageFailure(error))
         {
-            return new(addresses.ToArray(), unknown, error, occupied);
+            return new(addresses.ToArray(), unknown, error, occupied, intents);
         }
     }
 
@@ -119,11 +124,11 @@ internal sealed class RecoveryRecordStore
         try
         {
             var path = Paths.ScopesPath;
-            foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+            foreach (var entry in new DirectoryInfo(path).EnumerateFileSystemInfos())
             {
-                Paths.EnsureSafePath(entry);
-                if (IsDirectory(entry) && TryIdentity(Path.GetFileName(entry), out var scope)) scopes.Add(scope);
-                else unknown.Add(entry);
+                Paths.EnsureSafeEntry(entry.FullName, entry.Attributes);
+                if (entry is DirectoryInfo && TryIdentity(entry.Name, out var scope)) scopes.Add(scope);
+                else unknown.Add(entry.FullName);
             }
             return new(scopes, unknown);
         }
@@ -152,17 +157,17 @@ internal sealed class RecoveryRecordStore
         try
         {
             var path = scopeId.HasValue ? Paths.ScopePath(scopeId.Value) : Paths.RootPath;
-            foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+            foreach (var entry in new DirectoryInfo(path).EnumerateFileSystemInfos())
             {
-                Paths.EnsureSafePath(entry);
-                var name = Path.GetFileName(entry);
-                var directory = IsDirectory(entry);
+                Paths.EnsureSafeEntry(entry.FullName, entry.Attributes);
+                var name = entry.Name;
+                var directory = entry is DirectoryInfo;
                 var known = scopeId.HasValue ?
                     directory && name is "Checkpoints" or "Decisions" or "Rescue" or "Pending" ||
                     !directory && name is "writer.lock" or "readers.lock" :
                     directory && name is "Scopes" or "Transfers" or "Archives" || !directory && name == "store.lock";
-                if (known) entries.Add(entry);
-                else unknown.Add(entry);
+                if (known) entries.Add(entry.FullName);
+                else unknown.Add(entry.FullName);
             }
             return new(entries, unknown);
         }
@@ -317,12 +322,16 @@ internal sealed class RecoveryRecordStore
         catch (Exception error) when (IsStorageFailure(error)) { return Task.FromResult(false); }
     }
 
-    public async Task<IReadOnlyList<RecoveryAddress>> DeleteRetiredAsync(IEnumerable<RecoveryAddress> retired, CancellationToken cancellationToken = default)
+    /// <summary>Best effort under admission: remove an emptied per-document directory. A non-empty one stays.</summary>
+    public bool TryDeleteEmptyArea(RecoveryArea area)
     {
-        var retained = new List<RecoveryAddress>();
-        foreach (var address in retired)
-            if (!await DeleteAsync(address, cancellationToken).ConfigureAwait(false)) retained.Add(address);
-        return retained;
+        if (area.DocumentId == Guid.Empty) throw new ArgumentException("Only a per-document area can be removed.", nameof(area));
+        try
+        {
+            Directory.Delete(Paths.AreaPath(area), recursive: false);
+            return true;
+        }
+        catch (Exception error) when (IsStorageFailure(error)) { return false; }
     }
 
     private RecoveryDirectoryScan<RecoveryArea> EnumerateChildAreas(RecoveryArea root, Func<Guid, RecoveryArea> createArea)
@@ -332,11 +341,11 @@ internal sealed class RecoveryRecordStore
         try
         {
             var path = Paths.AreaPath(root);
-            foreach (var entry in Directory.EnumerateDirectories(path))
+            foreach (var entry in new DirectoryInfo(path).EnumerateDirectories())
             {
-                Paths.EnsureSafePath(entry);
-                if (TryIdentity(Path.GetFileName(entry), out var identity)) areas.Add(createArea(identity));
-                else unknown.Add(entry);
+                Paths.EnsureSafeEntry(entry.FullName, entry.Attributes);
+                if (TryIdentity(entry.Name, out var identity)) areas.Add(createArea(identity));
+                else unknown.Add(entry.FullName);
             }
             return new(areas, unknown);
         }
@@ -362,13 +371,13 @@ internal sealed class RecoveryRecordStore
             OperationMetrics.MetadataCopyWritten(bytes.Length);
             cancellationToken.ThrowIfCancellationRequested();
             faults?.OnStep(RecoveryStorageStep.BeforeRename, address, copy);
-            File.Move(Paths.EnsureSafePath(temporary), Paths.EnsureSafePath(path), overwrite: false);
+            File.Move(temporary, path, overwrite: false);
             faults?.OnStep(RecoveryStorageStep.AfterRename, address, copy);
         }
         finally
         {
             // A rename lost acknowledgement may already have committed the final path. Never delete it here.
-            try { File.Delete(Paths.EnsureSafePath(temporary)); }
+            try { File.Delete(temporary); }
             catch (Exception error) when (IsStorageFailure(error)) { }
         }
     }
@@ -427,6 +436,5 @@ internal sealed class RecoveryRecordStore
     private static bool IsStorageFailure(Exception error) => error is IOException or InvalidDataException or UnauthorizedAccessException;
     private static bool IsPublicationFailure(Exception error) => IsStorageFailure(error) || error is OperationCanceledException;
     private static bool TryIdentity(string value, out Guid identity) => Guid.TryParseExact(value, "N", out identity) && identity != Guid.Empty;
-    private static bool IsDirectory(string path) => (File.GetAttributes(path) & FileAttributes.Directory) != 0;
     private sealed record CopyRead(string Copy, RecoveryReadState State, RecoveryEncodedRecord Encoded = null, Exception Error = null);
 }

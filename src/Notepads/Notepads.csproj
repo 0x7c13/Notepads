@@ -47,14 +47,14 @@
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
-    <PackageReference Include="Microsoft.Services.Store.Engagement" Version="10.2307.3001" />
-    <PackageReference Include="UTF.Unknown" Version="2.7.0" />
-    <PackageReference Include="Win2D.uwp" Version="1.28.3" />
-    <PackageReference Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
-    <PackageReference Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
-    <PackageReference Include="CommunityToolkit.Uwp.Helpers" Version="8.2.251219" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+    <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="Microsoft.Services.Store.Engagement" />
+    <PackageReference Include="UTF.Unknown" />
+    <PackageReference Include="Win2D.uwp" />
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
+    <PackageReference Include="CommunityToolkit.Uwp.Converters" />
+    <PackageReference Include="CommunityToolkit.Uwp.Helpers" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
@@ -68,6 +68,7 @@
     <Compile Remove="Presentation\Controls\Markdown\**\*.cs" />
     <Page Remove="Presentation\Controls\Markdown\**\*.xaml" />
     <Page Update="Presentation\Theming\DiffThemes.xaml"><Link>Theming\DiffThemes.xaml</Link></Page>
+    <Page Update="Presentation\Theming\EditorThemes.xaml"><Link>Theming\EditorThemes.xaml</Link></Page>
     <Page Update="Presentation\Theming\SyntaxThemes.xaml">
       <Link>Theming\SyntaxThemes.xaml</Link>
     </Page>

@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Megnyitás Notepads-el</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ez egy árnyék ablaka a Notepads-nek.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Fájl már meg van nyitva!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>Megnyit egy új ablakot</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>Új Ablak</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Új Ablak</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Legutóbbi Megnyitása</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Ugrás Sorhoz</value><comment>GoTo: Go to bar placeholder text.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>A(z) "{0}" fájlkiterjesztés jelenleg nem támogatott</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Bezárás</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Nem sikerült visszaállítani az adatokat az utolsó munkamenetből a sérült adatok miatt. Kérjük, készítsen biztonsági másolatot az összes nem mentett fájlról (*.txt) a munkamenet mappájában.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>A munkamenet helyreállítását olyan helyreállítási fájlok blokkolják, amelyeket a Notepads nem tud ellenőrizni, ezért ez a művelet a dokumentumai védelme érdekében megszakadt. Nyissa meg a helyreállítási mappát, és készítsen külön másolatot, mielőtt bármely fájlt javítana vagy eltávolítana.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Nyissa meg a munkamenet biztonsági mentésének mappáját</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Figyelmeztetés</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>Nem sikerült biztonsági másolatot készíteni a munkamenetről. Mentse a fájlokat, és próbálja újra.</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>A munkamenet helyreállítását olyan helyreállítási fájlok blokkolják, amelyeket a Notepads nem tud ellenőrizni. Nyissa meg a helyreállítási mappát, és másolja ki őket, mielőtt bármit javítana vagy eltávolítana.</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>Néhány lapot nem sikerült visszaállítani. Biztonsági másolataik megmaradtak a munkamenet biztonsági mentési mappájában.</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>A fájl helyileg mentve lett. A felhőszinkronizálás még folyamatban van.</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>A helyettesítő szöveg érvénytelen szöveget tartalmaz.</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Régi szöveg, mentett verzió</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Előző módosítás (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Az összehasonlítás nem készíthető elő a rendelkezésre álló erőforrásokkal. A dokumentum változatlan.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Az 1 MB-nál nagyobb dokumentumok nem nyomtathatók ki.</value></data>
 </root>

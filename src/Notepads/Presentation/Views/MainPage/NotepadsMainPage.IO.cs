@@ -326,6 +326,10 @@ public sealed partial class NotepadsMainPage
         }
     }
 
+    // Print layout copies and flows the whole text on the UI thread. V1's 1 MB
+    // open limit used to cap it; 1 MiB is known to print acceptably.
+    private const long PrintDocumentLengthLimit = 1024 * 1024;
+
     public async Task PrintAsync(ITextEditor textEditor)
     {
         if (textEditor == null) return;
@@ -336,10 +340,17 @@ public sealed partial class NotepadsMainPage
     {
         if (textEditors == null || textEditors.Length == 0) return;
 
-        // Initialize print content
-        PrintArgs.PreparePrintContent(textEditors);
+        var printable = Array.FindAll(textEditors, textEditor => textEditor.DocumentLength <= PrintDocumentLengthLimit);
+        if (printable.Length != textEditors.Length)
+        {
+            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Print_NotificationMsg_DocumentTooLarge"), 2500);
+            if (printable.Length == 0) return;
+        }
 
-        if (PrintManager.IsSupported() && HaveNonemptyTextEditor(textEditors))
+        // Initialize print content
+        PrintArgs.PreparePrintContent(printable);
+
+        if (PrintManager.IsSupported() && HaveNonemptyTextEditor(printable))
         {
             // Show print UI
             await PrintArgs.ShowPrintUIAsync();

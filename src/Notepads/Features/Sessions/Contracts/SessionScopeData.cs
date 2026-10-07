@@ -52,14 +52,4 @@ internal sealed class SessionScopeData
         if (ownerId == Guid.Empty) throw new ArgumentException("A secondary session requires an owner.", nameof(ownerId));
         return "Secondary-" + ownerId.ToString("N") + "-";
     }
-
-    public static bool TryGetSecondaryOwner(string manifestFileName, out Guid ownerId)
-    {
-        ownerId = Guid.Empty;
-        const string prefix = "Secondary-";
-        const string suffix = "-NotepadsSessionData.json";
-        return manifestFileName != null && manifestFileName.Length == prefix.Length + 32 + suffix.Length &&
-            manifestFileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && manifestFileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase) &&
-            Guid.TryParseExact(manifestFileName.Substring(prefix.Length, 32), "N", out ownerId) && ownerId != Guid.Empty;
-    }
 }

@@ -1,0 +1,19 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for license information.
+-->
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.Uwp.Helpers" Version="8.2.251219" />
+    <PackageVersion Include="Microsoft.Services.Store.Engagement" Version="10.2307.3001" />
+    <PackageVersion Include="Microsoft.UI.Xaml" Version="2.8.7" />
+    <PackageVersion Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageVersion Include="UTF.Unknown" Version="2.7.0" />
+    <PackageVersion Include="Win2D.uwp" Version="1.28.3" />
+  </ItemGroup>
+</Project>

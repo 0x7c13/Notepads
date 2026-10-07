@@ -43,14 +43,24 @@ internal sealed partial class SessionService
                 batch.Pins.Add(SessionScopeLease.AcquireReader(_sessionScope.OwnerId));
                 batch.Pins.AddRange(_importedRecoverySources);
             }
-            foreach (var record in _unrecoveredEditors.Values)
+            foreach (var record in _unrecoveredEditors.Values.ToList())
             {
                 cancellation.ThrowIfCancellationRequested();
                 try
                 {
                     var document = await LegacySessionImporter.PrepareAsync(record, _sessionScope.OwnerId, defaults, cancellation);
-                    if (document != null) batch.Documents.Add(document);
-                    else RecoveryOutcome = SessionRecoveryOutcome.Partial;
+                    if (document != null)
+                    {
+                        batch.Documents.Add(document);
+                        if (_legacySelection is { } selection)
+                            (batch.SelectedEditorId, batch.TabScrollOffset) = selection;
+                    }
+                    else
+                    {
+                        // Like V1, a row with no content and no accessible file has nothing to restore.
+                        _unrecoveredEditors.Remove(record.Id);
+                        _adoptions.Remove(record.Id);
+                    }
                 }
                 catch (OperationCanceledException) { throw; }
                 catch (Exception ex)
@@ -63,7 +73,7 @@ internal sealed partial class SessionService
             {
                 cancellation.ThrowIfCancellationRequested();
                 PreparedRecoveryDocument document = null;
-                try { document = await PrepareCurrentDocumentAsync(record); }
+                try { document = await PrepareCurrentDocumentAsync(record, defaults, cancellation); }
                 catch (OperationCanceledException) { throw; }
                 catch (Exception ex)
                 {
@@ -102,7 +112,7 @@ internal sealed partial class SessionService
                                     fallback.StateMetaData.HasEditingFile = false; fallback.StateMetaData.RequiresSaveAs = true;
                                     fallback.StateMetaData.IsModified = true; fallback.TextDirty = true;
                                 }
-                                document = await PrepareCurrentDocumentAsync(fallback); break;
+                                document = await PrepareCurrentDocumentAsync(fallback, defaults, cancellation); break;
                             }
                             catch (OperationCanceledException) { throw; }
                             catch (Exception fallbackError)
@@ -118,9 +128,21 @@ internal sealed partial class SessionService
         catch { batch.Dispose(); throw; }
     }
 
-    private async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data)
+    private async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data,
+        DocumentLoadOptions defaults, CancellationToken cancellation)
     {
         if (data.StateMetaData == null) throw new InvalidDataException("The recovery editor has no saved metadata.");
+        var editingFile = data.EditingFileFutureAccessToken == null ? null :
+            await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
+        if (editingFile != null && !data.StateMetaData.IsModified && !data.TextDirty)
+        {
+            try { return await PreparedRecoveryDocument.FromFileAsync(data.Id, data.StateMetaData, editingFile, _sessionScope.OwnerId, defaults, cancellation); }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(SessionService)}] Restoring clean row [{data.Id}] from its recovery copy: {ex.Message}");
+            }
+        }
         var prepared = new PreparedRecoveryDocument { Id = data.Id, Metadata = data.StateMetaData, TextDirty = data.TextDirty };
         try
         {
@@ -142,8 +164,7 @@ internal sealed partial class SessionService
             prepared.Checkpoint = await prepared.Journal.OpenCheckpointAsync(data.Journal.BaselineSequence,
                 data.Journal.CommittedSequence, data.Journal.CommittedByteLength,
                 data.Journal.PrefixSha256, data.Journal.DocumentByteLength);
-            prepared.EditingFile = data.EditingFileFutureAccessToken == null ? null :
-                await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
+            prepared.EditingFile = editingFile;
             prepared.FileNamePlaceholder = data.StateMetaData.FileNamePlaceholder ?? data.EditingFileName;
             return prepared;
         }

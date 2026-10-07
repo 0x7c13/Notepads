@@ -45,7 +45,7 @@ namespace winrt::WinUIEditor::implementation
 		RequireUI(view);
 		if (_regexJob || view->HasJournal() || (_textLoadState && !_textLoadState->canceled.load()))
 			throw_hresult(E_ILLEGAL_METHOD_CALL);
-		if (CodePage() != 65001)
+		if (CodePage() != Scintilla::CpUtf8)
 			throw hresult_invalid_argument();
 		auto file = ::WinUIEditor::NativeJournalFile::Start(std::wstring{path}, sequence, static_cast<uint64_t>(Length()));
 		try
@@ -76,21 +76,15 @@ namespace winrt::WinUIEditor::implementation
 		// Stop is already recorded on UI. The file owns its draining worker,
 		// independently of whether the public asynchronous action is awaited.
 		co_await resume_background();
-		std::exception_ptr failure;
 		for (auto const &file : files)
-		{
-			try
-			{
-				file->WaitStopped();
-			}
-			catch (...)
-			{
-				if (!failure)
-					failure = std::current_exception();
-			}
-		}
-		if (failure)
-			std::rethrow_exception(failure);
+			file->WaitStopped();
+	}
+	bool Editor::JournalFaulted()
+	{
+		auto view = _editor.get();
+		RequireUI(view);
+		auto file = view->ActiveJournalFile();
+		return file && file->Faulted();
 	}
 	Windows::Foundation::IAsyncAction Editor::StartJournalFromCheckpointAsync(hstring path, WinUIEditor::EditorJournalCheckpoint checkpoint)
 	{

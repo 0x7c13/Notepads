@@ -1,0 +1,22 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Native editor surface colors. High contrast uses system colors instead.
+         The background stays transparent above the page's own backdrop brush. -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="EditorBackgroundColor">#00FFFFFF</Color>
+            <Color x:Key="EditorForegroundColor">#FFFFFF</Color>
+            <Color x:Key="EditorLineNumberColor">#969696</Color>
+            <Color x:Key="EditorCaretLineColor">#18FFFFFF</Color>
+            <Color x:Key="EditorSelectionTextColor">#FFFFFF</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="EditorBackgroundColor">#00FFFFFF</Color>
+            <Color x:Key="EditorForegroundColor">#000000</Color>
+            <Color x:Key="EditorLineNumberColor">#696969</Color>
+            <Color x:Key="EditorCaretLineColor">#18000000</Color>
+            <Color x:Key="EditorSelectionTextColor">#FFFFFF</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

@@ -132,7 +132,6 @@ internal sealed class RecoveryScopeSnapshot
         .Concat(Decisions).Concat(GlobalRecords).Where(read => read.State == RecoveryReadState.Valid).Select(read => read.Record);
     public NotepadsSessionDataV2 Session { get; set; }
     public RecoveryReadResult SelectedCheckpoint { get; set; }
-    public bool HasCheckpointEvidence { get; set; }
     public string AttentionReason { get; set; }
     public List<RecoveryReadResult> EligibleRescues { get; } = [];
 

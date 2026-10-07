@@ -40,18 +40,7 @@ public sealed partial class AdvancedSettingsPage : Page
 
         ShowStatusBarToggleSwitch.IsOn = ApplicationPreferences.ShowStatusBar;
         EnableSmartCopyToggleSwitch.IsOn = ApplicationPreferences.IsSmartCopyEnabled;
-
-        // Disable session snapshot toggle for shadow windows
-        if (!_context.IsPrimaryInstance)
-        {
-            EnableSessionSnapshotToggleSwitch.IsOn = false;
-            EnableSessionSnapshotToggleSwitch.IsEnabled = false;
-        }
-        else
-        {
-            EnableSessionSnapshotToggleSwitch.IsOn = ApplicationPreferences.IsSessionSnapshotEnabled;
-        }
-
+        EnableSessionSnapshotToggleSwitch.IsOn = ApplicationPreferences.IsSessionSnapshotEnabled;
         ExitWhenLastTabClosedToggleSwitch.IsOn = ApplicationPreferences.ExitWhenLastTabClosed;
         AlwaysOpenNewWindowToggleSwitch.IsOn = ApplicationPreferences.AlwaysOpenNewWindow;
 
@@ -108,7 +97,6 @@ public sealed partial class AdvancedSettingsPage : Page
 
     private async void OnSessionSnapshotPreferenceChanged(object sender, bool enabled)
     {
-        if (_context?.IsPrimaryInstance != true) return;
         try
         {
             await Dispatcher.CallOnUIThreadAsync(() =>

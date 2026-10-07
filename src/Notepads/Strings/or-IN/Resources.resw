@@ -199,8 +199,6 @@
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads ସହିତ ଖୋଲନ୍ତୁ</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>ଏହା ହେଉଛି Notepads ଛାୟା ୱିଣ୍ଡୋ|</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>ଫାଇଲ୍ ପୂର୍ବରୁ ଖୋଲା ଯାଇଛି!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Title" xml:space="preserve"><value>ନୂତନ ୱିଣ୍ଡୋ</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item display text.</comment></data>
-  <data name="JumpList_Tasks_NewWindow_Description" xml:space="preserve"><value>ଏକ ନୂତନ ୱିଣ୍ଡୋ ଖୋଲିବ</value><comment>JumpList: Windows Taskbar JumpList Items "New window" item description display text.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>ନୂତନ ୱିଣ୍ଡୋ</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>ଲାଇନକୁ ଯାଆନ୍ତୁ</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>ଲାଇନ ସଂଖ୍ୟା ସମୁଦାୟ ଧାଡି ସଂଖ୍ୟା ବାହାରେ!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
@@ -263,9 +261,11 @@
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>ଫାଇଲ ଏକ୍ସଟେନ୍ସନ୍ "{0}" ଏହି ମୁହୂର୍ତ୍ତରେ ସମର୍ଥିତ ନୁହେଁ</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>बंद करें</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>अशुद्ध डेटा के कारण पिछले सत्र से डेटा को पुनर्प्राप्त करने में विफल रहे। कृपया सत्र के फ़ोल्डर में अपने सभी बिना सेव किए गए फ़ाइलें (*.txt) बैकअप करें।</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Notepads ଯାଞ୍ଚ କରିପାରୁନଥିବା ପୁନରୁଦ୍ଧାର ଫାଇଲ୍‌ଗୁଡ଼ିକ ଯୋଗୁଁ ସେସନ୍ ପୁନରୁଦ୍ଧାର ଅବରୋଧିତ ହୋଇଛି, ତେଣୁ ଆପଣଙ୍କ ଡକ୍ୟୁମେଣ୍ଟଗୁଡ଼ିକୁ ସୁରକ୍ଷିତ ରଖିବା ପାଇଁ ଏହି କାର୍ଯ୍ୟ ବାତିଲ କରାଗଲା। କୌଣସି ଫାଇଲ୍ ମରାମତି କିମ୍ବା ଅପସାରଣ କରିବା ପୂର୍ବରୁ ଏକ ପୃଥକ କପି ତିଆରି କରିବା ପାଇଁ ପୁନରୁଦ୍ଧାର ଫୋଲ୍ଡର୍ ଖୋଲନ୍ତୁ।</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>सत्र बैकअप फ़ोल्डर खोलें</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>चेतावनी</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="SessionBackup_NotificationMsg_SaveFailed" xml:space="preserve"><value>ସେସନ୍‌ର ବ୍ୟାକଅପ୍ ନିଆଯାଇପାରିଲା ନାହିଁ। ଆପଣଙ୍କ ଫାଇଲ୍‌ଗୁଡ଼ିକୁ ସଂରକ୍ଷଣ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।</value><comment>Shown when recovery data cannot be saved. Closing is cancelled to keep unsaved documents available.</comment></data>
+  <data name="SessionBackup_NotificationMsg_SaveBlocked" xml:space="preserve"><value>Notepads ଯାଞ୍ଚ କରିପାରୁନଥିବା ପୁନରୁଦ୍ଧାର ଫାଇଲ୍‌ଗୁଡ଼ିକ ଯୋଗୁଁ ସେସନ୍ ପୁନରୁଦ୍ଧାର ଅବରୋଧିତ ହୋଇଛି। କିଛି ମରାମତି କିମ୍ବା ଅପସାରଣ କରିବା ପୂର୍ବରୁ ସେଗୁଡ଼ିକୁ କପି କରିବା ପାଇଁ ପୁନରୁଦ୍ଧାର ଫୋଲ୍ଡର୍ ଖୋଲନ୍ତୁ।</value></data>
   <data name="SessionBackup_NotificationMsg_RecoveryIncomplete" xml:space="preserve"><value>କିଛି ଟ୍ୟାବ୍ ପୁନଃସ୍ଥାପନ କରାଯାଇପାରିଲା ନାହିଁ। ସେଗୁଡ଼ିକର ବ୍ୟାକଅପ୍ ସେସନ୍ ବ୍ୟାକଅପ୍ ଫୋଲ୍ଡର୍‌ରେ ରଖାଯାଇଛି।</value></data>
   <data name="TextEditor_NotificationMsg_CloudSyncPending" xml:space="preserve"><value>ଫାଇଲ୍ ସ୍ଥାନୀୟ ଭାବେ ସଂରକ୍ଷିତ ହୋଇଛି। କ୍ଲାଉଡ୍ ସହ ସିଙ୍କ୍ ଏପର୍ଯ୍ୟନ୍ତ ସମ୍ପୂର୍ଣ୍ଣ ହୋଇନାହିଁ।</value></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>ପ୍ରତିସ୍ଥାପନରେ ଅବୈଧ ପାଠ୍ୟ ରହିଛି।</value></data>
@@ -293,4 +293,5 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>ପୁରୁଣା ପାଠ୍ୟ, ସଂରକ୍ଷିତ ସଂସ୍କରଣ</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>ପୂର୍ବ ପରିବର୍ତ୍ତନ (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>ଉପଲବ୍ଧ ସମ୍ବଳ ମଧ୍ୟରେ ତୁଳନା ପ୍ରସ୍ତୁତ କରାଯାଇପାରିଲା ନାହିଁ। ଆପଣଙ୍କ ଡକ୍ୟୁମେଣ୍ଟ ବଦଳିନାହିଁ।</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB ରୁ ବଡ଼ ଡକ୍ୟୁମେଣ୍ଟଗୁଡ଼ିକ ମୁଦ୍ରଣ କରାଯାଇପାରିବ ନାହିଁ।</value></data>
 </root>

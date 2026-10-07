@@ -220,6 +220,10 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	int xCaretMargin;	///< Ensure this many pixels visible on both sides of caret
 	bool horizontalScrollBarVisible;
 	int scrollWidth;
+	/// Tracked width awaits a measurement of the visible lines; metrics also clamp xOffset.
+	enum class WidthMeasure { none, content, metrics } pendingWidthMeasure = WidthMeasure::none;
+	/// Every style measures as StyleDefault, so restyling text cannot change a line's width.
+	bool uniformStyleMetrics = false;
 	bool verticalScrollBarVisible;
 	bool endAtLastLine;
 	Scintilla::CaretSticky caretSticky;
@@ -313,7 +317,9 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	virtual void Finalise();
 
 	void InvalidateStyleData() noexcept;
-	void InvalidateTrackedScrollWidth() noexcept;
+	void InvalidateTrackedScrollWidth(bool metrics = false) noexcept;
+	void ResetTrackedScrollWidth() noexcept;
+	int MeasureVisibleLineWidth();
 	void InvalidateStyleRedraw(bool invalidateWidth = true);
 	void RefreshStyleData();
 	void SetRepresentations();

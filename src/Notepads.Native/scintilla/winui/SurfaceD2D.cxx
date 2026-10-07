@@ -348,7 +348,7 @@ public:
 	void ClearRectangle(PRectangle rc); // Mica: Empty the area in the rectangle
 	void FillRectangle(PRectangle rc, Fill fill) override;
 	void FillRectangleAligned(PRectangle rc, Fill fill) override;
-	void FillRectangle(PRectangle rc, Surface &surfacePattern, Point origin = Point(0, 0)) override;
+	void FillRectangle(PRectangle rc, Surface &surfacePattern) override;
 	void RoundedRectangle(PRectangle rc, FillStroke fillStroke) override;
 	void AlphaRectangle(PRectangle rc, XYPOSITION cornerSize, FillStroke fillStroke) override;
 	void GradientRectangle(PRectangle rc, const std::vector<ColourStop> &stops, GradientOptions options) override;
@@ -655,7 +655,7 @@ void SurfaceD2D::FillRectangleAligned(PRectangle rc, Fill fill) {
 	FillRectangle(PixelAlign(rc, PixelDivisions()), fill);
 }
 
-void SurfaceD2D::FillRectangle(PRectangle rc, Surface &surfacePattern, Point origin) {
+void SurfaceD2D::FillRectangle(PRectangle rc, Surface &surfacePattern) {
 	SurfaceD2D *psurfOther = dynamic_cast<SurfaceD2D *>(&surfacePattern);
 	PLATFORM_ASSERT(psurfOther);
 	if (!psurfOther) {
@@ -671,7 +671,6 @@ void SurfaceD2D::FillRectangle(PRectangle rc, Surface &surfacePattern, Point ori
 		// Create the bitmap brush.
 		hr = pRenderTarget->CreateBitmapBrush(pBitmap.get(), brushProperties, pBitmapBrush.put());
 		if (SUCCEEDED(hr) && pBitmapBrush) {
-			pBitmapBrush->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<float>(origin.x), static_cast<float>(origin.y)));
 			ClearRectangle(rc); // Mica: Transparent folding margin
 			pRenderTarget->FillRectangle(
 				RectangleFromPRectangle(rc),

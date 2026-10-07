@@ -19,7 +19,7 @@ namespace winrt::WinUIEditor::implementation
 		view->SetSyntaxLexer(name, keywords, propertyNames, propertyValues);
 	}
 
-	int32_t Editor::SyntaxHighlightingPauseReason()
+	WinUIEditor::EditorSyntaxPauseReason Editor::SyntaxHighlightingPauseReason()
 	{
 		auto view = _editor.get();
 		if (!view) winrt::throw_hresult(RO_E_CLOSED);

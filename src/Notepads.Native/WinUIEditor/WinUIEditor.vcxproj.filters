@@ -389,5 +389,6 @@
     <ClCompile Include="NativeDiff.cpp" />
     <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx" />
     <Midl Include="EditorDiffResult.idl" />
+    <Midl Include="EditorSyntax.idl" />
   </ItemGroup>
 </Project>

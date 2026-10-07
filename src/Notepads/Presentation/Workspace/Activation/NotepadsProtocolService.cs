@@ -22,10 +22,8 @@ public static class NotepadsProtocolService
 {
     private const string NewInstanceProtocolStr = "newinstance";
 
-    public static NotepadsOperationProtocol GetOperationProtocol(Uri uri, out string context)
+    public static NotepadsOperationProtocol GetOperationProtocol(Uri uri)
     {
-        context = null;
-
         try
         {
             var uriStr = uri.ToString().Trim();

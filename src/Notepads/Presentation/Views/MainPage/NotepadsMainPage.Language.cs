@@ -9,6 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using WinUIEditor;
 
 namespace Notepads.Presentation.Views.MainPage;
 
@@ -40,12 +41,12 @@ public sealed partial class NotepadsMainPage
         var label = GetLanguageLabel(editor.DocumentLanguage);
         LanguageIndicator.Text = label;
         var description = _resourceLoader.GetString("TextEditor_Language_Select") + ": " + label;
-        if (editor.SyntaxHighlightingPauseReason != 0)
-            description += ". " + _resourceLoader.GetString(editor.SyntaxHighlightingPauseReason == 4
+        if (editor.SyntaxHighlightingPauseReason != EditorSyntaxPauseReason.None)
+            description += ". " + _resourceLoader.GetString(editor.SyntaxHighlightingPauseReason == EditorSyntaxPauseReason.Memory
                 ? "TextEditor_Language_MemoryPaused" : "TextEditor_Language_HighlightingPaused");
         ToolTipService.SetToolTip(LanguageIndicator, description);
         AutomationProperties.SetName(LanguageIndicator, description);
-        LanguageIndicator.Opacity = editor.SyntaxHighlightingPauseReason != 0 ? 0.65 : 1;
+        LanguageIndicator.Opacity = editor.SyntaxHighlightingPauseReason != EditorSyntaxPauseReason.None ? 0.65 : 1;
     }
 
     private void BuildLanguageFlyout(ITextEditor editor)

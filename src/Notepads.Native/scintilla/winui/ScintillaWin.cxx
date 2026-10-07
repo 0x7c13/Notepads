@@ -233,6 +233,8 @@ std::wstring StringMapCase(std::wstring_view wsv, DWORD mapFlags) {
 
 namespace Scintilla::Internal {
 
+	using winrt::WinUIEditor::EditorSyntaxPauseReason;
+
 	// Removing 'magic' numbers here would not help here.
 
 	// NOLINTBEGIN(*-magic-numbers)
@@ -663,20 +665,21 @@ namespace Scintilla::Internal {
 				catch (const std::bad_alloc &) { _syntaxState->PauseForMemory(); }
 				// The host reinstalls syntax after a complete streamed publication.
 				// Do not allocate optional storage inside its synthetic text events.
-				if (!document->InAtomicReplacement() || _syntaxState->PauseReason() != 0)
-					document->SetStyleStorage(_syntaxState->PauseReason() == 0);
+				if (!document->InAtomicReplacement() || _syntaxState->PauseReason() != EditorSyntaxPauseReason::None)
+					document->SetStyleStorage(_syntaxState->PauseReason() == EditorSyntaxPauseReason::None);
 				if (document->StyleStorageFailed()) _syntaxState->PauseForMemory();
 				if (previous != _syntaxState->PauseReason())
 				{
-					if (_syntaxState->PauseReason() == 4) PauseSyntaxForMemory();
+					if (_syntaxState->PauseReason() == EditorSyntaxPauseReason::Memory) PauseSyntaxForMemory();
 					else ResetSyntaxStyles();
 				}
 			}
 		}
 		// With undo disabled, DeleteText has no retained text pointer. Capture
 		// its UTF-16 length while the range still exists, independently of the
-		// public modification mask (which may exclude BeforeDelete).
-		if (FlagSet(modification.modificationType, ModificationFlags::BeforeDelete))
+		// public modification mask (which may exclude BeforeDelete). Atomic
+		// replacement always passes the previous text, so skip the O(n) count.
+		if (FlagSet(modification.modificationType, ModificationFlags::BeforeDelete) && !document->InAtomicReplacement())
 		{
 			_deletedUtf16Length = document->CountUTF16(modification.position,
 				modification.position + modification.length);
@@ -708,18 +711,7 @@ namespace Scintilla::Internal {
 			change.acpNewEnd = change.acpStart + (inserted ? utf16Length : 0);
 		}
 
-		{
-			// Queued TSF notifications also borrow their owned queue payload
-			// until dispatch completes, even after the document mutation ended.
-			struct PayloadScope
-			{
-				unsigned int &depth;
-				bool active;
-				PayloadScope(unsigned int &value, bool holdsText) noexcept : depth(value), active(holdsText) { if (active) ++depth; }
-				~PayloadScope() { if (active) --depth; }
-			} payloadScope{ _notificationPayloadDepth, modified && notificationData.text };
-			SendMessage(WM_NOTIFY, GetCtrlID(), reinterpret_cast<LPARAM>(&notificationData));
-		}
+		SendMessage(WM_NOTIFY, GetCtrlID(), reinterpret_cast<LPARAM>(&notificationData));
 
 		if (!notifyTsf || !(_tsfCore || _tfTextStoreACPSink)) return;
 		if (textChanged)
@@ -909,56 +901,52 @@ namespace Scintilla::Internal {
 		try
 		{
 #ifdef _DEBUG
-			WinUIEditor::CheckSyntaxAllocationForTesting(1);
+			WinUIEditor::CheckSyntaxAllocationForTesting(WinUIEditor::SyntaxFaultPoint::SharedState);
 #endif
 			auto state = std::make_shared<WinUIEditor::SyntaxHighlightingState>();
 			try { state->Reset(*pdoc); }
 			catch (const std::bad_alloc &) { state->PauseForMemory(); }
-			if (state->PauseReason() == 4) { PauseSyntaxForMemory(); return; }
+			if (state->PauseReason() == EditorSyntaxPauseReason::Memory) { PauseSyntaxForMemory(); return; }
 			auto lexer = WinUIEditor::CreateSyntaxLexer(to_string(name), state);
 			for (size_t slot = 0; slot < keywords.size(); ++slot)
-			{
 				lexer->WordListSet(static_cast<int>(slot), to_string(keywords[slot]).c_str());
-				if (state->PauseReason() == 4) { PauseSyntaxForMemory(); return; }
-			}
 			for (size_t property = 0; property < propertyNames.size(); ++property)
-			{
 				lexer->PropertySet(to_string(propertyNames[property]).c_str(), to_string(propertyValues[property]).c_str());
-				if (state->PauseReason() == 4) { PauseSyntaxForMemory(); return; }
-			}
 #ifdef _DEBUG
-			WinUIEditor::CheckSyntaxAllocationForTesting(3);
+			WinUIEditor::CheckSyntaxAllocationForTesting(WinUIEditor::SyntaxFaultPoint::LexInterface);
 #endif
 			// Prepare the lex interface before changing styles or lexer ownership.
 			DocumentLexState();
 			// Streaming candidates remain StylesNone; coloring is optional after publication.
-			pdoc->SetStyleStorage(state->PauseReason() == 0);
+			pdoc->SetStyleStorage(state->PauseReason() == EditorSyntaxPauseReason::None);
 			if (pdoc->StyleStorageFailed()) { PauseSyntaxForMemory(); return; }
 			pdoc->GetLexInterface()->SetInstance(lexer.release());
 			_syntaxState = std::move(state);
 			_syntaxMemoryPaused = false;
 		}
 		catch (const std::bad_alloc &) { PauseSyntaxForMemory(); return; }
-		idleStyling = IdleStyling::ToVisible;
 		ResetSyntaxStyles();
 	}
 
 	void ScintillaWinUI::ResetSyntaxStyles()
 	{
+		// Without a lexer, idle styling never completes and keeps the idle timer running.
+		idleStyling = _syntaxState ? IdleStyling::ToVisible : IdleStyling::None;
 		// Only clear lexical styles; contraction state also owns word-wrap heights.
 		pdoc->decorations->DeleteLexerDecorations();
 		pdoc->StartStyling(0);
 		pdoc->SetStyleFor(pdoc->Length(), 0);
-		if (_syntaxState && _syntaxState->PauseReason() == 0) pdoc->ModifiedAt(0);
+		if (_syntaxState && _syntaxState->PauseReason() == EditorSyntaxPauseReason::None) pdoc->ModifiedAt(0);
 		else needIdleStyling = false;
 		pdoc->IncrementStyleClock();
 		view.llc.Invalidate(LineLayout::ValidLevel::invalid);
 		Redraw();
 	}
 
-	int ScintillaWinUI::SyntaxHighlightingPauseReason() const noexcept
+	winrt::WinUIEditor::EditorSyntaxPauseReason ScintillaWinUI::SyntaxHighlightingPauseReason() const noexcept
 	{
-		return _syntaxMemoryPaused ? 4 : _syntaxState ? _syntaxState->PauseReason() : 0;
+		if (_syntaxMemoryPaused) return EditorSyntaxPauseReason::Memory;
+		return _syntaxState ? _syntaxState->PauseReason() : EditorSyntaxPauseReason::None;
 	}
 
 	void ScintillaWinUI::PauseSyntaxForMemory()
@@ -974,18 +962,19 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::NotifyStylingCompleted(Document *document, void *)
 	{
 		// Release a failed lexer only after its Lex/Fold and Colourise scopes exited.
-		if (document == pdoc && _syntaxState && _syntaxState->PauseReason() == 4) PauseSyntaxForMemory();
+		if (document == pdoc && _syntaxState && _syntaxState->PauseReason() == EditorSyntaxPauseReason::Memory) PauseSyntaxForMemory();
 	}
 
 	bool ScintillaWinUI::SetIdle(bool enabled)
 	{
-		if (_idleFinalized) return false;
-		if (enabled && !_idleSuspended)
+		// StopTimers has already stopped a suspended idle timer.
+		if (_idleFinalized || _idleSuspended) return false;
+		if (enabled)
 		{
 			if (!_idleTimer.IsEnabled()) _idleTimer.Start();
 		}
 		else _idleTimer.Stop();
-		return !_idleSuspended;
+		return true;
 	}
 
 	void ScintillaWinUI::QueueIdleWork(WorkItems items, Sci::Position upTo)
@@ -1039,9 +1028,8 @@ namespace Scintilla::Internal {
 	// Todo: conflated with the incorrectly spelled version
 	void ScintillaWinUI::Finalize()
 	{
-		ScintillaBase::Finalise();
 		StopTimers();
-		SetIdle(false);
+		ScintillaBase::Finalise();
 		if (_tfDocumentManager)
 		{
 			_tfDocumentManager->Pop(TF_POPF_ALL);
@@ -3201,7 +3189,7 @@ namespace Scintilla::Internal {
 				vs.styles[i] = vs.styles[StyleDefault];
 			}
 		}
-		if (metricsChanged) InvalidateTrackedScrollWidth();
+		if (metricsChanged) InvalidateTrackedScrollWidth(true);
 	}
 
 	void ScintillaWinUI::SetWndProc(std::function<LRESULT(winrt::Windows::Foundation::IInspectable const &, UINT, WPARAM, LPARAM)> wndProc)
@@ -3448,8 +3436,7 @@ namespace Scintilla::Internal {
 	{
 		const bool atomicReplacement = pdoc->InAtomicReplacement();
 		const bool modifying = pdoc->ModificationInProgress();
-		const bool borrowedPayload = _notificationPayloadDepth != 0;
-		if (_readLeases != 0 || modifying || borrowedPayload)
+		if (_readLeases != 0 || modifying)
 		{
 			if ((iMessage == Message::SetReadOnly && wParam == 0) ||
 				iMessage == Message::SetDocPointer || iMessage == Message::GetDocPointer ||
@@ -3459,7 +3446,7 @@ namespace Scintilla::Internal {
 				iMessage == Message::SetCodePage)
 				winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
 		}
-		if (_journal && iMessage == Message::SetCodePage && wParam != 65001)
+		if (_journal && iMessage == Message::SetCodePage && wParam != CpUtf8)
 			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
 		if (_journal && (iMessage == Message::SetEOLMode || iMessage == Message::ConvertEOLs) &&
 			wParam != static_cast<uptr_t>(EndOfLine::Cr)) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
@@ -3491,7 +3478,7 @@ namespace Scintilla::Internal {
 			default: break;
 			}
 		}
-		if (modifying || borrowedPayload)
+		if (modifying)
 		{
 			// Synchronous observers still borrow insertion/deletion bytes from
 			// undo storage. Keep that storage intact through the entire dispatch.
@@ -3519,10 +3506,14 @@ namespace Scintilla::Internal {
 		{
 #ifdef _DEBUG
 		case Message::PrivateLexerCall:
+		{
 			// Private debug-only fault injection; absent from release/WinRT API.
-			if (wParam == 0x4E500001) { FailStyleAllocationForTesting(static_cast<int>(lParam)); return 0; }
-			if (wParam == 0x4E500002) { WinUIEditor::FailSyntaxAllocationForTesting(static_cast<int>(lParam)); return 0; }
+			constexpr uptr_t FailStyleAllocation = 0x4E500001;
+			constexpr uptr_t FailSyntaxAllocation = 0x4E500002;
+			if (wParam == FailStyleAllocation) { FailStyleAllocationForTesting(static_cast<int>(lParam)); return 0; }
+			if (wParam == FailSyntaxAllocation) { WinUIEditor::FailSyntaxAllocationForTesting(static_cast<WinUIEditor::SyntaxFaultPoint>(lParam)); return 0; }
 			return __super::WndProc(iMessage, wParam, lParam);
+		}
 #endif
 		case Message::GetDirectFunction:
 			return reinterpret_cast<sptr_t>(DirectFunction);
@@ -3693,7 +3684,7 @@ namespace Scintilla::Internal {
 			view.ClearAllTabstops();
 			SetEmptySelection(0);
 			NeedWrapping();
-			InvalidateTrackedScrollWidth();
+			ResetTrackedScrollWidth();
 			SetScrollBars();
 			Redraw();
 		}

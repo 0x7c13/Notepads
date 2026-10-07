@@ -12,7 +12,6 @@ namespace winrt::WinUIEditor::implementation
 	struct DrainingAsyncOperation : implements<DrainingAsyncOperation<TResult, TJob>,
 		Windows::Foundation::IAsyncOperation<TResult>, Windows::Foundation::IAsyncInfo>
 	{
-		using Operation = Windows::Foundation::IAsyncOperation<TResult>;
 		using Handler = Windows::Foundation::AsyncOperationCompletedHandler<TResult>;
 		using AsyncStatus = Windows::Foundation::AsyncStatus;
 		explicit DrainingAsyncOperation(std::shared_ptr<TJob> job) : _job(std::move(job)) {}
@@ -57,11 +56,17 @@ namespace winrt::WinUIEditor::implementation
 			try { if (handler) handler(*this, status); } catch (...) {}
 		}
 	private:
+		// Runtime classes start null; default construction would activate one.
+		static TResult EmptyResult() noexcept
+		{
+			if constexpr (std::is_convertible_v<std::nullptr_t, TResult>) return nullptr;
+			else return {};
+		}
 		std::shared_ptr<TJob> _job;
 		mutable std::mutex _mutex;
 		AsyncStatus _status{AsyncStatus::Started};
 		hresult _error{S_OK};
-		TResult _result{nullptr};
+		TResult _result{EmptyResult()};
 		agile_ref<Handler> _completed;
 		bool _handlerAssigned{};
 	};

@@ -52,10 +52,9 @@ public sealed class DocumentBaseline : IDisposable
     /// <summary>Borrowed file identity; null for an empty generation created without disk I/O.</summary>
     public StorageFile File => _asset.File;
 
-    public static DocumentBaseline CreateEmpty(Guid? ownerId = null)
+    public static DocumentBaseline CreateEmpty(Guid ownerId)
     {
-        return new DocumentBaseline(DocumentAssetLease.Acquire(null), ownerId ?? DocumentAssetLease.DefaultOwnerId,
-            Guid.NewGuid(), 0, EmptySha256);
+        return new DocumentBaseline(DocumentAssetLease.Acquire(null), ownerId, Guid.NewGuid(), 0, EmptySha256);
     }
 
     /// <summary>
@@ -64,17 +63,17 @@ public sealed class DocumentBaseline : IDisposable
     /// A generation is published only after validation and flushing succeed.
     /// </summary>
     public static async Task<DocumentBaseline> CreateAsync(Func<Stream, Task> writeCanonicalUtf8Async,
-        CancellationToken cancellationToken = default, Guid? ownerId = null)
+        Guid ownerId, CancellationToken cancellationToken = default)
     {
         if (writeCanonicalUtf8Async == null) throw new ArgumentNullException(nameof(writeCanonicalUtf8Async));
+        if (ownerId == Guid.Empty) throw new ArgumentException("A document asset requires its owning scope.", nameof(ownerId));
         cancellationToken.ThrowIfCancellationRequested();
-        var owner = ownerId ?? DocumentAssetLease.DefaultOwnerId;
         var generation = Guid.NewGuid();
         var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
             "DocumentBaselines", CreationCollisionOption.OpenIfExists);
         cancellationToken.ThrowIfCancellationRequested();
         var asset = await DocumentAssetLease.CreateNewAsync(folder,
-            owner.ToString("N") + "-" + generation.ToString("N") + ".utf8", cancellationToken);
+            ownerId.ToString("N") + "-" + generation.ToString("N") + ".utf8", cancellationToken);
         var file = asset.File;
         try
         {
@@ -90,7 +89,7 @@ public sealed class DocumentBaseline : IDisposable
                 byteLength = writer.Length;
             }
             cancellationToken.ThrowIfCancellationRequested();
-            return new DocumentBaseline(asset, owner, generation, byteLength, hash);
+            return new DocumentBaseline(asset, ownerId, generation, byteLength, hash);
         }
         catch
         {
@@ -100,8 +99,8 @@ public sealed class DocumentBaseline : IDisposable
     }
 
     /// <summary>Explicit adapter for callers that already materialize a managed snapshot.</summary>
-    public static Task<DocumentBaseline> FromTextAsync(string text,
-        CancellationToken cancellationToken = default, Guid? ownerId = null)
+    public static Task<DocumentBaseline> FromTextAsync(string text, Guid ownerId,
+        CancellationToken cancellationToken = default)
     {
         if (text == null) throw new ArgumentNullException(nameof(text));
         return CreateAsync(async stream =>
@@ -111,7 +110,7 @@ public sealed class DocumentBaseline : IDisposable
                 await LineEndingUtility.WriteAsync(writer, text, LineEnding.Cr).ConfigureAwait(false);
                 await writer.FlushAsync().ConfigureAwait(false);
             }
-        }, cancellationToken, ownerId);
+        }, ownerId, cancellationToken);
     }
 
     /// <summary>Validate and retain an existing manifest-owned generation without copying its text.</summary>
