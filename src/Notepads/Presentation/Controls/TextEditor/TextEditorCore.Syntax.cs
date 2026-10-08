@@ -24,6 +24,7 @@ public sealed partial class TextEditorCore
 
     internal void SetSyntaxLanguage(DocumentLanguage language, string fileName)
     {
+        _language = language;
         var profileKey = language.Id + (fileName?.EndsWith(".jsonc", StringComparison.OrdinalIgnoreCase) == true ? ":jsonc" : string.Empty);
         if (_syntaxProfileKey == profileKey) return;
         _syntaxProfileKey = profileKey;

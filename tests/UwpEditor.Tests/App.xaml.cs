@@ -675,6 +675,8 @@ public sealed partial class App : Application
             log.AppendLine("PASS: editor colors from theme resources; tab re-entry, repeated theme notifications and unchanged font sizes keep applied styles.");
             await CheckDialogThemeResourcesAsync();
             log.AppendLine("PASS: dialog background and hyperlink colors follow a dialog theme that differs from the application theme.");
+            // Runs before the syntax tests, which configure the native lexer directly.
+            await IndentationTests.RunAsync(log, core);
             core.Focus(FocusState.Programmatic);
             if (args.Arguments == "--preview") await Task.Delay(20000);
             await SyntaxHighlightingTests.RunAsync(log, core);

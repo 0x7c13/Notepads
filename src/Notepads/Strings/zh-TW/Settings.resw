@@ -151,7 +151,7 @@
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>僅會套用至新的文件。</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>預設行尾</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>預設 (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Tab 按鍵行為僅會在每當使用者插入新製表符（Tab）時啟用。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Notepads 會沿用檔案既有的縮排方式，並遵循常見程式語言的慣例。當 Notepads 無法判斷適合的縮排時（例如純文字），預設會使用此設定。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>8 個空格</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>4 個空格</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>Tab 按鍵行為</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>

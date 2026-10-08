@@ -151,7 +151,7 @@
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>改变设置后只会影响新打开或者创建的文件。</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>默认换行符</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>插入默认制表符 (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>改变制表符行为之后，只有新键入的制表符才会生效，已有制表符不会被替换。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Notepads 会沿用文件已有的缩进方式，并遵循常见编程语言的惯例。当 Notepads 无法判断应使用哪种缩进时（例如纯文本），将默认使用此设置。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>插入八个空格</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>插入四个空格</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>制表符键(Tab)行为</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>

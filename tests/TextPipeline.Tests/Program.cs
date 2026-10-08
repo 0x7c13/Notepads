@@ -47,6 +47,7 @@ internal static class Program
         await DocumentTextCodecTests.RunAsync();
         SessionRecoverySchemaTests.Run();
         DocumentLanguageTests.Run();
+        IndentationDetectorTests.Run();
     }
 
     private static void Equal(string expected, string actual)

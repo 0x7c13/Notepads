@@ -151,7 +151,7 @@
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>新規文書にのみ適用されます。</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>既定の行末</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>タブ文字 (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>ここで設定するタブ キーの挙動は、新規に入力されたタブにのみ適用されます。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Notepads は、ファイルで既に使われているインデントと、一般的なプログラミング言語の慣例に従います。この設定は、プレーンテキストなど、Notepads が適切なインデントを判断できない場合の既定値として使われます。</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>半角スペース 8文字</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>半角スペース 4文字</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>タブ キーの挙動</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>

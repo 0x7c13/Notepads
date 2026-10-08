@@ -196,6 +196,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         DisplayLineNumbers = ApplicationPreferences.EditorDisplayLineNumbers;
         DisplayLineHighlighter = ApplicationPreferences.EditorDisplayLineHighlighter;
         Native.Modified += OnNativeModified;
+        Native.CharAdded += OnNativeCharAdded;
         Native.UpdateUI += OnNativeUpdateUI;
         Native.SavePointReached += OnSavePointReached;
         Native.SavePointLeft += OnSavePointLeft;
@@ -406,6 +407,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             Native.SetSel(0, 0);
             Native.EmptyUndoBuffer();
             Native.SetSavePoint();
+            ResetDetectedIndentation();
             UpdateLineNumberMargin();
         }
         finally { Native.UndoCollection = true; _settingText = false; }
@@ -453,6 +455,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             InstallSyntaxProfile();
             Native.SetSel(0, 0);
             ContentVersion++;
+            ResetDetectedIndentation();
             UpdateLineNumberMargin();
         }
         finally
@@ -682,6 +685,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         IsEnabled = false;
         UnhookExternalEvents();
         Native.Modified -= OnNativeModified;
+        Native.CharAdded -= OnNativeCharAdded;
         Native.UpdateUI -= OnNativeUpdateUI;
         Native.SavePointReached -= OnSavePointReached;
         Native.SavePointLeft -= OnSavePointLeft;

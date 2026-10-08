@@ -151,7 +151,7 @@
   <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>새 문서에만 적용됩니다.</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
   <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>기본 줄바꿈</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>탭 문자 (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
-  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>탭 키 동작 설정은 사용자가 삽입한 새 탭에만 적용됩니다.</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Notepads는 파일에서 이미 사용 중인 들여쓰기와 일반적인 프로그래밍 언어의 관례를 따릅니다. 이 설정은 일반 텍스트처럼 Notepads가 어떤 들여쓰기가 적합한지 판단할 수 없을 때 기본값으로 사용됩니다.</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>공백 8개</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>공백 4개</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>탭 키 동작</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>

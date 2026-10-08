@@ -18,6 +18,7 @@
     <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" Link="LineEndingUtility.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" Link="DocumentTextCodec.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationDetector.cs" Link="IndentationDetector.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Operations/DocumentOperationCoordinator.cs" Link="DocumentOperationCoordinator.cs" />
   </ItemGroup>
 </Project>

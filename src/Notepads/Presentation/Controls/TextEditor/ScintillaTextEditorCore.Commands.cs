@@ -56,44 +56,6 @@ public sealed partial class TextEditorCore
         ]);
     }
 
-    private void ChangeIndentation(bool remove)
-    {
-        var startLine = Native.LineFromPosition(Native.SelectionStart);
-        var endLine = Native.LineFromPosition(Native.SelectionEnd);
-        var indent = ApplicationPreferences.EditorDefaultTabIndents;
-        Native.UseTabs = indent < 0;
-        Native.Indent = indent < 0 ? Native.TabWidth : indent;
-        var singleRangeOnOneLine = startLine == endLine && Native.Selections == 1 && !Native.SelectionIsRectangle;
-        if (!remove && singleRangeOnOneLine)
-        {
-            // The setting promises a fixed number of inserted spaces rather
-            // than movement to the next visual tab stop.
-            TypeText(indent < 0 ? "\t" : new string(' ', indent));
-            return;
-        }
-        if (remove && singleRangeOnOneLine)
-        {
-            // BackTab outside the leading whitespace moves the caret.
-            // Notepads' Shift+Tab command always dedents the current line.
-            Native.SetLineIndentation(startLine, Math.Max(0, Native.GetLineIndentation(startLine) - Native.Indent));
-            return;
-        }
-        // Native commands preserve selection direction, handle rectangular
-        // ranges, exclude an unselected final line, and group undo.
-        if (remove) Native.BackTab();
-        else Native.Tab();
-    }
-
-    private void EnterWithAutoIndentation()
-    {
-        var start = Native.SelectionStart;
-        var lineStart = Native.PositionFromLine(Native.LineFromPosition(start));
-        // Read only the indentation prefix, even for an exceptionally long line.
-        var end = lineStart;
-        while (end < start && (Native.GetCharAt(end) == ' ' || Native.GetCharAt(end) == '\t')) end++;
-        TypeText("\r" + ReadRange(lineStart, end));
-    }
-
     private void JoinText()
     {
         var first = Native.LineFromPosition(Native.SelectionStart);

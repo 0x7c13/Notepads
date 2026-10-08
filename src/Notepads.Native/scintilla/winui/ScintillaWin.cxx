@@ -697,6 +697,8 @@ namespace Scintilla::Internal {
 			ModificationFlags::InsertText | ModificationFlags::DeleteText);
 		TS_TEXTCHANGE change{};
 		int utf16Length = 0;
+		LONG selectionStart = 0;
+		LONG selectionEnd = 0;
 		if (notifyTsf && (_tsfCore || _tfTextStoreACPSink) && textChanged)
 		{
 			// Capture coordinates and counted text while native storage is valid.
@@ -709,6 +711,21 @@ namespace Scintilla::Internal {
 			const bool inserted = FlagSet(notificationData.modificationType, ModificationFlags::InsertText);
 			change.acpOldEnd = change.acpStart + (inserted ? 0 : utf16Length);
 			change.acpNewEnd = change.acpStart + (inserted ? utf16Length : 0);
+			// Typing has not yet moved the caret past inserted text, so report
+			// the insertion end. A deletion delivered now has already moved the
+			// selection, so report it: a host edit away from the caret must not
+			// tell TSF that the caret moved to the edit. A queued deletion's
+			// selection is stale by the time it is delivered.
+			selectionStart = selectionEnd = change.acpNewEnd;
+			if (_tsfCore && !inserted && _lock == NONE)
+			{
+				// Backspace and Delete leave the caret at the deletion, which is
+				// already counted; recounting a long line costs time per key.
+				const auto start{ SelectionStart().Position() };
+				const auto end{ SelectionEnd().Position() };
+				if (start != notificationData.position) selectionStart = static_cast<LONG>(DocPositionToAcp(start));
+				selectionEnd = end == start ? selectionStart : static_cast<LONG>(DocPositionToAcp(end));
+			}
 		}
 
 		SendMessage(WM_NOTIFY, GetCtrlID(), reinterpret_cast<LPARAM>(&notificationData));
@@ -718,7 +735,7 @@ namespace Scintilla::Internal {
 		{
 			if (_tsfCore)
 				_editContext.NotifyTextChanged({ change.acpStart, change.acpOldEnd },
-					change.acpNewEnd - change.acpStart, { change.acpNewEnd, change.acpNewEnd });
+					change.acpNewEnd - change.acpStart, { selectionStart, selectionEnd });
 			else if (_tfTextStoreACPSink)
 			{
 #ifdef EnableTsfDebugMessages
