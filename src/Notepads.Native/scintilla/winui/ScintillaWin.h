@@ -108,6 +108,7 @@ namespace Scintilla::Internal {
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
 		bool HasJournal() const noexcept;
 		bool HasTextStoreLock() const noexcept { return _lock != NONE; }
+		bool IsComposing() const noexcept { return _compositionCount != 0; }
 		void StartJournal(std::shared_ptr<WinUIEditor::NativeJournalFile> file, uint64_t sequence, bool rotate);
 		WinUIEditor::JournalPrefix AcquireJournalPrefix();
 		std::shared_ptr<WinUIEditor::NativeJournalFile> ActiveJournalFile() const noexcept;
@@ -229,6 +230,7 @@ namespace Scintilla::Internal {
 		DWORD  _textStoreSinkMask{ 0 };
 		TfEditCookie _tfEditCookie{ 0 };
 		TfClientId _tfClientId{ 0 };
+		unsigned int _compositionCount{ 0 };
 		enum LockTypes
 		{
 			NONE = 0,

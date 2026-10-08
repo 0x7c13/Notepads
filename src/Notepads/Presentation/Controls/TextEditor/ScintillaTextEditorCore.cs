@@ -661,6 +661,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnEditorPreviewKeyDown(object sender, KeyRoutedEventArgs args)
     {
+        // A lock covers one TSF update, while composition spans multiple
+        // updates. Keep indentation keys on the native input path in both
+        // cases, including its queue for keys received during a lock.
+        if (args.Key is VirtualKey.Back or VirtualKey.Tab or VirtualKey.Enter
+            && (_view.IsComposing || _view.HasTextStoreLock)) return;
         if (!args.Handled && _keyboardCommandHandler.Handle(args)) args.Handled = true;
     }
 

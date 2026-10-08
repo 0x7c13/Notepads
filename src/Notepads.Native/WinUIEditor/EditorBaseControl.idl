@@ -16,6 +16,8 @@ namespace WinUIEditor
 	{
 		EditorBaseControl();
 		Editor Editor { get; };
+		Boolean IsComposing { get; };
+		Boolean HasTextStoreLock { get; };
 		// Hosts that own zoom policy can handle the unconsumed routed wheel event.
 		Boolean MouseWheelZoomEnabled;
 		// Unlike SCI_STYLESETBACK, this preserves alpha for XAML backdrops.

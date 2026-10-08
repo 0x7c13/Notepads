@@ -24,6 +24,8 @@ namespace winrt::WinUIEditor::implementation
 		static winrt::fire_and_forget final_release(std::unique_ptr<EditorBaseControl> self) noexcept;
 
 		WinUIEditor::Editor Editor();
+		bool IsComposing() const noexcept { return _scintilla->IsComposing(); }
+		bool HasTextStoreLock() const noexcept { return _scintilla->HasTextStoreLock(); }
 		bool MouseWheelZoomEnabled() const noexcept { return _mouseWheelZoomEnabled; }
 		void MouseWheelZoomEnabled(bool value) noexcept { _mouseWheelZoomEnabled = value; }
 		void SetBackgroundColor(Windows::UI::Color const &color);

@@ -363,3 +363,6 @@ _buildWinUI3/
 
 # Local development plans and working notes
 /docs/
+
+# iCode project folder
+/.chrys/

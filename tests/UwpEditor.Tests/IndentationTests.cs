@@ -26,12 +26,15 @@ internal static class IndentationTests
             // Refresh the cached syntax status left by earlier tests.
             await core.LoadTextAsync(string.Empty);
             CheckPrecedence(core, native);
+            CheckZeroIndentationSetting(core, native);
+            await CheckReviewRegressionsAsync(core, native);
             CheckEnterRules(core, native);
             await CheckEnterWithoutRulesAsync(core, native);
             await CheckTypedClosersAsync(core, native);
             await CheckPythonColonsAsync(core, native);
             CheckReadOnly(core, native);
             CheckSingleLineDedentSelection(core, native);
+            CheckBackspace(core, native);
         }
         finally
         {
@@ -39,7 +42,7 @@ internal static class IndentationTests
             core.SetSyntaxLanguage(DocumentLanguages.PlainText, "x.txt");
         }
         log.AppendLine("PASS: indentation precedence (file, language, Tab setting), Enter rules for brackets, colons, YAML and Python block exits, " +
-            "typed closer and Python keyword dedents, stale and disposed callbacks, read-only Tab, and selection-keeping Shift+Tab.");
+            "typed closer and Python keyword dedents, stale and disposed callbacks, read-only Tab, selection-keeping Shift+Tab, and Backspace unindent.");
     }
 
     private static void CheckPrecedence(TextEditorCore core, WinUIEditor.Editor native)
@@ -79,6 +82,103 @@ internal static class IndentationTests
             Enter(core, native, language, text, text.Replace("^", "\r  ^", StringComparison.Ordinal), language + " continuing Enter");
             Check(core.TestIndentationCheckedVersion == -1, language + " continuing Enter does not read the indentation sample");
         }
+    }
+
+    private static async Task CheckReviewRegressionsAsync(TextEditorCore core, WinUIEditor.Editor native)
+    {
+        ApplicationPreferences.EditorDefaultTabIndents = 4;
+
+        // Whether an open multiline string continues the statement is read from
+        // the lexer's style on the break just inserted, which no leading-text scan
+        // can reproduce: prefixes, escapes and the other delimiter all defeat one.
+        Enter(core, native, "python", "def f():\r    return \"\"\"text ^", "def f():\r    return \"\"\"text \r    ^",
+            "Python return in an unfinished string at EOF");
+        Enter(core, native, "python", "def f():\r    return '''text ^", "def f():\r    return '''text \r    ^",
+            "Python return in an unfinished single-quote string at EOF");
+        Enter(core, native, "python", "def f():\r    return f\"\"\"text ^", "def f():\r    return f\"\"\"text \r    ^",
+            "Python return in an unfinished f-string at EOF");
+        Enter(core, native, "python", "def f():\r    return \"\"\"^", "def f():\r    return \"\"\"\r    ^",
+            "Python return on a bare opening triple quote stays open");
+        // The prefix is part of the delimiter, not string content.
+        Enter(core, native, "python", "def f():\r    return f\"\"\"^", "def f():\r    return f\"\"\"\r    ^",
+            "Python return in an unfinished prefixed string at EOF");
+        Enter(core, native, "python", "def f():\r    return f\"\"\"\"\"\"^", "def f():\r    return f\"\"\"\"\"\"\r^",
+            "Python return in a closed prefixed empty string at EOF");
+        // An escaped quote is content, so the string stays open.
+        Enter(core, native, "python", "def f():\r    return \"\"\"abc\\\"\"\"^", "def f():\r    return \"\"\"abc\\\"\"\"\r    ^",
+            "Python return past an escaped quote stays open");
+        Enter(core, native, "python", "def f():\r    return \"\"\"abc\\\"\"\"\"^", "def f():\r    return \"\"\"abc\\\"\"\"\"\r^",
+            "Python return after an escaped quote and a closing triple");
+        // A non-quote or the other delimiter inside the string is content.
+        Enter(core, native, "python", "def f():\r    return \"\"\"abc\"\"x^", "def f():\r    return \"\"\"abc\"\"x\r    ^",
+            "Python return after two content quotes and a character stays open");
+        Enter(core, native, "python", "def f():\r    return '''abc\"\"\"^", "def f():\r    return '''abc\"\"\"\r    ^",
+            "Python return after the other delimiter inside a string stays open");
+        // Closed strings end the statement and dedent.
+        Enter(core, native, "python", "def f():\r    return \"\"\"\"\"\"^", "def f():\r    return \"\"\"\"\"\"\r^",
+            "Python return on an empty closed string at EOF");
+        Enter(core, native, "python", "def f():\r    return \"\"\"abc\"\"\"^", "def f():\r    return \"\"\"abc\"\"\"\r^",
+            "Python return in a closed triple-quoted string at EOF");
+        Enter(core, native, "python", "def f():\r    return '''abc'''^", "def f():\r    return '''abc'''\r^",
+            "Python return in a closed single-quote triple string at EOF");
+        Enter(core, native, "python", "def f():\r    return f\"\"\"abc\"\"\"^", "def f():\r    return f\"\"\"abc\"\"\"\r^",
+            "Python return in a closed triple-quoted f-string at EOF");
+        Enter(core, native, "python", "def f():\r    return \"abc\"^", "def f():\r    return \"abc\"\r^",
+            "Python return in a closed single-quote string at EOF");
+        Enter(core, native, "python", "def f():\r    return \"\"\"text ^\r", "def f():\r    return \"\"\"text \r    ^\r",
+            "Python return in an unfinished string before the last line");
+        // A definition provides the indentation the open string continues.
+        Enter(core, native, "python", "def f():\r    x = 1\r    return \"\"\"text ^", "def f():\r    x = 1\r    return \"\"\"text \r    ^",
+            "Python open string continues the enclosing block's indentation");
+        // The break and the indentation are one undo step.
+        Load(core, "python", "def f():\r    return \"\"\"text ^");
+        core.TestEnter();
+        core.Undo();
+        Expect(core, native, "def f():\r    return \"\"\"text ^", "one undo removes the whole Python block exit");
+
+        // Splitting a bracket pair must leave Up/Down on the middle line's column.
+        Load(core, "csharp", "void F() {^}");
+        core.TestEnter();
+        Expect(core, native, "void F() {\r    ^\r}", "bracket split: Enter between braces");
+        native.LineUp();
+        Expect(core, native, "void^ F() {\r    \r}", "bracket split: Up keeps the middle line's column");
+        native.LineDown();
+        Expect(core, native, "void F() {\r    ^\r}", "bracket split: Down keeps the middle line's column");
+
+        // else after an if that contains a definition the caret has left: at the
+        // definition's own indentation the outer if is reachable again.
+        await Type(core, native, "python", "if x:\r    def f():\r        g()\r    else^", ":",
+            "if x:\r    def f():\r        g()\relse:^", "Python else at the def's indentation aligns to the outer if");
+        await Type(core, native, "python", "if x:\r    class C:\r        g()\r    else^", ":",
+            "if x:\r    class C:\r        g()\relse:^", "Python else at the class's indentation aligns to the outer if");
+        await Type(core, native, "python", "if x:\r    def f():\r        g()\r    h()\r        else^", ":",
+            "if x:\r    def f():\r        g()\r    h()\relse:^", "Python else after a closed nested def body");
+        await Type(core, native, "python", "if x:\r    def f():\r        g()\r        else^", ":",
+            "if x:\r    def f():\r        g()\r        else:^", "Python else still inside a nested def");
+        await Type(core, native, "python", "def f():\r    if x:\r        g()\r        else^", ":",
+            "def f():\r    if x:\r        g()\r    else:^", "Python else inside a def matches its if");
+        // A closed multiline string is not a statement: the walk must step over it
+        // and still reach the enclosing header above it, whatever its indentation.
+        await Type(core, native, "python", "if ready:\r    text = \"\"\"hello\rworld\r\"\"\"\r    else^", ":",
+            "if ready:\r    text = \"\"\"hello\rworld\r\"\"\"\relse:^",
+            "Python else after a closed multiline string aligns to the outer if");
+        await Type(core, native, "python", "try:\r    text = \"\"\"a\rb\r\"\"\"\r    finally^", ":",
+            "try:\r    text = \"\"\"a\rb\r\"\"\"\rfinally:^",
+            "Python finally after a closed multiline string aligns to the outer try");
+        // A standalone string statement closes deeper suites like any statement:
+        // the walk must use its line's indentation, not step past the bookkeeping.
+        await Type(core, native, "python", "if outer:\r    if inner:\r        work()\r    \"\"\"done\"\"\"\r    else^", ":",
+            "if outer:\r    if inner:\r        work()\r    \"\"\"done\"\"\"\relse:^",
+            "Python else after a standalone single-line string aligns to the outer if");
+        await Type(core, native, "python", "if outer:\r    if inner:\r        work()\r    \"\"\"done\rmore\"\"\"\r    else^", ":",
+            "if outer:\r    if inner:\r        work()\r    \"\"\"done\rmore\"\"\"\relse:^",
+            "Python else after a standalone multiline string aligns to the outer if");
+        await Type(core, native, "python", "if a:\r    if b:\r        c()\r        \"\"\"doc\"\"\"\r        else^", ":",
+            "if a:\r    if b:\r        c()\r        \"\"\"doc\"\"\"\r    else:^",
+            "Python else after a deeper standalone string aligns to its own if");
+        await Type(core, native, "python", "try:\r    work()\r    \"\"\"doc\"\"\"\r    finally^", ":",
+            "try:\r    work()\r    \"\"\"doc\"\"\"\rfinally:^",
+            "Python finally after a standalone string aligns to the outer try");
     }
 
     private static void CheckEnterRules(TextEditorCore core, WinUIEditor.Editor native)
@@ -122,6 +222,19 @@ internal static class IndentationTests
             Enter(core, native, "python", text, text.Replace("^", "\r    ^", StringComparison.Ordinal), "Python non-exit " + Escape(text));
         }
         Enter(core, native, "python", "def f():\r    return^ x", "def f():\r    return\r    ^ x", "Python return before code");
+    }
+
+    private static void CheckZeroIndentationSetting(TextEditorCore core, WinUIEditor.Editor native)
+    {
+        ApplicationPreferences.EditorDefaultTabIndents = 0;
+        Load(core, "plaintext", "        ^");
+        core.TestDeleteBack();
+        Expect(core, native, "    ^", "Backspace with a zero Tab setting uses the tab width");
+        core.TestIndentation(true);
+        Expect(core, native, "^", "Shift+Tab with a zero Tab setting uses the tab width");
+        core.TestIndentation(false);
+        Expect(core, native, "    ^", "Tab with a zero Tab setting inserts a full unit");
+        ApplicationPreferences.EditorDefaultTabIndents = 4;
     }
 
     private static async Task CheckEnterWithoutRulesAsync(TextEditorCore core, WinUIEditor.Editor native)
@@ -212,13 +325,31 @@ internal static class IndentationTests
             "if x:\r    if y:\r        a = 1\r# note\r\r    else:^", "Python else: after a comment line");
         await Type(core, native, "python", "if x:\r    a = 1\relse^", ":", "if x:\r    a = 1\relse:^", "Python else: already in place");
         await Type(core, native, "python", "if x:\r    a = 1\r    elsewhere^", ":", "if x:\r    a = 1\r    elsewhere:^", "Python elsewhere:");
+        await Type(core, native, "python", "def f():\r    if x: pass\r    else^", ":",
+            "def f():\r    if x: pass\r    else:^", "Python inline suite keeps an already aligned else inside its function");
+        await Type(core, native, "python", "if (\r    x\r):\r    f()\r    else^", ":",
+            "if (\r    x\r):\r    f()\relse:^", "Python else matches a continued header");
+        await Type(core, native, "python", "def f():\r    try:\r        if x:\r            f()\r            except E^", ":",
+            "def f():\r    try:\r        if x:\r            f()\r    except E:^", "Python except finds try across a nested suite");
+        await Type(core, native, "python", "try:\r    f()\rexcept E:\r    g()\relse:\r    h()\r    finally^", ":",
+            "try:\r    f()\rexcept E:\r    g()\relse:\r    h()\rfinally:^", "Python finally after try/except/else");
+        await Type(core, native, "python", "if outer:\r    if inner:\r        f()\r    g()\r    else^", ":",
+            "if outer:\r    if inner:\r        f()\r    g()\relse:^", "Python else skips a closed sibling suite");
+        await Type(core, native, "python", "if x:\r    def f():\r        g()\r        else^", ":",
+            "if x:\r    def f():\r        g()\r        else:^", "Python else never searches outside its function");
+        await Type(core, native, "python", "if x:\r    f()\r    except E^", ":",
+            "if x:\r    f()\r    except E:^", "Python except without a matching try is left alone");
+        await Type(core, native, "python", "if x:\r    async  def f():\r        g()\r        else^", ":",
+            "if x:\r    async  def f():\r        g()\r        else:^", "Python else never searches outside an async function");
+        await Type(core, native, "python", "async def f():\r    async for x in xs:\r        g()\r        else^", ":",
+            "async def f():\r    async for x in xs:\r        g()\r    else:^", "Python else matches an async loop");
     }
 
     private static void CheckReadOnly(TextEditorCore core, WinUIEditor.Editor native)
     {
         foreach (var disable in new[] { false, true })
         {
-            foreach (var text in new[] { "^  a\r  b^", "  a^" })
+            foreach (var text in new[] { "^  a\r  b^", "  a^", "  ^a" })
             {
                 Load(core, "csharp", text);
                 var before = core.GetText();
@@ -230,6 +361,7 @@ internal static class IndentationTests
                 {
                     core.TestIndentation(false);
                     core.TestIndentation(true);
+                    core.TestDeleteBack();
                 }
                 finally
                 {
@@ -237,7 +369,7 @@ internal static class IndentationTests
                     native.ReadOnly = false;
                 }
                 Check(core.GetText() == before && native.Anchor == anchor && native.CurrentPos == caret && !core.CanUndo,
-                    "Tab and Shift+Tab leave a read-only editor unchanged: " + Escape(text) + (disable ? " (disabled)" : " (read-only)"));
+                    "Tab, Shift+Tab and Backspace leave a read-only editor unchanged: " + Escape(text) + (disable ? " (disabled)" : " (read-only)"));
             }
         }
     }
@@ -266,6 +398,68 @@ internal static class IndentationTests
         core.TestIndentation(true);
         core.Undo();
         Equal("\tabc", core.GetText(), "each single-line Shift+Tab is its own undo step");
+    }
+
+    private static void CheckBackspace(TextEditorCore core, WinUIEditor.Editor native)
+    {
+        ApplicationPreferences.EditorDefaultTabIndents = 4;
+        foreach (var (language, text, expected) in new[]
+        {
+            // At the end of the indentation: back to the previous unit stop.
+            ("plaintext", "        ^abc", "    ^abc"),
+            ("plaintext", "      ^abc", "    ^abc"),
+            ("plaintext", "        ^", "    ^"),
+            ("plaintext", "\t\t^abc", "\t^abc"),
+            ("plaintext", "\t  ^abc", "\t^abc"),
+            ("javascript", "  ^abc", "^abc"),
+            ("python", "if x:\r  y\r  ^z", "if x:\r  y\r^z"),
+            // Elsewhere: one character or the selection.
+            ("plaintext", "    a^bc", "    ^bc"),
+            ("plaintext", "  ^  abc", " ^  abc"),
+            ("plaintext", "a\r^    b", "a^    b"),
+            ("plaintext", "    ^abc^", "    ^"),
+        })
+        {
+            Load(core, language, text);
+            core.TestDeleteBack();
+            Expect(core, native, expected, "Backspace: " + Escape(text));
+        }
+        // A unit wider than the tab width still removes the whole indentation.
+        // A whitespace-only line is ignored by detection, so the setting wins.
+        ApplicationPreferences.EditorDefaultTabIndents = 8;
+        Load(core, "plaintext", "\t\t^");
+        core.TestDeleteBack();
+        Expect(core, native, "^", "Backspace with a unit wider than the tab width");
+        ApplicationPreferences.EditorDefaultTabIndents = 4;
+        Load(core, "plaintext", "        ^abc\r        def");
+        core.TestDeleteBack();
+        native.LineDown();
+        Expect(core, native, "    abc\r    ^    def", "Down after a Backspace unindent keeps the new column");
+        Load(core, "plaintext", "        ^abc");
+        core.TestDeleteBack();
+        core.Undo();
+        Equal("        abc", core.GetText(), "a Backspace unindent is one undo step");
+        // A zero-width rectangle is empty but is not a plain caret.
+        Load(core, "plaintext", "        ^abc");
+        native.SelectionMode = WinUIEditor.SelectionMode.Rectangle;
+        native.RectangularSelectionAnchor = 8;
+        native.RectangularSelectionCaret = 8;
+        Check(native.SelectionEmpty, "zero-width rectangle fixture is empty");
+        core.TestDeleteBack();
+        native.SelectionMode = WinUIEditor.SelectionMode.Stream;
+        Expect(core, native, "       ^abc", "Backspace deletes one character with a zero-width rectangle");
+        // Ordinary deletion next to an unindent: three separate undo steps.
+        Load(core, "plaintext", "\t x^");
+        core.TestDeleteBack();
+        Expect(core, native, "\t ^", "Backspace deletes a character after a tab-indented line");
+        core.TestDeleteBack();
+        Expect(core, native, "\t^", "Backspace removes the remaining space");
+        core.TestDeleteBack();
+        Expect(core, native, "^", "Backspace removes the tab");
+        core.Undo();
+        Expect(core, native, "\t^", "one undo restores the tab only");
+        core.Undo();
+        Expect(core, native, "\t ^", "another undo restores the space only");
     }
 
     private static void Enter(TextEditorCore core, WinUIEditor.Editor native, string language, string text, string expected, string name)

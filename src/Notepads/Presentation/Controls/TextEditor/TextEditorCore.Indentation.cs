@@ -68,7 +68,7 @@ public sealed partial class TextEditorCore
         _indentationCheckedVersion = -1;
     }
 
-    private int GetUnitColumns(int indentation) => indentation < 0 ? Native.TabWidth : indentation;
+    private int GetUnitColumns(int indentation) => indentation <= 0 ? Native.TabWidth : indentation;
 
     private string CreateIndentation(int columns, int indentation) => indentation < 0
         ? new string('\t', columns / Native.TabWidth) + new string(' ', columns % Native.TabWidth)
@@ -103,6 +103,24 @@ public sealed partial class TextEditorCore
         else Native.Tab();
     }
 
+    // Backspace at the end of a line's indentation removes back to the previous
+    // indentation unit stop; anywhere else it deletes as usual.
+    private void DeleteBackWithUnindent()
+    {
+        if (!CanEdit) return;
+        var caret = Native.CurrentPos;
+        var line = Native.LineFromPosition(caret);
+        var column = Native.GetLineIndentation(line);
+        if (column > 0 && Native.Selections == 1 && !Native.SelectionIsRectangle
+            && Native.SelectionEmpty && Native.GetLineIndentPosition(line) == caret)
+        {
+            var unit = GetUnitColumns(GetEffectiveIndentation());
+            DedentLine(line, (column - 1) / unit * unit);
+            return;
+        }
+        Native.DeleteBack();
+    }
+
     private void EnterWithAutoIndentation()
     {
         var start = Native.SelectionStart;
@@ -133,6 +151,9 @@ public sealed partial class TextEditorCore
                     Native.SetSel(start, closer);
                     TypeText("\r" + indentation + unit + "\r" + indentation);
                     Native.SetEmptySelection(start + 1 + indentation.Length + unit.Length);
+                    // The paste recorded the closing line's column; Up/Down must
+                    // use the middle line's instead.
+                    Native.ChooseCaretX();
                     return;
                 }
                 indentation += unit;
@@ -152,7 +173,25 @@ public sealed partial class TextEditorCore
             else if (_language.Id == "python" && prev >= codeStart && IsPythonBlockExit(codeStart, prev, end, lineEnd))
             {
                 var indent = GetEffectiveIndentation();
-                indentation = CreateIndentation(Math.Max(0, Native.GetLineIndentation(line) - GetUnitColumns(indent)), indent);
+                var dedented = CreateIndentation(Math.Max(0, Native.GetLineIndentation(line) - GetUnitColumns(indent)), indent);
+                if (dedented != indentation)
+                {
+                    // A statement continuing an open multiline string keeps the
+                    // block. Only the lexer knows that, and it needs the break to
+                    // style: insert it for real, then read the style it was given.
+                    Native.BeginUndoAction();
+                    try
+                    {
+                        TypeText("\r");
+                        // A failed catch-up keeps the statement's indentation:
+                        // the block's own indentation is the safe choice.
+                        var styled = TryEnsureStyled(start + 1);
+                        var next = styled && GetRole(start) != SyntaxColorRole.String ? dedented : indentation;
+                        if (next.Length > 0) TypeText(next);
+                    }
+                    finally { Native.EndUndoAction(); }
+                    return;
+                }
             }
         }
         TypeText("\r" + indentation);
@@ -161,7 +200,8 @@ public sealed partial class TextEditorCore
     // Rules need current lexer styles and one stream selection within a line.
     private bool CanUseIndentationRules()
     {
-        if (!CanEdit || !HasBracketRules && !HasColonRules || _syntaxProfile.Lexer.Length == 0
+        if (!CanEdit || _view.IsComposing || _view.HasTextStoreLock
+            || !HasBracketRules && !HasColonRules || _syntaxProfile.Lexer.Length == 0
             || SyntaxPauseReason != EditorSyntaxPauseReason.None || Native.Selections != 1 || Native.SelectionIsRectangle)
         {
             return false;
@@ -204,14 +244,14 @@ public sealed partial class TextEditorCore
     }
 
     // `return x` and similar statements end the block, unless the statement
-    // continues on the next line.
+    // continues on the next line. Whether an open multiline string continues it
+    // is decided from the lexer after the break exists, in the caller.
     private bool IsPythonBlockExit(long codeStart, long prev, long end, long lineEnd)
     {
         var wordEnd = Native.WordEndPosition(codeStart, true);
         if (wordEnd - codeStart > 8 || GetRole(codeStart) != SyntaxColorRole.Keyword
             || ReadRange(codeStart, wordEnd) is not ("pass" or "break" or "continue" or "return" or "raise")
-            || Native.GetCharAt(prev) == '\\' || !IsBlankOrComment(end, lineEnd)
-            || lineEnd < Native.Length && GetRole(lineEnd) == SyntaxColorRole.String)
+            || Native.GetCharAt(prev) == '\\' || !IsBlankOrComment(end, lineEnd))
         {
             return false;
         }
@@ -234,7 +274,7 @@ public sealed partial class TextEditorCore
         var p = Native.CurrentPos - 1;
         var ch = Native.GetCharAt(p);
         // A closer only moves when it starts its line.
-        if (!CanEdit || !IsTypedIndentationTrigger(ch)
+        if (!CanEdit || _view.IsComposing || !IsTypedIndentationTrigger(ch)
             || ch != ':' && Native.GetLineIndentPosition(Native.LineFromPosition(p)) != p)
         {
             return;
@@ -279,16 +319,10 @@ public sealed partial class TextEditorCore
         int target;
         if (ch == ':')
         {
-            if (!IsPythonDedentKeyword(Native.GetLineIndentPosition(line), pos, Native.GetLineEndPosition(line))) return;
-            var reference = line - 1;
-            var limit = Math.Max(0, line - PythonReferenceLines);
-            for (; reference >= limit; reference--)
-            {
-                var indentPosition = Native.GetLineIndentPosition(reference);
-                if (indentPosition != Native.GetLineEndPosition(reference) && GetRole(indentPosition) != SyntaxColorRole.Comment) break;
-            }
-            if (reference < limit) return;
-            target = Math.Max(0, Native.GetLineIndentation(reference) - GetUnitColumns(GetEffectiveIndentation()));
+            var codeStart = Native.GetLineIndentPosition(line);
+            if (!IsPythonDedentKeyword(codeStart, pos, Native.GetLineEndPosition(line))) return;
+            target = FindPythonDedentTarget(line, ReadRange(codeStart, Native.WordEndPosition(codeStart, true)));
+            if (target < 0) return;
         }
         else
         {
@@ -318,6 +352,9 @@ public sealed partial class TextEditorCore
             Native.DeleteRange(start + spaces, end - start);
         }
         finally { Native.EndUndoAction(); }
+        // As native Backspace and BackTab do: Up/Down keep the new column.
+        Native.ChooseCaretX();
+        Native.ScrollCaret();
     }
 
     // The line is `else:` or `finally:`, or starts with `elif` or `except`, and ends at this colon.
@@ -328,5 +365,65 @@ public sealed partial class TextEditorCore
         var word = ReadRange(codeStart, wordEnd);
         return (word is "else" or "finally" ? wordEnd == pos - 1 : word is "elif" or "except" && Native.GetCharAt(wordEnd) is ' ' or ':')
             && IsBlankOrComment(pos, lineEnd);
+    }
+
+    // Walk enclosing suites rather than subtracting a unit from the last
+    // statement: it may be nested several levels deeper, or an inline suite.
+    // A statement at a smaller indent closes any earlier suites at its level.
+    private int FindPythonDedentTarget(long line, string keyword)
+    {
+        var currentIndent = Native.GetLineIndentation(line);
+        var enclosingIndent = int.MaxValue;
+        var limit = Math.Max(0, line - PythonReferenceLines);
+        for (var reference = line - 1; reference >= limit; reference--)
+        {
+            var start = Native.GetLineIndentPosition(reference);
+            if (start == Native.GetLineEndPosition(reference) || GetRole(start) == SyntaxColorRole.Comment) continue;
+            // A continued header can end with a closing bracket on its own
+            // line. Its opener's line carries the block keyword and indent.
+            if (Native.GetCharAt(start) is ')' or ']' or '}' && GetRole(start) == SyntaxColorRole.Operator)
+            {
+                var match = Native.BraceMatch(start, 0);
+                if (match < 0) return -1;
+                reference = Native.LineFromPosition(match);
+                if (reference < limit) return -1;
+                start = Native.GetLineIndentPosition(reference);
+            }
+            var indent = Native.GetLineIndentation(reference);
+            if (indent > enclosingIndent) continue;
+            // A line whose text sits inside a string already open above is
+            // content, not a statement: step over it without moving the
+            // boundary. A line that opens a string is a statement like any
+            // other and must still close the suites at its indentation.
+            if (GetRole(start) == SyntaxColorRole.String && reference > 0
+                && GetRole(Native.GetLineEndPosition(reference - 1)) == SyntaxColorRole.String)
+            {
+                continue;
+            }
+            var end = Native.WordEndPosition(start, true);
+            var word = end - start <= 8 && GetRole(start) == SyntaxColorRole.Keyword ? ReadRange(start, end) : string.Empty;
+            if (word == "async")
+            {
+                start = end;
+                while (IsSpaceOrTab(Native.GetCharAt(start))) start++;
+                end = Native.WordEndPosition(start, true);
+                word = end - start <= 4 ? ReadRange(start, end) : string.Empty;
+            }
+            // A definition fences the caret in only while the caret sits inside
+            // its body; at the definition's own indentation the caret has left.
+            if (word is "def" or "class" && indent < currentIndent) return -1;
+            var matches = keyword switch
+            {
+                "elif" => word is "if" or "elif",
+                "else" => word is "if" or "elif" or "for" or "while" or "except",
+                "except" or "finally" => word is "try" or "except",
+                _ => false
+            };
+            if (matches && indent <= currentIndent) return indent;
+            // A try/except's else can precede finally; verify its earlier
+            // try/except at this same level before changing the indentation.
+            enclosingIndent = keyword == "finally" && word == "else" ? indent : indent - 1;
+        }
+        return -1;
     }
 }

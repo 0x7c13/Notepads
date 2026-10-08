@@ -1063,6 +1063,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::FinalizeAfterApartmentClosed() noexcept
 	{
+		_compositionCount = 0;
 		_idleFinalized = true;
 		_idleSuspended = true;
 		StopJournals();
@@ -2084,6 +2085,7 @@ namespace Scintilla::Internal {
 
 	IFACEMETHODIMP ScintillaWinUI::OnEndComposition(ITfCompositionView *pComposition)
 	{
+		if (_compositionCount) --_compositionCount;
 #ifdef EnableTsfDebugMessages
 		DebugOut(L"OnEndComposition\n");
 #endif
@@ -2093,6 +2095,7 @@ namespace Scintilla::Internal {
 
 	IFACEMETHODIMP ScintillaWinUI::OnStartComposition(ITfCompositionView *pComposition, BOOL *pfOk)
 	{
+		++_compositionCount;
 #ifdef EnableTsfDebugMessages
 		DebugOut(L"OnStartComposition\n");
 #endif
@@ -2576,6 +2579,9 @@ namespace Scintilla::Internal {
 		{
 			winrt::check_hresult(_tfThreadManager->SetFocus(focus ? _tfDocumentManager.get() : nullptr));
 		}
+		// Retire stale composition state after TSF has processed focus loss,
+		// even if it did not send an end-composition notification.
+		if (!focus) _compositionCount = 0;
 		Editor::NotifyFocus(focus);
 	}
 

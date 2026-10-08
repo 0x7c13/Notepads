@@ -47,6 +47,7 @@ public sealed partial class TextEditorCore
             new(VirtualKeyModifiers.Control, VirtualKey.J, () => JoinText()),
             new(VirtualKeyModifiers.None, VirtualKey.Tab, () => ChangeIndentation(false)),
             new(VirtualKeyModifiers.Shift, VirtualKey.Tab, () => ChangeIndentation(true)),
+            new(VirtualKeyModifiers.None, VirtualKey.Back, () => DeleteBackWithUnindent()),
             new(VirtualKeyModifiers.Menu, VirtualKey.Up, () => Native.MoveSelectedLinesUp()),
             new(VirtualKeyModifiers.Menu, VirtualKey.Down, () => Native.MoveSelectedLinesDown()),
             new(VirtualKeyModifiers.Menu, VirtualKey.Left, () => MoveWords(false)),
