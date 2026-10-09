@@ -972,6 +972,7 @@ internal static class SessionTestProtocol
 internal sealed class SessionTestDocument : IAsyncDisposable
 {
     private readonly EditorBaseControl _fixture = new();
+    internal EditorBaseControl View => _fixture;
     public Editor Editor => _fixture.Editor;
     public DocumentBaseline Baseline { get; private set; }
     public DocumentSnapshot Saved { get; private set; }
@@ -1009,7 +1010,7 @@ internal sealed class SessionTestDocument : IAsyncDisposable
             true, Editor.Length);
     }
     public static async Task<SessionTestDocument> FromPreparedAsync(Guid owner,
-        Notepads.Features.Sessions.Recovery.PreparedRecoveryDocument prepared)
+        Notepads.Features.Sessions.Recovery.PreparedRecoveryDocument prepared, Action nativeRestoreReturned = null)
     {
         var result = new SessionTestDocument();
         try
@@ -1021,6 +1022,7 @@ internal sealed class SessionTestDocument : IAsyncDisposable
             using var input = await result.Baseline.OpenReadStreamAsync();
             using var adapter = input.AsInputStream();
             await result.Editor.RestoreUtf8Async(adapter, (ulong)result.Baseline.ByteLength, prepared.Checkpoint);
+            nativeRestoreReturned?.Invoke();
             await result.Editor.StartJournalFromCheckpointAsync(result.Journal.File.Path, prepared.Checkpoint);
             return result;
         }

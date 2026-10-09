@@ -20,20 +20,55 @@ internal static class RecoveryRestorePipeline
         Func<int, PreparedRecoveryDocument, Task> restore, CancellationToken cancellationToken,
         Func<bool> hasMemoryHeadroom = null)
     {
-        for (var index = 0; index < documents.Count;)
+        var active = new List<Task>(2);
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var pair = index + 1 < documents.Count && CanParallel(documents[index]) && CanParallel(documents[index + 1]) &&
-                (hasMemoryHeadroom?.Invoke() ?? MemoryManager.AppMemoryUsageLevel == AppMemoryUsageLevel.Low);
-            var first = Invoke(restore, index, documents[index]);
-            if (pair)
+            for (var index = 0; index < documents.Count;)
             {
+                // Observe every completed peer before admitting another row. WhenAny
+                // can report success even when another loader has already failed.
+                for (var pending = active.Count - 1; pending >= 0; pending--)
+                {
+                    if (!active[pending].IsCompleted) continue;
+                    await active[pending];
+                    active.RemoveAt(pending);
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                if (active.Count == 2)
+                {
+                    await Task.WhenAny(active);
+                    continue;
+                }
+
+                var parallel = CanParallel(documents[index]);
+                var headroom = hasMemoryHeadroom?.Invoke() ?? MemoryManager.AppMemoryUsageLevel == AppMemoryUsageLevel.Low;
+                if (active.Count != 0 && (!parallel || !headroom))
+                {
+                    await Task.WhenAll(active);
+                    active.Clear();
+                    continue;
+                }
+
                 // Both callbacks are asynchronous on the caller's UI apartment.
                 // Native loaders perform their independent document work off UI.
-                await Task.WhenAll(first, Invoke(restore, index + 1, documents[index + 1]));
-                index += 2;
+                active.Add(Invoke(restore, index, documents[index]));
+                index++;
+                if (!parallel || !headroom)
+                {
+                    await Task.WhenAll(active);
+                    active.Clear();
+                }
             }
-            else { await first; index++; }
+            await Task.WhenAll(active);
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+        catch
+        {
+            // Admission checks can fail too. Keep ownership of every loader until
+            // it finishes, then preserve the original failure for the caller.
+            try { await Task.WhenAll(active); }
+            catch { }
+            throw;
         }
     }
 

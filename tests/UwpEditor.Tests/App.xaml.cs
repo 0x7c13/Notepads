@@ -73,6 +73,14 @@ public sealed partial class App : Application
         var log = new StringBuilder();
         try
         {
+            if (args.Arguments.StartsWith("--restore-perf-", StringComparison.Ordinal))
+            {
+                ThemeSettingsService.Initialize();
+                ApplicationPreferences.Initialize();
+                await SessionControllerTests.RunRestorePerformanceAsync(args.Arguments, log);
+                CompleteTests(log);
+                return;
+            }
             if (args.Arguments.StartsWith("--interactive-test ", StringComparison.Ordinal))
             {
                 await InteractiveEditorHost.StartAsync(args.Arguments);

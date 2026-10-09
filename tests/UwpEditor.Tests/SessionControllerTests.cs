@@ -31,7 +31,7 @@ using WinUIEditor;
 
 namespace NotepadsEditorTests;
 
-internal static class SessionControllerTests
+internal static partial class SessionControllerTests
 {
     public static async Task RunAsync(StringBuilder log)
     {
@@ -175,6 +175,7 @@ internal static class SessionControllerTests
         private readonly CoreDispatcher _dispatcher;
         private readonly List<FakeTextEditor> _created = [];
         private readonly List<FakeTextEditor> _open = [];
+        private Guid? _selectedEditorId;
 
         public FakeNotepadsCore(Guid owner, CoreDispatcher dispatcher) { _owner = owner; _dispatcher = dispatcher; }
 
@@ -192,6 +193,10 @@ internal static class SessionControllerTests
         public Guid DocumentOwnerId => _owner;
         public bool IsClosing { get; set; }
         public double TabScrollOffset { get; set; }
+        public Action<Guid> RestoreStarting { get; set; }
+        public Action<Guid> NativeRestoreReturned { get; set; }
+        public Action<FakeTextEditor> RestoreReady { get; set; }
+        public Action BatchAttached { get; set; }
 
         public async Task<FakeTextEditor> OpenAsync(string text)
         {
@@ -204,7 +209,12 @@ internal static class SessionControllerTests
         public ITextEditor CreateTextEditor(Guid id, StorageFile editingFile, string fileNamePlaceHolder)
         {
             RequireUIThread(_dispatcher);
-            var editor = new FakeTextEditor(id, _owner, _dispatcher);
+            var editor = new FakeTextEditor(id, _owner, _dispatcher)
+            {
+                RestoreStarting = RestoreStarting,
+                NativeRestoreReturned = NativeRestoreReturned,
+                RestoreReady = RestoreReady
+            };
             _created.Add(editor);
             return editor;
         }
@@ -217,16 +227,21 @@ internal static class SessionControllerTests
                 _open.Add(editor);
                 TextEditorOpened?.Invoke(this, editor);
             }
+            _selectedEditorId = editors.Any(editor => editor.Id == selectedEditorId)
+                ? selectedEditorId : editors.LastOrDefault()?.Id;
+            BatchAttached?.Invoke();
         }
 
         public void Close(FakeTextEditor editor)
         {
+            RequireUIThread(_dispatcher);
             _open.Remove(editor);
+            if (_selectedEditorId == editor.Id) _selectedEditorId = _open.LastOrDefault()?.Id;
             TextEditorClosed?.Invoke(this, editor);
         }
 
         public ITextEditor[] GetAllTextEditors() { RequireUIThread(_dispatcher); return _open.ToArray(); }
-        public ITextEditor GetSelectedTextEditor() { RequireUIThread(_dispatcher); return _open.FirstOrDefault(); }
+        public ITextEditor GetSelectedTextEditor() { RequireUIThread(_dispatcher); return _open.FirstOrDefault(editor => editor.Id == _selectedEditorId); }
         public int GetNumberOfOpenedTextEditors() => _open.Count;
         public double GetTabScrollViewerHorizontalOffset() { RequireUIThread(_dispatcher); return TabScrollOffset; }
         public void SetTabScrollViewerHorizontalOffset(double offset) { RequireUIThread(_dispatcher); TabScrollOffset = offset; }
@@ -273,6 +288,9 @@ internal static class SessionControllerTests
 #pragma warning restore CS0067
 
         public SessionTestDocument Document { get; private set; }
+        public Action<Guid> RestoreStarting { get; set; }
+        public Action<Guid> NativeRestoreReturned { get; set; }
+        public Action<FakeTextEditor> RestoreReady { get; set; }
         public string Text => Document.Editor.GetText(Document.Editor.Length);
         public Guid Id { get; set; }
         public StorageFile EditingFile => null;
@@ -299,8 +317,11 @@ internal static class SessionControllerTests
             EditorJournalCheckpoint checkpoint, StorageFile file, DocumentMetadata metadata, bool textDirty)
         {
             RequireUIThread(_dispatcher);
+            RestoreStarting?.Invoke(Id);
             Document = await SessionTestDocument.FromPreparedAsync(_owner, new PreparedRecoveryDocument
-            { SavedSnapshot = savedSnapshot, RecoveryBaseline = recoveryBaseline, Checkpoint = checkpoint, Metadata = metadata });
+            { SavedSnapshot = savedSnapshot, RecoveryBaseline = recoveryBaseline, Checkpoint = checkpoint, Metadata = metadata },
+                () => NativeRestoreReturned?.Invoke(Id));
+            RestoreReady?.Invoke(this);
         }
 
         public void Dispose() => RequireUIThread(_dispatcher);
