@@ -40,6 +40,7 @@ namespace WinUIEditor
 		void AdjustCallTipPadding(Scintilla::Internal::CallTip &callTip);
 
 		bool TransformToRoot(float &x, float &y) const;
+		bool TransformToScreen(Scintilla::Internal::PRectangle &rectangle) const noexcept;
 
 		void ReleaseAutocompletePopup();
 

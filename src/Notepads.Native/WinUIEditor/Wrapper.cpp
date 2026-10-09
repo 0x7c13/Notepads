@@ -186,6 +186,35 @@ namespace WinUIEditor
 		return false;
 	}
 
+	bool Wrapper::TransformToScreen(Scintilla::Internal::PRectangle &rectangle) const noexcept
+	{
+		try
+		{
+			const auto control{ _control.get() };
+			const auto window{ winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread() };
+			if (!control || !window) return false;
+
+			// Scintilla uses physical pixels; XAML transforms and CoreWindow.Bounds use DIPs.
+			// Both ITextStoreACP and CoreText LayoutBounds expect physical screen pixels.
+			const auto scale{ _logicalDpi / 96.f };
+			const auto relative{ control.TransformToVisual(nullptr).TransformBounds({
+				static_cast<float>(rectangle.left / scale), static_cast<float>(rectangle.top / scale),
+				static_cast<float>(rectangle.Width() / scale), static_cast<float>(rectangle.Height() / scale) }) };
+			const auto bounds{ window.Bounds() };
+			rectangle = Scintilla::Internal::PRectangle{
+				std::floor((relative.X + bounds.X) * scale),
+				std::floor((relative.Y + bounds.Y) * scale),
+				std::ceil((relative.X + relative.Width + bounds.X) * scale),
+				std::ceil((relative.Y + relative.Height + bounds.Y) * scale) };
+			return true;
+		}
+		catch (winrt::hresult_error const &)
+		{
+			// A detached/closing XAML view has no usable text layout.
+			return false;
+		}
+	}
+
 	void Wrapper::ReleaseAutocompletePopup()
 	{
 		if (_autocompletionPopup)

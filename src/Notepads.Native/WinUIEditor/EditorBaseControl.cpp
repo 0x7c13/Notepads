@@ -737,14 +737,28 @@ namespace winrt::WinUIEditor::implementation
 		_scintilla->DragLeave();
 	}
 
-	void EditorBaseControl::ImageTarget_Drop(IInspectable const &sender, DragEventArgs const &e)
+	winrt::fire_and_forget EditorBaseControl::ImageTarget_Drop(IInspectable sender, DragEventArgs e)
 	{
-		auto point{ e.GetPosition(sender.as<UIElement>()) };
-		point.X *= _dpiScale;
-		point.Y *= _dpiScale;
-		DataPackageOperation op;
-		_scintilla->Drop(point, e.DataView(), e.AllowedOperations(), e.Modifiers(), op);
-		e.AcceptedOperation(op);
+		auto lifetime = get_strong();
+		// Leave file drops available to the host's file-opening handler.
+		if (e.DataView().Contains(StandardDataFormats::StorageItems()) ||
+			!e.DataView().Contains(StandardDataFormats::Text())) co_return;
+		e.Handled(true);
+		e.AcceptedOperation(DataPackageOperation::None);
+		auto deferral = e.GetDeferral();
+		try
+		{
+			auto point = e.GetPosition(sender.as<UIElement>());
+			point.X *= _dpiScale;
+			point.Y *= _dpiScale;
+			const auto operation = co_await _scintilla->DropAsync(point, e.DataView(), e.AllowedOperations(), e.Modifiers());
+			e.AcceptedOperation(operation);
+		}
+		catch (winrt::hresult_error const &)
+		{
+			e.AcceptedOperation(DataPackageOperation::None);
+		}
+		deferral.Complete();
 	}
 
 	void EditorBaseControl::ImageTarget_DragStarting(UIElement const &sender, DragStartingEventArgs const &e)

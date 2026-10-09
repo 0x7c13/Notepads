@@ -30,6 +30,7 @@ namespace winrt::WinUIEditor::implementation
         void SetValue(hstring const &value);
 
     private:
+        uint64_t _textRevision{};
         WinUIEditor::Editor::UpdateUI_revoker _updateUIRevoker{};
         void Editor_UpdateUI(WinUIEditor::Editor const &sender, WinUIEditor::UpdateUIEventArgs const &args);
     };

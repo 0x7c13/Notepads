@@ -26,6 +26,9 @@ public sealed partial class TextEditorCore
     private int _detectedIndentation; // 0 = unknown
     private long _indentationCheckedVersion = -1;
     private bool _typedIndentationQueued;
+    private long _lastInsertionStart = -1;
+    private long _lastInsertionEnd;
+    private long _typedIndentationTriggerPos;
     private long _typedIndentationVersion;
     private long _typedIndentationPos;
 
@@ -267,20 +270,40 @@ public sealed partial class TextEditorCore
 
     private bool IsTypedIndentationTrigger(int ch) => ch is '}' or ']' or ')' ? HasBracketRules : ch == ':' && _language.Id == "python";
 
-    // CharAdded runs while TSF still holds its lock, so edit after the update.
+    // Defer edits until TSF's notification queue has drained and its lock is released.
     private void OnNativeCharAdded(Editor sender, CharAddedEventArgs args)
     {
-        // A TSF update can insert several characters; Ch is only the first.
-        var p = Native.CurrentPos - 1;
+        if (!CanEdit || _view.IsComposing || _lastInsertionStart < 0) return;
+        // Queued notifications may arrive after several keystrokes. The live
+        // caret already includes later inserts; use this insertion's endpoint.
+        var pos = _lastInsertionEnd;
+        var p = pos - 1;
+        var line = Native.LineFromPosition(p);
+        var codeStart = Native.GetLineIndentPosition(line);
+        // A TSF update can insert several characters (e.g. "};"). Look for a
+        // leading closer inside the actual insertion, not just its last byte.
+        if (codeStart >= _lastInsertionStart && codeStart < pos
+            && Native.GetCharAt(codeStart) is '}' or ']' or ')')
+        {
+            p = codeStart;
+        }
+        else if (_typedIndentationQueued && ContentVersion == _typedIndentationVersion + 1
+            && _lastInsertionStart == _typedIndentationPos
+            && Native.LineFromPosition(_typedIndentationTriggerPos) == line)
+        {
+            // Preserve the pending trigger across reported, adjacent typing.
+            // Other edits still invalidate the version/caret snapshot below.
+            p = _typedIndentationTriggerPos;
+        }
         var ch = Native.GetCharAt(p);
         // A closer only moves when it starts its line.
-        if (!CanEdit || _view.IsComposing || !IsTypedIndentationTrigger(ch)
-            || ch != ':' && Native.GetLineIndentPosition(Native.LineFromPosition(p)) != p)
+        if (!IsTypedIndentationTrigger(ch) || ch != ':' && codeStart != p)
         {
             return;
         }
         _typedIndentationVersion = ContentVersion;
-        _typedIndentationPos = Native.CurrentPos;
+        _typedIndentationPos = pos;
+        _typedIndentationTriggerPos = p;
         QueueTypedIndentation();
     }
 
@@ -290,10 +313,17 @@ public sealed partial class TextEditorCore
         _typedIndentationQueued = true;
         try
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            // Give queued input priority. PreviewKeyDown also flushes an
+            // adjustment before starting a subsequent TSF update.
+            await Dispatcher.RunIdleAsync(args =>
             {
                 _typedIndentationQueued = false;
-                ApplyTypedIndentation(_typedIndentationVersion, _typedIndentationPos);
+                if (!args.IsDispatcherIdle)
+                {
+                    QueueTypedIndentation();
+                    return;
+                }
+                FlushTypedIndentation(deferToInput: true);
             });
         }
         catch (Exception exception)
@@ -303,35 +333,61 @@ public sealed partial class TextEditorCore
         }
     }
 
+    private void FlushTypedIndentation(bool deferToInput = false)
+    {
+        var version = _typedIndentationVersion;
+        _typedIndentationVersion = -1;
+        ApplyTypedIndentation(version, _typedIndentationPos, _typedIndentationTriggerPos, deferToInput);
+    }
+
     // Dedents a typed closer to its opener's line, or a Python else/elif/except/
     // finally to its block. The adjustment is its own undo step.
-    private void ApplyTypedIndentation(long version, long pos)
+    private void ApplyTypedIndentation(long version, long pos, long p, bool deferToInput = false)
     {
         if (_disposed || _settingText || ContentVersion != version || Native.CurrentPos != pos
             || !Native.SelectionEmpty || !CanUseIndentationRules())
         {
             return;
         }
-        var p = pos - 1;
         var ch = Native.GetCharAt(p);
-        if (!IsTypedIndentationTrigger(ch) || GetRole(p) != SyntaxColorRole.Operator) return;
+        if (!IsTypedIndentationTrigger(ch)) return;
         var line = Native.LineFromPosition(p);
         int target;
         if (ch == ':')
         {
+            // A burst can contain an earlier slice/string colon and then the
+            // suite's colon. Styles are current now; prefer the last operator
+            // colon, ignoring colons in a trailing comment or string.
+            for (var candidate = pos - 1; candidate > p; candidate--)
+            {
+                if (Native.GetCharAt(candidate) != ':' || GetRole(candidate) != SyntaxColorRole.Operator) continue;
+                p = candidate;
+                break;
+            }
+            if (GetRole(p) != SyntaxColorRole.Operator) return;
             var codeStart = Native.GetLineIndentPosition(line);
-            if (!IsPythonDedentKeyword(codeStart, pos, Native.GetLineEndPosition(line))) return;
+            if (!IsPythonDedentKeyword(codeStart, p + 1, Native.GetLineEndPosition(line))) return;
             target = FindPythonDedentTarget(line, ReadRange(codeStart, Native.WordEndPosition(codeStart, true)));
             if (target < 0) return;
         }
         else
         {
+            if (GetRole(p) != SyntaxColorRole.Operator) return;
             var match = Native.BraceMatch(p, 0);
             if (match < 0) return;
             target = Native.GetLineIndentation(Native.LineFromPosition(match));
         }
         // Only ever dedent, never moving text right against what was typed.
         if (target >= Native.GetLineIndentation(line)) return;
+        // Styling can take long enough for another key to enter the queue.
+        // Let PreviewKeyDown apply this before TSF snapshots that key's range;
+        // a background edit at this point can invalidate the pending input.
+        if (deferToInput && Dispatcher.ShouldYield(CoreDispatcherPriority.Normal))
+        {
+            _typedIndentationVersion = version;
+            QueueTypedIndentation();
+            return;
+        }
         DedentLine(line, target);
     }
 

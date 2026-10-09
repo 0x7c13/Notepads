@@ -373,6 +373,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         if ((args.ModificationType & (int)TextModifications) == 0) return;
         ContentVersion++;
+        _lastInsertionStart = (args.ModificationType & (int)ModificationFlags.InsertText) != 0 ? args.Position : -1;
+        _lastInsertionEnd = args.Position + args.Length;
         if (_settingText) return;
         UpdateSyntaxStatus();
         if (args.Position <= DocumentLanguages.DetectionSampleBytes) QueueLanguageDetection();
@@ -663,6 +665,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnEditorPreviewKeyDown(object sender, KeyRoutedEventArgs args)
     {
+        // Apply the preceding closer before TSF observes the next key and
+        // snapshots its insertion range. Editing between KeyDown and TextUpdating
+        // can otherwise cancel that key's pending text update.
+        if (_typedIndentationQueued) FlushTypedIndentation();
         // A lock covers one TSF update, while composition spans multiple
         // updates. Keep indentation keys on the native input path in both
         // cases, including its queue for keys received during a lock.

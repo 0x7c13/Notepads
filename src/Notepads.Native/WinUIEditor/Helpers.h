@@ -25,5 +25,6 @@ namespace WinUIEditor
 
 	int ConvertFromDipToPixelUnit(float val, float dpiAdjustmentRatio, bool rounded = true);
 	bool IsClassicWindow();
+	unsigned int WheelScrollUnits(bool horizontal);
 	winrt::Windows::System::VirtualKeyModifiers GetKeyModifiersForCurrentThread();
 }

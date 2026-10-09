@@ -128,7 +128,7 @@ namespace winrt::WinUIEditor::implementation
 		DUX::UIElement::DragLeave_revoker _imageTargetDragLeaveRevoker{};
 		void ImageTarget_DragLeave(Windows::Foundation::IInspectable const &sender, DUX::DragEventArgs const &e);
 		DUX::UIElement::Drop_revoker _imageTargetDropRevoker{};
-		void ImageTarget_Drop(Windows::Foundation::IInspectable const &sender, DUX::DragEventArgs const &e);
+		winrt::fire_and_forget ImageTarget_Drop(Windows::Foundation::IInspectable sender, DUX::DragEventArgs e);
 		DUX::UIElement::DragStarting_revoker _imageTargetDragStartingRevoker{};
 		void ImageTarget_DragStarting(DUX::UIElement const &sender, DUX::DragStartingEventArgs const &e);
 		DUX::UIElement::ContextRequested_revoker _imageTargetContextRequestedRevoker{};

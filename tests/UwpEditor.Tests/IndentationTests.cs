@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Preferences;
 using Notepads.Presentation.Controls.TextEditor;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace NotepadsEditorTests;
@@ -272,6 +271,35 @@ internal static class IndentationTests
         Check(core.GetText() == "void F()\r{\r    a();\r    " && !core.CanUndo, "the next undo removes the typing");
         await Type(core, native, "csharp", "F(\r    a,\r    ^", ")", "F(\r    a,\r)^", "typed parenthesis");
         await Type(core, native, "json", "[\r  1,\r  ^", "]", "[\r  1,\r]^", "typed bracket");
+        await Type(core, native, "csharp", "{\r    ^", "};", "{\r};^", "closer followed by a semicolon in one TSF update");
+        await Type(core, native, "csharp", "{\r    ^", "}; // 你好", "{\r}; // 你好^", "batched closer with a UTF-8 suffix");
+        await Type(core, native, "csharp", "你好\r{\r    ^", "};", "你好\r{\r};^", "batched closer after a UTF-8 prefix");
+        await Type(core, native, "csharp", "F(\r    ^", ");", "F(\r);^", "batched parenthesis");
+        await Type(core, native, "json", "[\r    ^", "],", "[\r],^", "batched bracket");
+        await Type(core, native, "csharp", "{\r    }^", ";", "{\r    };^", "typing after an existing closer does not dedent it");
+        await Type(core, native, "csharp", "{\r    /*\r    ^", "};", "{\r    /*\r    };^", "batched closer in a comment");
+        await Type(core, native, "csharp", "{\r    s = @\"\r    ^", "};", "{\r    s = @\"\r    };^", "batched closer in a string");
+
+        Load(core, "csharp", "{\r    ^");
+        foreach (var ch in "}; ")
+        {
+            native.AddText(1, ch.ToString());
+            core.TestCharAdded();
+        }
+        await RoundTripAsync(core);
+        Expect(core, native, "{\r}; ^", "adjacent typing before the callback preserves the closer adjustment");
+        core.Undo();
+        Equal("{\r    }; ", core.GetText(), "one undo restores indentation without removing the burst");
+
+        Load(core, "csharp", "{\r    ^");
+        native.AddText(1, "}");
+        core.TestCharAdded();
+        core.TestFlushTypedIndentation(); // PreviewKeyDown runs before TSF observes the next key.
+        Expect(core, native, "{\r}^", "pending closer is applied before the next key");
+        native.AddText(1, ";");
+        core.TestCharAdded();
+        await RoundTripAsync(core);
+        Expect(core, native, "{\r};^", "the posted callback cannot replay an already flushed adjustment");
 
         await Type(core, native, "csharp", "{\r    /*\r    ^", "}", "{\r    /*\r    }^", "typed brace in a comment");
         await Type(core, native, "csharp", "{\r    s = @\"\r    ^", "}", "{\r    s = @\"\r    }^", "typed brace in a verbatim string");
@@ -285,7 +313,16 @@ internal static class IndentationTests
         core.TestCharAdded();
         native.AddText(1, ";");
         await RoundTripAsync(core);
-        Expect(core, native, "{\r    };^", "typing again before the callback cancels the adjustment");
+        Expect(core, native, "{\r    };^", "an edit without CharAdded cancels the pending adjustment");
+
+        Load(core, "csharp", "{\r    ^");
+        native.AddText(1, "}");
+        core.TestCharAdded();
+        native.SetEmptySelection(0);
+        native.AddText(1, ";");
+        core.TestCharAdded();
+        await RoundTripAsync(core);
+        Expect(core, native, ";^{\r    }", "typing elsewhere cancels the pending adjustment");
 
         Load(core, "csharp", "{\r    ^");
         native.AddText(1, "}");
@@ -320,6 +357,22 @@ internal static class IndentationTests
         {
             await Type(core, native, "python", block + "\r    a = 1\r    " + keyword + "^", ":",
                 block + "\r    a = 1\r" + keyword + ":^", "Python " + keyword + ":");
+        }
+        foreach (var (header, burst) in new[]
+        {
+            ("elif items[1", ":2]:"),
+            ("elif items[\"a", ":b\"]:"),
+            ("else", ": # note:")
+        })
+        {
+            Load(core, "python", "if x:\r    f()\r    " + header + "^");
+            foreach (var ch in burst)
+            {
+                native.AddText(1, ch.ToString());
+                core.TestCharAdded();
+            }
+            await RoundTripAsync(core);
+            Expect(core, native, "if x:\r    f()\r" + header + burst + "^", "Python burst uses the suite colon: " + header + burst);
         }
         await Type(core, native, "python", "if x:\r    if y:\r        a = 1\r# note\r\r        else^", ":",
             "if x:\r    if y:\r        a = 1\r# note\r\r    else:^", "Python else: after a comment line");
@@ -473,14 +526,24 @@ internal static class IndentationTests
     private static async Task Type(TextEditorCore core, WinUIEditor.Editor native, string language, string text, string typed, string expected, string name)
     {
         Load(core, language, text);
-        native.AddText(typed.Length, typed);
+        native.AddText(Encoding.UTF8.GetByteCount(typed), typed);
         core.TestCharAdded();
         await RoundTripAsync(core);
         Expect(core, native, expected, name);
     }
 
-    private static async Task RoundTripAsync(TextEditorCore core) =>
-        await core.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { });
+    private static async Task RoundTripAsync(TextEditorCore core)
+    {
+        // A low-priority sentinel may run before an idle adjustment that yielded
+        // to input. Wait for completion instead of asserting an intermediate state.
+        await core.Dispatcher.RunIdleAsync(_ => { });
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (core.TestTypedIndentationPending)
+        {
+            if (DateTime.UtcNow >= deadline) throw new TimeoutException("Typed indentation did not reach idle.");
+            await Task.Delay(10);
+        }
+    }
 
     private static void Load(TextEditorCore core, string language, string text)
     {

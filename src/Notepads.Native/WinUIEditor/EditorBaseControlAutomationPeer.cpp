@@ -29,13 +29,24 @@ namespace winrt::WinUIEditor::implementation
 
 	EditorBaseControlAutomationPeer::EditorBaseControlAutomationPeer(WinUIEditor::EditorBaseControl const &owner) : base_type(owner)
 	{
+		_textRevision = get_self<EditorBaseControl>(owner)->DocumentRevision();
 		_updateUIRevoker = owner.Editor().UpdateUI(auto_revoke, { this, &EditorBaseControlAutomationPeer::Editor_UpdateUI });
 	}
 
 	void EditorBaseControlAutomationPeer::Editor_UpdateUI(Editor const &sender, UpdateUIEventArgs const &args)
 	{
 		// https://github.com/microsoft/terminal/blob/main/src/cascadia/TerminalControl/TermControlAutomationPeer.cpp#L133
-		// Todo: Maybe we should raise selection changed on Update::Content also
+		if (static_cast<int>(static_cast<Update>(args.Updated()) & Update::Content))
+		{
+			// Scintilla's Content flag also includes styling and marker changes.
+			// Notify assistive technology only when the document text changed.
+			const auto revision = get_self<EditorBaseControl>(Owner().as<WinUIEditor::EditorBaseControl>())->DocumentRevision();
+			if (revision != _textRevision)
+			{
+				_textRevision = revision;
+				this->RaiseAutomationEvent(AutomationEvents::TextPatternOnTextChanged);
+			}
+		}
 		if (static_cast<int>(static_cast<Update>(args.Updated()) & Update::Selection))
 		{
 			this->RaiseAutomationEvent(AutomationEvents::TextPatternOnTextSelectionChanged);

@@ -141,8 +141,7 @@ namespace Scintilla::Internal {
 		void DragEnter(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const &dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation);
 		void DragOver(winrt::Windows::Foundation::Point const &point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation);
 		void DragLeave();
-		void Drop(winrt::Windows::Foundation::Point const &point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const &dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation);
-		winrt::fire_and_forget DoDropAsync(winrt::Windows::Foundation::Point const point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const operation);
+		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation> DropAsync(winrt::Windows::Foundation::Point point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers modifiers);
 		std::string_view GetDragData();
 		static sptr_t DirectFunction(sptr_t ptr, UINT iMessage, uptr_t wParam, sptr_t lParam);
 		static sptr_t DirectStatusFunction(sptr_t ptr, UINT iMessage, uptr_t wParam, sptr_t lParam, int *pStatus);
@@ -178,6 +177,8 @@ namespace Scintilla::Internal {
 		Sci::Position _deletedUtf16Length{ 0 };
 		void ProcessCharacterReceivedMessage(char16_t character);
 		winrt::DUI::PointerPoint _dragPointer{ nullptr };
+		uint64_t _dragDocumentRevision{};
+		std::string _dragSelection;
 
 		Scintilla::KeyMod WindowsModifiers(winrt::Windows::System::VirtualKeyModifiers modifiers);
 		void AddWString(std::wstring_view wsv, CharacterSource charSource); // win32
@@ -194,8 +195,6 @@ namespace Scintilla::Internal {
 		Sci::Position _multiCorrect{ 0 };
 
 		// WinUI Todo: These two values should be updated to use the Windows setting
-		unsigned int linesPerScroll{ 3 };	///< Intellimouse support
-		unsigned int charsPerScroll{ 3 };	///< Intellimouse support
 		int _lastVerticalScrollDelta{ 0 };
 		int _lastHorizontalScrollDelta{ 0 };
 		MouseWheelDelta verticalWheelDelta{};

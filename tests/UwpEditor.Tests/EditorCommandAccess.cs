@@ -14,6 +14,8 @@ public sealed partial class TextEditorCore
     internal void TestJoinLines() => JoinText();
     internal void TestEnter() => EnterWithAutoIndentation();
     internal void TestCharAdded() => OnNativeCharAdded(Native, null);
-    internal void TestApplyTypedIndentation(long version, long pos) => ApplyTypedIndentation(version, pos);
+    internal void TestFlushTypedIndentation() => FlushTypedIndentation();
+    internal bool TestTypedIndentationPending => _typedIndentationQueued;
+    internal void TestApplyTypedIndentation(long version, long pos) => ApplyTypedIndentation(version, pos, pos - 1);
     internal long TestIndentationCheckedVersion => _indentationCheckedVersion;
 }

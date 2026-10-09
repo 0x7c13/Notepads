@@ -34,6 +34,20 @@ namespace WinUIEditor
 			|| model != AppPolicyWindowingModel_Universal;
 	}
 
+	unsigned int WheelScrollUnits(bool horizontal)
+	{
+		// These read-only preferences are not exposed by UISettings. Resolve the
+		// desktop declaration dynamically, retaining Windows' default on failure.
+		using QuerySystemParameters = BOOL(WINAPI *)(UINT, UINT, PVOID, UINT);
+		static const auto query = reinterpret_cast<QuerySystemParameters>(
+			GetProcAddress(GetModuleHandleW(L"user32.dll"), "SystemParametersInfoW"));
+		constexpr UINT GetWheelScrollLines = 0x0068;
+		constexpr UINT GetWheelScrollChars = 0x006C;
+		unsigned int units = 3;
+		if (!query || !query(horizontal ? GetWheelScrollChars : GetWheelScrollLines, 0, &units, 0)) return 3;
+		return units;
+	}
+
 	winrt::Windows::System::VirtualKeyModifiers GetKeyModifiersForCurrentThread()
 	{
 		auto modifiers{ winrt::Windows::System::VirtualKeyModifiers::None };

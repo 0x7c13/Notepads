@@ -518,19 +518,12 @@ namespace Scintilla::Internal {
 
 		pdoc->AllocateLineCharacterIndex(Scintilla::LineCharacterIndexType::Utf16);
 
-		// Todo: Note that Windows Terminal repo may be able to help find a way to use TSF instead of WM_CHAR.
-		// Islands eats the text entry too
-		// This probably won't work, since it seems mandatory for win32 (https://stackoverflow.com/a/41452204/16152265)
-		// But maybe CoreWindow handles it somehow
-		// I THINK Windows Terminal is using KeyDown, but I do not know how it is translating
-		// In WT Islands, TextUpdating is never called for keyboard, but it is in UWP.
-		// The KeyDown is also triggered, but I do not know which is actually doing the input (does it matter?)
-		// It does not seem like WT ever uses WM_CHAR for input (maybe)
-		// This suggests that the best course of action is to figure out how to translate the KeyDown into input, and possibly use that input to call the TSF function
-		// Though it may be better to use the KeyDown on both UWP and win32 (can't figure out which WT UWP uses to actually input)
-
+		// CoreWindow supplies ordered keyboard text through CoreText. Creating a
+		// desktop thread manager can succeed in UWP too, but its deferred text
+		// delivery lets a following navigation/edit key discard pending input.
+		// Keep the ACP/CharacterReceived path for classic XAML Islands hosts.
 		MULTI_QI mq = { &__uuidof(ITfThreadMgr2), nullptr, 0 };
-		_tsfCore = FAILED(CoCreateInstanceFromApp(CLSID_TF_ThreadMgr, nullptr, CLSCTX_INPROC_SERVER, nullptr, 1, &mq)); // Todo NOTE: On HoloLens 2, this succeeds, even though it doesn't seem to work
+		_tsfCore = !WinUIEditor::IsClassicWindow() || FAILED(CoCreateInstanceFromApp(CLSID_TF_ThreadMgr, nullptr, CLSCTX_INPROC_SERVER, nullptr, 1, &mq));
 		if (_tsfCore)
 		{
 			auto manager{ winrt::Windows::UI::Text::Core::CoreTextServicesManager::GetForCurrentView() };
@@ -2056,8 +2049,8 @@ namespace Scintilla::Internal {
 		}
 
 		// Todo: Original note: What about offscreen positions? I really don't think this works here.
-		// Todo: Translate to screen. DPI?
-		const auto pr{ RectangleFromRange(Range{ AcpToDocPosition(acpStart), AcpToDocPosition(acpEnd) }, 0) };
+		auto pr{ RectangleFromRange(Range{ AcpToDocPosition(acpStart), AcpToDocPosition(acpEnd) }, 0) };
+		if (!_mainWrapper->TransformToScreen(pr)) return TS_E_NOLAYOUT;
 		prc->left = pr.left;
 		prc->top = pr.top;
 		prc->right = pr.right;
@@ -2079,8 +2072,8 @@ namespace Scintilla::Internal {
 			return TS_E_NOLOCK;
 		}
 
-		// Todo: Translate to screen. DPI?
-		const auto pr{ GetTextRectangle() };
+		auto pr{ GetTextRectangle() };
+		if (!_mainWrapper->TransformToScreen(pr)) return TS_E_NOLAYOUT;
 		prc->left = pr.left;
 		prc->top = pr.top;
 		prc->right = pr.right;
@@ -2535,6 +2528,9 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ClaimSelection()
 	{
+		// TSF already knows the selection it is setting. Echoing that change
+		// during TextUpdating can invalidate the next queued keyboard update.
+		if (_lock != NONE) return;
 		// Windows does not have a primary selection
 		if (_tsfCore)
 		{
@@ -2807,18 +2803,20 @@ namespace Scintilla::Internal {
 
 		// Treat Shift+WM_MOUSEWHEEL as horizontal scrolling, not data-zoom.
 		if (horizontal || (static_cast<int>(modifiers) & static_cast<int>(winrt::Windows::System::VirtualKeyModifiers::Shift))) {
+			const auto charsPerScroll = WinUIEditor::WheelScrollUnits(true);
 			if (vs.wrap.state != Wrap::None || charsPerScroll == 0) {
 				return;
 			}
 
 			MouseWheelDelta &wheelDelta = horizontal ? horizontalWheelDelta : verticalWheelDelta;
 			if (wheelDelta.Accumulate(delta)) {
-				const int charsToScroll = charsPerScroll * wheelDelta.Actions() * (horizontal ? -1 : 1); // WinUI Todo: Make sure horizontal scrolling direction is correct
-				const int widthToScroll = static_cast<int>(std::lround(charsToScroll * vs.aveCharWidth));
+				const double widthPerStep = charsPerScroll == WHEEL_PAGESCROLL
+					? GetTextRectangle().Width() : charsPerScroll * vs.aveCharWidth;
+				const double widthToScroll = std::round(widthPerStep * wheelDelta.Actions() * (horizontal ? -1 : 1));
 
 				// signChanged and uniformWheel prevent bumping at the edges on touchpads
 				auto uniformWheel{ std::abs(_lastHorizontalScrollDelta) == std::abs(delta) };
-				auto signChanged{ _lastHorizontalScrollDelta <= 0 && delta > 0 || _lastHorizontalScrollDelta >= 0 && delta < 0 };
+				auto signChanged{ _lastHorizontalScrollDelta < 0 && delta > 0 || _lastHorizontalScrollDelta > 0 && delta < 0 };
 				_lastHorizontalScrollDelta = delta;
 
 				if (!uniformWheel && signChanged)
@@ -2826,16 +2824,17 @@ namespace Scintilla::Internal {
 					return;
 				}
 
-				HorizontalScrollToClamped(xOffset + widthToScroll);
+				HorizontalScrollToClamped(static_cast<int>(std::clamp(xOffset + widthToScroll, 0.0, static_cast<double>(INT_MAX))));
 			}
 			return;
 		}
 
 		// Either SCROLL vertically or ZOOM. We handle the wheel steppings calculation
+		const auto linesPerScroll = WinUIEditor::WheelScrollUnits(false);
 		if (linesPerScroll != 0 && verticalWheelDelta.Accumulate(delta)) {
 			Sci::Line linesToScroll = linesPerScroll;
 			if (linesPerScroll == WHEEL_PAGESCROLL)
-				linesToScroll = LinesOnScreen() - 1;
+				linesToScroll = std::max<Sci::Line>(1, LinesOnScreen() - 1);
 			if (linesToScroll == 0) {
 				linesToScroll = 1;
 			}
@@ -2856,7 +2855,7 @@ namespace Scintilla::Internal {
 
 				// signChanged and uniformWheel prevent bumping at the edges on touchpads
 				auto uniformWheel{ std::abs(_lastVerticalScrollDelta) == std::abs(delta) };
-				auto signChanged{ _lastVerticalScrollDelta <= 0 && delta > 0 || _lastVerticalScrollDelta >= 0 && delta < 0 };
+				auto signChanged{ _lastVerticalScrollDelta < 0 && delta > 0 || _lastVerticalScrollDelta > 0 && delta < 0 };
 				_lastVerticalScrollDelta = delta;
 				if (!uniformWheel && signChanged)
 				{
@@ -3249,7 +3248,9 @@ namespace Scintilla::Internal {
 		// Control is for copy and alt is for move
 		winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation dwEffect{ static_cast<int>(allowedOperations) & static_cast<int>(winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move)
 			? winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move
-			: winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Copy };
+			: (static_cast<int>(allowedOperations) & static_cast<int>(winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Copy)
+				? winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Copy
+				: winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None) };
 		if (static_cast<int>(grfKeyState) & static_cast<int>(winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers::Alt)
 			&& static_cast<int>(allowedOperations) & static_cast<int>(winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move))
 		{
@@ -3265,7 +3266,9 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::DragEnter(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const &dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation)
 	{
-		if (!dragDropEnabled)
+		operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
+		hasOKText = false;
+		if (!dragDropEnabled || pdoc->IsReadOnly() || _idleFinalized)
 		{
 			operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 			return;
@@ -3280,9 +3283,10 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::DragOver(winrt::Windows::Foundation::Point const &point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation)
 	{
+		operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 		try
 		{
-			if (!dragDropEnabled || !hasOKText || pdoc->IsReadOnly())
+			if (!dragDropEnabled || !hasOKText || pdoc->IsReadOnly() || _idleFinalized || HasTextStoreLock())
 			{
 				operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 				return;
@@ -3311,49 +3315,52 @@ namespace Scintilla::Internal {
 		}
 	}
 
-	void ScintillaWinUI::Drop(winrt::Windows::Foundation::Point const &point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const &dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation> ScintillaWinUI::DropAsync(winrt::Windows::Foundation::Point point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers modifiers)
 	{
-		if (!dragDropEnabled)
-		{
-			operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
-			return;
-		}
-
+		auto lifetime = get_strong();
+		using Operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation;
 		try
 		{
-			operation = EffectFromState(allowedOperations, modifiers);
-
+			if (_idleFinalized) co_return Operation::None;
 			SetDragPosition(SelectionPosition(Sci::invalidPosition));
-
-			DoDropAsync(point, dataView, operation);
-		}
-		catch (...)
-		{
-			errorStatus = Status::Failure;
-		}
-	}
-
-	winrt::fire_and_forget ScintillaWinUI::DoDropAsync(winrt::Windows::Foundation::Point const point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const operation)
-	{
-		try
-		{
-			std::string putf{ winrt::to_string(co_await dataView.GetTextAsync()) }; // Todo: Fix (check content type and async)
-
-			if (putf.empty())
+			const auto operation = EffectFromState(allowedOperations, modifiers);
+			if (!dragDropEnabled || pdoc->IsReadOnly() || _idleFinalized || HasTextStoreLock() ||
+				operation == Operation::None || !dataView.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 			{
-				co_return;
+				co_return Operation::None;
 			}
 
-			bool isRectangular{ false }; // WinUI Todo: implement
-
 			const SelectionPosition movePos = SPositionFromLocation(Point{ point.X, point.Y }, false, false, UserVirtualSpace());
-
-			DropAt(movePos, putf, operation == winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move, isRectangular);
+			const bool internalMove = inDragDrop == DragDrop::dragging && operation == Operation::Move;
+			// An internal move deletes the source selection. It must still belong
+			// to the payload captured at drag start, including before mouse release.
+			const auto revision = internalMove ? _dragDocumentRevision : _documentRevision;
+			const auto selection = internalMove ? _dragSelection : std::string{};
+			if (internalMove && (_documentRevision != revision || sel.ToString() != selection))
+				co_return Operation::None;
+			const auto text = co_await dataView.GetTextAsync();
+			// Reject target edits while data is pending and recheck the drag source.
+			if (text.empty() || _idleFinalized || !dragDropEnabled || pdoc->IsReadOnly() || HasTextStoreLock() ||
+				_documentRevision != revision || (internalMove &&
+					(inDragDrop != DragDrop::dragging || sel.ToString() != selection)))
+			{
+				co_return Operation::None;
+			}
+			const auto encoded = EncodeWString(std::wstring_view(text));
+			DropAt(movePos, encoded, operation == Operation::Move, false);
+			// A rejected insertion must not authorize deletion in another editor.
+			if (!internalMove && _documentRevision == revision) co_return Operation::None;
+			co_return operation;
+		}
+		catch (winrt::hresult_error const &)
+		{
+			// An unavailable data provider rejects this drop, not subsequent edits.
 		}
 		catch (...)
 		{
 			errorStatus = Status::Failure;
 		}
+		co_return Operation::None;
 	}
 
 	// WinUI Todo: consider overriding DragThreshold
@@ -3365,19 +3372,27 @@ namespace Scintilla::Internal {
 
 	winrt::fire_and_forget ScintillaWinUI::DoDragAsync()
 	{
+		auto lifetime = get_strong();
 		if (!_dragPointer)
 		{
 			co_return;
 		}
 		inDragDrop = DragDrop::dragging;
-		DWORD dwEffect = 0;
 		dropWentOutside = true;
 		//Platform::DebugPrintf("About to DoDragDrop %x %x\n", pDataObject, pDropSource);
 		try
 		{
+			const auto revision = _documentRevision;
+			// SelectionRevision also advances when the drag caret is repainted.
+			// Compare actual ranges, selection mode and main selection instead.
+			const auto selection = sel.ToString();
+			_dragDocumentRevision = revision;
+			_dragSelection = selection;
 			const auto operation{ co_await _mainWrapper->StartDragAsync(_dragPointer) };
 			//Platform::DebugPrintf("DoDragDrop = %x\n", hr);
-			if (operation == winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move && dropWentOutside)
+			if (operation == winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move && dropWentOutside &&
+				!_idleFinalized && !pdoc->IsReadOnly() && !HasTextStoreLock() &&
+				_documentRevision == revision && sel.ToString() == selection)
 			{
 				// Remove dragged out text
 				ClearSelection();
@@ -3386,14 +3401,19 @@ namespace Scintilla::Internal {
 		catch (winrt::hresult_error const &)
 		{
 		}
+		catch (...)
+		{
+			errorStatus = Status::Failure;
+		}
 		inDragDrop = DragDrop::none;
 		_dragPointer = nullptr;
-		SetDragPosition(SelectionPosition(Sci::invalidPosition));
+		_dragSelection.clear();
+		if (!_idleFinalized) SetDragPosition(SelectionPosition(Sci::invalidPosition));
 	}
 
 	std::string_view ScintillaWinUI::GetDragData()
 	{
-		return { drag.Data(), drag.LengthWithTerminator() };
+		return drag.AsView();
 	}
 
 	LRESULT ScintillaWinUI::SendMessage(UINT msg, WPARAM wParam, LPARAM lParam)

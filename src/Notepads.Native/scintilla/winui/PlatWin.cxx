@@ -269,9 +269,7 @@ int Platform::DefaultFontSize() {
 }
 
 unsigned int Platform::DoubleClickTime() {
-	//return ::GetDoubleClickTime();
-	return 760;
-	// WinUI Todo
+	return winrt::Windows::UI::ViewManagement::UISettings{}.DoubleClickTime();
 }
 
 void Platform::DebugDisplay(const char *s) noexcept {
