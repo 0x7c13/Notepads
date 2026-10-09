@@ -17,6 +17,7 @@ internal sealed class DiffComparison
     internal uint AddedLines { get; }
     internal uint DeletedLines { get; }
     internal long[] ChangeRows { get; }
+    internal long[] ChangeRowCounts { get; }
 
     internal DiffComparison(EditorDiffResult result)
     {
@@ -29,7 +30,12 @@ internal sealed class DiffComparison
         // the collection once at the adapter boundary, including unchanged text.
         var hunks = IsAvailable ? result.GetHunks() ?? [] : [];
         ChangeRows = new long[hunks.Length];
+        ChangeRowCounts = new long[hunks.Length];
         for (var index = 0; index < hunks.Length; index++)
+        {
             ChangeRows[index] = checked((long)hunks[index].DisplayRow);
+            // Include the alignment gaps so both sides frame the same complete change.
+            ChangeRowCounts[index] = System.Math.Max(hunks[index].OldCount, hunks[index].NewCount);
+        }
     }
 }

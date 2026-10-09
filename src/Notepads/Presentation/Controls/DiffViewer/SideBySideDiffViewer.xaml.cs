@@ -27,6 +27,7 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
 {
     private readonly ResourceLoader _resources = ResourceLoader.GetForCurrentView();
     private long[] _changeRows = [];
+    private long[] _changeRowCounts = [];
     private uint _addedLines;
     private uint _deletedLines;
     private bool _coarse;
@@ -100,6 +101,7 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
         if (!result.IsAvailable) return false;
         _changeRows = result.ChangeRows;
+        _changeRowCounts = result.ChangeRowCounts;
         _addedLines = result.AddedLines;
         _deletedLines = result.DeletedLines;
         _coarse = result.IsCoarse;
@@ -168,6 +170,8 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         _synchronizing = true;
         try
         {
+            OldEditor.HighlightDiffChange(row, _changeRowCounts[_currentHunk]);
+            NewEditor.HighlightDiffChange(row, _changeRowCounts[_currentHunk]);
             OldEditor.SetDiffViewport(Math.Max(0, row - 2), 0);
             NewEditor.SetDiffViewport(Math.Max(0, row - 2), 0);
         }
@@ -223,5 +227,6 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         try { OldEditor.Dispose(); }
         finally { NewEditor.Dispose(); }
         _changeRows = [];
+        _changeRowCounts = [];
     }
 }

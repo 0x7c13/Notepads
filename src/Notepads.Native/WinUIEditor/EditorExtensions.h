@@ -10,6 +10,7 @@
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorDiffResult> RunDiffAsync(WinUIEditor::Editor other, std::shared_ptr<::WinUIEditor::DiffJob> job);
 		void ApplyDiffPresentation(WinUIEditor::EditorDiffResult const &result, bool oldSide);
 		void SetDiffColours(int32_t line, int32_t inlineColour, int32_t gap, int32_t gapHatch);
+		void SetDiffHighlight(int64_t row, int64_t count, int32_t colour);
 		void DetachDocument();
 		void SetLexerLanguage(hstring const &name, array_view<hstring const> keywords,
 			array_view<hstring const> propertyNames, array_view<hstring const> propertyValues);

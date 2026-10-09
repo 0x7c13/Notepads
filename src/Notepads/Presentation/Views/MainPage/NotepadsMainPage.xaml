@@ -408,7 +408,7 @@
                                             Tag="RevertAllChanges" 
                                             Click="ModificationFlyoutSelection_OnClick">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7A7;"/>
+                                    <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 
@@ -440,6 +440,13 @@
                         <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
                             <StackPanel Width="224">
                                 <Grid Height="34">
+                                    <Grid.Resources>
+                                        <!-- Fit the command-bar template to these 32px buttons and center the icons on the slider. -->
+                                        <x:Double x:Key="AppBarThemeCompactHeight">32</x:Double>
+                                        <x:Double x:Key="AppBarButtonContentHeight">16</x:Double>
+                                        <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,8,0,8</Thickness>
+                                        <Thickness x:Key="AppBarButtonInnerBorderMargin">0</Thickness>
+                                    </Grid.Resources>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="*"/>
@@ -502,8 +509,10 @@
                                               x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
                                               Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
                                               HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="224" Height="32" Margin="0,8,0,0"
-                                              Icon="Undo" 
                                               Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                    <AppBarButton.Icon>
+                                        <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                    </AppBarButton.Icon>
                                     <AppBarButton.KeyboardAccelerators>
                                         <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
                                     </AppBarButton.KeyboardAccelerators>

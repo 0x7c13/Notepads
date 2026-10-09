@@ -41,6 +41,7 @@ namespace winrt::WinUIEditor::implementation
 		void SetLoadedDocument(Scintilla::Internal::Document &replacement);
 		void SetDisplayLineMap(std::vector<Scintilla::Internal::DisplayGap> gaps, std::vector<Scintilla::Internal::TintedLineRange> tints);
 		void SetDisplayColours(unsigned int line, unsigned int gap, unsigned int hatch);
+		void SetDisplayHighlight(int64_t row, int64_t count, unsigned int colour);
 		void PublishPreparedReplacement(Scintilla::Internal::Document &replacement, const char *previousText,
 			std::unique_ptr<Scintilla::Internal::IContractionState> contraction, bool leased = false);
 		const Scintilla::Internal::Document &LeasedDocument() const;

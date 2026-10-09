@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 
 namespace Notepads.Presentation.Theming;
 
-internal enum DiffColorRole { AddedLine, DeletedLine, AddedText, DeletedText, Gap, GapHatch }
+internal enum DiffColorRole { AddedLine, DeletedLine, AddedText, DeletedText, Gap, GapHatch, ActiveChangeBorder }
 
 internal sealed class DiffColorPalette
 {
@@ -26,7 +26,8 @@ internal sealed class DiffColorPalette
         (Color)resources["DiffAddedTextColor"],
         (Color)resources["DiffDeletedTextColor"],
         (Color)resources["DiffGapColor"],
-        (Color)resources["DiffGapHatchColor"]
+        (Color)resources["DiffGapHatchColor"],
+        (Color)resources["DiffActiveChangeBorderColor"]
     ]) { }
 
     public Color this[DiffColorRole role] => _colors[(int)role];
@@ -40,7 +41,8 @@ internal sealed class DiffColorPalette
             var background = settings.GetColorValue(UIColorType.Background);
             // Gutter stripes and Old/New labels identify sides without color alone.
             var tint = Color.FromArgb(40, highlight.R, highlight.G, highlight.B);
-            return new DiffColorPalette([tint, tint, highlight, highlight, background, settings.GetColorValue(UIColorType.Foreground)]);
+            var foreground = settings.GetColorValue(UIColorType.Foreground);
+            return new DiffColorPalette([tint, tint, highlight, highlight, background, foreground, foreground]);
         }
         lock (PaletteLock)
         {

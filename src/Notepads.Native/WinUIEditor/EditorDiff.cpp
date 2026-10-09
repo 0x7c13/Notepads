@@ -157,6 +157,13 @@ namespace winrt::WinUIEditor::implementation
 		IndicSetAlpha(DiffInlineIndicator, alpha);
 		IndicSetOutlineAlpha(DiffInlineIndicator, alpha);
 	}
+	void Editor::SetDiffHighlight(int64_t row, int64_t count, int32_t colour)
+	{
+		auto view = _editor.get();
+		if (!view || view->IsFinalized()) throw_hresult(RO_E_CLOSED);
+		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
+		view->SetDisplayHighlight(row, count, static_cast<unsigned int>(colour));
+	}
 	void Editor::DetachDocument()
 	{
 		auto view = _editor.get();

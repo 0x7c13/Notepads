@@ -326,6 +326,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         Native.SetMarginWidthN(0, width);
         Native.MarginLeft = (int)Math.Round(6 * _dpiScale);
         _lineNumberReveal.Width = width / _dpiScale;
+        // Place the reveal halfway into the gap between the number margin and the text.
+        _lineNumberReveal.Margin = new Thickness(Native.MarginLeft / (2 * _dpiScale), 0, 0, 0);
         _lineNumberReveal.Visibility = _displayLineNumbers ? Visibility.Visible : Visibility.Collapsed;
         if (!_displayLineNumbers) HideLineNumberGlow();
     }
@@ -344,7 +346,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         const double radius = 80;
         var height = _view.ActualHeight;
-        var distance = Math.Abs(x - _lineNumberReveal.Width);
+        var distance = Math.Abs(x - (_lineNumberReveal.Margin.Left + _lineNumberReveal.Width));
         if (!_displayLineNumbers || _accessibility.HighContrast || x < 0 || y < 0 || y >= height || distance >= radius)
         {
             HideLineNumberGlow();

@@ -94,6 +94,19 @@ int main()
 {
 	try
 	{
+		// Active borders belong to the display map and must retire with its geometry.
+		for (int mutation = 0; mutation < 4; ++mutation) {
+			auto map = Mapping(4, {{1, 3}});
+			map->SetDisplayHighlight({1, 3, 0xc0ffffff});
+			Require(map->GetDisplayHighlight().count == 3 && map->IsDisplayGap(1), "highlight includes padding rows");
+			switch (mutation) {
+			case 0: map->InsertLines(0, 1); break;
+			case 1: map->SetHeight(0, 2); break;
+			case 2: map->SetVisible(1, 2, false); break;
+			case 3: map->Clear(); break;
+			}
+			Require(map->GetDisplayHighlight().count == 0, "retired display map clears active border");
+		}
 		struct CountCase { char const *oldText, *newText; uint32_t added, deleted; };
 		for (auto const &test : {CountCase{"", "", 0, 0}, CountCase{"", "a", 1, 0}, CountCase{"a", "", 0, 1},
 			CountCase{"", "\r", 1, 0}, CountCase{"\r", "", 0, 1}, CountCase{"a", "a\r", 1, 1},

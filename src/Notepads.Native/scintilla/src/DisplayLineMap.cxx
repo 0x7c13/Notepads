@@ -25,7 +25,8 @@ namespace Scintilla::Internal
 			std::vector<TintedLineRange> _tints;
 			unsigned int _lineColour{}, _gapColour{}, _gapHatchColour{};
 			Sci::Line _padding{};
-			void Retire() noexcept { _gaps.clear(); _tints.clear(); _padding = 0; }
+			DisplayHighlight _highlight{};
+			void Retire() noexcept { _gaps.clear(); _tints.clear(); _padding = 0; _highlight = {}; }
 			auto GapAt(Sci::Line row) const noexcept
 			{
 				auto found = std::upper_bound(_gaps.begin(), _gaps.end(), row,
@@ -112,6 +113,8 @@ namespace Scintilla::Internal
 				_gapHatchColour = hatch;
 			}
 			void InsertLines(Sci::Line line, Sci::Line count) override { Retire(); _base->InsertLines(line, count); }
+			DisplayHighlight GetDisplayHighlight() const noexcept override { return _highlight; }
+			void SetDisplayHighlight(DisplayHighlight highlight) noexcept override { _highlight = highlight; }
 			void DeleteLines(Sci::Line line, Sci::Line count) override { Retire(); _base->DeleteLines(line, count); }
 			bool GetVisible(Sci::Line line) const noexcept override { return _base->GetVisible(line); }
 			bool SetVisible(Sci::Line start, Sci::Line end, bool visible) override { if (!visible) Retire(); return _base->SetVisible(start, end, visible); }

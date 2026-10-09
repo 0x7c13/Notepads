@@ -181,6 +181,7 @@ namespace winrt::WinUIEditor::implementation
 		_scintilla->SetDisplayLineMap(std::move(gaps), std::move(tints));
 	}
 	void EditorBaseControl::SetDisplayColours(unsigned int line, unsigned int gap, unsigned int hatch) { _scintilla->SetDisplayColours(line, gap, hatch); }
+	void EditorBaseControl::SetDisplayHighlight(int64_t row, int64_t count, unsigned int colour) { _scintilla->SetDisplayHighlight(row, count, colour); }
 	std::shared_ptr<::WinUIEditor::NativeDocumentJournal> EditorBaseControl::PrepareJournalReplacement() { return _scintilla->PrepareJournalReplacement(); }
 	uint64_t EditorBaseControl::DocumentSequence() const noexcept { return _scintilla->DocumentSequence(); }
 	uint64_t EditorBaseControl::DocumentRevision() const noexcept { return _scintilla->DocumentRevision(); }

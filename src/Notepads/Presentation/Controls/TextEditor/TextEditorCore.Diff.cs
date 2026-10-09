@@ -19,6 +19,9 @@ namespace Notepads.Presentation.Controls.TextEditor;
 public sealed partial class TextEditorCore
 {
     private bool _diffPreview;
+    private long _diffHighlightRow;
+    private long _diffHighlightCount;
+    private int _diffHighlightColor;
     internal event EventHandler ViewportChanged;
     internal event EventHandler AppearanceChanged;
     internal long FirstVisibleRow => Native.FirstVisibleLine;
@@ -62,15 +65,32 @@ public sealed partial class TextEditorCore
     internal async Task<DiffComparison> CompareAsync(TextEditorCore other, CancellationToken cancellationToken) =>
         new(await Native.CompareAsync(other.Native).AsCompletionTask(cancellationToken));
 
-    internal void ApplyDiffPresentation(DiffComparison result, bool oldSide) => Native.ApplyDiffPresentation(result.NativeResult, oldSide);
+    internal void ApplyDiffPresentation(DiffComparison result, bool oldSide)
+    {
+        Native.ApplyDiffPresentation(result.NativeResult, oldSide);
+        _diffHighlightRow = _diffHighlightCount = 0;
+    }
 
-    internal void ApplyDiffPalette(DiffColorPalette palette, bool oldSide) => Native.SetDiffColours(
-        ToScintillaColor(palette[oldSide ? DiffColorRole.DeletedLine : DiffColorRole.AddedLine]) |
-        (palette[oldSide ? DiffColorRole.DeletedLine : DiffColorRole.AddedLine].A << 24),
-        ToScintillaColor(palette[oldSide ? DiffColorRole.DeletedText : DiffColorRole.AddedText]) |
-        (palette[oldSide ? DiffColorRole.DeletedText : DiffColorRole.AddedText].A << 24),
-        ToScintillaColor(palette[DiffColorRole.Gap]) | (palette[DiffColorRole.Gap].A << 24),
-        ToScintillaColor(palette[DiffColorRole.GapHatch]) | (palette[DiffColorRole.GapHatch].A << 24));
+    internal void ApplyDiffPalette(DiffColorPalette palette, bool oldSide)
+    {
+        Native.SetDiffColours(
+            ToScintillaColor(palette[oldSide ? DiffColorRole.DeletedLine : DiffColorRole.AddedLine]) |
+            (palette[oldSide ? DiffColorRole.DeletedLine : DiffColorRole.AddedLine].A << 24),
+            ToScintillaColor(palette[oldSide ? DiffColorRole.DeletedText : DiffColorRole.AddedText]) |
+            (palette[oldSide ? DiffColorRole.DeletedText : DiffColorRole.AddedText].A << 24),
+            ToScintillaColor(palette[DiffColorRole.Gap]) | (palette[DiffColorRole.Gap].A << 24),
+            ToScintillaColor(palette[DiffColorRole.GapHatch]) | (palette[DiffColorRole.GapHatch].A << 24));
+        var border = palette[DiffColorRole.ActiveChangeBorder];
+        _diffHighlightColor = ToScintillaColor(border) | (border.A << 24);
+        Native.SetDiffHighlight(_diffHighlightRow, _diffHighlightCount, _diffHighlightColor);
+    }
+
+    internal void HighlightDiffChange(long row, long count)
+    {
+        Native.SetDiffHighlight(row, count, _diffHighlightColor);
+        _diffHighlightRow = row;
+        _diffHighlightCount = count;
+    }
 
     internal void SetDiffViewport(long row, long horizontalOffset)
     {

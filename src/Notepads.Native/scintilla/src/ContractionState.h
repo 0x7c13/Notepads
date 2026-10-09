@@ -13,6 +13,11 @@
 
 namespace Scintilla::Internal {
 
+struct DisplayHighlight {
+	Sci::Line start{}, count{};
+	unsigned int colour{};
+};
+
 /**
 */
 class IContractionState {
@@ -36,6 +41,8 @@ public:
 	virtual unsigned int DisplayGapHatchColour() const noexcept { return 0; }
 	virtual unsigned int LineTint(Sci::Line) const noexcept { return 0; }
 	virtual void SetDisplayColours(unsigned int, unsigned int, unsigned int) noexcept {}
+	virtual DisplayHighlight GetDisplayHighlight() const noexcept { return {}; }
+	virtual void SetDisplayHighlight(DisplayHighlight) noexcept {}
 
 	virtual void InsertLines(Sci::Line lineDoc, Sci::Line lineCount)=0;
 	virtual void DeleteLines(Sci::Line lineDoc, Sci::Line lineCount)=0;

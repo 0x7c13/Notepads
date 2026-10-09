@@ -8,6 +8,7 @@
             <Color x:Key="DiffDeletedTextColor">#70D12F35</Color>
             <Color x:Key="DiffGapColor">#08000000</Color>
             <Color x:Key="DiffGapHatchColor">#18000000</Color>
+            <Color x:Key="DiffActiveChangeBorderColor">#A0000000</Color>
             <Color x:Key="DiffAddedCountColor">#188038</Color>
             <Color x:Key="DiffDeletedCountColor">#C42B1C</Color>
             <Color x:Key="DiffToolbarBackgroundColor">#10000000</Color>
@@ -20,6 +21,7 @@
             <Color x:Key="DiffDeletedTextColor">#70F85149</Color>
             <Color x:Key="DiffGapColor">#08FFFFFF</Color>
             <Color x:Key="DiffGapHatchColor">#18FFFFFF</Color>
+            <Color x:Key="DiffActiveChangeBorderColor">#C0FFFFFF</Color>
             <Color x:Key="DiffAddedCountColor">#3FB950</Color>
             <Color x:Key="DiffDeletedCountColor">#F85149</Color>
             <Color x:Key="DiffToolbarBackgroundColor">#18FFFFFF</Color>

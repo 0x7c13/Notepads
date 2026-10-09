@@ -131,6 +131,12 @@ namespace Scintilla::Internal {
 		pcs->SetDisplayColours(line, gap, hatch);
 		Redraw();
 	}
+	void ScintillaWinUI::SetDisplayHighlight(int64_t row, int64_t count, unsigned int colour) {
+		if (row < 0 || count < 0 || row > pcs->LinesDisplayed() || count > pcs->LinesDisplayed() - row)
+			throw winrt::hresult_invalid_argument();
+		pcs->SetDisplayHighlight({static_cast<Sci::Line>(row), static_cast<Sci::Line>(count), colour});
+		Redraw();
+	}
 }
 #include "NativeJournal.h"
 #include "Helpers.h"
@@ -3069,6 +3075,20 @@ namespace Scintilla::Internal {
 			surf->SetMode(SurfaceMode{ 65001, false }); // Todo: Ensure these values are good
 			rcPaint = Scintilla::Internal::PRectangle(drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom);
 			Paint(surf.get(), rcPaint);
+
+			// Paint the active diff region with the text so scrolling, gaps and DPI
+			// always share the same geometry. The existing tile clip trims offscreen edges.
+			const auto highlight = pcs->GetDisplayHighlight();
+			if (highlight.count > 0 && ColourRGBA(highlight.colour).GetAlpha()) {
+				const XYPOSITION scale = _mainWrapper->LogicalDpi() / 96.0;
+				PRectangle frame = GetTextRectangle();
+				frame.left = std::max<XYPOSITION>(0, frame.left - 2 * scale);
+				frame.top = static_cast<XYPOSITION>(highlight.start - topLine) * vs.lineHeight;
+				frame.bottom = frame.top + static_cast<XYPOSITION>(highlight.count) * vs.lineHeight;
+				if (frame.Width() > 2 * scale && frame.Intersects(rcPaint))
+					surf->AlphaRectangle(frame, std::min<XYPOSITION>(4 * scale, frame.Height() / 2),
+						FillStroke(ColourRGBA(0, 0, 0, 0), ColourRGBA(highlight.colour), scale));
+			}
 
 			surf->Release();
 			d2dDeviceContext->PopAxisAlignedClip();

@@ -102,6 +102,7 @@ namespace Scintilla::Internal {
 		const Document &LeasedDocument() const;
 		void SetDisplayLineMap(std::vector<DisplayGap> gaps, std::vector<TintedLineRange> tints);
 		void SetDisplayColours(unsigned int line, unsigned int gap, unsigned int hatch);
+		void SetDisplayHighlight(int64_t row, int64_t count, unsigned int colour);
 		std::shared_ptr<WinUIEditor::NativeDocumentJournal> PrepareJournalReplacement();
 		uint64_t DocumentSequence() const noexcept;
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }

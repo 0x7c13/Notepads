@@ -57,7 +57,7 @@
                                        Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                                        Foreground="{TemplateBinding Foreground}"
                                        Opacity="0.6"
-                                       FontSize="11"
+                                       FontSize="12"
                                        VerticalAlignment="Center"/>
                         </Grid>
                     </Border>

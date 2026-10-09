@@ -4,18 +4,16 @@
                     xmlns:ui="using:CommunityToolkit.WinUI"
                     xmlns:controls="using:Notepads.Controls">
 
+    <!-- BackgroundTransition interpolates Color, so keep transparency in the color alpha. -->
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.25"
-                         Color="White"/>
+                         Color="#40FFFFFF"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.15"
-                         Color="White"/>
+                         Color="#26FFFFFF"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.25"
-                         Color="White"/>
+                         Color="#40FFFFFF"/>
             <StaticResource x:Key="SetsViewItemHeaderBackground"
                             ResourceKey="SystemControlTransparentBrush" />
             <StaticResource x:Key="SetsViewSelectionIndicatorForeground"
@@ -42,16 +40,14 @@
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
-                         Opacity="0.25"
-                         Color="Black"/>
+                         Color="#40000000"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPointerOver"
-                         Opacity="0.20"
-                         Color="Black"/>
+                         Color="#33000000"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundPressed"
-                         Opacity="0.25"
-                         Color="Black"/>
-            <StaticResource x:Key="SetsViewItemHeaderBackground"
-                            ResourceKey="SystemControlTransparentBrush" />
+                         Color="#40000000"/>
+            <!-- Match the selected brush's RGB so fading out cannot pass through gray. -->
+            <SolidColorBrush x:Key="SetsViewItemHeaderBackground"
+                             Color="#00000000" />
             <StaticResource x:Key="SetsViewSelectionIndicatorForeground"
                             ResourceKey="SystemControlForegroundAccentBrush" />
             <StaticResource x:Key="SetsViewItemHeaderForeground"

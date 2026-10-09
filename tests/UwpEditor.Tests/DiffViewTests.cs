@@ -71,12 +71,15 @@ internal static class DiffViewTests
         current.MakeDiffReadOnly();
         var result = await old.CompareAsync(current, CancellationToken.None);
         Require(result.IsAvailable && !result.IsCoarse && result.ChangeRows.Length == 1, "exact insertion result");
+        Require(result.ChangeRowCounts.Length == 1 && result.ChangeRowCounts[0] == 1, "insertion border spans its display gap");
         Require(result.AddedLines == 1 && result.DeletedLines == 0, "inserted source line total");
         old.ApplyDiffPresentation(result, true);
         current.ApplyDiffPresentation(result, false);
         var palette = DiffColorPalette.ForTheme(ElementTheme.Dark, highContrast: false);
         old.ApplyDiffPalette(palette, true);
         current.ApplyDiffPalette(palette, false);
+        old.HighlightDiffChange(result.ChangeRows[0], result.ChangeRowCounts[0]);
+        current.HighlightDiffChange(result.ChangeRows[0], result.ChangeRowCounts[0]);
         await Task.Delay(100); // Exercise the native repeating gap brush during paint.
         Require(Native(old).VisibleFromDocLine(0) == Native(current).VisibleFromDocLine(1), "BOF display-only row alignment");
         Require(old.GetText() == "one\rtwo\rthree\r" && current.GetText() == originalText, "source bytes unchanged by alignment");

@@ -8,6 +8,7 @@
 		Windows.Foundation.IAsyncOperation<EditorDiffResult> CompareAsync(Editor other);
 		void ApplyDiffPresentation(EditorDiffResult result, Boolean oldSide);
 		void SetDiffColours(Int32 line, Int32 inlineColour, Int32 gap, Int32 gapHatch);
+		void SetDiffHighlight(Int64 row, Int64 count, Int32 colour);
 		void DetachDocument();
 		// Installs a complete compiled lexer configuration; optional OOM pauses coloring.
 		void SetLexerLanguage(String name, String[] keywords, String[] propertyNames, String[] propertyValues);

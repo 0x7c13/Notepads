@@ -354,6 +354,17 @@ public static class ThemeSettingsService
 
     private static void UpdateSystemAccentColorAndBrushes(Color color)
     {
+        // Lighten the current app accent for hover, including when the system accent is unchanged.
+        var hoverColor = Color.FromArgb(color.A,
+            (byte)Math.Round(color.R + (255 - color.R) * 0.15),
+            (byte)Math.Round(color.G + (255 - color.G) * 0.15),
+            (byte)Math.Round(color.B + (255 - color.B) * 0.15));
+        foreach (var theme in new[] { "Default", "Light" })
+        {
+            var resources = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries[theme];
+            ((SolidColorBrush)resources["NotepadsSliderThumbBackgroundPointerOver"]).Color = hoverColor;
+        }
+
         if ((Color)Application.Current.Resources["SystemAccentColor"] == color)
         {
             return;
