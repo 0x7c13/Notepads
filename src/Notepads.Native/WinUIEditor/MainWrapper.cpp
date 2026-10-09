@@ -39,6 +39,19 @@ namespace WinUIEditor
 		return _captured;
 	}
 
+	bool MainWrapper::IsEnabled() const noexcept
+	{
+		try
+		{
+			const auto control = _control.get();
+			return control && control.IsEnabled();
+		}
+		catch (winrt::hresult_error const &)
+		{
+			return false;
+		}
+	}
+
 	void MainWrapper::SetMouseCaptureElement(winrt::DUX::UIElement const &element)
 	{
 		_mouseCaptureElement = element;

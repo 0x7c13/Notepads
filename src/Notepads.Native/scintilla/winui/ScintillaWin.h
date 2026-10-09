@@ -179,6 +179,8 @@ namespace Scintilla::Internal {
 		void ProcessCharacterReceivedMessage(char16_t character);
 		winrt::DUI::PointerPoint _dragPointer{ nullptr };
 		uint64_t _dragDocumentRevision{};
+		uint64_t _dragGeneration{};
+		uint64_t _dragStartGeneration{};
 		std::string _dragSelection;
 
 		Scintilla::KeyMod WindowsModifiers(winrt::Windows::System::VirtualKeyModifiers modifiers);
@@ -333,6 +335,7 @@ namespace Scintilla::Internal {
 		IFACEMETHOD(UpdatesNeeded)() override;
 		void DrawBit(RECT const &drawingBounds);
 		[[nodiscard]] UINT CodePageOfDocument() const noexcept;
+		bool CanMutateForDrag() const noexcept;
 		winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation EffectFromState(winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &grfKeyState) const noexcept;
 		void StartDrag() override;
 		winrt::fire_and_forget DoDragAsync();

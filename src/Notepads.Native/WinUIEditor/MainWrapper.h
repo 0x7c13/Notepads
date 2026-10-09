@@ -18,6 +18,7 @@ namespace WinUIEditor
 		// Todo: Make abstract
 		void SetMouseCapture(bool on);
 		bool HaveMouseCapture();
+		bool IsEnabled() const noexcept;
 
 		// Todo: Move to separate XAML class
 		void SetMouseCaptureElement(winrt::DUX::UIElement const &element);

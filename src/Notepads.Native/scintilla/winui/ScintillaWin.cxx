@@ -1026,6 +1026,9 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::StopTimers()
 	{
 		_idleSuspended = true;
+		// Pending drags belong to this attachment, even if it is reloaded
+		// before the other process finishes providing or accepting text.
+		++_dragGeneration;
 		for (const auto &timer : { _caretTimer, _scrollTimer, _widenTimer, _dwellTimer, _idleTimer })
 		{
 			try
@@ -3264,11 +3267,17 @@ namespace Scintilla::Internal {
 		return dwEffect;
 	}
 
+	bool ScintillaWinUI::CanMutateForDrag() const noexcept
+	{
+		return !_idleFinalized && !_idleSuspended && dragDropEnabled &&
+			!pdoc->IsReadOnly() && !HasTextStoreLock() && _mainWrapper->IsEnabled();
+	}
+
 	void ScintillaWinUI::DragEnter(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView const &dataView, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation)
 	{
 		operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 		hasOKText = false;
-		if (!dragDropEnabled || pdoc->IsReadOnly() || _idleFinalized)
+		if (!CanMutateForDrag())
 		{
 			operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 			return;
@@ -3286,7 +3295,7 @@ namespace Scintilla::Internal {
 		operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 		try
 		{
-			if (!dragDropEnabled || !hasOKText || pdoc->IsReadOnly() || _idleFinalized || HasTextStoreLock())
+			if (!hasOKText || !CanMutateForDrag())
 			{
 				operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 				return;
@@ -3324,7 +3333,7 @@ namespace Scintilla::Internal {
 			if (_idleFinalized) co_return Operation::None;
 			SetDragPosition(SelectionPosition(Sci::invalidPosition));
 			const auto operation = EffectFromState(allowedOperations, modifiers);
-			if (!dragDropEnabled || pdoc->IsReadOnly() || _idleFinalized || HasTextStoreLock() ||
+			if (!CanMutateForDrag() ||
 				operation == Operation::None || !dataView.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 			{
 				co_return Operation::None;
@@ -3335,12 +3344,13 @@ namespace Scintilla::Internal {
 			// An internal move deletes the source selection. It must still belong
 			// to the payload captured at drag start, including before mouse release.
 			const auto revision = internalMove ? _dragDocumentRevision : _documentRevision;
+			const auto generation = internalMove ? _dragStartGeneration : _dragGeneration;
 			const auto selection = internalMove ? _dragSelection : std::string{};
-			if (internalMove && (_documentRevision != revision || sel.ToString() != selection))
+			if (internalMove && (_documentRevision != revision || _dragGeneration != generation || sel.ToString() != selection))
 				co_return Operation::None;
 			const auto text = co_await dataView.GetTextAsync();
 			// Reject target edits while data is pending and recheck the drag source.
-			if (text.empty() || _idleFinalized || !dragDropEnabled || pdoc->IsReadOnly() || HasTextStoreLock() ||
+			if (text.empty() || !CanMutateForDrag() || _dragGeneration != generation ||
 				_documentRevision != revision || (internalMove &&
 					(inDragDrop != DragDrop::dragging || sel.ToString() != selection)))
 			{
@@ -3383,15 +3393,17 @@ namespace Scintilla::Internal {
 		try
 		{
 			const auto revision = _documentRevision;
+			const auto generation = _dragGeneration;
 			// SelectionRevision also advances when the drag caret is repainted.
 			// Compare actual ranges, selection mode and main selection instead.
 			const auto selection = sel.ToString();
 			_dragDocumentRevision = revision;
+			_dragStartGeneration = generation;
 			_dragSelection = selection;
 			const auto operation{ co_await _mainWrapper->StartDragAsync(_dragPointer) };
 			//Platform::DebugPrintf("DoDragDrop = %x\n", hr);
 			if (operation == winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move && dropWentOutside &&
-				!_idleFinalized && !pdoc->IsReadOnly() && !HasTextStoreLock() &&
+				CanMutateForDrag() && _dragGeneration == generation &&
 				_documentRevision == revision && sel.ToString() == selection)
 			{
 				// Remove dragged out text

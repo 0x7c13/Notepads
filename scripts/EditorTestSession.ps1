@@ -5,6 +5,32 @@
 
 # Shared lifecycle for isolated, interactive editor tests. A pre-existing test
 # package is deliberately preserved; production packages are never considered.
+function Read-EditorTestFile {
+    param([string] $Path, [switch] $AsLines, [switch] $CompleteLinesOnly)
+    # Protocol files are published by atomic rename, and timelines are appended
+    # concurrently. Readers must permit both writers and deletion/rename handles.
+    $sharing = [IO.FileShare]::ReadWrite -bor [IO.FileShare]::Delete
+    $stream = [IO.FileStream]::new($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, $sharing)
+    $reader = $null
+    try {
+        $reader = [IO.StreamReader]::new($stream, [Text.UTF8Encoding]::new($false, $true), $true)
+        $text = $reader.ReadToEnd()
+        if ($AsLines) {
+            if ($CompleteLinesOnly) {
+                # An append can be observed halfway through its last TSV record.
+                $lastNewline = $text.LastIndexOf("`n")
+                if ($lastNewline -lt 0) { return ,@() }
+                $text = $text.Substring(0, $lastNewline + 1)
+            }
+            return ,($text -split "`r`n|`n|`r")
+        }
+        return $text
+    }
+    finally {
+        if ($reader) { $reader.Dispose() } else { $stream.Dispose() }
+    }
+}
+
 function Start-EditorTestSession {
     param([ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64', [int] $TimeoutSeconds = 40)
     if (Get-AppxPackage -Name Notepads.Editor.Tests) {
@@ -22,7 +48,7 @@ function Start-EditorTestSession {
     $session = @{ RunId = $runId; Root = $root; Layout = $layout; Sequence = 0; ProcessId = 0; Package = $null }
     try {
         New-Item -ItemType Directory -Path $layout -Force | Out-Null
-        [xml] $recipe = Get-Content -LiteralPath $recipePath -Raw
+        [xml] $recipe = Read-EditorTestFile $recipePath
         foreach ($group in $recipe.Project.ItemGroup) {
             foreach ($file in $group.ChildNodes) {
                 if (!$file.PackagePath -or !$file.Include) { continue }
@@ -35,7 +61,7 @@ function Start-EditorTestSession {
             }
         }
         $manifestPath = Join-Path $layout 'AppxManifest.xml'
-        [xml] $manifest = Get-Content -LiteralPath $manifestPath -Raw
+        [xml] $manifest = Read-EditorTestFile $manifestPath
         if ($manifest.Package.Identity.Name -ne 'Notepads.Editor.Tests') {
             throw 'Refusing to register a manifest other than Notepads.Editor.Tests.'
         }
@@ -100,7 +126,7 @@ function Assert-EditorTestAlive {
         throw 'The test process identity changed.'
     }
     $fatal = Join-Path $Session.Channel 'fatal.txt'
-    if (Test-Path -LiteralPath $fatal) { throw (Get-Content -LiteralPath $fatal -Raw) }
+    if (Test-Path -LiteralPath $fatal) { throw (Read-EditorTestFile $fatal) }
 }
 
 function Invoke-EditorTestCommand {
@@ -118,7 +144,7 @@ function Invoke-EditorTestCommand {
         if ([DateTime]::UtcNow -gt $deadline) { throw "Interactive command timed out: $Command" }
         Start-Sleep -Milliseconds 25
     }
-    $lines = @(Get-Content -LiteralPath $response -Encoding UTF8)
+    $lines = Read-EditorTestFile $response -AsLines
     if ($lines[0] -ne 'OK') { throw ($lines -join "`n") }
     $state = @{}
     foreach ($line in $lines | Select-Object -Skip 1) {
