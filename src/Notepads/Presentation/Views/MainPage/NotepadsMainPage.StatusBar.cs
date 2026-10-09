@@ -53,6 +53,7 @@ public sealed partial class NotepadsMainPage
     private void SetupStatusBar(ITextEditor textEditor)
     {
         if (textEditor == null) return;
+        if (StatusBar != null) StatusBar.IsHitTestVisible = true;
         UpdateApplicationTitle(textEditor);
         UpdateFileModificationStateIndicator(textEditor);
         UpdatePathIndicator(textEditor);
@@ -65,6 +66,31 @@ public sealed partial class NotepadsMainPage
         UpdateLanguageIndicator(textEditor);
     }
 
+    private void SetupSelectedTabStatus()
+    {
+        var tab = NotepadsCore.GetSelectedTab();
+        if (tab?.ReadyEditor is ITextEditor editor)
+        {
+            SetupStatusBar(editor);
+            return;
+        }
+        ApplicationView.GetForCurrentView().Title = tab?.Title ?? string.Empty;
+        if (StatusBar == null) return;
+        StatusBar.IsHitTestVisible = false;
+        PathIndicator.Text = tab?.EditingFilePath ?? tab?.Title ?? string.Empty;
+        ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
+        FileModificationStateIndicator.Visibility = Visibility.Collapsed;
+        ModificationIndicator.Text = tab?.IsModified == true ? _resourceLoader.GetString("TextEditor_ModificationIndicator_Text") : string.Empty;
+        ModificationIndicator.Visibility = tab?.IsModified == true ? Visibility.Visible : Visibility.Collapsed;
+        LineColumnIndicator.Text = tab == null ? string.Empty : _resourceLoader.GetString(
+            tab.State == WorkspaceTabState.Failed ? "WorkspaceTab_LoadFailed" : "WorkspaceTab_Loading");
+        EncodingIndicator.Text = string.Empty;
+        LineEndingIndicator.Text = string.Empty;
+        FontZoomIndicator.Text = string.Empty;
+        LanguageIndicator.Text = string.Empty;
+        UpdateShadowWindowIndicator();
+    }
+
     public void ShowHideStatusBar(bool showStatusBar)
     {
         if (showStatusBar)
@@ -75,7 +101,7 @@ public sealed partial class NotepadsMainPage
                 BuildEncodingIndicatorFlyout();
             } // Lazy loading
 
-            SetupStatusBar(NotepadsCore.GetSelectedTextEditor());
+            SetupSelectedTabStatus();
         }
         else
         {
@@ -204,7 +230,7 @@ public sealed partial class NotepadsMainPage
     {
         if (sender is not MenuFlyoutItem item) return;
 
-        var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedTextEditor == null) return;
 
         switch ((string)item.Tag)
@@ -220,7 +246,7 @@ public sealed partial class NotepadsMainPage
                     fileName,
                     confirmedAction: () => confirmed = true);
                 await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
-                if (confirmed && NotepadsCore.GetAllTextEditors().Contains(selectedTextEditor))
+                if (confirmed && NotepadsCore.GetTab(selectedTextEditor) != null)
                 {
                     try { await selectedTextEditor.RevertAllChangesAsync(); }
                     catch (Exception ex)
@@ -235,7 +261,7 @@ public sealed partial class NotepadsMainPage
 
     private async void ReloadFileFromDiskAsync(object sender, RoutedEventArgs e)
     {
-        var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
 
         if (selectedEditor?.EditingFile != null &&
             selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
@@ -247,7 +273,7 @@ public sealed partial class NotepadsMainPage
             }
             catch (Exception ex)
             {
-                if (!NotepadsCore.GetAllTextEditors().Contains(selectedEditor)) return;
+                if (NotepadsCore.GetTab(selectedEditor) == null) return;
                 var fileOpenErrorDialog = new FileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
@@ -260,7 +286,7 @@ public sealed partial class NotepadsMainPage
 
     private void CopyFullPath(object sender, RoutedEventArgs e)
     {
-        var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedEditor?.EditingFile == null) return;
 
         try
@@ -279,7 +305,7 @@ public sealed partial class NotepadsMainPage
 
     private async void OpenContainingFolderAsync(object sender, RoutedEventArgs e)
     {
-        var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedEditor?.EditingFile == null) return;
 
         try
@@ -294,7 +320,7 @@ public sealed partial class NotepadsMainPage
 
     private async void RenameFileAsync(object sender, RoutedEventArgs e)
     {
-        var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedEditor?.EditingFile == null) return;
         await RenameFileAsync(selectedEditor);
     }
@@ -303,7 +329,7 @@ public sealed partial class NotepadsMainPage
     {
         if (sender is not AppBarButton button) return;
 
-        var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedTextEditor == null) return;
 
         switch (button.Name)
@@ -329,7 +355,7 @@ public sealed partial class NotepadsMainPage
     {
         if (sender is not Slider) return;
 
-        var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedTextEditor == null) return;
 
         if (Math.Abs(e.NewValue - e.OldValue) > 0.1)
@@ -343,7 +369,7 @@ public sealed partial class NotepadsMainPage
         if (sender is not MenuFlyoutItem item) return;
 
         var lineEnding = LineEndingUtility.GetLineEndingByName((string)item.Tag);
-        var textEditor = NotepadsCore.GetSelectedTextEditor();
+        var textEditor = NotepadsCore.GetSelectedReadyEditor();
         if (textEditor != null)
         {
             NotepadsCore.ChangeLineEnding(textEditor, lineEnding);
@@ -352,7 +378,7 @@ public sealed partial class NotepadsMainPage
 
     private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
     {
-        var selectedEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedEditor == null) return;
 
         if (ReferenceEquals(sender, FileModificationStateIndicator))
@@ -453,7 +479,7 @@ public sealed partial class NotepadsMainPage
     private async void DiffPreviewAccelerator_OnInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         args.Handled = true;
-        var editor = NotepadsCore.GetSelectedTextEditor();
+        var editor = NotepadsCore.GetSelectedReadyEditor();
         if (editor == null) return;
         try { await editor.ToggleDiffPreviewAsync(); }
         catch (Exception exception)
@@ -606,19 +632,19 @@ public sealed partial class NotepadsMainPage
         };
         autoGuessEncodingItem.Click += async (sender, args) =>
         {
-            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
             var file = selectedTextEditor?.EditingFile;
             if (file == null || selectedTextEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
 
             try
             {
                 await selectedTextEditor.ReloadFromEditingFileAsync(decodingMode: DocumentDecodingMode.AutoDetect);
-                if (!NotepadsCore.GetAllTextEditors().Contains(selectedTextEditor)) return;
+                if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
             }
             catch (Exception ex)
             {
-                if (!NotepadsCore.GetAllTextEditors().Contains(selectedTextEditor)) return;
+                if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
                 var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                 if (!fileOpenErrorDialog.IsAborted)
@@ -644,18 +670,18 @@ public sealed partial class NotepadsMainPage
         };
         reopenWithEncodingItem.Click += async (sender, args) =>
         {
-            var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+            var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
             if (selectedTextEditor != null)
             {
                 try
                 {
                     await selectedTextEditor.ReloadFromEditingFileAsync(encoding);
-                    if (!NotepadsCore.GetAllTextEditors().Contains(selectedTextEditor)) return;
+                    if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
-                    if (!NotepadsCore.GetAllTextEditors().Contains(selectedTextEditor)) return;
+                    if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
                     var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
                     if (!fileOpenErrorDialog.IsAborted)
@@ -676,7 +702,7 @@ public sealed partial class NotepadsMainPage
         };
         saveWithEncodingItem.Click += (sender, args) =>
         {
-            NotepadsCore.GetSelectedTextEditor()?.TryChangeEncoding(encoding);
+            NotepadsCore.GetSelectedReadyEditor()?.TryChangeEncoding(encoding);
         };
         saveWithEncoding.Items?.Add(saveWithEncodingItem);
     }

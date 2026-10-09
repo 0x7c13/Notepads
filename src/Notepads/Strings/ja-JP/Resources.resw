@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>前の変更 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>利用可能なリソースの範囲内で比較を準備できませんでした。文書は変更されていません。</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB を超えるドキュメントは印刷できません。</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>ドキュメントを読み込み中…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>ドキュメントを読み込めません</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>「{0}」は読み込まれていません。閉じる前に読み込んで保存しますか、それとも復元用コピーを破棄しますか？</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>終了前に保存しますか？ 一部のドキュメントは読み込まれていません。破棄すると復元用コピーが削除されます。</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>未読み込みのドキュメント</value></data>
 </root>

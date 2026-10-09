@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Edellinen muutos (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Vertailua ei voitu valmistella käytettävissä olevilla resursseilla. Asiakirjaa ei ole muutettu.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Yli 1 MB:n asiakirjoja ei voi tulostaa.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Ladataan asiakirjaa…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Asiakirjaa ei voitu ladata</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Asiakirjaa ”{0}” ei ole ladattu. Ladataanko ja tallennetaanko se ennen sulkemista vai poistetaanko sen palautuskopio?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Tallennetaanko ennen lopettamista? Joitakin asiakirjoja ei ole ladattu. Hylkääminen poistaa niiden palautuskopiot.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Lataamattomat asiakirjat</value></data>
 </root>

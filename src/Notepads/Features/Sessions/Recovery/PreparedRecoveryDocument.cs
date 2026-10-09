@@ -18,32 +18,12 @@ using WinUIEditor;
 
 namespace Notepads.Features.Sessions.Recovery;
 
-/// <summary>Owns prepared assets until editors retain them or preparation is abandoned.</summary>
-internal sealed class PreparedRecoveryBatch : IDisposable
-{
-    public List<PreparedRecoveryDocument> Documents { get; } = new List<PreparedRecoveryDocument>();
-    public Guid? SelectedEditorId { get; set; }
-    public double TabScrollOffset { get; set; }
-    public RecoveryStamp ExpectedStamp { get; set; }
-    public List<IDisposable> Pins { get; } = [];
-
-    public void Dispose()
-    {
-        try
-        {
-            foreach (var document in Documents) document.Dispose();
-        }
-        finally
-        {
-            foreach (var pin in Pins) pin.Dispose();
-            Pins.Clear();
-        }
-    }
-}
-
+/// <summary>Owns prepared assets until a native document retains them.</summary>
 internal sealed class PreparedRecoveryDocument : IDisposable
 {
     public Guid Id { get; set; }
+    public RecoveryDocumentSource Source { get; internal set; }
+    public RecoveryFileAccessBinding FileAccessBinding { get; internal set; }
     public DocumentMetadata Metadata { get; set; }
     public StorageFile EditingFile { get; set; }
     public string FileNamePlaceholder { get; set; }
@@ -84,4 +64,12 @@ internal sealed class PreparedRecoveryDocument : IDisposable
             }
         }
     }
+}
+
+/// <summary>The exact broker resolution retained from preparation; it does not grant token ownership.</summary>
+internal sealed class RecoveryFileAccessBinding
+{
+    internal RecoveryFileAccessBinding(StorageFile file, string token) { File = file; Token = token; }
+    public StorageFile File { get; }
+    public string Token { get; }
 }

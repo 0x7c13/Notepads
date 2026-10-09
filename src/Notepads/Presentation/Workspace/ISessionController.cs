@@ -8,11 +8,16 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Presentation.Controls.TextEditor;
 
 namespace Notepads.Presentation.Workspace;
 
 internal interface ISessionController : IDisposable
 {
+    event EventHandler RecoveryStateChanged;
+
+    event EventHandler RestorationBackupFailed;
+
     bool IsBackupEnabled { get; set; }
 
     int UnrecoveredEditorCount { get; }
@@ -27,6 +32,13 @@ internal interface ISessionController : IDisposable
     Task InitializeAuthorityAsync();
 
     Task<int> LoadLastSessionAsync();
+
+    Task<ITextEditor> EnsureLoadedAsync(WorkspaceTab tab, bool allowWhileClosing = false);
+
+    /// <summary>Pause automatic loading and visual attachment during a terminal close.</summary>
+    void PauseRestoration();
+
+    void ResumeRestoration();
 
     /// <summary>
     /// Queue one recovery maintenance pass (retention, then orphaned-asset collection) after the initial load,

@@ -39,8 +39,8 @@ internal static class SessionRecoveryTests
         var targetService = SessionTestProtocol.CreateService(targetOwner);
         try
         {
-            await sourceService.EnsureMetadataRetainedAsync(CancellationToken.None);
-            await targetService.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await sourceService.InitializeAuthorityAsync(CancellationToken.None);
+            await targetService.InitializeAuthorityAsync(CancellationToken.None);
             await using var source = await SessionTestDocument.CreateAsync(sourceOwner, "saved العربية😀\0");
             source.Editor.GotoPos(source.Editor.Length); source.Editor.PasteText("\rchanged");
             using var sourceCapture = source.Capture(sourceId, sourceService.CurrentStamp);
@@ -138,7 +138,7 @@ internal static class SessionRecoveryTests
                 }
             }
             var stale = sourceService.CurrentStamp;
-            await sourceService.ClearSessionDataAsync();
+            await sourceService.ClearSessionDataAsync([]);
             await AssertThrowsAsync<InvalidDataException>(() => TransferRecoveryStore.CreateSourceTransferAsync(Guid.NewGuid(),
                 sourceOwner, Guid.NewGuid(), sourceData, null, stale));
         }
@@ -157,8 +157,8 @@ internal static class SessionRecoveryTests
         var targetService = SessionTestProtocol.CreateService(targetOwner);
         try
         {
-            await sourceService.EnsureMetadataRetainedAsync(CancellationToken.None);
-            await targetService.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await sourceService.InitializeAuthorityAsync(CancellationToken.None);
+            await targetService.InitializeAuthorityAsync(CancellationToken.None);
             await using var source = await SessionTestDocument.CreateAsync(sourceOwner, "inactive source");
             using var sourceCapture = source.Capture(sourceId, sourceService.CurrentStamp);
             SessionTestProtocol.Check((await sourceService.SaveAsync(sourceCapture, CancellationToken.None)).Succeeded, "Inactive source preparation failed.");
@@ -195,7 +195,7 @@ internal static class SessionRecoveryTests
                 SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Count == 0,
                     "Inactive consumption did not suppress its older checkpoint incarnation.");
             }
-            await targetService.ClearSessionDataAsync();
+            await targetService.ClearSessionDataAsync([]);
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Count == 0,

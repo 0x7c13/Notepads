@@ -61,6 +61,11 @@ function Start-EditorTestSession {
             }
         }
         $manifestPath = Join-Path $layout 'AppxManifest.xml'
+        $isolationMarker = Join-Path $layout 'TestIsolation.txt'
+        if (!(Test-Path -LiteralPath $isolationMarker) -or
+            (Get-Content -LiteralPath $isolationMarker -First 1) -ne 'Notepads.TestStorage/1') {
+            throw 'Rebuild the editor tests with their isolated-storage boundary before launching interactive tests.'
+        }
         [xml] $manifest = Read-EditorTestFile $manifestPath
         if ($manifest.Package.Identity.Name -ne 'Notepads.Editor.Tests') {
             throw 'Refusing to register a manifest other than Notepads.Editor.Tests.'
@@ -73,7 +78,7 @@ function Start-EditorTestSession {
             throw 'Test registration does not belong to this run.'
         }
         $session.Package = $package.PackageFullName
-        $session.Channel = Join-Path $env:LOCALAPPDATA "Packages\$($package.PackageFamilyName)\LocalState\InteractiveTests\$runId"
+        $session.Channel = Join-Path $env:LOCALAPPDATA "Packages\$($package.PackageFamilyName)\LocalState\WorkspaceTests\$runId\InteractiveTests\$runId"
         if (!('IsolatedEditorTestLauncher' -as [type])) {
             Add-Type @'
 using System;
@@ -96,7 +101,7 @@ public static class IsolatedEditorTestLauncher {
 }
 '@
         }
-        $session.ProcessId = [IsolatedEditorTestLauncher]::Launch("$($package.PackageFamilyName)!App", "--interactive-test $runId")
+        $session.ProcessId = [IsolatedEditorTestLauncher]::Launch("$($package.PackageFamilyName)!App", "--test-run $runId --interactive-test $runId")
         $process = Get-Process -Id $session.ProcessId
         if (!$process.Path.StartsWith($layout + '\', [StringComparison]::OrdinalIgnoreCase)) {
             throw 'Activation returned a process outside the owned test layout.'

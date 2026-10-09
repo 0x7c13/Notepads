@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Předchozí změna (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Porovnání nelze připravit s dostupnými prostředky. Dokument zůstává nezměněný.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumenty větší než 1 MB nelze vytisknout.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Načítání dokumentu…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Dokument se nepodařilo načíst</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Dokument „{0}“ není načten. Načíst a uložit jej před zavřením, nebo zahodit jeho kopii pro obnovení?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Uložit před ukončením? Některé dokumenty nejsou načteny. Zahozením se odstraní jejich kopie pro obnovení.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Nenačtené dokumenty</value></data>
 </root>

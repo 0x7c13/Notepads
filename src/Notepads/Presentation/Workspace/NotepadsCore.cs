@@ -26,6 +26,7 @@ using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -38,14 +39,17 @@ namespace Notepads.Presentation.Workspace;
 
 public sealed partial class NotepadsCore : INotepadsCore
 {
+    public event EventHandler<WorkspaceTab> TabOpened;
+    public event EventHandler<WorkspaceTab> TabClosed;
+    public event EventHandler<WorkspaceTab> TabClosing;
+    public event EventHandler<WorkspaceTab> TabSelected;
+    public event EventHandler<WorkspaceTab> TabStateChanged;
+    public event EventHandler<WorkspaceTab> EditorAttached;
     public event EventHandler<ITextEditor> TextEditorLoaded;
-    public event EventHandler<ITextEditor> TextEditorOpened;
-    public event EventHandler<ITextEditor> TextEditorClosed;
     public event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
     public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
     public event EventHandler<ITextEditor> TextEditorSaved;
     public event EventHandler<ITextEditor> TextEditorRenamed;
-    public event EventHandler<ITextEditor> TextEditorClosing;
     public event EventHandler<ITextEditor> TextEditorSelectionChanged;
     public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
     public event EventHandler<ITextEditor> TextEditorLanguageChanged;
@@ -84,6 +88,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         _sets = sets;
         _sets.SetClosing += SetsView_OnSetClosing;
         _sets.SetTapped += SetsView_OnSetTapped;
+        _sets.SelectionChanged += SetsView_OnSelectionChanged;
         _sets.SetDraggedOutside += Sets_SetDraggedOutside;
         _sets.DragOver += Sets_DragOver;
         _sets.Drop += Sets_Drop;
@@ -107,6 +112,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         _sets.SetClosing -= SetsView_OnSetClosing;
         _sets.SetTapped -= SetsView_OnSetTapped;
+        _sets.SelectionChanged -= SetsView_OnSelectionChanged;
         _sets.SetDraggedOutside -= Sets_SetDraggedOutside;
         _sets.DragOver -= Sets_DragOver;
         _sets.Drop -= Sets_Drop;
@@ -122,6 +128,11 @@ public sealed partial class NotepadsCore : INotepadsCore
         // Leave durable recovery roots for the next activation.
         foreach (var item in items)
         {
+            if (item.Tag is WorkspaceTab tab)
+            {
+                tab.StateChanged -= OnTabStateChanged;
+                tab.MarkClosed();
+            }
             try { if (item.ContextFlyout is TabContextFlyout flyout) flyout.Dispose(); }
             catch (Exception ex) { LoggingService.LogException(ex); }
         }
@@ -196,6 +207,25 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     public bool IsClosing { get; set; }
 
+    private bool _isEditorPresentationPaused;
+    public bool IsEditorPresentationPaused
+    {
+        get => _isEditorPresentationPaused;
+        set
+        {
+            if (_isEditorPresentationPaused == value) return;
+            _isEditorPresentationPaused = value;
+            if (!value) return;
+            // A background Ready editor may be in an off-tree host. A close
+            // dialog can select that tab while input is disabled; defer its
+            // first Loaded (.LOG and polling) until presentation resumes.
+            foreach (var tab in GetTabs())
+                if (tab.ReadyEditor != null && !tab.HasBeenPresented &&
+                    GetTabSetsViewItem(tab)?.Content is ContentControl host)
+                    host.Content = CreatePendingContent(tab);
+        }
+    }
+
     private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
     {
         if (_disposed) return;
@@ -235,75 +265,66 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         ThrowIfDisposedOrClosing();
         if (textEditor == null) throw new ArgumentNullException(nameof(textEditor));
-        if (GetTextEditorSetsViewItem(textEditor) != null)
-        {
-            SwitchTo(textEditor);
-            return;
-        }
-        SetsViewItem textEditorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
-        ITextEditor placeholderToReplace = null;
+        if (GetTab(textEditor) is WorkspaceTab existing) { SwitchTo(existing); return; }
+        var placeholder = GetTabs().Length == 1 && atIndex == -1 && textEditor.EditingFile != null
+            ? GetTabs()[0] : null;
+        if (placeholder?.ReadyEditor is not ITextEditor empty || empty.EditingFile != null ||
+            empty.IsModified || !empty.IsDocumentEmpty) placeholder = null;
+        OpenTab(new WorkspaceTab(textEditor), atIndex);
+        if (placeholder != null) TabClosing?.Invoke(this, placeholder);
+    }
 
-        // Notepads should replace current "Untitled.txt" with open file if it is empty and it is the only tab that has been created.
-        // If index != -1, it means set was created after a drag and drop, we should skip this logic
-        if (GetNumberOfOpenedTextEditors() == 1 && textEditor.EditingFile != null && atIndex == -1)
+    public void OpenTab(WorkspaceTab tab, int atIndex = -1, bool select = true, bool allowWhileClosing = false)
+    {
+        ThrowIfDisposed();
+        if (IsClosing && !allowWhileClosing) throw new OperationCanceledException("The view is closing.");
+        if (tab == null) throw new ArgumentNullException(nameof(tab));
+        if (tab.State == WorkspaceTabState.Closed) throw new InvalidOperationException("The tab is closed.");
+        if (ContainsTab(tab)) { if (select) SwitchTo(tab); return; }
+        if (GetTabs().Any(current => current.Id == tab.Id)) throw new InvalidOperationException("Duplicate document identity.");
+        var item = CreateTabSetsViewItem(tab);
+        tab.StateChanged += OnTabStateChanged;
+        if (atIndex < 0) _sets.Items.Add(item);
+        else _sets.Items.Insert(Math.Min(atIndex, _sets.Items.Count), item);
+        TabOpened?.Invoke(this, tab);
+        if (tab.ReadyEditor != null)
         {
-            var selectedEditor = GetAllTextEditors().First();
-            if (selectedEditor.EditingFile == null && !selectedEditor.IsModified && selectedEditor.IsDocumentEmpty)
-            {
-                placeholderToReplace = selectedEditor;
-            }
+            EditorAttached?.Invoke(this, tab);
+            if (!IsClosing && !IsEditorPresentationPaused) ((ContentControl)item.Content).Content = tab.ReadyEditor;
         }
-
-        if (atIndex == -1)
+        if (select && !IsClosing)
         {
-            if (_sets.Items == null) return;
-            _sets.Items.Add(textEditorSetsViewItem);
-        }
-        else
-        {
-            if (_sets.Items == null) return;
-            _sets.Items.Insert(atIndex, textEditorSetsViewItem);
-        }
-
-        TextEditorOpened?.Invoke(this, textEditor);
-        // Keep a live tab throughout replacement and close the old document
-        // through its normal lifetime path, including disposal and subscribers.
-        if (placeholderToReplace != null) TextEditorClosing?.Invoke(this, placeholderToReplace);
-
-        if (GetNumberOfOpenedTextEditors() > 1)
-        {
-            _sets.SelectedItem = textEditorSetsViewItem;
-            if (atIndex == -1)
-            {
-                _sets.ScrollToLastSet();
-            }
+            _sets.SelectedItem = item;
+            if (atIndex < 0) _sets.ScrollToLastSet();
         }
     }
 
-    public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
+    public void OpenTabs(WorkspaceTab[] tabs, Guid? selectedTabId = null, bool allowWhileClosing = false)
     {
-        ThrowIfDisposedOrClosing();
-        bool selectedEditorFound = false;
+        ThrowIfDisposed();
+        if (IsClosing && !allowWhileClosing) throw new OperationCanceledException("The view is closing.");
+        foreach (var tab in tabs) OpenTab(tab, select: false, allowWhileClosing: allowWhileClosing);
+        var selected = GetTabs().FirstOrDefault(tab => tab.Id == selectedTabId) ?? tabs.LastOrDefault();
+        if (selected != null) SwitchTo(selected);
+    }
 
-        foreach (var textEditor in editors)
-        {
-            if (GetTextEditorSetsViewItem(textEditor) != null) continue;
-            var editorSetsViewItem = CreateTextEditorSetsViewItem(textEditor);
-            if (_sets.Items == null) return;
-            _sets.Items.Add(editorSetsViewItem);
-            TextEditorOpened?.Invoke(this, textEditor);
-            if (selectedEditorId.HasValue && textEditor.Id == selectedEditorId.Value)
-            {
-                _sets.SelectedItem = editorSetsViewItem;
-                selectedEditorFound = true;
-            }
-        }
+    public bool AttachEditor(WorkspaceTab tab, ITextEditor editor, bool showEditor = true)
+    {
+        if (_disposed || !ContainsTab(tab) || !tab.TrySetReady(editor)) return false;
+        // Subscribers bind revision and persistence events before the first visual Loaded.
+        EditorAttached?.Invoke(this, tab);
+        if (showEditor && !IsClosing && !IsEditorPresentationPaused && GetTabSetsViewItem(tab)?.Content is ContentControl host)
+            host.Content = editor;
+        tab.CompleteLoading();
+        return true;
+    }
 
-        if (selectedEditorId == null || !selectedEditorFound)
-        {
-            _sets.SelectedIndex = editors.Length - 1;
-            _sets.ScrollToLastSet();
-        }
+    public void ResumeEditorPresentation()
+    {
+        if (_disposed || IsClosing || IsEditorPresentationPaused) return;
+        foreach (var tab in GetTabs())
+            if (tab.ReadyEditor is ITextEditor editor && GetTabSetsViewItem(tab)?.Content is ContentControl host &&
+                !ReferenceEquals(host.Content, editor)) host.Content = editor;
     }
 
     public Task<ITextEditor> CreateTextEditorAsync(Guid id, StorageFile file, Encoding encoding = null) =>
@@ -327,9 +348,11 @@ public sealed partial class NotepadsCore : INotepadsCore
     public ITextEditor CreateTextEditor(
         Guid id,
         StorageFile editingFile,
-        string fileNamePlaceholder)
+        string fileNamePlaceholder,
+        bool allowWhileClosing = false)
     {
-        ThrowIfDisposedOrClosing();
+        ThrowIfDisposed();
+        if (IsClosing && !allowWhileClosing) throw new OperationCanceledException("The view is closing.");
         ITextEditor textEditor = new TextEditor
         {
             Id = id,
@@ -364,30 +387,19 @@ public sealed partial class NotepadsCore : INotepadsCore
         TextEditorSaved?.Invoke(this, textEditor);
     }
 
-    public void DeleteTextEditor(ITextEditor textEditor)
+    public void DeleteTab(WorkspaceTab tab)
     {
-        RemoveTextEditor(textEditor);
-    }
-
-    private void RemoveTextEditor(ITextEditor textEditor)
-    {
-        if (_disposed || textEditor == null) return;
-        var item = GetTextEditorSetsViewItem(textEditor);
+        if (_disposed || tab == null) return;
+        var item = GetTabSetsViewItem(tab);
         if (item == null) return;
+        tab.StateChanged -= OnTabStateChanged;
+        tab.MarkClosed();
         item.IsEnabled = false;
         item.PrepareForClosing();
-        _sets.Items?.Remove(item);
-
-        if (item.ContextFlyout is TabContextFlyout tabContextFlyout)
-        {
-            tabContextFlyout.Dispose();
-        }
-
-        TextEditorClosed?.Invoke(this, textEditor);
-
-        DisposeTextEditor(textEditor);
-        // Explicit closure or source-move authority has already committed.
-        // Recovery retirement is awaited by the session/transfer protocol.
+        _sets.Items.Remove(item);
+        if (item.ContextFlyout is TabContextFlyout flyout) flyout.Dispose();
+        TabClosed?.Invoke(this, tab);
+        if (tab.AttachedEditor != null) DisposeTextEditor(tab.AttachedEditor);
     }
 
     private void DisposeTextEditor(ITextEditor textEditor)
@@ -407,41 +419,27 @@ public sealed partial class NotepadsCore : INotepadsCore
         _ = TrackWorkAsync(textEditor.DisposalCompletion, requiresShutdownProof: true);
     }
 
-    public int GetNumberOfOpenedTextEditors()
+    public async Task DiscardUnattachedEditorAsync(ITextEditor editor)
     {
-        return _disposed ? 0 : _sets.Items?.Count ?? 0;
+        if (editor == null) return;
+        if (GetTab(editor) != null) throw new InvalidOperationException("An attached editor must close through its tab.");
+        DisposeTextEditor(editor);
+        await editor.DisposalCompletion;
     }
+
+    public int GetTabCount() => _disposed ? 0 : _sets.Items?.Count ?? 0;
 
     public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content)
     {
-        title = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
-        content = textEditor.GetContentForSharing();
+        title = textEditor?.EditingFileName ?? textEditor?.FileNamePlaceholder;
+        content = textEditor?.GetContentForSharing();
         return !string.IsNullOrEmpty(content);
     }
 
-    public bool HaveUnsavedTextEditor()
-    {
-        if (_sets.Items == null || _sets.Items.Count == 0) return false;
-        foreach (SetsViewItem setsItem in _sets.Items)
-        {
-            if (setsItem.Content is not ITextEditor textEditor) continue;
-            if (!textEditor.IsModified) continue;
-            return true;
-        }
-        return false;
-    }
+    // Persisted clean metadata does not establish whether the file grant is still usable.
+    public bool HasTabsRequiringSave() => GetTabs().Any(tab => tab.ReadyEditor == null || tab.IsModified);
 
-    public bool HaveNonemptyTextEditor()
-    {
-        if (_sets.Items == null || _sets.Items.Count <= 1) return false;
-        foreach (SetsViewItem setsItem in _sets.Items)
-        {
-            if (setsItem.Content is not ITextEditor textEditor) continue;
-            if (textEditor.IsDocumentEmpty) continue;
-            return true;
-        }
-        return false;
-    }
+    public bool HasPrintableTabs() => GetTabs().Any(tab => tab.ReadyEditor == null || !tab.ReadyEditor.IsDocumentEmpty);
 
     public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding)
     {
@@ -489,6 +487,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     public void SwitchTo(ITextEditor textEditor)
     {
         var item = GetTextEditorSetsViewItem(textEditor);
+        if (item == null) return;
         if (!ReferenceEquals(_sets.SelectedItem, item))
         {
             _sets.SelectedItem = item;
@@ -496,48 +495,81 @@ public sealed partial class NotepadsCore : INotepadsCore
         }
     }
 
-    public ITextEditor GetSelectedTextEditor()
+    public void SwitchTo(WorkspaceTab tab)
     {
-        if (_disposed) return null;
-        return (_sets.SelectedItem as SetsViewItem)?.Content as ITextEditor;
+        var item = GetTabSetsViewItem(tab);
+        if (item == null || ReferenceEquals(_sets.SelectedItem, item)) return;
+        _sets.SelectedItem = item;
+        _sets.ScrollIntoView(item);
     }
 
-    public ITextEditor[] GetAllTextEditors()
-    {
-        if (_disposed) return [];
-        if (_sets.Items == null) return [];
-        var editors = new List<ITextEditor>();
-        foreach (SetsViewItem item in _sets.Items)
-        {
-            if (item.Content is ITextEditor textEditor)
-            {
-                editors.Add(textEditor);
-            }
-        }
-        return editors.ToArray();
-    }
+    public WorkspaceTab GetSelectedTab() => _disposed ? null : (_sets.SelectedItem as SetsViewItem)?.Tag as WorkspaceTab;
 
-    public void FocusOnSelectedTextEditor()
-    {
-        FocusOnTextEditor(GetSelectedTextEditor());
-    }
+    public ITextEditor GetSelectedReadyEditor() => GetSelectedTab()?.ReadyEditor;
+
+    public WorkspaceTab[] GetTabs() => _disposed || _sets.Items == null ? [] :
+        _sets.Items.Cast<SetsViewItem>().Select(item => (WorkspaceTab)item.Tag).ToArray();
+
+    public WorkspaceTab GetTab(ITextEditor editor) => editor == null ? null :
+        GetTabs().FirstOrDefault(tab => ReferenceEquals(tab.ReadyEditor, editor));
+
+    public bool ContainsTab(WorkspaceTab tab) => tab != null && GetTabSetsViewItem(tab) != null;
+
+    public void FocusOnSelectedTextEditor() => FocusOnTextEditor(GetSelectedReadyEditor());
 
     public void FocusOnTextEditor(ITextEditor textEditor)
     {
-        if (!_disposed) textEditor?.Focus();
+        if (!_disposed && !IsClosing && !IsEditorPresentationPaused) textEditor?.Focus();
     }
 
-    public void CloseTextEditor(ITextEditor textEditor)
+    public void CloseTab(WorkspaceTab tab) => GetTabSetsViewItem(tab)?.Close();
+
+    public async Task<WorkspaceTab> FindTabAsync(StorageFile file)
     {
-        var item = GetTextEditorSetsViewItem(textEditor);
-        item?.Close();
+        if (_disposed || file == null) return null;
+        while (!_disposed)
+        {
+            if (FindTabWithoutFileResolution(file) is WorkspaceTab existing) return existing;
+            var tabs = GetTabs();
+            var versions = tabs.Select(tab => tab.RepresentationVersion).ToArray();
+            foreach (var tab in tabs)
+            {
+                if (!ContainsTab(tab) || tab.ReadyEditor != null) continue;
+                var source = tab.RecoverySource;
+                var token = source?.EditingFileFutureAccessToken;
+                if (string.IsNullOrEmpty(token)) continue;
+                try
+                {
+                    var resolved = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
+                    // Another open or rename may have finished anywhere in the
+                    // roster while the broker call yielded, including an earlier row.
+                    if (FindTabWithoutFileResolution(file) is WorkspaceTab current) return current;
+                    if (ContainsTab(tab) && tab.ReadyEditor == null &&
+                        ReferenceEquals(tab.RecoverySource, source) && resolved.IsEqual(file)) return tab;
+                }
+                catch (Exception ex) { LoggingService.LogException(ex); }
+            }
+            var currentTabs = GetTabs();
+            if (tabs.Length != currentTabs.Length || tabs.Where((tab, index) =>
+                !ReferenceEquals(tab, currentTabs[index]) || tab.RepresentationVersion != versions[index]).Any()) continue;
+            // Ready file identity can change without changing its representation version.
+            return FindTabWithoutFileResolution(file);
+        }
+        return null;
     }
 
-    public ITextEditor GetTextEditor(StorageFile file)
+    private WorkspaceTab FindTabWithoutFileResolution(StorageFile file)
     {
-        if (_disposed) return null;
-        var item = GetTextEditorSetsViewItem(file);
-        return item?.Content as ITextEditor;
+        foreach (var tab in GetTabs())
+        {
+            if (tab.ReadyEditor is ITextEditor editor)
+            {
+                if (editor.EditingFile?.IsEqual(file) == true) return tab;
+            }
+            else if (!string.IsNullOrEmpty(file.Path) && !string.IsNullOrEmpty(tab.EditingFilePath) &&
+                string.Equals(file.Path, tab.EditingFilePath, StringComparison.OrdinalIgnoreCase)) return tab;
+        }
+        return null;
     }
 
     public double GetTabScrollViewerHorizontalOffset()
@@ -550,62 +582,56 @@ public sealed partial class NotepadsCore : INotepadsCore
         _sets.ScrollTo(offset);
     }
 
-    private SetsViewItem CreateTextEditorSetsViewItem(ITextEditor textEditor)
+    private SetsViewItem CreateTabSetsViewItem(WorkspaceTab tab)
     {
-        var modifierIcon = new FontIcon()
+        var item = new SetsViewItem
         {
-            Glyph = "\uF127",
-            FontSize = 1.5,
-            Width = 3,
-            Height = 3,
-            Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-        };
-
-        var textEditorSetsViewItem = new SetsViewItem
-        {
-            Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
-            Content = textEditor,
+            Tag = tab,
+            Header = tab.Title,
+            Content = new ContentControl
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Content = CreatePendingContent(tab)
+            },
             SelectionIndicatorForeground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
-            Icon = modifierIcon
+            Icon = new FontIcon
+            {
+                Glyph = "\uF127", FontSize = 1.5, Width = 3, Height = 3,
+                Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
+                Visibility = tab.IsModified ? Visibility.Visible : Visibility.Collapsed
+            },
+            ContextFlyout = new TabContextFlyout(this, tab, _renameTextEditorAsync)
         };
-
-        if (textEditorSetsViewItem.Content == null || textEditorSetsViewItem.Content is Page)
-        {
-            throw new Exception("Content should not be null and type should not be Page (SetsView does not work well with Page controls)");
-        }
-
-        textEditorSetsViewItem.Icon.Visibility = textEditor.IsModified ? Visibility.Visible : Visibility.Collapsed;
-        textEditorSetsViewItem.ContextFlyout = new TabContextFlyout(this, textEditor, _renameTextEditorAsync);
-
-        return textEditorSetsViewItem;
+        return item;
     }
 
-    private SetsViewItem GetTextEditorSetsViewItem(StorageFile file)
+    private TextBlock CreatePendingContent(WorkspaceTab tab) => new()
     {
-        if (file == null || _sets.Items == null) return null;
-        foreach (SetsViewItem setsItem in _sets.Items)
-        {
-            if (setsItem.Content is not ITextEditor textEditor) continue;
-            if (textEditor.EditingFile != null && textEditor.EditingFile.IsEqual(file))
-            {
-                return setsItem;
-            }
-        }
-        return null;
+        Text = _resourceLoader.GetString(tab.State == WorkspaceTabState.Failed ?
+            "WorkspaceTab_LoadFailed" : "WorkspaceTab_Loading"),
+        HorizontalAlignment = HorizontalAlignment.Center,
+        VerticalAlignment = VerticalAlignment.Center,
+        TextWrapping = TextWrapping.Wrap,
+        Margin = new Thickness(24)
+    };
+
+    private SetsViewItem GetTabSetsViewItem(WorkspaceTab tab) => _disposed || tab == null || _sets.Items == null ? null :
+        _sets.Items.Cast<SetsViewItem>().FirstOrDefault(item => ReferenceEquals(item.Tag, tab));
+
+    private SetsViewItem GetTextEditorSetsViewItem(ITextEditor textEditor) => GetTabSetsViewItem(GetTab(textEditor));
+
+    private void OnTabStateChanged(object sender, EventArgs e)
+    {
+        if (sender is not WorkspaceTab tab || GetTabSetsViewItem(tab) is not SetsViewItem item) return;
+        item.Header = tab.Title;
+        item.Icon.Visibility = tab.IsModified ? Visibility.Visible : Visibility.Collapsed;
+        if (tab.ReadyEditor == null && item.Content is ContentControl host) host.Content = CreatePendingContent(tab);
+        TabStateChanged?.Invoke(this, tab);
     }
 
-    private SetsViewItem GetTextEditorSetsViewItem(ITextEditor textEditor)
-    {
-        if (_sets.Items == null) return null;
-        foreach (SetsViewItem setsItem in _sets.Items)
-        {
-            if (setsItem.Content is ITextEditor editor)
-            {
-                if (textEditor == editor) return setsItem;
-            }
-        }
-        return null;
-    }
+    private void SetsView_OnSelectionChanged(object sender, SelectionChangedEventArgs e) =>
+        TabSelected?.Invoke(this, GetSelectedTab());
 
     private void MarkTextEditorSetNotSaved(ITextEditor textEditor)
     {
@@ -633,7 +659,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private void SetsView_OnSetTapped(object sender, SetSelectedEventArgs e)
     {
-        FocusOnTextEditor(e.Item as ITextEditor);
+        FocusOnSelectedTextEditor();
     }
 
     private void TextEditor_OnKeyDown(object sender, KeyRoutedEventArgs e)
@@ -643,18 +669,15 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private void SetsView_OnSetClosing(object sender, SetClosingEventArgs e)
     {
-        if (e.Set.Content is not ITextEditor textEditor) return;
-
-        if (TextEditorClosing != null)
-        {
-            e.Cancel = true;
-            TextEditorClosing.Invoke(this, textEditor);
-        }
+        if (e.Set.Tag is not WorkspaceTab tab) return;
+        e.Cancel = true;
+        TabClosing?.Invoke(this, tab);
     }
 
     private void TextEditor_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is not ITextEditor textEditor) return;
+        if (GetTab(textEditor) is WorkspaceTab tab) tab.HasBeenPresented = true;
         TextEditorLoaded?.Invoke(this, textEditor);
     }
 
@@ -720,7 +743,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private static ITextEditor GetDraggedEditor(object item)
     {
-        return item as ITextEditor ?? (item as SetsViewItem)?.Content as ITextEditor;
+        return (item as WorkspaceTab)?.ReadyEditor ?? ((item as SetsViewItem)?.Tag as WorkspaceTab)?.ReadyEditor;
     }
 
     private bool IsLocalTransfer(DataPackageView data)
@@ -789,20 +812,20 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         if (!_transfers.TryGetValue(transfer.Editor.Id, out var active) || active != transfer) return;
         _transfers.Remove(transfer.Editor.Id);
-        bool alive = GetAllTextEditors().Contains(transfer.Editor);
+        bool alive = GetTab(transfer.Editor) != null;
         var result = received ? TextEditorTransferResult.UnverifiedMove : TextEditorTransferResult.Cancelled;
         try
         {
             if (!_disposed && received && transfer.HasPublishedData && await transfer.HasReceiptAsync())
             {
                 if (await transfer.TryCommitSourceMoveAsync(
-                    () => !_disposed && !IsClosing && GetAllTextEditors().Contains(transfer.Editor),
+                    () => !_disposed && !IsClosing && GetTab(transfer.Editor) != null,
                     () => TextEditorMovedToAnotherAppInstance?.Invoke(this, transfer.Editor)))
                 {
                     result = TextEditorTransferResult.Received;
                 }
 
-                alive = !_disposed && GetAllTextEditors().Contains(transfer.Editor);
+                alive = !_disposed && GetTab(transfer.Editor) != null;
             }
         }
         catch (Exception ex) { LoggingService.LogException(ex); }
@@ -876,7 +899,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
                 editingFile = file;
             }
-            if (editingFile != null && GetTextEditor(editingFile) is ITextEditor existing)
+            if (editingFile != null && await FindTabAsync(editingFile) is WorkspaceTab existing)
             {
                 SwitchTo(existing);
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
@@ -902,6 +925,12 @@ public sealed partial class NotepadsCore : INotepadsCore
             // The destination owns independent baselines and an imported
             // journal before the source is allowed to close its editor.
             ThrowIfDisposedOrClosing();
+            if (editingFile != null && await FindTabAsync(editingFile) is WorkspaceTab duplicate)
+            {
+                SwitchTo(duplicate);
+                return;
+            }
+            ThrowIfDisposedOrClosing();
             await ProtectTransferredEditorAsync(candidate, token, expectedTarget);
             OpenTextEditor(candidate, GetDropIndex(sets, args));
             published = true;
@@ -920,8 +949,8 @@ public sealed partial class NotepadsCore : INotepadsCore
                     // A source may have consumed the durable receipt while
                     // this view was closing. Publication rollback is not an
                     // intentional discard of its independent recovery data.
-                    if (GetAllTextEditors().Contains(candidate)) RemoveTextEditor(candidate);
-                    else DisposeTextEditor(candidate);
+                    if (GetTab(candidate) != null) DeleteTab(GetTab(candidate));
+                    else await DiscardUnattachedEditorAsync(candidate);
                 }
                 if (args.DataView.Contains(TextEditorTransfer.DataFormat)) args.DataView.ReportOperationCompleted(DataPackageOperation.None);
             }
@@ -945,12 +974,12 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
     {
-        if (_sets.Items?.Count > 1 && e.Set?.Content is ITextEditor textEditor)
+        if (_sets.Items?.Count > 1 && (e.Set?.Tag as WorkspaceTab)?.ReadyEditor is ITextEditor textEditor)
         {
             // Only allow untitled empty document to be dragged outside for now
             if (!textEditor.IsModified && textEditor.EditingFile == null && textEditor.IsDocumentEmpty)
             {
-                TextEditorClosing?.Invoke(this, textEditor);
+                TabClosing?.Invoke(this, GetTab(textEditor));
                 await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
             }
         }

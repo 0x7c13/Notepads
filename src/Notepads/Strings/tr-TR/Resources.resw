@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Önceki değişiklik (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Karşılaştırma kullanılabilir kaynaklarla hazırlanamadı. Belgeniz değişmedi.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB'tan büyük belgeler yazdırılamaz.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Belge yükleniyor…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Belge yüklenemedi</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” yüklenmedi. Kapatmadan önce yükleyip kaydetmek mi, kurtarma kopyasını silmek mi istiyorsunuz?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Çıkmadan önce kaydedilsin mi? Bazı belgeler yüklenmedi. Vazgeçmek kurtarma kopyalarını siler.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Yüklenmemiş belgeler</value></data>
 </root>

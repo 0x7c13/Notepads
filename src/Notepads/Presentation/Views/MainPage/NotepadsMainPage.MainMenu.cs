@@ -28,15 +28,15 @@ public sealed partial class NotepadsMainPage
         MenuCreateNewButton.Click += async (sender, args) => await CreateNewTextEditorAsync();
         MenuCreateNewWindowButton.Click += async (sender, args) => await OpenNewAppInstanceAsync();
         MenuOpenFileButton.Click += async (sender, args) => await OpenNewFilesAsync();
-        MenuSaveButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: false);
-        MenuSaveAsButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: true);
-        MenuSaveAllButton.Click += async (sender, args) => await SaveAllAsync(NotepadsCore.GetAllTextEditors());
-        MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
-        MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedTextEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
+        MenuSaveButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedReadyEditor(), saveAs: false);
+        MenuSaveAsButton.Click += async (sender, args) => await SaveAsync(NotepadsCore.GetSelectedReadyEditor(), saveAs: true);
+        MenuSaveAllButton.Click += async (sender, args) => await SaveAllAsync(NotepadsCore.GetTabs());
+        MenuFindButton.Click += (sender, args) => NotepadsCore.GetSelectedReadyEditor()?.ShowFindAndReplaceControl(showReplaceBar: false);
+        MenuReplaceButton.Click += (sender, args) => NotepadsCore.GetSelectedReadyEditor()?.ShowFindAndReplaceControl(showReplaceBar: true);
         MenuFullScreenButton.Click += (sender, args) => EnterExitFullScreenMode();
         MenuCompactOverlayButton.Click += (sender, args) => EnterExitCompactOverlayMode();
-        MenuPrintButton.Click += async (sender, args) => await PrintAsync(NotepadsCore.GetSelectedTextEditor());
-        MenuPrintAllButton.Click += async (sender, args) => await PrintAllAsync(NotepadsCore.GetAllTextEditors());
+        MenuPrintButton.Click += async (sender, args) => await PrintAsync(NotepadsCore.GetSelectedReadyEditor());
+        MenuPrintAllButton.Click += async (sender, args) => await PrintAllAsync(NotepadsCore.GetTabs());
         MenuSettingsButton.Click += (sender, args) => RootSplitView.IsPaneOpen = true;
 
         if (!_context.IsPrimaryInstance)
@@ -57,7 +57,7 @@ public sealed partial class NotepadsMainPage
 
     private void MainMenuButtonFlyout_Opening(object sender, object e)
     {
-        var selectedTextEditor = NotepadsCore.GetSelectedTextEditor();
+        var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
 
         if (selectedTextEditor == null)
         {
@@ -85,7 +85,7 @@ public sealed partial class NotepadsMainPage
             if (PrintManager.IsSupported())
             {
                 MenuPrintButton.IsEnabled = !selectedTextEditor.IsDocumentEmpty;
-                MenuPrintAllButton.IsEnabled = NotepadsCore.HaveNonemptyTextEditor();
+                MenuPrintAllButton.IsEnabled = NotepadsCore.HasPrintableTabs();
             }
         }
 
@@ -97,7 +97,8 @@ public sealed partial class NotepadsMainPage
             ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay
                 ? "App_ExitCompactOverlayMode_Text"
                 : "App_EnterCompactOverlayMode_Text");
-        MenuSaveAllButton.IsEnabled = NotepadsCore.HaveUnsavedTextEditor();
+        MenuSaveAllButton.IsEnabled = NotepadsCore.HasTabsRequiringSave();
+        MenuPrintAllButton.IsEnabled = PrintManager.IsSupported() && NotepadsCore.HasPrintableTabs();
     }
 
     private async Task BuildOpenRecentButtonSubItemsAsync()

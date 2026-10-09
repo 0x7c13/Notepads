@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>이전 변경 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>사용 가능한 리소스로 비교를 준비할 수 없습니다. 문서는 변경되지 않았습니다.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1MB보다 큰 문서는 인쇄할 수 없습니다.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>문서를 불러오는 중…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>문서를 불러올 수 없음</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” 문서를 불러오지 않았습니다. 닫기 전에 불러와서 저장하거나 복구 사본을 삭제하시겠습니까?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>종료하기 전에 저장하시겠습니까? 일부 문서를 불러오지 않았습니다. 버리기를 선택하면 복구 사본이 삭제됩니다.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>불러오지 않은 문서</value></data>
 </root>

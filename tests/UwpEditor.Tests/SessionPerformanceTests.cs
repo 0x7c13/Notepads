@@ -114,31 +114,27 @@ internal static class SessionPerformanceTests
             originals.Clear();
             await service.DisposeAsync();
             reopened = SessionTestProtocol.CreateService(owner);
-            await Measure("metadata", () => reopened.EnsureMetadataRetainedAsync(CancellationToken.None));
+            SessionRecoveryPlan plan = null;
+            await Measure("metadata", async () => plan = await reopened.DiscoverRecoveryAsync(CancellationToken.None));
             var restoredIds = Array.Empty<Guid>();
-            PreparedRecoveryBatch batch = null;
+            SessionTestRecoveryBatch batch = null;
             try
             {
-                await Measure("prepare", async () => batch = await reopened.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None));
+                await Measure("prepare", async () => batch = await SessionTestProtocol.MaterializeAsync(reopened, new DocumentLoadOptions(), CancellationToken.None, plan));
                 SessionTestProtocol.Check(batch.Documents.Count == tabs, "The workload lost a recovery row.");
                 await Measure("native-restore", async () =>
                 {
-                    var completed = new SessionTestDocument[batch.Documents.Count];
-                    try
-                    {
-                        await RecoveryRestorePipeline.RunAsync(batch.Documents,
-                            async (index, prepared) => completed[index] = await SessionTestDocument.FromPreparedAsync(owner, prepared), CancellationToken.None);
-                    }
-                    finally { restored.AddRange(completed.Where(document => document != null)); }
+                    foreach (var prepared in batch.Documents)
+                        restored.Add(await SessionTestDocument.FromPreparedAsync(owner, prepared));
                 });
                 restoredIds = batch.Documents.Select(document => document.Id).ToArray();
                 await Measure("restore-publication", async () =>
                 {
                     using var capture = SessionTestProtocol.CaptureDocuments(restored, restoredIds, batch.ExpectedStamp);
-                    await reopened.CommitAttachedAsync(capture, restoredIds, CancellationToken.None);
+                    await SessionTestProtocol.PublishRecoveredAsync(reopened, batch, capture);
                 });
             }
-            finally { batch?.Dispose(); }
+            finally { batch?.Dispose(); plan?.Dispose(); }
 
             output = await ApplicationData.Current.LocalFolder.CreateFileAsync($"performance-{owner:N}.txt", CreationCollisionOption.FailIfExists);
             DocumentBaseline saved = null;
@@ -168,7 +164,7 @@ internal static class SessionPerformanceTests
                 var primaryOwner = Guid.NewGuid();
                 foreignOwners.Add(primaryOwner);
                 var primary = SessionTestProtocol.CreateService(primaryOwner, primary: true);
-                try { await Measure("inactive-startup", () => primary.EnsureMetadataRetainedAsync(CancellationToken.None)); }
+                try { await Measure("inactive-startup", async () => { using var inactive = await primary.DiscoverRecoveryAsync(); }); }
                 finally { await primary.DisposeAsync(); }
             }
         }

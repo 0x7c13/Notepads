@@ -18,6 +18,7 @@ using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Sessions;
 using Notepads.Features.Sessions.Recovery;
+using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Workspace;
@@ -47,7 +48,7 @@ internal static partial class SessionControllerTests
                 var controller = window.Controller;
                 await observer.ExpectOffUIAsync(controller.InitializeAuthorityAsync, "session.catalog");
                 await observer.ExpectOffUIAsync(async () => SessionTestProtocol.Check(await controller.LoadLastSessionAsync() == 0,
-                    "A new scope restored a tab."), "session.prepare", "session.metadata", "session.catalog");
+                    "A new scope restored a tab."), "session.discover", "session.catalog");
                 var kept = await window.Core.OpenAsync("kept\r");
                 var closing = await window.Core.OpenAsync("closing\r");
                 kept.Document.Editor.InsertText(0, "typed\r");
@@ -57,7 +58,7 @@ internal static partial class SessionControllerTests
                 await observer.ExpectOffUIAsync(async () => SessionTestProtocol.Check(
                     await controller.SaveSessionAsync(() => saved = true) && saved,
                     "The controller did not back up its tabs or skipped the after-save action."),
-                    "session.metadata", "session.journal.flush", "session.publish");
+                    "session.journal.flush", "session.publish");
                 var closed = new HashSet<Guid>();
                 await observer.ExpectOffUIAsync(async () => SessionTestProtocol.Check(
                     await controller.PrepareExplicitCloseAsync(new[] { closing.Id }, closed) && closed.SetEquals(new[] { closing.Id }),
@@ -71,9 +72,13 @@ internal static partial class SessionControllerTests
             {
                 var controller = window.Controller;
                 await observer.ExpectOffUIAsync(controller.InitializeAuthorityAsync, "session.catalog");
-                await observer.ExpectOffUIAsync(async () => SessionTestProtocol.Check(await controller.LoadLastSessionAsync() == 1,
-                    "The controller did not restore exactly the kept tab."), "session.prepare", "session.metadata", "session.publish");
-                var restored = (FakeTextEditor)window.Core.GetAllTextEditors().Single();
+                await observer.ExpectOffUIAsync(async () =>
+                {
+                    SessionTestProtocol.Check(await controller.LoadLastSessionAsync() == 1,
+                        "The controller did not restore exactly the kept tab.");
+                    await controller.WaitForRestorationCheckpointAsync();
+                }, "session.discover", "session.publish");
+                var restored = (FakeTextEditor)window.Core.GetTabs().Single().ReadyEditor;
                 SessionTestProtocol.Check(restored.Id == keptId && restored.Text == "typed\rkept\r" && window.Core.TabScrollOffset == 17,
                     "The restored tab lost its identity, its journaled text or the tab strip offset.");
                 var epoch = window.Service.CurrentStamp.EpochId;
@@ -87,7 +92,11 @@ internal static partial class SessionControllerTests
             observer.Dispose();
             await SessionTestProtocol.CleanupAsync(owner);
         }
-        log.AppendLine("PASS: the session controller runs authority, restore preparation, attach commit, backup, explicit close, maintenance and clear on the pool inside its serialized steps, while capture and restore stay on the UI thread across two window lifetimes.");
+        log.AppendLine("PASS: session authority, discovery, background preparation, backup, close, maintenance and reset run on the pool; native restore and capture stay on the UI thread across two window lifetimes.");
+        await VerifyLazyWorkspaceAsync(log);
+        await VerifyInterruptedResetAsync(log);
+        await VerifyBackgroundOutcomesAsync(log);
+        await VerifyImportedWorkspaceAsync(log);
     }
 
     private static NotSupportedException Unused() => new("The session controller test host does not use this member.");
@@ -141,11 +150,11 @@ internal static partial class SessionControllerTests
     {
         private bool _closed;
 
-        public ControllerHost(Guid owner, SessionRegistry registry)
+        public ControllerHost(Guid owner, SessionRegistry registry, RecoveryRecordStore store = null)
         {
             var dispatcher = Window.Current.Dispatcher;
             Core = new FakeNotepadsCore(owner, dispatcher);
-            Service = SessionTestProtocol.CreateService(owner);
+            Service = SessionTestProtocol.CreateService(owner, store);
             Controller = new SessionController(Core, Service, dispatcher, registry.Register);
         }
 
@@ -174,16 +183,16 @@ internal static partial class SessionControllerTests
         private readonly Guid _owner;
         private readonly CoreDispatcher _dispatcher;
         private readonly List<FakeTextEditor> _created = [];
-        private readonly List<FakeTextEditor> _open = [];
+        private readonly List<WorkspaceTab> _open = [];
         private Guid? _selectedEditorId;
 
         public FakeNotepadsCore(Guid owner, CoreDispatcher dispatcher) { _owner = owner; _dispatcher = dispatcher; }
 
-        public event EventHandler<ITextEditor> TextEditorOpened;
-        public event EventHandler<ITextEditor> TextEditorClosed;
+        public event EventHandler<WorkspaceTab> TabOpened, TabClosed, TabSelected, EditorAttached;
 #pragma warning disable CS0067
+        public event EventHandler<WorkspaceTab> TabClosing, TabStateChanged;
         public event EventHandler<ITextEditor> TextEditorLoaded, TextEditorLanguageChanged,
-            TextEditorEditorModificationStateChanged, TextEditorFileModificationStateChanged, TextEditorSaved, TextEditorClosing,
+            TextEditorEditorModificationStateChanged, TextEditorFileModificationStateChanged, TextEditorSaved,
             TextEditorRenamed, TextEditorSelectionChanged, TextEditorFontZoomFactorChanged, TextEditorEncodingChanged,
             TextEditorLineEndingChanged, TextEditorMovedToAnotherAppInstance;
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
@@ -192,21 +201,22 @@ internal static partial class SessionControllerTests
 
         public Guid DocumentOwnerId => _owner;
         public bool IsClosing { get; set; }
+        public bool IsEditorPresentationPaused { get; set; }
         public double TabScrollOffset { get; set; }
         public Action<Guid> RestoreStarting { get; set; }
         public Action<Guid> NativeRestoreReturned { get; set; }
         public Action<FakeTextEditor> RestoreReady { get; set; }
-        public Action BatchAttached { get; set; }
+        public Action SelectedAttached { get; set; }
 
         public async Task<FakeTextEditor> OpenAsync(string text)
         {
             var editor = (FakeTextEditor)CreateTextEditor(Guid.NewGuid(), null, null);
             await editor.CreateDocumentAsync(text);
-            OpenTextEditors(new ITextEditor[] { editor });
+            OpenTextEditor(editor);
             return editor;
         }
 
-        public ITextEditor CreateTextEditor(Guid id, StorageFile editingFile, string fileNamePlaceHolder)
+        public ITextEditor CreateTextEditor(Guid id, StorageFile editingFile, string fileNamePlaceHolder, bool allowWhileClosing = false)
         {
             RequireUIThread(_dispatcher);
             var editor = new FakeTextEditor(id, _owner, _dispatcher)
@@ -219,30 +229,67 @@ internal static partial class SessionControllerTests
             return editor;
         }
 
-        public void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null)
+        public void OpenTextEditor(ITextEditor editor, int atIndex = -1) => OpenTab(new WorkspaceTab(editor), atIndex);
+
+        public void OpenTab(WorkspaceTab tab, int atIndex = -1, bool select = true, bool allowWhileClosing = false)
         {
             RequireUIThread(_dispatcher);
-            foreach (FakeTextEditor editor in editors)
-            {
-                _open.Add(editor);
-                TextEditorOpened?.Invoke(this, editor);
-            }
-            _selectedEditorId = editors.Any(editor => editor.Id == selectedEditorId)
-                ? selectedEditorId : editors.LastOrDefault()?.Id;
-            BatchAttached?.Invoke();
+            if (atIndex < 0) _open.Add(tab);
+            else _open.Insert(atIndex, tab);
+            TabOpened?.Invoke(this, tab);
+            if (tab.ReadyEditor != null) EditorAttached?.Invoke(this, tab);
+            if (select) SwitchTo(tab);
         }
 
-        public void Close(FakeTextEditor editor)
+        public void OpenTabs(WorkspaceTab[] tabs, Guid? selectedTabId = null, bool allowWhileClosing = false)
+        {
+            foreach (var tab in tabs) OpenTab(tab, select: false);
+            SwitchTo(tabs.FirstOrDefault(tab => tab.Id == selectedTabId) ?? tabs.LastOrDefault());
+        }
+
+        public bool AttachEditor(WorkspaceTab tab, ITextEditor editor, bool showEditor = true)
         {
             RequireUIThread(_dispatcher);
-            _open.Remove(editor);
-            if (_selectedEditorId == editor.Id) _selectedEditorId = _open.LastOrDefault()?.Id;
-            TextEditorClosed?.Invoke(this, editor);
+            if (!ContainsTab(tab) || !tab.TrySetReady(editor)) return false;
+            EditorAttached?.Invoke(this, tab);
+            tab.CompleteLoading();
+            if (showEditor && GetSelectedTab() == tab) SelectedAttached?.Invoke();
+            return true;
         }
 
-        public ITextEditor[] GetAllTextEditors() { RequireUIThread(_dispatcher); return _open.ToArray(); }
-        public ITextEditor GetSelectedTextEditor() { RequireUIThread(_dispatcher); return _open.FirstOrDefault(editor => editor.Id == _selectedEditorId); }
-        public int GetNumberOfOpenedTextEditors() => _open.Count;
+        public void ResumeEditorPresentation() { }
+        public async Task DiscardUnattachedEditorAsync(ITextEditor editor)
+        {
+            if (GetTab(editor) != null) throw new InvalidOperationException("Cannot discard an attached editor.");
+            _created.Remove((FakeTextEditor)editor);
+            editor.Dispose();
+            await ((FakeTextEditor)editor).ReleaseDocumentAsync();
+            await editor.DisposalCompletion;
+        }
+        public void SwitchTo(WorkspaceTab tab)
+        {
+            RequireUIThread(_dispatcher);
+            _selectedEditorId = tab?.Id;
+            TabSelected?.Invoke(this, tab);
+        }
+
+        public void Close(FakeTextEditor editor) => CloseTab(GetTab(editor));
+        public void DeleteTab(WorkspaceTab tab) => CloseTab(tab);
+        public void CloseTab(WorkspaceTab tab)
+        {
+            RequireUIThread(_dispatcher);
+            tab.MarkClosed();
+            _open.Remove(tab);
+            if (_selectedEditorId == tab.Id) SwitchTo(_open.LastOrDefault());
+            TabClosed?.Invoke(this, tab);
+        }
+
+        public WorkspaceTab[] GetTabs() { RequireUIThread(_dispatcher); return _open.ToArray(); }
+        public WorkspaceTab GetSelectedTab() { RequireUIThread(_dispatcher); return _open.FirstOrDefault(tab => tab.Id == _selectedEditorId); }
+        public ITextEditor GetSelectedReadyEditor() => GetSelectedTab()?.ReadyEditor;
+        public WorkspaceTab GetTab(ITextEditor editor) => _open.FirstOrDefault(tab => tab.AttachedEditor == editor);
+        public bool ContainsTab(WorkspaceTab tab) => _open.Contains(tab);
+        public int GetTabCount() => _open.Count;
         public double GetTabScrollViewerHorizontalOffset() { RequireUIThread(_dispatcher); return TabScrollOffset; }
         public void SetTabScrollViewerHorizontalOffset(double offset) { RequireUIThread(_dispatcher); TabScrollOffset = offset; }
 
@@ -255,20 +302,17 @@ internal static partial class SessionControllerTests
 
         public Task<ITextEditor> CreateTextEditorAsync(Guid id, StorageFile file, Encoding encoding) => throw Unused();
         public Task<ITextEditor> CreateNewTextEditorAsync(string fileNamePlaceholder) => throw Unused();
-        public void OpenTextEditor(ITextEditor editor, int atIndex) => throw Unused();
         public Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file) => throw Unused();
-        public void DeleteTextEditor(ITextEditor textEditor) => throw Unused();
         public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content) => throw Unused();
-        public bool HaveUnsavedTextEditor() => throw Unused();
-        public bool HaveNonemptyTextEditor() => throw Unused();
+        public bool HasTabsRequiringSave() => throw Unused();
+        public bool HasPrintableTabs() => throw Unused();
         public void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding) => throw Unused();
         public void SwitchTo(bool next) => throw Unused();
         public void SwitchTo(int index) => throw Unused();
         public void SwitchTo(ITextEditor textEditor) => throw Unused();
-        public ITextEditor GetTextEditor(StorageFile file) => throw Unused();
+        public Task<WorkspaceTab> FindTabAsync(StorageFile file) => throw Unused();
         public void FocusOnTextEditor(ITextEditor textEditor) => throw Unused();
         public void FocusOnSelectedTextEditor() => throw Unused();
-        public void CloseTextEditor(ITextEditor textEditor) => throw Unused();
     }
 
     /// <summary>A native document with a journal standing in for the XAML editor's recovery surface.</summary>
@@ -359,8 +403,17 @@ internal static partial class SessionControllerTests
         public Task<bool> TryCommitTransferAsync(Func<bool> sourceUnchanged, Func<Task> commitRemovalIntent,
             Action removeLogicalSource) => throw Unused();
         public Task InitAsync(DocumentSnapshot snapshot, StorageFile file, bool isModified) => throw Unused();
-        public Task RestoreAsync(DocumentSnapshot snapshot, StorageFile file, DocumentMetadata metadata,
-            DocumentBaseline pendingBaseline) => throw Unused();
+        public async Task RestoreAsync(DocumentSnapshot snapshot, StorageFile file, DocumentMetadata metadata,
+            DocumentBaseline pendingBaseline)
+        {
+            RequireUIThread(_dispatcher);
+            if (pendingBaseline != null || file != null) throw Unused(); // Saved-only legacy import fixture.
+            RestoreStarting?.Invoke(Id);
+            Document = await SessionTestDocument.CreateAsync(_owner, snapshot.Baseline);
+            Document.Metadata = metadata.Clone();
+            NativeRestoreReturned?.Invoke(Id);
+            RestoreReady?.Invoke(this);
+        }
         public Task RenameAsync(string newFileName, StorageFile expectedFile) => throw Unused();
         public string GetText() => throw Unused();
         public void StartCheckingFileStatusPeriodically() => throw Unused();

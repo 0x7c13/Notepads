@@ -236,7 +236,7 @@ internal static class SyntaxHighlightingTests
         var bytes = Encoding.UTF8.GetBytes("{\"ok\":true}\r");
         using var baseline = await DocumentBaseline.CreateAsync(stream => stream.WriteAsync(bytes).AsTask(), BaselineOwner);
         await core.LoadBaselineAsync(baseline, false);
-        var folder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync(
+        var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
             "SyntaxJournal-" + Guid.NewGuid().ToString("N"));
         try
         {
@@ -480,7 +480,7 @@ internal static class SyntaxHighlightingTests
 
     private static int ToNativeColor(Windows.UI.Color color) => color.R | color.G << 8 | color.B << 16;
     private static void Checkpoint(string message) => File.WriteAllText(Path.Combine(
-        Windows.Storage.ApplicationData.Current.LocalFolder.Path, "diagnostic.txt"), "Syntax: " + message);
+        ApplicationData.Current.LocalFolder.Path, "diagnostic.txt"), "Syntax: " + message);
     private static void Check(bool condition, string name)
     {
         if (!condition) throw new Exception(name);

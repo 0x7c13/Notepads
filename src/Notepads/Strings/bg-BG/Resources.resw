@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Предишна промяна (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Сравнението не може да бъде подготвено с наличните ресурси. Документът ви не е променен.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документи, по-големи от 1 MB, не могат да бъдат отпечатани.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Зареждане на документа…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Документът не може да се зареди</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>„{0}“ не е зареден. Да се зареди и запази преди затваряне или да се изтрие копието му за възстановяване?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Запазване преди изход? Някои документи не са заредени. Отхвърлянето изтрива копията им за възстановяване.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Незаредени документи</value></data>
 </root>

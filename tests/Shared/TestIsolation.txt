@@ -1,0 +1,4 @@
+Notepads.TestStorage/1
+Requires: --test-run <nonempty N-format GUID>
+Root: LocalState/WorkspaceTests/<GUID>
+Diagnostics and temporary data are confined to that root.

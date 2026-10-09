@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>التغيير السابق (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>تعذر إعداد المقارنة ضمن الموارد المتاحة. لم يتغير مستندك.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>لا يمكن طباعة المستندات التي يتجاوز حجمها 1 ميغابايت.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>جارٍ تحميل المستند…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>تعذر تحميل المستند</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>لم يتم تحميل «{0}». هل تريد تحميله وحفظه قبل الإغلاق، أم تجاهل نسخة الاسترداد؟</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>هل تريد الحفظ قبل الخروج؟ لم يتم تحميل بعض المستندات. سيؤدي تجاهلها إلى حذف نسخ الاسترداد الخاصة بها.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>مستندات غير محمّلة</value></data>
 </root>

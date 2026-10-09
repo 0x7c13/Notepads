@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Előző módosítás (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Az összehasonlítás nem készíthető elő a rendelkezésre álló erőforrásokkal. A dokumentum változatlan.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Az 1 MB-nál nagyobb dokumentumok nem nyomtathatók ki.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Dokumentum betöltése…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>A dokumentum nem tölthető be</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>A(z) „{0}” nincs betöltve. Betölti és menti bezárás előtt, vagy elveti a helyreállítási másolatát?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Mentés kilépés előtt? Néhány dokumentum nincs betöltve. Az elvetés törli a helyreállítási másolataikat.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Be nem töltött dokumentumok</value></data>
 </root>

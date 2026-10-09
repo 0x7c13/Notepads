@@ -21,6 +21,7 @@ using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Validation;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using WinUIEditor;
 
 namespace NotepadsEditorTests;
@@ -29,6 +30,10 @@ internal static class SessionServiceTests
 {
     public static async Task RunAsync(StringBuilder log)
     {
+        await CheckFrozenMixedCaptureAsync();
+        await CheckCheckpointOnlyCloseAsync();
+        await CheckArchiveUnclaimedAsync();
+        await CheckResetFileBindingAsync();
         await CheckBoundedHistoryAndFallbackAsync();
         await CheckLegacyConsumptionAsync();
         await CheckAdoptionRetryAsync();
@@ -39,6 +44,7 @@ internal static class SessionServiceTests
         await CheckCleanFileRowAsync();
         await CheckEmptyLegacyRowAsync();
         await CheckInterruptedResetAsync();
+        await CheckIndeterminateResetIntentAsync();
         await CheckPartialCloseBatchAsync();
         await CheckRescueRetirementAsync();
         await CheckSnapshotOffMaintenanceAsync();
@@ -49,13 +55,174 @@ internal static class SessionServiceTests
         log.AppendLine("PASS: immutable session checkpoints/mirrors, bounded history, failed newest Pending protection, rescue Save As, stale epoch rejection, V1 partial adoption/close/reset, deleted editing files, clean file reload, empty V1 rows, interrupted reset, partial close batches, retirement of closed or cleared rescue history, snapshot-off orphan collection that spares live editors and other windows, one maintenance pass that both prunes and collects, another window's pruning of a retired scope's checkpoints that keeps its rescues and referenced assets, and a live blocked-recovery signal that saves and closes set and the next clean save clears.");
     }
 
+    private static async Task CheckFrozenMixedCaptureAsync()
+    {
+        var owner = Guid.NewGuid(); var first = Guid.NewGuid(); var second = Guid.NewGuid();
+        var faults = new CheckpointFailure();
+        var store = new RecoveryRecordStore(RecoveryRootStore.CreateStore().Paths.RootPath, faults);
+        var service = SessionTestProtocol.CreateService(owner, store);
+        try
+        {
+            await service.InitializeAuthorityAsync();
+            await using var a = await SessionTestDocument.CreateAsync(owner, "first العربية😀");
+            await using var b = await SessionTestDocument.CreateAsync(owner, "second pending");
+            using (var initial = SessionTestProtocol.CaptureDocuments(new[] { a, b }, new[] { first, second }, service.CurrentStamp))
+                SessionTestProtocol.Check((await service.SaveAsync(initial, CancellationToken.None)).Succeeded, "Mixed fixture did not commit.");
+            using var plan = await service.DiscoverRecoveryAsync();
+            var source = plan.Sources.Single(item => item.Id == second);
+            var originalHash = source.Descriptor.ComputeSha256();
+            var changedCopy = source.Descriptor;
+            changedCopy.StateMetaData.FileNamePlaceholder = "caller changed its copy";
+            var changedStamp = source.ExpectedStamp;
+            changedStamp.EpochId = Guid.NewGuid();
+            SessionTestProtocol.Check(source.Descriptor.ComputeSha256() == originalHash && source.ExpectedStamp.EpochId == plan.ExpectedStamp.EpochId,
+                "Discovery exposed mutable descriptor or epoch evidence.");
+            using var prepared = await RecoveryDocumentPreparation.PrepareAsync(plan.Sources[0], owner, new DocumentLoadOptions(), CancellationToken.None);
+            await using var loaded = await SessionTestDocument.FromPreparedAsync(owner, prepared);
+            SessionTestProtocol.Check(loaded.Editor.GetText(100) == "first العربية😀", "Pure preparation failed to make native content available.");
+            loaded.Editor.InsertText(0, "edited ");
+            using var mixed = loaded.Capture(first, plan.ExpectedStamp);
+            mixed.Documents.Insert(0, SessionDocumentCapture.Retain(source));
+            mixed.SelectedEditorId = second;
+            mixed.TabScrollOffset = 31;
+            faults.Enabled = true;
+            SessionTestProtocol.Check(!(await service.SaveAsync(mixed, CancellationToken.None)).Succeeded &&
+                loaded.Editor.GetText(100).StartsWith("edited ", StringComparison.Ordinal),
+                "A failed backup revoked or replaced an already usable native document.");
+            faults.Enabled = false;
+            var saved = await service.SaveAsync(mixed, CancellationToken.None);
+            SessionTestProtocol.Check(saved.Succeeded && saved.Descriptors.Count == 2 && saved.Descriptors[second].ComputeSha256() == originalHash,
+                "The save result omitted or changed the retained descriptor.");
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
+                SessionTestProtocol.Check(snapshot.SelectedCheckpoint.Record.Session.TextEditors.Select(item => item.Id).SequenceEqual(new[] { second, first }) &&
+                    snapshot.Session.SelectedTextEditor == second && snapshot.Session.TabScrollViewerHorizontalOffset == 31,
+                    "Mixed native/retained capture lost exact tab order, selection or scroll.");
+            }
+            plan.Dispose();
+            mixed.TabScrollOffset = 32;
+            SessionTestProtocol.Check((await service.SaveAsync(mixed, CancellationToken.None)).Succeeded,
+                "Releasing drained history pins invalidated still-owned retained metadata.");
+            using var invalid = loaded.Capture(first, service.CurrentStamp);
+            invalid.Documents.Add(SessionDocumentCapture.Retain(source));
+            invalid.Documents.Add(SessionDocumentCapture.Retain(source));
+            SessionTestProtocol.Check(!(await service.SaveAsync(invalid, CancellationToken.None)).Succeeded, "Duplicate captured IDs were accepted.");
+            using var exact = loaded.Capture(first, service.CurrentStamp);
+            SessionTestProtocol.Check((await service.SaveAsync(exact, CancellationToken.None)).Succeeded, "Exact one-row publication failed.");
+            using (await SessionRecoveryTransaction.EnterAsync())
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(owner)).SelectedCheckpoint.Record.Session.TextEditors.Single().Id == first,
+                    "Publication silently appended a source omitted by the complete capture.");
+        }
+        finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
+    }
+
+    private static async Task CheckCheckpointOnlyCloseAsync()
+    {
+        var owner = Guid.NewGuid(); var id = Guid.NewGuid();
+        var service = SessionTestProtocol.CreateService(owner);
+        try
+        {
+            await service.InitializeAuthorityAsync();
+            await using var document = await SessionTestDocument.CreateAsync(owner, "checkpoint-only retained");
+            using (var capture = document.Capture(id, service.CurrentStamp))
+                SessionTestProtocol.Check((await service.SaveAsync(capture, CancellationToken.None)).Succeeded, "Checkpoint-only fixture did not commit.");
+            var store = RecoveryRootStore.CreateStore();
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var area = store.GetScopeArea(owner, RecoveryAreaKind.Rescue, id);
+                foreach (var address in store.Enumerate(area).Entries)
+                    foreach (var copy in new[] { "a", "b" }) File.Delete(store.Paths.CopyPath(address, copy));
+            }
+            var closed = new List<Guid>();
+            SessionTestProtocol.Check(await service.PrepareExplicitCloseAsync(new[] { id }, closed) && closed.SequenceEqual(new[] { id }),
+                "An owned checkpoint-only tab did not receive a durable Closed decision.");
+            using var restart = await service.DiscoverRecoveryAsync();
+            SessionTestProtocol.Check(restart.Sources.Count == 0, "Closing a checkpoint-only tab resurrected it on discovery.");
+        }
+        finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
+    }
+
+    private static async Task CheckArchiveUnclaimedAsync()
+    {
+        var owner = Guid.NewGuid(); var id = Guid.NewGuid(); var replacement = Guid.NewGuid();
+        var service = SessionTestProtocol.CreateService(owner);
+        try
+        {
+            await service.InitializeAuthorityAsync();
+            await using var original = await SessionTestDocument.CreateAsync(owner, "unclaimed old workspace");
+            using (var capture = original.Capture(id, service.CurrentStamp))
+                SessionTestProtocol.Check((await service.SaveAsync(capture, CancellationToken.None)).Succeeded, "Archive fixture did not commit.");
+            using var unclaimed = await service.DiscoverRecoveryAsync();
+            var old = unclaimed.Sources.Single().Descriptor;
+            await service.ArchiveRecoverySourcesAsync(unclaimed.Sources);
+            await using var current = await SessionTestDocument.CreateAsync(owner, "new workspace");
+            using (var capture = current.Capture(replacement, service.CurrentStamp))
+                SessionTestProtocol.Check((await service.SaveAsync(capture, CancellationToken.None)).Succeeded, "New exact workspace did not commit after archival.");
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
+                var references = await SessionRecoveryCatalog.ReadReferencesAsync();
+                SessionTestProtocol.Check(snapshot.Session.TextEditors.Single().Id == replacement &&
+                    references.JournalFileNames.Contains(old.Journal.FileName) &&
+                    SessionRecoveryAuthority.IsClosed(snapshot.Stamp, id, snapshot.Decisions.Select(item => item.Record)),
+                    "Archiving unclaimed recovery dropped its bytes or left it eligible for automatic reimport.");
+            }
+        }
+        finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
+    }
+    private static async Task CheckResetFileBindingAsync()
+    {
+        var owner = Guid.NewGuid(); var id = Guid.NewGuid();
+        var service = SessionTestProtocol.CreateService(owner);
+        var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("reset-grant.txt", CreationCollisionOption.GenerateUniqueName);
+        await FileIO.WriteTextAsync(file, "still open after reset");
+        try
+        {
+            await service.InitializeAuthorityAsync();
+            await using var document = await SessionTestDocument.CreateAsync(owner, "still open after reset");
+            document.Metadata.HasEditingFile = true;
+            document.Metadata.RequiresSaveAs = false;
+            using (var initial = document.Capture(id, service.CurrentStamp))
+            {
+                initial.Documents[0].EditingFile = file;
+                initial.Documents[0].EditingFileName = file.Name;
+                initial.Documents[0].EditingFilePath = file.Path;
+                SessionTestProtocol.Check((await service.SaveAsync(initial, CancellationToken.None)).Succeeded, "File-binding fixture did not commit.");
+            }
+            RecoveryFileAccessBinding binding;
+            using (var plan = await service.DiscoverRecoveryAsync())
+            using (var prepared = await RecoveryDocumentPreparation.PrepareAsync(plan.Sources.Single(), owner,
+                new DocumentLoadOptions(), CancellationToken.None))
+                binding = prepared.FileAccessBinding;
+            await service.ClearSessionDataAsync([]);
+            await service.RunMaintenanceAsync(CancellationToken.None);
+            SessionTestProtocol.Check(!StorageApplicationPermissions.FutureAccessList.ContainsItem(binding.Token),
+                "Reset fixture did not collect the obsolete file grant.");
+            using var resumed = document.Capture(id, service.CurrentStamp);
+            resumed.Documents[0].EditingFile = binding.File;
+            resumed.Documents[0].EditingFileName = binding.File.Name;
+            resumed.Documents[0].EditingFilePath = binding.File.Path;
+            resumed.Documents[0].FileAccessBinding = binding;
+            var saved = await service.SaveAsync(resumed, CancellationToken.None);
+            SessionTestProtocol.Check(saved.Succeeded && saved.Descriptors[id].EditingFileFutureAccessToken != binding.Token &&
+                StorageApplicationPermissions.FutureAccessList.ContainsItem(saved.Descriptors[id].EditingFileFutureAccessToken),
+                "A pre-reset file binding republished an obsolete grant after its token was collected.");
+        }
+        finally
+        {
+            await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner);
+            await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+        }
+    }
+
     private static async Task CheckLiveRecoveryBlockAsync()
     {
         var owner = Guid.NewGuid(); var id = Guid.NewGuid();
         var service = SessionTestProtocol.CreateService(owner);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using var document = await SessionTestDocument.CreateAsync(owner, "blocked later");
             // An unrecognized root that appears after startup, which startup's RecoveryOutcome never sees.
             var stray = Path.Combine(RecoveryRootStore.CreateStore().Paths.ScopePath(owner), "Unrecognized");
@@ -121,7 +288,7 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using var document = await SessionTestDocument.CreateAsync(owner, "maintained");
             var orphan = PlantAsset(owner, ".npj");
             var store = RecoveryRootStore.CreateStore();
@@ -156,7 +323,7 @@ internal static class SessionServiceTests
         try
         {
             // A secondary window's last stretch: each save publishes a checkpoint and a rescue, and none prunes.
-            await closed.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await closed.InitializeAuthorityAsync(CancellationToken.None);
             await using (var document = await SessionTestDocument.CreateAsync(retired, "retired العربية😀"))
             {
                 for (var index = 0; index < 5; index++)
@@ -228,7 +395,7 @@ internal static class SessionServiceTests
         var documents = new List<SessionTestDocument>();
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             foreach (var id in identities) documents.Add(await SessionTestDocument.CreateAsync(owner, "churn العربية😀\r"));
             async Task PublishAsync()
             {
@@ -274,7 +441,7 @@ internal static class SessionServiceTests
                     "Maintenance collected the journal that Pending evidence references.");
             }
 
-            await service.ClearSessionDataAsync();
+            await service.ClearSessionDataAsync([]);
             await PublishAsync();
             using (await SessionRecoveryTransaction.EnterAsync())
             {
@@ -299,7 +466,7 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner, store);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using var a = await SessionTestDocument.CreateAsync(owner, "first");
             await using var b = await SessionTestDocument.CreateAsync(owner, "second");
             using (var capture = SessionTestProtocol.CaptureDocuments(new[] { a, b }, new[] { first, second }, service.CurrentStamp))
@@ -340,11 +507,11 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner, store);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             var previous = service.CurrentStamp;
             faults.Enabled = true;
             var failed = false;
-            try { await service.ClearSessionDataAsync(); }
+            try { await service.ClearSessionDataAsync([]); }
             catch (Exception) { failed = true; }
             faults.Enabled = false;
             SessionTestProtocol.Check(failed && service.CurrentStamp.EpochId != previous.EpochId,
@@ -355,6 +522,39 @@ internal static class SessionServiceTests
                 "Backup did not resume after a reset whose decision publication failed.");
         }
         finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
+    }
+
+    private static async Task CheckIndeterminateResetIntentAsync()
+    {
+        var owner = Guid.NewGuid(); var id = Guid.NewGuid();
+        var faults = new ResetIntentAcknowledgementFailure();
+        var service = SessionTestProtocol.CreateService(owner,
+            new RecoveryRecordStore(RecoveryRootStore.CreateStore().Paths.RootPath, faults));
+        try
+        {
+            await service.InitializeAuthorityAsync();
+            var before = service.CurrentStamp;
+            var failed = false;
+            try { await service.ClearSessionDataAsync([]); }
+            catch (IOException) { failed = true; }
+            SessionTestProtocol.Check(failed && service.CurrentStamp.EpochId != before.EpochId,
+                "An indeterminate reset intent did not reconcile the verified new epoch before returning failure.");
+            await using var document = await SessionTestDocument.CreateAsync(owner, "after indeterminate intent");
+            using var capture = document.Capture(id, service.CurrentStamp);
+            SessionTestProtocol.Check((await service.SaveAsync(capture, CancellationToken.None)).Succeeded,
+                "Backup stayed bound to the dead epoch after a renamed reset intent lost its acknowledgement.");
+        }
+        finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
+    }
+
+    private sealed class ResetIntentAcknowledgementFailure : IRecoveryStorageFaults
+    {
+        public void OnStep(RecoveryStorageStep step, RecoveryAddress address, string copy)
+        {
+            if (address.Area.Kind == RecoveryAreaKind.Decisions && copy == "intent" &&
+                step is RecoveryStorageStep.AfterRename or RecoveryStorageStep.BeforeRead)
+                throw new IOException("Injected lost reset-intent acknowledgement and failed readback.");
+        }
     }
 
     private sealed class ResetDecisionFailure : IRecoveryStorageFaults
@@ -376,7 +576,7 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using (var document = await SessionTestDocument.CreateAsync(owner, "captured"))
             {
                 document.Metadata.HasEditingFile = true; document.Metadata.RequiresSaveAs = false;
@@ -394,16 +594,19 @@ internal static class SessionServiceTests
             await service.DisposeAsync();
             await FileIO.WriteTextAsync(file, "changed on disk");
             service = SessionTestProtocol.CreateService(owner);
-            using (var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
                 SessionTestProtocol.Check(batch.Documents.Single().InitializeFromFile &&
                     await batch.Documents[0].SavedSnapshot.ReadTextAsync() == "changed on disk",
                     "A clean file row restored a stale recovery copy instead of its file.");
+                SessionTestProtocol.Check(ReferenceEquals(batch.Documents[0].EditingFile, batch.Documents[0].FileAccessBinding?.File) &&
+                    batch.Documents[0].FileAccessBinding.Token == batch.Plan.Sources.Single().EditingFileFutureAccessToken,
+                    "Preparation discarded the exact resolved file/token binding before publication.");
             }
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
             using (new FileStream(file.Path, FileMode.Open, FileAccess.Read, FileShare.None))
-            using (var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
                 SessionTestProtocol.Check(batch.Documents.Single().Checkpoint != null && service.RecoveryOutcome != SessionRecoveryOutcome.Partial,
                     "An unreadable clean file did not fall back to its recovery copy.");
@@ -437,14 +640,14 @@ internal static class SessionServiceTests
         });
         try
         {
-            using var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None);
             SessionTestProtocol.Check(batch.Documents.Count == 1 && batch.SelectedEditorId == good &&
-                service.RecoveryOutcome != SessionRecoveryOutcome.Partial && service.UnrecoveredEditorCount == 1,
+                service.RecoveryOutcome != SessionRecoveryOutcome.Partial && batch.UnconsumedSources.Count == 1,
                 "An empty V1 row was reported as a failed restore.");
             await using var restored = await SessionTestDocument.CreateAsync(owner, await batch.Documents[0].SavedSnapshot.ReadTextAsync());
             using var capture = restored.Capture(good, batch.ExpectedStamp);
-            await service.CommitAttachedAsync(capture, new[] { good }, CancellationToken.None);
-            SessionTestProtocol.Check(service.UnrecoveredEditorCount == 0, "An empty V1 row kept the restore incomplete.");
+            await SessionTestProtocol.PublishRecoveredAsync(service, batch, capture);
+            SessionTestProtocol.Check(batch.UnconsumedSources.Count == 0, "An empty V1 row kept the restore incomplete.");
         }
         finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
     }
@@ -457,7 +660,7 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using var document = await SessionTestDocument.CreateAsync(owner, "content");
             document.Metadata.HasEditingFile = true; document.Metadata.RequiresSaveAs = false;
             async Task<SessionSaveResult> SaveAsync(SessionService target)
@@ -479,7 +682,7 @@ internal static class SessionServiceTests
             // After a restart the old grant no longer resolves and a new one is refused.
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             SessionTestProtocol.Check((await SaveAsync(service)).Succeeded,
                 "A refused editing file grant failed the whole session publication.");
         }
@@ -498,7 +701,7 @@ internal static class SessionServiceTests
         var service = SessionTestProtocol.CreateService(owner);
         try
         {
-            await service.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await service.InitializeAuthorityAsync(CancellationToken.None);
             await using var document = await SessionTestDocument.CreateAsync(owner, "saved العربية😀");
             document.Metadata.LanguageOverride = "csharp";
             for (var index = 0; index < 4; index++)
@@ -537,7 +740,7 @@ internal static class SessionServiceTests
                 }));
             }
             await service.DisposeAsync(); service = SessionTestProtocol.CreateService(owner);
-            using (var ordering = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var ordering = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             using (var resumed = document.CaptureState())
             {
                 SessionTestProtocol.Check(resumed.CaptureRevision > snapshot.Session.TextEditors.Single().CaptureRevision + 10000,
@@ -551,7 +754,7 @@ internal static class SessionServiceTests
             { journal.SetLength(earlier.Journal.CommittedByteLength); journal.Flush(true); }
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
-            using (var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
                 SessionTestProtocol.Check(batch.Documents.Count == 1 && service.RecoveryOutcome == SessionRecoveryOutcome.Partial,
                     "A bad latest document did not recover an earlier descriptor independently.");
@@ -571,7 +774,7 @@ internal static class SessionServiceTests
             foreach (var checkpoint in snapshot.Checkpoints)
                 foreach (var peer in new[] { "a", "b" }) File.WriteAllText(store.Paths.CopyPath(checkpoint.Address, peer), "bad");
             service = SessionTestProtocol.CreateService(owner);
-            using (var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
                 SessionTestProtocol.Check(batch.Documents.Count == 1 && batch.Documents[0].Id != id &&
                     batch.Documents[0].Metadata.RequiresSaveAs && batch.Documents[0].EditingFile == null,
@@ -579,7 +782,7 @@ internal static class SessionServiceTests
                 SessionTestProtocol.Check(batch.Documents[0].Metadata.LanguageOverride == "csharp",
                     "Rescue salvage lost the manual document language.");
             }
-            await service.ClearSessionDataAsync();
+            await service.ClearSessionDataAsync([]);
             SessionTestProtocol.Check(!(await service.SaveAsync(staleCapture, CancellationToken.None)).Succeeded,
                 "A capture silently rebound to the epoch created during its await.");
         }
@@ -609,30 +812,31 @@ internal static class SessionServiceTests
         await SessionTestProtocol.WriteLegacySourceAsync(owner, legacy);
         try
         {
-            using (var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
-                SessionTestProtocol.Check(batch.Documents.Count == 1 && service.UnrecoveredEditorCount == 2,
+                SessionTestProtocol.Check(batch.Documents.Count == 1 && batch.UnconsumedSources.Count == 2,
                     "A failed V1 row blocked the valid row or preparation consumed rows prematurely.");
                 await using var restored = await SessionTestDocument.CreateAsync(owner, await batch.Documents[0].SavedSnapshot.ReadTextAsync());
                 using var capture = restored.Capture(good, batch.ExpectedStamp);
-                await service.CommitAttachedAsync(capture, new[] { good }, CancellationToken.None);
-                SessionTestProtocol.Check(service.UnrecoveredEditorCount == 1, "Partial V1 adoption consumed the failed row.");
+                await SessionTestProtocol.PublishRecoveredAsync(service, batch, capture);
+                SessionTestProtocol.Check(batch.UnconsumedSources.Count == 1, "Partial V1 adoption consumed the failed row.");
             }
             SessionTestProtocol.Check(await service.PrepareExplicitCloseAsync(new[] { good }), "The adopted tab close could not publish.");
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
-            using (var afterClose = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var afterClose = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
-                SessionTestProtocol.Check(afterClose.Documents.Count == 0 && service.UnrecoveredEditorCount == 1,
+                SessionTestProtocol.Check(afterClose.Documents.Count == 0 && afterClose.UnconsumedSources.Count == 1,
                     "Close revoked successful V1 consumption and reimported discarded content.");
             }
 
-            await service.ClearSessionDataAsync();
+            using (var unconsumed = await service.DiscoverRecoveryAsync())
+                await service.ClearSessionDataAsync(unconsumed.Sources);
             await service.DisposeAsync();
             service = SessionTestProtocol.CreateService(owner);
-            using (var afterReset = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var afterReset = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
-                SessionTestProtocol.Check(afterReset.Documents.Count == 0 && service.UnrecoveredEditorCount == 0,
+                SessionTestProtocol.Check(afterReset.Documents.Count == 0 && afterReset.UnconsumedSources.Count == 0,
                     "Reset did not suppress the complete accepted V1 source, including its failed row.");
             }
 
@@ -662,18 +866,18 @@ internal static class SessionServiceTests
         await SessionTestProtocol.WriteLegacySourceAsync(owner, legacy);
         try
         {
-            using var batch = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var batch = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None);
             await using var target = await SessionTestDocument.CreateAsync(owner, "retry source");
             using var capture = target.Capture(id, batch.ExpectedStamp);
             faults.Enabled = true;
             try
             {
-                await service.CommitAttachedAsync(capture, new[] { id }, CancellationToken.None);
+                await SessionTestProtocol.PublishRecoveredAsync(service, batch, capture);
                 throw new InvalidOperationException("The injected checkpoint publication failure was ignored.");
             }
             catch (IOException) { }
             faults.Enabled = false;
-            await service.CommitAttachedAsync(capture, new[] { id }, CancellationToken.None);
+            await SessionTestProtocol.PublishRecoveredAsync(service, batch, capture);
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 var authority = await SessionRecoveryCatalog.ReadScopeAsync(owner);
@@ -713,11 +917,11 @@ internal static class SessionServiceTests
         await SessionTestProtocol.WriteLegacySourceAsync(owner, legacy);
         try
         {
-            using (var prepared = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None))
+            using (var prepared = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             {
                 await using var adopted = await SessionTestDocument.CreateAsync(owner, "adopted text");
                 using (var initial = adopted.Capture(adoptedId, prepared.ExpectedStamp))
-                    await service.CommitAttachedAsync(initial, new[] { adoptedId }, CancellationToken.None);
+                    await SessionTestProtocol.PublishRecoveredAsync(service, prepared, initial);
                 await using var ordinary = await SessionTestDocument.CreateAsync(owner, "ordinary text");
                 using var capture = adopted.Capture(adoptedId, service.CurrentStamp);
                 capture.Documents.Add(new SessionDocumentCapture { Id = ordinaryId, Recovery = ordinary.CaptureState() });
@@ -730,11 +934,25 @@ internal static class SessionServiceTests
             foreach (var checkpoint in snapshot.Checkpoints)
                 foreach (var copy in new[] { "a", "b" }) File.WriteAllText(store.Paths.CopyPath(checkpoint.Address, copy), "bad");
             await service.DisposeAsync(); service = SessionTestProtocol.CreateService(owner);
-            using var recovered = await service.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var recovered = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None);
             SessionTestProtocol.Check(recovered.Documents.Count == 2 && recovered.Documents.Any(document => document.Id == adoptedId) &&
                 recovered.Documents.Any(document => document.Id != adoptedId && document.Metadata.RequiresSaveAs) &&
                 service.RecoveryOutcome == SessionRecoveryOutcome.Rescue,
                 "Durable adoption suppressed salvage of another ordinary tab when every checkpoint was lost.");
+            // A normal checkpoint may publish while another own rescue waits in the background queue.
+            await using var ready = await SessionTestDocument.FromPreparedAsync(owner, recovered.Documents.Single(item => item.Id == adoptedId));
+            using (var first = ready.Capture(adoptedId, recovered.ExpectedStamp))
+                await SessionTestProtocol.PublishRecoveredAsync(service, recovered, first);
+            var queuedRescue = recovered.Documents.Single(item => item.Id != adoptedId);
+            await using var rescued = await SessionTestDocument.FromPreparedAsync(owner, queuedRescue);
+            using (var both = ready.Capture(adoptedId, recovered.ExpectedStamp))
+            {
+                both.Documents.Add(new SessionDocumentCapture { Id = queuedRescue.Id, Recovery = rescued.CaptureState() });
+                await SessionTestProtocol.PublishRecoveredAsync(service, recovered, both);
+            }
+            using (await SessionRecoveryTransaction.EnterAsync())
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(owner)).Session.TextEditors.Count == 2,
+                    "An intervening workspace checkpoint made a queued, pinned own rescue impossible to adopt.");
         }
         finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
     }
@@ -748,7 +966,7 @@ internal static class SessionServiceTests
         var targetService = SessionTestProtocol.CreateService(targetOwner, store, primary: true);
         try
         {
-            await sourceService.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await sourceService.InitializeAuthorityAsync(CancellationToken.None);
             await using var source = await SessionTestDocument.CreateAsync(sourceOwner, "inactive retry source");
             source.Editor.GotoPos(source.Editor.Length); source.Editor.PasteText("\rcommitted edit");
             long goodPrefixLength;
@@ -771,8 +989,14 @@ internal static class SessionServiceTests
             using (var stream = new FileStream(source.Journal.File.Path, FileMode.Open, FileAccess.Write, FileShare.Read))
             { stream.SetLength(goodPrefixLength); stream.Flush(true); }
             await sourceService.DisposeAsync();
-            using var batch = await targetService.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var batch = await SessionTestProtocol.MaterializeAsync(targetService, new DocumentLoadOptions(), CancellationToken.None);
             var prepared = batch.Documents.Single(document => document.Id == id);
+            using (var foreign = new SessionCapture { ExpectedStamp = batch.ExpectedStamp, SelectedEditorId = id })
+            {
+                foreign.Documents.Add(SessionDocumentCapture.Retain(prepared.Source));
+                SessionTestProtocol.Check(!(await targetService.SaveAsync(foreign, CancellationToken.None)).Succeeded,
+                    "An unadopted foreign descriptor entered the owned workspace index.");
+            }
             SessionTestProtocol.Check(prepared.Checkpoint.CommittedSequence == goodSequence &&
                 targetService.RecoveryOutcome == SessionRecoveryOutcome.Partial &&
                 store.Enumerate(store.GetScopeArea(sourceOwner, RecoveryAreaKind.Pending, id)).Entries.Count != 0,
@@ -782,7 +1006,7 @@ internal static class SessionServiceTests
             faults.Enabled = true;
             try
             {
-                await targetService.CommitAttachedAsync(capture, new[] { id }, CancellationToken.None);
+                await SessionTestProtocol.PublishRecoveredAsync(targetService, batch, capture);
                 throw new InvalidOperationException("The injected checkpoint failure after inactive adoption was ignored.");
             }
             catch (IOException) { }
@@ -794,7 +1018,7 @@ internal static class SessionServiceTests
 
             faults.Enabled = false;
             using var retry = target.Capture(id, batch.ExpectedStamp);
-            await targetService.CommitAttachedAsync(retry, new[] { id }, CancellationToken.None);
+            await SessionTestProtocol.PublishRecoveredAsync(targetService, batch, retry);
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 var targetRoots = await SessionRecoveryCatalog.ReadScopeAsync(targetOwner);
@@ -817,7 +1041,7 @@ internal static class SessionServiceTests
         var targetService = SessionTestProtocol.CreateService(targetOwner, primary: true);
         try
         {
-            await sourceService.EnsureMetadataRetainedAsync(CancellationToken.None);
+            await sourceService.InitializeAuthorityAsync(CancellationToken.None);
             await using var source = await SessionTestDocument.CreateAsync(sourceOwner, "selected workspace content");
             source.Editor.GotoPos(source.Editor.Length); source.Editor.PasteText("\rcheckpoint edit");
             ulong selectedSequence;
@@ -849,7 +1073,7 @@ internal static class SessionServiceTests
             }
             await source.Editor.StopJournalAsync();
             await sourceService.DisposeAsync();
-            using var batch = await targetService.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var batch = await SessionTestProtocol.MaterializeAsync(targetService, new DocumentLoadOptions(), CancellationToken.None);
             var prepared = batch.Documents.Single(document => document.Id == id);
             SessionTestProtocol.Check(prepared.Checkpoint.CommittedSequence == selectedSequence,
                 "An incomplete workspace publication silently changed the selected recovery content.");
@@ -857,7 +1081,7 @@ internal static class SessionServiceTests
             using var capture = target.Capture(id, batch.ExpectedStamp);
             SessionTestProtocol.Check(capture.Documents[0].Recovery.CaptureRevision > newerDescriptor.CaptureRevision,
                 "The importing capture floor omitted higher inactive source rescue evidence.");
-            await targetService.CommitAttachedAsync(capture, new[] { id }, CancellationToken.None);
+            await SessionTestProtocol.PublishRecoveredAsync(targetService, batch, capture);
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner);
@@ -877,7 +1101,7 @@ internal static class SessionServiceTests
             }
             batch.Dispose();
             await targetService.DisposeAsync(); targetService = SessionTestProtocol.CreateService(targetOwner, primary: true);
-            using var restarted = await targetService.PrepareRecoveryAsync(new DocumentLoadOptions(), CancellationToken.None);
+            using var restarted = await SessionTestProtocol.MaterializeAsync(targetService, new DocumentLoadOptions(), CancellationToken.None);
             SessionTestProtocol.Check(restarted.Documents.Any(document => document.Id == id) &&
                 targetService.RecoveryOutcome == SessionRecoveryOutcome.Partial,
                 "A consumed source's damaged content aborted healthy target startup or lost its degraded notification.");
@@ -890,8 +1114,79 @@ internal static class SessionServiceTests
     }
 }
 
+internal sealed class SessionTestRecoveryBatch : IDisposable
+{
+    public SessionTestRecoveryBatch(SessionRecoveryPlan plan) { Plan = plan; }
+    public SessionRecoveryPlan Plan { get; }
+    public List<PreparedRecoveryDocument> Documents { get; } = [];
+    public HashSet<Guid> EmptyIds { get; } = [];
+    public HashSet<Guid> AcknowledgedIds { get; } = [];
+    public IReadOnlyList<RecoveryDocumentSource> UnconsumedSources => Plan.Sources
+        .Where(source => !EmptyIds.Contains(source.Id) && !AcknowledgedIds.Contains(source.Id)).ToArray();
+    public Guid? SelectedEditorId => Plan.SelectedEditorId;
+    public double TabScrollOffset => Plan.TabScrollOffset;
+    public RecoveryStamp ExpectedStamp => Plan.ExpectedStamp;
+    public void Dispose()
+    {
+        foreach (var document in Documents) document.Dispose();
+        Plan.Dispose();
+    }
+}
 internal static class SessionTestProtocol
 {
+    // This test harness deliberately owns the plan and materializes it eagerly. Production discovers only metadata.
+    public static async Task<SessionTestRecoveryBatch> MaterializeAsync(SessionService service,
+        DocumentLoadOptions defaults, CancellationToken cancellation, SessionRecoveryPlan plan = null)
+    {
+        var batch = new SessionTestRecoveryBatch(plan ?? await service.DiscoverRecoveryAsync(cancellation));
+        try
+        {
+            foreach (var source in batch.Plan.Sources)
+            {
+                PreparedRecoveryDocument prepared = null;
+                try { prepared = await RecoveryDocumentPreparation.PrepareAsync(source, batch.ExpectedStamp.ScopeId, defaults, cancellation); }
+                catch (OperationCanceledException) { throw; }
+                catch
+                {
+                    if (source.Descriptor != null)
+                    {
+                        await service.PreserveFailedNewestAsync(source, cancellation);
+                        for (var index = 0; index < source.FallbackCount; index++)
+                        {
+                            try { prepared = await RecoveryDocumentPreparation.PrepareAsync(source, batch.ExpectedStamp.ScopeId, defaults, cancellation, index); break; }
+                            catch (OperationCanceledException) { throw; }
+                            catch { }
+                        }
+                    }
+                    if (prepared == null) continue;
+                }
+                if (prepared == null) batch.EmptyIds.Add(source.Id);
+                else batch.Documents.Add(prepared);
+            }
+            return batch;
+        }
+        catch { batch.Dispose(); throw; }
+    }
+
+    public static async Task PublishRecoveredAsync(SessionService service, SessionTestRecoveryBatch batch, SessionCapture capture)
+    {
+        foreach (var document in capture.Documents)
+        {
+            var prepared = batch.Documents.FirstOrDefault(item => item.Id == document.Id);
+            document.Source = prepared?.Source;
+            document.FileAccessBinding = prepared?.FileAccessBinding;
+            if (document.Source is { IsOwned: false })
+            {
+                await service.PublishAdoptionAsync(document, capture.ExpectedStamp);
+                batch.AcknowledgedIds.Add(document.Id);
+            }
+        }
+        foreach (var source in batch.UnconsumedSources.Where(source => source.IsOwned && capture.Documents.All(item => item.Id != source.Id)))
+            capture.Documents.Add(SessionDocumentCapture.Retain(source));
+        var result = await service.SaveAsync(capture, CancellationToken.None);
+        if (!result.Succeeded) throw new IOException("The recovery checkpoint did not commit.");
+        foreach (var document in capture.Documents.Where(document => !document.IsRetained)) batch.AcknowledgedIds.Add(document.Id);
+    }
     public static SessionService CreateService(Guid owner, RecoveryRecordStore store = null, bool primary = false) => new(
         new SessionScopeData { OwnerId = owner, InstanceId = owner, Kind = primary ? SessionScopeData.Primary : SessionScopeData.Secondary },
         SessionScopeData.GetManifestFileName(owner), () => [], store)

@@ -4,170 +4,172 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents;
-using Notepads.Features.Documents.Contracts;
-using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
-using Notepads.Features.Sessions.Legacy;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Validation;
 using Notepads.Infrastructure.Diagnostics;
-using Notepads.Infrastructure.Storage;
 
 namespace Notepads.Features.Sessions;
 
 internal sealed partial class SessionService
 {
-    public async Task<PreparedRecoveryBatch> PrepareRecoveryAsync(DocumentLoadOptions defaults,
-        CancellationToken cancellation)
+    public async Task<SessionRecoveryPlan> DiscoverRecoveryAsync(CancellationToken cancellation = default)
     {
-        using var measurement = OperationMetrics.Measure("session.prepare");
-        await EnsureMetadataRetainedAsync(cancellation);
-        var batch = new PreparedRecoveryBatch
-        {
-            ExpectedStamp = CurrentStamp,
-            SelectedEditorId = _recoverySnapshot.Session.SelectedTextEditor,
-            TabScrollOffset = _recoverySnapshot.Session.TabScrollViewerHorizontalOffset
-        };
+        using var measurement = OperationMetrics.Measure("session.discover");
+        await EnsureWriterLeaseAsync(cancellation);
+        var pins = new List<IDisposable>();
+        var lifetime = new RecoverySourceLifetime();
         try
         {
             using (await SessionRecoveryTransaction.EnterAsync(cancellation))
             {
-                var authority = await SessionRecoveryCatalog.ReadScopeAsync(_sessionScope.OwnerId, cancellation, content: false);
-                SessionRecoveryAuthority.RequireCurrent(batch.ExpectedStamp, authority);
-                batch.Pins.Add(SessionScopeLease.AcquireReader(_sessionScope.OwnerId));
-                batch.Pins.AddRange(_importedRecoverySources);
-            }
-            foreach (var record in _unrecoveredEditors.Values.ToList())
-            {
-                cancellation.ThrowIfCancellationRequested();
-                try
+                var pass = new RecoveryCatalogPass();
+                var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(_sessionScope.OwnerId, cancellation, pass: pass);
+                BindAuthority(snapshot);
+                RecoveryOutcome = snapshot.Outcome;
+                _committedSessionData = snapshot.SelectedCheckpoint?.Record.Session;
+                AcceptLegacyDecisions(snapshot);
+                pins.Add(SessionScopeLease.AcquireReader(_sessionScope.OwnerId));
+                var sources = new List<RecoveryDocumentSource>();
+                foreach (var editor in snapshot.Session.TextEditors)
+                    sources.Add(new RecoveryDocumentSource(editor, null, true, CurrentStamp,
+                        snapshot.EarlierDescriptors(editor.Id), null, lifetime));
+                var selected = snapshot.Session.SelectedTextEditor;
+                var scroll = snapshot.Session.TabScrollViewerHorizontalOffset;
+                var (legacy, fingerprint, legacyError) = await SessionManifestStore.ReadLegacyAsync(_sessionMetaDataFileName, cancellation);
+                if (fingerprint != null) _acceptedLegacySources.Add(fingerprint);
+                if (legacyError != null)
                 {
-                    var document = await LegacySessionImporter.PrepareAsync(record, _sessionScope.OwnerId, defaults, cancellation);
-                    if (document != null)
-                    {
-                        batch.Documents.Add(document);
-                        if (_legacySelection is { } selection)
-                            (batch.SelectedEditorId, batch.TabScrollOffset) = selection;
-                    }
-                    else
-                    {
-                        // Like V1, a row with no content and no accessible file has nothing to restore.
-                        _unrecoveredEditors.Remove(record.Id);
-                        _adoptions.Remove(record.Id);
-                    }
+                    RecoveryOutcome = SessionRecoveryAuthority.CombineOutcomes(RecoveryOutcome,
+                        snapshot.Session.TextEditors.Count == 0 && snapshot.EligibleRescues.Count == 0 ?
+                            SessionRecoveryOutcome.Blocked : SessionRecoveryOutcome.Partial);
+                    LoggingService.LogError($"[{nameof(SessionService)}] Preserving unreadable migration source: {legacyError}");
                 }
-                catch (OperationCanceledException) { throw; }
-                catch (Exception ex)
+                if (legacy != null)
                 {
-                    RecoveryOutcome = SessionRecoveryOutcome.Partial;
-                    LoggingService.LogError($"[{nameof(SessionService)}] Retaining failed V1 row [{record.Id}]: {ex}");
-                }
-            }
-            foreach (var record in _unrecoveredV2Editors.Values)
-            {
-                cancellation.ThrowIfCancellationRequested();
-                PreparedRecoveryDocument document = null;
-                try { document = await PrepareCurrentDocumentAsync(record, defaults, cancellation); }
-                catch (OperationCanceledException) { throw; }
-                catch (Exception ex)
-                {
-                    RecoveryOutcome = SessionRecoveryOutcome.Partial;
-                    LoggingService.LogError($"[{nameof(SessionService)}] Retaining failed current row [{record.Id}]: {ex}");
-                    // Persist the failed newest descriptor before a successful
-                    // fallback can cause its older history to be retired.
-                    var originId = _adoptions.TryGetValue(record.Id, out var origin) ? origin.SourceEditor?.Id ?? record.Id : record.Id;
-                    var source = origin?.Source;
-                    if (record.Journal.OwnerId == _sessionScope.OwnerId || source?.WriterLease != null)
+                    foreach (var editor in legacy.TextEditors)
                     {
-                        using (await SessionRecoveryTransaction.EnterAsync(cancellation))
+                        if (SessionRecoveryAuthority.IsLegacyConsumed(fingerprint, editor.Id, snapshot.AllDecisions) ||
+                            sources.Any(source => source.Id == editor.Id)) continue;
+                        sources.Add(new RecoveryDocumentSource(null, editor, false, CurrentStamp, null,
+                            new RecoveryAdoptionOrigin { LegacyFingerprint = fingerprint }, lifetime));
+                    }
+                    if (snapshot.Session.TextEditors.Count == 0 && sources.Count != 0)
+                        (selected, scroll) = (legacy.SelectedTextEditor, legacy.TabScrollViewerHorizontalOffset);
+                }
+                foreach (var rescue in snapshot.EligibleRescues)
+                {
+                    var editor = rescue.Record.Editor;
+                    sources.Add(new RecoveryDocumentSource(AsRescue(editor), null, false, CurrentStamp,
+                        snapshot.EarlierDescriptors(editor.Id), new RecoveryAdoptionOrigin
                         {
-                            var pendingStamp = record.Journal.OwnerId == _sessionScope.OwnerId ? batch.ExpectedStamp : source.ExpectedStamp;
-                            var authority = await SessionRecoveryCatalog.ReadScopeAsync(pendingStamp.ScopeId, cancellation, content: false);
-                            SessionRecoveryAuthority.RequireCurrent(pendingStamp, authority);
-                            var store = _recordStore;
-                            var failedDescriptor = origin?.SourceEditor ?? record;
-                            var area = store.GetScopeArea(pendingStamp.ScopeId, RecoveryAreaKind.Pending, failedDescriptor.Id);
-                            RecoveryRootStore.RequireCommitted(await store.PublishAsync(area, new RecoveryRecord
-                            { Kind = RecoveryRecordKind.Pending, Stamp = store.CreatePublicationStamp(area, pendingStamp), Editor = failedDescriptor }, cancellation));
-                        }
-                        var alternatives = source?.EarlierDescriptors.TryGetValue(originId, out var sourceAlternatives) == true ?
-                            sourceAlternatives : _recoverySnapshot.EarlierDescriptors(originId);
-                        foreach (var older in alternatives)
+                            SourceStamp = CurrentStamp,
+                            RootAddress = rescue.Address,
+                            RootSha256 = rescue.PayloadSha256,
+                            SourceEditor = SessionRecoveryCatalog.CloneEditor(editor),
+                            ConsumptionCutoff = snapshot.ConsumptionCutoff(editor.Id),
+                            UnselectedNewerDescriptors = snapshot.CurrentDescriptors(editor.Id)
+                                .Where(candidate => candidate.CaptureRevision > editor.CaptureRevision)
+                                .DistinctBy(candidate => candidate.ComputeSha256()).Select(SessionRecoveryCatalog.CloneEditor).ToArray()
+                        }, lifetime));
+                }
+                long importedFloor = 0;
+                if (_sessionScope.Kind == SessionScopeData.Primary)
+                {
+                    var imported = await SessionRecoveryCatalog.ReadInactiveSourcesAsync(_sessionScope.OwnerId,
+                        new HashSet<Guid>(_getLiveInstances()), cancellation, pass);
+                    pins.AddRange(imported);
+                    foreach (var source in imported)
+                    {
+                        importedFloor = Math.Max(importedFloor, source.CaptureRevisionFloor);
+                        RecoveryOutcome = SessionRecoveryAuthority.CombineOutcomes(RecoveryOutcome, source.Outcome);
+                        foreach (var editor in source.Session.TextEditors)
                         {
-                            cancellation.ThrowIfCancellationRequested();
-                            try
-                            {
-                                var fallback = older;
-                                if (originId != record.Id)
+                            if (sources.Any(existing => existing.Id == editor.Id)) continue;
+                            source.EarlierDescriptors.TryGetValue(editor.Id, out var earlier);
+                            source.UnselectedNewerDescriptors.TryGetValue(editor.Id, out var newer);
+                            sources.Add(new RecoveryDocumentSource(source.RescueEditorIds.Contains(editor.Id) ? AsRescue(editor) : editor,
+                                null, false, source.ExpectedStamp, earlier, new RecoveryAdoptionOrigin
                                 {
-                                    fallback = SessionRecoveryCatalog.CloneEditor(older);
-                                    fallback.Id = record.Id;
-                                    fallback.EditingFileFutureAccessToken = null; fallback.EditingFilePath = null;
-                                    fallback.StateMetaData.HasEditingFile = false; fallback.StateMetaData.RequiresSaveAs = true;
-                                    fallback.StateMetaData.IsModified = true; fallback.TextDirty = true;
-                                }
-                                document = await PrepareCurrentDocumentAsync(fallback, defaults, cancellation); break;
-                            }
-                            catch (OperationCanceledException) { throw; }
-                            catch (Exception fallbackError)
-                            { LoggingService.LogError($"[{nameof(SessionService)}] Older row [{record.Id}] is unavailable: {fallbackError.Message}"); }
+                                    SourceStamp = SessionRecoveryAuthority.CopyStamp(source.ExpectedStamp),
+                                    RootAddress = source.RootAddress, RootSha256 = source.RootSha256,
+                                    SourceEditor = SessionRecoveryCatalog.CloneEditor(editor),
+                                    ConsumptionCutoff = source.ConsumptionCutoffs.TryGetValue(editor.Id, out var cutoff) ? cutoff : editor.CaptureRevision,
+                                    UnselectedNewerDescriptors = (newer ?? []).Select(SessionRecoveryCatalog.CloneEditor).ToArray()
+                                }, lifetime, CurrentStamp));
                         }
                     }
                 }
-                if (document != null) batch.Documents.Add(document);
+                DocumentRecoveryState.AdvanceCaptureRevisionFloor(Math.Max(importedFloor,
+                    SessionRecoveryAuthority.GetCaptureRevisionFloor(snapshot.VerifiedRecords)));
+                return new SessionRecoveryPlan(sources, selected == Guid.Empty ? null : selected,
+                    scroll, CurrentStamp, pins, lifetime);
             }
-            cancellation.ThrowIfCancellationRequested();
-            return batch;
         }
-        catch { batch.Dispose(); throw; }
+        catch
+        {
+            lifetime.Disposed = true;
+            foreach (var pin in pins) pin.Dispose();
+            throw;
+        }
     }
 
-    private async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data,
-        DocumentLoadOptions defaults, CancellationToken cancellation)
+    private void AcceptLegacyDecisions(RecoveryScopeSnapshot snapshot)
     {
-        if (data.StateMetaData == null) throw new InvalidDataException("The recovery editor has no saved metadata.");
-        var editingFile = data.EditingFileFutureAccessToken == null ? null :
-            await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
-        if (editingFile != null && !data.StateMetaData.IsModified && !data.TextDirty)
+        foreach (var decision in snapshot.Decisions.Select(read => read.Record))
         {
-            try { return await PreparedRecoveryDocument.FromFileAsync(data.Id, data.StateMetaData, editingFile, _sessionScope.OwnerId, defaults, cancellation); }
-            catch (OperationCanceledException) { throw; }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(SessionService)}] Restoring clean row [{data.Id}] from its recovery copy: {ex.Message}");
-            }
+            _acceptedLegacySources.UnionWith(decision.ResetAcceptedLegacySources);
+            _acceptedLegacySources.UnionWith(decision.Consumptions.Where(key => key.Kind == RecoveryConsumptionKind.Legacy)
+                .Select(key => key.LegacyFingerprint));
         }
-        var prepared = new PreparedRecoveryDocument { Id = data.Id, Metadata = data.StateMetaData, TextDirty = data.TextDirty };
-        try
+    }
+
+    private static TextEditorSessionDataV2 AsRescue(TextEditorSessionDataV2 source)
+    {
+        var editor = SessionRecoveryCatalog.CloneEditor(source);
+        editor.Id = Guid.NewGuid();
+        editor.EditingFileFutureAccessToken = null;
+        editor.EditingFilePath = null;
+        editor.StateMetaData.HasEditingFile = false;
+        editor.StateMetaData.RequiresSaveAs = true;
+        editor.StateMetaData.IsModified = true;
+        editor.TextDirty = true;
+        return editor;
+    }
+
+    /// <summary>Must commit before the caller tries any older payload.</summary>
+    public async Task PreserveFailedNewestAsync(RecoveryDocumentSource source, CancellationToken cancellation = default)
+    {
+        source.RequireAvailable();
+        var descriptor = source.Origin?.SourceEditor ?? source.Descriptor;
+        if (descriptor == null) throw new InvalidOperationException("Legacy recovery has no earlier descriptor.");
+        var expected = source.ExpectedStamp;
+        using (await SessionRecoveryTransaction.EnterAsync(cancellation))
         {
-            using (var savedSource = await SessionDocumentStore.OpenBaselineAsync(data.SavedBaseline))
-            using (var recoverySource = data.SavedBaseline.Matches(data.RecoveryBaseline) ? savedSource.Retain() :
-                await SessionDocumentStore.OpenBaselineAsync(data.RecoveryBaseline))
-            using (var saved = data.SavedBaseline.OwnerId != _sessionScope.OwnerId ?
-                await SessionDocumentStore.ForkBaselineAsync(savedSource, _sessionScope.OwnerId) : savedSource.Retain())
+            if (!SessionRecoveryAuthority.SameEpoch(expected, source.TargetStamp))
             {
-                prepared.SavedSnapshot = new DocumentSnapshot(saved,
-                    EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding),
-                    LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding),
-                    data.StateMetaData.DateModifiedFileTime);
-                prepared.RecoveryBaseline = data.SavedBaseline.Matches(data.RecoveryBaseline) ? saved.Retain() :
-                    data.RecoveryBaseline.OwnerId != _sessionScope.OwnerId ?
-                        await SessionDocumentStore.ForkBaselineAsync(recoverySource, _sessionScope.OwnerId) : recoverySource.Retain();
+                var target = await SessionRecoveryCatalog.ReadScopeAsync(_sessionScope.OwnerId, cancellation, content: false);
+                IsRecoveryBlocked = target.Blocked;
+                SessionRecoveryAuthority.RequireCurrent(source.TargetStamp, target);
             }
-            prepared.Journal = await SessionDocumentStore.OpenJournalAsync(data.Journal);
-            prepared.Checkpoint = await prepared.Journal.OpenCheckpointAsync(data.Journal.BaselineSequence,
-                data.Journal.CommittedSequence, data.Journal.CommittedByteLength,
-                data.Journal.PrefixSha256, data.Journal.DocumentByteLength);
-            prepared.EditingFile = editingFile;
-            prepared.FileNamePlaceholder = data.StateMetaData.FileNamePlaceholder ?? data.EditingFileName;
-            return prepared;
+            var authority = await SessionRecoveryCatalog.ReadScopeAsync(expected.ScopeId, cancellation, content: false);
+            IsRecoveryBlocked = authority.Blocked;
+            SessionRecoveryAuthority.RequireCurrent(expected, authority);
+            var area = _recordStore.GetScopeArea(expected.ScopeId, RecoveryAreaKind.Pending, descriptor.Id);
+            RecoveryRootStore.RequireCommitted(await _recordStore.PublishAsync(area, new RecoveryRecord
+            {
+                Kind = RecoveryRecordKind.Pending,
+                Stamp = _recordStore.CreatePublicationStamp(area, expected),
+                Editor = descriptor
+            }, cancellation));
+            RecoveryOutcome = SessionRecoveryOutcome.Partial;
         }
-        catch { prepared.Dispose(); throw; }
     }
 }

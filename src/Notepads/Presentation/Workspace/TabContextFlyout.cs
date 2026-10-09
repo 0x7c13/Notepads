@@ -32,15 +32,15 @@ public sealed partial class TabContextFlyout : MenuFlyout
     private string _containingFolderPath;
 
     private readonly INotepadsCore _notepadsCore;
-    private readonly ITextEditor _textEditor;
+    private readonly WorkspaceTab _tab;
     private readonly Func<ITextEditor, Task> _renameAsync;
 
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-    public TabContextFlyout(INotepadsCore notepadsCore, ITextEditor textEditor, Func<ITextEditor, Task> renameAsync)
+    public TabContextFlyout(INotepadsCore notepadsCore, WorkspaceTab tab, Func<ITextEditor, Task> renameAsync)
     {
         _notepadsCore = notepadsCore;
-        _textEditor = textEditor;
+        _tab = tab;
         _renameAsync = renameAsync;
 
         Items.Add(Close);
@@ -69,18 +69,21 @@ public sealed partial class TabContextFlyout : MenuFlyout
 
     private void TabContextFlyout_Opening(object sender, object e)
     {
+        var textEditor = _tab.ReadyEditor;
+        _filePath = _tab.EditingFilePath;
+        _containingFolderPath = string.IsNullOrEmpty(_filePath) ? null : Path.GetDirectoryName(_filePath);
         var isFileReadonly = false;
-        if (_textEditor.EditingFile != null)
+        if (textEditor?.EditingFile != null)
         {
-            _filePath = _textEditor.EditingFile.Path;
+            _filePath = textEditor.EditingFile.Path;
             _containingFolderPath = Path.GetDirectoryName(_filePath);
-            isFileReadonly = FileStorage.IsFileReadOnly(_textEditor.EditingFile);
+            isFileReadonly = FileStorage.IsFileReadOnly(textEditor.EditingFile);
         }
 
-        CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetNumberOfOpenedTextEditors() > 1;
+        CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetTabCount() > 1;
         CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
         OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
-        Rename.IsEnabled = _textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
+        Rename.IsEnabled = textEditor != null && textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
     }
 
     private void TabContextFlyout_Closed(object sender, object e)
@@ -95,7 +98,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
             if (_close != null) return _close;
 
             _close = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText") };
-            _close.Click += (sender, args) => { _notepadsCore.CloseTextEditor(_textEditor); };
+            _close.Click += (sender, args) => { _notepadsCore.CloseTab(_tab); };
             _close.KeyboardAccelerators.Add(new KeyboardAccelerator()
             {
                 Modifiers = VirtualKeyModifiers.Control,
@@ -115,12 +118,12 @@ public sealed partial class TabContextFlyout : MenuFlyout
             _closeOthers = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseOthersButtonDisplayText") };
             _closeOthers.Click += (sender, args) =>
             {
-                ExecuteOnAllTextEditors(
-                    (textEditor) =>
+                ExecuteOnAllTabs(
+                    (tab) =>
                     {
-                        if (textEditor != _textEditor)
+                        if (tab != _tab)
                         {
-                            _notepadsCore.CloseTextEditor(textEditor);
+                            _notepadsCore.CloseTab(tab);
                         }
                     });
             };
@@ -139,16 +142,16 @@ public sealed partial class TabContextFlyout : MenuFlyout
             {
                 bool close = false;
 
-                ExecuteOnAllTextEditors(
-                    (textEditor) =>
+                ExecuteOnAllTabs(
+                    (tab) =>
                     {
-                        if (textEditor == _textEditor)
+                        if (tab == _tab)
                         {
                             close = true;
                         }
                         else if (close)
                         {
-                            _notepadsCore.CloseTextEditor(textEditor);
+                            _notepadsCore.CloseTab(tab);
                         }
                     });
             };
@@ -165,12 +168,12 @@ public sealed partial class TabContextFlyout : MenuFlyout
             _closeSaved = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CloseSavedButtonDisplayText") };
             _closeSaved.Click += (sender, args) =>
             {
-                ExecuteOnAllTextEditors(
-                    (textEditor) =>
+                ExecuteOnAllTabs(
+                    (tab) =>
                     {
-                        if (!textEditor.IsModified)
+                        if (tab.ReadyEditor is ITextEditor editor && !editor.IsModified)
                         {
-                            _notepadsCore.CloseTextEditor(textEditor);
+                            _notepadsCore.CloseTab(tab);
                         }
                     });
             };
@@ -240,18 +243,18 @@ public sealed partial class TabContextFlyout : MenuFlyout
             });
             _rename.Click += async (sender, args) =>
             {
-                _notepadsCore.SwitchTo(_textEditor);
-                await _renameAsync(_textEditor);
+                _notepadsCore.SwitchTo(_tab);
+                if (_tab.ReadyEditor is ITextEditor editor) await _renameAsync(editor);
             };
             return _rename;
         }
     }
 
-    private void ExecuteOnAllTextEditors(Action<ITextEditor> action)
+    private void ExecuteOnAllTabs(Action<WorkspaceTab> action)
     {
-        foreach (ITextEditor textEditor in _notepadsCore.GetAllTextEditors())
+        foreach (var tab in _notepadsCore.GetTabs())
         {
-            action(textEditor);
+            action(tab);
         }
     }
 }

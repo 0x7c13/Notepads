@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>पिछला बदलाव (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>उपलब्ध संसाधनों के भीतर तुलना तैयार नहीं की जा सकी। आपका दस्तावेज़ बदला नहीं गया है।</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB से बड़े दस्तावेज़ प्रिंट नहीं किए जा सकते।</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>दस्तावेज़ लोड हो रहा है…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>दस्तावेज़ लोड नहीं हो सका</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” लोड नहीं हुआ है। बंद करने से पहले इसे लोड करके सहेजें, या इसकी पुनर्प्राप्ति प्रति हटा दें?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>बाहर निकलने से पहले सहेजें? कुछ दस्तावेज़ लोड नहीं हुए हैं। छोड़ने पर उनकी पुनर्प्राप्ति प्रतियाँ हट जाएँगी।</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>लोड नहीं हुए दस्तावेज़</value></data>
 </root>

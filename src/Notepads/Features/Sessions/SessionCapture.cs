@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Notepads.Features.Documents;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Recovery;
 using Windows.Storage;
 
 namespace Notepads.Features.Sessions;
@@ -21,7 +22,7 @@ internal sealed class SessionCapture : IDisposable
 
     public void Dispose()
     {
-        foreach (var document in Documents) document.Recovery.Dispose();
+        foreach (var document in Documents) document.Recovery?.Dispose();
     }
 }
 
@@ -29,7 +30,16 @@ internal sealed class SessionDocumentCapture
 {
     public Guid Id { get; set; }
     public DocumentRecoveryState Recovery { get; set; }
+    public RecoveryDocumentSource Source { get; set; }
+    public RecoveryFileAccessBinding FileAccessBinding { get; set; }
+    public bool IsRetained => Recovery == null && Source != null;
     public StorageFile EditingFile { get; set; }
     public string EditingFileName { get; set; }
     public string EditingFilePath { get; set; }
+
+    public static SessionDocumentCapture Retain(RecoveryDocumentSource source) => new()
+    {
+        Id = source.Id,
+        Source = source
+    };
 }

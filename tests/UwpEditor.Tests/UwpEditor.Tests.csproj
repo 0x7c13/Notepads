@@ -79,7 +79,8 @@
     <Compile Include="..\..\src\Notepads\Presentation\Controls\TextEditor\FileModificationState.cs" />
     <Compile Include="..\..\src\Notepads\Presentation\Workspace\INotepadsCore.cs" />
     <Compile Include="..\..\src\Notepads\Presentation\Workspace\ISessionController.cs" />
-    <Compile Include="..\..\src\Notepads\Presentation\Workspace\SessionController.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Workspace\SessionController*.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Workspace\WorkspaceTab.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="..\..\src\Notepads\Presentation\Theming\SyntaxThemes.xaml">
@@ -101,4 +102,5 @@
       <Link>TestAssets\Square44x44Logo.scale-200.png</Link>
     </Content>
   </ItemGroup>
+  <Import Project="..\Shared\TestStorageIsolation.targets" />
 </Project>

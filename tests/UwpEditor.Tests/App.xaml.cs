@@ -33,6 +33,7 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        NotepadsTestIsolation.TestApplicationData.InitializeFromActivation();
         try
         {
             Application.Start(_ =>
@@ -73,26 +74,26 @@ public sealed partial class App : Application
         var log = new StringBuilder();
         try
         {
-            if (args.Arguments.StartsWith("--restore-perf-", StringComparison.Ordinal))
+            if (NotepadsTestIsolation.TestApplicationData.Arguments.StartsWith("--restore-perf-", StringComparison.Ordinal))
             {
                 ThemeSettingsService.Initialize();
                 ApplicationPreferences.Initialize();
-                await SessionControllerTests.RunRestorePerformanceAsync(args.Arguments, log);
+                await SessionControllerTests.RunRestorePerformanceAsync(NotepadsTestIsolation.TestApplicationData.Arguments, log);
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments.StartsWith("--interactive-test ", StringComparison.Ordinal))
+            if (NotepadsTestIsolation.TestApplicationData.Arguments.StartsWith("--interactive-test ", StringComparison.Ordinal))
             {
-                await InteractiveEditorHost.StartAsync(args.Arguments);
+                await InteractiveEditorHost.StartAsync(NotepadsTestIsolation.TestApplicationData.Arguments);
                 return;
             }
-            if (args.Arguments.StartsWith("--lease-", StringComparison.Ordinal))
+            if (NotepadsTestIsolation.TestApplicationData.Arguments.StartsWith("--lease-", StringComparison.Ordinal))
             {
-                await SessionLeaseProcessTests.RunAsync(args.Arguments);
+                await SessionLeaseProcessTests.RunAsync(NotepadsTestIsolation.TestApplicationData.Arguments);
                 Exit();
                 return;
             }
-            if (args.Arguments == "--performance")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--performance")
             {
                 ThemeSettingsService.Initialize();
                 ApplicationPreferences.Initialize();
@@ -100,15 +101,15 @@ public sealed partial class App : Application
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments is "--persistence" or "--session-resilience")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments is "--persistence" or "--session-resilience")
             {
                 ThemeSettingsService.Initialize();
                 ApplicationPreferences.Initialize();
-                if (args.Arguments == "--persistence") await DocumentBaselineTests.RunAsync(log);
+                if (NotepadsTestIsolation.TestApplicationData.Arguments == "--persistence") await DocumentBaselineTests.RunAsync(log);
                 await SessionStorageTests.RunAsync(log);
                 await SessionRecoveryTests.RunAsync(log);
                 await SessionServiceTests.RunAsync(log);
-                if (args.Arguments == "--persistence")
+                if (NotepadsTestIsolation.TestApplicationData.Arguments == "--persistence")
                 {
                     await SessionRegistryTests.RunAsync(log);
                     await SessionControllerTests.RunAsync(log);
@@ -142,7 +143,7 @@ public sealed partial class App : Application
             Window.Current.Content = backdrop;
             WriteDiagnostic("Editor attached to window");
             Window.Current.Activate();
-            if (string.IsNullOrEmpty(args.Arguments))
+            if (string.IsNullOrEmpty(NotepadsTestIsolation.TestApplicationData.Arguments))
                 await AutomationNavigationTests.RunAsync(log, core);
             WriteDiagnostic("Window activated; importing initial text");
             const string imported = "你好😀\r\nx\nz\r\0end\r";
@@ -152,7 +153,7 @@ public sealed partial class App : Application
             var initialText = core.GetText();
             var nativeView = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
             var native = nativeView.Editor;
-            if (args.Arguments == "--automation-navigation")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--automation-navigation")
             {
                 await AutomationNavigationTests.RunAsync(log, core);
                 core.Dispose();
@@ -162,21 +163,21 @@ public sealed partial class App : Application
             Check((native.StyleGetFore(LineNumberStyle) & 0xffffff) == 0x969696 &&
                 unchecked((uint)native.GetElementColour(WinUIEditor.Element.CaretLineBack)) == 0x18ffffff,
                 "the constructor colors a new editor from the Dark palette before any theme change");
-            if (args.Arguments == "--diff")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--diff")
             {
                 await DiffViewTests.RunAsync(log, core);
                 core.Dispose();
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments == "--syntax")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--syntax")
             {
                 await SyntaxHighlightingTests.RunAsync(log, core);
                 core.Dispose();
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments == "--regex-memory")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--regex-memory")
             {
                 const int documentBytes = 8 * 1024 * 1024;
                 WriteDiagnostic("Regex allocation: preparing a bounded-line document");
@@ -212,7 +213,7 @@ public sealed partial class App : Application
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments == "--search")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--search")
             {
                 await CheckSearchBehaviorAsync(core);
                 core.Dispose();
@@ -220,7 +221,7 @@ public sealed partial class App : Application
                 CompleteTests(log);
                 return;
             }
-            if (args.Arguments == "--native-storage")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--native-storage")
             {
                 await CheckNativeUtf8ContractsAsync();
                 await CheckNativeJournalContractsAsync();
@@ -389,7 +390,7 @@ public sealed partial class App : Application
             Equal("ABC أهلا بالعالم 123 DEF", core.GetText(), "Arabic replacement uses logical document order");
             core.Undo();
             Equal(mixed, core.GetText(), "mixed-direction replacement undo");
-            if (args.Arguments == "--bidi-preview")
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--bidi-preview")
             {
                 core.SetText("مرحبا بالعالم\rABC مرحبا بالعالم 123 DEF\rالعربية: 123 (ABC)\rעברית ABC 123\rمرحبا\tABC\rالسَّلَامُ عَلَيْكُمْ\rArabic: العربية — English: hello");
                 core.SetTextSelectionPosition(17, 22);
@@ -700,7 +701,7 @@ public sealed partial class App : Application
             // Runs before the syntax tests, which configure the native lexer directly.
             await IndentationTests.RunAsync(log, core);
             core.Focus(FocusState.Programmatic);
-            if (args.Arguments == "--preview") await Task.Delay(20000);
+            if (NotepadsTestIsolation.TestApplicationData.Arguments == "--preview") await Task.Delay(20000);
             await SyntaxHighlightingTests.RunAsync(log, core);
             await DiffViewTests.RunAsync(log, core);
             core.Dispose();
@@ -718,6 +719,8 @@ public sealed partial class App : Application
 
     private void CompleteTests(StringBuilder log)
     {
+        try { NotepadsTestIsolation.TestApplicationData.ValidatePreservedFileGrants(); }
+        catch (Exception error) { log.AppendLine("FAIL: test storage isolation " + error); }
         System.IO.File.WriteAllText(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "results.txt"), log.ToString());
         Exit();
     }

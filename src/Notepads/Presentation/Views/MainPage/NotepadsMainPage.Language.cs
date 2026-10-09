@@ -19,7 +19,7 @@ public sealed partial class NotepadsMainPage
     private void LanguageIndicator_OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         args.Handled = true;
-        if (NotepadsCore.GetSelectedTextEditor()?.CanChangeLanguage == true)
+        if (NotepadsCore.GetSelectedReadyEditor()?.CanChangeLanguage == true)
             LanguageSelectionFlyout.ShowAt(LanguageIndicator);
     }
 
@@ -27,7 +27,7 @@ public sealed partial class NotepadsMainPage
     {
         LanguageSelectionFlyout.Items.Clear();
         _languageFlyoutEditor = null;
-        var editor = NotepadsCore.GetSelectedTextEditor();
+        var editor = NotepadsCore.GetSelectedReadyEditor();
         if (editor?.CanChangeLanguage == true) BuildLanguageFlyout(editor);
     }
 
@@ -68,7 +68,7 @@ public sealed partial class NotepadsMainPage
 
     private void LanguageSelection_OnClick(object sender, RoutedEventArgs args)
     {
-        var editor = NotepadsCore.GetSelectedTextEditor();
+        var editor = NotepadsCore.GetSelectedReadyEditor();
         if (ReferenceEquals(editor, _languageFlyoutEditor) && editor?.CanChangeLanguage == true && sender is MenuFlyoutItem item)
             editor.SetLanguageOverride(item.Tag as string);
     }

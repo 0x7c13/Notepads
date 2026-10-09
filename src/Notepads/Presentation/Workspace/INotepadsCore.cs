@@ -19,14 +19,17 @@ namespace Notepads.Presentation.Workspace;
 /// </summary>
 public interface INotepadsCore : IDisposable, IAsyncDisposable
 {
+    event EventHandler<WorkspaceTab> TabOpened;
+    event EventHandler<WorkspaceTab> TabClosed;
+    event EventHandler<WorkspaceTab> TabClosing;
+    event EventHandler<WorkspaceTab> TabSelected;
+    event EventHandler<WorkspaceTab> TabStateChanged;
+    event EventHandler<WorkspaceTab> EditorAttached;
     event EventHandler<ITextEditor> TextEditorLoaded;
-    event EventHandler<ITextEditor> TextEditorOpened;
     event EventHandler<ITextEditor> TextEditorLanguageChanged;
-    event EventHandler<ITextEditor> TextEditorClosed;
     event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
     event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
     event EventHandler<ITextEditor> TextEditorSaved;
-    event EventHandler<ITextEditor> TextEditorClosing;
     event EventHandler<ITextEditor> TextEditorRenamed;
     event EventHandler<ITextEditor> TextEditorSelectionChanged;
     event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
@@ -44,29 +47,54 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
     ITextEditor CreateTextEditor(
         Guid id,
         StorageFile editingFile,
-        string fileNamePlaceHolder);
+        string fileNamePlaceHolder,
+        bool allowWhileClosing = false);
 
     Guid DocumentOwnerId { get; }
 
     bool IsClosing { get; set; }
 
+    bool IsEditorPresentationPaused { get; set; }
+
     Task<ITextEditor> CreateNewTextEditorAsync(string fileNamePlaceholder);
+
+    Task DiscardUnattachedEditorAsync(ITextEditor editor);
 
     void OpenTextEditor(ITextEditor editor, int atIndex = -1);
 
-    void OpenTextEditors(ITextEditor[] editors, Guid? selectedEditorId = null);
+    void OpenTab(WorkspaceTab tab, int atIndex = -1, bool select = true, bool allowWhileClosing = false);
+
+    void OpenTabs(WorkspaceTab[] tabs, Guid? selectedTabId = null, bool allowWhileClosing = false);
+
+    bool AttachEditor(WorkspaceTab tab, ITextEditor editor, bool showEditor = true);
+
+    void ResumeEditorPresentation();
+
+    WorkspaceTab[] GetTabs();
+
+    WorkspaceTab GetSelectedTab();
+
+    WorkspaceTab GetTab(ITextEditor editor);
+
+    bool ContainsTab(WorkspaceTab tab);
+
+    Task<WorkspaceTab> FindTabAsync(StorageFile file);
+
+    void DeleteTab(WorkspaceTab tab);
+
+    void CloseTab(WorkspaceTab tab);
+
+    void SwitchTo(WorkspaceTab tab);
 
     Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file);
 
-    void DeleteTextEditor(ITextEditor textEditor);
-
-    int GetNumberOfOpenedTextEditors();
+    int GetTabCount();
 
     bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content);
 
-    bool HaveUnsavedTextEditor();
+    bool HasTabsRequiringSave();
 
-    bool HaveNonemptyTextEditor();
+    bool HasPrintableTabs();
 
     void ChangeLineEnding(ITextEditor textEditor, LineEnding lineEnding);
 
@@ -76,17 +104,11 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
 
     void SwitchTo(ITextEditor textEditor);
 
-    ITextEditor GetSelectedTextEditor();
-
-    ITextEditor GetTextEditor(StorageFile file);
-
-    ITextEditor[] GetAllTextEditors();
+    ITextEditor GetSelectedReadyEditor();
 
     void FocusOnTextEditor(ITextEditor textEditor);
 
     void FocusOnSelectedTextEditor();
-
-    void CloseTextEditor(ITextEditor textEditor);
 
     double GetTabScrollViewerHorizontalOffset();
 

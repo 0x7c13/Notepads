@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Prethodna promjena (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Usporedbu nije moguće pripremiti s dostupnim resursima. Dokument nije promijenjen.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumenti veći od 1 MB ne mogu se ispisati.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Učitavanje dokumenta…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Dokument nije moguće učitati</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>„{0}” nije učitan. Učitati i spremiti prije zatvaranja ili odbaciti njegovu kopiju za oporavak?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Spremiti prije izlaska? Neki dokumenti nisu učitani. Odbacivanjem se uklanjaju njihove kopije za oporavak.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Neučitani dokumenti</value></data>
 </root>

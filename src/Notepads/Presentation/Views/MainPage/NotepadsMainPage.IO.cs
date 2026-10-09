@@ -24,6 +24,14 @@ namespace Notepads.Presentation.Views.MainPage;
 
 public sealed partial class NotepadsMainPage
 {
+    private readonly List<FileOpenRequest> _openingFiles = [];
+
+    private sealed class FileOpenRequest(StorageFile file)
+    {
+        public StorageFile File { get; } = file;
+        public TaskCompletionSource<object> Completion { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
+
     private async Task CreateNewTextEditorAsync()
     {
         if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return;
@@ -31,12 +39,13 @@ public sealed partial class NotepadsMainPage
         try
         {
             editor = await NotepadsCore.CreateNewTextEditorAsync(_defaultNewFileName);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { editor.Dispose(); return; }
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return; }
             NotepadsCore.OpenTextEditor(editor);
         }
         catch (Exception ex)
         {
-            editor?.Dispose();
+            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to create a document: {ex}");
+            if (editor != null && NotepadsCore.GetTab(editor) == null) await NotepadsCore.DiscardUnattachedEditorAsync(editor);
             if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return;
             var errorDialog = new FileOpenErrorDialog(filePath: null, ex.Message);
             await DialogManager.OpenDialogAsync(errorDialog, awaitPreviousDialog: false);
@@ -80,11 +89,37 @@ public sealed partial class NotepadsMainPage
     public async Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true)
     {
         if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return false;
+        var pending = _openingFiles.FirstOrDefault(request => request.File.IsEqual(file));
+        if (pending != null)
+        {
+            // A StorageFile rejects overlapping metadata operations on the same
+            // instance. Join the original open, then select its surviving tab.
+            await pending.Completion.Task;
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
+            var existing = await NotepadsCore.FindTabAsync(file);
+            if (!_viewClosed && !_isAppClosing && !NotepadsCore.IsClosing && existing != null)
+                NotepadsCore.SwitchTo(existing);
+            return false;
+        }
+        var request = new FileOpenRequest(file);
+        _openingFiles.Add(request);
+        try { return await OpenFileCoreAsync(file, rebuildOpenRecentItems); }
+        finally
+        {
+            _openingFiles.Remove(request);
+            request.Completion.TrySetResult(null);
+        }
+    }
+
+    private async Task<bool> OpenFileCoreAsync(StorageFile file, bool rebuildOpenRecentItems)
+    {
+        if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return false;
         ITextEditor editor = null;
         try
         {
-            var openedEditor = NotepadsCore.GetTextEditor(file);
-            if (openedEditor != null)
+            var openedEditor = await NotepadsCore.FindTabAsync(file);
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
+            if (openedEditor != null && NotepadsCore.ContainsTab(openedEditor))
             {
                 NotepadsCore.SwitchTo(openedEditor);
                 NotificationCenter.Instance.PostNotification(
@@ -93,13 +128,14 @@ public sealed partial class NotepadsMainPage
             }
 
             editor = await NotepadsCore.CreateTextEditorAsync(Guid.NewGuid(), file);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { editor.Dispose(); return false; }
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return false; }
             // Another activation or drop can finish opening the same file
             // while this candidate is decoding its retained source stream.
-            openedEditor = NotepadsCore.GetTextEditor(file);
-            if (openedEditor != null)
+            openedEditor = await NotepadsCore.FindTabAsync(file);
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return false; }
+            if (openedEditor != null && NotepadsCore.ContainsTab(openedEditor))
             {
-                editor.Dispose();
+                await NotepadsCore.DiscardUnattachedEditorAsync(editor);
                 NotepadsCore.SwitchTo(openedEditor);
                 return false;
             }
@@ -117,8 +153,9 @@ public sealed partial class NotepadsMainPage
         }
         catch (Exception ex)
         {
-            if (editor != null && !NotepadsCore.GetAllTextEditors().Contains(editor)) editor.Dispose();
+            if (editor != null && NotepadsCore.GetTab(editor) == null) await NotepadsCore.DiscardUnattachedEditorAsync(editor);
             if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
+            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open [{file.Path}]: {ex}");
             var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
             await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
             if (!fileOpenErrorDialog.IsAborted)
@@ -179,9 +216,10 @@ public sealed partial class NotepadsMainPage
 
     private async Task<StorageFile> OpenFileUsingFileSavePickerAsync(ITextEditor textEditor)
     {
-        NotepadsCore.SwitchTo(textEditor);
+        if (textEditor == null || NotepadsCore.GetTab(textEditor) == null) return null;
+        if (!_isAppClosing) NotepadsCore.SwitchTo(textEditor);
         StorageFile file = await FilePickerFactory.GetFileSavePicker(textEditor).PickSaveFileAsync();
-        if (!_viewClosed && !_isAppClosing && NotepadsCore.GetAllTextEditors().Contains(textEditor))
+        if (!_viewClosed && !_isAppClosing && NotepadsCore.GetTab(textEditor) != null)
             NotepadsCore.FocusOnTextEditor(textEditor);
         return file;
     }
@@ -246,11 +284,11 @@ public sealed partial class NotepadsMainPage
 
             return true;
         }
-        catch (OperationCanceledException) when (!NotepadsCore.GetAllTextEditors().Contains(textEditor))
+        catch (OperationCanceledException) when (NotepadsCore.GetTab(textEditor) == null)
         {
             return false;
         }
-        catch (ObjectDisposedException) when (!NotepadsCore.GetAllTextEditors().Contains(textEditor))
+        catch (ObjectDisposedException) when (NotepadsCore.GetTab(textEditor) == null)
         {
             return false;
         }
@@ -269,15 +307,26 @@ public sealed partial class NotepadsMainPage
 
     private bool CanSaveEditor(ITextEditor textEditor, bool allowWhileClosing) =>
         !_viewClosed && textEditor != null && (!_isAppClosing || allowWhileClosing) &&
-        NotepadsCore.GetAllTextEditors().Contains(textEditor);
+        NotepadsCore.GetTab(textEditor) != null;
 
-    private async Task<bool> SaveAllAsync(ITextEditor[] textEditors)
+    private async Task<bool> SaveAllAsync(WorkspaceTab[] tabs)
     {
         var success = false;
+        var complete = true;
 
-        foreach (var textEditor in textEditors)
+        foreach (var tab in tabs)
         {
+            if (_viewClosed || _isAppClosing) return false;
+            var textEditor = await SessionController.EnsureLoadedAsync(tab);
+            if (!NotepadsCore.ContainsTab(tab)) continue;
+            if (textEditor == null)
+            {
+                complete = false;
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("WorkspaceTab_LoadFailed"), 3500);
+                continue;
+            }
             if (await SaveAsync(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false)) success = true;
+            else complete = false;
         }
 
         if (success)
@@ -285,7 +334,7 @@ public sealed partial class NotepadsMainPage
             await BuildOpenRecentButtonSubItemsAsync();
         }
 
-        return success;
+        return complete;
     }
 
     private async Task RenameFileAsync(ITextEditor textEditor)
@@ -304,7 +353,7 @@ public sealed partial class NotepadsMainPage
 
         var result = await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         if (result == null || fileRenameDialog.IsAborted || newFileName == null || _isAppClosing ||
-            !NotepadsCore.GetAllTextEditors().Contains(textEditor))
+            NotepadsCore.GetTab(textEditor) == null)
         {
             return;
         }
@@ -312,15 +361,15 @@ public sealed partial class NotepadsMainPage
         try
         {
             await textEditor.RenameAsync(newFileName, expectedFile);
-            if (!NotepadsCore.GetAllTextEditors().Contains(textEditor)) return;
+            if (NotepadsCore.GetTab(textEditor) == null) return;
             NotepadsCore.FocusOnSelectedTextEditor();
             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileRenamed"), 1500);
         }
         catch (OperationCanceledException) { }
-        catch (ObjectDisposedException) when (!NotepadsCore.GetAllTextEditors().Contains(textEditor)) { }
+        catch (ObjectDisposedException) when (NotepadsCore.GetTab(textEditor) == null) { }
         catch (Exception ex)
         {
-            if (!NotepadsCore.GetAllTextEditors().Contains(textEditor)) return;
+            if (NotepadsCore.GetTab(textEditor) == null) return;
             var errorMessage = ex.Message?.TrimEnd('\r', '\n');
             NotificationCenter.Instance.PostNotification(errorMessage, 3500);
         }
@@ -332,11 +381,30 @@ public sealed partial class NotepadsMainPage
 
     public async Task PrintAsync(ITextEditor textEditor)
     {
-        if (textEditor == null) return;
-        await PrintAllAsync([textEditor]);
+        if (_viewClosed || _isAppClosing || textEditor == null || NotepadsCore.GetTab(textEditor) == null) return;
+        await PrintEditorsAsync([textEditor]);
     }
 
-    public async Task PrintAllAsync(ITextEditor[] textEditors)
+    public async Task PrintAllAsync(WorkspaceTab[] tabs)
+    {
+        if (tabs == null || tabs.Length == 0 || _viewClosed || _isAppClosing) return;
+        var editors = new List<ITextEditor>();
+        foreach (var tab in tabs)
+        {
+            var editor = await SessionController.EnsureLoadedAsync(tab);
+            if (_viewClosed || _isAppClosing) return;
+            if (!NotepadsCore.ContainsTab(tab)) continue;
+            if (editor == null)
+            {
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("WorkspaceTab_LoadFailed"), 3500);
+                return;
+            }
+            editors.Add(editor);
+        }
+        await PrintEditorsAsync(editors.ToArray());
+    }
+
+    private async Task PrintEditorsAsync(ITextEditor[] textEditors)
     {
         if (textEditors == null || textEditors.Length == 0) return;
 

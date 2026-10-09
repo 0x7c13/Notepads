@@ -35,16 +35,15 @@ using WinUIEditor;
 
 namespace Notepads.Presentation.Workspace;
 
-internal sealed class SessionController : ISessionController, ISessionPersistenceParticipant
+internal sealed partial class SessionController : ISessionController, ISessionPersistenceParticipant
 {
     private static readonly TimeSpan SaveInterval = TimeSpan.FromSeconds(7);
     private static readonly TimeSpan MaintenanceInterval = TimeSpan.FromSeconds(60);
     private readonly INotepadsCore _notepadsCore;
     private readonly CoreDispatcher _dispatcher;
     // Each step starts on the UI thread and runs its SessionService call on the pool with one awaited
-    // Task.Run, so session file I/O never blocks the UI. Editor capture, restoration and capture disposal
-    // stay on the UI thread around that hop. Steps serialize every SessionService call and mutation; UI
-    // reads outside steps are limited to single-field snapshots (stamp, flags, counts).
+    // Task.Run, so session file I/O never blocks the UI. Native restoration and pure source preparation
+    // run outside this gate; only capture, publication and workspace adoption/retirement serialize here.
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed",
         Justification = "Dispose stops the coordinator; DrainAsync waits for its Completion before releasing session ownership.")]
     private readonly DocumentOperationCoordinator _sessionOperations = new();
@@ -73,13 +72,14 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         _registration = registerSession(this);
         _loaded = false;
 
-        foreach (var editor in _notepadsCore.GetAllTextEditors())
+        foreach (var tab in _notepadsCore.GetTabs())
         {
-            BindEditorContentStateChangeEvent(this, editor);
+            BindEditorContentStateChangeEvent(this, tab);
         }
 
-        _notepadsCore.TextEditorOpened += BindEditorContentStateChangeEvent;
-        _notepadsCore.TextEditorClosed += UnbindEditorContentStateChangeEvent;
+        _notepadsCore.EditorAttached += BindEditorContentStateChangeEvent;
+        _notepadsCore.TabClosed += UnbindEditorContentStateChangeEvent;
+        _notepadsCore.TabSelected += OnTabSelected;
     }
 
     public bool IsBackupEnabled
@@ -88,88 +88,16 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         set => _service.IsBackupEnabled = value;
     }
 
-    public int UnrecoveredEditorCount => _service.UnrecoveredEditorCount;
+    public int UnrecoveredEditorCount => _imports.Count(tab => tab.State == WorkspaceTabState.Failed) +
+        _notepadsCore.GetTabs().Count(tab => tab.State == WorkspaceTabState.Failed);
 
-    public SessionRecoveryOutcome RecoveryOutcome => _service.RecoveryOutcome;
+    public SessionRecoveryOutcome RecoveryOutcome => UnrecoveredEditorCount != 0 && _service.RecoveryOutcome != SessionRecoveryOutcome.Blocked
+        ? SessionRecoveryOutcome.Partial : _service.RecoveryOutcome;
 
     public bool IsRecoveryBlocked => _service.IsRecoveryBlocked;
 
     public Task InitializeAuthorityAsync() => _sessionOperations.RunAsync(
         cancellation => Task.Run(() => _service.InitializeAuthorityAsync(cancellation)));
-
-    public async Task<int> LoadLastSessionAsync()
-    {
-        var count = 0;
-        await _sessionOperations.RunAsync(async cancellation => count = await LoadLastSessionCoreAsync(cancellation));
-        return count;
-    }
-
-    private async Task<int> LoadLastSessionCoreAsync(CancellationToken cancellation)
-    {
-        if (_loaded) return 0;
-        var options = new DocumentLoadOptions(configuredDefaultEncoding: ApplicationPreferences.EditorDefaultDecoding);
-        using (var batch = await Task.Run(() => _service.PrepareRecoveryAsync(options, cancellation)))
-        {
-            var recovered = new ITextEditor[batch.Documents.Count];
-            try
-            {
-                await RecoveryRestorePipeline.RunAsync(batch.Documents, async (index, document) =>
-                {
-                    cancellation.ThrowIfCancellationRequested();
-                    if (_disposed || _notepadsCore.IsClosing) return;
-                    ITextEditor editor = null;
-                    try
-                    {
-                        editor = _notepadsCore.CreateTextEditor(document.Id, document.EditingFile, document.FileNamePlaceholder);
-                        if (document.Checkpoint != null)
-                        {
-                            await editor.RestoreV2Async(document.SavedSnapshot, document.RecoveryBaseline,
-                                document.Journal, document.Checkpoint, document.EditingFile, document.Metadata, document.TextDirty);
-                        }
-                        else if (document.InitializeFromFile)
-                        {
-                            await editor.InitAsync(document.SavedSnapshot, document.EditingFile);
-                            editor.ResetEditorState(document.Metadata);
-                        }
-                        else
-                        {
-                            await editor.RestoreAsync(document.SavedSnapshot, document.EditingFile,
-                                document.Metadata, document.RecoveryBaseline);
-                        }
-
-                        recovered[index] = editor;
-                    }
-                    catch (Exception ex)
-                    {
-                        editor?.Dispose();
-                        LoggingService.LogError($"[{nameof(SessionController)}] Failed to restore editor [{document.Id}]: {ex}");
-                    }
-                }, cancellation);
-                if (!_disposed && !_notepadsCore.IsClosing)
-                {
-                    try { _notepadsCore.OpenTextEditors(recovered.Where(editor => editor != null).ToArray(), batch.SelectedEditorId); }
-                    catch (Exception ex) { LoggingService.LogError($"[{nameof(SessionController)}] Recovered tabs could not all be attached: {ex}"); }
-                }
-                var attached = new HashSet<ITextEditor>(_notepadsCore.GetAllTextEditors());
-                var attachedIds = recovered.Where(attached.Contains).Select(editor => editor.Id).ToArray();
-                if (attachedIds.Length != 0)
-                {
-                    using var capture = CaptureSession(_notepadsCore.GetAllTextEditors(), batch.ExpectedStamp);
-                    await Task.Run(() => _service.CommitAttachedAsync(capture, attachedIds, cancellation));
-                }
-                if (!_disposed && !_notepadsCore.IsClosing)
-                    _notepadsCore.SetTabScrollViewerHorizontalOffset(batch.TabScrollOffset);
-                _loaded = true;
-                return attachedIds.Length;
-            }
-            finally
-            {
-                var attached = new HashSet<ITextEditor>(_notepadsCore.GetAllTextEditors());
-                foreach (var editor in recovered.Where(editor => editor != null))
-                    if (!attached.Contains(editor)) editor.Dispose();
-            }
-        }
-    }
 
     public async Task OpenSessionBackupFolderAsync()
     {
@@ -225,106 +153,6 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         }
     }
 
-    private async Task<bool> SaveSessionCoreAsync(Action actionAfterSaving, CancellationToken cancellation)
-    {
-        var capture = new SessionCapture();
-        try
-        {
-            cancellation.ThrowIfCancellationRequested();
-            if (!IsBackupEnabled || _disposed) return false;
-            await Task.Run(() => _service.EnsureMetadataRetainedAsync(cancellation));
-            cancellation.ThrowIfCancellationRequested();
-            if (!IsBackupEnabled || _disposed) return false;
-            // A journal whose writer failed would fail every capture; rebase it first.
-            foreach (var editor in _notepadsCore.GetAllTextEditors() ?? [])
-                await editor.RepairRecoveryJournalAsync(cancellation);
-            cancellation.ThrowIfCancellationRequested();
-            if (!IsBackupEnabled || _disposed) return false;
-            var editors = _notepadsCore.GetAllTextEditors() ?? [];
-            var revisions = editors.ToDictionary(editor => editor.Id, editor => _editorRevisions.GetOrAdd(editor.Id, 0));
-            var selected = _notepadsCore.GetSelectedTextEditor();
-            capture.ExpectedStamp = _service.CurrentStamp;
-            capture.SelectedEditorId = selected?.Id;
-            capture.TabScrollOffset = _notepadsCore.GetTabScrollViewerHorizontalOffset();
-            AddCapturedDocuments(capture, editors);
-            var result = await Task.Run(() => _service.SaveAsync(capture, cancellation));
-            if (!result.Succeeded) return false;
-            // Saves never prune or collect, so close, exit and suspension stay fast. The timer
-            // runs maintenance after a change, and the next startup pass covers terminal saves.
-            _maintenanceDue |= result.Changed;
-            if (actionAfterSaving != null)
-            {
-                var currentEditors = _notepadsCore.GetAllTextEditors();
-                if (_disposed || currentEditors == null || currentEditors.Length != revisions.Count ||
-                    currentEditors.Any(editor => !revisions.TryGetValue(editor.Id, out var revision) ||
-                        _editorRevisions.GetOrAdd(editor.Id, 0) != revision))
-                {
-                    return false;
-                }
-
-                foreach (var document in capture.Documents)
-                {
-                    var editor = currentEditors.First(current => current.Id == document.Id);
-                    using (var current = editor.CaptureRecoveryState())
-                    {
-                        if (current.Checkpoint.CommittedSequence != document.Recovery.Checkpoint.CommittedSequence ||
-                            current.DocumentJournal.GenerationId != document.Recovery.DocumentJournal.GenerationId ||
-                            current.RecoveryBaseline.GenerationId != document.Recovery.RecoveryBaseline.GenerationId)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                actionAfterSaving();
-            }
-            return true;
-        }
-        catch (Exception ex)
-        {
-            LoggingService.LogError($"[{nameof(SessionController)}] Failed to save session: {ex}");
-            AnalyticsService.TrackEvent("SessionManager_FailedToSaveSessionMetaData",
-                new Dictionary<string, string> { { "Exception", ex.Message } });
-            return false;
-        }
-        finally
-        {
-            // Persistence borrows the capture. It cannot outlive this awaited operation.
-            foreach (var document in capture.Documents)
-            {
-                try { await document.Recovery.DisposeAsync(); }
-                catch (Exception ex) { LoggingService.LogError($"[{nameof(SessionController)}] Failed to release captured recovery state: {ex}"); }
-            }
-        }
-    }
-
-    private SessionCapture CaptureSession(IEnumerable<ITextEditor> editors, RecoveryStamp stamp)
-    {
-        var capture = new SessionCapture
-        {
-            ExpectedStamp = stamp,
-            SelectedEditorId = _notepadsCore.GetSelectedTextEditor()?.Id,
-            TabScrollOffset = _notepadsCore.GetTabScrollViewerHorizontalOffset()
-        };
-        try { AddCapturedDocuments(capture, editors); return capture; }
-        catch { capture.Dispose(); throw; }
-    }
-
-    private static void AddCapturedDocuments(SessionCapture capture, IEnumerable<ITextEditor> editors)
-    {
-        // Capture every native prefix on the owning UI thread before yielding.
-        foreach (var editor in editors)
-        {
-            capture.Documents.Add(new SessionDocumentCapture
-            {
-                Id = editor.Id,
-                EditingFile = editor.EditingFile,
-                EditingFileName = editor.EditingFileName,
-                EditingFilePath = editor.EditingFilePath,
-                Recovery = editor.CaptureRecoveryState()
-            });
-        }
-    }
-
     public async Task<bool> PrepareExplicitCloseAsync(IReadOnlyCollection<Guid> editorIds, ICollection<Guid> closed = null)
     {
         if (_disposed) return false;
@@ -332,7 +160,17 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         try
         {
             await _sessionOperations.RunAsync(async cancellation =>
-                succeeded = await Task.Run(() => _service.PrepareExplicitCloseAsync(editorIds, closed, cancellation)));
+            {
+                var confirmed = new HashSet<Guid>();
+                try { succeeded = await Task.Run(() => _service.PrepareExplicitCloseAsync(editorIds, confirmed, cancellation)); }
+                finally
+                {
+                    foreach (var id in confirmed) closed?.Add(id);
+                    var retired = succeeded ? editorIds : (IEnumerable<Guid>)confirmed;
+                    foreach (var tab in _notepadsCore.GetTabs().Where(tab => retired.Contains(tab.Id))) tab.MarkClosed();
+                    SignalRestoration();
+                }
+            });
             return succeeded;
         }
         catch (Exception ex)
@@ -383,7 +221,7 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
                 await _dispatcher.CallOnUIThreadAsync(async () =>
                 {
                     if (_disposed || !IsBackupEnabled || _notepadsCore.IsClosing) return;
-                    foreach (var editor in _notepadsCore.GetAllTextEditors())
+                    foreach (var editor in LiveTabs().Select(tab => tab.ReadyEditor).Where(editor => editor != null))
                     {
                         if (_disposed || !IsBackupEnabled || _notepadsCore.IsClosing) break;
                         // One editor's failed compaction must not stall the others or the maintenance pass.
@@ -449,26 +287,10 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         }
     }
 
-    public async Task ClearSessionDataAsync()
+    private void BindEditorContentStateChangeEvent(object sender, WorkspaceTab tab)
     {
-        try
-        {
-            await _sessionOperations.RunAsync(async cancellation =>
-            {
-                cancellation.ThrowIfCancellationRequested();
-                await Task.Run(() => _service.ClearSessionDataAsync(cancellation));
-            });
-        }
-        catch (Exception ex)
-        {
-            LoggingService.LogError($"[{nameof(SessionController)}] Failed to delete session meta data: {ex.Message}");
-            AnalyticsService.TrackEvent("SessionManager_FailedToDeleteSessionMetaData", new Dictionary<string, string>() { { "Exception", ex.Message } });
-            throw;
-        }
-    }
-
-    private void BindEditorContentStateChangeEvent(object sender, ITextEditor textEditor)
-    {
+        var textEditor = tab.AttachedEditor;
+        if (textEditor == null) return;
         if (!_trackedEditors.Add(textEditor)) return;
         _editorRevisions.TryAdd(textEditor.Id, 0);
         // All text or file related events
@@ -482,8 +304,16 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         textEditor.LanguageOverrideChanged += OnEditorDocumentStateChanged;
     }
 
-    private void UnbindEditorContentStateChangeEvent(object sender, ITextEditor textEditor)
+    private void UnbindEditorContentStateChangeEvent(object sender, WorkspaceTab tab)
     {
+        UnbindEditor(tab.AttachedEditor);
+        SignalRestoration();
+        TryReleaseRestorePlan();
+    }
+
+    private void UnbindEditor(ITextEditor textEditor)
+    {
+        if (textEditor == null) return;
         if (!_trackedEditors.Remove(textEditor)) return;
         // All text or file related events
         textEditor.TextChanging -= OnEditorDocumentStateChanged;
@@ -512,6 +342,12 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
     private async Task DrainActiveWorkAsync()
     {
         StopSessionBackup();
+        PauseRestoration();
+        _restoreLifetime.Cancel();
+        SignalRestoration();
+        await _restoreWorker;
+        ThrowIfRestoreDrainFailed();
+        await _restoreCheckpointWork;
         Task timerWork;
         lock (_timerSync) timerWork = _timerWork;
         await timerWork;
@@ -520,10 +356,16 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
 
     private async Task CompleteDisposalAsync()
     {
+        await _restoreWorker;
+        ThrowIfRestoreDrainFailed();
+        await _restoreCheckpointWork;
         Task timerWork;
         lock (_timerSync) timerWork = _timerWork;
         await timerWork;
         await _sessionOperations.Completion;
+        _restorePlan?.Dispose();
+        _restorePlan = null;
+        _restoreLifetime.Dispose();
         _registration.Dispose();
     }
 
@@ -533,15 +375,18 @@ internal sealed class SessionController : ISessionController, ISessionPersistenc
         _disposed = true;
         IsBackupEnabled = false;
         StopSessionBackup();
+        _restoreLifetime.Cancel();
+        SignalRestoration();
         _sessionOperations.Dispose();
         _disposal = CompleteDisposalAsync();
         if (_notepadsCore != null)
         {
-            _notepadsCore.TextEditorOpened -= BindEditorContentStateChangeEvent;
-            _notepadsCore.TextEditorClosed -= UnbindEditorContentStateChangeEvent;
+            _notepadsCore.EditorAttached -= BindEditorContentStateChangeEvent;
+            _notepadsCore.TabClosed -= UnbindEditorContentStateChangeEvent;
+            _notepadsCore.TabSelected -= OnTabSelected;
             foreach (var editor in _trackedEditors.ToArray())
             {
-                UnbindEditorContentStateChangeEvent(this, editor);
+                UnbindEditor(editor);
             }
         }
 

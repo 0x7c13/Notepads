@@ -59,6 +59,8 @@ public sealed partial class NotepadsMainPage : Page
     private Window _window;
     private bool _isLastTabCloseInProgress;
     private bool _recoveryFolderDialogOpen;
+    private SessionRecoveryOutcome? _lastNotifiedRecoveryOutcome;
+    private int _lastNotifiedUnrecoveredCount;
     private int _closeDecisionCount;
     private bool _enabledBeforeCloseDecisions;
     private readonly HashSet<Guid> _closingTextEditors = new();
@@ -74,19 +76,22 @@ public sealed partial class NotepadsMainPage : Page
             _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher, _context, RenameFileAsync);
             _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
             _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
-            _notepadsCore.TextEditorClosed += OnTextEditorClosed;
+            _notepadsCore.TabClosed += OnTabClosed;
+            _notepadsCore.TabSelected += OnSelectedTabChanged;
+            _notepadsCore.TabStateChanged += OnSelectedTabChanged;
+            _notepadsCore.EditorAttached += OnSelectedTabChanged;
             _notepadsCore.TextEditorKeyDown += OnTextEditorKeyDown;
-            _notepadsCore.TextEditorClosing += OnTextEditorClosing;
+            _notepadsCore.TabClosing += OnTabClosing;
             _notepadsCore.TextEditorSaved += OnTextEditorSaved;
             _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
-            _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-            _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateLineColumnIndicator(editor); };
-            _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateFontZoomIndicator(editor); };
-            _notepadsCore.TextEditorLanguageChanged += (sender, editor) => { if (ReferenceEquals(NotepadsCore.GetSelectedTextEditor(), editor)) UpdateLanguageIndicator(editor); };
-            _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
-            _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
-            _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) SetupStatusBar(editor); };
-            _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedTextEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
+            _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) SetupStatusBar(editor); };
+            _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateLineColumnIndicator(editor); };
+            _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateFontZoomIndicator(editor); };
+            _notepadsCore.TextEditorLanguageChanged += (sender, editor) => { if (ReferenceEquals(NotepadsCore.GetSelectedReadyEditor(), editor)) UpdateLanguageIndicator(editor); };
+            _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
+            _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
+            _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) SetupStatusBar(editor); };
+            _notepadsCore.TextEditorFileModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) OnTextEditorFileModificationStateChanged(editor); };
 
             return _notepadsCore;
         }
@@ -96,8 +101,18 @@ public sealed partial class NotepadsMainPage : Page
 
     private ISessionController _sessionManager;
 
-    private ISessionController SessionController => _viewClosed ? throw new ObjectDisposedException(nameof(NotepadsMainPage)) :
-        _sessionManager ?? (_sessionManager = new SessionController(NotepadsCore, _context.Sessions, _context.Dispatcher, _context.RegisterSession));
+    private ISessionController SessionController
+    {
+        get
+        {
+            if (_viewClosed) throw new ObjectDisposedException(nameof(NotepadsMainPage));
+            if (_sessionManager != null) return _sessionManager;
+            _sessionManager = new SessionController(NotepadsCore, _context.Sessions, _context.Dispatcher, _context.RegisterSession);
+            _sessionManager.RecoveryStateChanged += OnRecoveryStateChanged;
+            _sessionManager.RestorationBackupFailed += OnRestorationBackupFailed;
+            return _sessionManager;
+        }
+    }
 
     private string _defaultNewFileName;
 
@@ -186,16 +201,16 @@ public sealed partial class NotepadsMainPage : Page
     {
         _keyboardCommandHandler = new KeyboardCommandHandler(
         [
-            new(VirtualKeyModifiers.Control, VirtualKey.W, () => NotepadsCore.CloseTextEditor(NotepadsCore.GetSelectedTextEditor())),
+            new(VirtualKeyModifiers.Control, VirtualKey.W, () => NotepadsCore.CloseTab(NotepadsCore.GetSelectedTab())),
             new(VirtualKeyModifiers.Control, VirtualKey.Tab, () => NotepadsCore.SwitchTo(true)),
             new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.Tab, () => NotepadsCore.SwitchTo(false)),
             new(VirtualKeyModifiers.Control, VirtualKey.N, async () => await CreateNewTextEditorAsync()),
             new(VirtualKeyModifiers.Control, VirtualKey.T, async () => await CreateNewTextEditorAsync()),
             new(VirtualKeyModifiers.Control, VirtualKey.O, async () => await OpenNewFilesAsync()),
-            new(VirtualKeyModifiers.Control, VirtualKey.S, async () => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
-            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.S, async () => await SaveAsync(NotepadsCore.GetSelectedTextEditor(), saveAs: true)),
-            new(VirtualKeyModifiers.Control, VirtualKey.P, async () => await PrintAsync(NotepadsCore.GetSelectedTextEditor())),
-            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.P, async () => await PrintAllAsync(NotepadsCore.GetAllTextEditors())),
+            new(VirtualKeyModifiers.Control, VirtualKey.S, async () => await SaveAsync(NotepadsCore.GetSelectedReadyEditor(), saveAs: false, ignoreUnmodifiedDocument: true)),
+            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.S, async () => await SaveAsync(NotepadsCore.GetSelectedReadyEditor(), saveAs: true)),
+            new(VirtualKeyModifiers.Control, VirtualKey.P, async () => await PrintAsync(NotepadsCore.GetSelectedReadyEditor())),
+            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.P, async () => await PrintAllAsync(NotepadsCore.GetTabs())),
             new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.R, () => ReloadFileFromDiskAsync(this, new RoutedEventArgs())),
             new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.N, async () => await OpenNewAppInstanceAsync()),
             new(VirtualKeyModifiers.Control, VirtualKey.Number1, () => NotepadsCore.SwitchTo(0)),
@@ -211,7 +226,7 @@ public sealed partial class NotepadsMainPage : Page
             new(VirtualKeyModifiers.None, VirtualKey.F12, () => EnterExitCompactOverlayMode()),
             new(VirtualKeyModifiers.None, VirtualKey.Escape, () => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
             new(VirtualKeyModifiers.None, VirtualKey.F1, () => { if (_context.IsPrimaryInstance) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
-            new(VirtualKeyModifiers.None, VirtualKey.F2, async () => await RenameFileAsync(NotepadsCore.GetSelectedTextEditor())),
+            new(VirtualKeyModifiers.None, VirtualKey.F2, async () => await RenameFileAsync(NotepadsCore.GetSelectedReadyEditor())),
             new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Menu | VirtualKeyModifiers.Shift, VirtualKey.L, async () => { await OpenFileAsync(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); }),
         ]);
     }
@@ -226,7 +241,9 @@ public sealed partial class NotepadsMainPage : Page
 
     #region Application Life Cycle & Window management
 
-    private async void OnWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs args)
+    private async void OnWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs args) => await DisposeWindowAsync();
+
+    private async Task DisposeWindowAsync()
     {
         if (_viewClosed) return;
         _viewClosed = true;
@@ -240,7 +257,12 @@ public sealed partial class NotepadsMainPage : Page
         _window.CoreWindow.Activated -= CoreWindow_Activated;
         _window.Closed -= OnWindowClosed;
         var sessions = _sessionManager;
-        sessions?.Dispose();
+        if (sessions != null)
+        {
+            sessions.RecoveryStateChanged -= OnRecoveryStateChanged;
+            sessions.RestorationBackupFailed -= OnRestorationBackupFailed;
+            sessions.Dispose();
+        }
         try
         {
             if (sessions != null) await sessions.DrainAsync();
@@ -286,22 +308,15 @@ public sealed partial class NotepadsMainPage : Page
     private async void Sets_Loaded(object sender, RoutedEventArgs e)
     {
         if (_context == null || _viewClosed || _isAppClosing) return;
-        int loadedCount = 0;
-
-        try { await SessionController.InitializeAuthorityAsync(); }
-        catch (Exception ex)
-        {
-            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Recovery authority is unavailable: {ex}");
-            NotificationCenter.Instance.PostNotification(
-                _resourceLoader.GetString("SessionBackup_NotificationMsg_RecoveryBlocked"), 7000);
-        }
-        if (_viewClosed || _isAppClosing) return;
 
         if (!_loaded && ApplicationPreferences.IsSessionSnapshotEnabled)
         {
             try
             {
-                loadedCount = await SessionController.LoadLastSessionAsync();
+                // Queue discovery before the first yield so a simultaneous close
+                // captures the admitted recovery roster. Discovery binds authority.
+                SessionController.IsBackupEnabled = true;
+                await SessionController.LoadLastSessionAsync();
                 if (_viewClosed || _isAppClosing) return;
                 ShowRecoveryOutcome();
             }
@@ -327,20 +342,33 @@ public sealed partial class NotepadsMainPage : Page
                 AnalyticsService.TrackEvent("SessionManager_FailedToLoadLastSession_UnhandledException", new Dictionary<string, string>() { { "Exception", ex.Message } });
             }
         }
+        else
+        {
+            try { await SessionController.InitializeAuthorityAsync(); }
+            catch (Exception ex)
+            {
+                LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Recovery authority is unavailable: {ex}");
+                NotificationCenter.Instance.PostNotification(
+                    _resourceLoader.GetString("SessionBackup_NotificationMsg_RecoveryBlocked"), 7000);
+            }
+        }
 
         if (_viewClosed || _isAppClosing) return;
+        if (ApplicationPreferences.IsSessionSnapshotEnabled)
+        {
+            SessionController.IsBackupEnabled = true;
+            SessionController.StartSessionBackup();
+        }
+
         if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
         {
-            loadedCount += await OpenFilesAsync(_appLaunchFiles);
+            await OpenFilesAsync(_appLaunchFiles);
             _appLaunchFiles = null;
         }
         else if (_appLaunchCmdDir != null)
         {
             var file = await CommandLineFiles.OpenFileFromCommandLineAsync(_appLaunchCmdDir, _appLaunchCmdArgs, _context.ApplicationName);
-            if (file != null && await OpenFileAsync(file))
-            {
-                loadedCount++;
-            }
+            if (file != null) await OpenFileAsync(file);
             _appLaunchCmdDir = null;
             _appLaunchCmdArgs = null;
         }
@@ -348,18 +376,12 @@ public sealed partial class NotepadsMainPage : Page
         if (_viewClosed || _isAppClosing) return;
         if (!_loaded)
         {
-            if (loadedCount == 0)
+            if (NotepadsCore.GetTabCount() == 0)
             {
                 await CreateNewTextEditorAsync();
                 if (_viewClosed || _isAppClosing) return;
             }
             _loaded = true;
-        }
-
-        if (ApplicationPreferences.IsSessionSnapshotEnabled)
-        {
-            SessionController.IsBackupEnabled = true;
-            SessionController.StartSessionBackup();
         }
 
         // Not awaited: collects what crashes, terminal saves and snapshot-off sessions left behind.
@@ -411,7 +433,7 @@ public sealed partial class NotepadsMainPage : Page
         if (args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
         {
             LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] CoreWindow Deactivated.", consoleOnly: true);
-            NotepadsCore.GetSelectedTextEditor()?.StopCheckingFileStatus();
+            NotepadsCore.GetSelectedReadyEditor()?.StopCheckingFileStatus();
             if (ApplicationPreferences.IsSessionSnapshotEnabled)
             {
                 SessionController.StopSessionBackup();
@@ -422,7 +444,7 @@ public sealed partial class NotepadsMainPage : Page
         {
             LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] CoreWindow Activated.", consoleOnly: true);
             Task.Run(() => ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString()));
-            NotepadsCore.GetSelectedTextEditor()?.StartCheckingFileStatusPeriodically();
+            NotepadsCore.GetSelectedReadyEditor()?.StartCheckingFileStatusPeriodically();
             if (!_isAppClosing && !_isLastTabCloseInProgress)
             {
                 // Each window is its own process. A pending close keeps the setting it started with,
@@ -447,7 +469,7 @@ public sealed partial class NotepadsMainPage : Page
     // Content sharing
     private void MainPage_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
     {
-        var textEditor = NotepadsCore.GetSelectedTextEditor();
+        var textEditor = NotepadsCore.GetSelectedReadyEditor();
         if (textEditor == null) return;
 
         if (NotepadsCore.TryGetSharingContent(textEditor, out var title, out var content))
@@ -464,84 +486,18 @@ public sealed partial class NotepadsMainPage : Page
     private async void MainPage_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
     {
         var deferral = e.GetDeferral();
-        var ownsCloseRequest = false;
+        try { e.Handled = !await RequestWindowCloseAsync(); }
+        finally { deferral.Complete(); }
+    }
+
+    private async Task<bool> RequestWindowCloseAsync()
+    {
+        if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || _closingTextEditors.Count > 0) return false;
         var closeApproved = false;
         var wasEnabled = IsEnabled;
         try
         {
-            if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || _closingTextEditors.Count > 0)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            // A window closed from the taskbar is never activated: read the setting once for the whole close.
-            if (ApplicationPreferences.RefreshSessionSnapshotSetting())
-                SessionController.IsBackupEnabled = ApplicationPreferences.IsSessionSnapshotEnabled;
-            _isAppClosing = true;
-            ownsCloseRequest = true;
-            NotepadsCore.IsClosing = true;
-            HideAllOpenFlyouts();
-            IsEnabled = false;
-            SessionController.StopSessionBackup();
-
-            // Finish admitted saves and renames before capturing the final
-            // file identity, saved baseline and journal prefix.
-            await Task.WhenAll(NotepadsCore.GetAllTextEditors()
-                .Select(editor => editor.WaitForDocumentOperationsAsync()));
-            if (_viewClosed) return;
-
-            if (ApplicationPreferences.IsSessionSnapshotEnabled)
-            {
-                // No further input may change a document after its final
-                // recovery snapshot has been captured.
-                closeApproved = await SessionController.SaveSessionAsync(() => { SessionController.IsBackupEnabled = false; });
-                if (_viewClosed) return;
-                if (!closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
-                return;
-            }
-
-            if (!NotepadsCore.HaveUnsavedTextEditor())
-            {
-                closeApproved = true;
-                return;
-            }
-
-            var saveAndExit = false;
-            var discardAndExit = false;
-            var appCloseSaveReminderDialog = new AppCloseSaveReminderDialog(
-                saveAndExitAction: () => { saveAndExit = true; },
-                discardAndExitAction: () => { discardAndExit = true; },
-                cancelAction: () => { });
-
-            var result = await DialogManager.OpenDialogAsync(appCloseSaveReminderDialog, awaitPreviousDialog: false);
-            if (_viewClosed) return;
-            if (result == null || appCloseSaveReminderDialog.IsAborted) return;
-            if (discardAndExit)
-            {
-                closeApproved = true;
-                return;
-            }
-            if (!saveAndExit) return;
-
-            IsEnabled = false;
-            var savedAll = true;
-            foreach (var textEditor in NotepadsCore.GetAllTextEditors().ToArray())
-            {
-                if (!NotepadsCore.GetAllTextEditors().Contains(textEditor)) continue;
-                if (!await SaveAsync(textEditor, saveAs: false, ignoreUnmodifiedDocument: true, rebuildOpenRecentItems: false,
-                    allowWhileClosing: true))
-                {
-                    savedAll = false;
-                    break;
-                }
-            }
-
-            // Keep the tabs available if a save failed, was cancelled, or
-            // another revision became dirty while asynchronous I/O ran.
-            if (_viewClosed) return;
-            closeApproved = savedAll && !NotepadsCore.HaveUnsavedTextEditor();
-            if (!closeApproved) await BuildOpenRecentButtonSubItemsAsync();
+            await EvaluateCloseAsync();
         }
         catch (Exception ex)
         {
@@ -549,61 +505,120 @@ public sealed partial class NotepadsMainPage : Page
             LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to finish closing the window: {ex.Message}");
             if (!_viewClosed && ApplicationPreferences.IsSessionSnapshotEnabled) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
         }
-        finally
+        try
         {
-            try
+            if (!_viewClosed && closeApproved && !ApplicationPreferences.IsSessionSnapshotEnabled)
             {
-                if (ownsCloseRequest && !_viewClosed)
+                var closed = new HashSet<Guid>();
+                try
                 {
-                    if (closeApproved && !ApplicationPreferences.IsSessionSnapshotEnabled)
-                    {
-                        // Without snapshots this window keeps no session. Tabs with durable recovery records,
-                        // such as a transfer receipt, are closed explicitly so enabling snapshots cannot revive them.
-                        var closed = new HashSet<Guid>();
-                        closeApproved = await SessionController.PrepareExplicitCloseAsync(
-                            NotepadsCore.GetAllTextEditors().Select(editor => editor.Id).ToArray(), closed);
-                        if (!closeApproved)
-                        {
-                            // A tab whose close already committed could never be restored again, so it cannot stay open.
-                            foreach (var editor in NotepadsCore.GetAllTextEditors().Where(editor => closed.Contains(editor.Id)).ToArray())
-                                NotepadsCore.DeleteTextEditor(editor);
-                            closeApproved = NotepadsCore.GetNumberOfOpenedTextEditors() == 0;
-                            if (!closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
-                        }
-                    }
-                    if (closeApproved && _sessionManager != null)
-                    {
-                        try { await _sessionManager.DrainAsync(); }
-                        catch (Exception ex)
-                        {
-                            closeApproved = false;
-                            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to drain session work before close: {ex}");
-                        }
-                    }
-                    e.Handled = !closeApproved;
-                    if (closeApproved)
-                    {
-                        IsEnabled = false;
-                        _context.ReleaseInstanceOwnership();
-                    }
-                    else
-                    {
-                        IsEnabled = wasEnabled;
-                        if (ApplicationPreferences.IsSessionSnapshotEnabled)
-                        {
-                            SessionController.IsBackupEnabled = true;
-                            SessionController.StartSessionBackup();
-                        }
-                        _isAppClosing = false;
-                        NotepadsCore.IsClosing = false;
-                        NotepadsCore.FocusOnSelectedTextEditor();
-                    }
+                    closeApproved = await SessionController.PrepareExplicitCloseAsync(
+                        NotepadsCore.GetTabs().Select(tab => tab.Id).ToArray(), closed);
+                }
+                finally
+                {
+                    // A committed Closed row must leave membership even if a later decision fails.
+                    foreach (var tab in NotepadsCore.GetTabs().Where(tab => closed.Contains(tab.Id)))
+                        NotepadsCore.DeleteTab(tab);
+                }
+                if (!closeApproved)
+                {
+                    closeApproved = NotepadsCore.GetTabCount() == 0;
+                    if (!closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
                 }
             }
-            finally
+            if (!_viewClosed && closeApproved && _sessionManager != null) await _sessionManager.DrainAsync();
+        }
+        catch (Exception ex)
+        {
+            closeApproved = false;
+            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to commit window closure: {ex}");
+            if (!_viewClosed) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
+        }
+        finally
+        {
+            if (!_viewClosed)
             {
-                deferral.Complete();
+                if (closeApproved)
+                {
+                    IsEnabled = false;
+                    _context.ReleaseInstanceOwnership();
+                }
+                else
+                {
+                    // Loaded can append .LOG text: restore input before promoting parked editors.
+                    IsEnabled = wasEnabled;
+                    _isAppClosing = false;
+                    NotepadsCore.IsClosing = false;
+                    SessionController.ResumeRestoration();
+                    if (ApplicationPreferences.IsSessionSnapshotEnabled)
+                    {
+                        SessionController.IsBackupEnabled = true;
+                        SessionController.StartSessionBackup();
+                    }
+                    NotepadsCore.FocusOnSelectedTextEditor();
+                }
             }
+        }
+        return closeApproved;
+
+        async Task EvaluateCloseAsync()
+        {
+            if (ApplicationPreferences.RefreshSessionSnapshotSetting())
+                SessionController.IsBackupEnabled = ApplicationPreferences.IsSessionSnapshotEnabled;
+            _isAppClosing = true;
+            NotepadsCore.IsClosing = true;
+            SessionController.PauseRestoration();
+            HideAllOpenFlyouts();
+            IsEnabled = false;
+            SessionController.StopSessionBackup();
+
+            await Task.WhenAll(NotepadsCore.GetTabs().Where(tab => tab.ReadyEditor != null)
+                .Select(tab => tab.ReadyEditor.WaitForDocumentOperationsAsync()));
+            if (_viewClosed) return;
+            if (ApplicationPreferences.IsSessionSnapshotEnabled)
+            {
+                closeApproved = await SessionController.SaveSessionAsync(() => { SessionController.IsBackupEnabled = false; });
+                if (!_viewClosed && !closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
+                return;
+            }
+            if (!NotepadsCore.HasTabsRequiringSave())
+            {
+                closeApproved = true;
+                return;
+            }
+
+            var saveAndExit = false;
+            var discardAndExit = false;
+            var dialog = new AppCloseSaveReminderDialog(
+                saveAndExitAction: () => { saveAndExit = true; },
+                discardAndExitAction: () => { discardAndExit = true; },
+                cancelAction: () => { });
+            if (NotepadsCore.GetTabs().Any(tab => tab.ReadyEditor == null))
+            {
+                dialog.Title = _resourceLoader.GetString("WorkspaceTab_CloseUnloadedTitle");
+                dialog.Content = _resourceLoader.GetString("WorkspaceTab_WindowCloseUnloaded");
+            }
+            var result = await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: false);
+            if (_viewClosed || result == null || dialog.IsAborted) return;
+            if (discardAndExit) { closeApproved = true; return; }
+            if (!saveAndExit) return;
+
+            var savedAll = true;
+            foreach (var tab in NotepadsCore.GetTabs())
+            {
+                if (!NotepadsCore.ContainsTab(tab)) continue;
+                var editor = await SessionController.EnsureLoadedAsync(tab, allowWhileClosing: true);
+                if (editor == null || !await SaveAsync(editor, saveAs: false, ignoreUnmodifiedDocument: true,
+                    rebuildOpenRecentItems: false, allowWhileClosing: true))
+                {
+                    savedAll = false;
+                    break;
+                }
+            }
+            if (_viewClosed) return;
+            closeApproved = savedAll && !NotepadsCore.HasTabsRequiringSave();
+            if (!closeApproved) await BuildOpenRecentButtonSubItemsAsync();
         }
     }
 
@@ -636,25 +651,43 @@ public sealed partial class NotepadsMainPage : Page
         finally { _recoveryFolderDialogOpen = false; }
     }
 
+    private void OnRecoveryStateChanged(object sender, EventArgs e)
+    {
+        if (!_viewClosed && ReferenceEquals(sender, _sessionManager)) ShowRecoveryOutcome();
+    }
+
+    private void OnRestorationBackupFailed(object sender, EventArgs e)
+    {
+        if (!_viewClosed && !_isAppClosing && ReferenceEquals(sender, _sessionManager))
+            ShowSessionBackupFailureNotification();
+    }
+
     private void ShowRecoveryOutcome()
     {
-        var key = SessionController.RecoveryOutcome switch
+        var outcome = SessionController.RecoveryOutcome;
+        var unrecoveredCount = SessionController.UnrecoveredEditorCount;
+        var key = outcome switch
         {
             SessionRecoveryOutcome.MirrorRepaired => "SessionBackup_NotificationMsg_MirrorRepaired",
             SessionRecoveryOutcome.OlderCheckpoint => "SessionBackup_NotificationMsg_OlderCheckpoint",
             SessionRecoveryOutcome.Rescue => "SessionBackup_NotificationMsg_Rescue",
             SessionRecoveryOutcome.Blocked => "SessionBackup_NotificationMsg_RecoveryBlocked",
             SessionRecoveryOutcome.Partial => "SessionBackup_NotificationMsg_RecoveryIncomplete",
-            _ => SessionController.UnrecoveredEditorCount > 0 ? "SessionBackup_NotificationMsg_RecoveryIncomplete" : null
+            _ => unrecoveredCount > 0 ? "SessionBackup_NotificationMsg_RecoveryIncomplete" : null
         };
-        if (key != null) NotificationCenter.Instance.PostNotification(_resourceLoader.GetString(key), 7000);
+        // The selected row may report before startup returns. Show that state
+        // once, then notify when background recovery changes the outcome/count.
+        if (key == null || (_lastNotifiedRecoveryOutcome == outcome && _lastNotifiedUnrecoveredCount == unrecoveredCount)) return;
+        _lastNotifiedRecoveryOutcome = outcome;
+        _lastNotifiedUnrecoveredCount = unrecoveredCount;
+        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString(key), 7000);
     }
 
     private void HideAllOpenFlyouts()
     {
         // Hide TextEditor ContextFlyout if it is showing
         // Why we need to do this? Take a look here: https://github.com/microsoft/microsoft-ui-xaml/issues/2461
-        var editorFlyout = NotepadsCore.GetSelectedTextEditor()?.GetContextFlyout();
+        var editorFlyout = NotepadsCore.GetSelectedReadyEditor()?.GetContextFlyout();
         if (editorFlyout != null && editorFlyout.IsOpen)
         {
             editorFlyout.Hide();
@@ -698,18 +731,25 @@ public sealed partial class NotepadsMainPage : Page
 
     #region NotepadsCore Events
 
+    private void OnSelectedTabChanged(object sender, WorkspaceTab tab)
+    {
+        if (tab != NotepadsCore.GetSelectedTab()) return;
+        SetupSelectedTabStatus();
+        MainMenuButtonFlyout_Opening(null, null);
+    }
+
     private void OnTextEditorLoaded(object sender, ITextEditor textEditor)
     {
-        if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+        if (NotepadsCore.GetSelectedReadyEditor() == textEditor)
         {
             SetupStatusBar(textEditor);
-            NotepadsCore.FocusOnSelectedTextEditor();
+            if (IsEnabled && !_isAppClosing) NotepadsCore.FocusOnSelectedTextEditor();
         }
     }
 
-    private async void OnTextEditorClosed(object sender, ITextEditor textEditor)
+    private async void OnTabClosed(object sender, WorkspaceTab tab)
     {
-        if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || NotepadsCore.GetNumberOfOpenedTextEditors() != 0) return;
+        if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || NotepadsCore.GetTabCount() != 0) return;
 
         _isLastTabCloseInProgress = true;
         BeginTabCloseOperation();
@@ -720,6 +760,7 @@ public sealed partial class NotepadsMainPage : Page
             if (exitWhenClosed)
             {
                 NotepadsCore.IsClosing = true;
+                SessionController.PauseRestoration();
                 IsEnabled = false;
                 if (ApplicationPreferences.IsSessionSnapshotEnabled) SessionController.StopSessionBackup();
             }
@@ -741,12 +782,12 @@ public sealed partial class NotepadsMainPage : Page
             }
 
             // Another activation may have opened a document while I/O yielded.
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() != 0) return;
+            if (NotepadsCore.GetTabCount() != 0) return;
 
             if (exitWhenClosed)
             {
                 if (_sessionManager != null) await _sessionManager.DrainAsync();
-                if (_viewClosed || NotepadsCore.GetNumberOfOpenedTextEditors() != 0) return;
+                if (_viewClosed || NotepadsCore.GetTabCount() != 0) return;
                 if (!await ApplicationView.GetForCurrentView().TryConsolidateAsync())
                 {
                     AnalyticsService.TrackEvent("FailedToConsolidateOnExit");
@@ -767,7 +808,7 @@ public sealed partial class NotepadsMainPage : Page
             NotepadsCore.IsClosing = false;
             LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to finish closing the last tab: {ex.Message}");
             if (ApplicationPreferences.IsSessionSnapshotEnabled) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
-            if (NotepadsCore.GetNumberOfOpenedTextEditors() == 0)
+            if (NotepadsCore.GetTabCount() == 0)
                 await CreateNewTextEditorAsync();
         }
         finally
@@ -804,7 +845,7 @@ public sealed partial class NotepadsMainPage : Page
 
     private void OnTextEditorSaved(object sender, ITextEditor textEditor)
     {
-        if (NotepadsCore.GetSelectedTextEditor() == textEditor)
+        if (NotepadsCore.GetSelectedReadyEditor() == textEditor)
         {
             SetupStatusBar(textEditor);
         }
@@ -813,64 +854,61 @@ public sealed partial class NotepadsMainPage : Page
 
     private void OnTextEditorMovedToAnotherAppInstance(object sender, ITextEditor textEditor)
     {
-        if (NotepadsCore.GetNumberOfOpenedTextEditors() == 1)
+        if (NotepadsCore.GetTabCount() == 1)
         {
             _lastTabMovedToAnotherInstance = true;
         }
-        NotepadsCore.DeleteTextEditor(textEditor);
+        NotepadsCore.DeleteTab(NotepadsCore.GetTab(textEditor));
     }
 
-    private async void OnTextEditorClosing(object sender, ITextEditor textEditor)
+    private async void OnTabClosing(object sender, WorkspaceTab tab) => await RequestTabCloseAsync(tab);
+
+    private async Task RequestTabCloseAsync(WorkspaceTab tab)
     {
-        if (_isAppClosing || textEditor == null || !_closingTextEditors.Add(textEditor.Id)) return;
+        if (_isAppClosing || tab == null || !_closingTextEditors.Add(tab.Id)) return;
         BeginTabCloseOperation();
         try
         {
-            await textEditor.WaitForDocumentOperationsAsync();
-            if (_viewClosed || _isAppClosing) return;
-            if (!NotepadsCore.GetAllTextEditors().Contains(textEditor)) return;
-            if (!ApplicationPreferences.ExitWhenLastTabClosed &&
-                NotepadsCore.GetNumberOfOpenedTextEditors() == 1 &&
-                !textEditor.IsModified && textEditor.EditingFile == null)
+            var editor = tab.ReadyEditor;
+            if (editor != null) await editor.WaitForDocumentOperationsAsync();
+            if (_viewClosed || _isAppClosing || !NotepadsCore.ContainsTab(tab)) return;
+            if (editor != null && !ApplicationPreferences.ExitWhenLastTabClosed &&
+                NotepadsCore.GetTabCount() == 1 && !editor.IsModified && editor.EditingFile == null) return;
+            if (editor != null && !editor.IsModified)
             {
-                return;
-            }
-            if (!textEditor.IsModified)
-            {
-                await CloseEditorWithRecoveryDecisionAsync(textEditor);
+                await CloseTabWithRecoveryDecisionAsync(tab);
                 return;
             }
 
-            var file = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
             var saveBeforeClosing = false;
             var discardChanges = false;
-            var setCloseSaveReminderDialog = new SetCloseSaveReminderDialog(file,
+            var dialog = new SetCloseSaveReminderDialog(tab.EditingFilePath ?? tab.Title,
                 saveAction: () => { saveBeforeClosing = true; },
                 skipSavingAction: () => { discardChanges = true; });
-
-            setCloseSaveReminderDialog.Opened += (s, a) =>
+            if (editor == null)
             {
-                if (NotepadsCore.GetAllTextEditors().Contains(textEditor))
-                {
-                    NotepadsCore.SwitchTo(textEditor);
-                }
+                dialog.Title = _resourceLoader.GetString("WorkspaceTab_CloseUnloadedTitle");
+                dialog.Content = string.Format(_resourceLoader.GetString("WorkspaceTab_CloseUnloaded"), tab.EditingFilePath ?? tab.Title);
+            }
+            dialog.Opened += (s, a) =>
+            {
+                if (NotepadsCore.ContainsTab(tab)) NotepadsCore.SwitchTo(tab);
             };
 
-            var result = await DialogManager.OpenDialogAsync(setCloseSaveReminderDialog, awaitPreviousDialog: true);
-            if (result == null || setCloseSaveReminderDialog.IsAborted || _isAppClosing ||
-                !NotepadsCore.GetAllTextEditors().Contains(textEditor))
-            {
-                return;
-            }
-
+            var result = await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: true);
+            if (result == null || dialog.IsAborted || _isAppClosing || !NotepadsCore.ContainsTab(tab)) return;
             if (discardChanges)
             {
-                await CloseEditorWithRecoveryDecisionAsync(textEditor, discardChanges: true);
+                await CloseTabWithRecoveryDecisionAsync(tab, discardChanges: true);
             }
-            else if (saveBeforeClosing && await SaveAsync(textEditor, saveAs: false) &&
-                !_isAppClosing && NotepadsCore.GetAllTextEditors().Contains(textEditor) && !textEditor.IsModified)
+            else if (saveBeforeClosing)
             {
-                await CloseEditorWithRecoveryDecisionAsync(textEditor);
+                editor = await SessionController.EnsureLoadedAsync(tab, allowWhileClosing: true);
+                if (editor == null && NotepadsCore.ContainsTab(tab))
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("WorkspaceTab_LoadFailed"), 3500);
+                if (editor != null && await SaveAsync(editor, saveAs: false, ignoreUnmodifiedDocument: true) &&
+                    !_isAppClosing && NotepadsCore.ContainsTab(tab) && !editor.IsModified)
+                    await CloseTabWithRecoveryDecisionAsync(tab);
             }
         }
         catch (Exception ex)
@@ -879,50 +917,50 @@ public sealed partial class NotepadsMainPage : Page
         }
         finally
         {
-            _closingTextEditors.Remove(textEditor.Id);
+            _closingTextEditors.Remove(tab.Id);
             EndTabCloseOperation();
             if (!_isAppClosing && !_isLastTabCloseInProgress) NotepadsCore.FocusOnSelectedTextEditor();
         }
     }
 
-    private async Task CloseEditorWithRecoveryDecisionAsync(ITextEditor editor, bool discardChanges = false)
+    private async Task CloseTabWithRecoveryDecisionAsync(WorkspaceTab tab, bool discardChanges = false)
     {
         BeginTabCloseOperation();
         try
         {
-            await editor.WaitForDocumentOperationsAsync();
-            if (_viewClosed || _isAppClosing || !NotepadsCore.GetAllTextEditors().Contains(editor)) return;
-            if (!discardChanges && editor.IsModified)
+            if (tab.ReadyEditor is ITextEditor editor) await editor.WaitForDocumentOperationsAsync();
+            if (_viewClosed || _isAppClosing || !NotepadsCore.ContainsTab(tab)) return;
+            if (!discardChanges && (tab.ReadyEditor == null || tab.IsModified))
             {
                 NotificationCenter.Instance.PostNotification(
                     _resourceLoader.GetString("SessionBackup_NotificationMsg_DocumentChangedDuringClose"), 3500);
                 return;
             }
-            if (!await SessionController.PrepareExplicitCloseAsync(new[] { editor.Id }))
+            if (!await SessionController.PrepareExplicitCloseAsync(new[] { tab.Id }))
             {
                 ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
                 return;
             }
-            if (!_viewClosed && !_isAppClosing && NotepadsCore.GetAllTextEditors().Contains(editor))
-                NotepadsCore.DeleteTextEditor(editor);
+            if (!_viewClosed && !_isAppClosing && NotepadsCore.ContainsTab(tab)) NotepadsCore.DeleteTab(tab);
         }
-        finally
-        {
-            EndTabCloseOperation();
-        }
+        finally { EndTabCloseOperation(); }
     }
 
     private void BeginTabCloseOperation()
     {
         if (_closeDecisionCount++ != 0) return;
         _enabledBeforeCloseDecisions = IsEnabled;
+        SessionController.PauseRestoration();
         IsEnabled = false;
     }
 
     private void EndTabCloseOperation(bool restore = true)
     {
         if (--_closeDecisionCount == 0 && restore && !_viewClosed && !_isAppClosing)
+        {
             IsEnabled = _enabledBeforeCloseDecisions;
+            SessionController.ResumeRestoration();
+        }
     }
 
     private void OnMainPagePreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -934,13 +972,18 @@ public sealed partial class NotepadsMainPage : Page
             RootSplitView.IsPaneOpen = false;
             e.Handled = true;
         }
+        // Pending content has no editor to forward workspace shortcuts. Keep
+        // tab navigation, close and document creation available from its header.
+        if (!e.Handled && IsEnabled && !RootSplitView.IsPaneOpen &&
+            NotepadsCore.GetSelectedTab() is WorkspaceTab tab && tab.ReadyEditor == null &&
+            _keyboardCommandHandler?.Handle(e) == true) e.Handled = true;
     }
 
     private void OnTextEditorKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (sender is not ITextEditor textEditor) return;
         // ignoring key events coming from inactive text editors
-        if (NotepadsCore.GetSelectedTextEditor() != textEditor) return;
+        if (NotepadsCore.GetSelectedReadyEditor() != textEditor) return;
         if (_keyboardCommandHandler.Handle(e)) e.Handled = true;
     }
 

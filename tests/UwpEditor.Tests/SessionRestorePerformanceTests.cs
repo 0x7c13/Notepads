@@ -277,15 +277,15 @@ internal static partial class SessionControllerTests
                 selectedView = editor.Document.View;
                 selectedView.Editor.Painted += OnSelectedPainted;
             };
-            host.Core.BatchAttached = () =>
+            host.Core.SelectedAttached = () =>
             {
-                SessionTestProtocol.Check(host.Core.GetSelectedTextEditor()?.Id == fixture.SelectedEditorId && selectedView != null,
-                    "The batch did not select the expected restored editor.");
+                SessionTestProtocol.Check(host.Core.GetSelectedReadyEditor()?.Id == fixture.SelectedEditorId && selectedView != null,
+                    "The selected editor was not attached first.");
                 attachmentStarted = true;
                 root.Children.Add(selectedView);
                 root.UpdateLayout();
                 result.BatchAttachedMilliseconds = ElapsedRestoreMilliseconds(started);
-                // Synchronous attachment returns immediately; painting never blocks CommitAttachedAsync.
+                // Native presentation and the first paint do not wait for the background tabs.
             };
             await using var memory = new RestoreMemorySampler();
             await memory.StartAsync();
@@ -298,6 +298,7 @@ internal static partial class SessionControllerTests
                     result.ControllerReturnMilliseconds = ElapsedRestoreMilliseconds(started);
                     var paintedAt = await painted.Task.WaitAsync(TimeSpan.FromSeconds(15));
                     result.SelectedPaintedMilliseconds = Stopwatch.GetElapsedTime(started, paintedAt).TotalMilliseconds;
+                    await host.Controller.WaitForRestorationCheckpointAsync();
                     result.IntervalMilliseconds = ElapsedRestoreMilliseconds(started);
                     SessionTestProtocol.Check(restored == fixture.Documents.Length, "Measurement lost a restored tab.");
                 }
@@ -342,12 +343,13 @@ internal static partial class SessionControllerTests
         {
             SessionTestProtocol.Check(await host.Controller.LoadLastSessionAsync() == expected.Length,
                 "The restart restored an unexpected tab count.");
+            await host.Controller.WaitForRestorationCheckpointAsync();
             await ValidateRestoredTabsAsync(host.Core, fixture, closedFirst: final);
             committedJournals = CaptureRestoredJournals(host.Core);
             await ValidateCommittedRestoreJournalsAsync(fixture, committedJournals, closedFirst: final);
             if (!final)
             {
-                var closing = (FakeTextEditor)host.Core.GetAllTextEditors()[0];
+                var closing = (FakeTextEditor)host.Core.GetTabs()[0].ReadyEditor;
                 SessionTestProtocol.Check(closing.Id != fixture.SelectedEditorId, "The verification tab must not be selected.");
                 var closed = new HashSet<Guid>();
                 SessionTestProtocol.Check(await host.Controller.PrepareExplicitCloseAsync(new[] { closing.Id }, closed) &&
@@ -355,7 +357,7 @@ internal static partial class SessionControllerTests
                 host.Core.Close(closing);
                 await ValidateCommittedRestoreJournalsAsync(fixture, committedJournals.Skip(1).ToArray(), closedFirst: true);
             }
-            // Deliberately no SaveSessionAsync: the next process must rely on attachment publication.
+            // No explicit SaveSessionAsync: the controller's coalesced restoration checkpoint must suffice.
         }
         return new RestoreVerification
         {
@@ -366,7 +368,7 @@ internal static partial class SessionControllerTests
     }
 
     private static RestoreCommittedJournal[] CaptureRestoredJournals(FakeNotepadsCore core) =>
-        core.GetAllTextEditors().Cast<FakeTextEditor>().Select(editor => new RestoreCommittedJournal
+        core.GetTabs().Select(tab => (FakeTextEditor)tab.ReadyEditor).Select(editor => new RestoreCommittedJournal
         {
             Id = editor.Id, JournalGenerationId = editor.Document.Journal.GenerationId
         }).ToArray();
@@ -405,9 +407,9 @@ internal static partial class SessionControllerTests
     private static async Task ValidateRestoredTabsAsync(FakeNotepadsCore core, RestoreFixture fixture, bool closedFirst)
     {
         var expected = closedFirst ? fixture.Documents.Skip(1).ToArray() : fixture.Documents;
-        var actual = core.GetAllTextEditors().Cast<FakeTextEditor>().ToArray();
+        var actual = core.GetTabs().Select(tab => (FakeTextEditor)tab.ReadyEditor).ToArray();
         SessionTestProtocol.Check(actual.Select(editor => editor.Id).SequenceEqual(expected.Select(row => row.Id)) &&
-            core.GetSelectedTextEditor()?.Id == fixture.SelectedEditorId, "Restoration changed ordered IDs or the selected ID.");
+            core.GetSelectedReadyEditor()?.Id == fixture.SelectedEditorId, "Restoration changed ordered IDs or the selected ID.");
         for (var index = 0; index < actual.Length; index++)
             await ValidateRestoreDocumentAsync(actual[index].Document, expected[index]);
     }

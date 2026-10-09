@@ -294,4 +294,9 @@
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Alteração anterior (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Não foi possível preparar a comparação com os recursos disponíveis. O documento não foi alterado.</value></data>
   <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Não é possível imprimir documentos com mais de 1 MB.</value></data>
+  <data name="WorkspaceTab_Loading" xml:space="preserve"><value>A carregar o documento…</value></data>
+  <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Não foi possível carregar o documento</value></data>
+  <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>«{0}» não foi carregado. Carregar e guardar antes de fechar ou eliminar a cópia de recuperação?</value></data>
+  <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Guardar antes de sair? Alguns documentos não foram carregados. Descartá-los elimina as respetivas cópias de recuperação.</value></data>
+  <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Documentos não carregados</value></data>
 </root>
