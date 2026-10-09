@@ -22,6 +22,8 @@
 		uint64_t DocumentSequence();
 		uint64_t DocumentRevision();
 		uint64_t SelectionRevision();
+		// Internal UIA navigation helper; deliberately absent from the WinRT ABI.
+		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word);
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorSearchResult> FindRegexAsync(hstring pattern, bool matchCase, int64_t origin, bool previous, bool wrap, int64_t excludedEmpty);
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorSearchResult> ReplaceRegexAsync(hstring pattern, bool matchCase, hstring replacement, int64_t origin, bool previous, bool replaceAll);
 		void StartJournal(hstring const &localPath, uint64_t baselineSequence);

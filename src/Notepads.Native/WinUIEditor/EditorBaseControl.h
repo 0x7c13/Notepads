@@ -50,6 +50,8 @@ namespace winrt::WinUIEditor::implementation
 		uint64_t DocumentSequence() const noexcept;
 		uint64_t DocumentRevision() const noexcept;
 		uint64_t SelectionRevision() const noexcept;
+		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word)
+		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
 		bool HasJournal() const noexcept;
 		Windows::Foundation::IAsyncAction WaitForTextStoreUnlockAsync();
 		void StartJournal(std::shared_ptr<::WinUIEditor::NativeJournalFile> file, uint64_t sequence, bool rotate);

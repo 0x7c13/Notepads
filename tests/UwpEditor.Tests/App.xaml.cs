@@ -73,6 +73,11 @@ public sealed partial class App : Application
         var log = new StringBuilder();
         try
         {
+            if (args.Arguments.StartsWith("--interactive-test ", StringComparison.Ordinal))
+            {
+                await InteractiveEditorHost.StartAsync(args.Arguments);
+                return;
+            }
             if (args.Arguments.StartsWith("--lease-", StringComparison.Ordinal))
             {
                 await SessionLeaseProcessTests.RunAsync(args.Arguments);
@@ -129,6 +134,8 @@ public sealed partial class App : Application
             Window.Current.Content = backdrop;
             WriteDiagnostic("Editor attached to window");
             Window.Current.Activate();
+            if (string.IsNullOrEmpty(args.Arguments))
+                await AutomationNavigationTests.RunAsync(log, core);
             WriteDiagnostic("Window activated; importing initial text");
             const string imported = "你好😀\r\nx\nz\r\0end\r";
             const string normalized = "你好😀\rx\rz\r\0end\r";
@@ -137,6 +144,13 @@ public sealed partial class App : Application
             var initialText = core.GetText();
             var nativeView = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
             var native = nativeView.Editor;
+            if (args.Arguments == "--automation-navigation")
+            {
+                await AutomationNavigationTests.RunAsync(log, core);
+                core.Dispose();
+                CompleteTests(log);
+                return;
+            }
             Check((native.StyleGetFore(LineNumberStyle) & 0xffffff) == 0x969696 &&
                 unchecked((uint)native.GetElementColour(WinUIEditor.Element.CaretLineBack)) == 0x18ffffff,
                 "the constructor colors a new editor from the Dark palette before any theme change");
@@ -1399,6 +1413,7 @@ public sealed partial class App : Application
     {
         WriteDiagnostic("Native lifecycle: forcing finalizer-thread release");
         var fixtures = CreateNativeFinalizerFixtures();
+        WriteDiagnostic("Native lifecycle: fixtures created; starting collection");
         // Leave UI free while managed finalizers release their native objects.
         await Task.Run(() => { GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect(); });
         await Task.Delay(100);

@@ -9125,6 +9125,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case Message::SetSelection:
 		sel.SetSelection(SelectionRange(PositionFromUPtr(wParam), lParam));
+		ContainerNeedsUpdate(Update::Selection);
 		Redraw();
 		break;
 

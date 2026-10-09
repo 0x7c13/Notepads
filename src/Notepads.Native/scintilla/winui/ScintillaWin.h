@@ -107,6 +107,7 @@ namespace Scintilla::Internal {
 		uint64_t DocumentSequence() const noexcept;
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
+		Range AutomationUnitRange(Sci::Position position, bool word);
 		bool HasJournal() const noexcept;
 		bool HasTextStoreLock() const noexcept { return _lock != NONE; }
 		bool IsComposing() const noexcept { return _compositionCount != 0; }

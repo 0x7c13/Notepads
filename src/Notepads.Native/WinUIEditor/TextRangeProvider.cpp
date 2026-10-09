@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "TextRangeProvider.h"
+#include "EditorWrapper.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -21,7 +22,20 @@ namespace winrt::WinUIEditor::implementation
 {
 	namespace
 	{
-		int64_t MoveCharacters(Editor const &editor, int64_t position, int32_t count)
+		int64_t CharacterBoundary(WinUIEditor::Editor const &editor, int64_t position)
+		{
+			const auto length = editor.Length();
+			position = std::clamp(position, int64_t{0}, length);
+			// A range can outlive an edit that puts its old byte offset inside
+			// a UTF-8 scalar. Navigation must never expose a partial character.
+			if (editor.CodePage() == Scintilla::CpUtf8)
+				while (position > 0 && position < length &&
+					Scintilla::Internal::UTF8IsTrailByte(static_cast<unsigned char>(editor.GetCharAt(position))))
+					--position;
+			return position;
+		}
+
+		int64_t MoveCharacters(WinUIEditor::Editor const &editor, int64_t position, int32_t count)
 		{
 			const auto length{ editor.Length() };
 			position = std::clamp(position, int64_t{ 0 }, length);
@@ -30,9 +44,83 @@ namespace winrt::WinUIEditor::implementation
 			// end. Automation movement must instead stop at that end.
 			return count > 0 && moved == 0 ? length : moved;
 		}
+
+		TextUnit SupportedUnit(TextUnit unit)
+		{
+			switch (unit)
+			{
+			case TextUnit::Format: return TextUnit::Word;
+			case TextUnit::Page: return TextUnit::Document;
+			case TextUnit::Character:
+			case TextUnit::Word:
+			case TextUnit::Line:
+			case TextUnit::Paragraph:
+			case TextUnit::Document: return unit;
+			default: throw hresult_invalid_argument();
+			}
+		}
+
+		struct UnitSpan
+		{
+			int64_t start;
+			int64_t end;
+		};
+
+		UnitSpan UnitRange(WinUIEditor::Editor const &editor, int64_t position, TextUnit unit)
+		{
+			const auto length = editor.Length();
+			position = std::clamp(position, int64_t{0}, length);
+			if (unit == TextUnit::Document)
+				return {0, length};
+			if (length == 0 || (unit == TextUnit::Character && position == length))
+				return {length, length};
+			if (unit == TextUnit::Character)
+			{
+				// Match PositionRelative/CountCharacters: CR and LF are separate
+				// scalars, whereas caret PositionAfter groups a CRLF pair.
+				position = CharacterBoundary(editor, position);
+				return {position, MoveCharacters(editor, position, 1)};
+			}
+			if (unit == TextUnit::Paragraph)
+			{
+				const auto line = editor.LineFromPosition(position);
+				return {editor.PositionFromLine(line), editor.PositionFromLine(line + 1)};
+			}
+			const auto range = get_self<implementation::Editor>(editor)->AutomationUnitRange(position, unit == TextUnit::Word);
+			return {range.start, range.end};
+		}
+
+		int32_t MovePosition(WinUIEditor::Editor const &editor, TextUnit unit, int32_t count, int64_t &position)
+		{
+			if (unit == TextUnit::Character)
+			{
+				position = CharacterBoundary(editor, position);
+				const auto original = position;
+				position = MoveCharacters(editor, position, count);
+				const auto moved = editor.CountCharacters(std::min(original, position), std::max(original, position));
+				return position < original ? -static_cast<int32_t>(moved) : static_cast<int32_t>(moved);
+			}
+			int32_t moved = 0;
+			const auto length = editor.Length();
+			const int direction = count > 0 ? 1 : -1;
+			while (moved != count)
+			{
+				if ((direction > 0 && position == length) || (direction < 0 && position == 0))
+					break;
+				const auto range = UnitRange(editor, position, unit);
+				auto next = direction > 0 ? range.end : range.start;
+				if (direction < 0 && next == position)
+					next = UnitRange(editor, editor.PositionBefore(position), unit).start;
+				if (next == position)
+					break;
+				position = next;
+				moved += direction;
+			}
+			return moved;
+		}
 	}
 
-	TextRangeProvider::TextRangeProvider(IRawElementProviderSimple const &peer, Editor const &editor, int64_t rangeStart, int64_t rangeEnd, Rect const &bounds)
+	TextRangeProvider::TextRangeProvider(IRawElementProviderSimple const &peer, WinUIEditor::Editor const &editor, int64_t rangeStart, int64_t rangeEnd, Rect const &bounds)
 		: _peer{ peer }, _editor{ editor }, _rangeStart{ rangeStart }, _rangeEnd{ rangeEnd }, _bounds{ bounds }
 	{
 	}
@@ -64,37 +152,9 @@ namespace winrt::WinUIEditor::implementation
 			throw hresult_error{ E_POINTER };
 		}
 
-		if (unit == TextUnit::Document)
-		{
-			_rangeStart = 0;
-			_rangeEnd = editor.Length();
-		}
-		else if (unit == TextUnit::Line || unit == TextUnit::Paragraph)
-		{
-			const auto line{ editor.LineFromPosition(_rangeStart) };
-			_rangeStart = editor.PositionFromLine(line);
-			_rangeEnd = editor.GetLineEndPosition(line);
-		}
-		else if (unit == TextUnit::Page)
-		{
-			const auto firstDisplayLine{ editor.FirstVisibleLine() };
-			const auto maxLine{ editor.LineCount() - 1 };
-			const auto firstVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine), int64_t{0}, maxLine) };
-			const auto lastVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine + editor.LinesOnScreen()), firstVisibleLine, maxLine) };
-
-			_rangeStart = editor.PositionFromLine(firstVisibleLine);
-			_rangeEnd = editor.GetLineEndPosition(lastVisibleLine);
-		}
-		else if (unit == TextUnit::Word)
-		{
-			_rangeStart = editor.WordStartPosition(_rangeStart, false);
-			_rangeEnd = editor.WordEndPosition(_rangeStart, false);
-		}
-		else if (unit == TextUnit::Character)
-		{
-			_rangeStart = std::clamp(_rangeStart, int64_t{ 0 }, editor.Length());
-			_rangeEnd = editor.PositionAfter(_rangeStart);
-		}
+		const auto range = UnitRange(editor, _rangeStart, SupportedUnit(unit));
+		_rangeStart = range.start;
+		_rangeEnd = range.end;
 	}
 
 	ITextRangeProvider TextRangeProvider::FindAttribute(int32_t attributeId, IInspectable const &value, bool backward)
@@ -266,7 +326,7 @@ namespace winrt::WinUIEditor::implementation
 
 	int32_t TextRangeProvider::Move(TextUnit const &unit, int32_t count)
 	{
-		if (unit != TextUnit::Character || count == 0)
+		if (count == 0)
 			return 0;
 		const auto editor{ _editor.get() };
 		if (!editor)
@@ -274,26 +334,35 @@ namespace winrt::WinUIEditor::implementation
 		const auto length{ editor.Length() };
 		const auto oldStart{ std::clamp(_rangeStart, int64_t{ 0 }, length) };
 		const auto oldEnd{ std::clamp(_rangeEnd, oldStart, length) };
-		const bool degenerate{ oldStart == oldEnd };
-		_rangeStart = MoveCharacters(editor, oldStart, count);
-		if (!degenerate)
+		const auto supported = SupportedUnit(unit);
+		const bool degenerate = oldStart == oldEnd;
+		// Normalize at the original start, then move. Normalization itself is
+		// not counted, and a failed movement must leave the original range alone.
+		auto position = degenerate ? oldStart : UnitRange(editor, oldStart, supported).start;
+		const auto normalizedStart = position;
+		auto moved = MovePosition(editor, supported, count, position);
+		if (!degenerate && position == length && moved > 0)
 		{
-			// Move normalizes a nonempty range to one requested unit. At EOF
-			// retain the last character rather than collapsing the range.
-			_rangeStart = std::min(_rangeStart, editor.PositionBefore(length));
-			_rangeEnd = editor.PositionAfter(_rangeStart);
+			const auto finalCharacter = supported == TextUnit::Character
+				? MoveCharacters(editor, length, -1) : editor.PositionBefore(length);
+			position = UnitRange(editor, finalCharacter, supported).start;
+			if (supported == TextUnit::Character)
+				moved = static_cast<int32_t>(editor.CountCharacters(normalizedStart, position));
+			else
+				--moved;
 		}
-		else
+		if (moved != 0)
 		{
-			_rangeEnd = _rangeStart;
+			const auto range = degenerate ? UnitSpan{position, position} : UnitRange(editor, position, supported);
+			_rangeStart = range.start;
+			_rangeEnd = range.end;
 		}
-		const auto moved{ editor.CountCharacters(std::min(oldStart, _rangeStart), std::max(oldStart, _rangeStart)) };
-		return _rangeStart < oldStart ? -static_cast<int32_t>(moved) : static_cast<int32_t>(moved);
+		return moved;
 	}
 
 	int32_t TextRangeProvider::MoveEndpointByUnit(TextPatternRangeEndpoint const &endpoint, TextUnit const &unit, int32_t count)
 	{
-		if (unit != TextUnit::Character || count == 0)
+		if (count == 0)
 			return 0;
 		const auto editor{ _editor.get() };
 		if (!editor)
@@ -301,7 +370,10 @@ namespace winrt::WinUIEditor::implementation
 		const auto length{ editor.Length() };
 		const auto oldPosition{ std::clamp(endpoint == TextPatternRangeEndpoint::Start ? _rangeStart : _rangeEnd,
 			int64_t{ 0 }, length) };
-		const auto newPosition{ MoveCharacters(editor, oldPosition, count) };
+		auto newPosition = oldPosition;
+		const auto moved = MovePosition(editor, SupportedUnit(unit), count, newPosition);
+		if (moved == 0)
+			return 0;
 		if (endpoint == TextPatternRangeEndpoint::Start)
 		{
 			_rangeStart = newPosition;
@@ -312,8 +384,7 @@ namespace winrt::WinUIEditor::implementation
 			_rangeEnd = newPosition;
 			_rangeStart = std::min(_rangeEnd, std::clamp(_rangeStart, int64_t{ 0 }, length));
 		}
-		const auto moved{ editor.CountCharacters(std::min(oldPosition, newPosition), std::max(oldPosition, newPosition)) };
-		return newPosition < oldPosition ? -static_cast<int32_t>(moved) : static_cast<int32_t>(moved);
+		return moved;
 	}
 
 	void TextRangeProvider::MoveEndpointByRange(TextPatternRangeEndpoint const &endpoint, ITextRangeProvider const &textRangeProvider, TextPatternRangeEndpoint const &targetEndpoint)

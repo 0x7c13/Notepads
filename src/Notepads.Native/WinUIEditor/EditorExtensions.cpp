@@ -12,6 +12,16 @@
 
 namespace winrt::WinUIEditor::implementation
 {
+	Scintilla::Internal::Range Editor::AutomationUnitRange(int64_t position, bool word)
+	{
+		auto view = _editor.get();
+		if (!view || view->IsFinalized())
+			winrt::throw_hresult(RO_E_CLOSED);
+		if (!view->Dispatcher().HasThreadAccess())
+			winrt::throw_hresult(RPC_E_WRONG_THREAD);
+		return view->AutomationUnitRange(position, word);
+	}
+
 	Windows::Storage::Streams::IBuffer Editor::ReadUtf8Range(int64_t offset, int32_t maxBytes)
 	{
 		auto view = _editor.get();

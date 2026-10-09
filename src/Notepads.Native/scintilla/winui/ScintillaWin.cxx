@@ -3418,7 +3418,13 @@ namespace Scintilla::Internal {
 
 	LRESULT ScintillaWinUI::SendMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		return _wndProc && _wndProcTag ? _wndProc(_wndProcTag.get(), msg, wParam, lParam) : 0;
+		if (!_wndProc)
+			return 0;
+		// A weak reference remains assigned after its target expires. Idle
+		// work may run while final_release is queued to the owning apartment.
+		// Resolve once and retain the owner throughout notification delivery.
+		const auto owner = _wndProcTag.get();
+		return owner ? _wndProc(owner, msg, wParam, lParam) : 0;
 	}
 
 	sptr_t ScintillaWinUI::DirectFunction(
@@ -3623,6 +3629,69 @@ namespace Scintilla::Internal {
 			pdoc->SetReadOnly(true);
 			pdoc->SetReadLease(true);
 		}
+	}
+
+	Range ScintillaWinUI::AutomationUnitRange(Sci::Position position, bool word) {
+		const auto length = pdoc->Length();
+		position = std::clamp(position, Sci::Position{0}, length);
+		position = pdoc->MovePositionOutsideChar(position, -1, false);
+		if (length == 0)
+			return Range(length, length);
+		if (word) {
+			if (position == length)
+				position -= pdoc->CharacterBefore(position).widthBytes;
+			// UIA words include their trailing separators. Keep an initial run
+			// of separators as a unit of its own, without copying document text.
+			auto isWord = [&](CharacterExtracted character) {
+				return pdoc->WordCharacterClass(character.character) == CharacterClass::word;
+			};
+			auto start = position;
+			if (!isWord(pdoc->CharacterAfter(start))) {
+				while (start > 0 && !isWord(pdoc->CharacterBefore(start)))
+					start -= pdoc->CharacterBefore(start).widthBytes;
+			}
+			while (start > 0 && isWord(pdoc->CharacterBefore(start)))
+				start -= pdoc->CharacterBefore(start).widthBytes;
+			auto end = start;
+			while (end < length && isWord(pdoc->CharacterAfter(end)))
+				end += pdoc->CharacterAfter(end).widthBytes;
+			while (end < length && !isWord(pdoc->CharacterAfter(end)))
+				end += pdoc->CharacterAfter(end).widthBytes;
+			return Range(start, end);
+		}
+
+		// Use layout offsets directly: display rows may contain diff padding,
+		// and caret line-end commands stop before a wrapped row's last character.
+		// Match normal wrapping: style transitions themselves are word-wrap
+		// opportunities, even when adjacent styles use identical font metrics.
+		pdoc->EnsureStyledTo(pdoc->LineStart(pdoc->SciLineFromPosition(position) + 1));
+		// Styling can notify the container before measurement starts.
+		position = pdoc->MovePositionOutsideChar(std::clamp(position, Sci::Position{0}, pdoc->Length()), -1, false);
+		RefreshStyleData();
+		AutoSurface surface(this);
+		const auto line = pdoc->SciLineFromPosition(position);
+		const auto lineStart = pdoc->LineStart(line);
+		int queryWidth = LineLayout::wrapWidthInfinite;
+		if (Wrapping()) {
+			auto textArea = GetClientRectangle();
+			textArea.left = static_cast<XYPOSITION>(vs.textStart);
+			textArea.right -= vs.rightMarginWidth;
+			queryWidth = static_cast<int>(textArea.Width());
+		}
+		// Wrapping normally catches up during paint/idle. A synchronous UIA
+		// query must use the current geometry without publishing new layout
+		// heights into a cache whose display-row map still describes the old size.
+		auto layout = queryWidth != wrapWidth || wrapPending.NeedsWrap()
+			? std::make_shared<LineLayout>(line, static_cast<int>(pdoc->LineStart(line + 1) - lineStart))
+			: view.RetrieveLineLayout(line, *this);
+		if (!surface || !layout)
+			return Range(lineStart, pdoc->LineStart(line + 1));
+		view.LayoutLine(*this, surface, vs, layout.get(), queryWidth);
+		const auto subLine = layout->SubLineFromPosition(static_cast<int>(position - lineStart), PointEnd::start);
+		auto range = layout->SubLineRange(subLine, LineLayout::Scope::includeEnd);
+		range.start += lineStart;
+		range.end = subLine == layout->lines - 1 ? pdoc->LineStart(line + 1) : range.end + lineStart;
+		return range;
 	}
 
 	uint64_t ScintillaWinUI::DocumentSequence() const noexcept { return _journal ? _journal->Sequence() : _documentSequence; }
